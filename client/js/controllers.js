@@ -6336,200 +6336,212 @@ angular.module('app.controllers', ['ngCookies'])
             
             function saveDeck(deck) {
                 console.log('saving deck: ', deck);
+				console.log("hiiiiiiiiiiiiiii");
+				return;
                 deck.authorId = User.getCurrentId();
                 deck.votes = [
                     {
                         userID: User.getCurrentId(),
                         direction: 1
                     }
-                ],
-                async.waterfall([
-                    function (seriesCallback) {
-                        Deck.create(deck)
-                        .$promise
-                        .then(function (deckInstance) {
-//                            console.log('deck instance: ',deckInstance);
-                            var deckId = deckInstance.id;
-                            var deckSlug = deckInstance.slug;
-                            seriesCallback(null, deckInstance);
-                        })
-                        .catch(function (err) {
-                            if(err) {
-//                                console.log('deck create err: ', err);
-                                seriesCallback(err);
-                            }
-                        });
-                    },
-                    function(deckInstance, seriesCallback) {
-                        // Create cards for deck
-//                        console.log('deckCard deckId: ', deckId);
-                        async.each(deck.cards, function(deckCard, deckCardCB) {
-                            var newDeckCard = {
-                                cardId: deckCard.card.id,
-                                deckId: deckInstance.id,
-                                cardQuantity: deckCard.cardQuantity,
-                                card: deckCard.card
-                            };
-//                            console.log('deckCard: ', deckCard);
-                            Deck.cards.create({
-                                id: deckInstance.id
-                            }, deckCard)
-                            .$promise
-                            .then(function (cardCreated) {
-//                                console.log('card created: ', cardCreated);
-                                
-                                // goto next deckCard
-                                return deckCardCB();
-                            })
-                            .catch(function (err) {
-                                if (err) {
-//                                    console.log('card create err: ', err);
-                                    deckCardCB(err);
-                                }
-                            });
-                        }, function(err) {
-                            if (err) {
-                                seriesCallback(err);
-                            }
-                            seriesCallback(null, deckInstance);
-                        });
-                    },
-                    function (deckInstance, seriesCallback) {
-//                        console.log('mulligan deckId: ', deckId);
-                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
-                            var newMulligan = {
-                                className: mulligan.className,
-                                instructionsWithCoin: mulligan.instructionsWithCoin,
-                                instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
-                                deckId: deckInstance.id
-                            };
-//                            console.log('newMulligan: ', newMulligan);
-                            Mulligan.create(newMulligan)
-                            .$promise
-                            .then(function (mulliganCreated) {
-//                                console.log('mulligan created: ', mulliganCreated);
-                                
-                                async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
-                                    console.log('cardWithCoin: ', cardWithCoin);
-                                    var realCardWithCoin = {
-                                        cardId: cardWithCoin.id,
-                                        mulliganId: mulliganCreated.id,
-                                        card: cardWithCoin
-                                    };
-                                    console.log('realCardWithCoin: ', realCardWithCoin);
-                                    
-                                    CardWithCoin.create(realCardWithCoin)
-                                    .$promise
-                                    .then(function (cardWithCoinCreated) {
-//                                        console.log('cardWithCoin created: ', cardWithCoinCreated);
-                                        
-                                        // goto next cardWithCoin
-                                        cardWithCoinCB();
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-//                                            console.log('err: ', err);
-                                            cardWithCoinCB(err);
-                                        }
-                                    });
-                                });
-                                
-                                async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
-//                                    console.log('cardWithoutCoin: ', cardWithoutCoin);
-                                    var realCardWithoutCoin = {
-                                        cardId: cardWithoutCoin.id,
-                                        mulliganId: mulliganCreated.id,
-                                        card: cardWithoutCoin
-                                    };
-//                                    console.log('realCardWithoutCoin: ', realCardWithoutCoin);
-                                    CardWithoutCoin.create(realCardWithoutCoin)
-                                    .$promise
-                                    .then(function (cardWithoutCoinCreated) {
-//                                        console.log('cardWithCoin created: ', cardWithoutCoinCreated);
-                                        
-                                        // goto next cardWithCoin
-                                        cardWithoutCoinCB();
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-//                                            console.log('err: ', err);
-                                            cardWithoutCoinCB(err);
-                                        }
-                                    });
-                                });
-                                
-                                // goto next mulligan
-                                mulliganCB();
-                            })
-                            .catch(function (err) {
-                                if (err) {
-                                    mulliganCB(err);
-                                }
-                            });
-                        }, function(err) {
-                            if (err) {
-                                seriesCallback(err);
-                            }
-                            seriesCallback(null, deckInstance);
-                        });
-                    },
-                    function (deckInstance, seriesCallback) {
-//                        console.log('matchup deckId: ', deckInstance.id);
-//                        console.log('deck.matchups: ', deck.matchups);
-//                        console.log('deckSlug: ', deckInstance.slug);
-                        async.each(deck.matchups, function(matchup, matchupCB) {
-                            console.log('matchup: ', matchup);
-                            var newMatchup = {
-                                deckName: matchup.deckName,
-                                className: matchup.className,
-                                forChance: matchup.forChance,
-                                forDeckId: deckInstance.id,
-                                deckId: deckInstance.id
-                            };
-                            console.log('newMatchup: ', newMatchup);
-                            DeckMatchup.create(newMatchup)
-                            .$promise
-                            .then(function (matchupCreated) {
-//                                console.log('matchup created: ', matchupCreated);
-                                
-                                // goto next
-                                matchupCB();
-                            })
-                            .catch(function (err) {
-                                if (err) {
-                                    matchupCB(err);
-                                }
-                            });
-                        }, function(err) {
-                            if (err) {
-                                seriesCallback(err);
-                            }
-                            seriesCallback(null, deckInstance);
-                        });
-                    }
-                ], 
-                function(err, deckInstance) {
-                    if (err) {
-                        $scope.errors = [];
-//                        console.log('series err: ', err);
-                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                            angular.forEach(err.data.error.details.messages, function(errArray) {
-                                for (var i = 0; i < errArray.length; i++) {
-                                    $scope.errors.push(errArray[i]);
-                                }
-                            });
-                        } else if (err.data.error.message) {
-                            $scope.errors.push(err.data.error.message);
-                        }
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                        $scope.deckSubmitting = false;
-                        return false;
-                    }
-                    console.log('Deck Created!');
-                    $scope.deckSubmitting = false;
-                    $state.transitionTo('app.hs.decks.deck', { slug: deckInstance.slug });
-                });
+                ];
+				
+				Deck.create(deck)
+				.$promise
+				.then(function (deckCreated) {
+					console.log('deckCreated:', deckCreated);
+				})
+				.catch(function (err) {
+					console.log('deck create err:', err);
+				});
+				
+//                async.waterfall([
+//                    function (seriesCallback) {
+//                        Deck.create(deck)
+//                        .$promise
+//                        .then(function (deckInstance) {
+////                            console.log('deck instance: ',deckInstance);
+//                            var deckId = deckInstance.id;
+//                            var deckSlug = deckInstance.slug;
+//                            seriesCallback(null, deckInstance);
+//                        })
+//                        .catch(function (err) {
+//                            if(err) {
+////                                console.log('deck create err: ', err);
+//                                seriesCallback(err);
+//                            }
+//                        });
+//                    },
+//                    function(deckInstance, seriesCallback) {
+//                        // Create cards for deck
+////                        console.log('deckCard deckId: ', deckId);
+//                        async.each(deck.cards, function(deckCard, deckCardCB) {
+//                            var newDeckCard = {
+//                                cardId: deckCard.card.id,
+//                                deckId: deckInstance.id,
+//                                cardQuantity: deckCard.cardQuantity,
+//                                card: deckCard.card
+//                            };
+////                            console.log('deckCard: ', deckCard);
+//                            Deck.cards.create({
+//                                id: deckInstance.id
+//                            }, deckCard)
+//                            .$promise
+//                            .then(function (cardCreated) {
+////                                console.log('card created: ', cardCreated);
+//                                
+//                                // goto next deckCard
+//                                return deckCardCB();
+//                            })
+//                            .catch(function (err) {
+//                                if (err) {
+////                                    console.log('card create err: ', err);
+//                                    deckCardCB(err);
+//                                }
+//                            });
+//                        }, function(err) {
+//                            if (err) {
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback(null, deckInstance);
+//                        });
+//                    },
+//                    function (deckInstance, seriesCallback) {
+////                        console.log('mulligan deckId: ', deckId);
+//                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
+//                            var newMulligan = {
+//                                className: mulligan.className,
+//                                instructionsWithCoin: mulligan.instructionsWithCoin,
+//                                instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
+//                                deckId: deckInstance.id
+//                            };
+////                            console.log('newMulligan: ', newMulligan);
+//                            Mulligan.create(newMulligan)
+//                            .$promise
+//                            .then(function (mulliganCreated) {
+////                                console.log('mulligan created: ', mulliganCreated);
+//                                
+//                                async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
+//                                    console.log('cardWithCoin: ', cardWithCoin);
+//                                    var realCardWithCoin = {
+//                                        cardId: cardWithCoin.id,
+//                                        mulliganId: mulliganCreated.id,
+//                                        card: cardWithCoin
+//                                    };
+//                                    console.log('realCardWithCoin: ', realCardWithCoin);
+//                                    
+//                                    CardWithCoin.create(realCardWithCoin)
+//                                    .$promise
+//                                    .then(function (cardWithCoinCreated) {
+////                                        console.log('cardWithCoin created: ', cardWithCoinCreated);
+//                                        
+//                                        // goto next cardWithCoin
+//                                        cardWithCoinCB();
+//                                    })
+//                                    .catch(function (err) {
+//                                        if (err) {
+////                                            console.log('err: ', err);
+//                                            cardWithCoinCB(err);
+//                                        }
+//                                    });
+//                                });
+//                                
+//                                async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+////                                    console.log('cardWithoutCoin: ', cardWithoutCoin);
+//                                    var realCardWithoutCoin = {
+//                                        cardId: cardWithoutCoin.id,
+//                                        mulliganId: mulliganCreated.id,
+//                                        card: cardWithoutCoin
+//                                    };
+////                                    console.log('realCardWithoutCoin: ', realCardWithoutCoin);
+//                                    CardWithoutCoin.create(realCardWithoutCoin)
+//                                    .$promise
+//                                    .then(function (cardWithoutCoinCreated) {
+////                                        console.log('cardWithCoin created: ', cardWithoutCoinCreated);
+//                                        
+//                                        // goto next cardWithCoin
+//                                        cardWithoutCoinCB();
+//                                    })
+//                                    .catch(function (err) {
+//                                        if (err) {
+////                                            console.log('err: ', err);
+//                                            cardWithoutCoinCB(err);
+//                                        }
+//                                    });
+//                                });
+//                                
+//                                // goto next mulligan
+//                                mulliganCB();
+//                            })
+//                            .catch(function (err) {
+//                                if (err) {
+//                                    mulliganCB(err);
+//                                }
+//                            });
+//                        }, function(err) {
+//                            if (err) {
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback(null, deckInstance);
+//                        });
+//                    },
+//                    function (deckInstance, seriesCallback) {
+////                        console.log('matchup deckId: ', deckInstance.id);
+////                        console.log('deck.matchups: ', deck.matchups);
+////                        console.log('deckSlug: ', deckInstance.slug);
+//                        async.each(deck.matchups, function(matchup, matchupCB) {
+//                            console.log('matchup: ', matchup);
+//                            var newMatchup = {
+//                                deckName: matchup.deckName,
+//                                className: matchup.className,
+//                                forChance: matchup.forChance,
+//                                forDeckId: deckInstance.id,
+//                                deckId: deckInstance.id
+//                            };
+//                            console.log('newMatchup: ', newMatchup);
+//                            DeckMatchup.create(newMatchup)
+//                            .$promise
+//                            .then(function (matchupCreated) {
+////                                console.log('matchup created: ', matchupCreated);
+//                                
+//                                // goto next
+//                                matchupCB();
+//                            })
+//                            .catch(function (err) {
+//                                if (err) {
+//                                    matchupCB(err);
+//                                }
+//                            });
+//                        }, function(err) {
+//                            if (err) {
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback(null, deckInstance);
+//                        });
+//                    }
+//                ], 
+//                function(err, deckInstance) {
+//                    if (err) {
+//                        $scope.errors = [];
+////                        console.log('series err: ', err);
+//                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+//                            angular.forEach(err.data.error.details.messages, function(errArray) {
+//                                for (var i = 0; i < errArray.length; i++) {
+//                                    $scope.errors.push(errArray[i]);
+//                                }
+//                            });
+//                        } else if (err.data.error.message) {
+//                            $scope.errors.push(err.data.error.message);
+//                        }
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                        $scope.deckSubmitting = false;
+//                        return false;
+//                    }
+//                    console.log('Deck Created!');
+//                    $scope.deckSubmitting = false;
+//                    $state.transitionTo('app.hs.decks.deck', { slug: deckInstance.slug });
+//                });
             }
         }
     ])
@@ -7695,8 +7707,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollListCtrl', ['$scope', '$q', '$timeout', '$compile', 'bootbox', 'AlertService', 'polls', 'pollsCount', 'paginationParams', 'Poll', 'AjaxPagination',
-        function ($scope, $q, $timeout, $compile, bootbox, AlertService, polls, pollsCount, paginationParams, Poll, AjaxPagination) {
+    .controller('AdminPollListCtrl', ['$scope', '$window', '$q', '$timeout', '$compile', 'bootbox', 'AlertService', 'polls', 'pollsCount', 'paginationParams', 'Poll', 'AjaxPagination',
+        function ($scope, $window, $q, $timeout, $compile, bootbox, AlertService, polls, pollsCount, paginationParams, Poll, AjaxPagination) {
             // grab alerts
 //            if (AlertService.hasAlert()) {
 //                $scope.success = AlertService.getSuccess();
@@ -7776,6 +7788,7 @@ angular.module('app.controllers', ['ngCookies'])
 
 //             delete poll
             $scope.deletePoll = function (poll) {
+				console.log('hi');
                 var box = bootbox.dialog({
                     title: 'Delete poll: ' + poll.title + '?',
                     message: 'Are you sure you want to delete the poll <strong>' + poll.title + '</strong>?',
@@ -7784,15 +7797,17 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                Poll.destroyById({id:poll.id}).$promise.then(function (data) {
+                                Poll.destroyById({
+									id:poll.id
+								}).$promise
+								.then(function (data) {
                                     var index = $scope.polls.indexOf(poll);
-                                    if (index !== -1) {
-                                        $scope.polls.splice(index, 1);
-                                    }
-                                    $scope.success = {
-                                        show: true,
-                                        msg: poll.title + ' deleted successfully.'
-                                    };
+									$window.scrollTo(0, 0);
+									$scope.polls.splice(index, 1);
+									AlertService.setSuccess({
+										show: true,
+										msg: poll.title + ' deleted successfully.'
+									});
                                     updatePolls($scope.page, $scope.perpage, $scope.search, false);
                                 });
                             }
@@ -7815,17 +7830,17 @@ angular.module('app.controllers', ['ngCookies'])
             var box,
                 defaultPoll = {
                     title : '',
-                    subTitle: '',
+                    subtitle: '',
                     description: '',
-                    type: '',
-                    active: false,
-                    view: '',
-                    items: []
+                    pollType: '',
+                    viewType: '',
+                    items: [],
+					voteLimit: ''
                 },
                 defaultItem = {
                     name: '',
                     orderNum: 0,
-                    photos: {
+                    photoNames: {
                         large: '',
                         thumb: ''
                     }
@@ -7919,7 +7934,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.editItem = function () {
                 box.modal('hide');
-                $scope.currentItem = false;
             };
 
             $scope.deleteItem = function (item) {
@@ -7939,10 +7953,10 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.addItem = function () {
+				$scope.currentItem.votes = 0;
                 $scope.currentItem.orderNum = $scope.poll.items.length + 1;
                 $scope.poll.items.push($scope.currentItem);
                 box.modal('hide');
-                $scope.currentItem = false;
             };
 
             $scope.updateDND = function (list, index) {
@@ -7958,17 +7972,38 @@ angular.module('app.controllers', ['ngCookies'])
 
             // add Poll
             $scope.addPoll = function () {
+				console.log('$scope.poll: ', $scope.poll);
+				$scope.fetching = true;
                 $scope.poll.createdDate = new Date().toISOString();
-                Poll.create({}, $scope.poll).$promise.then(function (data) {
-                   
-                        AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been added successfully.' })
-                        $state.go('app.admin.polls.list');
+                Poll.create($scope.poll)
+				.$promise
+				.then(function (pollInstance) {
+					console.log('pollInstance:', pollInstance);
+					Poll.items.createMany({
+						id: pollInstance.id
+					}, $scope.poll.items).$promise
+					.then(function (itemsCreated) {
+						$scope.fetching = false;
+						$state.go('app.admin.polls.list');
+					})
+					.catch(function (err) {
+						$scope.fetching = false;
+						$window.scrollTo(0,0);
+						AlertService.setError({
+							show: true,
+							msg: 'Unable to create Poll',
+							lbErr: err
+						});
+					});
                 })
                 .catch(function(err){
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
+					$scope.fetching = false;
                     $window.scrollTo(0,0);
-                    AlertService.setError({ show: true, msg: 'There was an error adding your poll ' + err.status + ": " + err.data.error.message})
+                    AlertService.setError({ 
+						show: true, 
+						msg: 'There was an error adding your poll ',
+						lbErr: err
+					});
                 });
             };
         }
@@ -7980,19 +8015,23 @@ angular.module('app.controllers', ['ngCookies'])
                     title : '',
                     subtitle: '',
                     description: '',
-                    type: '',
-                    active: false,
-                    view: '',
-                    items: []
+                    pollType: '',
+                    viewType: '',
+                    items: [],
+					voteLimit: ''
                 },
                 defaultItem = {
                     name: '',
                     orderNum: 0,
-                    photos: {
+                    photoNames: {
                         large: '',
                         thumb: ''
                     }
-                }
+                },
+				onSave = {
+					toDelete: [],
+					toCreate: []
+				};
 
             $scope.options = {
                 disableDragAndDrop: true,
@@ -8012,7 +8051,7 @@ angular.module('app.controllers', ['ngCookies'])
                 ]
             };
 
-            console.log(poll);
+            console.log('poll: ', poll);
             
             // load Poll
             $scope.poll = poll;
@@ -8024,12 +8063,27 @@ angular.module('app.controllers', ['ngCookies'])
                 { name: 'Image', value: 'img' },
                 { name: 'Text', value: 'txt' }
             ];
+			
+			$scope.poll.pollType === 'img' ? $scope.poll.pollType = $scope.pollType[0].value : $scope.poll.pollType = $scope.pollType[1].value;
 
             $scope.pollView = [
                 { name: 'Main', value: 'main' },
                 { name: 'Sidebar', value: 'side' },
                 { name: 'Hide', value: 'hide'}
             ];
+			
+			console.log('$scope.poll.viewType:', $scope.poll.viewType);
+			switch($scope.poll.viewType) {
+				case 'main':
+					$scope.poll.viewType = $scope.pollView[0].value;
+					break;
+				case 'sidebar':
+					$scope.poll.viewType = $scope.pollView[1].value;
+					break;
+				case 'hide':
+					$scope.poll.viewType = $scope.pollView[2].value;
+					break;
+			}
 
             $scope.pollActive = [
                 { name: 'Yes', value: 'true'},
@@ -8043,7 +8097,8 @@ angular.module('app.controllers', ['ngCookies'])
                     out.push(i + 1);
                 }
 
-                return out;
+                $scope.voteLimits = out;
+				return out;
             }
 
             $scope.photoUpload = function ($files) {
@@ -8091,6 +8146,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deleteItem = function (item) {
                 var index = $scope.poll.items.indexOf(item);
                 $scope.poll.items.splice(index, 1);
+				onSave.toDelete.push(item);
                 for (var i = 0; i < $scope.poll.items.length; i++) {
                     $scope.poll.items[i].orderNum = i + 1;
                 }
@@ -8105,10 +8161,11 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.addItem = function () {
+				$scope.currentItem.votes = 0;
                 $scope.currentItem.orderNum = $scope.poll.items.length + 1;
                 $scope.poll.items.push($scope.currentItem);
+				onSave.toCreate.push($scope.currentItem);
                 box.modal('hide');
-                $scope.currentItem = false;
             };
 
             $scope.updateDND = function (list, index) {
@@ -8124,20 +8181,31 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.editPoll = function () {
-                $scope.showError = false;
-
-                Poll.update( {
-                    where: {id:$scope.poll.id}
-                }, $scope.poll).$promise.then(function (data) {
-                    AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been updated successfully.' })
-                    $state.go('app.admin.polls.list');
-                })
-                .catch(function(err){
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                    AlertService.setError({ show: true, msg: 'There was an error editing your poll ' + err.status + ": " + err.data.error.message})
-                });
+				$scope.fetching = true;
+				
+				async.parallel([
+					function(paraCB){ 
+						Poll.upsert($scope.poll)
+							.$promise
+							.then(function (data) {
+							$scope.fetching = false;
+							$window.scrollTo(0, 0);
+							$state.go('app.admin.polls.list');
+						})
+						.catch(function(err){
+							return paraCB(err);
+						});
+					},
+					function(paraCB){ 
+					}
+				], function(err) {
+					$scope.fetching = false;
+					if (err) {
+						
+					}
+				});
+				
+                
             };
         }
     ])
@@ -9030,21 +9098,26 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ];
 				
-				var mulligansWithCoin = [];
 				angular.forEach(deck.mulligans, function(mulligan) {
+					var mulliganIndex = deck.mulligans.indexOf(mulligan);
+					console.log('mulliganIndex:', mulliganIndex);
 					
-					angular.forEach(mulligan.mulligansWithCoin, function(cardWithCoin, index) {
-						var cardMulligan = {
-							cardId: cardWithCoin.id
+					angular.forEach(mulligan.mulligansWithCoin, function(mulliganWithCoin) {
+						console.log('mulliganWithCoin:', mulliganWithCoin);
+						var withCoinIndex = mulligan.mulligansWithCoin.indexOf(mulliganWithCoin);
+						var cardWithCoin = {
+							cardId: mulliganWithCoin.id
 						};
-						mulligan.mulligansWithCoin[index] = cardMulligan;
+						mulligan.mulligansWithCoin[withCoinIndex] = cardWithCoin;
 					});
 					
-					angular.forEach(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, index) {
-						var cardMulligan = {
-							cardId: cardWithoutCoin.id
+					angular.forEach(mulligan.mulligansWithoutCoin, function(mulliganWithoutCoin) {
+						console.log('mulliganWithoutCoin:', mulliganWithoutCoin);
+						var withoutCoinIndex = mulligan.mulligansWithoutCoin.indexOf(mulliganWithoutCoin);
+						var cardWithoutCoin = {
+							cardId: mulliganWithoutCoin.id
 						};
-						mulligan.mulligansWithoutCoin[index] = cardMulligan;
+						mulligan.mulligansWithoutCoin[withoutCoinIndex] = cardWithoutCoin;
 					});
 					
 				});
