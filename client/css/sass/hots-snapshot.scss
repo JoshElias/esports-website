@@ -10,6 +10,7 @@
 // 4... hero image
 // 5... qualities
 // 6... meta change box
+// 7... filter styles
 
 //*************************************
 
@@ -112,14 +113,24 @@
 // 3... Tiers
 //*************************************
     
-    .tier .tier-heading {
-        border: 1px solid transparent;
+    .tier {
+        
+        position: relative;
+        
+        .tier-heading {
+            background: -webkit-linear-gradient(left, #1F2650, #20365F);
+            background: -o-linear-gradient(right, #1F2650, #20365F);
+            background: -moz-linear-gradient(right, #1F2650, #20365F);
+            background: linear-gradient(to right, #1F2650, #20365F);
+            border: 1px solid transparent;
+               
         
         @media screen and (max-width: 575px) {
                 h2 {
                     margin-left: 10px;
                 }
             }
+        }
         
     }
     
@@ -127,7 +138,7 @@
         
         .tier-hero h4 {
             //padding-right: 200px;
-            text-indent: 20px;
+            //text-indent: 20px;
             line-height: 48px;
             font-weight: bold;
             color: $white;
@@ -135,11 +146,12 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            position: relative;
             
             @media screen and (max-width: 750px) {
                 font-size: 14px;
                 margin-top: 5px;
-                text-indent: 10px;
+                //text-indent: 10px;
             }
         }
 
@@ -160,6 +172,7 @@
             h3 {
                 font-size: 20px;
                 font-weight: bold;
+                color: $grey-blue;
             }
             
             h4 {
@@ -193,16 +206,29 @@
             appearance: none;
             cursor: pointer;
             
+            h4 {
+                margin-left: 20px;
+                
+                @media screen and (max-width: 740px) {
+                    margin-left: 10px;
+                }
+            }
+            
             @media screen and (min-width: 750px) {
                 
                 background-repeat: no-repeat !important;
                 background-position: right top !important;
                 padding-top: 4px;
+                
+               
             }
 
-             .hero-button {
+             
+        }
+    
+        .hero-button {
                 position: absolute;
-                top: 19px;
+                top: 16px;
                 right: 150px;
                 display: block;
                 background: rgba(0, 0, 0, 0.25);
@@ -210,14 +236,15 @@
                 color: $light-grey;
                 padding: 2px 25px;
                 outline: none;
-                 
+                
+                .bottom-hero-button {
+                    position: relative;
+                }
                  
                  @media screen and (min-width: 750px) {
                      &:hover {
                         background-color: rgba($white, .15 ) ;
                         border: 2px solid transparent;
-                        top: 12px;
-
                      }
                  }
                  
@@ -225,11 +252,18 @@
                     right: 10px;
                     font-size: 12px;    
                  }
-                 
-                 
-             
-             }
-        }
+            }
+    
+            .bottom-hero-button {
+                  
+                display: block;
+                background: rgba($hots-dark-purple, 1);
+                border: 1px $light-grey solid;
+                color: $light-grey;
+                padding: 5px 30px;
+                outline: none;
+                margin: 0 auto 20px;            
+            }
     
     
 //*************************************
@@ -421,6 +455,223 @@
         }
     }
 
+//*************************************
+// 7... filter styles
+//*************************************
+    
    
+    
+    
+    .tier-hero-filters {
+        float: right;
+        margin-top: 7px;
+        margin-right: 10px;
+    }
 
+     .mobile-filter {
+        background: -webkit-linear-gradient(left, #1F2650, #20365F);
+        background: -o-linear-gradient(right, #1F2650, #20365F);
+        background: -moz-linear-gradient(right, #1F2650, #20365F);
+        background: linear-gradient(to right, #1F2650, #20365F);
+        width: 100%;
+        
+        .tier-hero-filters {
+            float: none;
+            margin: 0;
+            
+            .center {
+                width: 374px;
+                overflow: auto;
+                margin: 10px auto;    
+
+                @media screen and (max-width: 500px) {
+                    width: 172px;
+                    margin: 15px auto 0;
+                    
+                }
+             }
+        }
+         
+         .filter {
+             
+             @media screen and (max-width: 500px) {
+                 
+                 margin-bottom: 10px;
+                 
+                 &.filter-specialist {
+                     margin-right: 0px;
+                 }
+
+                 &.filter-universe-sc {
+                    clear: both;
+                 }
+             }
+         
+         
+         }
+
+    }
+    
+    .filter {
+        background-image: url(../img/hots/filter-sprites.png);
+        height: 49px;
+        width: 42px;
+        background-color: transparent;
+        border: transparent;
+        float: left;
+        margin-left: 1px;
+        
+        
+
+        //filters on the hero
+
+        &.filter-role {
+            
+            position: absolute;
+            top:6px;
+            right: 370px;
+
+            &.warrior {
+            background-position: -43px -1px;
+            }
+
+            &.support {
+                background-position: -43px -99px;
+            }
+
+            &.specialist {
+                background-position: -43px -148px;
+            }
+
+            &.assasin {
+                background-position: -43px -50px;
+            }
+            
+            @media screen and (max-width: 770px) {
+              right: 60px;            
+            }
+        }
+
+        &.filter-universe {
+
+            
+            position: absolute;
+            top:6px;
+            right: 320px;
+
+            @media screen and (max-width: 770px) {
+              right: 10px;
+            }
+                    
+        }
+
+        //filters on the tier
+        //class filters
+
+         &.filter-warrior {
+            background-position: -1px -1px;
+            //position: absolute;
+//            top:8px;
+//            right: 380px;
+
+             &.active {
+                background-position: -43px -1px;
+            }
+
+        }
+
+
+
+        &.filter-assasin {
+            background-position: -1px -50px;
+            //position: absolute;
+            //top:8px;
+            //right: 330px;
+
+             &.active {
+                 background-position: -43px -50px;
+            }
+
+        }
+
+
+        &.filter-support {
+
+            background-position: -1px -99px;
+//            position: absolute;
+//            top:8px;
+//            right: 280px;
+
+             &.active {
+                background-position: -43px -99px;
+            }
+
+        }
+
+        &.filter-specialist {
+            background-position: -1px -148px;
+            margin-right: 30px;
+//            position: absolute;
+//            top:8px;
+//            right: 230px;
+
+            &.active {
+                background-position: -43px -148px;
+            }
+        }
+
+        //world filters
+
+        &.filter-universe-sc {
+            background-position: -87px -50px;
+//            position: absolute;
+//            top:8px;
+//            right: 160px;
+
+             &.active {
+                background-position: -130px -50px;
+            }
+
+        }
+
+
+
+        &.filter-universe-diablo {
+            background-position: -87px -99px;
+//            position: absolute;
+//            top:8px;
+//            right: 110px;
+
+             &.active {
+                background-position: -130px -99px;
+            }
+
+        }
+
+
+        &.filter-blizzard {
+
+            background-position: -87px -148px;
+//            position: absolute;
+//            top:8px;
+//            right: 60px;
+//            
+             &.active {
+                background-position: -130px 48px;
+            }
+
+        }
+
+        &.filter-universe-wc {
+            background-position: -87px -1px;
+//            position: absolute;
+//            top:8px;
+//            right: 10px;
+
+            &.active {
+                background-position: -130px -1px;
+            }
+        }    
+    }
+    
 }

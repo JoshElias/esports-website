@@ -1870,7 +1870,11 @@ var app = angular.module('app', [
                                 filter: {
                                   fields: {
                                     oldTalents: false,
-                                    oldAbilities: false
+                                    oldAbilities: false,
+                                    price: false,
+                                    title: false,
+                                    manaType: false,
+                                    characters: false
                                   }
                                 }
                               }).$promise;
@@ -2035,41 +2039,49 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.talentCalculator.hero.html',
                         controller: 'HOTSTalentCalculatorHeroCtrl',
                         resolve: {
-                            hero: ['$stateParams', '$q', 'Hero', '$filter', '$state', function ($stateParams, $q, Hero, $filter, $state) {
-                                var hero = $stateParams.hero;
-                                return Hero.findOne({
-                                    filter: {
-                                        where: {
-                                            className: hero
+                          hero: ['$stateParams', '$q', 'Hero', '$filter', '$state', function ($stateParams, $q, Hero, $filter, $state) {
+                            var hero = $stateParams.hero;
+                            return Hero.findOne({
+                              filter: {
+                                where: {
+                                    className: hero
+                                },
+                                include: [
+                                  {
+                                    relation: 'talents',
+                                    scope: {
+                                      order: "orderNum ASC",
+                                      include: [
+                                        {
+                                          relation: 'talent'
                                         },
-                                        include: [
-                                            {
-                                                relation: 'talents',
-                                                scope: {
-                                                    order: "orderNum ASC",
-                                                    include: [
-                                                      {
-                                                        relation: 'talent'
-                                                      }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                              relation: 'abilities'
-                                            }
-                                        ]
+                                        {
+                                          relation: 'ability',
+                                          scope: {
+                                            fields: ['id']
+                                          }
+                                        }
+                                      ]
                                     }
-                                })
-                                .$promise
-                                .then(function (hero) {
-                                    console.log(hero);
-                                    return hero;
-                                })
-                                .catch(function(err) {
-                                    console.log(err.status, err.data.error.code, "REDIRECTING");
-                                    $state.go('app.hots.talentCalculator.redirect')
-                                });
-                            }]
+                                  },
+                                  {
+                                    relation: 'abilities'
+                                  }
+                                ]
+                              }
+                            })
+                            .$promise
+                            .then(function (hero) {
+                              var sort = _.sortBy(hero.talents, 'orderNum');
+                              hero.talents = sort;
+                              
+                              return hero;
+                            })
+                            .catch(function(err) {
+                              console.log(err.status, err.data.error.code, "REDIRECTING");
+                              $state.go('app.hots.talentCalculator.redirect')
+                            });
+                          }]
                         }
                     }
                 },

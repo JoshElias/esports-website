@@ -1256,6 +1256,15 @@ angular.module('app.services', [])
         },
         getObjectID: function () {
             return $http.post('/api/admin/id', {});
+        },
+        cleanObj: function (obj, properties) {
+          var out = {};
+          
+          _.each(properties, function (pVal) {
+            out[pVal] = obj[pVal];
+          });
+          
+          return out;
         }
     };
 }])

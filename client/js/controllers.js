@@ -12682,7 +12682,7 @@ angular.module('app.controllers', ['ngCookies'])
                     .$promise
                     .then(function (data) {
                         console.log(data);
-                        getTalents(1, 50, $scope.search);
+                        updateTalents(1, 50, $scope.search);
                         box.modal('hide');
                     })
                     .catch(function (err) {
@@ -12776,7 +12776,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     });
                                 });
                                 
-                                getTalents(1, 50, $scope.search);
+                                updateTalents(1, 50, $scope.search);
                             }
                         },
                         cancel: {
@@ -13666,19 +13666,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             };
 
-            function getDict (guides) {
-                var dict = {};
-                for (var i = 0; i < guides.length; i++) {
-                    for (var k = 0; k < guides[i].heroes.length; k++) {
-                        for (var l = 0; l < guides[i].heroes[k].talents.length; l++) {
-                            var temp = guides[i].heroes[k].talents[l].id;
-                            dict[temp] = guides[i].heroes[k].talents[l];
-                        }
-                    }
-                }
-                return dict;
-            }
-
             var initializing = true;
             $scope.$watch(function(){ return $scope.filters; }, function (value) {
                 if (initializing) {
@@ -13699,7 +13686,6 @@ angular.module('app.controllers', ['ngCookies'])
                         async.parallel([
                             function () {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, function(err, guides) {
-                                    featuredTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesFeatured = guides;
@@ -13709,7 +13695,6 @@ angular.module('app.controllers', ['ngCookies'])
                             },
                             function () {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
-                                    communityTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesCommunity = guides;
@@ -13730,7 +13715,6 @@ angular.module('app.controllers', ['ngCookies'])
                             },
                             function () {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, function (err, guides) {
-                                    featuredTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesFeatured = guides;
@@ -13740,13 +13724,13 @@ angular.module('app.controllers', ['ngCookies'])
                             },
                             function () {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, function (err, guides) {
-                                    communityTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesCommunity = guides;
                                         initializing = false;
                                     });
                                 });
+                              
                             }
                         ])
                     } else if ($scope.filters.search != '') {
@@ -13754,7 +13738,6 @@ angular.module('app.controllers', ['ngCookies'])
                         async.parallel([
                             function () {
                                 HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
-                                    featuredTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesFeatured = guides;
@@ -13764,7 +13747,6 @@ angular.module('app.controllers', ['ngCookies'])
                             },
                             function () {
                                 HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
-                                    communityTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesCommunity = guides;
@@ -13804,7 +13786,6 @@ angular.module('app.controllers', ['ngCookies'])
                             },
                             function () {
                                 HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
-                                    featuredTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesFeatured = guides;
@@ -13814,7 +13795,6 @@ angular.module('app.controllers', ['ngCookies'])
                             },
                             function () {
                                HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
-                                    communityTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesCommunity = guides;
@@ -13851,14 +13831,14 @@ angular.module('app.controllers', ['ngCookies'])
                     index = 0;
 
                 // get index of current hero
-                for (var i = 0; i < guide.heroes.length; i++) {
-                    if (currentHero.id == guide.heroes[i].id) {
+                for (var i = 0; i < guide.guideHeroes.length; i++) {
+                    if (currentHero.id == guide.guideHeroes[i].id) {
                         index = i;
                         break;
                     }
                 }
 
-                guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+                guide.currentHero = (index == 0) ? guide.guideHeroes[guide.guideHeroes.length - 1] : guide.guideHeroes[index - 1];
             };
 
             $scope.guideNextHero = function ($event, guide) {
@@ -13867,9 +13847,9 @@ angular.module('app.controllers', ['ngCookies'])
 
                 var currentHero = $scope.getGuideCurrentHero(guide),
                     index = 0;
-
+                
                 // get index of current hero
-                for (var i = 0; i < guide.heroes.length; i++) {
+                for (var i = 0; i < guide.guideHeroes.length; i++) {
                     if (currentHero.id == guide.guideHeroes[i].id) {
                         index = i;
                         break;
@@ -13878,7 +13858,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                 guide.currentHero = (index == guide.guideHeroes.length - 1) ? guide.guideHeroes[0] : guide.guideHeroes[index + 1];
             };
-
+          
             //is premium
             $scope.isPremium = function (guide) {
                 if (!guide.premium.isPremium) { return false; }
@@ -13916,19 +13896,6 @@ angular.module('app.controllers', ['ngCookies'])
                 map: undefined
             };
 
-            function getDict (guides) {
-                var dict = {};
-                for (var i = 0; i < guides.length; i++) {
-                    for (var k = 0; k < guides[i].heroes.length; k++) {
-                        for (var l = 0; l < guides[i].heroes[k].talents.length; l++) {
-                            var temp = guides[i].heroes[k].talents[l].id;
-                            dict[temp] = guides[i].heroes[k].talents[l];
-                        }
-                    }
-                }
-                return dict;
-            }
-
             var initializing = true;
             $scope.$watch(function() { return $scope.filters; }, function (value) {
                 if (initializing) {
@@ -13951,7 +13918,6 @@ angular.module('app.controllers', ['ngCookies'])
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, null, 1, function(err, guides) {
                                   console.log(guides);
-//                                    $scope.topGuidesTalents = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.topGuides = guides;
@@ -13962,7 +13928,6 @@ angular.module('app.controllers', ['ngCookies'])
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 4, function(err, guides) {
                                   console.log(guides);
-//                                    $scope.tempostormGuideTalents = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.tempostormGuides = guides;
@@ -13973,7 +13938,6 @@ angular.module('app.controllers', ['ngCookies'])
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
                                   console.log(guides);
-//                                    $scope.communityGuideTalents = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.communityGuides = guides;
@@ -13987,7 +13951,6 @@ angular.module('app.controllers', ['ngCookies'])
                         async.series([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, null, 1, function (err, guides) {
-//                                    $scope.topGuidesTalents = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.topGuides = guides;
@@ -13997,7 +13960,6 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, true, 4, function (err, guides) {
-//                                    $scope.tempostormGuideTalents = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.tempostormGuides = guides;
@@ -14007,7 +13969,6 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, function (err, guides) {
-//                                    $scope.communityGuideTalents = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.communityGuides = guides;
@@ -14048,7 +14009,6 @@ angular.module('app.controllers', ['ngCookies'])
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getGuides($scope.filters, null, 1, function(err, guides) {
                                   console.log(guides);
-//                                    $scope.topGuidesTalents = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.topGuides = guides;
@@ -14059,7 +14019,6 @@ angular.module('app.controllers', ['ngCookies'])
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getGuides($scope.filters, true, 4, function(err, guides) {
                                   console.log(guides);
-//                                    $scope.tempostormGuideTalents = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.tempostormGuides = guides;
@@ -14071,7 +14030,6 @@ angular.module('app.controllers', ['ngCookies'])
                             function (seriesCallback) {
                                HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
                                  console.log(guides);
-//                                    $scope.communityGuideTalents = getDict(guides);
 
                                    $timeout(function () {
                                         $scope.communityGuides = guides;
@@ -14323,7 +14281,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.selectedTalent = function (hero, tier, talent) {
-                return _.find(hero.talents, function(val) { return (val.id == talent.talentId); });
+              return !!_.find($scope.currentTalents, function(val) { return val.talent.id === talent.talent.id; });
             };
 
             // matchups
@@ -14526,6 +14484,22 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
+                var keys = ['name',
+                            'slug',
+                            'guideType',
+                            'description',
+                            'createdDate',
+                            'premium',
+                            'votes',
+                            'against',
+                            'content',
+                            'isFeatured',
+                            'isPublic',
+                            'youtubeId',
+                            'viewCount',
+                            'voteScore'
+                           ];
+                var stripped = Util.cleanObj($scope.guide, keys);
                 $scope.guide.slug = Util.slugify($scope.guide.name);
                     
                 $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
@@ -14543,8 +14517,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 $scope.guide.guideTalents = _.flatten(temp);
 
-                console.log("pre create:", $scope.guide);
-                Guide.create({}, $scope.guide)
+                Guide.create({}, stripped)
                 .$promise
                 .then(function (guideData) {
                   console.log('guideData', guideData);
@@ -14564,13 +14537,11 @@ angular.module('app.controllers', ['ngCookies'])
                       _.each(heroTals, function (innerEachVal, index, list) {
                         innerEachVal.guideId = guideData.id;
                         innerEachVal.guideHeroId = eachVal.id; 
-                        
-                        console.log(innerEachVal, index, list);
                       });
                       
                       tals.push(heroTals);
                     });
-                    
+                    console.log(tals);
                     Guide.guideTalents.createMany({
                       id: guideData.id 
                     }, tals)
@@ -15135,40 +15106,33 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.tiers = HOTS.tiers;
 
             $scope.talentsByTier = function (tier) {
-                var hero     = $scope.currentHero;
-                var filtered = _.filter(hero.talents, function (val) { return val.tier === tier });
-                var mapped   = _.map(filtered, function (val) { return val.talent; });
+              var hero     = $scope.currentHero;
+              var filtered = _.filter(hero.talents, function (val) { return val.tier === tier });
 
-                return mapped;
+              return filtered;
             };
 
             $scope.hasTalent = function (talent) {
               var tal = _.find($scope.currentTalents, function (val) { return val === talent.id; });
               
-              
               return (tal) ? ' active' : '';
             }
 
             $scope.hasAnyTalent = function (talent) {
-                return ($scope.currentTalents['tier'+talent.tier] !== null) ? ' tier-selected' : '';
+//              console.log($scope.currentTalents['tier'+talent.tier], $scope.currentTalents, talent);
+              return ($scope.currentTalents['tier'+talent.tier] !== null) ? ' tier-selected' : '';
             }
 
             $scope.toggleTalent = function (talent, tierIndex, talentIndex) {
-              console.log($scope.hasTalent(talent));
+              var hasTalent = ($scope.hasTalent(talent) !== "") ? true : false;
               
-              
-              
-                if ($scope.hasTalent(talent) !== '') {
-                    $scope.currentTalents['tier'+talent.tier] = null;
-                } else {
-                    $scope.currentTalents['tier'+talent.tier] = talent.id;
-                }
+              $scope.currentTalents['tier'+talent.tier] = (hasTalent) ? null : talent.id;
 
-                // set hash
-                $scope.hash[tierIndex] = ($scope.hasTalent(talent)) ? talentIndex + 2 : 1;
-                if (checkHash($scope.hash)) {
-                    setHash();
-                }
+              // set hash
+              $scope.hash[tierIndex] = ($scope.hasTalent(talent)) ? talentIndex + 2 : 1;
+              if (checkHash($scope.hash)) {
+                setHash();
+              }
             };
 
             // hash
@@ -15242,24 +15206,24 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.getAbilityTalents = function () {
-                var ability = $scope.getCurrentAbility(),
-                    currentTalents = $scope.currentTalents,
-                    tiers = $scope.tiers,
-                    out = [],
-                    talent;
+              var ability = $scope.getCurrentAbility(),
+                  currentTalents = $scope.currentTalents,
+                  tiers = $scope.tiers,
+                  out = [],
+                  talent;
 
-                if (!ability) { return out; }
+              if (!ability) { return out; }
 
-                for (var i = 0; i < tiers.length; i++) {
-                    if (currentTalents['tier' + tiers[i]] !== null) {
-                        talent = getTalentByID(currentTalents['tier' + tiers[i]]);
-                        if (talent && talent.ability == ability._id) {
-                            out.push(talent);
-                        }
-                    }
+              for (var i = 0; i < tiers.length; i++) {
+                if (currentTalents['tier' + tiers[i]] !== null) {
+                  talent = getTalentByID(currentTalents['tier' + tiers[i]]);
+                  if (talent && talent.ability && talent.ability.id == ability.id) {
+                    out.push(talent);
+                  }
                 }
+              }
 
-                return out;
+              return out;
             };
 
             // url

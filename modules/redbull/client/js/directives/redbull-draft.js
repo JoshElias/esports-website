@@ -406,7 +406,9 @@ angular.module('redbull.directives')
                 };
                 
                 // done mouse down
-                scope.doneMouseDown = function () {
+                scope.doneMouseDown = function ($event) {
+                    if (fastForward && $event.hasOwnProperty('originalEvent')) { return false; }
+                    
                     if (!done) {
                         var anotherPack = hasAnotherPack();
                         packDropped = false;

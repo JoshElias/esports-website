@@ -59,7 +59,7 @@
                                     <h1>{{guide.name}}</h1>
                                     <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
                                     <div class="hots-guide-votes">{{guide.voteScore}}</div>
-                                    <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
+                                    <div class="hero-flip btn-group" ng-if="guide.guideHeroes.length > 1">
                                         <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
                                         <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
                                     </div>
@@ -91,7 +91,7 @@
                                     <h1>{{guide.name}}</h1>
                                     <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
                                     <div class="hots-guide-votes">{{guide.voteScore}}</div>
-                                    <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
+                                    <div class="hero-flip btn-group" ng-if="guide.guideHeroes.length > 1">
                                         <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
                                         <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
                                     </div>
