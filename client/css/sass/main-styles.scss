@@ -359,7 +359,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .m-l-none { margin-left: 0px; }
 
 // 2.11.. Buttons
-
+.btn.wide { width: 100%; border-radius: 0; text-align: left; }
 .btn-rounded { border-radius: 17px; }
 .btn-green {
     color: #fff !important;

@@ -50,8 +50,8 @@
                     <li class="clearfix" ng-repeat="tier in tiers">
                         <span>{{tier}}</span>
                         <ul class="tc-talents-icons clearfix">
-                            <li ng-repeat="talent in talentsByTier(tier) | orderBy: 'orderNum'">
-                                <a href="#" class="talents-icon {{getCurrentHero().className}} {{talent.className}}{{hasAnyTalent(talent)}}{{hasTalent(talent)}}" ng-click="toggleTalent(talent, $parent.$index, $index)" hots-talent hero="getCurrentHero()" talent="talent">{{talent.name}}</a>
+                            <li ng-repeat="talent in talentsByTier(tier)">
+                                <a href="#" class="talents-icon {{getCurrentHero().className}} {{talent.talent.className}} {{hasAnyTalent(talent)}} {{hasTalent(talent)}}" ng-click="toggleTalent(talent, $parent.$index, $index)" hots-talent hero="getCurrentHero()" talent="talent.talent">{{talent.talent.name}}</a>
                             </li>
                         </ul>
                     </li>
@@ -65,9 +65,9 @@
                         <p>{{getCurrentAbility().description}}</p>
                     </div>
                     <div class="tc-damage-talent m-b-md pos-rl" ng-repeat="talent in getAbilityTalents()">
-                        <div class="talents-icon {{getCurrentHero().className}} {{talent.className}}"></div>
-                        <h3>{{talent.name}}</h3>
-                        <p>{{talent.description}}</p>
+                        <div class="talents-icon {{getCurrentHero().className}} {{talent.talent.className}}"></div>
+                        <h3>{{talent.talent.name}}</h3>
+                        <p>{{talent.talent.description}}</p>
                     </div>
                 </div>
             </div>
