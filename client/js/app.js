@@ -790,15 +790,9 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'cardsWithCoin',
-												scope: {
-													include: 'card'
-												}
                                             },
                                             {
                                                 relation: 'cardsWithoutCoin',
-												scope: {
-													include: 'card'
-												}
                                             }
                                         ]
                                     }
@@ -807,7 +801,7 @@ var app = angular.module('app', [
                                 .then(function (mulligans) {
 //                                    console.log('mullies: ', mulligans);
                                     deck.mulligans = mulligans;
-//                                    console.log('deck in resolve: ', deck);
+                                    console.log('deck in resolve: ', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -1022,10 +1016,10 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'mulligansWithCoin'
+                                                relation: 'mulligansWithCoin',
                                             },
                                             {
-                                                relation: 'mulligansWithoutCoin'
+                                                relation: 'mulligansWithoutCoin',
                                             }
                                         ]
                                     }
@@ -1033,13 +1027,60 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (mulligans) {
                                     deckNoMulligans.mulligans = mulligans;
-                                    console.log('deck in resolve: ', deckNoMulligans);
                                     return deckNoMulligans;
                                 })
                                 .catch(function (err) {
                                     if (err) console.log('err: ', err);
                                 });
                             }],
+							
+							deckCardMulligans: ['deck', 'Card', '$q',  function(deck, Card, $q) {
+								var d = $q.defer();
+								async.each(deck.mulligans, function(mulligan, mulliganCB) {
+									
+									var mulliganIndex = deck.mulligans.indexOf(mulligan);
+									
+									async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+										Card.findById({
+											id: cardWithoutCoin.cardId
+										}).$promise
+										.then(function (cardFound) {
+											console.log('cardFound:', cardFound);
+											var cardIndex = mulligan.mulligansWithoutCoin.indexOf(cardWithoutCoin);
+											deck.mulligans[mulliganIndex].mulligansWithoutCoin[cardIndex] = cardFound;
+											return cardWithoutCoinCB();
+										})
+										.catch(function (err) {
+											return cardWithoutCoinCB(err);
+										});
+										
+									});
+									
+									async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
+										
+										Card.findById({
+											id: cardWithCoin.cardId
+										}).$promise
+										.then(function (cardFound) {
+											var cardIndex = mulligan.mulligansWithCoin.indexOf(cardWithCoin);
+											deck.mulligans[mulliganIndex].mulligansWithCoin[cardIndex] = cardFound;
+											return cardWithCoinCB();
+										})
+										.catch(function (err) {
+											return cardWithCoinCB(err);
+										});
+										
+									});
+									
+									mulliganCB();
+									
+								}, function(err) {
+									if (err) return d.resolve(err);
+									console.log('deck now!!!!!: ', deck);
+									d.resolve(deck);
+								});
+								return d.promise;
+							}],
                                 
                             classCardsList: ['$stateParams', 'deckNoMulligans', 'Card', function($stateParams, deckNoMulligans, Card) {
                                 var perpage = 15,
