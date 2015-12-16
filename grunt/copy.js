@@ -6,6 +6,13 @@ module.exports = {
         dest: 'client/dist/css/fonts',
         filter: 'isFile'
     },
+    modules_audio: {
+        expand: true,
+        flatten: true,
+        src: ['modules/**/client/audio/**/*'],
+        dest: 'client/dist/css/audio',
+        filter: 'isFile'
+    },
     //jsAssets: {
     //    expand: true,
     //    flatten: true,

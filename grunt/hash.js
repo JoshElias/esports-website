@@ -8,11 +8,11 @@ module.exports = {
         }
     },
     js: {
-        src: ['client/dist/js/angular.min.js', 'client/dist/js/app.min.js', 'client/dist/js/vendor.min.js'],
+        src: ['client/dist/js/angular.min.js', 'client/dist/js/app.min.js', 'client/dist/js/vendor.min.js', 'client/dist/js/modules.min.js'],
         dest: 'client/dist/js/'
     },
     css: {
-        src: ['client/dist/css/style.min.css', 'client/dist/css/vendor.min.css'],
+        src: ['client/dist/css/style.min.css', 'client/dist/css/vendor.min.css', 'client/dist/css/modules.min.css'],
         dest: 'client/dist/css/'
     }
 };

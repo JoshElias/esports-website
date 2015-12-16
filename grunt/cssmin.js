@@ -17,6 +17,9 @@ module.exports = {
             'client/dist/css/style.min.css': [
                 'client/dist/css/style.css'
             ],
+            'client/dist/css/modules.min.css': [
+                'client/dist/css/modules.css'
+            ],
         }
     }
 };
