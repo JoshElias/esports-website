@@ -102,9 +102,9 @@ angular.module('redbull.controllers')
     
     // file variables
     var fileLocations = [];
-    var imagePath = (tpl !== './') ? tpl + 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
+    var imagePath = (tpl !== './') ? 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
     var ext = '.mp3';
-    var audioPath = (tpl !== './') ? tpl + 'audio/' : 'dist/audio/';
+    var audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/';
     
     // image files
     var imageFiles = [
