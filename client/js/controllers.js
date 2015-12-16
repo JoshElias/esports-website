@@ -6335,9 +6335,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             function saveDeck(deck) {
-                console.log('saving deck: ', deck);
-				console.log("hiiiiiiiiiiiiiii");
-				return;
+                console.log('init deck ', deck);
+				
                 deck.authorId = User.getCurrentId();
                 deck.votes = [
                     {
@@ -6346,7 +6345,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ];
 				
-				Deck.create(deck)
+				Deck.create(testDeck)
 				.$promise
 				.then(function (deckCreated) {
 					console.log('deckCreated:', deckCreated);
@@ -9089,7 +9088,33 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             function saveDeck(deck) {
-                console.log('saving deck: ', deck);
+                console.log('init deck: ', deck);
+				
+				var testDeck = {
+					deckType: "Donkey",
+					description: "Super Donkylous",
+					name: "Donkey's Name7f",
+					playerClass: "Druid",
+					isPublic: true,
+					cards: [
+						{
+							card: {
+								asdf: 'asdf'
+							},
+							cardId: '540f58378ad084541b6b6262',
+							cardQuantity: 2,
+							deckId: null
+						}
+					]
+				};
+				testDeck.authorId = User.getCurrentId();
+				testDeck.votes = [
+					{
+						userId: User.getCurrentId(),
+						direction: 1
+					}
+				];
+				
                 deck.authorId = User.getCurrentId();
                 deck.votes = [
                     {
@@ -9098,37 +9123,38 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ];
 				
-				angular.forEach(deck.mulligans, function(mulligan) {
-					var mulliganIndex = deck.mulligans.indexOf(mulligan);
-					console.log('mulliganIndex:', mulliganIndex);
-					
-					angular.forEach(mulligan.mulligansWithCoin, function(mulliganWithCoin) {
-						console.log('mulliganWithCoin:', mulliganWithCoin);
-						var withCoinIndex = mulligan.mulligansWithCoin.indexOf(mulliganWithCoin);
-						var cardWithCoin = {
-							cardId: mulliganWithCoin.id
-						};
-						mulligan.mulligansWithCoin[withCoinIndex] = cardWithCoin;
-					});
-					
-					angular.forEach(mulligan.mulligansWithoutCoin, function(mulliganWithoutCoin) {
-						console.log('mulliganWithoutCoin:', mulliganWithoutCoin);
-						var withoutCoinIndex = mulligan.mulligansWithoutCoin.indexOf(mulliganWithoutCoin);
-						var cardWithoutCoin = {
-							cardId: mulliganWithoutCoin.id
-						};
-						mulligan.mulligansWithoutCoin[withoutCoinIndex] = cardWithoutCoin;
-					});
-					
-				});
+//				angular.forEach(deck.mulligans, function(mulligan) {
+//					var mulliganIndex = deck.mulligans.indexOf(mulligan);
+//					console.log('mulliganIndex:', mulliganIndex);
+//					
+//					angular.forEach(mulligan.mulligansWithCoin, function(mulliganWithCoin) {
+//						console.log('mulliganWithCoin:', mulliganWithCoin);
+//						var withCoinIndex = mulligan.mulligansWithCoin.indexOf(mulliganWithCoin);
+//						var cardWithCoin = {
+//							cardId: mulliganWithCoin.id
+//						};
+//						mulligan.mulligansWithCoin[withCoinIndex] = cardWithCoin;
+//					});
+//					
+//					angular.forEach(mulligan.mulligansWithoutCoin, function(mulliganWithoutCoin) {
+//						console.log('mulliganWithoutCoin:', mulliganWithoutCoin);
+//						var withoutCoinIndex = mulligan.mulligansWithoutCoin.indexOf(mulliganWithoutCoin);
+//						var cardWithoutCoin = {
+//							cardId: mulliganWithoutCoin.id
+//						};
+//						mulligan.mulligansWithoutCoin[withoutCoinIndex] = cardWithoutCoin;
+//					});
+//					
+//				});
 				
-				console.log('deck.mulligans:', deck.mulligans);
+//				console.log('deck.mulligans:', deck.mulligans);
                 
-                Deck.create(deck)
+                Deck.create(testDeck)
                 .$promise
                 .then(function (deckCreated) {
                     console.log('deck created: ', deckCreated);
                     $scope.deckSubmitting = false;
+					return;
                     $state.transitionTo('app.hs.decks.deck', { slug: deckCreated.slug });
                 })
                 .catch(function (err) {
