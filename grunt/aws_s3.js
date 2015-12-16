@@ -36,9 +36,9 @@ module.exports = {
             },
             {
                 expand: true,
-                cwd: 'client/dist/css/fonts/',
+                cwd: 'client/dist/fonts/',
                 src: ['**/*'],
-                dest: 'css/fonts'
+                dest: 'fonts'
             },
             {
                 expand: true,
@@ -89,9 +89,9 @@ module.exports = {
             },
             {
                 expand: true,
-                cwd: 'client/dist/css/fonts/',
+                cwd: 'client/dist/fonts/',
                 src: ['**/*'],
-                dest: 'css/fonts'
+                dest: 'fonts'
             },
             {
                 expand: true,

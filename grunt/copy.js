@@ -3,7 +3,7 @@ module.exports = {
         expand: true,
         flatten: true,
         src: ['client/css/fonts/**/*', 'client/vendor/font-awesome/fonts/**/*'],
-        dest: 'client/dist/css/fonts',
+        dest: 'client/dist/fonts',
         filter: 'isFile'
     },
     modules_audio: {
