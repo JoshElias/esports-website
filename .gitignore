@@ -23,7 +23,6 @@ dist
 client/dist
 .sass-cache/*
 client/css/.sass-cache/*
-server/configs/assets.json
 server/uploads/photos/banners/*
 server/uploads/photos/articles/*
 server/uploads/photos/cards/*

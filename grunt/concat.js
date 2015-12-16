@@ -71,8 +71,8 @@ module.exports = {
                 'client/css/vendor/megamenu/simple-line-icons.css',
                 'client/vendor/font-awesome/css/font-awesome.min.css',
                 'client/vendor/summernote/dist/summernote.css',
-                'client/css/vendor/animations/animation.css',
-                'client/css/vendor/animate.css',                
+                //'client/css/vendor/animations/animation.css',
+                //'client/css/vendor/animate.css',                
             ],
             'client/dist/css/sass.css': [
                 'client/dist/css/sass/*.css'
