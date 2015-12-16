@@ -17,8 +17,7 @@ module.exports = {
                 'client/js/vendor/iscroll.js',
                 'client/vendor/underscore/underscore-min.js',
                 'client/vendor/async/dist/async.min.js',
-                'client/vendor/jrumble/jquery.jrumble.min.js',
-                'client/vendor/jrumble/jquery.jrumble.min.js',
+                'client/vendor/jrumble/jquery.jrumble.min.js'
             ],
             'client/dist/js/angular.js': [
                 'client/vendor/angular/angular.js',
