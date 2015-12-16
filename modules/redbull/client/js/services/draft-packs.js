@@ -29,11 +29,11 @@ angular.module('redbull.services')
                 // calculate how many packs in the draft
                 this.calculateNumberOfPacks();
                 
-                // generate packs rolls
-                this.generatePacksRolls();
-                
                 // assign expansions to packs
                 this.generatePacksWithExpansions();
+                
+                // generate packs rolls
+                this.generatePacksRolls();
                 
                 // generate packs with cards
                 this.generatePacksWithCards();
@@ -51,17 +51,26 @@ angular.module('redbull.services')
                 for (var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
                 return o;
             },
-            generatePackRolls: function () {
+            getRareThreshold: function (expansion) {
+                // TODO: FIGURE OUT ACTUAL RARE THRESHOLD
+                var chances = this.getExpansionChances(expansion);
+                
+                return ( chances.basic + chances.common );
+            },
+            generatePackRolls: function (packNum) {
                 var rolls = [],
+                    expansion = this.packsWithExpansions[packNum],
+                    rareThreshold = this.getRareThreshold(expansion),
+                    hasRare = this.getExpansionChances(expansion).rare,
                     rarePlus = false;
-
+                
                 for (var i = 0; i < 5; i++) {
                     rolls[i] = this.getRandomInt(1, 100);
-                    if (rolls[i] > 74) {
+                    if (rolls[i] > rareThreshold) {
                         rarePlus = true;
                     }
-
-                    if (i == 4 && !rarePlus) {
+                    
+                    if (i === 4 && !rarePlus && hasRare) {
                         rolls[i] += 100;
                     }
                 }
@@ -72,7 +81,10 @@ angular.module('redbull.services')
                 var numberPacks = 0;
                 
                 for (var i = 0; i < this.tournament.packs.length; i++) {
-                    numberPacks += this.tournament.packs[i].packs;
+                    // only if expansion is active
+                    if (this.tournament.packs[i].isActive) {
+                        numberPacks += this.tournament.packs[i].packs;
+                    }
                 }
                 
                 this.numberPacks = numberPacks;
@@ -81,7 +93,7 @@ angular.module('redbull.services')
                 var packs = [];
                 
                 for (var i = 0; i < this.numberPacks; i++) {
-                    packs.push(this.generatePackRolls());
+                    packs.push(this.generatePackRolls(i));
                 }
                 
                 this.packsWithRolls = packs;
@@ -122,8 +134,11 @@ angular.module('redbull.services')
                 var packs = [];
                 
                 for (var i = 0; i < this.tournament.packs.length; i++) {
-                    for (var j = 0; j < this.tournament.packs[i].packs; j++) {
-                        packs.push(this.tournament.packs[i].expansion);
+                    // only active expansions
+                    if (this.tournament.packs[i].isActive) {
+                        for (var j = 0; j < this.tournament.packs[i].packs; j++) {
+                            packs.push(this.tournament.packs[i].expansion);
+                        }
                     }
                 }
                 
@@ -155,26 +170,26 @@ angular.module('redbull.services')
                 start += chances.basic;
                 
                 // common
-                if (chances.common > 0 && roll > start && roll <= (chances.common + start)) {
+                if ((chances.common > 0 && roll > start && roll <= (chances.common + start)) || chances.common === 100) {
                     pool = expansionCards.common;
                 }
                 start += chances.common;
                 
                 // rare
                 // TODO: POSSIBLE BUG IF RARE CHANCE IS 0% AND LAST CARD NEEDED TO BE AT LEAST RARE
-                if (chances.rare > 0 && ((roll > start && roll <= (chances.rare + start)) || roll > 100)) {
+                if ((chances.rare > 0 && ((roll > start && roll <= (chances.rare + start)) || roll > 100)) || chances.rare === 100) {
                     pool = expansionCards.rare;
                 }
                 start += chances.rare;
                 
                 // epic
-                if (chances.epic > 0 && roll > start && roll <= (chances.epic + start)) {
+                if ((chances.epic > 0 && roll > start && roll <= (chances.epic + start)) || chances.epic === 100) {
                     pool = expansionCards.epic;
                 }
                 start += chances.epic;
                 
                 // legendary
-                if (chances.legendary > 0 && roll > start && roll <= (chances.legendary + start)) {
+                if ((chances.legendary > 0 && roll > start && roll <= (chances.legendary + start)) || chances.legendary === 100) {
                     pool = expansionCards.legendary;
                 }
                 
@@ -217,7 +232,8 @@ angular.module('redbull.services')
                 
                 // create expansions
                 for (var i = 0; i < this.tournament.packs.length; i++) {
-                    if (this.tournament.packs[i].packs > 0) {
+                    // don't add expansions for inactive or no packs
+                    if (this.tournament.packs[i].isActive && this.tournament.packs[i].packs > 0) {
                         expansion = this.tournament.packs[i].expansion;
                         packs[expansion] = {
                             expansion: expansion,

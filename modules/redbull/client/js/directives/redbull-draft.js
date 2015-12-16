@@ -35,7 +35,7 @@ angular.module('redbull.directives')
                     scope.expansions.push(key);
                     scope.currentPack[key] = 0;
                 };
-
+                
                 // watch current pack
                 scope.$watch('currentPack', function (newValue) {
                     scope.currentPack = newValue;
@@ -218,7 +218,6 @@ angular.module('redbull.directives')
                                     $(pack).closest('.pack-wrapper').css('z-index', '100');
 
                                     // fade out glowing background
-                                    console.log($('.pack.ui-draggable-dragging').length);
                                     if ($('.pack.ui-draggable-dragging').length === 1) {
                                         // remove mouse icon for grab
                                         el.removeClass('grabbing');
@@ -339,7 +338,7 @@ angular.module('redbull.directives')
                         stopShakeTimer();
                         
                         // play audio for pack burst
-                        scope.playAudio('pack_burst');
+                        //scope.playAudio('pack_burst');
 
                         // fade out pack
                         $pack.fadeOut(0, function() {
