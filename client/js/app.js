@@ -4659,14 +4659,14 @@ var app = angular.module('app', [
                                     filter: {
                                         where: { 
                                             id: pollID
-                                        }
+                                        },
+										include: 'items'
                                     }
-                                
                                 }) 
                                 .$promise
                                 .then(function (data) {
+									console.log('data:', data);
                                     return data;
-                                
                                 })
                             }]
                             

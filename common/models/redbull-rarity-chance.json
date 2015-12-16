@@ -1,5 +1,5 @@
 {
-  "name": "redbullExpansionChance",
+  "name": "redbullRarityChance",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
