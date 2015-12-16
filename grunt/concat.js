@@ -63,6 +63,17 @@ module.exports = {
             stripBanners: true,
         },
         files: {
+            'client/dist/css/vendor.css': [
+                'client/vendor/bootstrap/dist/css/bootstrap.min.css',
+                'client/vendor/bootstrap/dist/css/bootstrap-theme.min.css',
+                'client/css/vendor/jquery/jquery-ui.min.css',
+                'client/css/vendor/megamenu/MegaNavbar.min.css',
+                'client/css/vendor/megamenu/simple-line-icons.css',
+                'client/vendor/font-awesome/css/font-awesome.min.css',
+                'client/vendor/summernote/dist/summernote.css',
+                'client/css/vendor/animations/animation.css',
+                'client/css/vendor/animate.css',                
+            ],
             'client/dist/css/sass.css': [
                 'client/dist/css/sass/*.css'
             ],
