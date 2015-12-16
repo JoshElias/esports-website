@@ -20,7 +20,8 @@ module.exports = function(_server) {
         createMulliganModels,
         createSnapshotModels,
         createUserIdentities,
-        createUserRoles
+        createUserRoles,
+        createRedbullExpansions
     ],
     function(err) {
         console.log("Finished in ", convertMillisecondsToDigitalClock(Date.now() - startTime));
