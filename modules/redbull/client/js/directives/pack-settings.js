@@ -1,5 +1,5 @@
 angular.module('redbull.directives')
-.directive('packSettings', ['Hearthstone', function (Hearthstone) {
+.directive('packSettings', [function () {
     return {
         restrict: 'E',
         replace: true,
@@ -7,53 +7,24 @@ angular.module('redbull.directives')
             tournament: '='
         },
         templateUrl: tpl + 'dist/views/redbull/client/views/directives/pack-settings.html',
-        controller: ['$scope', 'Hearthstone', function ($scope, Hearthstone) {
+        controller: ['$scope', function ($scope) {
+            
+            $scope.$watch(function () { return $scope.tournament; }, function (newValue) {
+                $scope.tournament = newValue;
+            }, true);
             
             
-            
-            /*var expansions = ['Soulbound'].concat(Hearthstone.expansions);
-            var rarities = Hearthstone.rarities;
-
-            function Chances (rarity, percentage) {
-                var rarity = rarity;
-                var percentage = percentage;
-
-                this.__defineGetter__("percentage", function () {
-                    return percentage;
-                });
-
-                this.__defineSetter__("percentage", function (val) {        
-                    val = parseInt(val);
-                    percentage = val;
-                });
-
-                this.__defineGetter__("rarity", function () {
-                    return rarity;
-                });
-
-                this.__defineSetter__("rarity", function (val) {        
-                    rarity = val;
-                });
-            }
-
-            $scope.settings = {
-                expansions: []
-            };
-
-            for (var i = 0; i < expansions.length; i++) {
-                var expansion = {
-                    packs: 1,
-                    isActive: false,
-                    name: expansions[i],
-                    chances: []
-                };
-
-                for (var j = 0; j < rarities.length; j++) {
-                    expansion.chances.push(new Chances(rarities[j], 0));
+            $scope.hasRarity = function (expansion, rarity) {
+                switch (expansion.expansion) {
+                    case 'Soulbound':
+                        return (rarity === 'basic');
+                    case 'Blackrock Mountain':
+                        return (rarity !== 'epic' && rarity !== 'basic');
+                    default:
+                        return (rarity !== 'basic');
                 }
-
-                $scope.settings.expansions.push(expansion);
-            }*/
+            };
+            
         }]
     };
 }]);

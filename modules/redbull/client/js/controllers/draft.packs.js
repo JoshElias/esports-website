@@ -1,5 +1,5 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$compile', 'bootbox', 'Preloader', 'DraftPacks', 'cards', function ($scope, $localStorage, $compile, bootbox, Preloader, DraftPacks, cards){
+.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'cards', function ($scope, $localStorage, $window, $compile, bootbox, Preloader, AlertService, DraftPacks, cards){
     // temp tournament settings
     var defaultTournament = {
             packs: [
@@ -90,7 +90,7 @@ angular.module('redbull.controllers')
             ]
         };
     
-    $scope.tournament = $localStorage.tournament || defaultTournament;
+    $scope.tournament = ($localStorage.tournament) ? angular.copy($localStorage.tournament) : defaultTournament;
     
     // variables
     $scope.isLoading = true;
@@ -177,7 +177,37 @@ angular.module('redbull.controllers')
     );
 
     // temp settings window
+    $scope.$watch(function () { return $scope.tournament; }, function (newValue) {
+        $scope.tournament = newValue;
+    }, true);
+    
+    function settingsError () {
+        for (var i = 0; i < $scope.tournament.packs.length; i++) {
+            if ($scope.tournament.packs[i].isActive) {
+                
+                // test packs
+                if (isNaN(parseInt($scope.tournament.packs[i].packs)) || parseInt($scope.tournament.packs[i].packs) < 1) {
+                    return 'Expansion ' + $scope.tournament.packs[i].expansion + ': Can not have zero packs.';
+                }
+                
+                // test percentage
+                var count = 0;
+            
+                for (key in $scope.tournament.packs[i].chances) {
+                    count += $scope.tournament.packs[i].chances[key];
+                }
+
+                if (count !== 100) {
+                    return 'Expansion ' + $scope.tournament.packs[i].expansion + ': Chances do not add up to 100%.';
+                }
+            }
+        }
+        return false;
+    }
+    
     $scope.settingsWnd = function () {
+        AlertService.reset();
+        var oldSettings = angular.copy($scope.tournament);
         var box = bootbox.dialog({
             title: 'Pack Settings',
             message: $compile('<pack-settings tournament="tournament"></pack-settings>')($scope),
@@ -186,12 +216,37 @@ angular.module('redbull.controllers')
                     label: 'Save',
                     className: 'btn-blue',
                     callback: function () {
-                        
+                        var error = settingsError();
+                        if (!error) {
+                            $localStorage.tournament = $scope.tournament;
+                            $window.location.reload();
+                        } else {
+                            AlertService.setError({ show: true, msg: error });
+                            return false;
+                        }
                     }
                 },
                 cancel: {
                     label: 'Cancel',
                     className: 'btn-default pull-left',
+                    callback: function () {
+                        $scope.tournament = oldSettings;
+                        box.modal('hide');
+                    }
+                }
+            }
+        });
+        box.modal('show');
+    };
+    
+    $scope.buildInfo = function () {
+        var box = bootbox.dialog({
+            title: 'Build Decks',
+            message: 'This feature has not been completed yet.',
+            buttons: {
+                cancel: {
+                    label: 'OK',
+                    className: 'btn-blue',
                     callback: function () {
                         box.modal('hide');
                     }
