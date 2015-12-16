@@ -17,7 +17,7 @@ angular.module('redbull.directives')
                     packDropped = false,
                     isDragging = false,
                     done = false,
-                    audioPath = 'modules/redbull/client/audio/',
+                    audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/',
                     fastForwardSpeed = 500,
                     fastForward = false,
                     fadeDuration = 1000,
