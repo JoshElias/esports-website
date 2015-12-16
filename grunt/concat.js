@@ -1,7 +1,7 @@
 module.exports = {
     js: {
         options: {
-            separator: '',
+            separator: '\n',
             stripBanners: true,
         },
         files: {
