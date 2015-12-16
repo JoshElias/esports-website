@@ -8007,8 +8007,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll',
-        function ($scope, $upload, $state, $window, $compile, AlertService, poll, Poll) {
+    .controller('AdminPollEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll', 'PollItem',
+        function ($scope, $upload, $state, $window, $compile, AlertService, poll, Poll, PollItem) {
             var box,
                 defaultPoll = {
                     title : '',
@@ -8091,11 +8091,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.voteLimit = function() {
                 var out = [];
-  
                 for (var i = 0; i < $scope.poll.items.length; i++) {
                     out.push(i + 1);
                 }
-
                 $scope.voteLimits = out;
 				return out;
             }
@@ -8143,9 +8141,27 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.deleteItem = function (item) {
+				$scope.fetching = true;
                 var index = $scope.poll.items.indexOf(item);
                 $scope.poll.items.splice(index, 1);
-				onSave.toDelete.push(item);
+				PollItem.exists({
+					id: item.id
+				}).$promise
+				.then(function (pollExists) {
+					$scope.fetching = false;
+					console.log('pollExists:', pollExists);
+					if (pollExists.exists) {
+						onSave.toDelete.push(item);
+					}
+				})
+				.catch(function (err) {
+					$scope.fetching = false;
+					var index = onSave.toCreate.indexOf(item);
+					if (index !== -1) {
+						onSave.toCreate.splice(index, 1);
+					}
+				});
+				
                 for (var i = 0; i < $scope.poll.items.length; i++) {
                     $scope.poll.items[i].orderNum = i + 1;
                 }
@@ -8181,27 +8197,32 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.editPoll = function () {
 				$scope.fetching = true;
-				
 				async.parallel([
 					function(paraCB){ 
 						Poll.upsert($scope.poll)
-							.$promise
-							.then(function (data) {
-							$scope.fetching = false;
-							$window.scrollTo(0, 0);
-							$state.go('app.admin.polls.list');
+						.$promise
+						.then(function (data) {
+							return paraCB();
 						})
 						.catch(function(err){
 							return paraCB(err);
 						});
 					},
 					function(paraCB){ 
+						
 					}
 				], function(err) {
 					$scope.fetching = false;
+					$window.scrollTo(0, 0);
 					if (err) {
-						
+						AlertService.setError({
+							show: true,
+							msg: 'Could not Edit ' + poll.title,
+							lbErr: err
+						});
+						return;
 					}
+					$state.go('app.admin.polls.list');
 				});
 				
                 
