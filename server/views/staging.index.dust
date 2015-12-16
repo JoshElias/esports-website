@@ -20,6 +20,7 @@
 
     <link rel="stylesheet" href="{cdnUrl}css/{assets.vendor_min_css}" type="text/css" />
     <link rel="stylesheet" href="{cdnUrl}css/{assets.style_min_css}" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}css/{assets.modules_min_css}" type="text/css" />
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
 
@@ -42,6 +43,7 @@
 
     <!-- app -->
     <script src="{cdnUrl}js/{assets.app_min_js}"></script>
+    <script src="{cdnUrl}js/{assets.modules_min_js}"></script>
 
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>

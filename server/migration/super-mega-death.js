@@ -30,6 +30,7 @@ module.exports = function(_server) {
     });
 };
 
+
 function convertMillisecondsToDigitalClock(ms) {
     hours = Math.floor(ms / 3600000), // 1 Hour = 36000 Milliseconds
         minutes = Math.floor((ms % 3600000) / 60000), // 1 Minutes = 60000 Milliseconds
@@ -61,6 +62,35 @@ function addMissingTalent(finalCb) {
     });
 }
 
+
+
+
+var properTalents = {
+    "Vampiric Strike": "Basic Attacks heal for 25% of the damage dealt to the primary target.",
+    "Nexus": "Frenzy: Increase Attack Speed by 20% and Attack Range by 20%.",
+    "Calldown: MULE": "Activate to calldown a Mule that repairs Structures, one at a time, near target point for 40 seconds, healing for 100 Health every 1 second. Grants 1 ammo every 5 seconds.",
+    "Cleanse": "Activate to remove all stuns, roots, silences, and slows from the target and reduce the duration of their reapplication by 50% for 2 seconds.",
+    "Block": "Every 5 seconds, you can Block a Basic Attack from an enemy Hero reducing its damage by 50%. Stores up to 2 charges.",
+    "Stoneskin": "Activate to gain 30% of your Maximum Health as a Shield for 5 seconds.",
+    "Scouting Drone": "Places a Scouting Drone at target location, revealing a large area around it for 45 seconds. This drone cannot be hidden and is killed by enemies with 2 Basic Attacks. Stores up to 2 charges.",
+    "Healing Ward": "Activate to place a ward on the ground that heals allies in an area for 2% of their max Health every second for 10 seconds.",
+    "Envenom": "Activate to poison an enemy Hero, dealing 352 damage over 10 seconds.",
+    "Relentless": "Reduce the duration of silences, stuns, slows, and roots against your Hero by 50%.",
+    "Burning Rage": "Deal 23 damage per second to nearby enemies.",
+    "Amplified Healing": "Increases regeneration effects and all healing received by 30%.",
+    "Hardened Focus": "While above 80% life, your Basic Ability cooldowns regenerate 50% faster.",
+    "Conjurer's Pursuit": "Collecting Regeneration Globes permanently increases Mana Regeneration by 0.1 per second.",
+    "Follow Through": "After using an ability, your next basic attack within 6 seconds deals 40% additional damage.",
+    "Seasoned Marksman": "For every 6 enemy Minions or captured Mercenary kills near your Hero, gain 1 Basic Attack damage. Hero Takedowns count as 3 Minion kills.",
+    "Spell Shield": "Upon taking Ability Damage, reduce that damage and further Ability Damage by 50% for 3 seconds. Can only trigger once every 30 seconds.",
+    "Battle Momentum": "Basic Attacks reduce ability cooldowns by 0.5 seconds.",
+    "Ice Block": "Activate to place yourself in Stasis and gain Invulnerability for 3 seconds.",
+    "Storm Shield": "Activate to give all nearby allied heroes a Shield for 20% of their max health for 3 seconds.",
+    "Hardened Shield": "Activate to reduce damage taken by 75% for 4 seconds.",
+    "Bolt of the Storm": "Activate to teleport to a nearby location.",
+    "Rewind": "Activate to reset the cooldowns of your Basic Abilities.",
+    "Fury of the Storm": "Every 5 seconds, your next basic attack will deal an additional 91 damage to the target, and 228 damage to all nearby Minions and Mercenaries."
+}
 
 var oldTalents = {};
 var oldAbilities = {};
@@ -124,7 +154,6 @@ function createAbilitiesAndTalents(finalCb) {
                             Talent.findOne({
                                 where: {
                                     name: talent.name,
-                                    description: talent.description,
                                     className: talent.className
                                 }
                             }, function (err, talentInstance) {
@@ -136,11 +165,15 @@ function createAbilitiesAndTalents(finalCb) {
                                 }
 
 
-                                Talent.create({
+                                var newTalent = {
                                     name: talent.name,
-                                    description: talent.description,
                                     className: talent.className
-                                }, function(err, talentInstance) {
+                                }
+
+                                newTalent.description = (properTalents[talent.name])
+                                    ? properTalents[talent.name] : talent.description;
+
+                                Talent.create(newTalent, function(err, talentInstance) {
                                     if (!err) {
                                         console.log("created talent:", talentInstance);
                                         oldTalents[talent._id.toString()] = talentInstance.id.toString();
