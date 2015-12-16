@@ -76,7 +76,8 @@ var redbull = angular.module('app.redbull', [
                     }
                 }
             },
-            access: { auth: true }
+            seo: { title: 'Redbull' },
+            //access: { auth: true }
         })
         .state('app.admin.redbull', {
             abstract: true,

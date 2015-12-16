@@ -570,18 +570,14 @@ angular.module('app.services', [])
             return error;
         },
         setError: function (value) {
-//            console.log("alertservice:", value);
             this.reset();
             error = value;
             alert = value.show || true;
-            console.log('value: ', value);
-            console.log('value.errorList: ', value.errorList);
             if (value.lbErr
                 && value.lbErr.data
                 && value.lbErr.data.error
                 && value.lbErr.data.error.details
                 && value.lbErr.data.error.details.messages) {
-                console.log('got here');
                 var errorList = [];
                 var errMsgs = value.lbErr.data.error.details.messages;
                 angular.forEach(errMsgs, function(errArr) {

@@ -91,7 +91,7 @@
             <span ng-if="isFastForward()">Stop Opening Packs</span>
             <i class="fa fa-refresh fa-spin" ng-if="isFastForward()"></i>
         </button>
-        <a ui-sref="app.redbull.draft.build" class="btn btn-blue btn-block" ng-if="draftComplete">Build Decks</a>
+        <button class="btn btn-blue btn-block" ng-show="draftComplete" ng-click="$parent.buildInfo()">Build Decks</button>
     </div>
 </div>
 <!-- / card pool -->

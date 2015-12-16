@@ -6,13 +6,13 @@ angular.module('redbull.controllers')
     }
     
     $scope.playerLogin = function () {
-        if(!User.isAuthenticated()) {
-            LoginModalService.showModal('login', function () {
-                return goToDrafts();
-            });
-        } else {
+        //if(!User.isAuthenticated()) {
+            //LoginModalService.showModal('login', function () {
+            //    return goToDrafts();
+            //});
+        //} else {
             return goToDrafts();
-        }
+        //}
     };
     
 }]);

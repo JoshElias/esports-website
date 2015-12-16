@@ -282,7 +282,7 @@
                 width: 1366px;
                 height: 768px;
                 perspective: 1000px;
-                z-index: 6;
+                z-index: 100;
                 display: none;
 
                 .card {
@@ -498,7 +498,7 @@
                 display: none;
                 width: 175px;
                 height: 104px;
-                z-index: 7;
+                z-index: 101;
                 background: url("../img/modules/redbull/client/img/done.png") no-repeat;
             }
 
@@ -796,9 +796,18 @@
     
 }/* .redbull-draft */
 
+.alert-wrapper {
+    margin-bottom: 20px;
+}
+
 .pack-settings-content {
     height: 400px;
     overflow: hidden;
+    
+    h3,
+    p.rarity {
+        text-transform: uppercase;
+    }
     
     .form-group {
         margin-bottom: 0px;
