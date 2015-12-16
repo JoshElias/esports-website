@@ -8198,7 +8198,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editPoll = function () {
 				$scope.fetching = true;
 				async.parallel([
-					function(paraCB){ 
+					function(paraCB) { 
 						Poll.upsert($scope.poll)
 						.$promise
 						.then(function (data) {
@@ -8208,8 +8208,42 @@ angular.module('app.controllers', ['ngCookies'])
 							return paraCB(err);
 						});
 					},
-					function(paraCB){ 
-						
+					function(paraCB) {
+						async.each(onSave.toDelete, function(pollToDel, pollToDelCB) {
+							Poll.items.destroyById({
+								id: poll.id,
+								fk: pollToDel.pollId
+							}).$promise
+							.then(function (pollDeleted) {
+								return pollToDelCB();
+							})
+							.catch(function (err) {
+								return pollToDelCB(err);
+							});
+						}, function(err) {
+							if (err) {
+								return paraCB(err);
+							}
+							return paraCB();
+						});
+					},
+					function(paraCB) {
+						async.each(onSave.toCreate, function(polltoCr, polltoCrCB) {
+							Poll.items.createMany({
+								id: poll.id
+							}).$promise
+							.then(function (pollsItemsCreated) {
+								return pollToCrCB();
+							})
+							.catch(function (err) {
+								return pollToCrCB(err);
+							});
+						}, function(err) {
+							if (err) {
+								return paraCB(err);
+							}
+							return paraCB();
+						});
 					}
 				], function(err) {
 					$scope.fetching = false;
@@ -9170,12 +9204,11 @@ angular.module('app.controllers', ['ngCookies'])
 				
 //				console.log('deck.mulligans:', deck.mulligans);
                 
-                Deck.create(testDeck)
+                Deck.create(deck)
                 .$promise
                 .then(function (deckCreated) {
                     console.log('deck created: ', deckCreated);
                     $scope.deckSubmitting = false;
-					return;
                     $state.transitionTo('app.hs.decks.deck', { slug: deckCreated.slug });
                 })
                 .catch(function (err) {
