@@ -3,7 +3,7 @@ angular.module('redbull.directives')
     function ($q, $timeout, $interval, $rootScope, Util){
         return {
             restrict: 'A',
-            templateUrl: tpl + 'dist/views/redbull/client/views/directives/redbull-draft.html',
+            templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/redbull-draft.html',
             scope: {
                 packs: '=',
                 isLoading: '=',

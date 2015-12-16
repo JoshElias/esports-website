@@ -51,7 +51,13 @@ module.exports = {
                 cwd: 'client/dist/img/',
                 src: ['**/*'],
                 dest: 'img'
-            }
+            },
+            {
+                expand: true,
+                cwd: 'client/dist/audio/',
+                src: ['**/*.mp3', '**/*.ogg'],
+                dest: 'audio'
+            },
         ]
     },
     production: {
@@ -104,7 +110,13 @@ module.exports = {
                 cwd: 'client/dist/img/',
                 src: ['**/*'],
                 dest: 'img'
-            }
+            },
+            {
+                expand: true,
+                cwd: 'client/dist/audio/',
+                src: ['**/*.mp3', '**/*.ogg'],
+                dest: 'audio'
+            },
         ]
     }
 };
