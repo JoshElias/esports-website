@@ -3,6 +3,7 @@ Thumbs.db
 *.dat
 *.iml
 *.out
+*.pid
 *.seed
 *.sublime-*
 *.swo
