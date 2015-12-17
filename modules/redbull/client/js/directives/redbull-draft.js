@@ -28,12 +28,14 @@ angular.module('redbull.directives')
                 scope.draftComplete = false;
                 scope.cardPool = [];
                 scope.expansions = [];
+                scope.packsCount = [];
                 scope.cardsFlipped = 0;
                 
                 // init expansions and currentPack
                 for (var key in scope.packs) {
                     scope.expansions.push(key);
                     scope.currentPack[key] = 0;
+                    scope.packsCount[key] = scope.packs[key].packs.length;
                 };
                 
                 // watch current pack
@@ -59,12 +61,7 @@ angular.module('redbull.directives')
                 
                 // return number of packs remaining in stack for given expansion
                 scope.packTabCount = function (expansion) {
-                    var isOpening = $('.pack.' + Util.slugify(expansion)).is('.ui-draggable-dragging') || (packDropped && currentExpansion === expansion);
-                    var packCount = scope.packs[expansion].packs.length - scope.currentPack[expansion];
-                    if (isOpening) {
-                        packCount--;
-                    }
-                    return packCount;
+                    return scope.packsCount[expansion];
                 };
                 
                 // get first expansion that has packs left to be opened
@@ -192,6 +189,12 @@ angular.module('redbull.directives')
                             start: function() {
                                 if (!packDropped) {
                                     
+                                    // remove one from packs count
+                                    var expansion = $(pack).attr('data-expansion');
+                                    scope.$apply(function () {
+                                        scope.packsCount[expansion]--;
+                                    });
+                                    
                                     // change mouse icon for grab
                                     el.addClass('grabbing');
                                     
@@ -210,6 +213,12 @@ angular.module('redbull.directives')
                             },
                             stop: function() {
                                 if (!packDropped) {
+
+                                    // add one to packs count
+                                    var expansion = $(pack).attr('data-expansion');
+                                    scope.$apply(function () {
+                                        scope.packsCount[expansion]++;
+                                    });
 
                                     // play audio
                                     scope.playAudio('pack_release');
@@ -333,6 +342,13 @@ angular.module('redbull.directives')
 
                         // disable pack dragging
                         $(".pack").draggable("disable");
+                        
+                        // if fast forwarding remove one from pack count
+                        if (fastForward) {
+                            scope.$apply(function () {
+                                scope.packsCount[expansion]--;
+                            });
+                        }
 
                         // stop shaking pack
                         stopShakeTimer();
