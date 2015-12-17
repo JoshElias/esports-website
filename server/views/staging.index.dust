@@ -39,7 +39,7 @@
     <script src="{cdnUrl}js/services/lb-services.js"></script>
 
     <!-- modules -->
-    <script src="{cdnUrl}js/modules.min.js"></script>
+    <script src="{cdnUrl}js/{assets.modules_min_js}"></script>
 
     <!-- app -->
     <script src="{cdnUrl}js/{assets.app_min_js}"></script>
