@@ -6,7 +6,7 @@ angular.module('redbull.directives')
         scope: {
             tournament: '='
         },
-        templateUrl: tpl + 'dist/views/redbull/client/views/directives/pack-settings.html',
+        templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/pack-settings.html',
         controller: ['$scope', function ($scope) {
             
             $scope.$watch(function () { return $scope.tournament; }, function (newValue) {

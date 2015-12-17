@@ -10,7 +10,7 @@ module.exports = {
         expand: true,
         flatten: true,
         src: ['modules/**/client/audio/**/*'],
-        dest: 'client/dist/css/audio',
+        dest: 'client/dist/audio',
         filter: 'isFile'
     },
     //jsAssets: {

@@ -21,6 +21,7 @@ client/vendor
 dist
 client/dist
 .sass-cache/*
+modules/.sass-cache/*
 client/css/.sass-cache/*
 server/uploads/photos/banners/*
 server/uploads/photos/articles/*

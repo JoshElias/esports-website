@@ -3,7 +3,7 @@ angular.module('redbull.directives')
     function ($q, $timeout, $interval, $rootScope, Util){
         return {
             restrict: 'A',
-            templateUrl: tpl + 'dist/views/redbull/client/views/directives/redbull-draft.html',
+            templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/redbull-draft.html',
             scope: {
                 packs: '=',
                 isLoading: '=',
@@ -17,7 +17,7 @@ angular.module('redbull.directives')
                     packDropped = false,
                     isDragging = false,
                     done = false,
-                    audioPath = 'modules/redbull/client/audio/',
+                    audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/',
                     fastForwardSpeed = 500,
                     fastForward = false,
                     fadeDuration = 1000,
