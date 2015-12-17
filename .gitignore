@@ -2,7 +2,6 @@ Thumbs.db
 *.csv
 *.dat
 *.iml
-*.log
 *.out
 *.pid
 *.seed
