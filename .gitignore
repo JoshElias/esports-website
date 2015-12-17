@@ -3,7 +3,6 @@ Thumbs.db
 *.dat
 *.iml
 *.out
-*.pid
 *.seed
 *.sublime-*
 *.swo
@@ -30,3 +29,4 @@ server/uploads/photos/decks/*
 server/uploads/photos/polls/*
 server/uploads/photos/snapshots/*
 server/uploads/photos/teams/*
+server/logs/*
