@@ -31,5 +31,6 @@ server/uploads/photos/polls/*
 server/uploads/photos/snapshots/*
 server/uploads/photos/teams/*
 server/logs/*
+server/tempostorm-web-server.pid
 .brackets.json
 .jshint.rc
