@@ -122,7 +122,7 @@
             <div class="col-md-pull-4 col-md-8">
 
                 <!-- deck description -->
-                <div class="deck-section">
+                <div class="deck-section" ng-if="deck.description">
                     <div class="deck-section-title clearfix">
                         <h3 class="pull-left">DESCRIPTION</h3>
                     </div>
@@ -162,7 +162,7 @@
                             </div>
                         </div>
 
-                        <div class="deck-section-content deck-mulligan-details pos-rl" ng-show="show.mulligans && currentMulligan">
+                        <div class="deck-section-content deck-mulligan-details pos-rl" ng-show="show.mulligans && currentMulligan" ng-init="show.mulligans = true">
                             <a href="#" class="mulligan-coin pull-left" ng-class="{active:coin}" ng-click="toggleCoin()"></a>
                             <div>
                                 <h3>{{currentMulligan.className.toUpperCase()}} MULLIGAN</h3>
