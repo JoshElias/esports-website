@@ -79,6 +79,29 @@ var redbull = angular.module('app.redbull', [
             seo: { title: 'Redbull' },
             //access: { auth: true }
         })
+        .state('app.redbull.draft.build', {
+            url: '/build',
+            views: {
+                'redbull-draft': {
+                    templateUrl: moduleTpl + 'draft.build.html',
+                    controller: 'DraftBuildCtrl',
+                    resolve: {
+                        cards: ['Card', function (Card) {
+                            return Card.find({
+                                filter: {
+                                    where: {
+                                        deckable: true,
+                                        isActive: true
+                                    }
+                                }
+                            }).$promise;
+                        }]
+                    }
+                }
+            },
+            seo: { title: 'Redbull' },
+            //access: { auth: true }
+        })
         .state('app.admin.redbull', {
             abstract: true,
             url: '/redbull',

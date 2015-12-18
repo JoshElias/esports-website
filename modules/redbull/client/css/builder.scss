@@ -1,0 +1,251 @@
+.redbull-draft {
+    
+    .draft-build {
+        
+        .draft-build-filtering {
+            position: fixed;
+            top: 52px;
+            left: 0px;
+            bottom: 0px;
+            width: 300px;
+            background: rgba(0,0,0,.4);
+            border-right: 1px solid #000;
+            
+            h3 {
+                height: 35px;
+                line-height: 35px;
+                font-size: 14px;
+                text-indent: 20px;
+                text-transform: uppercase;
+                color: #FFF;
+                background: #315178;
+                margin-bottom: 0px;
+            }
+            
+            .mana-curve {
+                
+                ul {
+                    display: block;
+                    width: 90%;
+                    padding: 0;
+                    margin: 9px auto;
+                
+                    li {
+                        float: left;
+                        list-style: none;
+                        width: 12.5%;
+                    
+                        .mana-curve-amt {
+                            width: 100%;
+                            text-align: center;
+                            font-family: hs;
+                            font-size: 14px;
+                            color: #FFF;
+                            font-weight: bold;
+                            line-height: 20px;
+                            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+                            margin-bottom: 5px;
+                        } /* .mana-curve-amt */
+                        
+                        .mana-curve-bar {
+                            position: relative;
+                            width: 50%;
+                            margin: 0 auto;
+                            height: 100px;
+                            background: url('../img/black-60.png');
+                            background: rgba(255,255,255,.15);
+                            
+                            span {
+                                position: absolute;
+                                left: 0px;
+                                right: 0px;
+                                bottom: 0px;
+                                height: 0px;
+                                -webkit-transition: height .25s;
+                                transition: height .25s;
+                                background: #2268AD;
+                            } /* span */
+                        } /* .mana-curve-bar */
+                        
+                        .mana-curve-num {
+                            position: relative;
+                            width: 50%;
+                            height: 20px;
+                            margin: 5px auto 0 auto;
+                            line-height: 20px;
+                            text-align: center;
+                            font-family: hs;
+                            font-size: 14px;
+                            color: #FFF;
+                            font-weight: bold;
+                            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+                        
+                            span {
+                                position: absolute;
+                                top: 1px;
+                                font-size: 10px;
+                            } /* span */
+                        } /* .mana-curve-num */
+                        
+                    } /* li */
+                } /* ul */
+                
+            } /* .mana-curve */
+            
+            .card-search {
+                
+                form {
+                    margin: 10px;
+                } /* form */
+                
+            } /* .card-search */
+            
+            .mana-cost {
+                
+                .mana-crystals {
+                    margin: 10px;
+                    
+                    div {
+                        margin-right: 8px;
+                        opacity: .6;
+                        background-image: url("../img/manacrystal.png");
+                        background-position: bottom;
+                        width: 38px;
+                        height: 38px;
+                        line-height: 2.75;
+                        text-align: center;
+                        float: left;
+                        
+                        &:hover {
+                            opacity: 1;
+                        }
+                        
+                        &.active {
+                            opacity: 1;
+                            background-position: top;
+                        }
+                        
+                        a {
+                            display: block;
+                            height: 38px;
+                            width: 38px;
+                            color: white;
+                            
+                            &:focus,
+                            &:active {
+                                outline: none;
+                                border: none;
+                            }
+                            
+                        }
+                    }
+                    
+                }
+                
+            } /* .mana-cost */
+            
+            .card-mechanics {
+                position: absolute;
+                top: 50%;
+                bottom: 0px;
+                width: 300px;
+                
+                .mechanics-wrapper {
+                    position: absolute;
+                    top: 35px;
+                    left: 0px;
+                    bottom: 0px;
+                    width: 300px;
+                }
+                
+                ul {
+                    margin: 0;
+                    padding: 0;
+                    
+                    li {
+                        height: 30px;
+                        list-style: none;
+                        border-bottom: 1px solid #000;
+                        
+                        &:last-child {
+                            border-bottom: none;
+                        }
+                        
+                        button {
+                            display: block;
+                            width: 100%;
+                            height: 30px;
+                            line-height: 30px;
+                            color: #FFF;
+                            text-align: left;
+                            padding: 0px 20px;
+                            outline: none;
+                            background: none;
+                            border: none;
+                            
+                            &:hover {
+                                background: rgba(255,255,255,.2);
+                            }
+                            
+                            &.active {
+                                background: rgba(39, 102, 173, 1);
+                            }
+                        }
+                    }
+                    
+                }
+                
+            } /* .card-effect */
+            
+        } /* .draft-build-filtering */
+        
+        .draft-build-decks {
+            position: fixed;
+            top: 52px;
+            right: 0px;
+            bottom: 0px;
+            width: 300px;
+            background: rgba(0,0,0,.4);
+            border-left: 1px solid #000;
+            
+            .deck-add-button {
+                height: 50px;
+                border-bottom: 1px solid #000;
+                
+                button {
+                    display: block;
+                    width: 300px;
+                    height: 50px;
+                    line-height: 50px;
+                    outline: none;
+                    border: none;
+                    text-align: left;
+                    text-indent: 20px;
+                    color: #FFF;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    background: #000 url("../img/modules/redbull/client/img/deck-top.png") no-repeat;
+                    
+                    &:hover {
+                        background-color: rgba(255,255,255,.2);
+                    } /* :hover */
+                    
+                } /* button */
+                
+            } /* .deck-add-button */
+            
+            .decks {
+                
+                .deck {
+                    
+                    
+                    
+                } /* .deck */
+                
+            } /* .decks */
+            
+        } /* .draft-build-decks */
+        
+    } /* .draft-build */
+    
+} /* .redbull-draft */
