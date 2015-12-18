@@ -31,3 +31,5 @@ server/uploads/photos/polls/*
 server/uploads/photos/snapshots/*
 server/uploads/photos/teams/*
 server/logs/*
+.brackets.json
+.jshint.rc
