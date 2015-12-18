@@ -3948,8 +3948,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminSnapshotAddCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
-        function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
+    .controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
+        function ($scope, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
 
             var deckBootBox = undefined,
                 authorBootBox = undefined,
@@ -11953,260 +11953,308 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService) {
-            // default hero
-            var defaultHero = {
-                    name : '',
-                    description: '',
-                    title: '',
-                    role: HOTS.roles[0],
-                    heroType: HOTS.types[0],
-                    universe: HOTS.universes[0],
-                    manaType: HOTS.manaTypes[0],
-                    abilities: [],
-                    talents: [],
-                    characters: [],
-                    price: {
-                        gold: ''
-                    },
-                    className: '',
-                    active: true
-                },
-                defaultAbility = {
-                    name: '',
-                    abilityType: HOTS.abilityTypes[0],
-                    mana: '',
-                    cooldown: '',
-                    description: '',
-                    damage: '',
-                    healing: '',
-                    className: '',
-                    orderNum: 1
-                },
-                defaultTalent = {
-                    name: '',
-                    tier: HOTS.tiers[0],
-                    description: '',
-                    ability: undefined,
-                    className: '',
-                    orderNum: 1
-                },
-                defaultCharacter = {
-                    name: '',
-                    stats: {
-                        base: {
-                            health: 0,
-                            healthRegen: 0,
-                            mana: 0,
-                            manaRegen: 0,
-                            attackSpeed: 0,
-                            range: 0,
-                            damage: 0
-                        },
-                        gain: {
-                            health: 0,
-                            healthRegen: 0,
-                            mana: 0,
-                            manaRegen: 0,
-                            attackSpeed: 0,
-                            range: 0,
-                            damage: 0
-                        }
-                    }
-                };
+    .controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 'Hero', 'Ability', 'Talent', 'HeroTalent',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService, Hero, Ability, Talent, HeroTalent) {
+          // default hero
+          var defaultHero = {
+                  name : '',
+                  description: '',
+                  title: '',
+                  role: HOTS.roles[0],
+                  heroType: HOTS.types[0],
+                  universe: HOTS.universes[0],
+                  manaType: HOTS.manaTypes[0],
+                  abilities: [],
+                  talents: [],
+                  characters: [],
+                  price: {
+                      gold: ''
+                  },
+                  className: '',
+                  active: true
+              },
+              defaultAbility = {
+                  name: '',
+                  abilityType: HOTS.abilityTypes[0],
+                  mana: '',
+                  cooldown: '',
+                  description: '',
+                  damage: '',
+                  healing: '',
+                  className: '',
+                  orderNum: 1
+              },
+              defaultTalent = {
+                  name: '',
+                  tier: HOTS.tiers[0],
+                  description: '',
+                  ability: undefined,
+                  className: '',
+                  orderNum: 1
+              },
+              defaultCharacter = {
+                  name: '',
+                  stats: {
+                      base: {
+                          health: 0,
+                          healthRegen: 0,
+                          mana: 0,
+                          manaRegen: 0,
+                          attackSpeed: 0,
+                          range: 0,
+                          damage: 0
+                      },
+                      gain: {
+                          health: 0,
+                          healthRegen: 0,
+                          mana: 0,
+                          manaRegen: 0,
+                          attackSpeed: 0,
+                          range: 0,
+                          damage: 0
+                      }
+                  }
+              };
 
-            // load hero
-            $scope.hero = angular.copy(defaultHero);
+          // load hero
+          $scope.hero = angular.copy(defaultHero);
 
-            // roles
-            $scope.roles = HOTS.roles;
+          // roles
+          $scope.roles = HOTS.roles;
 
-            // types
-            $scope.heroTypes = HOTS.types;
+          // types
+          $scope.heroTypes = HOTS.types;
 
-            // universe
-            $scope.universes = HOTS.universes;
+          // universe
+          $scope.universes = HOTS.universes;
 
-            // mana types
-            $scope.manaTypes = HOTS.manaTypes;
+          // mana types
+          $scope.manaTypes = HOTS.manaTypes;
 
-            // select options
-            $scope.heroActive = [
-                { name: 'Yes', value: true },
-                { name: 'No', value: false }
-            ];
+          //talents
+          $scope.talentTiers = HOTS.tiers;
 
-            // abilities
-            $scope.abilityTypes = HOTS.abilityTypes;
-            var box;
-            $scope.abilityAddWnd = function () {
-                console.log('sup');
-                $scope.currentAbility = angular.copy(defaultAbility);
-                box = bootbox.dialog({
-                    title: 'Add Ability',
-                    message: $compile('<div ability-add-form></div>')($scope)
-                });
-            };
+          // select options
+          $scope.heroActive = [
+              { name: 'Yes', value: true },
+              { name: 'No', value: false }
+          ];
 
-            $scope.abilityEditWnd = function (ability) {
-                $scope.currentAbility = ability;
-                box = bootbox.dialog({
-                    title: 'Edit Ability',
-                    message: $compile('<div ability-edit-form></div>')($scope)
-                });
-            };
+          // abilities
+          $scope.abilityTypes = HOTS.abilityTypes;
+          var box;
+          $scope.abilityAddWnd = function () {
+              console.log('sup');
+              $scope.currentAbility = angular.copy(defaultAbility);
+              box = bootbox.dialog({
+                  title: 'Add Ability',
+                  message: $compile('<div ability-add-form></div>')($scope)
+              });
+          };
 
-            $scope.addAbility = function () {
-                $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
-                $scope.hero.abilities.push($scope.currentAbility);
-                box.modal('hide');
-                $scope.currentAbility = false;
-            };
+          $scope.abilityEditWnd = function (ability) {
+              $scope.currentAbility = ability;
+              box = bootbox.dialog({
+                  title: 'Edit Ability',
+                  message: $compile('<div ability-edit-form></div>')($scope)
+              });
+          };
 
-            $scope.editAbility = function (ability) {
-                box.modal('hide');
-                $scope.currentAbility = false;
-            };
+          $scope.addAbility = function () {
+              $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
+              $scope.hero.abilities.push($scope.currentAbility);
+              box.modal('hide');
+              $scope.currentAbility = false;
+          };
 
-            $scope.deleteAbility = function (ability) {
-                var index = $scope.hero.abilities.indexOf(ability);
-                $scope.hero.abilities.splice(index, 1);
+          $scope.editAbility = function (ability) {
+              box.modal('hide');
+              $scope.currentAbility = false;
+          };
 
-                for (var i = 0; i < $scope.hero.abilities.length; i++) {
-                    $scope.hero.abilities[i].orderNum = i + 1;
-                }
-            };
+          $scope.deleteAbility = function (ability) {
+              var index = $scope.hero.abilities.indexOf(ability);
+              $scope.hero.abilities.splice(index, 1);
 
-            // talents
-            $scope.talentTiers = HOTS.tiers;
-            $scope.talentAddWnd = function () {
-                $scope.currentTalent = angular.copy(defaultTalent);
+              for (var i = 0; i < $scope.hero.abilities.length; i++) {
+                  $scope.hero.abilities[i].orderNum = i + 1;
+              }
+          };
+
+          // talents
+          $scope.talentAddWnd = function () {
+              $scope.currentTalent = angular.copy(defaultTalent);
 //                $scope.talentAbilities = $scope.hero.abilities;
-                $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
-                box = bootbox.dialog({
-                    title: 'Add Talent',
-                    message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
-                });
-            };
+              $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
+              box = bootbox.dialog({
+                  title: 'Add Talent',
+                  message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
+              });
+          };
 
-            $scope.talentEditWnd = function (talent) {
-                $scope.currentTalent = talent;
+          $scope.talentEditWnd = function (talent) {
+              $scope.currentTalent = talent;
 //                $scope.talentAbilities = $scope.hero.abilities;
-                $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
-                box = bootbox.dialog({
-                    title: 'Edit Talent',
-                    message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
-                });
-            };
+              $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
+              box = bootbox.dialog({
+                  title: 'Edit Talent',
+                  message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
+              });
+          };
 
-            $scope.addTalent = function () {
-                if (_.isUndefined($scope.talents)) {
-                    $scope.talents = [];
+          $scope.addTalent = function (talent) {
+              if (_.isUndefined($scope.talents)) {
+                  $scope.talents = [];
+              }
+
+              $scope.currentTalent.orderNum = $scope.talents.length + 1;
+              $scope.talents.push($scope.currentTalent);
+
+              box.modal('hide');
+              $scope.currentTalent = undefined;
+          };
+
+          $scope.editTalent = function (talent) {
+              box.modal('hide');
+              $scope.currentAbility = false;
+          };
+
+          $scope.deleteTalent = function (talent) {
+              var index = $scope.talents.indexOf(talent);
+              $scope.talents.splice(index, 1);
+
+              for (var i = 0; i < $scope.talents.length; i++) {
+                  $scope.talents[i].orderNum = i + 1;
+              }
+          };
+
+          // characters
+          $scope.charAddWnd = function () {
+              $scope.currentCharacter = angular.copy(defaultCharacter);
+              box = bootbox.dialog({
+                  title: 'Add Character',
+                  message: $compile('<div char-add-form></div>')($scope)
+              });
+          };
+
+          $scope.charEditWnd = function (character) {
+              $scope.currentCharacter = character;
+              box = bootbox.dialog({
+                  title: 'Edit Character',
+                  message: $compile('<div char-edit-form></div>')($scope)
+              });
+          };
+
+          $scope.addCharacter = function () {
+              $scope.hero.characters.push($scope.currentCharacter);
+              box.modal('hide');
+              $scope.currentCharacter = false;
+          };
+
+          $scope.editCharacter = function (character) {
+              box.modal('hide');
+              $scope.currentCharacter = false;
+          };
+
+          $scope.deleteChar = function (character) {
+              var index = $scope.hero.characters.indexOf(character);
+              $scope.hero.characters.splice(index, 1);
+          };
+
+          $scope.updateDND = function (list, index) {
+              list.splice(index, 1);
+
+              for (var i = 0; i < list.length; i++) {
+                  list[i].orderNum = i + 1;
+              }
+          };
+
+          $scope.addHero = function () {
+            var hero = angular.copy($scope.hero);
+
+
+            _.each($scope.talents, function (talVal) {
+              var t = _.find(hero.abilities, function (abiVal) { return talVal.ability === abiVal.name });
+              delete talVal.ability;
+
+              if (_.isUndefined(t)) {
+                hero.talents.push(talVal);
+              } else {
+                if (_.isUndefined(t.talents)) {
+                  t.talents = [];
                 }
-                
-                $scope.currentTalent.orderNum = $scope.talents.length + 1;
-                $scope.talents.push($scope.currentTalent);
-                
-                box.modal('hide');
-                $scope.currentTalent = false;
-            };
 
-            $scope.editTalent = function (talent) {
-                box.modal('hide');
-                $scope.currentAbility = false;
-            };
+                t.talents.push(talVal);
+              }
+            });
 
-            $scope.deleteTalent = function (talent) {
-                var index = $scope.talents.indexOf(talent);
-                $scope.talents.splice(index, 1);
+            var abilToAdd = hero.abilities;
+            var talToAdd  = hero.talents;
 
-                for (var i = 0; i < $scope.talents.length; i++) {
-                    $scope.talents[i].orderNum = i + 1;
+            delete hero.abilities;
+            delete hero.talents;
+
+            Hero.create({}, hero)
+            .$promise
+            .then(function (heroData) {
+              async.series([
+                function(seriesCb) {
+                  async.each(abilToAdd, function (abil, abilCb) {
+                    var tempTals = abil.talents;
+                    delete abil.talents;
+
+                    abil.heroId = heroData.id;
+                    Ability.create({}, abil)
+                    .$promise
+                    .then(function (abilData) {
+                      async.each(tempTals, function(abilTal, abilTalCb) {
+                        Talent.upsert({}, abilTal)
+                        .$promise
+                        .then(function (abilTalData) {
+                          HeroTalent.create({}, {
+                            heroId: heroData.id,
+                            talentId: abilTalData.id,
+                            abilityId: abilData.id,
+                            tier: abilTal.tier,
+                            orderNum: abilTal.orderNum
+                          })
+                          .$promise
+                          .then(function (heroTalData) {
+                            return abilTalCb();
+                          }).catch(function (err) {return seriesCb(err)});
+                        }).catch(function (err) {return seriesCb(err)});
+                      }, abilCb);
+                    }).catch(function (err) {return seriesCb(err)});
+                  }, seriesCb(undefined));
+                },
+                function (seriesCb) {
+                  async.each(talToAdd, function (tal, eachCb) {
+                    Talent.upsert({}, tal)
+                    .$promise
+                    .then(function (talData) {
+                      HeroTalent.create({}, {
+                        heroId: heroData.id,
+                        talentId: talData.id,
+                        tier: tal.tier,
+                        orderNum: tal.orderNum
+                      })
+                      .$promise
+                      .then(eachCb())
+                      .catch(function (err) { return seriesCb(err) });
+                    })
+                    .catch(function (err) { return seriesCb(err) });
+                  }, seriesCb(undefined))
                 }
-            };
-
-            // characters
-            $scope.charAddWnd = function () {
-                $scope.currentCharacter = angular.copy(defaultCharacter);
-                box = bootbox.dialog({
-                    title: 'Add Character',
-                    message: $compile('<div char-add-form></div>')($scope)
-                });
-            };
-
-            $scope.charEditWnd = function (character) {
-                $scope.currentCharacter = character;
-                box = bootbox.dialog({
-                    title: 'Edit Character',
-                    message: $compile('<div char-edit-form></div>')($scope)
-                });
-            };
-
-            $scope.addCharacter = function () {
-                $scope.hero.characters.push($scope.currentCharacter);
-                box.modal('hide');
-                $scope.currentCharacter = false;
-            };
-
-            $scope.editCharacter = function (character) {
-                box.modal('hide');
-                $scope.currentCharacter = false;
-            };
-
-            $scope.deleteChar = function (character) {
-                var index = $scope.hero.characters.indexOf(character);
-                $scope.hero.characters.splice(index, 1);
-            };
-
-            $scope.updateDND = function (list, index) {
-                list.splice(index, 1);
-
-                for (var i = 0; i < list.length; i++) {
-                    list[i].orderNum = i + 1;
-                }
-            };
-
-            $scope.addHero = function () {
-                console.log($scope.hero);
-                
-                
-                _.each($scope.talents, function (talVal) {
-                    var t = _.find($scope.hero.abilities, function (abiVal) { return talVal.ability === abiVal.name });
-                    delete talVal.ability;
-                    
-                    if (_.isUndefined(t)) {
-                        $scope.hero.talents.push(talVal);
-                    } else {
-                        if (_.isUndefined(t.talents)) {
-                            t.talents = [];
-                        }
-                        
-                        t.talents.push(talVal);
-                    }
-                })
-                
-                console.log($scope.hero);
-                
-                //TODO: POST THIS BITCH
-                
-//                $scope.showError = false;
-//
-//                AdminHeroService.addHero($scope.hero).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been added successfully.' });
-//                        $state.go('app.admin.hots.heroes.list');
-//                    }
-//                });
-            };
+              ], function (err) {
+                if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
+                else { console.log('success!'); }
+              })
+            }).catch(function (err) { console.log(err); });
+          };
         }
     ])
-    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'talents',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, talents) {
+    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero) {
             // defaults
             var defaultAbility = {
                     name: '',
@@ -12253,7 +12301,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load hero
             $scope.hero = hero;
-            $scope.hero.talents = talents;
             
             // roles
             $scope.roles = HOTS.roles;
@@ -12317,7 +12364,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.hero.abilities[i].orderNum = i + 1;
                 }
             };
-
+          
             // talents
             $scope.talentTiers = HOTS.tiers;
             $scope.talentAddWnd = function () {
@@ -12450,7 +12497,21 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
             
             $scope.openTalent = function (title, talent) {
-                $scope.currentTalent = talent || {};
+              $scope.loading = true;
+              
+              if(talent) {
+                Talent.findById({
+                  id: talent.id
+                })
+                .$promise
+                .then(function(data) {
+                  $scope.loading = false;
+                  $scope.currentTalent = data;
+                });
+              } else {
+                $scope.currentTalent = undefined;
+                $scope.loading = false;
+              }
                 
                 box = bootbox.dialog({
                     title: title,
@@ -13661,8 +13722,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService',
-        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService) {
+    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
+        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
 
             $scope.tempostormGuides = dataTempostormGuides;
 //            $scope.tempostormGuideTalents = tempostormTalents;
@@ -13676,6 +13737,7 @@ angular.module('app.controllers', ['ngCookies'])
             // filtering
             $scope.heroes = dataHeroes;
             $scope.maps = dataMaps;
+            $scope.hotsTiers = HOTS.tiers;
 
             $scope.filters = {
                 roles: [],
@@ -13703,7 +13765,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
 
                      if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
-                        async.series([
+                        async.parallel([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, null, 1, function(err, guides) {
                                   console.log(guides);
@@ -13737,7 +13799,7 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         ]);
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                        async.series([
+                        async.parallel([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, null, 1, function (err, guides) {
 
@@ -13768,7 +13830,7 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         ])
                     } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
-                        async.series([
+                        async.parallel([
                             function (seriesCallback) {
                                 $scope.topGuides = null;
                                 initializing = false;
@@ -13794,7 +13856,7 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         ]);
                     } else {
-                        async.series([
+                        async.parallel([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getGuides($scope.filters, null, 1, function(err, guides) {
                                   console.log(guides);
@@ -13857,6 +13919,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getTalent = function (hero, guide, tier, isFeatured) {
+//              console.log(hero);
               var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
               var out = (t.talent.className !== '__missing') ? t.talent : { className: '__missing', name: "Missing Talent" };
               
@@ -14273,7 +14336,11 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
+                $scope.guide.slug = Util.slugify($scope.guide.name);
+                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                
                 var keys = ['name',
+                            'authorId',
                             'slug',
                             'guideType',
                             'description',
@@ -14281,6 +14348,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'premium',
                             'votes',
                             'against',
+                            'synergy',
                             'content',
                             'isFeatured',
                             'isPublic',
@@ -14289,10 +14357,6 @@ angular.module('app.controllers', ['ngCookies'])
                             'voteScore'
                            ];
                 var stripped = Util.cleanObj($scope.guide, keys);
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                    
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
-                
                 var temp = _.map($scope.guide.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
@@ -14304,8 +14368,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                   });
                 });
+                
                 $scope.guide.guideTalents = _.flatten(temp);
-
                 Guide.create({}, stripped)
                 .$promise
                 .then(function (guideData) {
@@ -14337,7 +14401,7 @@ angular.module('app.controllers', ['ngCookies'])
                     .$promise
                     .then(function (guideTalentData) {
                       console.log("YEP:", guideTalentData);
-                      $scope.app.settings.guide = null;
+//                      $scope.app.settings.guide = null;
                       $state.go('app.hots.guides.guide', { slug: guideData.slug });
                     })
                     .catch(function (err) {
@@ -14854,7 +14918,8 @@ angular.module('app.controllers', ['ngCookies'])
                         out.push(abilities[i]);
                     }
                 }
-                return out;
+              
+                return _.sortBy(out, function (val) { return val.orderNum });
             };
 
             $scope.getHeroics = function () {
@@ -14865,7 +14930,7 @@ angular.module('app.controllers', ['ngCookies'])
                         out.push(abilities[i]);
                     }
                 }
-                return out;
+                return _.sortBy(out, function (val) { return val.orderNum });
             };
 
             $scope.getTrait = function () {
@@ -15027,53 +15092,75 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getHealth = function () {
                 var char = $scope.getCurrentCharacter(),
-                    level = $scope.level;
+                    level = $scope.level,
+                    val = char.stats.base.health * Math.pow(1 + char.stats.gain.health, level - 1);
 
-                return (char.stats.base.health + ((level * char.stats.gain.health) - char.stats.gain.health));
+                //return (char.stats.base.health + ((level * char.stats.gain.health) - char.stats.gain.health));
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getHealthRegen = function () {
                 var char = $scope.getCurrentCharacter(),
                     level = $scope.level,
-                    val = (char.stats.base.healthRegen + ((level * char.stats.gain.healthRegen) - char.stats.gain.healthRegen));
+                    val = char.stats.base.healthRegen * Math.pow(1 + char.stats.gain.healthRegen, level - 1);
 
-                return (isNum(val)) ? val : +val.toFixed(2);
+                //return (isNum(val)) ? val : +val.toFixed(2);
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getMana = function () {
                 var char = $scope.getCurrentCharacter(),
-                    level = $scope.level;
+                    level = $scope.level,
+                    val = char.stats.base.mana + (char.stats.gain.mana * (level - 1));
 
-                return (char.stats.base.mana + ((level * char.stats.gain.mana) - char.stats.gain.mana)) || 'N/A';
+                //return (char.stats.base.mana + ((level * char.stats.gain.mana) - char.stats.gain.mana)) || 'N/A';
+                if (val) {
+                    return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
+                } else {
+                    return 'N/A';
+                }
             };
             $scope.getManaRegen = function () {
                 var char = $scope.getCurrentCharacter(),
                     level = $scope.level,
-                    val = (char.stats.base.manaRegen + ((level * char.stats.gain.manaRegen) - char.stats.gain.manaRegen));
+                    val = char.stats.base.manaRegen + (char.stats.gain.manaRegen * (level - 1));
 
-                return (isNum(val)) ? val || 'N/A' : +val.toFixed(2);
+                //return (isNum(val)) ? val || 'N/A' : +val.toFixed(2);
+                if (val) {
+                    return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
+                } else {
+                    return 'N/A';
+                }
+
             };
             $scope.getSpeed = function () {
                 var char = $scope.getCurrentCharacter(),
                     level = $scope.level,
-                    val = (char.stats.base.attackSpeed + ((level * char.stats.gain.attackSpeed) - char.stats.gain.attackSpeed));
+                    val = char.stats.base.attackSpeed * Math.pow(1 + char.stats.gain.attackSpeed, level - 1);
 
-                return (isNum(val)) ? val : +val.toFixed(2);
+                //return (isNum(val)) ? val : +val.toFixed(2);
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getRange = function () {
                 var char = $scope.getCurrentCharacter(),
                     level = $scope.level,
-                    val = (char.stats.base.range + ((level * char.stats.gain.range) - char.stats.gain.range));
+                    val = char.stats.base.range * Math.pow(1 + char.stats.gain.range, level - 1);
 
-                return (isNum(val)) ? val : +val.toFixed(2);
+                //return (isNum(val)) ? val : +val.toFixed(2);
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getDamage = function () {
                 var char = $scope.getCurrentCharacter(),
-                    level = $scope.level;
+                    level = $scope.level,
+                    val = char.stats.base.damage * Math.pow(1 + char.stats.gain.damage, level - 1);
 
-                return (char.stats.base.damage + ((level * char.stats.gain.damage) - char.stats.gain.damage));
+                //return (char.stats.base.damage + ((level * char.stats.gain.damage) - char.stats.gain.damage));
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getDPS = function () {
                 var val = ($scope.getSpeed() * $scope.getDamage());
-                return (isNum(val)) ? val : +val.toFixed(2);
+                            //e + h * parseInt(f) : e * Math.pow(1 + h, parseInt(f))
+                console.log('val: ', val);
+                console.log('new val: ', val.toString().indexOf('.'));
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val).toFixed(2);
             };
 
             // copy

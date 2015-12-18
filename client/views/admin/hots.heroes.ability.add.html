@@ -1,55 +1,55 @@
 <form name="abilityForm">
-    <div class="row form-group">
-        <label for="abilityName" class="col-sm-2 control-label">Name</label>
-        <div class="col-sm-10">
-            <input type="text" id="abilityName" name="abilityName" class="form-control" ng-model="currentAbility.name" required>
-        </div>
+  <div class="row form-group">
+    <label for="abilityName" class="col-sm-2 control-label">Name</label>
+    <div class="col-sm-10">
+      <input type="text" id="abilityName" name="abilityName" class="form-control" ng-model="currentAbility.name" required>
     </div>
-    <div class="row form-group">
-        <label for="abilityType" class="col-sm-2 control-label">Type</label>
-        <div class="col-sm-10">
-            <select id="abilityType" name="abilityType" class="form-control" ng-options="abilityType as abilityType for abilityType in abilityTypes" ng-model="currentAbility.abilityType" required></select>
-        </div>
+  </div>
+  <div class="row form-group">
+    <label for="abilityType" class="col-sm-2 control-label">Type</label>
+    <div class="col-sm-10">
+      <select id="abilityType" name="abilityType" class="form-control" ng-options="abilityType as abilityType for abilityType in abilityTypes" ng-model="currentAbility.abilityType" required></select>
+      </div>
+  </div>
+  <div class="row form-group">
+    <label for="abilityMana" class="col-sm-2 control-label">Mana</label>
+    <div class="col-sm-10">
+      <input type="text" id="abilityMana" name="abilityMana" class="form-control" ng-model="currentAbility.mana" required>
     </div>
-    <div class="row form-group">
-        <label for="abilityMana" class="col-sm-2 control-label">Mana</label>
-        <div class="col-sm-10">
-            <input type="text" id="abilityMana" name="abilityMana" class="form-control" ng-model="currentAbility.mana" required>
-        </div>
+  </div>
+  <div class="row form-group">
+    <label for="abilityCooldown" class="col-sm-2 control-label">Cooldown</label>
+    <div class="col-sm-10">
+      <input type="text" id="abilityCooldown" name="abilityCooldown" class="form-control" ng-model="currentAbility.cooldown" required>
     </div>
-    <div class="row form-group">
-        <label for="abilityCooldown" class="col-sm-2 control-label">Cooldown</label>
-        <div class="col-sm-10">
-            <input type="text" id="abilityCooldown" name="abilityCooldown" class="form-control" ng-model="currentAbility.cooldown" required>
-        </div>
+  </div>
+  <div class="row form-group">
+    <label for="abilityDescription" class="col-sm-2 control-label">Description</label>
+    <div class="col-sm-10">
+      <input type="text" id="abilityDescription" name="abilityDescription" class="form-control" ng-model="currentAbility.description" required>
     </div>
-    <div class="row form-group">
-        <label for="abilityDescription" class="col-sm-2 control-label">Description</label>
-        <div class="col-sm-10">
-            <input type="text" id="abilityDescription" name="abilityDescription" class="form-control" ng-model="currentAbility.description" required>
-        </div>
+  </div>
+  <div class="row form-group">
+    <label for="abilityDamage" class="col-sm-2 control-label">Damage</label>
+    <div class="col-sm-10">
+      <input type="text" id="abilityDamage" name="abilityDamage" class="form-control" ng-model="currentAbility.damage" required>
     </div>
-    <div class="row form-group">
-        <label for="abilityDamage" class="col-sm-2 control-label">Damage</label>
-        <div class="col-sm-10">
-            <input type="text" id="abilityDamage" name="abilityDamage" class="form-control" ng-model="currentAbility.damage" required>
-        </div>
+  </div>
+  <div class="row form-group">
+    <label for="abilityHealing" class="col-sm-2 control-label">Healing</label>
+    <div class="col-sm-10">
+      <input type="text" id="abilityHealing" name="abilityHealing" class="form-control" ng-model="currentAbility.healing" required>
     </div>
-    <div class="row form-group">
-        <label for="abilityHealing" class="col-sm-2 control-label">Healing</label>
-        <div class="col-sm-10">
-            <input type="text" id="abilityHealing" name="abilityHealing" class="form-control" ng-model="currentAbility.healing" required>
-        </div>
+  </div>
+  <div class="row form-group">
+    <label for="abilityClassName" class="col-sm-2 control-label">CSS Class</label>
+    <div class="col-sm-10">
+      <input type="text" id="abilityClassName" name="abilityClassName" class="form-control" ng-model="currentAbility.className" required>
     </div>
-    <div class="row form-group">
-        <label for="abilityClassName" class="col-sm-2 control-label">CSS Class</label>
-        <div class="col-sm-10">
-            <input type="text" id="abilityClassName" name="abilityClassName" class="form-control" ng-model="currentAbility.className" required>
-        </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-sm-10 col-sm-offset-2">
+      <button type="submit" class="btn btn-blue btn-lg" ng-disabled="abilityForm.$invalid" ng-click="addAbility()">Add Ability</button>
     </div>
-    <div class="row form-group">
-        <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="abilityForm.$invalid" ng-click="addAbility()">Add Ability</button>
-        </div>
-    </div>
+  </div>
 </form>
