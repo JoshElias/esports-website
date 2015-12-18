@@ -1,0 +1,95 @@
+<div class="draft-build">
+    <div class="draft-build-filtering">
+    
+        <div class="mana-curve">
+            <h3>Mana Curve</h3>
+            
+            <ul class="clearfix">
+                <li ng-repeat="cost in manaCosts">
+                    <div class="mana-curve-amt">{{manaCount(cost)}}</div>
+                    <div class="mana-curve-bar"><span style="height: {{manaCurve(cost)}}px;"></span></div>
+                    <div class="mana-curve-num">{{cost}}<span ng-if="cost === 7">+</span></div>
+                </li>
+            </ul>
+            
+        </div>
+        
+        <div class="card-search">
+            <h3>Card Search</h3>
+            <form>
+                <div class="input-group">
+                    <input type="text" name="search" class="input-sm input-dark form-control" placeholder="Search..." ng-model="filters.search">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-blue btn-sm"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </form>
+        </div>
+        
+        <div class="mana-cost">
+            <h3>Mana Cost</h3>
+            
+            <div class="mana-crystals clearfix">
+                <div ng-class="{active: filters.mana === cost}" ng-repeat="cost in manaCosts">
+                    <a href="#" ng-click="toggleFilterByMana(cost); pagination.setPage(1)">{{cost}}<span ng-if="cost === 7">+</span></a>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="card-mechanics">
+            <h3>Card Mechanics</h3>
+            
+            <div class="mechanics-wrapper">
+                <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+                    <div class="iscroll-scroller">
+                        <ul>
+                            <li ng-repeat="mechanic in cardMechanics">
+                                <button ng-class="{ active: hasFilterMechanic(mechanic) }" ng-click="toggleFilterByMechanic(mechanic)">{{mechanic}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    
+    <div class="draft-build-decks">
+        
+        <div class="deck-add-button">
+            <button>
+                <i class="fa fa-plus-circle"></i>
+                Add Deck
+            </button>
+        </div>
+        
+        <div class="decks">
+            
+            <div class="deck">
+                
+                <div class="deck-title-bar">
+                    <div class="deck-delete"><i class="fa fa-times"></i></div>
+                    <div class="deck-title">Mage Deck</div>
+                </div>
+                
+                <div class="deck-cards">
+                    
+                </div>
+                
+            </div>
+            
+        </div>
+        
+    </div>
+    
+    <div class="draft-build-timer">
+        
+    </div>
+    
+    <div class="draft-build-cards">
+    
+    </div>
+    
+</div>

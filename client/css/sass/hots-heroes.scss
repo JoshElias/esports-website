@@ -375,6 +375,8 @@ This is the template for hots-hero-talents.
 @include hots-hero(valla);
 @include hots-hero(zagara);
 @include hots-hero(zeratul);
+@include hots-hero(lunara);
+
 
 
 //*************************************
@@ -851,27 +853,24 @@ This is the template for hots-hero-talents.
 
 //talents: Lunara 
 
-@include hots-hero-talents ( heroName, (
-    ( class: (blossom-swell), pos: 0 ), // 0
-    ( class: (photosynthesis), pos: 1 ), // -30
-    ( class: (natural-perspective), pos: 2 ), // -60
-    ( class: (cruel-spores), pos: 3 ), // -90
+@include hots-hero-talents ( Lunara, (
+    ( class: (blossom-swell, splintered-spear, pestering-blossom, choking-pollen), pos: 0 ), // 0
+    ( class: (photosynthesis, invigorating-spores), pos: 1 ), // -30
+    ( class: (natural-perspective, natures-culling, unfair-advantage), pos: 2 ), // -60
+    ( class: (cruel-spores, wild-vigor, star-wood-spear), pos: 3 ), // -90
     ( class: (nimble-wisp), pos: 4 ), // -120
-    ( class: (), pos: 5 ), // -150
-    ( class: (), pos: 6 ), // -180
-    ( class: (), pos: 7 ), // -210
-    ( class: (), pos: 8 ), // -240
-    ( class: (), pos: 9 ), // -270
-    ( class: (), pos: 10 ), // -300
-    ( class: (), pos: 11 ), // -330
-    ( class: (), pos: 12 ), // -360
-    ( class: (), pos: 13 ), // -390
-    ( class: (), pos: 14 ), // -420
-    ( class: (), pos: 15 ), // -450
-    ( class: (), pos: 16 ), // -480
-    ( class: (), pos: 17 ), // -510
-    ( class: (), pos: 18 ) // -540
-) );
+    ( class: (timelost-wisp ), pos: 5 ), // -150
+    ( class: (skybound-wisp), pos: 6 ), // -180
+    ( class: (dividing-wisp), pos: 7 ), // -210
+    ( class: (siphoning-toxin), pos: 8 ), // -240
+    ( class: (thornwood-vine, forests-wrath), pos: 9 ), // -270
+    ( class: (leaping-strike, boundless-stride), pos: 10 ), // -300
+    ( class: (giant-killer), pos: 11 ), // -330
+    ( class: (greater-spell-shield), pos: 12 ), // -360
+    ( class: (let-them-wither), pos: 13 ), // -390
+    ( class: (galloping-gait), pos: 14 ), // -420
+    ( class: (abolish-magic), pos: 15 ), // -450
+ ) );
 
 //talents: morales
 
@@ -1631,3 +1630,4 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(valla, -25, -22, -70, 96);
 @include hots-snapshot-hero(zagara, -25, -22, -70, 96);
 @include hots-snapshot-hero(zeratul, -25, -5, -70, 96);
+@include hots-snapshot-hero(lunara, -25, -5, -70, 96);

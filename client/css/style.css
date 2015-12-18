@@ -15,7 +15,9 @@
 */
 
 
-
+alert-box .admin .panel-body {
+	background-color: white;
+}
 
 alert-box .default {
     margin-top: 20px;

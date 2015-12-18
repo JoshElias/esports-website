@@ -994,7 +994,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             //is premium
             $scope.isPremium = function (guide) {
-                if (!guide.premium.isPremium) { return false; }
+                if (!guide.premium || !guide.premium.isPremium) { return false; }
                 var now = new Date().getTime(),
                     expiry = new Date(guide.premium.expiryDate).getTime();
                 if (expiry > now) {
@@ -1804,7 +1804,6 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
             //!search functions
-            
             $scope.openAuthors = function () {
                 $scope.getUsers(function () {
                     itemAddBox = bootbox.dialog({
@@ -2060,39 +2059,117 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
 
-            $scope.addArticle = function () {
+            $scope.addArticle = function (article) {
                 $scope.fetching = true;
-                console.log($scope.article);
-                var date = new Date();
-                $scope.article.createdDate = d.toISOString();
-                $scope.article.authorId = $scope.article.author.id;
-                if($scope.article.deck) {
-                    $scope.article.deckId = $scope.article.deck.id;
-                } else if ($scope.article.guide) {
-                    $scope.article.guideId = $scope.article.guide.id;
-                }
-                
-                
-                Article.upsert({}, $scope.article)
-                .$promise
-                .then(function (data) {
-                    async.each($scope.article.related, function (related, relatedCb) {
-                        var relatedClean = {};
-                        
-                        relatedClean.parentArticleId = data.id;
-                        relatedClean.childArticleId = related.id;
-                        
-                        ArticleArticle.upsert({}, relatedClean)
-                        .$promise
-                        .then(function () {
-                            return relatedCb();
-                        });
-                    });
-                    
-                    AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been added successfully.' });
-                    $scope.showError = false;
-                    $state.go('app.admin.articles.list');
-                });
+                console.log('article:', article);
+				
+				var d = new Date().toISOString();
+				article.createdDate = d;
+				
+				// create model for articleArticle
+				var relatedArticleArticle = [];
+				angular.forEach(article.related, function(relatedArticle) {
+					var articleArticle = {
+						childArticleId: relatedArticle.id
+					};
+					relatedArticleArticle.push(articleArticle);
+				});
+				
+				var cleanArticle = {
+					title: article.title,
+					slug: article.slug,
+					description: article.description,
+					content: article.content,
+					photoNames: article.photoNames,
+					classTags: article.classTags,
+					themeName: article.themeName,
+					viewCount: 1,
+					votes: [{ 
+						userId: article.author.id, 
+						direction: 1
+					}],
+					voteScore: 1,
+					isFeatured: article.isFeatured,
+					createdDate: d,
+					premium: article.premium,
+					articleType: article.articleType,
+					isActive: article.isActive,
+					deckId: article.deck ? article.deck.id : null,
+					guideId: article.guide ? article.guide.id : null,
+					authorId: article.author ? article.author.id : null,
+					related: relatedArticleArticle
+				};
+				
+				async.waterfall([
+					function (wateryCB) {
+						Article.create(cleanArticle)
+						.$promise
+						.then(function (articleCreated) {
+							return wateryCB(null, articleCreated);
+						})
+						.catch(function (err) {
+							return wateryCB(err);
+						});
+					},
+					function (articleCreated, wateryCB) {
+						// add parentId from created article
+						angular.forEach(cleanArticle.related, function(articleArticle) {
+							articleArticle.parentArticleId = articleCreated.id;
+						});
+						
+						ArticleArticle.createMany(cleanArticle.related)
+						.$promise
+						.then(function (relatedArticles) {
+							return wateryCB(null);
+						})
+						.catch(function (err) {
+							return wateryCB(err);
+						});
+					}
+				], function(err, results) {
+					$scope.fetching = false;
+					if (err) {
+						$window.scrollTo(0, 0);
+						return AlertService.setError({
+							show: true,
+							msg: 'Unable to create Article.',
+							lbErr: err
+						});
+					}
+					$state.transitionTo('app.admin.articles.list');
+				});
+				
+				
+//                var date = new Date().toISOString();
+//                $scope.article.createdDate = date;
+//                $scope.article.authorId = $scope.article.author.id;
+//                if($scope.article.deck) {
+//                    $scope.article.deckId = $scope.article.deck.id;
+//                } else if ($scope.article.guide) {
+//                    $scope.article.guideId = $scope.article.guide.id;
+//                }
+//                
+//                
+//                Article.upsert({}, $scope.article)
+//                .$promise
+//                .then(function (data) {
+//                    async.each($scope.article.related, function (related, relatedCb) {
+//                        var relatedClean = {};
+//                        
+//                        relatedClean.parentArticleId = data.id;
+//                        relatedClean.childArticleId = related.id;
+//                        
+//                        ArticleArticle.upsert({}, relatedClean)
+//                        .$promise
+//                        .then(function () {
+//                            return relatedCb();
+//                        });
+//                    });
+//                    
+//                    AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been added successfully.' });
+//                    $scope.showError = false;
+//                    $state.go('app.admin.articles.list');
+//                });
             };
         }
     ])
@@ -2277,7 +2354,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.article.deck = (deck) ? deck : undefined;
             }
             
-            
             $scope.openGuides = function () {
                 $scope.getDecks(function () {
                     itemAddBox = bootbox.dialog({
@@ -2329,75 +2405,26 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.modifyRelated = function (a) {
                 console.log('a: ', a);
                 if ($scope.isRelated(a)) {
-                    // if article exists in db and is being removed from client
-                    // push to relatedArticleChanges.toDelete
-                    ArticleArticle.exists({
-                        id: a.id
-                    })
-                    .$promise
-                    .then(function (relatedArticleExist) {
-                        console.log('related exist: ', relatedArticleExist);
-                        if (relatedArticleExist.exists) {
-                            relatedArticleChanges.toDelete.push(a);
-                        }
-                        var indexToRem = relatedArticleChanges.toCreate.indexOf(a);
-                        if (indexToRem !== -1) {
-                            relatedArticleChanges.toCreate.splice(indexToRem, 1);
-                        }
-                        console.log('relatedArticleChanges.toCreate: ', relatedArticleChanges.toCreate);
-                        console.log('relatedArticleChanges.toDelete: ', relatedArticleChanges.toDelete);
-                    })
-                    .catch(function (err) {
-                        console.log('related exist art: ', err);
-                    });
                     $scope.removeRelatedArticle(a);
                 } else {
-                    // article being added in client
-                    // check if it exist in db already and if not push to toCreate
-                    ArticleArticle.exists({
-                        id: a.id
-                    })
-                    .$promise
-                    .then(function (relatedArticleExist) {
-                        console.log('related exist: ', relatedArticleExist);
-                        if (!relatedArticleExist.exists) {
-                            relatedArticleChanges.toCreate.push(a);
-                        }
-                        var indexToRem = relatedArticleChanges.toDelete.indexOf(a);
-                        if (indexToRem !== -1) {
-                            relatedArticleChanges.toDelete.splice(indexToRem, 1);
-                        }
-                        console.log('relatedArticleChanges.toCreate: ', relatedArticleChanges.toCreate);
-                        console.log('relatedArticleChanges.toDelete: ', relatedArticleChanges.toDelete);
-                    })
-                    .catch(function (err) {
-                        console.log('exist err: ', err);
-                    });
                     $scope.article.related.push(a);
                 }
-                
+                console.log('relatedArticleChanges:', relatedArticleChanges);
             }
 
             $scope.removeRelatedArticle = function (a) {
+				console.log('a:', a);
                 for (var i = 0; i < $scope.article.related.length; i++) {
                     if (a.id === $scope.article.related[i].id) {
-                        // if article exists in db and is being removed from client
-                        // push to relatedArticleChanges.toDelete
-                        ArticleArticle.exists({
-                            id: a.id
-                        })
-                        .$promise
-                        .then(function (relatedArticleExist) {
-                            console.log('related exist: ', relatedArticleExist);
-                            if (relatedArticleExist.exists) {
-                                relatedArticleChanges.toDelete.push(a);
-                            }
-                            console.log('relatedArticleChanges.toCreate: ', relatedArticleChanges.toCreate);
-                            console.log('relatedArticleChanges.toDelete: ', relatedArticleChanges.toDelete);
-                        })
-                        .catch(function (err) {
-                            console.log('related exist art: ', err);
-                        });
+						// check if it exists in toCreate
+						// remove it from toCreate else add it to toDelete
+						var index = relatedArticleChanges.toCreate.indexOf(a);
+						if (index !== -1) {
+							relatedArticleChanges.toCreate.splice(index, 1);
+						} else {
+							relatedArticleChanges.toDelete.push(a);
+						}
+						console.log('relatedArticleChanges:', relatedArticleChanges);
                         $scope.article.related.splice(i, 1);
                         break;
                     }
@@ -2546,6 +2573,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editArticle = function (article) {
                 $scope.fetching = true;
                 console.log('relatedArticleChanges: ', relatedArticleChanges);
+				console.log('article:', article);
+				
                 Article.upsert(article)
                 .$promise
                 .then(function (articleUpserted) {
@@ -3919,8 +3948,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminSnapshotAddCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
-        function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
+    .controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
+        function ($scope, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
 
             var deckBootBox = undefined,
                 authorBootBox = undefined,
@@ -6251,8 +6280,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.deckSubmitting = false;
                     return false;
                 }
-                
-                console.log('User.isAuthenticated(): ', User.isAuthenticated());
+				
                 if(!User.isAuthenticated()) {
                     LoginModalService.showModal('login', function () {
                         $scope.saveDeck(deck);
@@ -6335,7 +6363,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             function saveDeck(deck) {
-                console.log('init deck ', deck);
+                console.log('init deck: ', deck);
 				
                 deck.authorId = User.getCurrentId();
                 deck.votes = [
@@ -6345,202 +6373,49 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ];
 				
-				Deck.create(testDeck)
-				.$promise
-				.then(function (deckCreated) {
-					console.log('deckCreated:', deckCreated);
-				})
-				.catch(function (err) {
-					console.log('deck create err:', err);
-				});
+				var deckSubmitted = angular.copy(deck);
 				
-//                async.waterfall([
-//                    function (seriesCallback) {
-//                        Deck.create(deck)
-//                        .$promise
-//                        .then(function (deckInstance) {
-////                            console.log('deck instance: ',deckInstance);
-//                            var deckId = deckInstance.id;
-//                            var deckSlug = deckInstance.slug;
-//                            seriesCallback(null, deckInstance);
-//                        })
-//                        .catch(function (err) {
-//                            if(err) {
-////                                console.log('deck create err: ', err);
-//                                seriesCallback(err);
-//                            }
-//                        });
-//                    },
-//                    function(deckInstance, seriesCallback) {
-//                        // Create cards for deck
-////                        console.log('deckCard deckId: ', deckId);
-//                        async.each(deck.cards, function(deckCard, deckCardCB) {
-//                            var newDeckCard = {
-//                                cardId: deckCard.card.id,
-//                                deckId: deckInstance.id,
-//                                cardQuantity: deckCard.cardQuantity,
-//                                card: deckCard.card
-//                            };
-////                            console.log('deckCard: ', deckCard);
-//                            Deck.cards.create({
-//                                id: deckInstance.id
-//                            }, deckCard)
-//                            .$promise
-//                            .then(function (cardCreated) {
-////                                console.log('card created: ', cardCreated);
-//                                
-//                                // goto next deckCard
-//                                return deckCardCB();
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-////                                    console.log('card create err: ', err);
-//                                    deckCardCB(err);
-//                                }
-//                            });
-//                        }, function(err) {
-//                            if (err) {
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, deckInstance);
-//                        });
-//                    },
-//                    function (deckInstance, seriesCallback) {
-////                        console.log('mulligan deckId: ', deckId);
-//                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
-//                            var newMulligan = {
-//                                className: mulligan.className,
-//                                instructionsWithCoin: mulligan.instructionsWithCoin,
-//                                instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
-//                                deckId: deckInstance.id
-//                            };
-////                            console.log('newMulligan: ', newMulligan);
-//                            Mulligan.create(newMulligan)
-//                            .$promise
-//                            .then(function (mulliganCreated) {
-////                                console.log('mulligan created: ', mulliganCreated);
-//                                
-//                                async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
-//                                    console.log('cardWithCoin: ', cardWithCoin);
-//                                    var realCardWithCoin = {
-//                                        cardId: cardWithCoin.id,
-//                                        mulliganId: mulliganCreated.id,
-//                                        card: cardWithCoin
-//                                    };
-//                                    console.log('realCardWithCoin: ', realCardWithCoin);
-//                                    
-//                                    CardWithCoin.create(realCardWithCoin)
-//                                    .$promise
-//                                    .then(function (cardWithCoinCreated) {
-////                                        console.log('cardWithCoin created: ', cardWithCoinCreated);
-//                                        
-//                                        // goto next cardWithCoin
-//                                        cardWithCoinCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                        if (err) {
-////                                            console.log('err: ', err);
-//                                            cardWithCoinCB(err);
-//                                        }
-//                                    });
-//                                });
-//                                
-//                                async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
-////                                    console.log('cardWithoutCoin: ', cardWithoutCoin);
-//                                    var realCardWithoutCoin = {
-//                                        cardId: cardWithoutCoin.id,
-//                                        mulliganId: mulliganCreated.id,
-//                                        card: cardWithoutCoin
-//                                    };
-////                                    console.log('realCardWithoutCoin: ', realCardWithoutCoin);
-//                                    CardWithoutCoin.create(realCardWithoutCoin)
-//                                    .$promise
-//                                    .then(function (cardWithoutCoinCreated) {
-////                                        console.log('cardWithCoin created: ', cardWithoutCoinCreated);
-//                                        
-//                                        // goto next cardWithCoin
-//                                        cardWithoutCoinCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                        if (err) {
-////                                            console.log('err: ', err);
-//                                            cardWithoutCoinCB(err);
-//                                        }
-//                                    });
-//                                });
-//                                
-//                                // goto next mulligan
-//                                mulliganCB();
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-//                                    mulliganCB(err);
-//                                }
-//                            });
-//                        }, function(err) {
-//                            if (err) {
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, deckInstance);
-//                        });
-//                    },
-//                    function (deckInstance, seriesCallback) {
-////                        console.log('matchup deckId: ', deckInstance.id);
-////                        console.log('deck.matchups: ', deck.matchups);
-////                        console.log('deckSlug: ', deckInstance.slug);
-//                        async.each(deck.matchups, function(matchup, matchupCB) {
-//                            console.log('matchup: ', matchup);
-//                            var newMatchup = {
-//                                deckName: matchup.deckName,
-//                                className: matchup.className,
-//                                forChance: matchup.forChance,
-//                                forDeckId: deckInstance.id,
-//                                deckId: deckInstance.id
-//                            };
-//                            console.log('newMatchup: ', newMatchup);
-//                            DeckMatchup.create(newMatchup)
-//                            .$promise
-//                            .then(function (matchupCreated) {
-////                                console.log('matchup created: ', matchupCreated);
-//                                
-//                                // goto next
-//                                matchupCB();
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-//                                    matchupCB(err);
-//                                }
-//                            });
-//                        }, function(err) {
-//                            if (err) {
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, deckInstance);
-//                        });
-//                    }
-//                ], 
-//                function(err, deckInstance) {
-//                    if (err) {
-//                        $scope.errors = [];
-////                        console.log('series err: ', err);
-//                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-//                            angular.forEach(err.data.error.details.messages, function(errArray) {
-//                                for (var i = 0; i < errArray.length; i++) {
-//                                    $scope.errors.push(errArray[i]);
-//                                }
-//                            });
-//                        } else if (err.data.error.message) {
-//                            $scope.errors.push(err.data.error.message);
-//                        }
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                        $scope.deckSubmitting = false;
-//                        return false;
-//                    }
-//                    console.log('Deck Created!');
-//                    $scope.deckSubmitting = false;
-//                    $state.transitionTo('app.hs.decks.deck', { slug: deckInstance.slug });
-//                });
+				angular.forEach(deckSubmitted.mulligans, function(mulligan) {
+					var mulliganIndex = deckSubmitted.mulligans.indexOf(mulligan);
+					console.log('mulliganIndex:', mulliganIndex);
+					
+					angular.forEach(mulligan.mulligansWithCoin, function(mulliganWithCoin) {
+						console.log('mulliganWithCoin:', mulliganWithCoin);
+						var withCoinIndex = mulligan.mulligansWithCoin.indexOf(mulliganWithCoin);
+						var cardWithCoin = {
+							cardId: mulliganWithCoin.id
+						};
+						mulligan.mulligansWithCoin[withCoinIndex] = cardWithCoin;
+					});
+					
+					angular.forEach(mulligan.mulligansWithoutCoin, function(mulliganWithoutCoin) {
+						console.log('mulliganWithoutCoin:', mulliganWithoutCoin);
+						var withoutCoinIndex = mulligan.mulligansWithoutCoin.indexOf(mulliganWithoutCoin);
+						var cardWithoutCoin = {
+							cardId: mulliganWithoutCoin.id
+						};
+						mulligan.mulligansWithoutCoin[withoutCoinIndex] = cardWithoutCoin;
+					});
+					
+				});
+                
+                Deck.create(deckSubmitted)
+                .$promise
+                .then(function (deckCreated) {
+                    console.log('deck created: ', deckCreated);
+                    $scope.deckSubmitting = false;
+                    $state.transitionTo('app.hs.decks.deck', { slug: deckCreated.slug });
+                })
+                .catch(function (err) {
+                    console.log('deck create err: ', err);
+                    $scope.deckSubmitting = false;
+					$window.scrollTo(0, 0);
+                    AlertService.setError({
+                        show: true,
+                        lbErr: err,
+                        msg: 'Unable to save deck.'
+                    });
+                });
             }
         }
     ])
@@ -6548,6 +6423,8 @@ angular.module('app.controllers', ['ngCookies'])
         function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, EventService, userRoles) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
+			
+			console.log('deckCardMulligans:', deckCardMulligans);
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
@@ -6663,7 +6540,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return classCards;
             }
 
-            $scope.className = deck.playerClass;
+            $scope.className = deckCardMulligans.playerClass;
 
             // filters
             $scope.filters = {
@@ -6894,7 +6771,7 @@ angular.module('app.controllers', ['ngCookies'])
             
 //            $scope.deck = DeckBuilder.new($scope.className, deck);
             
-            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deck.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deck);
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deckCardMulligans.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deckCardMulligans);
 
             $scope.$watch('deck', function() {
                 $scope.app.settings.deck = {
@@ -6918,7 +6795,6 @@ angular.module('app.controllers', ['ngCookies'])
                     isPublic: $scope.deck.isPublic,
                     mulligans: $scope.deck.mulligans
                 };
-                console.log('deck: ', $scope.deck);
             }, true);
 
             // current mulligan
@@ -7123,7 +6999,9 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             // Updates Deck, Mulligan, and Matchup Models
-            function updateDeck(deck) {
+            function updateDeck(deckSubmitted) {
+				var deck = angular.copy(deckSubmitted);
+				
                 async.series([
                     function (seriesCallback) {
                         Deck.upsert({
@@ -7153,9 +7031,14 @@ angular.module('app.controllers', ['ngCookies'])
                             // now create new deck
                             async.each(deck.cards, function(deckCard, deckCardCB) {
                                 var deckId = deck.id;
-                                deckCard.deckId = deckId;
-                                
-                                DeckCard.create(deckCard)
+								
+								var newDeckCard = {
+									deckId: deckId,
+									cardQuantity: deckCard.cardQuantity,
+									cardId: deckCard.cardId
+								};
+                                console.log('current deckCard: ', newDeckCard);
+                                DeckCard.create(newDeckCard)
                                 .$promise
                                 .then(function (newCard) {
                                     console.log('newCard: ', newCard);
@@ -7192,34 +7075,34 @@ angular.module('app.controllers', ['ngCookies'])
                             .$promise
                             .then(function (currentMulligan) {
                                 console.log('currentMulligan: ', mulligan);
-                                
                                 // Destroy all cards with coin and recreate them
                                 Mulligan.mulligansWithCoin.destroyAll({
                                     id: mulligan.id
                                 })
                                 .$promise
                                 .then(function (deleted) {
-                                    console.log('deleted: ', deleted);
+                                    console.log('cardWithCoin deleted: ', deleted);
                                     
                                     async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
                                         var realCardWithCoin = {
                                             cardId: cardWithCoin.id,
-                                            mulliganId: currentMulligan.id,
-                                            card: cardWithCoin
+                                            deckId: deck.id,
                                         };
-        //                                    console.log('realCardWithCoin: ', realCardWithCoin);
+                                            console.log('realCardWithCoin: ', realCardWithCoin);
 
-                                        CardWithCoin.create(realCardWithCoin)
+                                        Mulligan.mulligansWithCoin.create({
+											id: mulligan.id
+										}, realCardWithCoin)
                                         .$promise
                                         .then(function (cardWithCoinCreated) {
-        //                                        console.log('cardWithCoin created: ', cardWithCoinCreated);
+                                                console.log('cardWithCoin created: ', cardWithCoinCreated);
 
                                             // goto next cardWithCoin
                                             cardWithCoinCB();
                                         })
                                         .catch(function (err) {
                                             if (err) {
-                                                console.log('err: ', err);
+                                                console.log('mulligan with coin create err: ', err);
                                                 cardWithCoinCB(err);
                                             }
                                         });
@@ -7238,27 +7121,28 @@ angular.module('app.controllers', ['ngCookies'])
                                 })
                                 .$promise
                                 .then(function (deleted) {
-                                    console.log('deleted: ', deleted);
+                                    console.log('cardWithoutCoin deleted: ', deleted);
                                     
                                     async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
                                         var realCardWithoutCoin = {
                                             cardId: cardWithoutCoin.id,
-                                            mulliganId: currentMulligan.id,
-                                            card: cardWithoutCoin
+                                            deckId: deck.id
                                         };
-        //                                    console.log('realCardWithoutCoin: ', realCardWithoutCoin);
+                                            console.log('realCardWithoutCoin: ', realCardWithoutCoin);
 
-                                        CardWithoutCoin.create(realCardWithoutCoin)
+                                        Mulligan.mulligansWithoutCoin.create({
+											id: mulligan.id
+										}, realCardWithoutCoin)
                                         .$promise
                                         .then(function (cardWithoutCoinCreated) {
-        //                                        console.log('cardWithoutCoin created: ', cardWithoutCoinCreated);
+                                                console.log('cardWithoutCoin created: ', cardWithoutCoinCreated);
 
                                             // goto next cardWithCoin
                                             cardWithoutCoinCB();
                                         })
                                         .catch(function (err) {
                                             if (err) {
-                                                console.log('err: ', err);
+                                                console.log('mulligan without coin create : ', err);
                                                 cardWithoutCoinCB(err);
                                             }
                                         });
@@ -7266,7 +7150,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 })
                                 .catch(function (err) {
                                     if (err) {
-                                        console.log('mulligan upsert err: ', err);
+                                        console.log('cardWthoutCoin destroyAll err: ', err);
                                         mulliganCB(err);
                                     }
                                 });
@@ -7297,7 +7181,7 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (deleted) {
-                            console.log('deleted: ', deleted);
+                            console.log('deleted deck matchup: ', deleted);
                             
                             async.each(deck.matchups, function(matchup, matchupCB) {
                                 var newMatchup = {
@@ -7307,6 +7191,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     forDeckId: deck.id,
                                     deckId: deck.id
                                 };
+                                console.log('newMatchup: ', newMatchup);
                                 DeckMatchup.create(newMatchup)
                                 .$promise
                                 .then(function (newMatchup) {
@@ -7339,11 +7224,15 @@ angular.module('app.controllers', ['ngCookies'])
                     if (err) {
                         $scope.errors = [];
                         console.log('series err: ', err);
-                        angular.forEach(err.data.error.details.messages, function(errArray) {
-                            for(var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
+                        if (err.data.error && err.data.details && err.data.details.messages) {
+                            angular.forEach(err.data.error.details.messages, function(errArray) {
+                                for(var i = 0; i < errArray.length; i++) {
+                                    $scope.errors.push(errArray[i]);
+                                }
+                            });
+                        } else {
+                            $scope.errors = [err.data.error.message];
+                        }
                         $scope.showError = true;
                         $window.scrollTo(0,0);
                         $scope.deckSubmitting = false;
@@ -8141,27 +8030,17 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.deleteItem = function (item) {
-				$scope.fetching = true;
                 var index = $scope.poll.items.indexOf(item);
                 $scope.poll.items.splice(index, 1);
-				PollItem.exists({
-					id: item.id
-				}).$promise
-				.then(function (pollExists) {
-					$scope.fetching = false;
-					console.log('pollExists:', pollExists);
-					if (pollExists.exists) {
-						onSave.toDelete.push(item);
-					}
-				})
-				.catch(function (err) {
-					$scope.fetching = false;
-					var index = onSave.toCreate.indexOf(item);
-					if (index !== -1) {
-						onSave.toCreate.splice(index, 1);
-					}
-				});
 				
+				if (item.id) {
+					console.log('added to delete');
+					onSave.toDelete.push(item);
+				}
+				var index = onSave.toCreate.indexOf(item);
+				if (index !== -1) {
+					onSave.toCreate.splice(index, 1);
+				}
                 for (var i = 0; i < $scope.poll.items.length; i++) {
                     $scope.poll.items[i].orderNum = i + 1;
                 }
@@ -8196,6 +8075,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.editPoll = function () {
+				console.log('onSave.toDelete: ', onSave.toDelete);
+				console.log('onSave.toCreate: ', onSave.toCreate);
 				$scope.fetching = true;
 				async.parallel([
 					function(paraCB) { 
@@ -8212,7 +8093,7 @@ angular.module('app.controllers', ['ngCookies'])
 						async.each(onSave.toDelete, function(pollToDel, pollToDelCB) {
 							Poll.items.destroyById({
 								id: poll.id,
-								fk: pollToDel.pollId
+								fk: pollToDel.id
 							}).$promise
 							.then(function (pollDeleted) {
 								return pollToDelCB();
@@ -8228,21 +8109,14 @@ angular.module('app.controllers', ['ngCookies'])
 						});
 					},
 					function(paraCB) {
-						async.each(onSave.toCreate, function(polltoCr, polltoCrCB) {
-							Poll.items.createMany({
-								id: poll.id
-							}).$promise
-							.then(function (pollsItemsCreated) {
-								return pollToCrCB();
-							})
-							.catch(function (err) {
-								return pollToCrCB(err);
-							});
-						}, function(err) {
-							if (err) {
-								return paraCB(err);
-							}
+						Poll.items.createMany({
+							id: poll.id
+						}, onSave.toCreate).$promise
+						.then(function (pollsItemsCreated) {
 							return paraCB();
+						})
+						.catch(function (err) {
+							return paraCB(err);
 						});
 					}
 				], function(err) {
@@ -8600,7 +8474,7 @@ angular.module('app.controllers', ['ngCookies'])
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 // Check if user is admin or contentProvider
                 User.isInRoles({
-                    id: User.getCurrentId(),
+                    uid: User.getCurrentId(),
                     roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
@@ -9145,31 +9019,6 @@ angular.module('app.controllers', ['ngCookies'])
             function saveDeck(deck) {
                 console.log('init deck: ', deck);
 				
-				var testDeck = {
-					deckType: "Donkey",
-					description: "Super Donkylous",
-					name: "Donkey's Name7f",
-					playerClass: "Druid",
-					isPublic: true,
-					cards: [
-						{
-							card: {
-								asdf: 'asdf'
-							},
-							cardId: '540f58378ad084541b6b6262',
-							cardQuantity: 2,
-							deckId: null
-						}
-					]
-				};
-				testDeck.authorId = User.getCurrentId();
-				testDeck.votes = [
-					{
-						userId: User.getCurrentId(),
-						direction: 1
-					}
-				];
-				
                 deck.authorId = User.getCurrentId();
                 deck.votes = [
                     {
@@ -9178,33 +9027,33 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ];
 				
-//				angular.forEach(deck.mulligans, function(mulligan) {
-//					var mulliganIndex = deck.mulligans.indexOf(mulligan);
-//					console.log('mulliganIndex:', mulliganIndex);
-//					
-//					angular.forEach(mulligan.mulligansWithCoin, function(mulliganWithCoin) {
-//						console.log('mulliganWithCoin:', mulliganWithCoin);
-//						var withCoinIndex = mulligan.mulligansWithCoin.indexOf(mulliganWithCoin);
-//						var cardWithCoin = {
-//							cardId: mulliganWithCoin.id
-//						};
-//						mulligan.mulligansWithCoin[withCoinIndex] = cardWithCoin;
-//					});
-//					
-//					angular.forEach(mulligan.mulligansWithoutCoin, function(mulliganWithoutCoin) {
-//						console.log('mulliganWithoutCoin:', mulliganWithoutCoin);
-//						var withoutCoinIndex = mulligan.mulligansWithoutCoin.indexOf(mulliganWithoutCoin);
-//						var cardWithoutCoin = {
-//							cardId: mulliganWithoutCoin.id
-//						};
-//						mulligan.mulligansWithoutCoin[withoutCoinIndex] = cardWithoutCoin;
-//					});
-//					
-//				});
+				var deckSubmitted = angular.copy(deck);
 				
-//				console.log('deck.mulligans:', deck.mulligans);
+				angular.forEach(deckSubmitted.mulligans, function(mulligan) {
+					var mulliganIndex = deckSubmitted.mulligans.indexOf(mulligan);
+					console.log('mulliganIndex:', mulliganIndex);
+					
+					angular.forEach(mulligan.mulligansWithCoin, function(mulliganWithCoin) {
+						console.log('mulliganWithCoin:', mulliganWithCoin);
+						var withCoinIndex = mulligan.mulligansWithCoin.indexOf(mulliganWithCoin);
+						var cardWithCoin = {
+							cardId: mulliganWithCoin.id
+						};
+						mulligan.mulligansWithCoin[withCoinIndex] = cardWithCoin;
+					});
+					
+					angular.forEach(mulligan.mulligansWithoutCoin, function(mulliganWithoutCoin) {
+						console.log('mulliganWithoutCoin:', mulliganWithoutCoin);
+						var withoutCoinIndex = mulligan.mulligansWithoutCoin.indexOf(mulliganWithoutCoin);
+						var cardWithoutCoin = {
+							cardId: mulliganWithoutCoin.id
+						};
+						mulligan.mulligansWithoutCoin[withoutCoinIndex] = cardWithoutCoin;
+					});
+					
+				});
                 
-                Deck.create(deck)
+                Deck.create(deckSubmitted)
                 .$promise
                 .then(function (deckCreated) {
                     console.log('deck created: ', deckCreated);
@@ -9214,227 +9063,14 @@ angular.module('app.controllers', ['ngCookies'])
                 .catch(function (err) {
                     console.log('deck create err: ', err);
                     $scope.deckSubmitting = false;
+					$window.scrollTo(0, 0);
                     AlertService.setError({
                         show: true,
                         lbErr: err,
                         msg: 'Unable to save deck.'
                     });
                 });
-                
-//                async.waterfall([
-//                    function (seriesCallback) {
-//                        Deck.create(deck)
-//                        .$promise
-//                        .then(function (deckInstance) {
-//                            console.log('deck instance: ',deckInstance);
-//                            var deckId = deckInstance.id;
-//                            var deckSlug = deckInstance.slug;
-//                            seriesCallback(null, deckInstance);
-//                        })
-//                        .catch(function (err) {
-//                            if(err) {
-//                                console.log('deck create err: ', err);
-//                                seriesCallback(err);
-//                            }
-//                        });
-//                    },
-//                    function(deckInstance, seriesCallback) {
-//                        // Create cards for deck
-////                        console.log('deckCard deckId: ', deckId);
-//                        async.each(deck.cards, function(deckCard, deckCardCB) {
-//                            var newDeckCard = {
-//                                cardId: deckCard.card.id,
-//                                deckId: deckInstance.id,
-//                                cardQuantity: deckCard.cardQuantity,
-//                                card: deckCard.card
-//                            };
-////                            console.log('deckCard: ', deckCard);
-//                            Deck.cards.create({
-//                                id: deckInstance.id
-//                            }, deckCard)
-//                            .$promise
-//                            .then(function (cardCreated) {
-////                                console.log('card created: ', cardCreated);
-//                                
-//                                // goto next deckCard
-//                                return deckCardCB();
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-//                                    console.log('card create err: ', err);
-//                                    deckCardCB(err);
-//                                }
-//                            });
-//                        }, function(err) {
-//                            if (err) {
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, deckInstance);
-//                        });
-//                    },
-//                    function (deckInstance, seriesCallback) {
-////                        console.log('mulligan deckId: ', deckId);
-//                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
-//                            var newMulligan = {
-//                                className: mulligan.className,
-//                                instructionsWithCoin: mulligan.instructionsWithCoin,
-//                                instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
-//                                deckId: deckInstance.id
-//                            };
-//                            console.log('newMulligan: ', newMulligan);
-//                            Mulligan.create(newMulligan)
-//                            .$promise
-//                            .then(function (mulliganCreated) {
-//                                console.log('mulligan created: ', mulliganCreated);
-//                                
-//                                async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
-//                                    console.log('cardWithCoin: ', cardWithCoin);
-//                                    var realCardWithCoin = {
-//                                        cardId: cardWithCoin.id,
-//                                        mulliganId: mulliganCreated.id,
-//                                        card: cardWithCoin
-//                                    };
-//                                    console.log('realCardWithCoin: ', realCardWithCoin);
-//                                    
-//                                    CardWithCoin.create(realCardWithCoin)
-//                                    .$promise
-//                                    .then(function (cardWithCoinCreated) {
-////                                        console.log('cardWithCoin created: ', cardWithCoinCreated);
-//                                        
-//                                        // goto next cardWithCoin
-//                                        cardWithCoinCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                        if (err) {
-//                                            console.log('err: ', err);
-//                                            cardWithCoinCB(err);
-//                                        }
-//                                    });
-//                                });
-//                                
-//                                async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
-////                                    console.log('cardWithoutCoin: ', cardWithoutCoin);
-//                                    var realCardWithoutCoin = {
-//                                        cardId: cardWithoutCoin.id,
-//                                        mulliganId: mulliganCreated.id,
-//                                        card: cardWithoutCoin
-//                                    };
-////                                    console.log('realCardWithoutCoin: ', realCardWithoutCoin);
-//                                    CardWithoutCoin.create(realCardWithoutCoin)
-//                                    .$promise
-//                                    .then(function (cardWithoutCoinCreated) {
-////                                        console.log('cardWithCoin created: ', cardWithoutCoinCreated);
-//                                        
-//                                        // goto next cardWithCoin
-//                                        cardWithoutCoinCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                        if (err) {
-//                                            console.log('err: ', err);
-//                                            cardWithoutCoinCB(err);
-//                                        }
-//                                    });
-//                                });
-//                                
-//                                // goto next mulligan
-//                                mulliganCB();
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-//                                    mulliganCB(err);
-//                                }
-//                            });
-//                        }, function(err) {
-//                            if (err) {
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, deckInstance);
-//                        });
-//                    },
-//                    function (deckInstance, seriesCallback) {
-//                        console.log('matchup deckId: ', deckInstance.id);
-//                        console.log('deck.matchups: ', deck.matchups);
-//                        console.log('deckSlug: ', deckInstance.slug);
-//                        async.each(deck.matchups, function(matchup, matchupCB) {
-//                            console.log('matchup: ', matchup);
-//                            var newMatchup = {
-//                                deckName: matchup.deckName,
-//                                className: matchup.className,
-//                                forChance: matchup.forChance,
-//                                forDeckId: deckInstance.id,
-//                                deckId: deckInstance.id
-//                            };
-//                            console.log('newMatchup: ', newMatchup);
-//                            DeckMatchup.create(newMatchup)
-//                            .$promise
-//                            .then(function (matchupCreated) {
-////                                console.log('matchup created: ', matchupCreated);
-//                                
-//                                // goto next
-//                                matchupCB();
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-//                                    matchupCB(err);
-//                                }
-//                            });
-//                        }, function(err) {
-//                            if (err) {
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, deckInstance);
-//                        });
-//                    }
-//                ], 
-//                function(err, deckInstance) {
-//                    if (err) {
-//                        $scope.errors = [];
-//                        console.log('series err: ', err);
-//                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-//                            angular.forEach(err.data.error.details.messages, function(errArray) {
-//                                for (var i = 0; i < errArray.length; i++) {
-//                                    $scope.errors.push(errArray[i]);
-//                                }
-//                            });
-//                        } else if (err.data.error.message) {
-//                            $scope.errors.push(err.data.error.message);
-//                        }
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                        $scope.deckSubmitting = false;
-//                        return false;
-//                    }
-//                    console.log('Deck Created!');
-//                    $scope.deckSubmitting = false;
-//                    $state.transitionTo('app.hs.decks.deck', { slug: deckInstance.slug });
-//                });
             }
-
-            var box;
-
-            // login for modal
-//        $scope.login = function login(email, password) {
-//            if (email !== undefined && password !== undefined) {
-//                UserService.login(email, password).success(function(data) {
-//                    AuthenticationService.setLogged(true);
-//                    AuthenticationService.setAdmin(data.isAdmin);
-//                    AuthenticationService.setProvider(data.isProvider);
-//
-//                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-//                    SubscriptionService.setTsPlan(data.subscription.plan);
-//                    SubscriptionService.setExpiry(data.subscription.expiry);
-//
-//                    $window.sessionStorage.userID = data.userID;
-//                    $window.sessionStorage.username = data.username;
-//                    $window.sessionStorage.email = data.email;
-//                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-//                    box.modal('hide');
-//                    $scope.saveDeck();
-//                }).error(function() {
-//                    $scope.showError = true;
-//                });
-//            }
-//        }
         }
     ])
     .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
@@ -10024,7 +9660,9 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             // Updates Deck, Mulligan, and Matchup Models
-            function updateDeck(deck) {
+            function updateDeck(deckSubmitted) {
+				var deck = angular.copy(deckSubmitted);
+				
                 async.series([
                     function (seriesCallback) {
                         Deck.upsert({
@@ -10109,8 +9747,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
                                         var realCardWithCoin = {
                                             cardId: cardWithCoin.id,
-                                            mulliganId: currentMulligan.id,
-                                            card: cardWithCoin
+                                            deckId: deck.id,
                                         };
                                             console.log('realCardWithCoin: ', realCardWithCoin);
 
@@ -10150,8 +9787,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
                                         var realCardWithoutCoin = {
                                             cardId: cardWithoutCoin.id,
-                                            mulliganId: currentMulligan.id,
-                                            card: cardWithoutCoin
+                                            deckId: deck.id
                                         };
                                             console.log('realCardWithoutCoin: ', realCardWithoutCoin);
 
@@ -10935,7 +10571,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // related
             $scope.relatedActive = function () {
-                var related = $scope.article.relatedArticles;
+                var related = $scope.article.related;
                 if (!related || !related.length) { return false; }
                 for (var i = 0; i < related.length; i++) {
                     if (related[i].isActive) { return true; }
@@ -12317,260 +11953,308 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService) {
-            // default hero
-            var defaultHero = {
-                    name : '',
-                    description: '',
-                    title: '',
-                    role: HOTS.roles[0],
-                    heroType: HOTS.types[0],
-                    universe: HOTS.universes[0],
-                    manaType: HOTS.manaTypes[0],
-                    abilities: [],
-                    talents: [],
-                    characters: [],
-                    price: {
-                        gold: ''
-                    },
-                    className: '',
-                    active: true
-                },
-                defaultAbility = {
-                    name: '',
-                    abilityType: HOTS.abilityTypes[0],
-                    mana: '',
-                    cooldown: '',
-                    description: '',
-                    damage: '',
-                    healing: '',
-                    className: '',
-                    orderNum: 1
-                },
-                defaultTalent = {
-                    name: '',
-                    tier: HOTS.tiers[0],
-                    description: '',
-                    ability: undefined,
-                    className: '',
-                    orderNum: 1
-                },
-                defaultCharacter = {
-                    name: '',
-                    stats: {
-                        base: {
-                            health: 0,
-                            healthRegen: 0,
-                            mana: 0,
-                            manaRegen: 0,
-                            attackSpeed: 0,
-                            range: 0,
-                            damage: 0
-                        },
-                        gain: {
-                            health: 0,
-                            healthRegen: 0,
-                            mana: 0,
-                            manaRegen: 0,
-                            attackSpeed: 0,
-                            range: 0,
-                            damage: 0
-                        }
-                    }
-                };
+    .controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 'Hero', 'Ability', 'Talent', 'HeroTalent',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService, Hero, Ability, Talent, HeroTalent) {
+          // default hero
+          var defaultHero = {
+                  name : '',
+                  description: '',
+                  title: '',
+                  role: HOTS.roles[0],
+                  heroType: HOTS.types[0],
+                  universe: HOTS.universes[0],
+                  manaType: HOTS.manaTypes[0],
+                  abilities: [],
+                  talents: [],
+                  characters: [],
+                  price: {
+                      gold: ''
+                  },
+                  className: '',
+                  active: true
+              },
+              defaultAbility = {
+                  name: '',
+                  abilityType: HOTS.abilityTypes[0],
+                  mana: '',
+                  cooldown: '',
+                  description: '',
+                  damage: '',
+                  healing: '',
+                  className: '',
+                  orderNum: 1
+              },
+              defaultTalent = {
+                  name: '',
+                  tier: HOTS.tiers[0],
+                  description: '',
+                  ability: undefined,
+                  className: '',
+                  orderNum: 1
+              },
+              defaultCharacter = {
+                  name: '',
+                  stats: {
+                      base: {
+                          health: 0,
+                          healthRegen: 0,
+                          mana: 0,
+                          manaRegen: 0,
+                          attackSpeed: 0,
+                          range: 0,
+                          damage: 0
+                      },
+                      gain: {
+                          health: 0,
+                          healthRegen: 0,
+                          mana: 0,
+                          manaRegen: 0,
+                          attackSpeed: 0,
+                          range: 0,
+                          damage: 0
+                      }
+                  }
+              };
 
-            // load hero
-            $scope.hero = angular.copy(defaultHero);
+          // load hero
+          $scope.hero = angular.copy(defaultHero);
 
-            // roles
-            $scope.roles = HOTS.roles;
+          // roles
+          $scope.roles = HOTS.roles;
 
-            // types
-            $scope.heroTypes = HOTS.types;
+          // types
+          $scope.heroTypes = HOTS.types;
 
-            // universe
-            $scope.universes = HOTS.universes;
+          // universe
+          $scope.universes = HOTS.universes;
 
-            // mana types
-            $scope.manaTypes = HOTS.manaTypes;
+          // mana types
+          $scope.manaTypes = HOTS.manaTypes;
 
-            // select options
-            $scope.heroActive = [
-                { name: 'Yes', value: true },
-                { name: 'No', value: false }
-            ];
+          //talents
+          $scope.talentTiers = HOTS.tiers;
 
-            // abilities
-            $scope.abilityTypes = HOTS.abilityTypes;
-            var box;
-            $scope.abilityAddWnd = function () {
-                console.log('sup');
-                $scope.currentAbility = angular.copy(defaultAbility);
-                box = bootbox.dialog({
-                    title: 'Add Ability',
-                    message: $compile('<div ability-add-form></div>')($scope)
-                });
-            };
+          // select options
+          $scope.heroActive = [
+              { name: 'Yes', value: true },
+              { name: 'No', value: false }
+          ];
 
-            $scope.abilityEditWnd = function (ability) {
-                $scope.currentAbility = ability;
-                box = bootbox.dialog({
-                    title: 'Edit Ability',
-                    message: $compile('<div ability-edit-form></div>')($scope)
-                });
-            };
+          // abilities
+          $scope.abilityTypes = HOTS.abilityTypes;
+          var box;
+          $scope.abilityAddWnd = function () {
+              console.log('sup');
+              $scope.currentAbility = angular.copy(defaultAbility);
+              box = bootbox.dialog({
+                  title: 'Add Ability',
+                  message: $compile('<div ability-add-form></div>')($scope)
+              });
+          };
 
-            $scope.addAbility = function () {
-                $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
-                $scope.hero.abilities.push($scope.currentAbility);
-                box.modal('hide');
-                $scope.currentAbility = false;
-            };
+          $scope.abilityEditWnd = function (ability) {
+              $scope.currentAbility = ability;
+              box = bootbox.dialog({
+                  title: 'Edit Ability',
+                  message: $compile('<div ability-edit-form></div>')($scope)
+              });
+          };
 
-            $scope.editAbility = function (ability) {
-                box.modal('hide');
-                $scope.currentAbility = false;
-            };
+          $scope.addAbility = function () {
+              $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
+              $scope.hero.abilities.push($scope.currentAbility);
+              box.modal('hide');
+              $scope.currentAbility = false;
+          };
 
-            $scope.deleteAbility = function (ability) {
-                var index = $scope.hero.abilities.indexOf(ability);
-                $scope.hero.abilities.splice(index, 1);
+          $scope.editAbility = function (ability) {
+              box.modal('hide');
+              $scope.currentAbility = false;
+          };
 
-                for (var i = 0; i < $scope.hero.abilities.length; i++) {
-                    $scope.hero.abilities[i].orderNum = i + 1;
-                }
-            };
+          $scope.deleteAbility = function (ability) {
+              var index = $scope.hero.abilities.indexOf(ability);
+              $scope.hero.abilities.splice(index, 1);
 
-            // talents
-            $scope.talentTiers = HOTS.tiers;
-            $scope.talentAddWnd = function () {
-                $scope.currentTalent = angular.copy(defaultTalent);
+              for (var i = 0; i < $scope.hero.abilities.length; i++) {
+                  $scope.hero.abilities[i].orderNum = i + 1;
+              }
+          };
+
+          // talents
+          $scope.talentAddWnd = function () {
+              $scope.currentTalent = angular.copy(defaultTalent);
 //                $scope.talentAbilities = $scope.hero.abilities;
-                $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
-                box = bootbox.dialog({
-                    title: 'Add Talent',
-                    message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
-                });
-            };
+              $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
+              box = bootbox.dialog({
+                  title: 'Add Talent',
+                  message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
+              });
+          };
 
-            $scope.talentEditWnd = function (talent) {
-                $scope.currentTalent = talent;
+          $scope.talentEditWnd = function (talent) {
+              $scope.currentTalent = talent;
 //                $scope.talentAbilities = $scope.hero.abilities;
-                $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
-                box = bootbox.dialog({
-                    title: 'Edit Talent',
-                    message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
-                });
-            };
+              $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
+              box = bootbox.dialog({
+                  title: 'Edit Talent',
+                  message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
+              });
+          };
 
-            $scope.addTalent = function () {
-                if (_.isUndefined($scope.talents)) {
-                    $scope.talents = [];
+          $scope.addTalent = function (talent) {
+              if (_.isUndefined($scope.talents)) {
+                  $scope.talents = [];
+              }
+
+              $scope.currentTalent.orderNum = $scope.talents.length + 1;
+              $scope.talents.push($scope.currentTalent);
+
+              box.modal('hide');
+              $scope.currentTalent = undefined;
+          };
+
+          $scope.editTalent = function (talent) {
+              box.modal('hide');
+              $scope.currentAbility = false;
+          };
+
+          $scope.deleteTalent = function (talent) {
+              var index = $scope.talents.indexOf(talent);
+              $scope.talents.splice(index, 1);
+
+              for (var i = 0; i < $scope.talents.length; i++) {
+                  $scope.talents[i].orderNum = i + 1;
+              }
+          };
+
+          // characters
+          $scope.charAddWnd = function () {
+              $scope.currentCharacter = angular.copy(defaultCharacter);
+              box = bootbox.dialog({
+                  title: 'Add Character',
+                  message: $compile('<div char-add-form></div>')($scope)
+              });
+          };
+
+          $scope.charEditWnd = function (character) {
+              $scope.currentCharacter = character;
+              box = bootbox.dialog({
+                  title: 'Edit Character',
+                  message: $compile('<div char-edit-form></div>')($scope)
+              });
+          };
+
+          $scope.addCharacter = function () {
+              $scope.hero.characters.push($scope.currentCharacter);
+              box.modal('hide');
+              $scope.currentCharacter = false;
+          };
+
+          $scope.editCharacter = function (character) {
+              box.modal('hide');
+              $scope.currentCharacter = false;
+          };
+
+          $scope.deleteChar = function (character) {
+              var index = $scope.hero.characters.indexOf(character);
+              $scope.hero.characters.splice(index, 1);
+          };
+
+          $scope.updateDND = function (list, index) {
+              list.splice(index, 1);
+
+              for (var i = 0; i < list.length; i++) {
+                  list[i].orderNum = i + 1;
+              }
+          };
+
+          $scope.addHero = function () {
+            var hero = angular.copy($scope.hero);
+
+
+            _.each($scope.talents, function (talVal) {
+              var t = _.find(hero.abilities, function (abiVal) { return talVal.ability === abiVal.name });
+              delete talVal.ability;
+
+              if (_.isUndefined(t)) {
+                hero.talents.push(talVal);
+              } else {
+                if (_.isUndefined(t.talents)) {
+                  t.talents = [];
                 }
-                
-                $scope.currentTalent.orderNum = $scope.talents.length + 1;
-                $scope.talents.push($scope.currentTalent);
-                
-                box.modal('hide');
-                $scope.currentTalent = false;
-            };
 
-            $scope.editTalent = function (talent) {
-                box.modal('hide');
-                $scope.currentAbility = false;
-            };
+                t.talents.push(talVal);
+              }
+            });
 
-            $scope.deleteTalent = function (talent) {
-                var index = $scope.talents.indexOf(talent);
-                $scope.talents.splice(index, 1);
+            var abilToAdd = hero.abilities;
+            var talToAdd  = hero.talents;
 
-                for (var i = 0; i < $scope.talents.length; i++) {
-                    $scope.talents[i].orderNum = i + 1;
+            delete hero.abilities;
+            delete hero.talents;
+
+            Hero.create({}, hero)
+            .$promise
+            .then(function (heroData) {
+              async.series([
+                function(seriesCb) {
+                  async.each(abilToAdd, function (abil, abilCb) {
+                    var tempTals = abil.talents;
+                    delete abil.talents;
+
+                    abil.heroId = heroData.id;
+                    Ability.create({}, abil)
+                    .$promise
+                    .then(function (abilData) {
+                      async.each(tempTals, function(abilTal, abilTalCb) {
+                        Talent.upsert({}, abilTal)
+                        .$promise
+                        .then(function (abilTalData) {
+                          HeroTalent.create({}, {
+                            heroId: heroData.id,
+                            talentId: abilTalData.id,
+                            abilityId: abilData.id,
+                            tier: abilTal.tier,
+                            orderNum: abilTal.orderNum
+                          })
+                          .$promise
+                          .then(function (heroTalData) {
+                            return abilTalCb();
+                          }).catch(function (err) {return seriesCb(err)});
+                        }).catch(function (err) {return seriesCb(err)});
+                      }, abilCb);
+                    }).catch(function (err) {return seriesCb(err)});
+                  }, seriesCb(undefined));
+                },
+                function (seriesCb) {
+                  async.each(talToAdd, function (tal, eachCb) {
+                    Talent.upsert({}, tal)
+                    .$promise
+                    .then(function (talData) {
+                      HeroTalent.create({}, {
+                        heroId: heroData.id,
+                        talentId: talData.id,
+                        tier: tal.tier,
+                        orderNum: tal.orderNum
+                      })
+                      .$promise
+                      .then(eachCb())
+                      .catch(function (err) { return seriesCb(err) });
+                    })
+                    .catch(function (err) { return seriesCb(err) });
+                  }, seriesCb(undefined))
                 }
-            };
-
-            // characters
-            $scope.charAddWnd = function () {
-                $scope.currentCharacter = angular.copy(defaultCharacter);
-                box = bootbox.dialog({
-                    title: 'Add Character',
-                    message: $compile('<div char-add-form></div>')($scope)
-                });
-            };
-
-            $scope.charEditWnd = function (character) {
-                $scope.currentCharacter = character;
-                box = bootbox.dialog({
-                    title: 'Edit Character',
-                    message: $compile('<div char-edit-form></div>')($scope)
-                });
-            };
-
-            $scope.addCharacter = function () {
-                $scope.hero.characters.push($scope.currentCharacter);
-                box.modal('hide');
-                $scope.currentCharacter = false;
-            };
-
-            $scope.editCharacter = function (character) {
-                box.modal('hide');
-                $scope.currentCharacter = false;
-            };
-
-            $scope.deleteChar = function (character) {
-                var index = $scope.hero.characters.indexOf(character);
-                $scope.hero.characters.splice(index, 1);
-            };
-
-            $scope.updateDND = function (list, index) {
-                list.splice(index, 1);
-
-                for (var i = 0; i < list.length; i++) {
-                    list[i].orderNum = i + 1;
-                }
-            };
-
-            $scope.addHero = function () {
-                console.log($scope.hero);
-                
-                
-                _.each($scope.talents, function (talVal) {
-                    var t = _.find($scope.hero.abilities, function (abiVal) { return talVal.ability === abiVal.name });
-                    delete talVal.ability;
-                    
-                    if (_.isUndefined(t)) {
-                        $scope.hero.talents.push(talVal);
-                    } else {
-                        if (_.isUndefined(t.talents)) {
-                            t.talents = [];
-                        }
-                        
-                        t.talents.push(talVal);
-                    }
-                })
-                
-                console.log($scope.hero);
-                
-                //TODO: POST THIS BITCH
-                
-//                $scope.showError = false;
-//
-//                AdminHeroService.addHero($scope.hero).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been added successfully.' });
-//                        $state.go('app.admin.hots.heroes.list');
-//                    }
-//                });
-            };
+              ], function (err) {
+                if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
+                else { console.log('success!'); }
+              })
+            }).catch(function (err) { console.log(err); });
+          };
         }
     ])
-    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'talents',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, talents) {
+    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero) {
             // defaults
             var defaultAbility = {
                     name: '',
@@ -12617,7 +12301,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load hero
             $scope.hero = hero;
-            $scope.hero.talents = talents;
             
             // roles
             $scope.roles = HOTS.roles;
@@ -12681,7 +12364,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.hero.abilities[i].orderNum = i + 1;
                 }
             };
-
+          
             // talents
             $scope.talentTiers = HOTS.tiers;
             $scope.talentAddWnd = function () {
@@ -12814,7 +12497,21 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
             
             $scope.openTalent = function (title, talent) {
-                $scope.currentTalent = talent || {};
+              $scope.loading = true;
+              
+              if(talent) {
+                Talent.findById({
+                  id: talent.id
+                })
+                .$promise
+                .then(function(data) {
+                  $scope.loading = false;
+                  $scope.currentTalent = data;
+                });
+              } else {
+                $scope.currentTalent = undefined;
+                $scope.loading = false;
+              }
                 
                 box = bootbox.dialog({
                     title: title,
@@ -14025,8 +13722,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService',
-        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService) {
+    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
+        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
 
             $scope.tempostormGuides = dataTempostormGuides;
 //            $scope.tempostormGuideTalents = tempostormTalents;
@@ -14040,6 +13737,7 @@ angular.module('app.controllers', ['ngCookies'])
             // filtering
             $scope.heroes = dataHeroes;
             $scope.maps = dataMaps;
+            $scope.hotsTiers = HOTS.tiers;
 
             $scope.filters = {
                 roles: [],
@@ -14067,7 +13765,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
 
                      if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
-                        async.series([
+                        async.parallel([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, null, 1, function(err, guides) {
                                   console.log(guides);
@@ -14101,7 +13799,7 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         ]);
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                        async.series([
+                        async.parallel([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, null, 1, function (err, guides) {
 
@@ -14132,7 +13830,7 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         ])
                     } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
-                        async.series([
+                        async.parallel([
                             function (seriesCallback) {
                                 $scope.topGuides = null;
                                 initializing = false;
@@ -14158,7 +13856,7 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         ]);
                     } else {
-                        async.series([
+                        async.parallel([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getGuides($scope.filters, null, 1, function(err, guides) {
                                   console.log(guides);
@@ -14221,6 +13919,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getTalent = function (hero, guide, tier, isFeatured) {
+//              console.log(hero);
               var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
               var out = (t.talent.className !== '__missing') ? t.talent : { className: '__missing', name: "Missing Talent" };
               
@@ -14637,7 +14336,11 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
+                $scope.guide.slug = Util.slugify($scope.guide.name);
+                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                
                 var keys = ['name',
+                            'authorId',
                             'slug',
                             'guideType',
                             'description',
@@ -14645,6 +14348,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'premium',
                             'votes',
                             'against',
+                            'synergy',
                             'content',
                             'isFeatured',
                             'isPublic',
@@ -14653,10 +14357,6 @@ angular.module('app.controllers', ['ngCookies'])
                             'voteScore'
                            ];
                 var stripped = Util.cleanObj($scope.guide, keys);
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                    
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
-                
                 var temp = _.map($scope.guide.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
@@ -14668,8 +14368,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                   });
                 });
+                
                 $scope.guide.guideTalents = _.flatten(temp);
-
                 Guide.create({}, stripped)
                 .$promise
                 .then(function (guideData) {
@@ -14701,7 +14401,7 @@ angular.module('app.controllers', ['ngCookies'])
                     .$promise
                     .then(function (guideTalentData) {
                       console.log("YEP:", guideTalentData);
-                      $scope.app.settings.guide = null;
+//                      $scope.app.settings.guide = null;
                       $state.go('app.hots.guides.guide', { slug: guideData.slug });
                     })
                     .catch(function (err) {
@@ -15218,7 +14918,8 @@ angular.module('app.controllers', ['ngCookies'])
                         out.push(abilities[i]);
                     }
                 }
-                return out;
+              
+                return _.sortBy(out, function (val) { return val.orderNum });
             };
 
             $scope.getHeroics = function () {
@@ -15229,7 +14930,7 @@ angular.module('app.controllers', ['ngCookies'])
                         out.push(abilities[i]);
                     }
                 }
-                return out;
+                return _.sortBy(out, function (val) { return val.orderNum });
             };
 
             $scope.getTrait = function () {
@@ -15391,53 +15092,75 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getHealth = function () {
                 var char = $scope.getCurrentCharacter(),
-                    level = $scope.level;
+                    level = $scope.level,
+                    val = char.stats.base.health * Math.pow(1 + char.stats.gain.health, level - 1);
 
-                return (char.stats.base.health + ((level * char.stats.gain.health) - char.stats.gain.health));
+                //return (char.stats.base.health + ((level * char.stats.gain.health) - char.stats.gain.health));
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getHealthRegen = function () {
                 var char = $scope.getCurrentCharacter(),
                     level = $scope.level,
-                    val = (char.stats.base.healthRegen + ((level * char.stats.gain.healthRegen) - char.stats.gain.healthRegen));
+                    val = char.stats.base.healthRegen * Math.pow(1 + char.stats.gain.healthRegen, level - 1);
 
-                return (isNum(val)) ? val : +val.toFixed(2);
+                //return (isNum(val)) ? val : +val.toFixed(2);
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getMana = function () {
                 var char = $scope.getCurrentCharacter(),
-                    level = $scope.level;
+                    level = $scope.level,
+                    val = char.stats.base.mana + (char.stats.gain.mana * (level - 1));
 
-                return (char.stats.base.mana + ((level * char.stats.gain.mana) - char.stats.gain.mana)) || 'N/A';
+                //return (char.stats.base.mana + ((level * char.stats.gain.mana) - char.stats.gain.mana)) || 'N/A';
+                if (val) {
+                    return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
+                } else {
+                    return 'N/A';
+                }
             };
             $scope.getManaRegen = function () {
                 var char = $scope.getCurrentCharacter(),
                     level = $scope.level,
-                    val = (char.stats.base.manaRegen + ((level * char.stats.gain.manaRegen) - char.stats.gain.manaRegen));
+                    val = char.stats.base.manaRegen + (char.stats.gain.manaRegen * (level - 1));
 
-                return (isNum(val)) ? val || 'N/A' : +val.toFixed(2);
+                //return (isNum(val)) ? val || 'N/A' : +val.toFixed(2);
+                if (val) {
+                    return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
+                } else {
+                    return 'N/A';
+                }
+
             };
             $scope.getSpeed = function () {
                 var char = $scope.getCurrentCharacter(),
                     level = $scope.level,
-                    val = (char.stats.base.attackSpeed + ((level * char.stats.gain.attackSpeed) - char.stats.gain.attackSpeed));
+                    val = char.stats.base.attackSpeed * Math.pow(1 + char.stats.gain.attackSpeed, level - 1);
 
-                return (isNum(val)) ? val : +val.toFixed(2);
+                //return (isNum(val)) ? val : +val.toFixed(2);
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getRange = function () {
                 var char = $scope.getCurrentCharacter(),
                     level = $scope.level,
-                    val = (char.stats.base.range + ((level * char.stats.gain.range) - char.stats.gain.range));
+                    val = char.stats.base.range * Math.pow(1 + char.stats.gain.range, level - 1);
 
-                return (isNum(val)) ? val : +val.toFixed(2);
+                //return (isNum(val)) ? val : +val.toFixed(2);
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getDamage = function () {
                 var char = $scope.getCurrentCharacter(),
-                    level = $scope.level;
+                    level = $scope.level,
+                    val = char.stats.base.damage * Math.pow(1 + char.stats.gain.damage, level - 1);
 
-                return (char.stats.base.damage + ((level * char.stats.gain.damage) - char.stats.gain.damage));
+                //return (char.stats.base.damage + ((level * char.stats.gain.damage) - char.stats.gain.damage));
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
             };
             $scope.getDPS = function () {
                 var val = ($scope.getSpeed() * $scope.getDamage());
-                return (isNum(val)) ? val : +val.toFixed(2);
+                            //e + h * parseInt(f) : e * Math.pow(1 + h, parseInt(f))
+                console.log('val: ', val);
+                console.log('new val: ', val.toString().indexOf('.'));
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val).toFixed(2);
             };
 
             // copy

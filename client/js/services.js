@@ -1313,7 +1313,7 @@ angular.module('app.services', [])
         Hunter: ['Rexxar', 'Alleria'],
         Druid: ['Malfurion']
     };
-    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
+    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];    
     hs.deckTypes = ['None', 'Aggro', 'Control', 'Midrange', 'Combo', 'Theory Craft'];
     hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament', 'League of Explorers'];
 
@@ -1329,7 +1329,7 @@ angular.module('app.services', [])
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
     hots.heroRows = [9, 8, 9, 8, 7];
-    hots.mapRows = [5,4];
+    hots.mapRows = [3,4,3];
 
     hots.genStats = function () {
         var stats = [],
@@ -2488,54 +2488,62 @@ angular.module('app.services', [])
 .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
     return {
         getArticles: function (filters, isFeatured, limit, finalCallback) {
-            async.waterfall([
-                function(seriesCallback) {
-                    var where = {};
-                    
-                    if ((!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) && _.isEmpty(filters.heroes)) {
-                        where.and = [];
-                        if (!_.isEmpty(filters.roles)) {
-                            where.and.push({ role: { inq: filters.roles }})
-                        }
+          async.waterfall([
+            function(seriesCallback) {
+              var where = {};
 
-                        if (!_.isEmpty(filters.universes)) {
-                            where.and.push({ universe: { inq: filters.universes }})
-                        }
-                    } else if (!_.isEmpty(filters.heroes)) {
-                        var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
-                        where.name = { inq: heroNames };
-                    }
-
-                    Hero.find({
-                        filter: {
-                            where: where,
-                            fields: ["name"]
-                        }
-                    }, function (heroes) {
-                        return seriesCallback(undefined, heroes);
-                    }, function (err) {
-                        console.log(err);
-                        return finalCallback(err);
-                    });
-                },
-                function(heroes, seriesCallback) {
-                    heroes = _.map(heroes, function(hero) { return hero.name; })
-                    
-                    Article.find({
-                        filter: {
-                            where: {
-                                classTags: { inq: heroes }
-                            }
-                        }
-                    }, function (articles) {
-                        return finalCallback(undefined, articles);
-                    }, function (err) {
-                        console.log(err);
-                        return finalCallback(err);
-                    })
+              if ((!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) && _.isEmpty(filters.heroes)) {
+                where.and = [];
+                if (!_.isEmpty(filters.roles)) {
+                  where.and.push({ role: { inq: filters.roles }})
                 }
-            ])
-            
+
+                if (!_.isEmpty(filters.universes)) {
+                  where.and.push({ universe: { inq: filters.universes }})
+                }
+              } else if (!_.isEmpty(filters.heroes)) {
+                var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
+                where.name = { inq: heroNames };
+              }
+
+              Hero.find({
+                filter: {
+                  where: where,
+                  fields: ["name"]
+                }
+              }, function (heroes) {
+                return seriesCallback(undefined, heroes);
+              }, function (err) {
+                console.log(err);
+                return finalCallback(err);
+              });
+            },
+            function(heroes, seriesCallback) {
+              heroes = _.map(heroes, function(hero) { return hero.name; })
+
+              Article.find({
+                filter: {
+                  where: {
+                    classTags: { inq: heroes }
+                  },
+                  fields: {
+                    title: true,
+                    description: true,
+                    photoNames: true,
+                    themeName: true,
+                    slug: true,
+                    articleType: true,
+                    premium: true
+                  }
+                }
+              }, function (articles) {
+                return finalCallback(undefined, articles);
+              }, function (err) {
+                console.log(err);
+                return finalCallback(err);
+              })
+            }
+          ])
         },
         getGuides: function (filters, isFeatured, limit, finalCallback) {
             var order = "voteScore DESC",
@@ -2603,49 +2611,61 @@ angular.module('app.services', [])
                     guideWhere.id = { inq: selectedGuideIds };
                     
                     Guide.find({
-                        filter: {
-                            limit: limit,
-                            order: order,
-                            where: guideWhere,
-                            fields: [
-                                "name", 
-                                "authorId", 
-                                "slug", 
-                                "voteScore", 
-                                "guideType", 
-                                "premium", 
-                                "id", 
-                                "talentTiers",
-                                "createdDate"
-                            ],
-                            include: [
+                      filter: {
+                        limit: limit,
+                        order: order,
+                        where: guideWhere,
+                        fields: [
+                          "name", 
+                          "authorId", 
+                          "slug", 
+                          "voteScore", 
+                          "guideType", 
+                          "premium", 
+                          "id", 
+                          "talentTiers",
+                          "createdDate"
+                        ],
+                        include: [
+                          {
+                            relation: "author",
+                            scope: {
+                              fields: ['username']
+                            }
+                          },
+                          {
+                            relation: 'guideHeroes',
+                            scope: {
+                              include: [
                                 {
-                                    relation: "author"
+                                  relation: 'talents'
                                 },
                                 {
-                                  relation: 'guideHeroes',
+                                  relation: 'hero',
                                   scope: {
-                                    include: [
-                                      {
-                                        relation: 'talents'
-                                      },
-                                      {
-                                        relation: 'hero',
-                                        scope: {
-                                          include: ['talents']
-                                        }
-                                      }
-                                    ]
+                                    include: (isFeatured !== null) ? false : ['talents'],
+                                    fields: ['name', 'className']
                                   }
-                                },
-                                {
-                                  relation: 'guideTalents',
-                                  scope: {
-                                    include: ['talent']
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            relation: 'guideTalents',
+                            scope: {
+                              include: {
+                                relation: 'talent',
+                                scope: {
+                                  fields: {
+                                    name: true,
+                                    className: true
                                   }
-                                },
-                            ]
-                        }
+                                }
+                              },
+                            }
+                          },
+                        ]
+                      }
                     }).$promise.then(function (guides) {
                         return finalCallback(undefined, guides);
                     }).catch(function (err) {
@@ -2731,32 +2751,44 @@ angular.module('app.services', [])
                                 "createdDate"
                             ],
                             include: [
-                                {
-                                    relation: "author"
-                                },
-                                {
-                                  relation: 'guideHeroes',
+                            {
+                              relation: "author",
+                              scope: {
+                                fields: ['username']
+                              }
+                            },
+                            {
+                              relation: 'guideHeroes',
+                              scope: {
+                                include: [
+                                  {
+                                    relation: 'talents'
+                                  },
+                                  {
+                                    relation: 'hero',
+                                    scope: {
+                                      include: (isFeatured !== null) ? false : ['talents'],
+                                      fields: ['name', 'className']
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              relation: 'guideTalents',
+                              scope: {
+                                include: {
+                                  relation: 'talent',
                                   scope: {
-                                    include: [
-                                      {
-                                        relation: 'talents'
-                                      },
-                                      {
-                                        relation: 'hero',
-                                        scope: {
-                                          include: ['talents']
-                                        }
-                                      }
-                                    ]
+                                    fields: {
+                                      name: true,
+                                      className: true
+                                    }
                                   }
                                 },
-                                {
-                                  relation: 'guideTalents',
-                                  scope: {
-                                    include: ['talent']
-                                  }
-                                },
-                            ]
+                              }
+                            },
+                          ]
                         }
                     }).$promise.then(function (guides) {
                         return finalCallback(undefined, guides);
@@ -2830,7 +2862,10 @@ angular.module('app.services', [])
                                 ],
                                 include: [
                                     {
-                                        relation: "author"
+                                      relation: "author",
+                                      scope: {
+                                        fields: ['username']
+                                      }
                                     },
                                     {
                                         relation: "maps"
@@ -2941,35 +2976,44 @@ angular.module('app.services', [])
                                 "createdDate"
                             ],
                             include: [
-                                {
-                                    relation: "author"
-                                },
-                                {
-                                  relation: 'guideHeroes',
+                            {
+                              relation: "author",
+                              scope: {
+                                fields: ['username']
+                              }
+                            },
+                            {
+                              relation: 'guideHeroes',
+                              scope: {
+                                include: [
+                                  {
+                                    relation: 'talents'
+                                  },
+                                  {
+                                    relation: 'hero',
+                                    scope: {
+                                      include: (isFeatured !== null) ? false : ['talents'],
+                                      fields: ['name', 'className']
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              relation: 'guideTalents',
+                              scope: {
+                                include: {
+                                  relation: 'talent',
                                   scope: {
-                                    include: [
-                                      {
-                                        relation: 'talents'
-                                      },
-                                      {
-                                        relation: 'hero',
-                                        scope: {
-                                          include: ['talents']
-                                        }
-                                      }
-                                    ]
+                                    fields: {
+                                      name: true,
+                                      className: true
+                                    }
                                   }
                                 },
-                                {
-                                  relation: 'guideTalents',
-                                  scope: {
-                                    include: ['talent']
-                                  }
-                                },
-                                {
-                                    relation: "maps"
-                                }
-                            ]
+                              }
+                            },
+                          ]
                         }
                     }).$promise.then(function (guides) {
                         return seriesCallback(undefined, guides);
