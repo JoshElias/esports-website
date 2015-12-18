@@ -1,4 +1,4 @@
-tempo.pid
-**/logs/**
+server/logs/*
+client/**/*
 newrelic_agent.log
-**/photos/**
+server/tempostorm-web-server.pid
