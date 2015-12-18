@@ -2,3 +2,5 @@ server/logs/*
 client/**/*
 newrelic_agent.log
 server/tempostorm-web-server.pid
+node_modules/**/*
+newrelic.js

@@ -1053,8 +1053,8 @@ var redbullData = [
         }
     }
 ]
-/*
+
 function createRedbullExpansions(finalCb) {
 
 }
-*/
+
