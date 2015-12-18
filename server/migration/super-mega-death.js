@@ -21,11 +21,14 @@ module.exports = function(_server) {
         createSnapshotModels,
         createUserIdentities,
         createUserRoles,
-        createRedbullExpansions
+        //createRedbullExpansions
     ],
     function(err) {
         console.log("Finished in ", convertMillisecondsToDigitalClock(Date.now() - startTime));
-        if(err) console.log("error with super mega death script:", err);
+        if(err) {
+            console.log("error with super mega death script:", err);
+            console.log(err.stack);
+        }
         else console.log("Donnerino");
     });
 };
@@ -322,9 +325,12 @@ function associateCommentReplies(finalCb) {
         }
 
         console.log("comments length:",comments.length);
-        async.eachSeries(comments, async.ensureAsync(function(comment, callback) {
+        async.each(comments, async.ensureAsync(function(comment, callback) {
             console.log("iterating on comment:", comment);
-            async.eachSeries(comment.oldReplies, async.ensureAsync(function(replyId, innerCallback) {
+            if(!Array.isArray(comment.oldReplies)) {
+                return callback();
+            }
+            async.each(comment.oldReplies, async.ensureAsync(function(replyId, innerCallback) {
                 console.log("iterating on reply:", replyId);
                 Comment.updateAll({id:replyId.toString()}, {parentCommentId:comment.id.toString()}, function(err) {
                     if(!err) console.log("added parent ID:"+comment.id.toString()+" to comment:"+replyId.toString());
@@ -340,14 +346,16 @@ function associateRelatedArticles(finalCb) {
 
     Article.find({}, function(err, articles) {
         if(err) {
-            console.log("err finding articles");
             return finalCb(err);
         }
 
-        async.eachSeries(articles, async.ensureAsync(function(article, callback) {
-            async.eachSeries(article.oldRelatedArticles, async.ensureAsync(function(relatedArticleId, innerCallback) {
-                Article.findById(relatedArticleId, function(err, relatedArticleInstance) {
-                    if(err) innerCallback(err);
+        async.each(articles, async.ensureAsync(function(article, callback) {
+            async.each(article.oldRelatedArticles, async.ensureAsync(function(relatedArticleId, innerCallback) {
+                if(!relatedArticleId.toString() || relatedArticleId.toString().length < 1) {
+                    return innerCallback();
+                }
+                Article.findById(relatedArticleId.toString(), function(err, relatedArticleInstance) {
+                    if(err || !relatedArticleInstance) innerCallback(err);
                     else {
                         article.relatedArticles.add(relatedArticleInstance, function(err) {
                             if(!err) console.log("added parent ID:"+article.id.toString()+" to relatedArticle:"+relatedArticleId.toString());
@@ -377,7 +385,7 @@ function createDeckCards(finalCb) {
         // Create user identity for each user
         function(decks, seriesCallback) {
             console.log("creating card decks");
-            async.each(decks, function(deck, callback) {
+            async.eachSeries(decks, function(deck, callback) {
                 async.each(deck.oldCards, function(card, innerCallback) {
                     DeckCard.create({
                         cardId: card.card.toString(),
@@ -412,9 +420,9 @@ function associateGuideHeroes(finalCb) {
         // Create user identity for each user
         function(guides, seriesCallback) {
             console.log("creating user identies");
-            async.eachSeries(guides, function(guide, callback) {
+            async.each(guides, function(guide, callback) {
                 console.log("old heroes:", guide.oldHeroes);
-                async.eachSeries(guide.oldHeroes, function(hero, innerCallback) {
+                async.each(guide.oldHeroes, function(hero, innerCallback) {
                     Hero.findById(hero.hero, function(err, heroInstance) {
                         if(err) innerCallback(err);
                         else {
@@ -648,8 +656,8 @@ function createSnapshotModels(finalCb) {
     }
 
     function createDeckTier(snapshot, finalCallback) {
-        async.eachSeries(snapshot.tiers, function(tier, seriesCallback) {
-            async.eachSeries(tier.decks, function(deck, innerCallback) {
+        async.each(snapshot.tiers, function(tier, seriesCallback) {
+            async.each(tier.decks, function(deck, innerCallback) {
                 try {
                     deck.rank.last.unshift(deck.rank.current);
                     var deckTier = {

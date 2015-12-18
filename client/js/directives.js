@@ -803,7 +803,27 @@ angular.module('app.directives', ['ui.load'])
 }])
 .directive('talentHeroFormAdd', ['Talent', function () {
     return {
-        templateUrl: tpl + 'views/admin/hots.heroes.talents.add.form.html',
+      templateUrl: tpl + 'views/admin/hots.heroes.talents.add.form.html',
+      controller: ['$scope', 'Talent', function ($scope, Talent) {
+        $scope.talentSearch = "";
+        $scope.searchedTalents
+        $scope.searchTalents = function () {
+          Talent.find({
+            filter: {
+              limit: 4,
+              where: { name: { like: $scope.talentSearch } }
+            }
+          })
+          .$promise
+          .then(function (data) {
+            $scope.searchedTalents = (!_.isEmpty($scope.talentSearch)) ? data : [];
+          })
+        }
+        
+        $scope.setCurrent = function (talent) {
+          $scope.currentTalent = talent;
+        }
+      }]
     };
 }])
 .directive('talentHeroFormEdit', ['Talent', function () {

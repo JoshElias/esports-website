@@ -1365,22 +1365,25 @@ var app = angular.module('app', [
                                     order: "createdDate DESC",
                                   where: {
                                     isFeatured: false,
-                                      isPublic: true
+                                    isPublic: true
                                   },
-                                  fields: {
-                                    name: true,
-                                    voteScore: true,
-                                    authorId: true,
-                                    createdDate: true,
-                                    premium: true,
-                                    guideType: true,
-                                    id: true,
-                                    talentTiers: true,
-                                    slug: true
-                                  },
+                                  fields: [
+                                    "name", 
+                                    "authorId", 
+                                    "slug", 
+                                    "voteScore", 
+                                    "guideType", 
+                                    "premium", 
+                                    "id", 
+                                    "talentTiers",
+                                    "createdDate"
+                                  ],
                                   include: [
                                     {
-                                      relation: 'author'
+                                      relation: "author",
+                                      scope: {
+                                        fields: ['username']
+                                      }
                                     },
                                     {
                                       relation: 'guideHeroes',
@@ -1392,7 +1395,7 @@ var app = angular.module('app', [
                                           {
                                             relation: 'hero',
                                             scope: {
-                                              include: ['talents']
+                                              fields: ['name', 'className']
                                             }
                                           }
                                         ]
@@ -1401,12 +1404,17 @@ var app = angular.module('app', [
                                     {
                                       relation: 'guideTalents',
                                       scope: {
-                                        include: ['talent']
+                                        include: {
+                                          relation: 'talent',
+                                          scope: {
+                                            fields: {
+                                              name: true,
+                                              className: true
+                                            }
+                                          }
+                                        },
                                       }
                                     },
-                                    {
-                                      relation: 'maps'
-                                    }
                                   ]
                                 }
                               })
@@ -1426,22 +1434,25 @@ var app = angular.module('app', [
                                     order: "createdDate DESC",
                                   where: {
                                     isFeatured: true,
-                                      isPublic: true
+                                    isPublic: true
                                   },
-                                  fields: {
-                                    name: true,
-                                    voteScore: true,
-                                    authorId: true,
-                                    createdDate: true,
-                                    premium: true,
-                                    guideType: true,
-                                    id: true,
-                                    talentTiers: true,
-                                    slug: true
-                                  },
+                                  fields: [
+                                    "name", 
+                                    "authorId", 
+                                    "slug", 
+                                    "voteScore", 
+                                    "guideType", 
+                                    "premium", 
+                                    "id", 
+                                    "talentTiers",
+                                    "createdDate"
+                                  ],
                                   include: [
                                     {
-                                      relation: 'author'
+                                      relation: "author",
+                                      scope: {
+                                        fields: ['username']
+                                      }
                                     },
                                     {
                                       relation: 'guideHeroes',
@@ -1453,7 +1464,7 @@ var app = angular.module('app', [
                                           {
                                             relation: 'hero',
                                             scope: {
-                                              include: ['talents']
+                                              fields: ['name', 'className']
                                             }
                                           }
                                         ]
@@ -1462,12 +1473,17 @@ var app = angular.module('app', [
                                     {
                                       relation: 'guideTalents',
                                       scope: {
-                                        include: ['talent']
+                                        include: {
+                                          relation: 'talent',
+                                          scope: {
+                                            fields: {
+                                              name: true,
+                                              className: true
+                                            }
+                                          }
+                                        },
                                       }
                                     },
-                                    {
-                                      relation: 'maps'
-                                    }
                                   ]
                                 }
                               })
@@ -1482,9 +1498,20 @@ var app = angular.module('app', [
                             }],
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
-                                  filter: {
-                                      order: "name ASC"
+                                filter: {
+                                  order: "name ASC",
+                                  fields: {
+                                    isActive: true,
+//                                    characters: true,
+                                    className: true,
+                                    name: true,
+                                    title: true,
+                                    orderNum: true,
+                                    role: true,
+                                    universe: true,
+                                    id: true
                                   }
+                                }
                               })
                               .$promise
                               .then(function (data) {
@@ -1531,25 +1558,27 @@ var app = angular.module('app', [
                                 filter: {
                                   limit: 10,
                                   order: 'createdDate DESC',
-                                  fields: {
-                                    authorId: true,
-                                    name: true,
-                                    voteScore: true,
-                                    createdDate: true,
-                                    premium: true,
-                                    guideType: true,
-                                    id: true,
-                                    description: true,
-                                    talentTiers: true,
-                                    slug: true
-                                  },
                                   where: {
                                     isFeatured: false,
-                                      isPublic: true
+                                    isPublic: true
                                   },
+                                  fields: [
+                                    "name", 
+                                    "authorId", 
+                                    "slug", 
+                                    "voteScore", 
+                                    "guideType", 
+                                    "premium", 
+                                    "id", 
+                                    "talentTiers",
+                                    "createdDate"
+                                  ],
                                   include: [
                                     {
-                                      relation: 'author'
+                                      relation: "author",
+                                      scope: {
+                                        fields: ['username']
+                                      }
                                     },
                                     {
                                       relation: 'guideHeroes',
@@ -1561,7 +1590,7 @@ var app = angular.module('app', [
                                           {
                                             relation: 'hero',
                                             scope: {
-                                              include: ['talents']
+                                              fields: ['name', 'className']
                                             }
                                           }
                                         ]
@@ -1570,12 +1599,17 @@ var app = angular.module('app', [
                                     {
                                       relation: 'guideTalents',
                                       scope: {
-                                        include: ['talent']
+                                        include: {
+                                          relation: 'talent',
+                                          scope: {
+                                            fields: {
+                                              name: true,
+                                              className: true
+                                            }
+                                          }
+                                        },
                                       }
                                     },
-                                    {
-                                      relation: 'maps'
-                                    }
                                   ]
                                 }
                               }).$promise;
@@ -1599,21 +1633,23 @@ var app = angular.module('app', [
                                   where: {
                                       guideType: "hero"
                                   },
-                                  fields: {
-                                    authorId: true,
-                                    name: true,
-                                    voteScore: true,
-                                    createdDate: true,
-                                    premium: true,
-                                    guideType: true,
-                                    id: true,
-                                    description: true,
-                                    talentTiers: true,
-                                    slug: true
-                                  },
+                                  fields: [
+                                    "name", 
+                                    "authorId", 
+                                    "slug", 
+                                    "voteScore", 
+                                    "guideType", 
+                                    "premium", 
+                                    "id", 
+                                    "talentTiers",
+                                    "createdDate"
+                                  ],
                                   include: [
                                     {
-                                      relation: 'author'
+                                      relation: "author",
+                                      scope: {
+                                        fields: ['username']
+                                      }
                                     },
                                     {
                                       relation: 'guideHeroes',
@@ -1625,7 +1661,8 @@ var app = angular.module('app', [
                                           {
                                             relation: 'hero',
                                             scope: {
-                                              include: ['talents']
+                                              include: ['talents'],
+                                              fields: ['name', 'className']
                                             }
                                           }
                                         ]
@@ -1634,7 +1671,15 @@ var app = angular.module('app', [
                                     {
                                       relation: 'guideTalents',
                                       scope: {
-                                        include: ['talent']
+                                        include: {
+                                          relation: 'talent',
+                                          scope: {
+                                            fields: {
+                                              name: true,
+                                              className: true
+                                            }
+                                          }
+                                        }
                                       }
                                     },
                                     {
@@ -1653,24 +1698,26 @@ var app = angular.module('app', [
                                 filter: {
                                   order: 'createdDate DESC',
                                   limit: 4,
-                                  fields: {
-                                    authorId: true,
-                                    name: true,
-                                    voteScore: true,
-                                    createdDate: true,
-                                    premium: true,
-                                    guideType: true,
-                                    id: true,
-                                    description: true,
-                                    talentTiers: true,
-                                    slug: true
-                                  },
                                   where: {
                                     isFeatured: true
                                   },
+                                  fields: [
+                                    "name", 
+                                    "authorId", 
+                                    "slug", 
+                                    "voteScore", 
+                                    "guideType", 
+                                    "premium", 
+                                    "id", 
+                                    "talentTiers",
+                                    "createdDate"
+                                  ],
                                   include: [
                                     {
-                                      relation: 'author'
+                                      relation: "author",
+                                      scope: {
+                                        fields: ['username']
+                                      }
                                     },
                                     {
                                       relation: 'guideHeroes',
@@ -1682,7 +1729,7 @@ var app = angular.module('app', [
                                           {
                                             relation: 'hero',
                                             scope: {
-                                              include: ['talents']
+                                              fields: ['name', 'className']
                                             }
                                           }
                                         ]
@@ -1691,12 +1738,17 @@ var app = angular.module('app', [
                                     {
                                       relation: 'guideTalents',
                                       scope: {
-                                        include: ['talent']
+                                        include: {
+                                          relation: 'talent',
+                                          scope: {
+                                            fields: {
+                                              name: true,
+                                              className: true
+                                            }
+                                          }
+                                        },
                                       }
                                     },
-                                    {
-                                      relation: 'maps'
-                                    }
                                   ]
                                 }
                               })
@@ -1712,7 +1764,18 @@ var app = angular.module('app', [
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
                                   filter: {
-                                      order: "name ASC"
+                                    order: "name ASC",
+                                    fields: {
+                                      isActive: true,
+//                                      characters: true,
+                                      className: true,
+                                      name: true,
+                                      title: true,
+                                      orderNum: true,
+                                      role: true,
+                                      universe: true,
+                                      id: true
+                                    }
                                   }
                               }).$promise;
                             }],
@@ -3830,38 +3893,29 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             id: heroID
-                                        }
+                                        },
+                                        include: [
+                                          {
+                                            relation: 'talents',
+                                            scope: {
+                                              include: 'talent'
+                                            }
+                                          },
+                                          {
+                                            relation: 'abilities'
+                                          }
+                                        ]
                                     }
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log(data);
-                                    return data;
+                                  var tals = _.sortBy(data.talents, 'orderNum');
+                                  var abils = _.sortBy(data.abilities, 'orderNum');
+                                  
+                                  data.talents = tals;
+                                  data.abilities = abils;
+                                  return data;
                                 });
-                            }],
-                            talents: ['Talent', 'hero', function (Talent, hero) {
-                                var heroTalents = _.map(hero.talentTiers, function (val, key) { 
-                                    return key;
-                                });
-                                
-                                return Talent.find({
-                                    filter: {
-                                        where: {
-                                            id: { inq: heroTalents }
-                                        }
-                                    }
-                                })
-                                .$promise
-                                .then(function (data) {
-                                    var dat = [];
-                                    
-                                    _.each(data, function (val) {
-                                        val.tier = parseInt(hero.talentTiers[val.id]);
-                                        dat.push(val);
-                                    })
-                                    
-                                    return dat;
-                                })
                             }]
                         }
                     }
@@ -4174,8 +4228,6 @@ var app = angular.module('app', [
                         resolve: {
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                
-                                console.log("guide id", guideID);
                                 
                                 return Guide.find({
                                     filter: {
