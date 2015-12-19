@@ -104,7 +104,7 @@
                     dnd-disable-if="hero.talents.length < 2"
                     dnd-type="'talent'"
                 >
-                    Level {{talent.tier}} - {{talent.name}}
+                    Level {{talent.tier}} - {{talent.talent.name}}
                     <div class="pull-right">
                         <button class="btn btn-sm btn-default" ng-click="talentEditWnd(talent)">Edit</button>
                         <button class="btn btn-sm btn-danger" ng-click="deleteTalent(talent)">Delete</button>
@@ -199,7 +199,7 @@
         <div class="row form-group">
             <label for="active" class="col-sm-2 control-label">Active</label>
             <div class="col-sm-10">
-                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in heroActive" ng-model="hero.active" required></select>
+                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in heroActive" ng-model="hero.isActive" required></select>
             </div>
         </div>
     </div>

@@ -15,11 +15,7 @@
         "object"
       ]
     },
-    "oldReplies": {
-      "type": [
-        "string"
-      ]
-    },
+    "oldReplies": {},
     "createdDate": {
       "type": "date",
       "required": true

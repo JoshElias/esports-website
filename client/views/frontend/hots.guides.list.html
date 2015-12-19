@@ -36,7 +36,7 @@
                             <ul class="hots-top-guide-talents clearfix">
                                 <li>
                                     <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 1).className }}" 
-                                       ng-tooltip title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 1).name }}"></a>
+                                       ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 1).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 1, dot) }"
                                              ng-repeat="dot in getTopGuideTierTalents(1, topGuide)"></div>
@@ -44,7 +44,7 @@
                                 </li>
                                 <li>
                                     <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 4).className}}" 
-                                       ng-tooltip title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 4).name }}"></a>
+                                       ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 4).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 4, dot) }"
                                              ng-repeat="dot in getTopGuideTierTalents(4, topGuide)"></div>
@@ -52,7 +52,7 @@
                                 </li>
                                 <li>
                                     <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 7).className}}" 
-                                       ng-tooltip title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 7).name }}"></a>
+                                       ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 7).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 7, dot) }"
                                              ng-repeat="dot in getTopGuideTierTalents(7, topGuide)"></div>
@@ -60,7 +60,7 @@
                                 </li>
                                 <li>
                                     <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 10).className }}" 
-                                       ng-tooltip title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 10).name }}"></a>
+                                       ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 10).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 10, dot) }"
                                              ng-repeat="dot in getTopGuideTierTalents(10, topGuide)"></div>
@@ -68,7 +68,7 @@
                                 </li>
                                 <li>
                                     <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 13).className }}" 
-                                       ng-tooltip title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 13).name }}"></a>
+                                       ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 13).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 13, dot) }"
                                              ng-repeat="dot in getTopGuideTierTalents(13, topGuide)"></div>
@@ -76,7 +76,7 @@
                                 </li>
                                 <li>
                                     <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 16).className }}" 
-                                       ng-tooltip title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 16).name }}"></a>
+                                       ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 16).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 16, dot) }"
                                              ng-repeat="dot in getTopGuideTierTalents(16, topGuide)"></div>
@@ -84,7 +84,7 @@
                                 </li>
                                 <li>
                                     <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 20).className }}" 
-                                       ng-tooltip title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 20).name }}"></a>
+                                       ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 20).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 20, dot) }"
                                              ng-repeat="dot in getTopGuideTierTalents(20, topGuide)"></div>
@@ -141,19 +141,19 @@
                             </div>
                             <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
                                 <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 1, true).className }}" 
-                                    ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 1, true).name }}"></li>
+                                    ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 1, true).name }}"></li>
                                 <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 4, true).className }}" 
-                                    ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 4, true).name }}"></li>
+                                    ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 4, true).name }}"></li>
                                 <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 7, true).className }}" 
-                                    ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 7, true).name }}"></li>
+                                    ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 7, true).name }}"></li>
                                 <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 10, true).className }}" 
-                                    ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 10, true).name }}"></li>
+                                    ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 10, true).name }}"></li>
                                 <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 13, true).className }}" 
-                                    ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 13, true).name }}"></li>
+                                    ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 13, true).name }}"></li>
                                 <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 16, true).className }}" 
-                                    ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 16, true).name }}"></li>
+                                    ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 16, true).name }}"></li>
                                 <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 20, true).className }}" 
-                                    ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 20, true).name }}"></li>
+                                    ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 20, true).name }}"></li>
                             </ul>
                         </a>
                     </li>
@@ -230,19 +230,19 @@
                                     <div class="row-col">
                                         <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
                                             <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 1, false).className }}" 
-                                                ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 1, false).name }}"></li>
+                                                ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 1, false).name }}"></li>
                                             <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 4, false).className }}" 
-                                                ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 4, false).name }}"></li>
+                                                ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 4, false).name }}"></li>
                                             <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 7, false).className }}" 
-                                                ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 7, false).name }}"></li>
+                                                ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 7, false).name }}"></li>
                                             <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 10, false).className }}" 
-                                                ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 10, false).name }}"></li>
+                                                ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 10, false).name }}"></li>
                                             <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 13, false).className }}" 
-                                                ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 13, false).name }}"></li>
+                                                ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 13, false).name }}"></li>
                                             <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 16, false).className }}" 
-                                                ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 16, false).name }}"></li>
+                                                ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 16, false).name }}"></li>
                                             <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 20, false).className }}" 
-                                                ng-tooltip title="{{ getTalent(getGuideCurrentHero(guide), guide, 20, false).name }}"></li>
+                                                ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 20, false).name }}"></li>
                                         </ul>
                                     </div>
                                 </div>
