@@ -24,8 +24,6 @@
 
         </div>
         
-        {{isUser}}
-        
         <div class="row m-r-none m-l-none m-t-md">
             <div class="m-b-md article-left col-lg-8">
                 <div class="article-subscribe" ng-if="isPremium() && !isUser.premium && !isUser.admin && !isUser.contentProvider">
@@ -40,8 +38,10 @@
                     <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>
                     <!-- / article content -->
 
-                    <div class="article-author m-t-md">
-                        <a class="hidden-xs" href="./user/{{article.author.username}}"><img gravatar-src-once="authorEmail" alt="" /></a>
+                    <div class="article-author m-t-md" ng-if="article.author">
+                        <a class="hidden-xs" href="./user/{{article.author.username}}">
+							<img gravatar-src-once="authorEmail" alt="" />
+						</a>
                         
                         <div class="author-content">
                             <div class="author-top-wrapper clearfix">

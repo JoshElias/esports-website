@@ -4,8 +4,11 @@
         <strong>{{getMessage('msg')}}</strong>
     </div>
     <div class="panel-body" ng-if="!isSuccess()">
-        <ul class="error text-danger">
-            <li ng-repeat="error in getMessage('errorList') track by $index">{{error}}</li>
+        <ul class="error text-danger" ng-repeat="(errKey, errArr) in getMessage('errorList') track by $index">
+            <li ng-repeat="errMsg in errArr track by $index">
+				<span ng-if="!(errMsg === 'can\'t be blank')">{{errMsg}}</span>
+				<span ng-if="errMsg === 'can\'t be blank'">{{errKey}} {{errMsg}}</span>
+			</li>
         </ul>
     </div>
 </div>

@@ -1319,21 +1319,13 @@ angular.module('app.controllers', ['ngCookies'])
                 })
                 .catch(function (err) {
                     console.log('newCard: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ 
-                            show: true, 
-                            msg: 'Unable to delete Card',
-                            errorList: $scope.errors 
-                        });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    }
+					AlertService.setError({ 
+						show: true, 
+						msg: 'Unable to delete Card',
+						lbErr: err
+					});
+					$window.scrollTo(0,0);
+					$scope.fetching = false;
                 });
             };
         }
@@ -1790,7 +1782,8 @@ angular.module('app.controllers', ['ngCookies'])
                 if($scope.search) {
                     options.filter.where = {
                         or: [
-                            {username: { regexp: $scope.search }}
+                            {username: { regexp: $scope.search }},
+							{email: { regexp: $scope.search }}
                         ]
                     }
                 }
@@ -1819,9 +1812,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setAuthor = function (user) {
-                $scope.article.author = (user) ? user : undefined;
+				$scope.article.authorId = (user) ? user : null;
+                $scope.article.author = (user) ? user : null;
                 $scope.search = '';
-                itemAddBox.modal('hide');
+                if (itemAddBox) {
+					itemAddBox.modal('hide');
+				}
             }
             
             
@@ -1840,9 +1836,9 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setDeck = function (deck) {
-                $scope.article.deck = (deck) ? deck : undefined;
-            }
-            
+				$scope.article.deckId = (deck) ? deck.id : null;
+                $scope.article.deck = (deck) ? deck : null;
+            };
             
             $scope.openGuides = function () {
                 $scope.getGuides(function () {
@@ -1859,7 +1855,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setGuide = function (guide) {
-                $scope.article.guide = (guide) ? guide : undefined;
+				$scope.article.guideId = (guide) ? guide.id : null;
+                $scope.article.guide = (guide) ? guide : null;
             }
 
 
@@ -1869,15 +1866,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             //change the article item
             $scope.modifyItem = function (item) {
-                switch ($scope.article.articleType.toString()) {
-                    case 'hs': $scope.article.deck = item; break;
-                    case 'hots': $scope.article.guide = item; break;
-                }
-                $scope.search = '';
+				switch($scope.article.articleType[0]) {
+					case 'hs': $scope.article.deck = item; break;
+					case 'hots': $scope.article.guide = item; break;
+				}
                 itemAddBox.modal('hide');
-            }
-
-
+            };
 
             //this is for the related article modal
             $scope.addRelatedArticle = function () {
@@ -2063,6 +2057,17 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
                 console.log('article:', article);
 				
+				// unlink guides/decks depending on what type of guide
+				if (article.articleType[0] !== 'hs') {
+					article['deck'] = undefined;
+					article['deckId'] = undefined;
+				}
+				
+				if (article.articleType[0] !== 'hots') {
+					article['guide'] = undefined;
+					article['guideId'] = undefined;
+				}
+				
 				var d = new Date().toISOString();
 				article.createdDate = d;
 				
@@ -2083,9 +2088,9 @@ angular.module('app.controllers', ['ngCookies'])
 					photoNames: article.photoNames,
 					classTags: article.classTags,
 					themeName: article.themeName,
-					viewCount: 1,
-					votes: [{ 
-						userId: article.author.id, 
+					viewCount: 0,
+					votes: [{
+						userId: article.author ? article.author.id : null,
 						direction: 1
 					}],
 					voteScore: 1,
@@ -2138,38 +2143,6 @@ angular.module('app.controllers', ['ngCookies'])
 					}
 					$state.transitionTo('app.admin.articles.list');
 				});
-				
-				
-//                var date = new Date().toISOString();
-//                $scope.article.createdDate = date;
-//                $scope.article.authorId = $scope.article.author.id;
-//                if($scope.article.deck) {
-//                    $scope.article.deckId = $scope.article.deck.id;
-//                } else if ($scope.article.guide) {
-//                    $scope.article.guideId = $scope.article.guide.id;
-//                }
-//                
-//                
-//                Article.upsert({}, $scope.article)
-//                .$promise
-//                .then(function (data) {
-//                    async.each($scope.article.related, function (related, relatedCb) {
-//                        var relatedClean = {};
-//                        
-//                        relatedClean.parentArticleId = data.id;
-//                        relatedClean.childArticleId = related.id;
-//                        
-//                        ArticleArticle.upsert({}, relatedClean)
-//                        .$promise
-//                        .then(function () {
-//                            return relatedCb();
-//                        });
-//                    });
-//                    
-//                    AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been added successfully.' });
-//                    $scope.showError = false;
-//                    $state.go('app.admin.articles.list');
-//                });
             };
         }
     ])
@@ -2330,9 +2303,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setAuthor = function (user) {
-                $scope.article.author = (user) ? user : undefined;
+				$scope.article.authorId = (user) ? user : null;
+                $scope.article.author = (user) ? user : null;
                 $scope.search = '';
-                itemAddBox.modal('hide');
+                if (itemAddBox) {
+					itemAddBox.modal('hide');
+				}
             }
             
             
@@ -2348,14 +2324,24 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.search = '';
                     });
                 });
-            }
+            };
+			
+			//change the article item
+            $scope.modifyItem = function (item) {
+				switch($scope.article.articleType[0]) {
+					case 'hs': $scope.article.deck = item; break;
+					case 'hots': $scope.article.guide = item; break;
+				}
+                itemAddBox.modal('hide');
+            };
             
             $scope.setDeck = function (deck) {
-                $scope.article.deck = (deck) ? deck : undefined;
+				$scope.article.deckId = (deck) ? deck.id : null;
+                $scope.article.deck = (deck) ? deck : null;
             }
             
             $scope.openGuides = function () {
-                $scope.getDecks(function () {
+                $scope.getGuides(function () {
                     itemAddBox = bootbox.dialog({
                         message: $compile('<div article-guide-add></div>')($scope),
                         closeButton: true,
@@ -2369,7 +2355,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setGuide = function (guide) {
-                $scope.article.guide = (guide) ? guide : undefined;
+				$scope.article.guideId = (guide) ? guide.id : null;
+                $scope.article.guide = (guide) ? guide : null;
             }
 
             //this is for the related article modal
@@ -2403,32 +2390,115 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.modifyRelated = function (a) {
+				// toggle related article
                 console.log('a: ', a);
                 if ($scope.isRelated(a)) {
-                    $scope.removeRelatedArticle(a);
+					// removing related articles
+					// remove from toCreate
+					// push to toDelete if it exist in db
+					
+					angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
+						if (toCrArticle.id === a.id) {
+							relatedArticleChanges.toCreate.splice(index, 1);
+							console.log('relatedArticleChanges:', relatedArticleChanges);
+							return;
+						}
+					});
+					
+					ArticleArticle.find({
+						filter: {
+							where: {
+								childArticleId: a.id,
+								parentArticleId: $scope.article.id
+							}
+						}
+					}).$promise
+					.then(function (relatedArticle) {
+						// related article exist in db
+						if (relatedArticle.length !== 0) {
+							relatedArticleChanges.toDelete.push(a);
+						}
+						console.log('relatedArticleChanges:', relatedArticleChanges);
+					});
+					
+					angular.forEach($scope.article.related, function(relArticle, index) {
+						if (relArticle.id === a.id) {
+							$scope.article.related.splice(index, 1);
+							return;
+						}
+					});
+					
                 } else {
+					// adding related articles
+					// remove from toDelete
+					// push to toCreate if it doesn't exist in db
+					console.log('adding');
+					angular.forEach(relatedArticleChanges.toDelete, function(toDelArticle, index) {
+						if (toDelArticle.id === a.id) {
+							relatedArticleChanges.toDelete.splice(index, 1);
+							return;
+						}
+					});
+					
+					ArticleArticle.find({
+						filter: {
+							where: {
+								childArticleId: a.id,
+								parentArticleId: $scope.article.id
+							}
+						}
+					}).$promise
+					.then(function (relatedArticle) {
+						
+						console.log('relatedArticle FOUND:', relatedArticle);
+						// doesn't exist in db
+						if (relatedArticle.length === 0) {
+							relatedArticleChanges.toCreate.push(a);
+						}
+						console.log('relatedArticleChanges:', relatedArticleChanges);
+					});
+					
                     $scope.article.related.push(a);
                 }
-                console.log('relatedArticleChanges:', relatedArticleChanges);
+				
             }
 
             $scope.removeRelatedArticle = function (a) {
 				console.log('a:', a);
-                for (var i = 0; i < $scope.article.related.length; i++) {
-                    if (a.id === $scope.article.related[i].id) {
-						// check if it exists in toCreate
-						// remove it from toCreate else add it to toDelete
-						var index = relatedArticleChanges.toCreate.indexOf(a);
-						if (index !== -1) {
-							relatedArticleChanges.toCreate.splice(index, 1);
-						} else {
-							relatedArticleChanges.toDelete.push(a);
-						}
+                // removing related articles
+				// remove from toCreate
+				// push to toDelete if it exist in db
+
+				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
+					if (toCrArticle.id === a.id) {
+						relatedArticleChanges.toCreate.splice(index, 1);
 						console.log('relatedArticleChanges:', relatedArticleChanges);
-                        $scope.article.related.splice(i, 1);
-                        break;
-                    }
-                }
+						return;
+					}
+				});
+
+				ArticleArticle.find({
+					filter: {
+						where: {
+							childArticleId: a.id,
+							parentArticleId: $scope.article.id
+						}
+					}
+				}).$promise
+				.then(function (relatedArticle) {
+					// related article exist in db
+					if (relatedArticle.length !== 0) {
+						relatedArticleChanges.toDelete.push(a);
+					}
+					console.log('relatedArticleChanges:', relatedArticleChanges);
+				});
+
+				angular.forEach($scope.article.related, function(relArticle, index) {
+					if (relArticle.id === a.id) {
+						$scope.article.related.splice(index, 1);
+						return;
+					}
+				});
             }
 
             $scope.closeBox = function () {
@@ -2489,6 +2559,20 @@ angular.module('app.controllers', ['ngCookies'])
 				{ name: 'Heroes of the Storm', value: 'hots' },
 				{ name: 'Overwatch', value: 'overwatch' }
 			];
+			
+			$scope.activeType = function() {
+				console.log('$scope.article.articleType:', $scope.article.articleType);
+				for (var i = 0; i < $scope.articleTypes.length; i++) {
+					if ($scope.article.articleType[0] === $scope.articleTypes[i].value) {
+						$scope.selectedArticleType = $scope.articleTypes[i].value;
+					}
+				}
+			};
+			
+			$scope.updateArticleType = function() {
+				$scope.article.articleType = [];
+				$scope.article.articleType.push($scope.selectedArticleType);
+			};
 
             // select options
             $scope.articleFeatured =
@@ -2575,65 +2659,106 @@ angular.module('app.controllers', ['ngCookies'])
                 console.log('relatedArticleChanges: ', relatedArticleChanges);
 				console.log('article:', article);
 				
-                Article.upsert(article)
-                .$promise
-                .then(function (articleUpserted) {
-                    console.log('article upsert: ', articleUpserted);
-                    
-                    async.parallel([
-                        function(paraCB){ 
-                            async.each(relatedArticleChanges.toDelete, function(relatedArticle, relatedDeleteCB) {
-                                ArticleArticle.destroyById({
-                                    id: relatedArticle.id
-                                })
-                                .$promise
-                                .then(function (relatedArticleDeleted) {
-                                    console.log('related art deleted: ', relatedArticleDeleted);
-                                    return relatedDeleteCB();
-                                })
-                                .catch(function (err) {
-                                    return relatedDeleteCB(err);
-                                });
-                            }, function (err) {
-                                if (err) {
-                                    return paraCB(err);
-                                }
-                                return paraCB();
-                            });
-                        },
-                        function(paraCB){ 
-                            async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
-                                relatedArticle.parentArticleId = article.id;
-                                relatedArticle.childArticleId = relatedArticle.id;
-                                ArticleArticle.create(relatedArticle)
-                                .$promise
-                                .then(function (relatedArticleCreated) {
-                                    console.log('related art created: ', relatedArticleCreated);
-                                    return relatedCreateCB();
-                                })
-                                .catch(function (err) {
-                                    return relatedCreateCB(err);
-                                });
-                            }, function (err) {
-                                if (err) {
-                                    return paraCB(err);
-                                }
-                                return paraCB();
-                            });
-                        }
-                    ], function(err) {
-                        $scope.fetching = false;
-                        if (err) {
-                            console.log('async para err: ', err);
-                            return;
-                        }
-                        $window.scrollTo(0, 0);
-                        $state.transitionTo('app.admin.articles.list');
-                    });
-                })
-                .catch(function (err) {
-                    console.log('article upsert err: ', err);
-                });
+				// unlink guides/decks depending on what type of guide
+				if (article.articleType[0] !== 'hs') {
+					article['deck'] = null;
+					article['deckId'] = null;
+				}
+				
+				if (article.articleType[0] !== 'hots') {
+					article['guide'] = null;
+					article['guideId'] = null;
+				}
+				
+                console.log('article now:', article);
+				async.parallel([
+					function (paraCB) {
+						Article.upsert(article)
+						.$promise
+						.then(function (articleUpserted) {
+							return paraCB();
+						})
+						.catch(function (err) {
+							return paraCB(err);
+						});
+					},
+					function(paraCB){ 
+						
+						async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
+							
+							async.waterfall([
+								function (wateryCB) {
+									ArticleArticle.findOne({
+										filter: {
+											where: {
+												childArticleId: relatedToDelete.id,
+												parentArticleId: article.id
+											}
+										}
+									}).$promise
+									.then(function (articleFound) {
+										return wateryCB(null, articleFound);
+									})
+									.catch(function (err) {
+										return wateryCB(err);
+									});
+								},
+								function (articleFound, wateryCB) {
+									ArticleArticle.destroyById({
+										id: articleFound.id
+									}).$promise
+									.then(function (relArticleDestroyed) {
+										return wateryCB();
+									})
+									.catch(function (err) {
+										return wateryCB(err);
+									});
+								}
+							], function(err) {
+								if (err) {
+									return relatedToDeleteCB(err);
+								}
+								return relatedToDeleteCB();
+							});
+							
+						}, function(err) {
+							if (err) {
+								return paraCB(err);
+							}
+							return paraCB();
+						});
+					},
+					function(paraCB) { 
+						async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
+							var articleArticle = {
+								parentArticleId: article.id,
+								childArticleId: relatedArticle.id
+							};
+							ArticleArticle.create(articleArticle)
+							.$promise
+							.then(function (relatedArticleCreated) {
+								console.log('related art created: ', relatedArticleCreated);
+								return relatedCreateCB();
+							})
+							.catch(function (err) {
+								return relatedCreateCB(err);
+							});
+						}, function (err) {
+							if (err) {
+								return paraCB(err);
+							}
+							return paraCB();
+						});
+					}
+				], function(err) {
+					$scope.fetching = false;
+					if (err) {
+						console.log('async para err: ', err);
+						return;
+					}
+					$window.scrollTo(0, 0);
+					$state.transitionTo('app.admin.articles.list');
+				});
             };
 
             $scope.getNames = function () {
@@ -2780,16 +2905,18 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                Article.deleteById({ id: article.id }).$promise.then(function (data) {
+                                Article.deleteById({ id: article.id })
+									.$promise.then(function (data) {
                                     if (data.$resolved) {
                                         var indexToDel = $scope.articles.indexOf(article);
                                         if (indexToDel !== -1) {
                                             $scope.articles.splice(indexToDel, 1);
                                         }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: article.title + ' deleted successfully.'
-                                        };
+                                        AlertService.setSuccess({
+											show: true,
+											msg: article.title + ' was deleted successfully.'
+										});
+										$scope.articlePagination.total -= 1;
                                     }
                                 });
                             }
@@ -5411,6 +5538,7 @@ angular.module('app.controllers', ['ngCookies'])
                                             show: true,
                                             msg: vod.subtitle + ' deleted successfully.'
                                         };
+										$scope.vodPagination.total -= 1;
                                     }
                                 }, function (error) {
                                     if(error) console.log('error: ', error);
@@ -5600,6 +5728,7 @@ angular.module('app.controllers', ['ngCookies'])
                                             show: true,
                                             msg: deck.name + ' deleted successfully.'
                                         });
+										$scope.deckPagination.total -= 1;
                                     }
                                 })
                                 .catch(function (err) {
@@ -7696,7 +7825,7 @@ angular.module('app.controllers', ['ngCookies'])
 										show: true,
 										msg: poll.title + ' deleted successfully.'
 									});
-                                    updatePolls($scope.page, $scope.perpage, $scope.search, false);
+                                    $scope.pollPagination.total -= 1;
                                 });
                             }
                         },
@@ -10493,10 +10622,10 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'userRoles', 'EventService', 'User',
         function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth, userRoles, EventService, User) {
-
+			console.log('article:', article);
             $scope.ArticleService = Article;
             $scope.article = article;
-            $scope.authorEmail = article.author.email;
+            $scope.authorEmail = article.author ? article.author.email : null;
 //        $scope.ArticleService = ArticleService;
 //        $scope.$watch('app.user.isLogged()', function() {
 //            for (var i = 0; i < $scope.article.votes.length; i++) {

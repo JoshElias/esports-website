@@ -573,21 +573,21 @@ angular.module('app.services', [])
             this.reset();
             error = value;
             alert = value.show || true;
+			
             if (value.lbErr
                 && value.lbErr.data
                 && value.lbErr.data.error
                 && value.lbErr.data.error.details
                 && value.lbErr.data.error.details.messages) {
-                var errorList = [];
+                var errorList = {};
                 var errMsgs = value.lbErr.data.error.details.messages;
-                angular.forEach(errMsgs, function(errArr) {
-                    angular.forEach(errArr, function(errMsg) {
-                        errorList.push(errMsg);
-                    });
+                angular.forEach(errMsgs, function(errArr, key) {
+                    errorList[key] = errArr;
                 });
                 // attach lb errors to error object
                 error.errorList = errorList;
             }
+			console.log('error.errorList:', error.errorList);
                 
         },
         reset: function () {

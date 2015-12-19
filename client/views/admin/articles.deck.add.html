@@ -1,5 +1,5 @@
 <div class="panel panel-dark m-b-none">   
-    <div ng-show="article.articleType == 'hs'">
+    <div ng-show="article.articleType[0] == 'hs'">
         <div class="panel-heading clearfix">
             <strong class="lh-lg">ADD DECK</strong>
             <div class="pull-right m-r-sm">
@@ -7,7 +7,11 @@
             </div>
         </div>
         <form class="list-group m-b-none">
-            <a href="#" class="list-group-item" ng-click="modifyItem(deck)" ng-repeat="deck in decks">
+            <a href="#" 
+			   ng-class="{'active': article.deck.id === deck.id}"
+			   class="list-group-item" 
+			   ng-click="modifyItem(deck)" 
+			   ng-repeat="deck in decks">
                 {{deck.name}}
             </a>
         </form>
