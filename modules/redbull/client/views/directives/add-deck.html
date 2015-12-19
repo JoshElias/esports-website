@@ -1,0 +1,11 @@
+<form>
+    <alert-box></alert-box>
+    <div class="form-group">
+        <input type="text" id="deckName" name="deckName" class="form-control input-dark" placeholder="Deck name..." ng-model="newDeck.name">
+    </div>
+    <ul class="new-deck-classes">
+        <li ng-repeat="klass in klasses">
+            <button class="{{klass.toLowerCase()}}" ng-click="newDeck.playerClass = klass" ng-class="{ active: newDeck.playerClass === klass }">{{klass}}</button>
+        </li>
+    </ul>
+</form>
