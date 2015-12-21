@@ -556,7 +556,7 @@ angular.module('app.directives', ['ui.load'])
         restrict: 'E',
         replace: true,
         scope: false,
-        templateUrl: "views/frontend/directives/subnav.stream.html",
+        templateUrl: tpl+"views/frontend/directives/subnav.stream.html",
         controller: ['$scope', function ($scope) {
             $scope.subNavStreams = [];
             $scope.showSubNavStream = false;
