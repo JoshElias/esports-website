@@ -1272,7 +1272,8 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.card.photoNames.medium = data.medium;
                         $scope.card.photoNames.large = data.large;
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
-                        $scope.cardImg = cdn2 + data.path + data.large;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.cardImg = URL + data.path + data.large;
                         box.modal('hide');
                     });
                 }
@@ -1381,7 +1382,9 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.card.photoNames.medium = data.medium;
                         $scope.card.photoNames.large = data.large;
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
-                        $scope.cardImg = cdn2 + data.path + data.large;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.cardImg = URL + data.path + data.large;
+						console.log('$scope.cardImg:', $scope.cardImg);
                         box.modal('hide');
                     });
                 }
@@ -2038,7 +2041,8 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-                        $scope.cardImg = cdn2 + data.path + data.small;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.cardImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -2049,7 +2053,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.imgPath = 'articles/';
                 if (!$scope.article.photoNames) { return 'img/blank.png'; }
 //                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photoNames.small;
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ? cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.article.photoNames.small;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ? URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
             };
 
 
@@ -2638,7 +2643,8 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-                        $scope.articleImg = cdn2 + data.path + data.small;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.articleImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -2651,7 +2657,8 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!$scope.article.photoNames) { 
                     return 'img/blank.png'; 
                 }
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.article.photoNames.small;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
             };
 
             $scope.editArticle = function (article) {
@@ -3214,7 +3221,8 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-                        $scope.snapshotImg = cdn2 + data.path + data.small;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.snapshotImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -3224,7 +3232,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.imgPath = 'snapshots/';
                 if (!$scope.snapshot) { return '/img/blank.png'; }
 //                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.snapshot.photoNames.small;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  URL + '/img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
             };
 
             //REMOVE METHODS
@@ -4209,7 +4218,8 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.snapshotImg = $scope.app.cdn + data.path + data.small;
-                        $scope.snapshotImg = cdn2 + data.path + data.small;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.snapshotImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -4217,10 +4227,12 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.getImage = function () {
                 $scope.imgPath = 'snapshots/';
-                if (!$scope.snapshot) { return cdn2 + '/img/blank.png'; }
+				var URL = (tpl === './') ? cdn2 : tpl;
+                if (!$scope.snapshot) { return URL + '/img/blank.png'; }
                 console.log('$scope.snapshot.photoNames.large:', $scope.snapshot.photoNames.large);
 //                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ? cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.snapshot.photoNames.small;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ? URL + '/img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
             };
             
             function removeAuthorAJAX(obj, cb) {
@@ -5336,7 +5348,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }).success(function(data, status, headers, config) {
 						console.log('data:', data);
                         $scope.member.photoName = data.photo;
-                        $scope.cardImg = cdn2 + data.path + data.photo;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.cardImg = URL + data.path + data.photo;
                         box.modal('hide');
                     });
                 }
@@ -5346,7 +5359,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.imgPath = 'team/';
                 if (!$scope.member) { return '/img/blank.png'; }
 				console.log('$scope.path:', $scope.imgPath);
-                return ($scope.member.photoName && $scope.member.photoName === '') ?  cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.member.photoName;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.member.photoName && $scope.member.photoName === '') ?  URL + '/img/blank.png' : URL + $scope.imgPath + $scope.member.photoName;
             };
 
             // save member
@@ -5396,7 +5410,8 @@ angular.module('app.controllers', ['ngCookies'])
                         console.log('data:', data);
                         $scope.member.photoName = data.photo;
 //                        $scope.memberImg = $scope.app.cdn + data.path + data.photo;
-                        $scope.memberImg = cdn2 + data.path + data.photo;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.memberImg = URL + data.path + data.photo;
                         box.modal('hide');
                     });
                 }
@@ -7984,7 +7999,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getImage = function () {
-                return ($scope.currentItem.photoNames && $scope.currentItem.photoNames.thumb === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.currentItem.photoNames.thumb;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.currentItem.photoNames && $scope.currentItem.photoNames.thumb === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.currentItem.photoNames.thumb;
             };
 
             // add Poll
@@ -8200,7 +8216,8 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getImage = function () {
                 if (!$scope.currentItem) { return 'img/blank.png'; }
-                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.currentItem.photos.thumb;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.currentItem.photos.thumb;
             };
 
             $scope.editPoll = function () {
