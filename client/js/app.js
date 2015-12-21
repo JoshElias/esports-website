@@ -71,10 +71,11 @@ var app = angular.module('app', [
                 
                 AlertService.reset();
             });
-            $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
+            $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
                 console.log("Event:", event);
                 console.log("To State:", toState);
                 console.log("From State", fromState);
+				console.log("Error: ", error);
                 console.log('State change failed!');
 //                $state.go('app.404');
             });
