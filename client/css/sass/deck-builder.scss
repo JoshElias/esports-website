@@ -25,8 +25,17 @@
     .db-loading-indicator { font-size: 48px; color: white; text-align: center; margin-top: 50px; }
 
     .db-footer,
-    .db-header { color: #FFF; height: auto; line-height: 50px; font-size: 26px; width: 80%; margin: 20px 0px; }
-    .db-header.head-shift { margin: 20px 95px; }
+    .db-header { color: #FFF; height: auto; line-height: 50px; font-size: 26px; width: 80%; margin: 20px 20px; }
+    
+    .db-header.head-shift { 
+        
+        margin: 20px 95px; 
+        
+        @media (max-width: 767px) {
+            margin: 20px 20px;
+        }
+    }
+    
     .db-header span { float: left; }
     .db-header h1,
     .db-footer h1 { color: #FFF; font-size: 36px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); }
@@ -267,7 +276,8 @@
     .db-cards-no-match { color: #2766ad; font-size: 40px; text-align: center; width: 100%; height: 590px; line-height: 590px; }
 
     .db-search { margin: 0px auto 10px auto; position: relative; }
-    .db-search input { width: 300px; }
+   // .db-search input { width: 300px; }
+
     .db-search .search-charm { background: #2268AD; position: absolute; top: 0; right: 0; height: 100%; width: 30px; text-align: center; line-height: 2; color: white; border-radius: 0px 2px 2px 0px; }
 
     .db-builder .mana-crystals div {

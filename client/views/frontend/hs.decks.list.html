@@ -24,6 +24,8 @@
             <div class="hs-mini-filters hidden-xs">
                 <div hs-filter-class filters="filters" classes="classes"></div>
                 <div class="hs-filters-search">
+                    
+<!--
                     <form ng-submit="newSearch()">
                         <div class="input-group">
                             <input type="text" class="form-control input-dark hs-search" ng-model="deckSearch">
@@ -32,6 +34,19 @@
                             </span>
                         </div>
                     </form>
+-->
+                    
+                    <form class="ng-pristine ng-valid">
+                        <div class="input-group">
+                            <input type="text" name="search" class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" placeholder="Search..." ng-model="filters.search" style=""> 
+                            <span class="input-group-btn">
+                                <button type="submit" type="submit" class="btn btn-blue btn-sm">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </form>
+                
                 </div>
             </div>
         </div>
@@ -67,6 +82,7 @@
             <div class="hs-mini-filters hidden-xs">
                 <div hs-filter-class filters="filters" classes="classes"></div>
                 <div class="hs-filters-search">
+<!--
                     <form ng-submit="newSearch()">
                         <div class="input-group">
                             <input type="text" class="form-control input-dark hs-search" ng-model="deckSearch">
@@ -75,6 +91,18 @@
                             </span>
                         </div>
                     </form>
+-->
+                    
+                <form class="ng-pristine ng-valid">
+                    <div class="input-group">
+                        <input type="text" name="search" class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" placeholder="Search..." ng-model="filters.search" style=""> 
+                        <span class="input-group-btn">
+                            <button type="submit" type="submit" class="btn btn-blue btn-sm">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
                 </div>
             </div>
         </div>
