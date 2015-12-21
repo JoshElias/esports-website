@@ -12,7 +12,7 @@ module.exports = function(Article) {
     Article.observe("persist", function(ctx, next) {
         var data = ctx.data || ctx.instance;
 
-        var uniqueErr = new Error('Article slug must be unique');
+        var uniqueErr = new Error('Article title must be unique');
         uniqueErr.statusCode = 422;
         uniqueErr.code = 'DUPLICATE_SLUG';
 
