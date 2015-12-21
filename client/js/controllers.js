@@ -5198,13 +5198,6 @@ angular.module('app.controllers', ['ngCookies'])
 //                $scope.fifaMembers = fifaTeam;
 //                $scope.fgcMembers = fgcTeam;
 
-
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
-
 //            $scope.updateDND = function (list, index) {
 //                list.splice(index, 1);
 //                for (var i = 0; i < list.length; i++) {
@@ -5367,10 +5360,14 @@ angular.module('app.controllers', ['ngCookies'])
             // save member
             $scope.saveMember = function () {
 				$scope.fetching = true;
-               TeamMember.create({}, $scope.member).$promise.then(function (data) {
-                    $scope.fetching = false;
-				    $state.go('app.admin.teams.list');
-                   
+                TeamMember.create({}, $scope.member).$promise.then(function (data) {
+                   $scope.fetching = false;
+				   $state.go('app.admin.teams.list');
+				   AlertService.setSuccess({
+					   show: true,
+					   persist: true,
+					   msg: $scope.member.screenName + ' created successfully'
+				   });
                })
                .catch(function(err){
 				   $scope.fetching = false;
@@ -5433,37 +5430,26 @@ angular.module('app.controllers', ['ngCookies'])
                      $scope.fetching = false;
                      $window.scrollTo(0, 0);
                      $state.go('app.admin.teams.list');
+					 AlertService.setSuccess({
+						 persist: true,
+						 show: true,
+						 msg: userUpdated.screenName + ' updated successfully'
+					 });
                  })
                  .catch(function (err) {
-                     if (err) {
-                         if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                             $scope.errors = [];
-                             angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                 for (var i = 0; i < errArray.length; i++) {
-                                     $scope.errors.push(errArray[i]);
-                                 }
-                             });
-                             AlertService.setError({ 
-                                 show: true, 
-                                 msg: 'Unable to update User', 
-                                 errorList: $scope.errors
-                             });
-                             $window.scrollTo(0,0);
-                             $scope.fetching = false;
-                         }
-                     }
+					 $window.scrollTo(0,0);
+					 $scope.fetching = false;
+					 AlertService.setError({ 
+						 show: true, 
+						 msg: 'Unable to update User', 
+						 lbErr: err
+					 });
                  });
             };
         }
     ])
     .controller('AdminVodListCtrl', ['$scope', '$q', '$timeout', 'paginationParams', 'vodsCount', 'vods', 'AlertService', 'Vod', 'AjaxPagination',
         function ($scope, $q, $timeout,  paginationParams, vodsCount, vods, AlertService, Vod, AjaxPagination) {
-
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
 
             console.log('vods: ', vods);
 
@@ -5593,13 +5579,17 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save VOD
             $scope.saveVod = function (vod) {
+				$scope.fetching = true;
                 Vod.create({}, vod, function (data) {
-					$state.transitionTo('app.admin.vod.list');
+					$scope.fetching = false;
+					$state.go('app.admin.vod.list');
 					AlertService.setSuccess({
+						persist: true,
 						show: true,
 						msg: vod.subtitle + ' created successfully.'
 					});
                 }, function (err) {
+					$scope.fetching = false;
                     AlertService.setError({
 						show: true,
 						msg: 'Unable to create Vod ' + vod.subtitle,
@@ -5634,10 +5624,19 @@ angular.module('app.controllers', ['ngCookies'])
                 .then(function(data) {
                     $scope.fetching = false;
                     $state.go('app.admin.vod.list');
+					AlertService.setSuccess({
+						persist: true,
+						show: true,
+						msg: vod.subtitle + ' updated successfully'
+					});
                 })
                 .catch(function(err) {
                     $scope.fetching = false;
-                    if(err) console.log('error: ',err);
+					AlertService.setError({
+						show: true,
+						msg: vod.subtitle + ' could not be updated',
+						lbErr: err
+					});
                 });
             };
         }
@@ -7391,11 +7390,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminUserListCtrl', ['$scope', '$timeout', '$q', 'User', 'bootbox', 'AjaxPagination', 'AlertService', 'AdminUserService', 'paginationParams', 'usersCount', 'users',
         function ($scope, $timeout, $q, User, bootbox, AjaxPagination, AlertService, AdminUserService, paginationParams, usersCount, users) {
-            // grab alerts
-//            if (AlertService.hasAlert()) {
-//                $scope.success = AlertService.getSuccess();
-//                AlertService.reset();
-//            }
 
             // load users
             $scope.users = users;
@@ -7495,11 +7489,11 @@ angular.module('app.controllers', ['ngCookies'])
                                 .catch(function (err) {
 //                                    console.log('User.destroyById err: ', err);
                                     AlertService.setError({ 
-                                        show: true, msg: 'Unable to delete ' + user.name, 
-                                        errorList: err
+                                        show: true, 
+										msg: 'Unable to delete ' + user.name, 
+                                        lbErr: err
                                     });
                                     $window.scrollTo(0,0);
-                                    $scope.fetching = false;
                                 });
                             }
                         },
@@ -7627,6 +7621,11 @@ angular.module('app.controllers', ['ngCookies'])
 //                        console.log('series results: ', results);
                         $state.go('app.admin.users.list');
                         $scope.fetching = false;
+						AlertService.setSuccess({
+							persist: true,
+							show: true,
+							msg: user.username + ' created successfully'
+						});
                     }
                 });
             };
@@ -7719,21 +7718,21 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ], function(err, results) {
                     if (err) {
-                        console.log('series err: ', err);
-                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                            $scope.errors = [];
-                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                for (var i = 0; i < errArray.length; i++) {
-                                    $scope.errors.push(errArray[i]);
-                                }
-                            });
-                            AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
-                            $window.scrollTo(0,0);
-                            $scope.fetching = false;
-                        }
+						AlertService.setError({ 
+							show: true, 
+							msg: 'Unable to update user', 
+							lbErr: err
+						});
+						$window.scrollTo(0,0);
+						$scope.fetching = false;
                     } else {
                         $state.go('app.admin.users.list');
                         $scope.fetching = false;
+						AlertService.setSuccess({
+							persist: true,
+							show: true,
+							msg: user.username + ' editted successfully'
+						});
                     }
                 });
             };
@@ -7741,11 +7740,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminPollListCtrl', ['$scope', '$window', '$q', '$timeout', '$compile', 'bootbox', 'AlertService', 'polls', 'pollsCount', 'paginationParams', 'Poll', 'AjaxPagination',
         function ($scope, $window, $q, $timeout, $compile, bootbox, AlertService, polls, pollsCount, paginationParams, Poll, AjaxPagination) {
-            // grab alerts
-//            if (AlertService.hasAlert()) {
-//                $scope.success = AlertService.getSuccess();
-//                AlertService.reset();
-//            }
 
             // load polls
             $scope.polls = polls;
@@ -8011,20 +8005,26 @@ angular.module('app.controllers', ['ngCookies'])
                 Poll.create($scope.poll)
 				.$promise
 				.then(function (pollInstance) {
-					console.log('pollInstance:', pollInstance);
+					
 					Poll.items.createMany({
 						id: pollInstance.id
 					}, $scope.poll.items).$promise
 					.then(function (itemsCreated) {
 						$scope.fetching = false;
 						$state.go('app.admin.polls.list');
+						AlertService.setSuccess({
+							persist: true,
+							show: true,
+							msg: pollInstance.title + ' created successfully'
+						});
+						
 					})
 					.catch(function (err) {
 						$scope.fetching = false;
 						$window.scrollTo(0,0);
 						AlertService.setError({
 							show: true,
-							msg: 'Unable to create Poll',
+							msg: 'Unable to create ' + $scope.poll.title,
 							lbErr: err
 						});
 					});
@@ -8032,9 +8032,9 @@ angular.module('app.controllers', ['ngCookies'])
                 .catch(function(err){
 					$scope.fetching = false;
                     $window.scrollTo(0,0);
-                    AlertService.setError({ 
-						show: true, 
-						msg: 'There was an error adding your poll ',
+                    AlertService.setError({
+						show: true,
+						msg: 'Unable to create ' + $scope.poll.title,
 						lbErr: err
 					});
                 });
@@ -8269,13 +8269,17 @@ angular.module('app.controllers', ['ngCookies'])
 					$scope.fetching = false;
 					$window.scrollTo(0, 0);
 					if (err) {
-						AlertService.setError({
+						return AlertService.setError({
 							show: true,
-							msg: 'Could not Edit ' + poll.title,
+							msg: 'Could not edit ' + poll.title,
 							lbErr: err
 						});
-						return;
 					}
+					AlertService.setSuccess({
+						persist: true,
+						show: true,
+						msg: poll.title + ' editted successfully'
+					});
 					$state.go('app.admin.polls.list');
 				});
 				
@@ -11552,11 +11556,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminForumStructureListCtrl', ['$scope', '$window', 'bootbox', 'AlertService', 'categories', 'ForumCategory', 'ForumThread', 'ForumPost',
         function ($scope, $window, bootbox, AlertService, categories, ForumCategory, ForumThread, ForumPost) {
-            // grab alerts
-//            if (AlertService.hasAlert()) {
-//                $scope.success = AlertService.getSuccess();
-//                AlertService.reset();
-//            }
 
             // load categories
             $scope.categories = categories;
@@ -11671,16 +11670,12 @@ angular.module('app.controllers', ['ngCookies'])
                                     },
                                 ], function(err) {
                                     if (err) {
-                                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                                            $scope.errors = [];
-                                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                                for (var i = 0; i < errArray.length; i++) {
-                                                    $scope.errors.push(errArray[i]);
-                                                }
-                                            });
-                                            AlertService.setError({ show: true, msg: 'Unable to delete thread', errorList: $scope.errors });
-                                            $window.scrollTo(0,0);
-                                        }
+										AlertService.setError({ 
+											show: true, 
+											msg: 'Unable to delete thread', 
+											lbErr: err
+										});
+										$window.scrollTo(0,0);
                                         return false;
                                     }
                                     
@@ -11693,7 +11688,10 @@ angular.module('app.controllers', ['ngCookies'])
                                             }
                                         }
                                     }
-                                    AlertService.setSuccess({ show: true, msg: thread.title + ' deleted successfully' });
+                                    AlertService.setSuccess({ 
+										show: true, 
+										msg: thread.title + ' deleted successfully' 
+									});
                                     $window.scrollTo(0, 0);
                                 });
                                 

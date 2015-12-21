@@ -574,19 +574,28 @@ angular.module('app.services', [])
             error = value;
             alert = value.show || true;
 			
+			// array of errors
+			console.log('lbErr:', value.lbErr);
+			var errorList = [];
             if (value.lbErr
                 && value.lbErr.data
                 && value.lbErr.data.error
                 && value.lbErr.data.error.details
                 && value.lbErr.data.error.details.messages) {
-                var errorList = {};
                 var errMsgs = value.lbErr.data.error.details.messages;
-                angular.forEach(errMsgs, function(errArr, key) {
-                    errorList[key] = errArr;
+                angular.forEach(errMsgs, function(errArr) {
+                    angular.forEach(errArr, function(errMsg) {
+						errorList.push(errMsg);
+					});
                 });
                 // attach lb errors to error object
-                error.errorList = errorList;
-            }
+            } else if (value.lbErr
+					   && value.lbErr.data
+					   && value.lbErr.data.error
+					   && value.lbErr.data.error.message) {
+				errorList.push(value.lbErr.data.error.message);
+			}
+			error.errorList = errorList;
 			console.log('error.errorList:', error.errorList);
                 
         },
