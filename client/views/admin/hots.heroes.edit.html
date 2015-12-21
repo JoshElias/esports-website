@@ -104,7 +104,7 @@
                     dnd-disable-if="hero.talents.length < 2"
                     dnd-type="'talent'"
                 >
-                    Level {{talent.tier}} - {{talent.talent.name}}
+                    Level {{talent.tier}} - {{talent.name || talent.talent.name}}
                     <div class="pull-right">
                         <button class="btn btn-sm btn-default" ng-click="talentEditWnd(talent)">Edit</button>
                         <button class="btn btn-sm btn-danger" ng-click="deleteTalent(talent)">Delete</button>

@@ -4979,20 +4979,20 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (snapshot) {
                     console.log(snapshot);
-                    snapshot.id = undefined;
+                    delete snapshot.id;
                     
                     snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
                     
                     var stripped = {};
-                    stripped['authors'] = _.map(snapshot.authors, function (author) { author.id = undefined; return author });
-                    stripped['matches'] = _.map(snapshot.deckMatchups, function (matchup) { matchup.id = undefined; return matchup });
+                    stripped['authors'] = _.map(snapshot.authors, function (author) { delete author.id; return author });
+                    stripped['matches'] = _.map(snapshot.deckMatchups, function (matchup) { delete matchup.id; return matchup });
                     console.log(snapshot.deckTiers);
                     stripped['decks'] = _.map(snapshot.deckTiers, function (deck) { 
-                        deck.id = undefined;
+                        delete deck.id;
                         deck.deckTech = _.map(deck.deckTech, function(deckTech) {
-                            deckTech.id = undefined;
+                            delete deckTech.id;
                             deckTech.cardTech = _.map(deckTech.cardTech, function (cardTech) {
-                                cardTech.id = undefined;
+                                delete cardTech.id;
                                 return cardTech;
                             });
                             return deckTech;
@@ -12393,14 +12393,14 @@ angular.module('app.controllers', ['ngCookies'])
                 }
               ], function (err) {
                 if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
-                else { console.log('success!'); }
+                else { console.log('success!'); AlertService.setSuccess({ persist: true, show: true, msg: "your shit got added" }); $state.go('app.admin.hots.heroes.list'); }
               })
             }).catch(function (err) { console.log(err); });
           };
         }
     ])
-    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero) {
+    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'Ability', 'HeroTalent', 'Talent',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, Ability, HeroTalent, Talent) {
             // defaults
             var defaultAbility = {
                     name: '',
@@ -12515,19 +12515,24 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.talentTiers = HOTS.tiers;
             $scope.talentAddWnd = function () {
                 $scope.currentTalent = angular.copy(defaultTalent);
+  //                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Add Talent',
-                    message: $compile('<div talent-add-form></div>')($scope)
+                    message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
                 });
             };
 
             $scope.talentEditWnd = function (talent) {
-                $scope.currentTalent = talent;
+                $scope.currentTalent = talent.talent;
+                $scope.currentTalent.tier = talent.tier;
+                $scope.currentTalent.orderNum = talent.orderNum;
+                $scope.currentTalent.ability = talent.ability;
+  //                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Edit Talent',
-                    message: $compile('<div talent-edit-form></div>')($scope)
+                    message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
                 });
             };
 
@@ -12594,18 +12599,114 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.editHero = function () {
-                $scope.showError = false;
+              var hero = angular.copy($scope.hero);
+              var tals = hero.talents;
+              var talsToAdd  = [];
+              var abilsToAdd = hero.abilities;
+              
+              delete hero.abilities;
+              delete hero.talents;
 
-                AdminHeroService.editHero($scope.hero).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hots.heroes.list');
-                    }
-                });
+              _.each(tals, function (talVal) {
+                var a = _.find(abilsToAdd, function (abiVal) { return talVal.ability === abiVal.name });
+                var toPush = {};
+                
+                if (talVal.talent !== undefined) {
+                  toPush = talVal.talent;
+                  toPush.tier = talVal.tier;
+                  toPush.orderNum = talVal.orderNum;
+                } else {
+                  toPush = talVal
+                }
+                
+                delete talVal.ability;
+
+                if (_.isUndefined(a)) {
+                  talsToAdd.push(toPush);
+                } else {
+                  if (_.isUndefined(a.talents)) {
+                    a.talents = [];
+                  }
+
+                  a.talents.push(toPush);
+                }
+              });
+              
+              Hero.update({
+                where: {
+                  id: hero.id
+                }
+              }, hero)
+              .$promise
+              .then(function (heroData) {
+                async.series([
+                  function (seriesCb) {
+                    Hero.talents.destroyAll({
+                      id: heroData.id
+                    })
+                    .$promise
+                    .then(seriesCb(undefined))
+                    .catch(seriesCb)
+                  },
+                  function(seriesCb) {
+                    async.each(abilsToAdd, function (abil, abilCb) {
+                      var tempTals = abil.talents;
+                      delete abil.talents;
+                      abil.heroId = heroData.id;
+                      Ability.upsert({
+                        id: abil.id
+                      }, abil)
+                      .$promise
+                      .then(function (abilData) {
+                        async.each(tempTals, function(abilTal, abilTalCb) {
+                          Talent.upsert({}, abilTal)
+                          .$promise
+                          .then(function (abilTalData) {
+                            HeroTalent.create({}, {
+                              heroId: heroData.id,
+                              talentId: abilTalData.id,
+                              abilityId: abilData.id,
+                              tier: abilTal.tier,
+                              orderNum: abilTal.orderNum
+                            })
+                            .$promise
+                            .then(function (heroTalData) {
+                              return abilTalCb();
+                            }).catch(seriesCb);
+                          }).catch(seriesCb);
+                        }, function() {
+                          return abilCb(undefined);
+                        });
+                      }).catch(seriesCb);
+                    }, function () {
+                      return seriesCb(undefined);
+                    });
+                  },
+                  function (seriesCb) {
+                    async.each(talsToAdd, function (tal, eachCb) {
+                      Talent.upsert({}, tal)
+                      .$promise
+                      .then(function (talData) {
+                        HeroTalent.create({}, {
+                          heroId: heroData.id,
+                          talentId: talData.id,
+                          tier: tal.tier,
+                          orderNum: tal.orderNum
+                        })
+                        .$promise
+                        .then(eachCb())
+                        .catch(seriesCb);
+                      })
+                      .catch(seriesCb);
+                    }, seriesCb(undefined))
+                  }
+                ], function (err) {
+                  if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
+                  else { 
+                    $state.go('app.admin.hots.heroes.list');
+                  }
+                })
+              }).catch(function (err) { console.log(err); });
             };
         }
     ])
