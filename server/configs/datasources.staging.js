@@ -23,6 +23,7 @@ module.exports = {
         "provider": "amazon",
         "key": "+5HNYCyZ84OMMNuZfrFuEz2xzyN9MtJQWN65dSB3",
         "keyId": "AKIAIQZRXBQLHFBKCGSQ",
-        "bucket": "staging-cdn.tempostorm.com"
+        "bucket": "staging-cdn.tempostorm.com",
+		"endpoint": "staging-cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com"
     }
 }

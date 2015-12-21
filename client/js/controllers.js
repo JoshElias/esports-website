@@ -5349,6 +5349,7 @@ angular.module('app.controllers', ['ngCookies'])
 						console.log('data:', data);
                         $scope.member.photoName = data.photo;
 						var URL = (tpl === './') ? cdn2 : tpl;
+						console.log('URL:', URL);
                         $scope.cardImg = URL + data.path + data.photo;
                         box.modal('hide');
                     });
@@ -5593,19 +5594,18 @@ angular.module('app.controllers', ['ngCookies'])
             // save VOD
             $scope.saveVod = function (vod) {
                 Vod.create({}, vod, function (data) {
-                    if (data.$resolved) {
-                        $scope.success = {
-                            show: true,
-                            msg: vod.subtitle + ' created successfully.'
-                        };
-                        $scope.vod = angular.copy(defaultVod);
-                    }
+					$state.transitionTo('app.admin.vod.list');
+					AlertService.setSuccess({
+						show: true,
+						msg: vod.subtitle + ' created successfully.'
+					});
                 }, function (err) {
-                    if(err) console.log('error: ',err);
-                    $scope.success = {
-                        show: true,
-                        msg: vod.subtitle + ' could not be created.'
-                    };
+                    AlertService.setError({
+						show: true,
+						msg: 'Unable to create Vod ' + vod.subtitle,
+						lbErr: err
+					});
+					$window.scrollTo(0, 0);
                 });
             };
 
