@@ -30,6 +30,12 @@ module.exports = {
             },
             {
                 expand: true,
+                cwd: 'client/dist/js/services/',
+                src: ['**/*'],
+                dest: 'js/services'
+            },
+            {
+                expand: true,
                 cwd: 'client/dist/css/',
                 src: ['*.min.*.css'],
                 dest: 'css'
@@ -86,6 +92,12 @@ module.exports = {
                 cwd: 'client/dist/js/',
                 src: ['**/*', '!**/*.js'],
                 dest: 'js'
+            },
+            {
+                expand: true,
+                cwd: 'client/dist/js/services/',
+                src: ['**/*'],
+                dest: 'js/services'
             },
             {
                 expand: true,
