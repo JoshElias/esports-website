@@ -12,7 +12,6 @@ module.exports = {
                 'client/vendor/moment/min/moment.min.js',
                 'client/vendor/summernote/dist/summernote.js',
                 'client/vendor/bootbox/bootbox.js',
-                'client/js/vendor/angular-file-upload-shim.min.js',
                 'client/js/vendor/wtooltip.js',
                 'client/js/vendor/iscroll.js',
                 'client/vendor/underscore/underscore-min.js',
@@ -32,8 +31,9 @@ module.exports = {
                 'client/vendor/angular-ui-validate/dist/validate.js',
                 'client/js/vendor/angular-bootbox.js',
                 'client/vendor/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
-                'client/vendor/angular-file-upload/dist/angular-file-upload.min.js',
                 'client/vendor/angular-gravatar/build/angular-gravatar.min.js',
+                'client/js/vendor/angular-file-upload-shim.min.js',
+                'client/js/vendor/angular-file-upload.min.js',
                 'client/vendor/angular-moment/angular-moment.min.js',
                 'client/vendor/angular-payments/lib/angular-payments.min.js',
                 'client/vendor/angular-sanitize/angular-sanitize.min.js',
@@ -49,7 +49,7 @@ module.exports = {
                 'client/js/services.js',
                 'client/js/directives.js',
                 'client/js/filters.js',
-                'client/js/animations.js',                
+                'client/js/animations.js',
             ],
             'client/dist/js/modules.js': [
                 'modules/**/client/js/**/*.js',
@@ -71,7 +71,7 @@ module.exports = {
                 'client/vendor/font-awesome/css/font-awesome.min.css',
                 'client/vendor/summernote/dist/summernote.css',
                 //'client/css/vendor/animations/animation.css',
-                //'client/css/vendor/animate.css',                
+                //'client/css/vendor/animate.css',
             ],
             'client/dist/css/sass.css': [
                 'client/dist/css/sass/*.css'
@@ -82,7 +82,7 @@ module.exports = {
             'client/dist/css/style.css': [
                 'client/css/style.css',
                 'client/dist/css/sass/*.css',
-            ],            
+            ],
         }
     },
     modules: {

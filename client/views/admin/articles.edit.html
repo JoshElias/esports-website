@@ -9,7 +9,12 @@
         <div class="form-group">
             <label for="articleType" class="col-sm-2 control-label">Type</label>
             <div class="col-sm-10">
-                <select id="articleType" name="articleType" size="4" class="form-control" ng-options="articleType.value as articleType.name for articleType in articleTypes" ng-model="article.articleType" multiple required></select>
+                <select id="articleType" name="articleType" 
+						ng-init="activeType()" 
+						class="form-control" 
+						ng-options="articleType.value as articleType.name for articleType in articleTypes" 
+						ng-model="selectedArticleType" 
+						ng-change="updateArticleType()" required></select>
             </div>
         </div>
         <div class="form-group">
@@ -18,7 +23,7 @@
                 <div class="input-group">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-green" ng-show="!article.author" ng-click="openAuthors()">Add Author</button>
-                        <button type="button" class="btn btn-danger" ng-show="article.author" ng-click="setAuthor(undefined)"><i class="fa fa-close"></i></button>
+                        <button type="button" class="btn btn-danger" ng-show="article.author" ng-click="setAuthor(null)"><i class="fa fa-close"></i></button>
                         <button type="button" class="btn btn-blue" ng-show="article.author" ng-click="openAuthors()"><i class="fa fa-exchange"></i></button>
                     </span>
                     <input type="text" id="deck" name="deck" class="form-control" ng-model="article.author.username" readonly>

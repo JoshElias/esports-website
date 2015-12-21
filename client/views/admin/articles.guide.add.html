@@ -8,7 +8,10 @@
         </div>
 
         <form class="list-group m-b-none">
-            <a href="#" class="list-group-item" ng-click="modifyItem(guide)" ng-repeat="guide in guides">
+            <a href="#" class="list-group-item" 
+			   ng-class="{'active': article.guide.id === guide.id }"
+			   ng-click="modifyItem(guide)" 
+			   ng-repeat="guide in guides">
                 {{guide.name}}
             </a>
         </form>

@@ -7,7 +7,11 @@
         </div>
     </div>
     <form class="list-group m-b-none">
-        <a href="#" class="list-group-item" ng-click="setAuthor(user)" ng-repeat="user in users">
+        <a href="#" 
+		   ng-class="{'active': article.author.id === user.id}"
+		   class="list-group-item" 
+		   ng-click="setAuthor(user)" 
+		   ng-repeat="user in users">
             {{user.username}}
         </a>
     </form>

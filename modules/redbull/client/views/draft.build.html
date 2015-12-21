@@ -18,9 +18,9 @@
             <h3>Card Search</h3>
             <form>
                 <div class="input-group">
-                    <input type="text" name="search" class="input-sm input-dark form-control" placeholder="Search..." ng-model="filters.search">
+                    <input type="text" name="search" class="input-sm input-dark form-control" placeholder="Search..." ng-model="search">
                     <span class="input-group-btn">
-                        <button type="submit" class="btn btn-blue btn-sm"><i class="fa fa-search"></i></button>
+                        <button type="submit" class="btn btn-blue btn-sm" ng-click="setSearch()"><i class="fa fa-search"></i></button>
                     </span>
                 </div>
             </form>
@@ -59,7 +59,7 @@
     <div class="draft-build-decks">
         
         <div class="deck-add-button">
-            <button>
+            <button ng-click="addDeckWnd()">
                 <i class="fa fa-plus-circle"></i>
                 Add Deck
             </button>
@@ -67,11 +67,13 @@
         
         <div class="decks">
             
-            <div class="deck">
+            <div class="deck {{deck.playerClass.toLowerCase()}}" ng-class="{ active: isCurrentDeck(deck) }" ng-repeat="deck in decks" ng-click="setCurrentDeck(deck)">
                 
                 <div class="deck-title-bar">
-                    <div class="deck-delete"><i class="fa fa-times"></i></div>
-                    <div class="deck-title">Mage Deck</div>
+                    <div class="deck-title-bar-inner">
+                        <button class="deck-delete" ng-click="deleteDeck($event, deck)"><i class="fa fa-times"></i></button>
+                        <div class="deck-title">{{deck.name}}</div>
+                    </div>
                 </div>
                 
                 <div class="deck-cards">
@@ -89,7 +91,31 @@
     </div>
     
     <div class="draft-build-cards">
-    
+        
+        <ul class="card-filter-classes clearfix">
+            <li ng-repeat="klass in klasses">
+                <button class="{{klass.toLowerCase()}}" ng-class="{ active: filters.class === klass }" ng-click="setFilterClass(klass)" ng-tooltip data-original-title="{{klass}}">{{klass}}</button>
+            </li>
+            <li>
+                <button class="neutral" ng-class="{ active: filters.class === 'Neutral' }" ng-click="setFilterClass('Neutral')" ng-tooltip data-original-title="Neutral">Neutral</button>
+            </li>
+        </ul>
+        
+        <div class="draft-build-pool">
+            <div pagination="classPagination" theme="deckbuilder" class="db-pagination db-pagination-left"></div>
+            <div pagination="classPagination" theme="deckbuilder" class="db-pagination db-pagination-right"></div>
+
+            <div class="db-cards-view-wrapper clearfix">
+                <div class="db-cards-view clearfix">
+                    <div class="db-card" ng-class="{ disabled: !deck.isAddable(card) }" ng-repeat="card in cards.current">
+                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
+                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
+                        </a>
+                    </div>
+                    <div class="draft-build-pool-no-match" ng-show="!cards.current.length">No Matches Found</div>
+                </div>
+            </div>
+        </div>
     </div>
     
 </div>
