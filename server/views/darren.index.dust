@@ -34,6 +34,7 @@
     <div class="app" id="app" ui-view="root" bootstrap-width></div>
     <script>
         var tpl = '{cdnUrl}';
+        var cdn2 = '{cdnUrl2}';
     </script>
 
     <!-- d3 -->
