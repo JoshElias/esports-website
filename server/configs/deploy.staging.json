@@ -1,0 +1,26 @@
+{
+  "apps" : [{
+    // Tempostorm
+    "name"        : "tempostorm-web-server",
+    "script"      : "server/server.js",
+    "cwd"         : "/home/ec2-user/tempostorm",
+    "watch"       : ["server", "client"],
+    "ignore_watch": ["server/logs", "server/uploads", "^.*\.log$", "^.*\.err$", "^.*\.pid$", "\.sass-cache", "node_modules"],
+    "merge_logs"  : true,
+    "watch_options": {
+      "followSymlinks": false
+    },
+    "error_file"       : "server/logs/tempostorm.err",
+    "out_file"         : "server/logs/tempostorm.log",
+    "pid_file"         : "/home/ec2-user/tempostorm-web-server.pid",
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "env_production" : {
+      "NODE_ENV": "production"
+    },
+    "env_staging" : {
+      "NODE_ENV" : "staging"
+    }
+  }]
+}
