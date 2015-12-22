@@ -11580,7 +11580,6 @@ angular.module('app.controllers', ['ngCookies'])
                                     var indexToDel = $scope.categories.indexOf(category);
                                     if (indexToDel !== -1) {
                                         $scope.categories.splice(indexToDel, 1);
-										$window.scrollTo(0, 0);
                                         AlertService.setSuccess({
                                             show: true,
                                             msg: category.title + ' deleted successfully.'
@@ -15593,12 +15592,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
             $scope.saving = false;
 
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
-
             function updateOrder (list) {
                 for (var i = 0; i < list.length; i++) {
                     list[i].orderNum = i + 1;
@@ -15653,20 +15646,31 @@ angular.module('app.controllers', ['ngCookies'])
                                 OverwatchHero.overwatchAbilities.destroyAll({ id: hero.id }).$promise
                                 .then(function () {
                                     OverwatchHero.destroyById({ id: hero.id }).$promise
-                                    .then(done)
-                                    .catch(function (httpResponse) {
-                                        console.log('httpResponse: ', httpResponse);
-
-                                        $scope.errors = ['An error occurred while trying to delete the hero.'];
-                                        $scope.showError = true;
+                                    .then(function() {
+										var index = $scope.heroes.indexOf(hero);
+                   					    $scope.heroes.splice(index, 1);
+										
+										AlertService.setSuccess({
+											show: true,
+											msg: hero.heroName + ' deleted successfully'
+										});
+										$window.scrollTo(0, 0);
+									})
+                                    .catch(function (err) {
+                                        AlertService.setError({
+											show: true,
+											msg: 'An error occured while trying to delete the hero',
+											lbErr: err
+										});
                                         $window.scrollTo(0,0);
                                     });
                                 })
-                                .catch(function (httpResponse) {
-                                    console.log('httpResponse: ', httpResponse);
-
-                                    $scope.errors = ['An error occurred while trying to delete the hero abilities.'];
-                                    $scope.showError = true;
+                                .catch(function (err) {
+									AlertService.setError({
+										show: true,
+										msg: 'An error occurred while trying to delete the hero abilities.',
+										lbErr: err
+									});
                                     $window.scrollTo(0,0);
                                 });
                             }
@@ -15786,7 +15790,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.addHero = function () {
-                $scope.showError = false;
+                $scope.fetching = true;
 
                 OverwatchHero.create($scope.hero).$promise
                 .then(function (heroValue) {
@@ -15796,22 +15800,33 @@ angular.module('app.controllers', ['ngCookies'])
 
                     OverwatchHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
                     .then(function (abilityValue) {
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been added successfully.' });
+						$scope.fetching = false;
+                        AlertService.setSuccess({ 
+							persist: true,
+							show: false, 
+							msg: $scope.hero.heroName + ' has been added successfully.' 
+						});
+						$window.scrollTo(0, 0);
                         $state.go('app.admin.overwatch.heroes.list');
+						
                     })
-                    .catch(function (httpResponse) {
-                        console.log('httpResponse: ', httpResponse);
-
-                        $scope.errors = _.omit(httpResponse.data.error, ['message', 'status']);
-                        $scope.showError = true;
+                    .catch(function (err) {
+						$scope.fetching = false;
+                        AlertService.setError({
+							show: true,
+							msg: 'Unable to create Hero',
+							lbErr: err
+						});
                         $window.scrollTo(0,0);
                     });
                 })
-                .catch(function (httpResponse) {
-                    console.log('httpResponse: ', httpResponse);
-
-                    $scope.errors = _.omit(httpResponse.data.error, ['message', 'status']);
-                    $scope.showError = true;
+                .catch(function (err) {
+					$scope.fetching = false;
+					AlertService.setError({
+						show: true,
+						msg: 'Unable to create Hero',
+						lbErr: err
+					});
                     $window.scrollTo(0,0);
                 });
             };
@@ -15887,12 +15902,20 @@ angular.module('app.controllers', ['ngCookies'])
                                 if (!ability.id) { return done(); }
 
                                 OverwatchHero.overwatchAbilities.destroyById({ id: ability.heroId, fk: ability.id }).$promise
-                                .then(done)
-                                .catch(function (httpResponse) {
-                                    console.log('httpResponse: ', httpResponse);
-
-                                    $scope.errors = [httpResponse.data.error.message];
-                                    $scope.showError = true;
+                                .then(function() {
+									AlertService.setSuccess({
+										show: false,
+										persist: true,
+										msg: ability.name + ' deleted successfully.'
+									});
+									$window.scrollTo(0, 0);
+								})
+                                .catch(function (err) {
+                                    AlertService.setError({
+										show: true,
+										msg: 'An error occured while deleting ' + ability.name,
+										lbErr: err
+									});
                                     $window.scrollTo(0,0);
                                 });
                             }
@@ -15922,6 +15945,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit hero
             $scope.editHero = function () {
+				$scope.fetching = true;
                 OverwatchHero.upsert($scope.hero).$promise
                 .then(function (heroValue) {
 
@@ -15938,26 +15962,34 @@ angular.module('app.controllers', ['ngCookies'])
                             console.log('httpResponse: ', httpResponse);
                             return eachCallback(httpResponse);
                         });
-                    }, function (httpResponse) {
-                        if (httpResponse) {
-                            console.log('httpResponse: ', httpResponse);
-
-                            $scope.errors = ['An error occurred while trying to update an ability.'];
-                            $scope.showError = true;
+                    }, function (err) {
+						$scope.fetching = false;
+                        if (err) {
                             $window.scrollTo(0,0);
-                            return;
+                            return AlertService.setError({
+								show: true,
+								msg: 'Could not update ' + $scope.hero.heroName,
+								lbErr: err
+							});
                         }
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been updated successfully.' });
+						$window.scrollTo(0, 0);
+                        AlertService.setSuccess({ 
+							persist: true,
+							show: false,
+							msg: $scope.hero.heroName + ' has been updated successfully.' 
+						});
                         return $state.go('app.admin.overwatch.heroes.list');
                     });
 
                 })
-                .catch(function (httpResponse) {
-                    console.log('httpResponse: ', httpResponse);
-
-                    $scope.errors = ['An error occurred while trying to update the hero.'];
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
+                .catch(function (err) {
+					$scope.fetching = false;
+					$window.scrollTo(0,0);
+					return AlertService.setError({
+						show: true,
+						msg: 'Could not update ' + $scope.hero.heroName,
+						lbErr: err
+					});
                 });
             }
         }
