@@ -310,6 +310,12 @@
         border: none;
     }
 
+    
+    .db-builder .btn .caret {
+        position: absolute;
+        right: 10px;
+        top: 15px;
+    }
 
     //*************************************
     // 4... mana curve
@@ -780,5 +786,15 @@
     .deck-video { width: 100%; border: none; }
 
     .deck-subscribe > h1 { margin-top: 20px; color: #2766ad; font-family: 'Open Sans Bold'; }
-    .deck-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF; }
+    .deck-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF;      }
+    
+    .note-editor {
+        overflow: visible;
+    }
+    
+    .panel-heading.note-toolbar .note-color .dropdown-toggle {
+        width: 20px;
+        padding-left: 19px;
+        padding-bottom: 23px;
+    }
 }

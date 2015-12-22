@@ -2569,7 +2569,7 @@ var app = angular.module('app', [
                                 .then(function (t) {
                                     async.each(t, function (tm, eachCb) {
                                         if (typeof tm.isActive === 'string') {
-                                            console.log('IT\'S A STRING FAGOT');
+                                            console.log('IT\'S A STRING');
                                             tm.isActive = true;
                                             
                                             TeamMember.update({ 
