@@ -11580,6 +11580,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     var indexToDel = $scope.categories.indexOf(category);
                                     if (indexToDel !== -1) {
                                         $scope.categories.splice(indexToDel, 1);
+										$window.scrollTo(0, 0);
                                         AlertService.setSuccess({
                                             show: true,
                                             msg: category.title + ' deleted successfully.'

@@ -581,6 +581,7 @@ angular.module('app.services', [])
 			this.reset();
 			error = value;
 			alert = value.show;
+			(value.persist !== undefined) ? this.setPersist(value.persist) : null;
 
 			// array of errors
 			console.log('lbErr:', value.lbErr);
