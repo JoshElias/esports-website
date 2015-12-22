@@ -283,7 +283,7 @@ angular.module('redbull.directives')
                     tolerance: "touch",
                     drop: function(e, ui) {
                         var expansion = ui.draggable.attr('data-expansion');
-                        packDrop(expansion);
+                        packDrop(expansion, 'mouse');
                     }
                 });
                 
@@ -296,10 +296,10 @@ angular.module('redbull.directives')
                         if (fastForward && e.hasOwnProperty('originalEvent')) { return false };
 
                         // spacebar to drop pack
-                        if (!scope.isLoading && !packDropped) {
+                        if (!scope.isLoading && !packDropped && $('.pack.ui-draggable-dragging').length === 0) {
                                 
                                 // drop pack
-                                packDrop();
+                                packDrop(null, 'spacebar');
                         
                         // spacebar to flip card / click done
                         } else if (!scope.isLoading && packDropped) {
@@ -332,7 +332,7 @@ angular.module('redbull.directives')
                     return !(e.keyCode == 32);
                 };
                 
-                function packDrop(expansion) {
+                function packDrop(expansion, droppedBy) {
                     if (!packDropped) {
                         packDropped = true;
                         scope.cardsFlipped = 0;
@@ -344,7 +344,7 @@ angular.module('redbull.directives')
                         $(".pack").draggable("disable");
                         
                         // if fast forwarding remove one from pack count
-                        if (fastForward) {
+                        if (fastForward || droppedBy === 'spacebar') {
                             scope.$apply(function () {
                                 scope.packsCount[expansion]--;
                             });
@@ -426,7 +426,6 @@ angular.module('redbull.directives')
                     
                     if (!done) {
                         var anotherPack = hasAnotherPack();
-                        packDropped = false;
                         done = true;
                         
                         // enable pack dragging
@@ -440,12 +439,14 @@ angular.module('redbull.directives')
                         
                         // remove blur
                         el.removeClass('blurred');
-                        
-                        if (!anotherPack) {
-                            scope.expansions.splice(scope.expansions.indexOf(currentExpansion), 1);
-                        }
-                        
+
                         $('.cards').fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF), function() {
+                            if (!anotherPack) {
+                                scope.expansions.splice(scope.expansions.indexOf(currentExpansion), 1);
+                            }
+                        
+                            packDropped = false;
+
                             $('.card').removeClass('flipped-left flipped-right');
                             if (anotherPack) {
                                 nextPack(currentExpansion);
@@ -469,6 +470,7 @@ angular.module('redbull.directives')
                                     fastForward = false;
                                     el.removeClass('fast-forward');
                                 }
+                                stopShakeTimer();
                                 scope.draftComplete = true;
                             }
                         });
