@@ -179,9 +179,10 @@ module.exports = function(Image) {
         form.parse(req, function (err, fields, files) {
             if (err) {
                 console.log("ERR parsing form:", err);
-                return done(defaultError);
+                return done(err);
             }
 
+            console.log("receiving files", files);
             var file = files[Object.keys(files)[0]]; // get first property in dict files
 
             var arr = file.name.split('.'),

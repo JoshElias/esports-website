@@ -19,10 +19,7 @@
     "tier": {
       "type": "number"
     },
-    "deckId": {
-      "type": "string",
-      "objectId": true
-    },
+    "deckId": {},
     "snapshotId": {},
     "ranks": {
       "type": [
