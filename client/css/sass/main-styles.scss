@@ -1789,6 +1789,8 @@ input[type=range]:focus::-ms-fill-upper {
 
 // Summernote and panel overrides
 
+.db-builder,
+.forum-styles {
 
     .note-editor .note-editing-area .note-editable {
         background-color: transparent;
@@ -1818,7 +1820,8 @@ input[type=range]:focus::-ms-fill-upper {
         border-color: transparent;
     }
 
-
+}
+    
 .db-builder { position: relative; margin: 20px 0; }
 
 .db-section { outline: 1px solid rgba(255,255,255,.3); outline-offset: 0px; background: rgba(0,0,0,.3); position: relative; }
