@@ -50,7 +50,14 @@
         .hots-guide.long.#{$hero} { background-image: url('../img/hots/heroes/guide-images/long/#{$hero}.png'); background-repeat: no-repeat; background-position: right top; }
         .hots-top-guide .hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat center right; }
         .guide-hero-image.#{$hero} { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/#{$hero}60.png') no-repeat right top; }
-        .tc-hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat right 120px; }
+        .tc-hero.#{$hero} { 
+            background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat right 120px;
+        
+            @media only screen and (min-width:765px) and (max-width: 1201px) {
+                background: url('../img/hots/modal/heroes/#{$hero}.png') top 112px right -74px no-repeat;
+                background-size: 75% auto;
+            }
+        }
     }
     
     .hots-modal .hero.#{$hero} { background: url(../img/hots/modal/heroes/#{$hero}.png) no-repeat center right; }
@@ -853,7 +860,7 @@ This is the template for hots-hero-talents.
 
 //talents: Lunara 
 
-@include hots-hero-talents ( Lunara, (
+@include hots-hero-talents ( lunara, (
     ( class: (blossom-swell, splintered-spear, pestering-blossom, choking-pollen), pos: 0 ), // 0
     ( class: (photosynthesis, invigorating-spores), pos: 1 ), // -30
     ( class: (natural-perspective, natures-culling, unfair-advantage), pos: 2 ), // -60
