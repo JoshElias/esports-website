@@ -553,60 +553,74 @@ angular.module('app.services', [])
     };
 }])
 .factory('AlertService', function () {
-    var success = {},
-        error = {},
-        alert = false;
+    var success = {};
+    var error = {};
+    var alert = false;
+    var persist = false;
     
     return {
+        getPersist: function () {
+          return persist;
+        },
+        setPersist: function (value) {
+          persist = value;
+        },
         getSuccess: function () {
-            return success;
+          return success;
         },
         setSuccess: function (value) {
-            this.reset();
-            success = value;
-            alert = value.show || true;
+          this.reset();
+          (value.persist !== undefined) ? this.setPersist(value.persist) : null;
+          success = value;
+		  alert = value.show
         },
         getError: function () {
-            return error;
+          return error;
         },
         setError: function (value) {
-            this.reset();
-            error = value;
-            alert = value.show || true;
-			
+			this.reset();
+			error = value;
+			alert = value.show;
+
 			// array of errors
 			console.log('lbErr:', value.lbErr);
 			var errorList = [];
-            if (value.lbErr
-                && value.lbErr.data
-                && value.lbErr.data.error
-                && value.lbErr.data.error.details
-                && value.lbErr.data.error.details.messages) {
-                var errMsgs = value.lbErr.data.error.details.messages;
-                angular.forEach(errMsgs, function(errArr) {
-                    angular.forEach(errArr, function(errMsg) {
+			if (value.lbErr
+				&& value.lbErr.data
+				&& value.lbErr.data.error
+				&& value.lbErr.data.error.details
+				&& value.lbErr.data.error.details.messages) {
+				var errMsgs = value.lbErr.data.error.details.messages;
+				angular.forEach(errMsgs, function(errArr) {
+					angular.forEach(errArr, function(errMsg) {
 						errorList.push(errMsg);
 					});
-                });
-                // attach lb errors to error object
-            } else if (value.lbErr
-					   && value.lbErr.data
-					   && value.lbErr.data.error
-					   && value.lbErr.data.error.message) {
+				});
+			// attach lb errors to error object
+			} else if (value.lbErr
+						 && value.lbErr.data
+						 && value.lbErr.data.error
+						 && value.lbErr.data.error.message) {
 				errorList.push(value.lbErr.data.error.message);
 			}
 			error.errorList = errorList;
 			console.log('error.errorList:', error.errorList);
-                
         },
         reset: function () {
-            success = {};
-            error = {};
-            alert = false;
+          success = {};
+          error = {};
+          alert = false;
         },
         hasAlert: function () {
-            return alert;
-        }
+          return alert;
+        },
+		setShow: function(showVal) {
+			alert = showVal;
+		},
+		getShow: function() {
+			console.log('alert2:', alert);
+			return alert;
+		}
     }
 })
 .factory('AdminArticleService', ['$http', '$q', function ($http, $q) {

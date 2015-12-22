@@ -394,7 +394,7 @@ angular.module('app.directives', ['ui.load'])
             var as = AlertService;
             
             $scope.show = function () {
-                return (as.hasAlert()) ? true : false;
+                return as.getShow();
             }
             
             $scope.reset = function() {
@@ -556,7 +556,7 @@ angular.module('app.directives', ['ui.load'])
         restrict: 'E',
         replace: true,
         scope: false,
-        templateUrl: "views/frontend/directives/subnav.stream.html",
+        templateUrl: tpl+"views/frontend/directives/subnav.stream.html",
         controller: ['$scope', function ($scope) {
             $scope.subNavStreams = [];
             $scope.showSubNavStream = false;
@@ -805,18 +805,17 @@ angular.module('app.directives', ['ui.load'])
     return {
       templateUrl: tpl + 'views/admin/hots.heroes.talents.add.form.html',
       controller: ['$scope', 'Talent', function ($scope, Talent) {
-        $scope.talentSearch = "";
-        $scope.searchedTalents
-        $scope.searchTalents = function () {
+        $scope.searchedTalents = [];
+        $scope.searchTalents = function (pattern) {
           Talent.find({
             filter: {
               limit: 4,
-              where: { name: { like: $scope.talentSearch } }
+              where: { name: { like: pattern } }
             }
           })
           .$promise
           .then(function (data) {
-            $scope.searchedTalents = (!_.isEmpty($scope.talentSearch)) ? data : [];
+            $scope.searchedTalents = (!_.isEmpty(pattern)) ? data : [];
           })
         }
         

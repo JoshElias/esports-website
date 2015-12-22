@@ -8,7 +8,7 @@
       <div class="row form-group m-r-none m-l-none">
           <label for="talentName" class="col-sm-3 control-label">Name</label>
           <div class="col-sm-9">
-              <input type="text" id="talentName" name="talentName" class="form-control" ng-model="currentTalent.name" required>
+              <input type="text" id="talentName" name="talentName" class="form-control" ng-model="currentTalent.name" ng-change="searchTalents(currentTalent.name)" required>
           </div>
       </div>
       <div class="row form-group m-r-none m-l-none">
@@ -38,13 +38,11 @@
     </div>
     <div class="col-sm-5 panel panel-dark padding-none">
       <div class="row form-group m-b-none">
-        <div class="panel-heading">
-          <input type="text" id="searchTalents" placeholder="Search..." class="form-control" ng-model="talentSearch" ng-change="searchTalents()">
-        </div>
         <ul class="list-group m-b-none">
-          <a ng-click="setCurrent(talent)" ng-repeat="talent in searchedTalents" class="list-group-item"> 
+          <a ng-if="searchedTalents.length" ng-click="setCurrent(talent)" ng-repeat="talent in searchedTalents" class="list-group-item"> 
             {{talent.name}}
           </a>
+          <li ng-if="!searchedTalents.length" class="list-group-item">No results.</li>
         </ul>
       </div>
     </div>

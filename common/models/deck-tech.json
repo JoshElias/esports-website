@@ -29,6 +29,11 @@
       "model": "cardTech",
       "foreignKey": "deckTechId",
       "isChild": true
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
     }
   },
   "acls": [

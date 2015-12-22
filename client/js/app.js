@@ -69,7 +69,15 @@ var app = angular.module('app', [
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
                 }
                 
-                AlertService.reset();
+			  console.log('STATE CHANGE SUCCESSING');
+                //we're resetting the alertService if unless persist is set to true, then we reset persist and the alertservice will reset on the NEXT state change
+                if (!AlertService.getPersist()) {
+                  AlertService.reset();
+                } else {
+				  AlertService.setShow(true);
+                  AlertService.setPersist(false);
+                }
+                
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
                 console.log("Event:", event);
@@ -3899,7 +3907,17 @@ var app = angular.module('app', [
                                           {
                                             relation: 'talents',
                                             scope: {
-                                              include: 'talent'
+                                              include: [
+                                                {
+                                                  relation: 'talent'
+                                                },
+                                                {
+                                                  relation: 'ability',
+                                                  scope: {
+                                                    fields: ['name']
+                                                  }
+                                                }
+                                              ]
                                             }
                                           },
                                           {
@@ -3915,6 +3933,8 @@ var app = angular.module('app', [
                                   
                                   data.talents = tals;
                                   data.abilities = abils;
+                                  
+                                  _.each(data.talents, function (tal) { if (tal.ability !== undefined) { var temp = tal.ability.name; tal.ability = temp; } })
                                   return data;
                                 });
                             }]
@@ -5330,7 +5350,7 @@ var app = angular.module('app', [
                                         fields: paginationParams.options.filter.fields
                                     }
                                 };
-
+							  console.log('VOD LIST RESOLVE');
                                 return Vod.find(options).$promise;
                             }]
                         }

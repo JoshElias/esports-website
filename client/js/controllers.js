@@ -4979,20 +4979,20 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (snapshot) {
                     console.log(snapshot);
-                    snapshot.id = undefined;
+                    delete snapshot.id;
                     
                     snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
                     
                     var stripped = {};
-                    stripped['authors'] = _.map(snapshot.authors, function (author) { author.id = undefined; return author });
-                    stripped['matches'] = _.map(snapshot.deckMatchups, function (matchup) { matchup.id = undefined; return matchup });
+                    stripped['authors'] = _.map(snapshot.authors, function (author) { delete author.id; return author });
+                    stripped['matches'] = _.map(snapshot.deckMatchups, function (matchup) { delete matchup.id; return matchup });
                     console.log(snapshot.deckTiers);
                     stripped['decks'] = _.map(snapshot.deckTiers, function (deck) { 
-                        deck.id = undefined;
+                        delete deck.id;
                         deck.deckTech = _.map(deck.deckTech, function(deckTech) {
-                            deckTech.id = undefined;
+                            delete deckTech.id;
                             deckTech.cardTech = _.map(deckTech.cardTech, function (cardTech) {
-                                cardTech.id = undefined;
+                                delete cardTech.id;
                                 return cardTech;
                             });
                             return deckTech;
@@ -5300,7 +5300,6 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService) {
 //removed upload
             
-            console.log('hello2');
             var defaultMember = {
                 game: '',
                 screenName: '',
@@ -5364,7 +5363,7 @@ angular.module('app.controllers', ['ngCookies'])
                    $scope.fetching = false;
 				   $state.go('app.admin.teams.list');
 				   AlertService.setSuccess({
-					   show: true,
+					   show: false,
 					   persist: true,
 					   msg: $scope.member.screenName + ' created successfully'
 				   });
@@ -5432,7 +5431,7 @@ angular.module('app.controllers', ['ngCookies'])
                      $state.go('app.admin.teams.list');
 					 AlertService.setSuccess({
 						 persist: true,
-						 show: true,
+						 show: false,
 						 msg: userUpdated.screenName + ' updated successfully'
 					 });
                  })
@@ -5561,8 +5560,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminVodAddCtrl', ['$scope', '$window', '$state', 'AdminVodService', 'AlertService', 'Vod',
-        function ($scope, $window, $state, AdminVodService, AlertService, Vod) {
+    .controller('AdminVodAddCtrl', ['$scope', '$timeout', '$window', '$state', 'AdminVodService', 'AlertService', 'Vod',
+        function ($scope, $timeout, $window, $state, AdminVodService, AlertService, Vod) {
 
             var defaultVod = {
                 displayDate: '',
@@ -5580,22 +5579,25 @@ angular.module('app.controllers', ['ngCookies'])
             // save VOD
             $scope.saveVod = function (vod) {
 				$scope.fetching = true;
-                Vod.create({}, vod, function (data) {
+                Vod.create({}, vod)
+					.$promise
+					.then(function (data) {
 					$scope.fetching = false;
 					$state.go('app.admin.vod.list');
 					AlertService.setSuccess({
 						persist: true,
-						show: true,
+						show: false,
 						msg: vod.subtitle + ' created successfully.'
 					});
-                }, function (err) {
-					$scope.fetching = false;
-                    AlertService.setError({
-						show: true,
-						msg: 'Unable to create Vod ' + vod.subtitle,
-						lbErr: err
-					});
-					$window.scrollTo(0, 0);
+                })
+				  .catch(function (err) {
+				  $scope.fetching = false;
+				  AlertService.setError({
+					  show: true,
+					  msg: 'Unable to create Vod ' + vod.subtitle,
+					  lbErr: err
+				  });
+				  $window.scrollTo(0, 0);
                 });
             };
 
@@ -7623,7 +7625,7 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.fetching = false;
 						AlertService.setSuccess({
 							persist: true,
-							show: true,
+							show: false,
 							msg: user.username + ' created successfully'
 						});
                     }
@@ -7730,7 +7732,7 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.fetching = false;
 						AlertService.setSuccess({
 							persist: true,
-							show: true,
+							show: false,
 							msg: user.username + ' editted successfully'
 						});
                     }
@@ -7914,11 +7916,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.voteLimit = function() {
                 var out = [];
-
                 for (var i = 0; i < $scope.poll.items.length; i++) {
                     out.push(i + 1);
                 }
-
                 return out;
             }
 
@@ -8014,7 +8014,7 @@ angular.module('app.controllers', ['ngCookies'])
 						$state.go('app.admin.polls.list');
 						AlertService.setSuccess({
 							persist: true,
-							show: true,
+							show: false,
 							msg: pollInstance.title + ' created successfully'
 						});
 						
@@ -8277,7 +8277,7 @@ angular.module('app.controllers', ['ngCookies'])
 					}
 					AlertService.setSuccess({
 						persist: true,
-						show: true,
+						show: false,
 						msg: poll.title + ' editted successfully'
 					});
 					$state.go('app.admin.polls.list');
@@ -11777,21 +11777,22 @@ angular.module('app.controllers', ['ngCookies'])
 //                    console.log('newCategory: ', newCategory);
                     $scope.fetching = false;
                     $window.scrollTo(0,0);
+				    AlertService.setSuccess({
+					  persist: true,
+					  show: false,
+					  msg: newCategory.title + ' created successfully'
+					});
                     $state.go('app.admin.forum.structure.list');
                 })
                 .catch(function (err) {
                     console.log('err: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ show: true, msg: 'Unable to create Forum Category', errorList: $scope.errors });
-                        $scope.fetching = false;
-                        $window.scrollTo(0,0);
-                    }
+					AlertService.setError({ 
+					  show: true, 
+					  msg: 'Unable to create Forum Category', 
+					  lbErr: err
+					});
+					$scope.fetching = false;
+					$window.scrollTo(0,0);
                 });
             };
         }
@@ -11817,20 +11818,21 @@ angular.module('app.controllers', ['ngCookies'])
 //                    console.log('categoryUpdated: ', categoryUpdated);
                     $window.scrollTo(0, 0);
                     $state.go('app.admin.forum.structure.list');
+				    AlertService.setSuccess({
+					  persist: true,
+					  show: false,
+					  msg: category.title + ' updated successfully'
+					});
                 })
                 .catch(function (err) {
 //                    console.log('categoryUpdated: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ show: true, msg: '', errorList: $scope.errors });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    }
+					  AlertService.setError({ 
+						show: true, 
+						msg: 'Unable to update ' + category.title, 
+						lbErr: err
+					  });
+					  $window.scrollTo(0,0);
+					  $scope.fetching = false;
                 });
             };
         }
@@ -11879,33 +11881,23 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0,0);
                     $scope.fetching = false;
                     $state.go('app.admin.forum.structure.list');
+				    AlertService.setSuccess({
+					  show: false,
+					  persist: true,
+					  msg: thread.title + ' created successfully'
+					});
                 })
                 .catch(function (err) {
 //                    console.log('thread creation: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ show: true, msg: '', errorList: $scope.errors });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    }
+					  AlertService.setError({ 
+						show: true, 
+						msg: 'Unable to create ' + thread.title, 
+						lbErr: err
+					  });
+					  $window.scrollTo(0,0);
+					  $scope.fetching = false;
                     
                 });
-                
-//                AdminForumService.addThread($scope.thread).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        AlertService.setSuccess({ show: true, msg: $scope.thread.title + ' has been added successfully.' });
-//                        $state.go('app.admin.forum.categories.list');
-//                    }
-//                });
             };
         }
     ])
@@ -11943,34 +11935,22 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0,0);
                     $scope.fetching = false;
                     $state.go('app.admin.forum.structure.list');
+				    AlertService.setSuccess({
+					  show: false,
+					  persist: true,
+					  msg: thread.title + ' updated successfully'
+					});
                 })
                 .catch(function (err) {
 //                    console.log('ForumThread Update: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    }
+					  AlertService.setError({ 
+						show: true, 
+						msg: 'Unable to update ' + thread.title, 
+						lbErr: err
+					  });
+					  $window.scrollTo(0,0);
+					  $scope.fetching = false;
                 });
-                
-//                $scope.showError = false;
-
-//                AdminForumService.editThread($scope.thread).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        AlertService.setSuccess({ show: true, msg: $scope.thread.title + ' has been updated successfully.' });
-//                        $state.go('app.admin.forum.categories.list');
-//                    }
-//                });
             };
         }
     ])
@@ -12391,14 +12371,14 @@ angular.module('app.controllers', ['ngCookies'])
                 }
               ], function (err) {
                 if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
-                else { console.log('success!'); }
+                else { console.log('success!'); AlertService.setSuccess({ persist: true, show: true, msg: "your shit got added" }); $state.go('app.admin.hots.heroes.list'); }
               })
             }).catch(function (err) { console.log(err); });
           };
         }
     ])
-    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero) {
+    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'Ability', 'HeroTalent', 'Talent',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, Ability, HeroTalent, Talent) {
             // defaults
             var defaultAbility = {
                     name: '',
@@ -12513,19 +12493,24 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.talentTiers = HOTS.tiers;
             $scope.talentAddWnd = function () {
                 $scope.currentTalent = angular.copy(defaultTalent);
+  //                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Add Talent',
-                    message: $compile('<div talent-add-form></div>')($scope)
+                    message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
                 });
             };
 
             $scope.talentEditWnd = function (talent) {
-                $scope.currentTalent = talent;
+                $scope.currentTalent = talent.talent;
+                $scope.currentTalent.tier = talent.tier;
+                $scope.currentTalent.orderNum = talent.orderNum;
+                $scope.currentTalent.ability = talent.ability;
+  //                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Edit Talent',
-                    message: $compile('<div talent-edit-form></div>')($scope)
+                    message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
                 });
             };
 
@@ -12592,18 +12577,114 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.editHero = function () {
-                $scope.showError = false;
+              var hero = angular.copy($scope.hero);
+              var tals = hero.talents;
+              var talsToAdd  = [];
+              var abilsToAdd = hero.abilities;
+              
+              delete hero.abilities;
+              delete hero.talents;
 
-                AdminHeroService.editHero($scope.hero).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hots.heroes.list');
-                    }
-                });
+              _.each(tals, function (talVal) {
+                var a = _.find(abilsToAdd, function (abiVal) { return talVal.ability === abiVal.name });
+                var toPush = {};
+                
+                if (talVal.talent !== undefined) {
+                  toPush = talVal.talent;
+                  toPush.tier = talVal.tier;
+                  toPush.orderNum = talVal.orderNum;
+                } else {
+                  toPush = talVal
+                }
+                
+                delete talVal.ability;
+
+                if (_.isUndefined(a)) {
+                  talsToAdd.push(toPush);
+                } else {
+                  if (_.isUndefined(a.talents)) {
+                    a.talents = [];
+                  }
+
+                  a.talents.push(toPush);
+                }
+              });
+              
+              Hero.update({
+                where: {
+                  id: hero.id
+                }
+              }, hero)
+              .$promise
+              .then(function (heroData) {
+                async.series([
+                  function (seriesCb) {
+                    Hero.talents.destroyAll({
+                      id: heroData.id
+                    })
+                    .$promise
+                    .then(seriesCb(undefined))
+                    .catch(seriesCb)
+                  },
+                  function(seriesCb) {
+                    async.each(abilsToAdd, function (abil, abilCb) {
+                      var tempTals = abil.talents;
+                      delete abil.talents;
+                      abil.heroId = heroData.id;
+                      Ability.upsert({
+                        id: abil.id
+                      }, abil)
+                      .$promise
+                      .then(function (abilData) {
+                        async.each(tempTals, function(abilTal, abilTalCb) {
+                          Talent.upsert({}, abilTal)
+                          .$promise
+                          .then(function (abilTalData) {
+                            HeroTalent.create({}, {
+                              heroId: heroData.id,
+                              talentId: abilTalData.id,
+                              abilityId: abilData.id,
+                              tier: abilTal.tier,
+                              orderNum: abilTal.orderNum
+                            })
+                            .$promise
+                            .then(function (heroTalData) {
+                              return abilTalCb();
+                            }).catch(seriesCb);
+                          }).catch(seriesCb);
+                        }, function() {
+                          return abilCb(undefined);
+                        });
+                      }).catch(seriesCb);
+                    }, function () {
+                      return seriesCb(undefined);
+                    });
+                  },
+                  function (seriesCb) {
+                    async.each(talsToAdd, function (tal, eachCb) {
+                      Talent.upsert({}, tal)
+                      .$promise
+                      .then(function (talData) {
+                        HeroTalent.create({}, {
+                          heroId: heroData.id,
+                          talentId: talData.id,
+                          tier: tal.tier,
+                          orderNum: tal.orderNum
+                        })
+                        .$promise
+                        .then(eachCb())
+                        .catch(seriesCb);
+                      })
+                      .catch(seriesCb);
+                    }, seriesCb(undefined))
+                  }
+                ], function (err) {
+                  if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
+                  else { 
+                    $state.go('app.admin.hots.heroes.list');
+                  }
+                })
+              }).catch(function (err) { console.log(err); });
             };
         }
     ])
