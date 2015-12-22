@@ -1272,7 +1272,8 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.card.photoNames.medium = data.medium;
                         $scope.card.photoNames.large = data.large;
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
-                        $scope.cardImg = cdn2 + data.path + data.large;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.cardImg = URL + data.path + data.large;
                         box.modal('hide');
                     });
                 }
@@ -1381,7 +1382,9 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.card.photoNames.medium = data.medium;
                         $scope.card.photoNames.large = data.large;
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
-                        $scope.cardImg = cdn2 + data.path + data.large;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.cardImg = URL + data.path + data.large;
+						console.log('$scope.cardImg:', $scope.cardImg);
                         box.modal('hide');
                     });
                 }
@@ -2038,7 +2041,8 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-                        $scope.cardImg = cdn2 + data.path + data.small;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.cardImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -2049,7 +2053,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.imgPath = 'articles/';
                 if (!$scope.article.photoNames) { return 'img/blank.png'; }
 //                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photoNames.small;
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ? cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.article.photoNames.small;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ? URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
             };
 
 
@@ -2638,7 +2643,8 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-                        $scope.articleImg = cdn2 + data.path + data.small;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.articleImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -2651,7 +2657,8 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!$scope.article.photoNames) { 
                     return 'img/blank.png'; 
                 }
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.article.photoNames.small;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
             };
 
             $scope.editArticle = function (article) {
@@ -3214,7 +3221,8 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-                        $scope.snapshotImg = cdn2 + data.path + data.small;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.snapshotImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -3224,7 +3232,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.imgPath = 'snapshots/';
                 if (!$scope.snapshot) { return '/img/blank.png'; }
 //                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.snapshot.photoNames.small;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  URL + '/img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
             };
 
             //REMOVE METHODS
@@ -4209,7 +4218,8 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.snapshotImg = $scope.app.cdn + data.path + data.small;
-                        $scope.snapshotImg = cdn2 + data.path + data.small;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.snapshotImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -4217,10 +4227,12 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.getImage = function () {
                 $scope.imgPath = 'snapshots/';
-                if (!$scope.snapshot) { return cdn2 + '/img/blank.png'; }
+				var URL = (tpl === './') ? cdn2 : tpl;
+                if (!$scope.snapshot) { return URL + '/img/blank.png'; }
                 console.log('$scope.snapshot.photoNames.large:', $scope.snapshot.photoNames.large);
 //                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ? cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.snapshot.photoNames.small;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ? URL + '/img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
             };
             
             function removeAuthorAJAX(obj, cb) {
@@ -4967,20 +4979,20 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (snapshot) {
                     console.log(snapshot);
-                    snapshot.id = undefined;
+                    delete snapshot.id;
                     
                     snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
                     
                     var stripped = {};
-                    stripped['authors'] = _.map(snapshot.authors, function (author) { author.id = undefined; return author });
-                    stripped['matches'] = _.map(snapshot.deckMatchups, function (matchup) { matchup.id = undefined; return matchup });
+                    stripped['authors'] = _.map(snapshot.authors, function (author) { delete author.id; return author });
+                    stripped['matches'] = _.map(snapshot.deckMatchups, function (matchup) { delete matchup.id; return matchup });
                     console.log(snapshot.deckTiers);
                     stripped['decks'] = _.map(snapshot.deckTiers, function (deck) { 
-                        deck.id = undefined;
+                        delete deck.id;
                         deck.deckTech = _.map(deck.deckTech, function(deckTech) {
-                            deckTech.id = undefined;
+                            delete deckTech.id;
                             deckTech.cardTech = _.map(deckTech.cardTech, function (cardTech) {
-                                cardTech.id = undefined;
+                                delete cardTech.id;
                                 return cardTech;
                             });
                             return deckTech;
@@ -5336,7 +5348,9 @@ angular.module('app.controllers', ['ngCookies'])
                     }).success(function(data, status, headers, config) {
 						console.log('data:', data);
                         $scope.member.photoName = data.photo;
-                        $scope.cardImg = cdn2 + data.path + data.photo;
+						var URL = (tpl === './') ? cdn2 : tpl;
+						console.log('URL:', URL);
+                        $scope.cardImg = URL + data.path + data.photo;
                         box.modal('hide');
                     });
                 }
@@ -5346,7 +5360,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.imgPath = 'team/';
                 if (!$scope.member) { return '/img/blank.png'; }
 				console.log('$scope.path:', $scope.imgPath);
-                return ($scope.member.photoName && $scope.member.photoName === '') ?  cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.member.photoName;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.member.photoName && $scope.member.photoName === '') ?  URL + '/img/blank.png' : URL + $scope.imgPath + $scope.member.photoName;
             };
 
             // save member
@@ -5396,7 +5411,8 @@ angular.module('app.controllers', ['ngCookies'])
                         console.log('data:', data);
                         $scope.member.photoName = data.photo;
 //                        $scope.memberImg = $scope.app.cdn + data.path + data.photo;
-                        $scope.memberImg = cdn2 + data.path + data.photo;
+						var URL = (tpl === './') ? cdn2 : tpl;
+                        $scope.memberImg = URL + data.path + data.photo;
                         box.modal('hide');
                     });
                 }
@@ -5578,19 +5594,18 @@ angular.module('app.controllers', ['ngCookies'])
             // save VOD
             $scope.saveVod = function (vod) {
                 Vod.create({}, vod, function (data) {
-                    if (data.$resolved) {
-                        $scope.success = {
-                            show: true,
-                            msg: vod.subtitle + ' created successfully.'
-                        };
-                        $scope.vod = angular.copy(defaultVod);
-                    }
+					$state.transitionTo('app.admin.vod.list');
+					AlertService.setSuccess({
+						show: true,
+						msg: vod.subtitle + ' created successfully.'
+					});
                 }, function (err) {
-                    if(err) console.log('error: ',err);
-                    $scope.success = {
-                        show: true,
-                        msg: vod.subtitle + ' could not be created.'
-                    };
+                    AlertService.setError({
+						show: true,
+						msg: 'Unable to create Vod ' + vod.subtitle,
+						lbErr: err
+					});
+					$window.scrollTo(0, 0);
                 });
             };
 
@@ -7984,7 +7999,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getImage = function () {
-                return ($scope.currentItem.photoNames && $scope.currentItem.photoNames.thumb === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.currentItem.photoNames.thumb;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.currentItem.photoNames && $scope.currentItem.photoNames.thumb === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.currentItem.photoNames.thumb;
             };
 
             // add Poll
@@ -8200,7 +8216,8 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getImage = function () {
                 if (!$scope.currentItem) { return 'img/blank.png'; }
-                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.currentItem.photos.thumb;
+				var URL = (tpl === './') ? cdn2 : tpl;
+                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.currentItem.photos.thumb;
             };
 
             $scope.editPoll = function () {
@@ -12376,14 +12393,14 @@ angular.module('app.controllers', ['ngCookies'])
                 }
               ], function (err) {
                 if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
-                else { console.log('success!'); }
+                else { console.log('success!'); AlertService.setSuccess({ persist: true, show: true, msg: "your shit got added" }); $state.go('app.admin.hots.heroes.list'); }
               })
             }).catch(function (err) { console.log(err); });
           };
         }
     ])
-    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero) {
+    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'Ability', 'HeroTalent', 'Talent',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, Ability, HeroTalent, Talent) {
             // defaults
             var defaultAbility = {
                     name: '',
@@ -12498,19 +12515,24 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.talentTiers = HOTS.tiers;
             $scope.talentAddWnd = function () {
                 $scope.currentTalent = angular.copy(defaultTalent);
+  //                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Add Talent',
-                    message: $compile('<div talent-add-form></div>')($scope)
+                    message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
                 });
             };
 
             $scope.talentEditWnd = function (talent) {
-                $scope.currentTalent = talent;
+                $scope.currentTalent = talent.talent;
+                $scope.currentTalent.tier = talent.tier;
+                $scope.currentTalent.orderNum = talent.orderNum;
+                $scope.currentTalent.ability = talent.ability;
+  //                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Edit Talent',
-                    message: $compile('<div talent-edit-form></div>')($scope)
+                    message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
                 });
             };
 
@@ -12577,18 +12599,114 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.editHero = function () {
-                $scope.showError = false;
+              var hero = angular.copy($scope.hero);
+              var tals = hero.talents;
+              var talsToAdd  = [];
+              var abilsToAdd = hero.abilities;
+              
+              delete hero.abilities;
+              delete hero.talents;
 
-                AdminHeroService.editHero($scope.hero).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hots.heroes.list');
-                    }
-                });
+              _.each(tals, function (talVal) {
+                var a = _.find(abilsToAdd, function (abiVal) { return talVal.ability === abiVal.name });
+                var toPush = {};
+                
+                if (talVal.talent !== undefined) {
+                  toPush = talVal.talent;
+                  toPush.tier = talVal.tier;
+                  toPush.orderNum = talVal.orderNum;
+                } else {
+                  toPush = talVal
+                }
+                
+                delete talVal.ability;
+
+                if (_.isUndefined(a)) {
+                  talsToAdd.push(toPush);
+                } else {
+                  if (_.isUndefined(a.talents)) {
+                    a.talents = [];
+                  }
+
+                  a.talents.push(toPush);
+                }
+              });
+              
+              Hero.update({
+                where: {
+                  id: hero.id
+                }
+              }, hero)
+              .$promise
+              .then(function (heroData) {
+                async.series([
+                  function (seriesCb) {
+                    Hero.talents.destroyAll({
+                      id: heroData.id
+                    })
+                    .$promise
+                    .then(seriesCb(undefined))
+                    .catch(seriesCb)
+                  },
+                  function(seriesCb) {
+                    async.each(abilsToAdd, function (abil, abilCb) {
+                      var tempTals = abil.talents;
+                      delete abil.talents;
+                      abil.heroId = heroData.id;
+                      Ability.upsert({
+                        id: abil.id
+                      }, abil)
+                      .$promise
+                      .then(function (abilData) {
+                        async.each(tempTals, function(abilTal, abilTalCb) {
+                          Talent.upsert({}, abilTal)
+                          .$promise
+                          .then(function (abilTalData) {
+                            HeroTalent.create({}, {
+                              heroId: heroData.id,
+                              talentId: abilTalData.id,
+                              abilityId: abilData.id,
+                              tier: abilTal.tier,
+                              orderNum: abilTal.orderNum
+                            })
+                            .$promise
+                            .then(function (heroTalData) {
+                              return abilTalCb();
+                            }).catch(seriesCb);
+                          }).catch(seriesCb);
+                        }, function() {
+                          return abilCb(undefined);
+                        });
+                      }).catch(seriesCb);
+                    }, function () {
+                      return seriesCb(undefined);
+                    });
+                  },
+                  function (seriesCb) {
+                    async.each(talsToAdd, function (tal, eachCb) {
+                      Talent.upsert({}, tal)
+                      .$promise
+                      .then(function (talData) {
+                        HeroTalent.create({}, {
+                          heroId: heroData.id,
+                          talentId: talData.id,
+                          tier: tal.tier,
+                          orderNum: tal.orderNum
+                        })
+                        .$promise
+                        .then(eachCb())
+                        .catch(seriesCb);
+                      })
+                      .catch(seriesCb);
+                    }, seriesCb(undefined))
+                  }
+                ], function (err) {
+                  if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
+                  else { 
+                    $state.go('app.admin.hots.heroes.list');
+                  }
+                })
+              }).catch(function (err) { console.log(err); });
             };
         }
     ])
