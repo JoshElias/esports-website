@@ -1789,7 +1789,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 // Summernote and panel overrides
 
-.db-section {
+
     .note-editor .note-editing-area .note-editable {
         background-color: transparent;
         color: $white;
@@ -1797,10 +1797,12 @@ input[type=range]:focus::-ms-fill-upper {
     
     .note-editor {
         border: 0px solid;
+        overflow: visible !important;
     }
     
     .panel {
         background-color: transparent;
+        border-radius: 0;
     }
     
     .panel-default {
@@ -1815,7 +1817,7 @@ input[type=range]:focus::-ms-fill-upper {
         background-image: none; 
         border-color: transparent;
     }
-}
+
 
 .db-builder { position: relative; margin: 20px 0; }
 

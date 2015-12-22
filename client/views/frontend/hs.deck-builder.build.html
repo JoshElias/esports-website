@@ -132,7 +132,7 @@
                                 <input placeholder="DECK NAME..." ng-maxlength="35" ng-model="deck.name"/>
                             </div>
                             <div class="deck-description">
-                                <textarea placeholder="Put stuff here" resize="none" ng-model="deck.description"></textarea>
+                                <textarea placeholder="Deck description" resize="none" ng-model="deck.description"></textarea>
                             </div>
                         </span>
                         <div class="deck-list">
@@ -187,6 +187,7 @@
                                         <div class="dropdown">
                                             <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
                                                 <span>Mechanics ({{filters.mechanics.length}})</span>
+                                                <b class="caret"></b>
                                             </button>
                                             <ul class="list-group dropdown-menu dropdown-dark">
                                                 <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" 
