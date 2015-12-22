@@ -2,7 +2,7 @@ module.exports = {
 	"mongodb": {
 	    "host": "54.68.67.60",
 	    "port": 27017,
-	    "database": "new-tempostorm",
+	    "database": "tempostorm",
 	    "name": "mongodb",
 	    "connector": "mongodb",
 	    "server": {
@@ -23,6 +23,7 @@ module.exports = {
         "provider": "amazon",
         "key": "+KtXI6Pvdt8ijq4uOCpkIT5f76Wxf23avEdy311f",
         "keyId": "AKIAI5GMLIWXZP6TQXYQ",
-        "bucket": "staging-cdn.tempostorm.com"
+        "bucket": "staging-cdn.tempostorm.com",
+		"endpoint": "staging-cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com"
   }
 }

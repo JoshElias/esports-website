@@ -69,7 +69,13 @@ var app = angular.module('app', [
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
                 }
                 
-                AlertService.reset();
+                //we're resetting the alertService if unless persist is set to true, then we reset persist and the alertservice will reset on the NEXT state change
+                if (!AlertService.getPersist()) {
+                  AlertService.reset();
+                } else {
+                  AlertService.setPersist(false);
+                }
+                
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
                 console.log("Event:", event);
@@ -2570,7 +2576,7 @@ var app = angular.module('app', [
                                 .then(function (t) {
                                     async.each(t, function (tm, eachCb) {
                                         if (typeof tm.isActive === 'string') {
-                                            console.log('IT\'S A STRING FAGOT');
+                                            console.log('IT\'S A STRING');
                                             tm.isActive = true;
                                             
                                             TeamMember.update({ 
@@ -3899,7 +3905,17 @@ var app = angular.module('app', [
                                           {
                                             relation: 'talents',
                                             scope: {
-                                              include: 'talent'
+                                              include: [
+                                                {
+                                                  relation: 'talent'
+                                                },
+                                                {
+                                                  relation: 'ability',
+                                                  scope: {
+                                                    fields: ['name']
+                                                  }
+                                                }
+                                              ]
                                             }
                                           },
                                           {
@@ -3915,6 +3931,8 @@ var app = angular.module('app', [
                                   
                                   data.talents = tals;
                                   data.abilities = abils;
+                                  
+                                  _.each(data.talents, function (tal) { if (tal.ability !== undefined) { var temp = tal.ability.name; tal.ability = temp; } })
                                   return data;
                                 });
                             }]

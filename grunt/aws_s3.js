@@ -4,8 +4,8 @@ var configProduction = require('./../server/configs/datasources.production').s3;
 module.exports = {
     staging: {
         options: {
-            accessKeyId: configStaging.keyId,
-            secretAccessKey: configStaging.key,
+            accessKeyId: "AKIAIQZRXBQLHFBKCGSQ",
+            secretAccessKey: "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",
             bucket: 'staging-cdn.tempostorm.com',
             region: 'us-west-2',
             access: 'public-read',

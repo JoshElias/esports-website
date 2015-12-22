@@ -553,50 +553,57 @@ angular.module('app.services', [])
     };
 }])
 .factory('AlertService', function () {
-    var success = {},
-        error = {},
-        alert = false;
+    var success = {};
+    var error = {};
+    var alert = false;
+    var persist = false;
     
     return {
+        getPersist: function () {
+          return persist;
+        },
+        setPersist: function (value) {
+          persist = value;
+        },
         getSuccess: function () {
-            return success;
+          return success;
         },
         setSuccess: function (value) {
-            this.reset();
-            success = value;
-            alert = value.show || true;
+          this.reset();
+          (value.persist !== undefined) ? this.setPersist(value.persist) : null;
+          success = value;
+          alert = value.show || true;
         },
         getError: function () {
-            return error;
+          return error;
         },
         setError: function (value) {
-            this.reset();
-            error = value;
-            alert = value.show || true;
-			
-            if (value.lbErr
-                && value.lbErr.data
-                && value.lbErr.data.error
-                && value.lbErr.data.error.details
-                && value.lbErr.data.error.details.messages) {
-                var errorList = {};
-                var errMsgs = value.lbErr.data.error.details.messages;
-                angular.forEach(errMsgs, function(errArr, key) {
-                    errorList[key] = errArr;
-                });
-                // attach lb errors to error object
-                error.errorList = errorList;
-            }
-			console.log('error.errorList:', error.errorList);
-                
+          this.reset();
+          error = value;
+          alert = value.show || true;
+          if (value.lbErr
+            && value.lbErr.data
+            && value.lbErr.data.error
+            && value.lbErr.data.error.details
+            && value.lbErr.data.error.details.messages) {
+            var errorList = [];
+            var errMsgs = value.lbErr.data.error.details.messages;
+            angular.forEach(errMsgs, function(errArr) {
+              angular.forEach(errArr, function(errMsg) {
+                errorList.push(errMsg);
+              });
+            });
+            // attach lb errors to error object
+            error.errorList = errorList;
+          }
         },
         reset: function () {
-            success = {};
-            error = {};
-            alert = false;
+          success = {};
+          error = {};
+          alert = false;
         },
         hasAlert: function () {
-            return alert;
+          return alert;
         }
     }
 })
