@@ -2398,15 +2398,16 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
-            var relatedArticleChanges = {
-                toDelete: [],
-                toCreate: []
-            };
-
+    
+			var relatedArticleChanges = {
+			  toCreate: [],
+			  toDelete: []
+			};
+			
             $scope.modifyRelated = function (a) {
 				// toggle related article
                 console.log('a: ', a);
+				console.log('$scope.article:', $scope.article);
                 if ($scope.isRelated(a)) {
 					// removing related articles
 					// remove from toCreate
@@ -2435,7 +2436,7 @@ angular.module('app.controllers', ['ngCookies'])
 						}
 						console.log('relatedArticleChanges:', relatedArticleChanges);
 					});
-					
+//					
 					angular.forEach($scope.article.related, function(relArticle, index) {
 						if (relArticle.id === a.id) {
 							$scope.article.related.splice(index, 1);
@@ -2484,29 +2485,29 @@ angular.module('app.controllers', ['ngCookies'])
 				// remove from toCreate
 				// push to toDelete if it exist in db
 
-				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
-					if (toCrArticle.id === a.id) {
-						relatedArticleChanges.toCreate.splice(index, 1);
-						console.log('relatedArticleChanges:', relatedArticleChanges);
-						return;
-					}
-				});
-
-				ArticleArticle.find({
-					filter: {
-						where: {
-							childArticleId: a.id,
-							parentArticleId: $scope.article.id
-						}
-					}
-				}).$promise
-				.then(function (relatedArticle) {
-					// related article exist in db
-					if (relatedArticle.length !== 0) {
-						relatedArticleChanges.toDelete.push(a);
-					}
-					console.log('relatedArticleChanges:', relatedArticleChanges);
-				});
+//				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
+//					if (toCrArticle.id === a.id) {
+//						relatedArticleChanges.toCreate.splice(index, 1);
+//						console.log('relatedArticleChanges:', relatedArticleChanges);
+//						return;
+//					}
+//				});
+//
+//				ArticleArticle.find({
+//					filter: {
+//						where: {
+//							childArticleId: a.id,
+//							parentArticleId: $scope.article.id
+//						}
+//					}
+//				}).$promise
+//				.then(function (relatedArticle) {
+//					// related article exist in db
+//					if (relatedArticle.length !== 0) {
+//						relatedArticleChanges.toDelete.push(a);
+//					}
+//					console.log('relatedArticleChanges:', relatedArticleChanges);
+//				});
 
 				angular.forEach($scope.article.related, function(relArticle, index) {
 					if (relArticle.id === a.id) {
@@ -5969,7 +5970,6 @@ angular.module('app.controllers', ['ngCookies'])
     }])
     .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService',
         function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService) {
-			console.log('WE ARE HERE');
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
             
@@ -6322,8 +6322,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-                $scope.filters.mana = m;
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				if ($scope.filters.mana === m) {
+					$scope.filters.mana = 'all';
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+				} else {
+					$scope.filters.mana = m;
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				}
             }
 
             $scope.filters.byMana = function () {
@@ -6888,8 +6893,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-                $scope.filters.mana = m;
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				if ($scope.filters.mana === m) {
+					$scope.filters.mana = 'all';
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+				} else {
+					$scope.filters.mana = m;
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				}
             }
 
             $scope.filters.byMana = function () {
@@ -8981,8 +8991,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-                $scope.filters.mana = m;
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				if ($scope.filters.mana === m) {
+					$scope.filters.mana = 'all';
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+				} else {
+					$scope.filters.mana = m;
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				}
             }
 
             $scope.filters.byMana = function () {
@@ -9553,8 +9568,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-                $scope.filters.mana = m;
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				if ($scope.filters.mana === m) {
+					$scope.filters.mana = 'all';
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+				} else {
+					$scope.filters.mana = m;
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				}
             }
 
             $scope.filters.byMana = function () {

@@ -619,7 +619,6 @@ angular.module('app.services', [])
 			alert = showVal;
 		},
 		getShow: function() {
-			console.log('alert2:', alert);
 			return alert;
 		}
     }
@@ -1776,9 +1775,6 @@ angular.module('app.services', [])
                     }
                 }
             }
-			
-			console.log('index:', index);
-			console.log('cardRemovedFromDeck: ', cardRemovedFromDeck);
             
             if(cardRemovedFromDeck) {
                 console.log('card was removed');
