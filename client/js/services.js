@@ -1761,44 +1761,54 @@ angular.module('app.services', [])
                 cardMulliganExists = false,
                 cancel = false;
             
+			console.log('db.cards:', db.cards);
             for (var i = 0; i < db.cards.length; i++) {
-                if (card.card.id === db.cards[i].card.id) {
+                if (card.id === db.cards[i].card.id) {
+					console.log('card.id:', card.id);
+					console.log('db.cards[i].card.id:', db.cards[i].card.id);
                     if (db.cards[i].cardQuantity > 1) {
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
                     } else {
-                        index = db.cards.indexOf(card);
-                        console.log('index: ', index);
-                        if (index !== -1) {
-                            cardRemovedFromDeck = true;
-                        }
+						index = i;
+						cardRemovedFromDeck = true;
+						break;
                     }
                 }
             }
+			
+			console.log('index:', index);
+			console.log('cardRemovedFromDeck: ', cardRemovedFromDeck);
             
             if(cardRemovedFromDeck) {
                 console.log('card was removed');
                 // search all card with coin mulligans
+				console.log('db.mulligans:', db.mulligans);
                 for(var i = 0; i < db.mulligans.length; i++) {
-                    for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
-                        if (db.mulligans[i].mulligansWithCoin[j].id === card.card.id) {
-                            cardMulliganExists = true;
-                            break;
-                        }
-                    }
-                    for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
-                        if (db.mulligans[i].mulligansWithoutCoin[j].id === card.card.id) {
-                            cardMulliganExists = true;
-                            break;
-                        }
-                    }
+					if (db.mulligans[i].mulligansWithCoin.length > 0) {
+						for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
+							if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
+								cardMulliganExists = true;
+								break;
+							}
+						}
+					}
+                    
+                    if (db.mulligans[i].mulligansWithoutCoin.length > 0) {
+						for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
+							if (db.mulligans[i].mulligansWithoutCoin[j].id === card.id) {
+								cardMulliganExists = true;
+								break;
+							}
+						}
+					}
                 }
             }
             
             if (cardMulliganExists) {
                     var box = bootbox.dialog({
-                        title: 'Are you sure you want to remove <strong>' + card.card.name + '</strong>?',
-                        message: 'Current mulligans for ' + card.card.name + ' will be lost as well.',
+                        title: 'Are you sure you want to remove <strong>' + card.name + '</strong>?',
+                        message: 'Current mulligans for ' + card.name + ' will be lost as well.',
                         buttons: {
                             delete: {
                                 label: 'Continue',
@@ -1809,12 +1819,12 @@ angular.module('app.services', [])
                                     });
                                     for(var i = 0; i < db.mulligans.length; i++) {
                                         for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
-                                            if (db.mulligans[i].mulligansWithCoin[j].id === card.card.id) {
+                                            if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
                                                 db.mulligans[i].mulligansWithCoin.splice(j, 1);
                                             }
                                         }
                                         for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
-                                            if (db.mulligans[i].mulligansWithoutCoin[j].id === card.card.id) {
+                                            if (db.mulligans[i].mulligansWithoutCoin[j].id === card.id) {
                                                 db.mulligans[i].mulligansWithoutCoin.splice(j, 1);
                                             }
                                         }
@@ -1833,9 +1843,10 @@ angular.module('app.services', [])
                     });
                     box.modal('show');
                 } else {
-                    db.cards.splice(index, 1);
-                    return;
-                }
+					if (index !== -1) {
+						db.cards.splice(index, 1);
+					}
+				}
         };
 
         db.removeCard = function (card) {

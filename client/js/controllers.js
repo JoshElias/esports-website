@@ -1315,6 +1315,11 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (newCard) {
                     console.log('newCard: ', newCard);
+					AlertService.setSuccess({
+						show: false,
+						persist: true,
+						msg: card.name + ' created successfully'
+					});
                     $scope.fetching = false;
                     $state.transitionTo('app.admin.hearthstone.cards.list');
                 })
@@ -2138,14 +2143,19 @@ angular.module('app.controllers', ['ngCookies'])
 					}
 				], function(err, results) {
 					$scope.fetching = false;
+					$window.scrollTo(0, 0);
 					if (err) {
-						$window.scrollTo(0, 0);
 						return AlertService.setError({
 							show: true,
 							msg: 'Unable to create Article.',
 							lbErr: err
 						});
 					}
+					AlertService.setSuccess({
+						persist: true,
+						show: false,
+						msg: article.title + ' created successfully',
+					});
 					$state.transitionTo('app.admin.articles.list');
 				});
             };
@@ -2759,11 +2769,20 @@ angular.module('app.controllers', ['ngCookies'])
 					}
 				], function(err) {
 					$scope.fetching = false;
+					$window.scrollTo(0, 0);
 					if (err) {
 						console.log('async para err: ', err);
-						return;
+						return AlertService.setError({
+							show: true,
+							msg: article.title + ' could not be updated',
+							lbErr: err
+						});
 					}
-					$window.scrollTo(0, 0);
+					AlertService.setSuccess({
+						show: false,
+						persist: true,
+						msg: article.title + ' updated successfully',
+					});
 					$state.transitionTo('app.admin.articles.list');
 				});
             };
@@ -2789,11 +2808,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'paginationParams', 'articles', 'articlesCount', 'Article', 'authors',
         function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, paginationParams, articles, articlesCount, Article, authors) {
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
 
             // load articles
             $scope.articles = articles;
@@ -5953,10 +5967,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService) {
+    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService) {
+			console.log('WE ARE HERE');
             // redirect back to class pick if no data
-//            if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+//        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+            
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -5986,9 +6002,6 @@ angular.module('app.controllers', ['ngCookies'])
             });
 
             $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
-            console.log('isUserEveryone: ', isUserAdmin);
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
             
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
@@ -6039,6 +6052,7 @@ angular.module('app.controllers', ['ngCookies'])
                 class: classCardsList,
                 current: classCardsList
             };
+			console.log('$scope.cards!!!!!!!!:', $scope.cards);
 
             $scope.isSecondary = function (klass) {
                 switch(klass) {
@@ -6426,7 +6440,8 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.deckSubmitting = false;
                     return false;
                 }
-				
+                
+                console.log('User.isAuthenticated(): ', User.isAuthenticated());
                 if(!User.isAuthenticated()) {
                     LoginModalService.showModal('login', function () {
                         $scope.saveDeck(deck);

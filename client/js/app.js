@@ -3432,8 +3432,8 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
-                                    var playerClass = $stateParams.playerClass;
+                            classCardsList: ['$stateParams', 'Card', function($stateParams, Card) {
+                                var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
 
                                 return Card.find({
                                     filter: {
@@ -3444,16 +3444,25 @@ var app = angular.module('app', [
                                         order: ['cost ASC', 'cardType ASC', 'name ASC'],
                                         limit: 15
                                     }
-                                }).$promise;
+                                }).$promise
+								.then(function(classCards) {
+									console.log('classCards:', classCards);
+									return classCards;
+								});
                             }],
 
-                            classCardsCount: ['$stateParams', 'deck', 'Card', function ($stateParams, deck, Card) {
-                                var playerClass = $stateParams.playerClass;
+                            classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
+								var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
+								console.log('playerClass:', playerClass);
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass
                                     }
-                                }).$promise;
+                                }).$promise
+								.then(function (classCardCounts) {
+									console.log('classCardCounts:', classCardCounts);
+									return classCardCounts;
+								});
                             }],
 
                             neutralCardsCount: ['Card', function (Card) {
@@ -3476,6 +3485,12 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
+							
+							toStep: ['$stateParams', function ($stateParams) {
+                                if ($stateParams.goTo) {
+                                    return $stateParams.goTo;
+                                }
+                            }]
                         }
                     }
                 },
