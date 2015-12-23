@@ -166,7 +166,24 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .games-btn .middle-helper { display: inline-block; height: 100%; vertical-align: middle; }
 
-.games-btn-back { position: absolute; height: 100%; width: 100%; top: 0px; left: 0px; -moz-transition: all .5s; -webkit-transition: all .5s; transition: all .5s; -moz-transform: scale(1.01,1.01); -webkit-transform: scale(1.01,1.01); transform: scale(1.01,1.01); z-index: 0; opacity: 1; z-index: 1; }
+.games-btn-back { 
+    position: absolute; 
+    height: 100%; 
+    width: 100%; 
+    top: 0px; 
+    left: 0px; 
+    z-index: 0; 
+    opacity: 1; 
+    z-index: 1; 
+    
+    @media only screen and (min-width: 768px) {
+        -moz-transition: all .5s; 
+        -webkit-transition: all .5s; 
+        transition: all .5s; -moz-transform: scale(1.01,1.01); 
+        -webkit-transform: scale(1.01,1.01); 
+        transform: scale(1.01,1.01); 
+    }
+}
 .games-btn-hs .games-btn-back { background: url('../img/hs/hsheadbg.jpg') no-repeat left center; background-size: cover; }
 .games-btn-hots .games-btn-back { background: url('../img/hots/hotsheadbg.jpg') no-repeat center center; background-size: cover; }
 .games-btn-overwatch .games-btn-back { background: url('../img/overwatch/top-header-big.jpg') no-repeat left center; background-size: cover; }
@@ -178,8 +195,12 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .games-btn-logo { position: relative; display: inline-block; max-width: 80%; vertical-align: middle; -moz-transition: all .5s; -webkit-transition: all .5s; transition: all .5s; -moz-transform: scale(0.9,0.9); -webkit-transform: scale(0.9,0.9); transform: scale(0.9,0.9); z-index: 2; }
 
-.games-btn:hover .games-btn-back { -moz-transform: scale(1.1,1.1); -webkit-transform: scale(1.1,1.1); transform: scale(1.1,1.1); opacity: .5; }
-.games-btn:hover .games-btn-logo { -moz-transform: scale(1.25,1.25); -webkit-transform: scale(1.25,1.25); transform: scale(1.25,1.25); }
+@media only screen and (min-width: 768px) {
+
+    .games-btn:hover .games-btn-back { -moz-transform: scale(1.1,1.1); -webkit-transform: scale(1.1,1.1); transform: scale(1.1,1.1); opacity: .5; }
+    .games-btn:hover .games-btn-logo { -moz-transform: scale(1.25,1.25); -webkit-transform: scale(1.25,1.25); transform: scale(1.25,1.25); }
+    
+}
 
 .home-dark { background-color: #121111; }
 .home-img-back { background: url('../img/worgenbg.jpg') top center no-repeat; }
@@ -1790,7 +1811,8 @@ input[type=range]:focus::-ms-fill-upper {
 // Summernote and panel overrides
 
 .db-builder,
-.forum-styles {
+.forum-styles,
+.guide-builder {
 
     .note-editor .note-editing-area .note-editable {
         background-color: transparent;
