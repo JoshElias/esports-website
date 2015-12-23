@@ -1,10 +1,14 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', 'Hearthstone', 'bootbox', 'AlertService', 'cards', function ($scope, $compile, Hearthstone, bootbox, AlertService, cards) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'cards', function ($scope, $compile, Hearthstone, DeckBuilder, bootbox, AlertService, cards) {
     
     $scope.klasses = angular.copy(Hearthstone.classes);
     $scope.klasses.splice(0, 1);
     
     $scope.currentDeck = null;
+    $scope.cards = {
+        sorted: {},
+        current: [],
+    };
     $scope.decks = [];
     
     $scope.search = '';
@@ -15,6 +19,30 @@ angular.module('redbull.controllers')
         mana: false,
         mechanics: [],
         class: $scope.klasses[0],
+    };
+    
+    function sortCards () {
+        for (var i = 0; i < cards.length; i++) {
+            if (!$scope.cards.sorted[cards[i].playerClass]) {
+                $scope.cards.sorted[cards[i].playerClass] = [];
+            }
+            $scope.cards.sorted[cards[i].playerClass].push(cards[i]);
+        }
+        $scope.cards.current = $scope.cards.sorted[$scope.klasses[0]];
+    }
+    sortCards();
+
+    $scope.getCardsCurrent = function () {
+        return $scope.cards.current;
+    }
+    
+    $scope.addCardToDeck = function () {
+        if (!$scope.currentDeck) { return false; }
+        
+    };
+    
+    $scope.sortedDeckCards = function (cards) {
+        return cards;
     };
     
     $scope.manaCount = function (cost) {
@@ -51,6 +79,15 @@ angular.module('redbull.controllers')
         } else {
             $scope.filters.mechanics.push(mechanic);
         }
+    };
+    
+    $scope.hasFilterClass = function (klass) {
+        return ($scope.filters.class === klass);
+    };
+    
+    $scope.setFilterClass = function (klass) {
+        $scope.filters.class = klass;
+        $scope.cards.current = $scope.cards.sorted[klass];
     };
     
     $scope.isCurrentDeck = function (deck) {
@@ -125,10 +162,13 @@ angular.module('redbull.controllers')
                     label: 'Add Deck',
                     className: 'btn-blue',
                     callback: function () {
+                        if (!$scope.newDeck.playerClass) { return false; }
                         var error = false;
                         if (!error) {
-                            $scope.decks.push($scope.newDeck);
-                            $scope.currentDeck = $scope.newDeck;
+                            if (!$scope.newDeck.name.length) { $scope.newDeck.name = $scope.newDeck.playerClass + ' Deck'; }
+                            var newDeck = DeckBuilder.new($scope.newDeck.playerClass, $scope.newDeck);
+                            $scope.decks.push(newDeck);
+                            $scope.currentDeck = newDeck;
                         } else {
                             AlertService.setError({ show: true, msg: error });
                             return false;

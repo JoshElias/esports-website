@@ -1,0 +1,16 @@
+@mixin draft-hero-select ($hero, $pos) {
+    $width: -176;
+    $height: -129;
+    
+    &.#{$hero} {
+        background-position: #{$width * $pos}px #{$height * 0}px;
+
+        &:hover {
+            background-position: #{$width * $pos}px #{$height * 1}px;
+        }
+
+        &.active {
+            background-position: #{$width * $pos}px #{$height * 2}px;
+        }
+    }
+}

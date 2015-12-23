@@ -22,7 +22,6 @@ module.exports = function(Image) {
                 return done(defaultError);
             }
 
-
             var file = files[Object.keys(files)[0]]; // get first property in dict files
 
             // check if image file
@@ -172,7 +171,6 @@ module.exports = function(Image) {
     }
 
     Image.uploadArticle = function (ctx, options, done) {
-        console.log("uploading article");
         var req = ctx.req;
         var res = ctx.res;
 
