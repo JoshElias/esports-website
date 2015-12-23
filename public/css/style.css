@@ -500,6 +500,13 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
 .home-content h3.sub-title { font-size: 14px; color: #d3eefa; }
 
+.home-content .g2a-banner {
+  border: 1px solid rgba(0,0,0,.2);
+  outline: 1px solid rgba(255,255,255,.2);
+  outline-offset: -2px;
+  width: 100%;
+}
+
 .home-resource { display: block; position: relative; top: 0px; left: 0px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
 .home-resource:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); background: #2766ad; }
 
