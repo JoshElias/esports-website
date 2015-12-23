@@ -182,7 +182,6 @@ module.exports = function(Image) {
                 return done(err);
             }
 
-            console.log("receiving files", files);
             var file = files[Object.keys(files)[0]]; // get first property in dict files
 
             var arr = file.name.split('.'),

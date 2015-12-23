@@ -4218,7 +4218,7 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.snapshotImg = $scope.app.cdn + data.path + data.small;
-						var URL = (tpl === './') ? cdn2 : tpl;
+						            var URL = (tpl === './') ? cdn2 : tpl;
                         $scope.snapshotImg = URL + data.path + data.small;
                         box.modal('hide');
                     });
@@ -4227,138 +4227,137 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.getImage = function () {
                 $scope.imgPath = 'snapshots/';
-				var URL = (tpl === './') ? cdn2 : tpl;
+				        var URL = (tpl === './') ? cdn2 : tpl;
                 if (!$scope.snapshot) { return URL + '/img/blank.png'; }
-                console.log('$scope.snapshot.photoNames.large:', $scope.snapshot.photoNames.large);
 //                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-				var URL = (tpl === './') ? cdn2 : tpl;
+				        var URL = (tpl === './') ? cdn2 : tpl;
                 return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ? URL + '/img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
             };
             
-            function removeAuthorAJAX(obj, cb) {
-                if (!obj.id) { return cb(); }
-                
-                Snapshot.authors.destroyById({
-                    id: $scope.snapshot.id,
-                    fk: obj.id
-                })
-                .$promise
-                .then(function () {
-                    console.log("successfully removed author from db");
-                    return cb();
-                })
-                .catch(function (err) {
-                    console.log("error removing author from db:", err);
-                    return cb();
-                })
-            }
-
-            function removeTierAJAX(id, obj, cb) {
-
-                removeDeckAJAX(id, obj, function () {
-                    return cb();
-                });
-            }
-
-            function removeDeckAJAX(id, obj, cb) {
+//            function removeAuthorAJAX(obj, cb) {
 //                if (!obj.id) { return cb(); }
-
-                if (id === undefined) {
-                    async.each(obj.decks, function (deck, eachCb) {
-                        removeDeckTechAJAX(deck.id, deck, function () {
-                            DeckTier.destroyById({
-                                id: deck.id
-                            })
-                            .$promise
-                            .then(function(data) {
-                                console.log("succesfully removed ALL deckTier:", data);
-                                return eachCb();
-                            }).catch(function(err) {
-                                return eachCb(err);
-                            });
-                        });
-                    }, function () {
-                        return cb();
-                    });
-                } else {
-                    removeDeckTechAJAX(id, obj, function () {
-                        DeckTier.destroyById({
-                            id: id
-                        })
-                        .$promise
-                        .then(function(data) {
-                            console.log("successfully removed deckTier:", data);
-                            return cb();
-                        }).catch(function(err) {
-                            return cb(err);
-                        });
-                    });
-                }
-            }
-
-            function removeDeckTechAJAX(id, obj, cb) {
-                if (!obj.id) { return cb(); }
-
-                if (obj.deckTech) {
-                    async.each(obj.deckTech, function (deckTech, eachCb) {
-                        removeCardTechAJAX(deckTech.id, deckTech, function () {
-                            DeckTier.deckTech.destroyAll({
-                                id: id
-                            })
-                            .$promise
-                            .then(function(data) {
-                                console.log("successfully removed ALL deckTech:::", data);
-                                return eachCb();
-                            }).catch(function(err) {
-                                return eachCb(err);
-                            });
-                        });
-                    }, function () {
-                        return cb();
-                    });
-                } else {
-                    removeCardTechAJAX(id, obj, function () {
-                        DeckTech.destroyById({
-                            id: id
-                        })
-                        .$promise
-                        .then(function(data) {
-                            console.log("successfully removed deckTech:", data);
-                            return cb();
-                        }).catch(function(err) {
-                            return cb(err);
-                        });
-                    });
-                }
-            }
-
-            function removeCardTechAJAX(id, obj, cb) {
-                if (!obj.id) { return cb(); }
-                
-                if (obj.cardTech) {
-                    DeckTech.cardTech.destroyAll({
-                        id: id
-                    })
-                    .$promise
-                    .then(function(data) {
-                        console.log("successfully removed cardTech:", data);
-                        return cb();
-                    }).catch(function(err) {
-                        return cb();
-                    });
-                } else {
-                    CardTech.destroyById({
-                        id: id
-                    })
-                    .$promise
-                    .then(function(data) {
-                        console.log("successfully removed cardTech:", data);
-                        return cb();
-                    }).catch(function(err) {
-                        return cb(err);
-                    });
-                }
-            }
+//                
+//                Snapshot.authors.destroyById({
+//                    id: $scope.snapshot.id,
+//                    fk: obj.id
+//                })
+//                .$promise
+//                .then(function () {
+//                    console.log("successfully removed author from db");
+//                    return cb();
+//                })
+//                .catch(function (err) {
+//                    console.log("error removing author from db:", err);
+//                    return cb();
+//                })
+//            }
+//
+//            function removeTierAJAX(id, obj, cb) {
+//
+//                removeDeckAJAX(id, obj, function () {
+//                    return cb();
+//                });
+//            }
+//
+//            function removeDeckAJAX(id, obj, cb) {
+////                if (!obj.id) { return cb(); }
+//
+//                if (id === undefined) {
+//                    async.each(obj.decks, function (deck, eachCb) {
+//                        removeDeckTechAJAX(deck.id, deck, function () {
+//                            DeckTier.destroyById({
+//                                id: deck.id
+//                            })
+//                            .$promise
+//                            .then(function(data) {
+//                                console.log("succesfully removed ALL deckTier:", data);
+//                                return eachCb();
+//                            }).catch(function(err) {
+//                                return eachCb(err);
+//                            });
+//                        });
+//                    }, function () {
+//                        return cb();
+//                    });
+//                } else {
+//                    removeDeckTechAJAX(id, obj, function () {
+//                        DeckTier.destroyById({
+//                            id: id
+//                        })
+//                        .$promise
+//                        .then(function(data) {
+//                            console.log("successfully removed deckTier:", data);
+//                            return cb();
+//                        }).catch(function(err) {
+//                            return cb(err);
+//                        });
+//                    });
+//                }
+//            }
+//
+//            function removeDeckTechAJAX(id, obj, cb) {
+//                if (!obj.id) { return cb(); }
+//
+//                if (obj.deckTech) {
+//                    async.each(obj.deckTech, function (deckTech, eachCb) {
+//                        removeCardTechAJAX(deckTech.id, deckTech, function () {
+//                            DeckTier.deckTech.destroyAll({
+//                                id: id
+//                            })
+//                            .$promise
+//                            .then(function(data) {
+//                                console.log("successfully removed ALL deckTech:::", data);
+//                                return eachCb();
+//                            }).catch(function(err) {
+//                                return eachCb(err);
+//                            });
+//                        });
+//                    }, function () {
+//                        return cb();
+//                    });
+//                } else {
+//                    removeCardTechAJAX(id, obj, function () {
+//                        DeckTech.destroyById({
+//                            id: id
+//                        })
+//                        .$promise
+//                        .then(function(data) {
+//                            console.log("successfully removed deckTech:", data);
+//                            return cb();
+//                        }).catch(function(err) {
+//                            return cb(err);
+//                        });
+//                    });
+//                }
+//            }
+//
+//            function removeCardTechAJAX(id, obj, cb) {
+//                if (!obj.id) { return cb(); }
+//                
+//                if (obj.cardTech) {
+//                    DeckTech.cardTech.destroyAll({
+//                        id: id
+//                    })
+//                    .$promise
+//                    .then(function(data) {
+//                        console.log("successfully removed cardTech:", data);
+//                        return cb();
+//                    }).catch(function(err) {
+//                        return cb();
+//                    });
+//                } else {
+//                    CardTech.destroyById({
+//                        id: id
+//                    })
+//                    .$promise
+//                    .then(function(data) {
+//                        console.log("successfully removed cardTech:", data);
+//                        return cb();
+//                    }).catch(function(err) {
+//                        return cb(err);
+//                    });
+//                }
+//            }
 
             function escapeStr( str ) {
                 return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -4550,9 +4549,9 @@ angular.module('app.controllers', ['ngCookies'])
                 var toDelete = undefined;
                 _.each($scope.snapshot.authors, function(author, eachCb) {
                     if (a.id === author.user.id) {
-                        removeAuthorAJAX(author, function () {
+//                        removeAuthorAJAX(author, function () {
                             toDelete = $scope.snapshot.authors.indexOf(author);
-                        });
+//                        });
                     }
                 });
                 $scope.snapshot.authors.splice(toDelete, 1);
@@ -4578,8 +4577,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTier = function (t) {
-                removeTierAJAX(undefined, t, function (err) {
-                    if (err) { console.log("ERR REMOVING TIER:", err); }
+//                removeTierAJAX(undefined, t, function (err) {
+//                    if (err) { console.log("ERR REMOVING TIER:", err); }
                     
                     for (var j = 0; j < t.decks.length; j++) {
                         $scope.removedDecks.push(t.decks[j].deck);
@@ -4595,7 +4594,7 @@ angular.module('app.controllers', ['ngCookies'])
                     doUpdateMatches(function () {
                         $scope.deckRanks
                     }, true);
-                });
+//                });
             }
             ///////////////////////////////////////////////////////////////////////////////////
             $scope.deckRanks = function () {
@@ -4744,8 +4743,8 @@ angular.module('app.controllers', ['ngCookies'])
                 async.each($scope.snapshot.tiers, function (tier, eachCb1) {
                     async.each(tier.decks, function (deck, eachCb2) {
                         if (d.id == deck.deck.id) {
-                            removeDeckAJAX(tierDeck.id, deck, function (err) {
-                                if (err) { console.log("ERR REMOVING DECK:", err); }
+//                            removeDeckAJAX(tierDeck.id, deck, function (err) {
+//                                if (err) { console.log("ERR REMOVING DECK:", err); }
                                 
                                 var t = $scope.snapshot.tiers.indexOf(tier);
                                 console.log(t);
@@ -4758,7 +4757,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 
 //                                tier.decks.splice(k, 1);
                                 return eachCb2();
-                            });
+//                            });
                         } else {
                             return eachCb2();
                         }
@@ -4859,8 +4858,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTech = function (t) {
-                removeDeckTechAJAX(t.id, t, function (err) {
-                    if (err) { console.log("ERR REMOVING DECK:", err); }
+//                removeDeckTechAJAX(t.id, t, function (err) {
+//                    if (err) { console.log("ERR REMOVING DECK:", err); }
                     
                     for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                         for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
@@ -4872,13 +4871,13 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         }
                     }
-                });
+//                });
             }
 
             $scope.removeTechCard = function (tech, c) {
                 console.log(tech, c);
-                removeCardTechAJAX(c.id, c, function (err) {
-                    if (err) { console.log("ERR REMOVING CARD TECH:", err); }
+//                removeCardTechAJAX(c.id, c, function (err) {
+//                    if (err) { console.log("ERR REMOVING CARD TECH:", err); }
                     
                     for (var card in tech.cardTech) {
                         if (c.id == tech.cardTech[card].id) {
@@ -4886,7 +4885,7 @@ angular.module('app.controllers', ['ngCookies'])
                             break;
                         }
                     }
-                });
+//                });
             }
 
             $scope.setBoth = function (c) {
@@ -5061,16 +5060,19 @@ angular.module('app.controllers', ['ngCookies'])
                     function (waterfallCb) {
                         var stripped = {};
                         
-                        console.log("step 1");
+                        console.log("step 1", $scope.snapshot);
 
                         stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
                         stripped.decks = _.flatten(stripped.authors, true);
+//                        delete $scope.snapshot.authors;
 
                         stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
                         stripped.matches = _.flatten(stripped.matches, true);
+//                        delete $scope.snapshot.matches;
 
                         stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
                         stripped.decks = _.flatten(stripped.decks, true);
+//                        delete $scope.snapshot.tiers;
 
                         stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
                         stripped.deckTech = _.flatten(stripped.deckTech, true);
@@ -5086,7 +5088,7 @@ angular.module('app.controllers', ['ngCookies'])
                         Snapshot.upsert({}, $scope.snapshot)
                         .$promise
                         .then(function (dataSnapshot) {
-                            console.log("wat:", dataSnapshot);
+                            console.log("snapshot created", dataSnapshot);
                             async.each(stripped.decks, function(deck, deckTierCB) {
                                 deck.snapshotId = dataSnapshot.id;
                                 DeckTier.upsert({}, deck)
@@ -5127,7 +5129,6 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             }, function() {
                                 async.series([
-                                    
                                     function(seriesCallback) {
                                         Snapshot.deckMatchups.createMany({
                                             id: dataSnapshot.id
