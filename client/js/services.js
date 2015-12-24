@@ -1645,6 +1645,7 @@ angular.module('app.services', [])
 
         db.isAddable = function (card) {
             if (db.gameModeType === 'arena') { return true; }
+            if (card.playerClass !== db.playerClass && card.playerClass !== 'Neutral') { return false; }
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false;
@@ -3294,6 +3295,71 @@ angular.module('app.services', [])
         emit : emit
      }
 }])
+.factory('CrudMan', [
+  function () {
+    var arrs = {};
+    var crud = {
+      exists  : [],
+      toDelete: [],
+      toCreate: []
+    }
+    
+    function setExists (inArr, arrName) {
+      _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
+    }
+    
+    function find (item, arrName, crud) {
+      //do some validation?
+      return _.find(arrs[arrName][crud], function (val) { return val == item });
+    }
+    
+    function newItem (arrName) {
+      arrs[arrName] = angular.copy(crud);
+    }
+    
+    function removeFromArr (item, arrName, crud) {
+      var arr = arrs[arrName];
+      var idx = arr[crud].indexOf(item);
+      
+      arr[crud].splice(idx, 1);
+      arr['toDelete'].push(item);
+    }
+    
+    function addToArr (item, arrName, crud) {
+      var arr = arrs[arrName];
+      
+      if (find(item, arrName, crud)) {
+        var idx = arr[crud].indexOf(item);
+        
+        arr['toDelete'].splice(idx, 1);
+      }
+      
+      arr['toCreate'].push(item);
+    }
+    
+    function toggleItem (item, arrName) {
+      var e = 'exists';
+      var d = 'toDelete';
+      var c = 'toCreate';
+
+      if (find(item, arrName, e)) {
+        arr['toDelete'].push(item);
+      } else if (find(item, arrName, c)) {
+        removeFromArr(item, arrName, c);
+        return;
+      } else {
+        addToArr(item, arrName, c);
+      }
+    }
+    
+    return {
+      setExists: setExists,
+      toggleItem: toggleItem,
+      newItem: newItem,
+      getArrs: arrs
+    }
+  }
+])
 .factory('markitupSettings', [
   function() {
     var factory, markset;
