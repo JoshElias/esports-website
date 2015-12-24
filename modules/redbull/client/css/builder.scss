@@ -828,7 +828,8 @@
             @include draft-hero-select (shaman, 6);
             @include draft-hero-select (warlock, 7);
             @include draft-hero-select (warrior, 8);
-
+            &.inactive { opacity: .3; }
+            
         }
     }
 
