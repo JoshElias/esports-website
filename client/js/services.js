@@ -1629,6 +1629,7 @@ angular.module('app.services', [])
 
         db.isAddable = function (card) {
             if (db.gameModeType === 'arena') { return true; }
+            if (card.playerClass !== db.playerClass && card.playerClass !== 'Neutral') { return false; }
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false;

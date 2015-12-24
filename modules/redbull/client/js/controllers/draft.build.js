@@ -36,9 +36,16 @@ angular.module('redbull.controllers')
         return $scope.cards.current;
     }
     
-    $scope.addCardToDeck = function () {
+    $scope.addCardToDeck = function (card) {
         if (!$scope.currentDeck) { return false; }
-        
+        if ($scope.currentDeck.isAddable(card)) {
+            $scope.currentDeck.addCard(card);
+        }
+    };
+    
+    $scope.removeCardFromDeck = function (card) {
+        if (!$scope.currentDeck) { return false; }
+        $scope.currentDeck.removeCard(card);
     };
     
     $scope.sortedDeckCards = function (cards) {
@@ -47,12 +54,12 @@ angular.module('redbull.controllers')
     
     $scope.manaCount = function (cost) {
         if (!$scope.currentDeck) { return 0; }
-        // TODO: ADD MANA CHECK FOR CURRENT DECK
+        return $scope.currentDeck.manaCount(cost);
     }
     
     $scope.manaCurve = function (cost) {
         if (!$scope.currentDeck) { return 0; }
-        // TODO: ADD MANA CHECK FOR CURRENT DECK
+        return $scope.currentDeck.manaCurve(cost);
     }
     
     // set search
@@ -167,6 +174,7 @@ angular.module('redbull.controllers')
                         if (!error) {
                             if (!$scope.newDeck.name.length) { $scope.newDeck.name = $scope.newDeck.playerClass + ' Deck'; }
                             var newDeck = DeckBuilder.new($scope.newDeck.playerClass, $scope.newDeck);
+                            console.log('newDeck: ', newDeck);
                             $scope.decks.push(newDeck);
                             $scope.currentDeck = newDeck;
                         } else {
