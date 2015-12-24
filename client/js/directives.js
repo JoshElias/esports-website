@@ -31,22 +31,44 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('hsCard', function () {
+.directive('hsCard', ['$compile', function ($compile) {
     return {
         restrict: 'A',
+		scope: {
+            tooltipImg: '='
+        },
         link: function (scope, el, attr) {
-            var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -344 : 60;
-            el.wTooltip({
-                delay: 500,
-                offsetX: xPos,
-                offsetY: -40,
-                content: '<img src="'+attr['tooltipImg']+'" alt="">',
-                style: false,
-                className: 'hs-card-tooltip'
+            scope.$watch('tooltipImg', function (newValue) {
+                scope.tooltipImg = newValue;
+                setTooltip();
+            });
+            
+			var createUUID = function() {
+			  return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
+			}
+			var tmpUuid = createUUID();
+			
+            function setTooltip () {
+                var content = $compile('<img ng-src="'+scope.tooltipImg+'" alt="">')(scope);
+				var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
+				el.wTooltip({
+					delay: 500,
+					offsetX: xPos,
+					offsetY: -50,
+					content: content,
+					style: false,
+					className: 'hs-card-tooltip-' + tmpUuid,
+					id: tmpUuid
+				});
+            }
+            
+            scope.$on('$destroy', function () {
+				console.log('REMOVING');
+                $('.hs-card-tooltip-'+tmpUuid).remove();
             });
         }
     };
-})
+}])
 .directive('bootstrapWidth', ['$window', '$timeout', function ($window, $timeout) {
     return {
         restrict: 'A',
@@ -394,7 +416,7 @@ angular.module('app.directives', ['ui.load'])
             var as = AlertService;
             
             $scope.show = function () {
-                return (as.hasAlert()) ? true : false;
+                return as.getShow();
             }
             
             $scope.reset = function() {

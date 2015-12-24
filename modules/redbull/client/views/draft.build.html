@@ -77,13 +77,14 @@
                 </div>
                 
                 <div class="deck-cards">
-                    <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.qty > 1, legendary: card.card.rarity === 'Legendary'}" 
+                    <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}" 
                          ng-repeat="card in sortedDeckCards(deck.cards) track by card.card.id" 
                          data-card-id="card.card.id" 
                          data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
-                         data-tooltip-pos="left" pool-card>
+                         data-tooltip-pos="left" pool-card
+                         ng-click="removeCardFromDeck(card)">
                         <div class="card-pool-card-mana">{{card.card.cost}}</div>
-                        <div class="card-pool-card-qty" ng-if="card.qty > 1">{{card.qty}}</div>
+                        <div class="card-pool-card-qty" ng-if="card.cardQuantity > 1">{{card.cardQuantity}}</div>
                         <div class="card-pool-card-legendary" ng-if="card.card.rarity === 'Legendary'">
                             <i class="fa fa-star"></i>
                         </div>
@@ -122,7 +123,7 @@
                 <div class="draft-build-cards-view-wrapper clearfix">
                     <div class="draft-build-cards-view clearfix">
                         <div class="draft-build-card" ng-class="{ disabled: !currentDeck.isAddable(card) }" ng-repeat="card in getCardsCurrent() | orderBy: ['cost', 'name'] | limitTo: 15">
-                            <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="currentDeck.addCard(card)" ng-right-click="currentDeck.removeCardFromDeck(card)" hs-card>
+                            <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="addCardToDeck(card)" ng-right-click="currentDeck.removeCardFromDeck(card)" hs-card>
                                 <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
                             </a>
                         </div>

@@ -1315,6 +1315,11 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (newCard) {
                     console.log('newCard: ', newCard);
+					AlertService.setSuccess({
+						show: false,
+						persist: true,
+						msg: card.name + ' created successfully'
+					});
                     $scope.fetching = false;
                     $state.transitionTo('app.admin.hearthstone.cards.list');
                 })
@@ -2138,14 +2143,19 @@ angular.module('app.controllers', ['ngCookies'])
 					}
 				], function(err, results) {
 					$scope.fetching = false;
+					$window.scrollTo(0, 0);
 					if (err) {
-						$window.scrollTo(0, 0);
 						return AlertService.setError({
 							show: true,
 							msg: 'Unable to create Article.',
 							lbErr: err
 						});
 					}
+					AlertService.setSuccess({
+						persist: true,
+						show: false,
+						msg: article.title + ' created successfully',
+					});
 					$state.transitionTo('app.admin.articles.list');
 				});
             };
@@ -2388,15 +2398,16 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
-            var relatedArticleChanges = {
-                toDelete: [],
-                toCreate: []
-            };
-
+    
+			var relatedArticleChanges = {
+			  toCreate: [],
+			  toDelete: []
+			};
+			
             $scope.modifyRelated = function (a) {
 				// toggle related article
                 console.log('a: ', a);
+				console.log('$scope.article:', $scope.article);
                 if ($scope.isRelated(a)) {
 					// removing related articles
 					// remove from toCreate
@@ -2425,7 +2436,7 @@ angular.module('app.controllers', ['ngCookies'])
 						}
 						console.log('relatedArticleChanges:', relatedArticleChanges);
 					});
-					
+//					
 					angular.forEach($scope.article.related, function(relArticle, index) {
 						if (relArticle.id === a.id) {
 							$scope.article.related.splice(index, 1);
@@ -2474,29 +2485,29 @@ angular.module('app.controllers', ['ngCookies'])
 				// remove from toCreate
 				// push to toDelete if it exist in db
 
-				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
-					if (toCrArticle.id === a.id) {
-						relatedArticleChanges.toCreate.splice(index, 1);
-						console.log('relatedArticleChanges:', relatedArticleChanges);
-						return;
-					}
-				});
-
-				ArticleArticle.find({
-					filter: {
-						where: {
-							childArticleId: a.id,
-							parentArticleId: $scope.article.id
-						}
-					}
-				}).$promise
-				.then(function (relatedArticle) {
-					// related article exist in db
-					if (relatedArticle.length !== 0) {
-						relatedArticleChanges.toDelete.push(a);
-					}
-					console.log('relatedArticleChanges:', relatedArticleChanges);
-				});
+//				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
+//					if (toCrArticle.id === a.id) {
+//						relatedArticleChanges.toCreate.splice(index, 1);
+//						console.log('relatedArticleChanges:', relatedArticleChanges);
+//						return;
+//					}
+//				});
+//
+//				ArticleArticle.find({
+//					filter: {
+//						where: {
+//							childArticleId: a.id,
+//							parentArticleId: $scope.article.id
+//						}
+//					}
+//				}).$promise
+//				.then(function (relatedArticle) {
+//					// related article exist in db
+//					if (relatedArticle.length !== 0) {
+//						relatedArticleChanges.toDelete.push(a);
+//					}
+//					console.log('relatedArticleChanges:', relatedArticleChanges);
+//				});
 
 				angular.forEach($scope.article.related, function(relArticle, index) {
 					if (relArticle.id === a.id) {
@@ -2759,11 +2770,20 @@ angular.module('app.controllers', ['ngCookies'])
 					}
 				], function(err) {
 					$scope.fetching = false;
+					$window.scrollTo(0, 0);
 					if (err) {
 						console.log('async para err: ', err);
-						return;
+						return AlertService.setError({
+							show: true,
+							msg: article.title + ' could not be updated',
+							lbErr: err
+						});
 					}
-					$window.scrollTo(0, 0);
+					AlertService.setSuccess({
+						show: false,
+						persist: true,
+						msg: article.title + ' updated successfully',
+					});
 					$state.transitionTo('app.admin.articles.list');
 				});
             };
@@ -2789,11 +2809,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'paginationParams', 'articles', 'articlesCount', 'Article', 'authors',
         function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, paginationParams, articles, articlesCount, Article, authors) {
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
 
             // load articles
             $scope.articles = articles;
@@ -5199,13 +5214,6 @@ angular.module('app.controllers', ['ngCookies'])
 //                $scope.fifaMembers = fifaTeam;
 //                $scope.fgcMembers = fgcTeam;
 
-
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
-
 //            $scope.updateDND = function (list, index) {
 //                list.splice(index, 1);
 //                for (var i = 0; i < list.length; i++) {
@@ -5308,7 +5316,6 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService) {
 //removed upload
             
-            console.log('hello2');
             var defaultMember = {
                 game: '',
                 screenName: '',
@@ -5368,10 +5375,14 @@ angular.module('app.controllers', ['ngCookies'])
             // save member
             $scope.saveMember = function () {
 				$scope.fetching = true;
-               TeamMember.create({}, $scope.member).$promise.then(function (data) {
-                    $scope.fetching = false;
-				    $state.go('app.admin.teams.list');
-                   
+                TeamMember.create({}, $scope.member).$promise.then(function (data) {
+                   $scope.fetching = false;
+				   $state.go('app.admin.teams.list');
+				   AlertService.setSuccess({
+					   show: false,
+					   persist: true,
+					   msg: $scope.member.screenName + ' created successfully'
+				   });
                })
                .catch(function(err){
 				   $scope.fetching = false;
@@ -5434,37 +5445,26 @@ angular.module('app.controllers', ['ngCookies'])
                      $scope.fetching = false;
                      $window.scrollTo(0, 0);
                      $state.go('app.admin.teams.list');
+					 AlertService.setSuccess({
+						 persist: true,
+						 show: false,
+						 msg: userUpdated.screenName + ' updated successfully'
+					 });
                  })
                  .catch(function (err) {
-                     if (err) {
-                         if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                             $scope.errors = [];
-                             angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                 for (var i = 0; i < errArray.length; i++) {
-                                     $scope.errors.push(errArray[i]);
-                                 }
-                             });
-                             AlertService.setError({ 
-                                 show: true, 
-                                 msg: 'Unable to update User', 
-                                 errorList: $scope.errors
-                             });
-                             $window.scrollTo(0,0);
-                             $scope.fetching = false;
-                         }
-                     }
+					 $window.scrollTo(0,0);
+					 $scope.fetching = false;
+					 AlertService.setError({ 
+						 show: true, 
+						 msg: 'Unable to update User', 
+						 lbErr: err
+					 });
                  });
             };
         }
     ])
     .controller('AdminVodListCtrl', ['$scope', '$q', '$timeout', 'paginationParams', 'vodsCount', 'vods', 'AlertService', 'Vod', 'AjaxPagination',
         function ($scope, $q, $timeout,  paginationParams, vodsCount, vods, AlertService, Vod, AjaxPagination) {
-
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
 
             console.log('vods: ', vods);
 
@@ -5576,8 +5576,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminVodAddCtrl', ['$scope', '$window', '$state', 'AdminVodService', 'AlertService', 'Vod',
-        function ($scope, $window, $state, AdminVodService, AlertService, Vod) {
+    .controller('AdminVodAddCtrl', ['$scope', '$timeout', '$window', '$state', 'AdminVodService', 'AlertService', 'Vod',
+        function ($scope, $timeout, $window, $state, AdminVodService, AlertService, Vod) {
 
             var defaultVod = {
                 displayDate: '',
@@ -5594,19 +5594,26 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save VOD
             $scope.saveVod = function (vod) {
-                Vod.create({}, vod, function (data) {
-					$state.transitionTo('app.admin.vod.list');
+				$scope.fetching = true;
+                Vod.create({}, vod)
+					.$promise
+					.then(function (data) {
+					$scope.fetching = false;
+					$state.go('app.admin.vod.list');
 					AlertService.setSuccess({
-						show: true,
+						persist: true,
+						show: false,
 						msg: vod.subtitle + ' created successfully.'
 					});
-                }, function (err) {
-                    AlertService.setError({
-						show: true,
-						msg: 'Unable to create Vod ' + vod.subtitle,
-						lbErr: err
-					});
-					$window.scrollTo(0, 0);
+                })
+				  .catch(function (err) {
+				  $scope.fetching = false;
+				  AlertService.setError({
+					  show: true,
+					  msg: 'Unable to create Vod ' + vod.subtitle,
+					  lbErr: err
+				  });
+				  $window.scrollTo(0, 0);
                 });
             };
 
@@ -5635,10 +5642,19 @@ angular.module('app.controllers', ['ngCookies'])
                 .then(function(data) {
                     $scope.fetching = false;
                     $state.go('app.admin.vod.list');
+					AlertService.setSuccess({
+						persist: true,
+						show: true,
+						msg: vod.subtitle + ' updated successfully'
+					});
                 })
                 .catch(function(err) {
                     $scope.fetching = false;
-                    if(err) console.log('error: ',err);
+					AlertService.setError({
+						show: true,
+						msg: vod.subtitle + ' could not be updated',
+						lbErr: err
+					});
                 });
             };
         }
@@ -5952,10 +5968,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService) {
+    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService) {
             // redirect back to class pick if no data
-//            if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+//        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+            
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -5985,9 +6002,6 @@ angular.module('app.controllers', ['ngCookies'])
             });
 
             $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
-            console.log('isUserEveryone: ', isUserAdmin);
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
             
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
@@ -6038,6 +6052,7 @@ angular.module('app.controllers', ['ngCookies'])
                 class: classCardsList,
                 current: classCardsList
             };
+			console.log('$scope.cards!!!!!!!!:', $scope.cards);
 
             $scope.isSecondary = function (klass) {
                 switch(klass) {
@@ -6307,8 +6322,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-                $scope.filters.mana = m;
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				if ($scope.filters.mana === m) {
+					$scope.filters.mana = 'all';
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+				} else {
+					$scope.filters.mana = m;
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				}
             }
 
             $scope.filters.byMana = function () {
@@ -6425,7 +6445,8 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.deckSubmitting = false;
                     return false;
                 }
-				
+                
+                console.log('User.isAuthenticated(): ', User.isAuthenticated());
                 if(!User.isAuthenticated()) {
                     LoginModalService.showModal('login', function () {
                         $scope.saveDeck(deck);
@@ -6872,8 +6893,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-                $scope.filters.mana = m;
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				if ($scope.filters.mana === m) {
+					$scope.filters.mana = 'all';
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+				} else {
+					$scope.filters.mana = m;
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				}
             }
 
             $scope.filters.byMana = function () {
@@ -7392,11 +7418,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminUserListCtrl', ['$scope', '$timeout', '$q', 'User', 'bootbox', 'AjaxPagination', 'AlertService', 'AdminUserService', 'paginationParams', 'usersCount', 'users',
         function ($scope, $timeout, $q, User, bootbox, AjaxPagination, AlertService, AdminUserService, paginationParams, usersCount, users) {
-            // grab alerts
-//            if (AlertService.hasAlert()) {
-//                $scope.success = AlertService.getSuccess();
-//                AlertService.reset();
-//            }
 
             // load users
             $scope.users = users;
@@ -7506,11 +7527,11 @@ angular.module('app.controllers', ['ngCookies'])
                                 .catch(function (err) {
 //                                    console.log('User.destroyById err: ', err);
                                     AlertService.setError({ 
-                                        show: true, msg: 'Unable to delete ' + user.name, 
-                                        errorList: err
+                                        show: true, 
+										msg: 'Unable to delete ' + user.name, 
+                                        lbErr: err
                                     });
                                     $window.scrollTo(0,0);
-                                    $scope.fetching = false;
                                 });
                             }
                         },
@@ -7638,6 +7659,11 @@ angular.module('app.controllers', ['ngCookies'])
 //                        console.log('series results: ', results);
                         $state.go('app.admin.users.list');
                         $scope.fetching = false;
+						AlertService.setSuccess({
+							persist: true,
+							show: false,
+							msg: user.username + ' created successfully'
+						});
                     }
                 });
             };
@@ -7730,21 +7756,21 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ], function(err, results) {
                     if (err) {
-                        console.log('series err: ', err);
-                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                            $scope.errors = [];
-                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                for (var i = 0; i < errArray.length; i++) {
-                                    $scope.errors.push(errArray[i]);
-                                }
-                            });
-                            AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
-                            $window.scrollTo(0,0);
-                            $scope.fetching = false;
-                        }
+						AlertService.setError({ 
+							show: true, 
+							msg: 'Unable to update user', 
+							lbErr: err
+						});
+						$window.scrollTo(0,0);
+						$scope.fetching = false;
                     } else {
                         $state.go('app.admin.users.list');
                         $scope.fetching = false;
+						AlertService.setSuccess({
+							persist: true,
+							show: false,
+							msg: user.username + ' editted successfully'
+						});
                     }
                 });
             };
@@ -7752,11 +7778,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminPollListCtrl', ['$scope', '$window', '$q', '$timeout', '$compile', 'bootbox', 'AlertService', 'polls', 'pollsCount', 'paginationParams', 'Poll', 'AjaxPagination',
         function ($scope, $window, $q, $timeout, $compile, bootbox, AlertService, polls, pollsCount, paginationParams, Poll, AjaxPagination) {
-            // grab alerts
-//            if (AlertService.hasAlert()) {
-//                $scope.success = AlertService.getSuccess();
-//                AlertService.reset();
-//            }
 
             // load polls
             $scope.polls = polls;
@@ -7931,11 +7952,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.voteLimit = function() {
                 var out = [];
-
                 for (var i = 0; i < $scope.poll.items.length; i++) {
                     out.push(i + 1);
                 }
-
                 return out;
             }
 
@@ -8022,20 +8041,26 @@ angular.module('app.controllers', ['ngCookies'])
                 Poll.create($scope.poll)
 				.$promise
 				.then(function (pollInstance) {
-					console.log('pollInstance:', pollInstance);
+					
 					Poll.items.createMany({
 						id: pollInstance.id
 					}, $scope.poll.items).$promise
 					.then(function (itemsCreated) {
 						$scope.fetching = false;
 						$state.go('app.admin.polls.list');
+						AlertService.setSuccess({
+							persist: true,
+							show: false,
+							msg: pollInstance.title + ' created successfully'
+						});
+						
 					})
 					.catch(function (err) {
 						$scope.fetching = false;
 						$window.scrollTo(0,0);
 						AlertService.setError({
 							show: true,
-							msg: 'Unable to create Poll',
+							msg: 'Unable to create ' + $scope.poll.title,
 							lbErr: err
 						});
 					});
@@ -8043,9 +8068,9 @@ angular.module('app.controllers', ['ngCookies'])
                 .catch(function(err){
 					$scope.fetching = false;
                     $window.scrollTo(0,0);
-                    AlertService.setError({ 
-						show: true, 
-						msg: 'There was an error adding your poll ',
+                    AlertService.setError({
+						show: true,
+						msg: 'Unable to create ' + $scope.poll.title,
 						lbErr: err
 					});
                 });
@@ -8280,13 +8305,17 @@ angular.module('app.controllers', ['ngCookies'])
 					$scope.fetching = false;
 					$window.scrollTo(0, 0);
 					if (err) {
-						AlertService.setError({
+						return AlertService.setError({
 							show: true,
-							msg: 'Could not Edit ' + poll.title,
+							msg: 'Could not edit ' + poll.title,
 							lbErr: err
 						});
-						return;
 					}
+					AlertService.setSuccess({
+						persist: true,
+						show: false,
+						msg: poll.title + ' editted successfully'
+					});
 					$state.go('app.admin.polls.list');
 				});
 				
@@ -8972,8 +9001,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-                $scope.filters.mana = m;
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				if ($scope.filters.mana === m) {
+					$scope.filters.mana = 'all';
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+				} else {
+					$scope.filters.mana = m;
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				}
             }
 
             $scope.filters.byMana = function () {
@@ -9544,8 +9578,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-                $scope.filters.mana = m;
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				if ($scope.filters.mana === m) {
+					$scope.filters.mana = 'all';
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+				} else {
+					$scope.filters.mana = m;
+					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+				}
             }
 
             $scope.filters.byMana = function () {
@@ -11563,11 +11602,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminForumStructureListCtrl', ['$scope', '$window', 'bootbox', 'AlertService', 'categories', 'ForumCategory', 'ForumThread', 'ForumPost',
         function ($scope, $window, bootbox, AlertService, categories, ForumCategory, ForumThread, ForumPost) {
-            // grab alerts
-//            if (AlertService.hasAlert()) {
-//                $scope.success = AlertService.getSuccess();
-//                AlertService.reset();
-//            }
 
             // load categories
             $scope.categories = categories;
@@ -11682,16 +11716,12 @@ angular.module('app.controllers', ['ngCookies'])
                                     },
                                 ], function(err) {
                                     if (err) {
-                                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                                            $scope.errors = [];
-                                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                                for (var i = 0; i < errArray.length; i++) {
-                                                    $scope.errors.push(errArray[i]);
-                                                }
-                                            });
-                                            AlertService.setError({ show: true, msg: 'Unable to delete thread', errorList: $scope.errors });
-                                            $window.scrollTo(0,0);
-                                        }
+										AlertService.setError({ 
+											show: true, 
+											msg: 'Unable to delete thread', 
+											lbErr: err
+										});
+										$window.scrollTo(0,0);
                                         return false;
                                     }
                                     
@@ -11704,7 +11734,10 @@ angular.module('app.controllers', ['ngCookies'])
                                             }
                                         }
                                     }
-                                    AlertService.setSuccess({ show: true, msg: thread.title + ' deleted successfully' });
+                                    AlertService.setSuccess({ 
+										show: true, 
+										msg: thread.title + ' deleted successfully' 
+									});
                                     $window.scrollTo(0, 0);
                                 });
                                 
@@ -11790,21 +11823,22 @@ angular.module('app.controllers', ['ngCookies'])
 //                    console.log('newCategory: ', newCategory);
                     $scope.fetching = false;
                     $window.scrollTo(0,0);
+				    AlertService.setSuccess({
+					  persist: true,
+					  show: false,
+					  msg: newCategory.title + ' created successfully'
+					});
                     $state.go('app.admin.forum.structure.list');
                 })
                 .catch(function (err) {
                     console.log('err: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ show: true, msg: 'Unable to create Forum Category', errorList: $scope.errors });
-                        $scope.fetching = false;
-                        $window.scrollTo(0,0);
-                    }
+					AlertService.setError({ 
+					  show: true, 
+					  msg: 'Unable to create Forum Category', 
+					  lbErr: err
+					});
+					$scope.fetching = false;
+					$window.scrollTo(0,0);
                 });
             };
         }
@@ -11830,20 +11864,21 @@ angular.module('app.controllers', ['ngCookies'])
 //                    console.log('categoryUpdated: ', categoryUpdated);
                     $window.scrollTo(0, 0);
                     $state.go('app.admin.forum.structure.list');
+				    AlertService.setSuccess({
+					  persist: true,
+					  show: false,
+					  msg: category.title + ' updated successfully'
+					});
                 })
                 .catch(function (err) {
 //                    console.log('categoryUpdated: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ show: true, msg: '', errorList: $scope.errors });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    }
+					  AlertService.setError({ 
+						show: true, 
+						msg: 'Unable to update ' + category.title, 
+						lbErr: err
+					  });
+					  $window.scrollTo(0,0);
+					  $scope.fetching = false;
                 });
             };
         }
@@ -11892,33 +11927,23 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0,0);
                     $scope.fetching = false;
                     $state.go('app.admin.forum.structure.list');
+				    AlertService.setSuccess({
+					  show: false,
+					  persist: true,
+					  msg: thread.title + ' created successfully'
+					});
                 })
                 .catch(function (err) {
 //                    console.log('thread creation: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ show: true, msg: '', errorList: $scope.errors });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    }
+					  AlertService.setError({ 
+						show: true, 
+						msg: 'Unable to create ' + thread.title, 
+						lbErr: err
+					  });
+					  $window.scrollTo(0,0);
+					  $scope.fetching = false;
                     
                 });
-                
-//                AdminForumService.addThread($scope.thread).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        AlertService.setSuccess({ show: true, msg: $scope.thread.title + ' has been added successfully.' });
-//                        $state.go('app.admin.forum.categories.list');
-//                    }
-//                });
             };
         }
     ])
@@ -11956,34 +11981,22 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0,0);
                     $scope.fetching = false;
                     $state.go('app.admin.forum.structure.list');
+				    AlertService.setSuccess({
+					  show: false,
+					  persist: true,
+					  msg: thread.title + ' updated successfully'
+					});
                 })
                 .catch(function (err) {
 //                    console.log('ForumThread Update: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(errArray[i]);
-                            }
-                        });
-                        AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    }
+					  AlertService.setError({ 
+						show: true, 
+						msg: 'Unable to update ' + thread.title, 
+						lbErr: err
+					  });
+					  $window.scrollTo(0,0);
+					  $scope.fetching = false;
                 });
-                
-//                $scope.showError = false;
-
-//                AdminForumService.editThread($scope.thread).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        AlertService.setSuccess({ show: true, msg: $scope.thread.title + ' has been updated successfully.' });
-//                        $state.go('app.admin.forum.categories.list');
-//                    }
-//                });
             };
         }
     ])
@@ -15625,12 +15638,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
             $scope.saving = false;
 
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
-
             function updateOrder (list) {
                 for (var i = 0; i < list.length; i++) {
                     list[i].orderNum = i + 1;
@@ -15685,20 +15692,31 @@ angular.module('app.controllers', ['ngCookies'])
                                 OverwatchHero.overwatchAbilities.destroyAll({ id: hero.id }).$promise
                                 .then(function () {
                                     OverwatchHero.destroyById({ id: hero.id }).$promise
-                                    .then(done)
-                                    .catch(function (httpResponse) {
-                                        console.log('httpResponse: ', httpResponse);
-
-                                        $scope.errors = ['An error occurred while trying to delete the hero.'];
-                                        $scope.showError = true;
+                                    .then(function() {
+										var index = $scope.heroes.indexOf(hero);
+                   					    $scope.heroes.splice(index, 1);
+										
+										AlertService.setSuccess({
+											show: true,
+											msg: hero.heroName + ' deleted successfully'
+										});
+										$window.scrollTo(0, 0);
+									})
+                                    .catch(function (err) {
+                                        AlertService.setError({
+											show: true,
+											msg: 'An error occured while trying to delete the hero',
+											lbErr: err
+										});
                                         $window.scrollTo(0,0);
                                     });
                                 })
-                                .catch(function (httpResponse) {
-                                    console.log('httpResponse: ', httpResponse);
-
-                                    $scope.errors = ['An error occurred while trying to delete the hero abilities.'];
-                                    $scope.showError = true;
+                                .catch(function (err) {
+									AlertService.setError({
+										show: true,
+										msg: 'An error occurred while trying to delete the hero abilities.',
+										lbErr: err
+									});
                                     $window.scrollTo(0,0);
                                 });
                             }
@@ -15818,7 +15836,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.addHero = function () {
-                $scope.showError = false;
+                $scope.fetching = true;
 
                 OverwatchHero.create($scope.hero).$promise
                 .then(function (heroValue) {
@@ -15828,22 +15846,33 @@ angular.module('app.controllers', ['ngCookies'])
 
                     OverwatchHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
                     .then(function (abilityValue) {
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been added successfully.' });
+						$scope.fetching = false;
+                        AlertService.setSuccess({ 
+							persist: true,
+							show: false, 
+							msg: $scope.hero.heroName + ' has been added successfully.' 
+						});
+						$window.scrollTo(0, 0);
                         $state.go('app.admin.overwatch.heroes.list');
+						
                     })
-                    .catch(function (httpResponse) {
-                        console.log('httpResponse: ', httpResponse);
-
-                        $scope.errors = _.omit(httpResponse.data.error, ['message', 'status']);
-                        $scope.showError = true;
+                    .catch(function (err) {
+						$scope.fetching = false;
+                        AlertService.setError({
+							show: true,
+							msg: 'Unable to create Hero',
+							lbErr: err
+						});
                         $window.scrollTo(0,0);
                     });
                 })
-                .catch(function (httpResponse) {
-                    console.log('httpResponse: ', httpResponse);
-
-                    $scope.errors = _.omit(httpResponse.data.error, ['message', 'status']);
-                    $scope.showError = true;
+                .catch(function (err) {
+					$scope.fetching = false;
+					AlertService.setError({
+						show: true,
+						msg: 'Unable to create Hero',
+						lbErr: err
+					});
                     $window.scrollTo(0,0);
                 });
             };
@@ -15919,12 +15948,20 @@ angular.module('app.controllers', ['ngCookies'])
                                 if (!ability.id) { return done(); }
 
                                 OverwatchHero.overwatchAbilities.destroyById({ id: ability.heroId, fk: ability.id }).$promise
-                                .then(done)
-                                .catch(function (httpResponse) {
-                                    console.log('httpResponse: ', httpResponse);
-
-                                    $scope.errors = [httpResponse.data.error.message];
-                                    $scope.showError = true;
+                                .then(function() {
+									AlertService.setSuccess({
+										show: false,
+										persist: true,
+										msg: ability.name + ' deleted successfully.'
+									});
+									$window.scrollTo(0, 0);
+								})
+                                .catch(function (err) {
+                                    AlertService.setError({
+										show: true,
+										msg: 'An error occured while deleting ' + ability.name,
+										lbErr: err
+									});
                                     $window.scrollTo(0,0);
                                 });
                             }
@@ -15954,6 +15991,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit hero
             $scope.editHero = function () {
+				$scope.fetching = true;
                 OverwatchHero.upsert($scope.hero).$promise
                 .then(function (heroValue) {
 
@@ -15970,26 +16008,34 @@ angular.module('app.controllers', ['ngCookies'])
                             console.log('httpResponse: ', httpResponse);
                             return eachCallback(httpResponse);
                         });
-                    }, function (httpResponse) {
-                        if (httpResponse) {
-                            console.log('httpResponse: ', httpResponse);
-
-                            $scope.errors = ['An error occurred while trying to update an ability.'];
-                            $scope.showError = true;
+                    }, function (err) {
+						$scope.fetching = false;
+                        if (err) {
                             $window.scrollTo(0,0);
-                            return;
+                            return AlertService.setError({
+								show: true,
+								msg: 'Could not update ' + $scope.hero.heroName,
+								lbErr: err
+							});
                         }
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been updated successfully.' });
+						$window.scrollTo(0, 0);
+                        AlertService.setSuccess({ 
+							persist: true,
+							show: false,
+							msg: $scope.hero.heroName + ' has been updated successfully.' 
+						});
                         return $state.go('app.admin.overwatch.heroes.list');
                     });
 
                 })
-                .catch(function (httpResponse) {
-                    console.log('httpResponse: ', httpResponse);
-
-                    $scope.errors = ['An error occurred while trying to update the hero.'];
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
+                .catch(function (err) {
+					$scope.fetching = false;
+					$window.scrollTo(0,0);
+					return AlertService.setError({
+						show: true,
+						msg: 'Could not update ' + $scope.hero.heroName,
+						lbErr: err
+					});
                 });
             }
         }

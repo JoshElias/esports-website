@@ -1,9 +1,9 @@
 <div class="bg-override deck-builder {{className.toLowerCase()}}">
     <div class="sub-nav-wrapper hidden-xs">
-        <div class="container-fluid sub-nav sticky">
+        <div class="container-fluid sub-nav">
             <div class="sub-nav-links">
                 <ul>
-                    <li><a ui-sref="app.hs.deckBuilder.class">CLASS SELECT</a></li><li ng-class="{'db-sub-nav-border-override': deck.basic}"><a href="#" ng-click="step = 1" ng-class="{'active':$state.includes('app.hs.deckBuilder.build') && step == 1}">CARD SELECT</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 2" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 2}">MULLIGANS</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 3" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 3}">DESCRIPTION</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 4" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 4}">MATCH UPS</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 5" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 5}">SUBMIT</a></li>
+                    <li><a ui-sref="app.admin.hearthstone.decks.add">CLASS SELECT</a></li><li ng-class="{'db-sub-nav-border-override': deck.basic}"><a href="#" ng-click="step = 1" ng-class="{'active':$state.includes('app.admin.hearthstone.decks.addBuild') && step == 1}">CARD SELECT</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 2" ng-class="{active:$state.includes('app.admin.hearthstone.decks.addBuild') && step == 2}">MULLIGANS</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 3" ng-class="{active:$state.includes('app.admin.hearthstone.decks.addBuild') && step == 3}">DESCRIPTION</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 4" ng-class="{active:$state.includes('app.admin.hearthstone.decks.addBuild') && step == 4}">MATCH UPS</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 5" ng-class="{active:$state.includes('app.admin.hearthstone.decks.addBuild') && step == 5}">SUBMIT</a></li>
                 </ul>
             </div>
         </div>
@@ -36,15 +36,22 @@
             <div class="db-builder row clearfix">
                 <!-- db-right -->
                 <div class="col-md-push-9 col-md-3">
+                   
+                        
                     <div class="db-search">
-                        <form novalidate>
-                            <input type="text" class="input-sm input-dark" 
-                                   placeholder="Search..." ng-model="filters.search">
-                            <button ng-click="search()" type="submit" class="search-charm" style="border: 0px;">
-                                <i class="fa fa-search"></i>
-                            </button>
+                        <form class="ng-pristine ng-valid">
+                            <div class="input-group">
+                                <input type="text" name="search" class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" placeholder="Search..." ng-model="filters.search" style=""> 
+                                <span class="input-group-btn">
+                                    <button ng-click="search()" type="submit" class="btn btn-blue btn-sm">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
                         </form>
                     </div>
+                        
+
                     <div class="db-mana-curve m-b-md">
                         <div class="db-mana-curve-title">
                             MANA CURVE<i class="fa pull-right show-toggle-caret" ng-class="{ 'fa-caret-down' : !show.mana, 'fa-caret-up' : show.mana  }" ng-click="show.mana = !show.mana"></i>
@@ -125,14 +132,15 @@
                                 <input placeholder="DECK NAME..." ng-maxlength="35" ng-model="deck.name"/>
                             </div>
                             <div class="deck-description">
-                                <textarea placeholder="Put stuff here" resize="none" ng-model="deck.description"></textarea>
+                                <textarea placeholder="Deck description" resize="none" ng-model="deck.description"></textarea>
                             </div>
                         </span>
                         <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)"
-                             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+							 tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
+                             ng-click="deck.removeCardFromDeck(card.card)"
+							 card-id="card.card.id"
                              data-tooltip-pos="left" hs-card>
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
@@ -145,7 +153,7 @@
                         </div>
                     </div>
                         <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
-                            {{getDust(deck.cards)}}
+                            {{deck.getDust()}}
                             <div class="dust-bottle-sm"></div>
                         </div>
                     </div>
@@ -180,6 +188,7 @@
                                         <div class="dropdown">
                                             <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
                                                 <span>Mechanics ({{filters.mechanics.length}})</span>
+                                                <b class="caret"></b>
                                             </button>
                                             <ul class="list-group dropdown-menu dropdown-dark">
                                                 <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" 
@@ -193,9 +202,11 @@
                                 <div class="col-md-6">
                                     <h1>MANA COST</h1>
                                     <div class="mana-crystals">
+<!--
                                         <div ng-class="{active: filters.mana === 'all'}">
-                                            <a href="#" ng-click="doFilterByMana('all'); pagination.setPage(1)">All</a>
+                                            <a href="#" ng-click="doFilterByMana('all')">All</a>
                                         </div>
+-->
                                         <div ng-class="{active: filters.mana === 0}">
                                             <a href="#" ng-click="doFilterByMana(0); pagination.setPage(1)">0</a>
                                         </div>
@@ -296,8 +307,13 @@
                             <!-- cards -->
                             <div class="db-cards-view-wrapper clearfix">
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
-                                    <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
-                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
+                                    <div class="db-card" 
+										 ng-class="{'db-card-disabled': !deck.isAddable(card)}" 
+										 ng-repeat="card in cards.current">
+                                        <a href="#" 
+										   tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.photoNames.large" 
+										   ng-click="deck.addCard(card)" 
+										   ng-right-click="deck.removeCardFromDeck(card)" hs-card>
                                             <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
                                         </a>
                                     </div>
@@ -383,7 +399,8 @@
                             </div>  
                             <div class="col-xs-4 right">
                                 <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
-                                     data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                     tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
+									 card-id="card.card.id"
                                      data-tooltip-pos="left" hs-card>
                                     <button ng-class="{'active': isMulliganCard(true, card)}"
                                             ng-click="deck.toggleMulligan(mulligan, true, card.card)">
@@ -427,7 +444,8 @@
                             </div>
                             <div class="col-xs-4 right">
                                 <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
-                                     data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                     tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
+									 card-id="card.card.id"
                                      data-tooltip-pos="left" hs-card>
                                     <button ng-class="{'active': isMulliganCard(false, card)}"
                                             ng-click="deck.toggleMulligan(mulligan, false, card.card)">
@@ -510,8 +528,8 @@
                     <!-- / step 4 -->
                     <!-- step 5 -->
                     <div class="db-section" ng-hide="step !== 5">
-						
-						<alert-box theme="admin"></alert-box>
+                        
+                        <alert-box theme="admin"></alert-box>
                         
                         <div class="db-section-title">
                             <h1>SAVE YOUR DECK</h1>
