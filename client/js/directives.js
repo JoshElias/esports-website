@@ -57,13 +57,11 @@ angular.module('app.directives', ['ui.load'])
 					offsetY: -50,
 					content: content,
 					style: false,
-					className: 'hs-card-tooltip-' + tmpUuid,
-					id: tmpUuid
+					className: 'hs-card-tooltip-' + tmpUuid
 				});
             }
             
             scope.$on('$destroy', function () {
-				console.log('REMOVING');
                 $('.hs-card-tooltip-'+tmpUuid).remove();
             });
         }

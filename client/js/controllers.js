@@ -10901,6 +10901,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.newSearch = function () {
+				console.log('$scope.filters.search:', $scope.filters.search);
                 $scope.filters.search = $scope.deckSearch;
             }
             
@@ -10935,22 +10936,21 @@ angular.module('app.controllers', ['ngCookies'])
                 }
 
                 if ($scope.filters.search.length > 0) {
-                    console.log("search:", $scope.filters.search);
-                    var pattern = new RegExp('.*'+$scope.filters.search+'.*', "i");
-
                     options.filter.where.or = [
-                        { name: { like: pattern } },
-                        { description: { like: pattern } },
-                        { deckType: { like: pattern } }
-                    ]
+						{ name: { regexp: $scope.filters.search } },
+						{ description: { regexp: $scope.filters.search } },
+						{ deckType: { regexp: $scope.filters.search } }
+					]
                 }
                 
-                console.log(options);
+                console.log('options:', options);
                 return options;
             }
 
             // pagination
             function updateTempostormDecks (page, perpage, callback) {
+				var test = getQuery(true, page, perpage);
+				console.log('test:', test);
                 Deck.find(getQuery(true, page, perpage))
                 .$promise
                 .then(function (data) {
