@@ -11,6 +11,7 @@
 // 6... Drag and Drop
 // 7... Progress
 // 8... Card Circles
+// 9... Admin Users styles
 
 //*************************************
 
@@ -306,3 +307,23 @@ ul[dnd-list] .dndPlaceholder {
 
 /* class circles */
 .class { width: 30px; height: 30px; background: #000 url('../img/class-icons.png') no-repeat; }
+
+//*************************************
+// 9... Admin Users styles
+//*************************************
+
+.blue-userbar {
+    background-color: $ts-blue;
+    color: $white;
+    padding: 10px 0 0;
+    
+    h4 {
+        font-weight: 700;
+    }
+
+}
+
+.no-top-bottom-pad {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+}

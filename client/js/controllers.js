@@ -7410,6 +7410,16 @@ angular.module('app.controllers', ['ngCookies'])
                     if (err) return console.log('err: ', err);
                 });
             };
+            
+            var activeMsg = {
+                'true': "Active",
+                'false': "Inactive"
+            } 
+            
+            // is user active
+            $scope.isUserActive = function(isActive) {
+                return activeMsg[isActive];
+            }
 
             // pagination
             function updateUsers (page, perpage, search, callback) {

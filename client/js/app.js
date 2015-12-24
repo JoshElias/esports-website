@@ -4547,7 +4547,9 @@ var app = angular.module('app', [
                                         filter: {
                                             fields: {
                                                 id: true,
-                                                username: true
+                                                username: true,
+                                                email: true,
+                                                isActive: true
                                             },
                                             limit: 50,
                                             order: 'createdDate DESC'
