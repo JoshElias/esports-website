@@ -3765,7 +3765,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminDeckBuilderClassCtrl', ['$scope', function ($scope) {
+.controller('AdminDeckBuilderClassCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone) {
     if ($scope.app.settings.secondaryPortrait == undefined || $scope.app.settings.secondaryPortrait.length == 0) {
         $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
     }
@@ -3801,11 +3801,17 @@ angular.module('app.controllers', ['ngCookies'])
     
     //get the hero name based on the index of portraitSettings' index
     $scope.getName = function (index, caps) {
-        if (caps) {
-            return Hearthstone.heroNames[getClass(index)][portraitSettings[index]];
-        } else {
-            var name = Hearthstone.heroNames[getClass(index)][portraitSettings[index]]
-            return name[0].toLowerCase() + name.slice(1);
+        try {
+            if (caps) {
+                return Hearthstone.heroNames[getClass(index)][portraitSettings[index]];
+            } else {
+                var name = Hearthstone.heroNames[getClass(index)][portraitSettings[index]]
+                return name[0].toLowerCase() + name.slice(1);
+            }
+        } catch(err) {
+            $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+            portraitSettings = $scope.app.settings.secondaryPortrait;
+            $scope.getName(index, caps);
         }
     }
     
@@ -3856,7 +3862,21 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
-        $scope.getName = function () {
+//        $scope.getName = function () {
+//            return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
+//        }
+        
+        $scope.getName = function (index, klass) {
+            var classHero = Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+            if (classHero) {
+              return classHero;
+            } else {
+              $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+              $scope.getName(index, klass);
+            }
+        }
+        
+        $scope.getActiveDeckName = function () {
             return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
         }
         
@@ -4195,7 +4215,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
-        console.log(data);
+        $scope.getName = function (index, klass) {
+            var classHero = Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+            if (classHero) {
+              return classHero;
+            } else {
+              $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+              $scope.getName(index, klass);
+            }
+        }
         
         $scope.getDust = function (cards) {
             var dust = 0;
@@ -5383,7 +5411,6 @@ angular.module('app.controllers', ['ngCookies'])
     }
 ])
 .controller('DeckBuilderClassCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone) {
-    
     if ($scope.app.settings.secondaryPortrait == undefined || $scope.app.settings.secondaryPortrait.length == 0) {
         $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
     }
@@ -5832,6 +5859,16 @@ angular.module('app.controllers', ['ngCookies'])
             5: 'Provide a synopsis and title for your deck.'            
         };
         
+        //get the hero name based on the index of portraitSettings' index
+        $scope.getName = function (index, klass) {
+            var classHero = Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+            if (classHero) {
+              return classHero;
+            } else {
+              $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+              $scope.getName(index, klass);
+            }
+        }
         
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
