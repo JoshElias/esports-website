@@ -12,7 +12,7 @@ var redbull = angular.module('app.redbull', [
     function() {
     }
 ])
-.config(['$stateProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
+.config(['$stateProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide',
     function($stateProvider, $controllerProvider, $compileProvider, $filterProvider, $provide) {
 
         redbull.controller = $controllerProvider.register;
@@ -22,7 +22,7 @@ var redbull = angular.module('app.redbull', [
         redbull.service    = $provide.service;
         redbull.constant   = $provide.constant;
         redbull.value      = $provide.value;
-
+        
         // cdn templates
         var moduleTpl = (tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/';
 
@@ -92,7 +92,8 @@ var redbull = angular.module('app.redbull', [
                                     where: {
                                         deckable: true,
                                         isActive: true
-                                    }
+                                    },
+                                    order: ['cost ASC', 'name ASC']
                                 }
                             }).$promise;
                         }]

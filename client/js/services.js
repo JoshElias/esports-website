@@ -1075,19 +1075,20 @@ angular.module('app.services', [])
 
     var pagination = {};
 
-    pagination.new = function (perpage) {
+    pagination.new = function (perpage, total) {
 
         perpage = perpage || 50;
 
         var paginate = {
             page: 1,
-            perpage: perpage
+            perpage: perpage,
+            total: total
         };
 
         paginate.results = function () {
-            return 0;
+            return paginate.total;
         };
-
+        
         paginate.pages = function () {
             return Math.ceil(paginate.results() / paginate.perpage);
         };
@@ -1118,6 +1119,10 @@ angular.module('app.services', [])
             return (paginate.page === page);
         };
 
+        paginate.getPage = function () {
+            return paginate.page;
+        };
+        
         paginate.setPage = function (page) {
             paginate.page = page;
         };
@@ -1744,7 +1749,7 @@ angular.module('app.services', [])
                         result = 0;
 
                     while(result === 0 && i < props.length) {
-                        result = dynamicSort(props[i])(a, b);
+                        result = dynamicSort(props[i])(a.card, b.card);
                         i++;
                     }
                     return result;
