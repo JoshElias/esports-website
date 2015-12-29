@@ -12113,20 +12113,6 @@ angular.module('app.controllers', ['ngCookies'])
 //                AlertService.reset();
 //            }
           
-            var fuck = {
-              fuck: "fuck"
-            }
-          
-            CrudMan.newItem('talents');
-            CrudMan.newItem('abilities');
-          
-            CrudMan.toggleItem(fuck, 'talents');
-            fuck.lol = 'lol';
-            CrudMan.toggleItem(fuck, 'talents');
-          
-            console.log(CrudMan.getArrs);
-            
-            console.log('heros: ', heroes);
             // load heroes
             $scope.heroes = heroes;
             $scope.heroesCount = heroesCount;
@@ -12540,52 +12526,54 @@ angular.module('app.controllers', ['ngCookies'])
           };
         }
     ])
-    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'Ability', 'HeroTalent', 'Talent',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, Ability, HeroTalent, Talent) {
+    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'Ability', 'HeroTalent', 'Talent', 'CrudMan',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, Ability, HeroTalent, Talent, CrudMan) {
             // defaults
             var defaultAbility = {
-                    name: '',
-                    abilityType: HOTS.abilityTypes[0],
-                    mana: '',
-                    cooldown: '',
-                    description: '',
-                    damage: '',
-                    healing: '',
-                    className: '',
-                    orderNum: 1
-                },
-                defaultTalent = {
-                    name: '',
-                    tier: HOTS.tiers[0],
-                    description: '',
-                    ability: null,
-                    className: '',
-                    orderNum: 1
-                },
-                defaultCharacter = {
-                    name: '',
-                    stats: {
-                        base: {
-                            health: 0,
-                            healthRegen: 0,
-                            mana: 0,
-                            manaRegen: 0,
-                            attackSpeed: 0,
-                            range: 0,
-                            damage: 0
-                        },
-                        gain: {
-                            health: 0,
-                            healthRegen: 0,
-                            mana: 0,
-                            manaRegen: 0,
-                            attackSpeed: 0,
-                            range: 0,
-                            damage: 0
-                        }
-                    }
-                };
-
+                name: '',
+                abilityType: HOTS.abilityTypes[0],
+                mana: '',
+                cooldown: '',
+                description: '',
+                damage: '',
+                healing: '',
+                className: '',
+                orderNum: 1
+              },
+              defaultTalent = {
+                name: '',
+                tier: HOTS.tiers[0],
+                description: '',
+                ability: null,
+                className: '',
+                orderNum: 1
+              },
+              defaultCharacter = {
+                name: '',
+                stats: {
+                  base: {
+                    health: 0,
+                    healthRegen: 0,
+                    mana: 0,
+                    manaRegen: 0,
+                    attackSpeed: 0,
+                    range: 0,
+                    damage: 0
+                  },
+                  gain: {
+                    health: 0,
+                    healthRegen: 0,
+                    mana: 0,
+                    manaRegen: 0,
+                    attackSpeed: 0,
+                    range: 0,
+                    damage: 0
+                  }
+                }
+              };
+            CrudMan.setExists(hero.talents, 'talents');
+            CrudMan.setExists(hero.abilities, 'abilities');
+          
             // load hero
             $scope.hero = hero;
             
@@ -12612,14 +12600,10 @@ angular.module('app.controllers', ['ngCookies'])
             var box;
             $scope.abilityAddWnd = function () {
                 $scope.currentAbility = angular.copy(defaultAbility);
-                Util.getObjectID().success(function (data) {
-                    if (data.success) {
-                        $scope.currentAbility._id = data.id;
-                        box = bootbox.dialog({
-                            title: 'Add Ability',
-                            message: $compile('<div ability-add-form></div>')($scope)
-                        });
-                    }
+//                $scope.currentAbility._id = data.id;
+                box = bootbox.dialog({
+                    title: 'Add Ability',
+                    message: $compile('<div ability-add-form></div>')($scope)
                 });
             };
 
@@ -12632,10 +12616,13 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.addAbility = function () {
-                $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
-                $scope.hero.abilities.push($scope.currentAbility);
-                box.modal('hide');
-                $scope.currentAbility = false;
+              var abil = $scope.currentAbility;
+
+              $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
+              $scope.hero.abilities.push(abil);
+              CrudMan.toggleItem(abil, 'abilities');
+              box.modal('hide');
+              $scope.currentAbility = false;
             };
 
             $scope.editAbility = function (ability) {
@@ -12644,12 +12631,13 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.deleteAbility = function (ability) {
-                var index = $scope.hero.abilities.indexOf(ability);
-                $scope.hero.abilities.splice(index, 1);
+              var index = $scope.hero.abilities.indexOf(ability);
+              $scope.hero.abilities.splice(index, 1);
+              CrudMan.toggleItem(ability, 'abilities');
 
-                for (var i = 0; i < $scope.hero.abilities.length; i++) {
-                    $scope.hero.abilities[i].orderNum = i + 1;
-                }
+              for (var i = 0; i < $scope.hero.abilities.length; i++) {
+                $scope.hero.abilities[i].orderNum = i + 1;
+              }
             };
           
             // talents
@@ -12678,8 +12666,10 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.addTalent = function () {
-                $scope.currentTalent.orderNum = $scope.hero.talents.length + 1;
-                $scope.hero.talents.push($scope.currentTalent);
+                var tal = $scope.currentTalent;
+                tal.orderNum = $scope.hero.talents.length + 1;
+                $scope.hero.talents.push(tal);
+                CrudMan.toggleItem(tal, 'talents');
                 box.modal('hide');
                 $scope.currentTalent = false;
             };
@@ -12692,6 +12682,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deleteTalent = function (talent) {
                 var index = $scope.hero.talents.indexOf(talent);
                 $scope.hero.talents.splice(index, 1);
+                CrudMan.toggleItem(talent, 'talents');
 
                 for (var i = 0; i < $scope.hero.talents.length; i++) {
                     $scope.hero.talents[i].orderNum = i + 1;

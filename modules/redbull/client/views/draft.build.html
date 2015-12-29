@@ -67,9 +67,9 @@
         
         <div class="decks">
             
-            <div class="deck {{deck.playerClass.toLowerCase()}}" ng-class="{ active: isCurrentDeck(deck) }" ng-repeat="deck in decks" ng-click="setCurrentDeck(deck)">
+            <div class="deck {{deck.playerClass.toLowerCase()}}" ng-class="{ active: isCurrentDeck(deck) }" ng-repeat="deck in decks">
                 
-                <div class="deck-title-bar">
+                <div class="deck-title-bar" ng-click="toggleCurrentDeck(deck)">
                     <div class="deck-title-bar-inner">
                         <button class="deck-delete" ng-click="deleteDeck($event, deck)"><i class="fa fa-times"></i></button>
                         <div class="deck-title">{{deck.name}}</div>
@@ -78,10 +78,9 @@
                 
                 <div class="deck-cards">
                     <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}" 
-                         ng-repeat="card in sortedDeckCards(deck.cards) track by card.card.id" 
-                         data-card-id="card.card.id" 
+                         ng-repeat="card in deck.cards track by card.card.id" 
                          data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
-                         data-tooltip-pos="left" pool-card
+                         data-tooltip-pos="left" hs-card
                          ng-click="removeCardFromDeck(card)">
                         <div class="card-pool-card-mana">{{card.card.cost}}</div>
                         <div class="card-pool-card-qty" ng-if="card.cardQuantity > 1">{{card.cardQuantity}}</div>
@@ -107,23 +106,23 @@
     
     <div class="draft-build-cards">
         <div class="container">
-            <ul class="card-filter-classes clearfix">
+            <ul class="card-filter-classes clearfix" ng-class="{ filtered: currentDeck }">
                 <li ng-repeat="klass in klasses">
-                    <button class="{{klass.toLowerCase()}}" ng-class="{ active: hasFilterClass(klass) }" ng-click="setFilterClass(klass)" ng-tooltip data-original-title="{{klass}}">{{klass}}</button>
+                    <button class="{{klass.toLowerCase()}}" ng-class="{ active: hasFilterClass(klass) }" ng-click="setFilterClass(klass)" ng-tooltip data-original-title="{{klass}}" ng-if="currentDeck.playerClass === klass || !currentDeck">{{klass}}</button>
                 </li>
                 <li>
                     <button class="neutral" ng-class="{ active: hasFilterClass('Neutral') }" ng-click="setFilterClass('Neutral')" ng-tooltip data-original-title="Neutral">Neutral</button>
                 </li>
             </ul>
 
-            <div class="draft-build-pool">
-                <div pagination="classPagination" theme="deckbuilder" class="draft-build-cards-pagination draft-build-cards-pagination-left"></div>
-                <div pagination="classPagination" theme="deckbuilder" class="draft-build-cards-pagination draft-build-cards-pagination-right"></div>
+            <div class="draft-build-pool clearfix">
+                <button class="draft-build-cards-pagination left" ng-disabled="pagination.getPage() === 1" ng-click="pagination.setPage(pagination.getPage() - 1)" ng-if="pagination.pages() > 1"><div class="inner"><i class="fa fa-caret-left"></i></div></button>
+                <button class="draft-build-cards-pagination right" ng-disabled="pagination.getPage() + 1 > pagination.pages() || pagination.results() === 0" ng-click="pagination.setPage(pagination.getPage() + 1)" ng-if="pagination.pages() > 1"><div class="inner"><i class="fa fa-caret-right"></i></div></button>
 
                 <div class="draft-build-cards-view-wrapper clearfix">
                     <div class="draft-build-cards-view clearfix">
-                        <div class="draft-build-card" ng-class="{ disabled: !currentDeck.isAddable(card) }" ng-repeat="card in getCardsCurrent() | orderBy: ['cost', 'name'] | limitTo: 15">
-                            <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="addCardToDeck(card)" ng-right-click="currentDeck.removeCardFromDeck(card)" hs-card>
+                        <div class="draft-build-card" ng-class="{ disabled: !currentDeck.isAddable(card) }" ng-repeat="card in getCardsCurrent()">
+                            <a href="#" data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.photoNames.large" ng-click="addCardToDeck(card)" ng-right-click="currentDeck.removeCardFromDeck(card)" hs-card>
                                 <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
                             </a>
                         </div>

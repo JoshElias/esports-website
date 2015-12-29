@@ -115,8 +115,8 @@ var app = angular.module('app', [
     ]
 )
 .config(
-    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider', '$animateProvider',
-    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider, $animateProvider) {
+    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider',
+    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
 
         app.controller = $controllerProvider.register;
         app.directive  = $compileProvider.directive;
@@ -142,7 +142,7 @@ var app = angular.module('app', [
         ]);
 
         // ignore ng-animate on font awesome spin
-        $animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
+        //$animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
 
 //        $urlRouterProvider.otherwise('404');
         $stateProvider
