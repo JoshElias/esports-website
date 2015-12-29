@@ -3301,20 +3301,27 @@ angular.module('app.services', [])
     var crud = {
       exists  : [],
       toDelete: [],
-      toCreate: []
+      toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
     }
     
-    function setExists (inArr, arrName) {
-      _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
+    function getArrs () {
+      return arrs;
     }
     
     function find (item, arrName, crud) {
-      //do some validation?
       return _.find(arrs[arrName][crud], function (val) { return val == item });
     }
     
-    function newItem (arrName) {
+    function createArr (arrName) {
       arrs[arrName] = angular.copy(crud);
+    }
+    
+    function setExists (inArr, arrName) {
+      if (!arrs[arrName]) {
+        this.createArr(arrName);
+      }
+      
+      _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
     }
     
     function removeFromArr (item, arrName, crud) {
@@ -3322,7 +3329,6 @@ angular.module('app.services', [])
       var idx = arr[crud].indexOf(item);
       
       arr[crud].splice(idx, 1);
-      arr['toDelete'].push(item);
     }
     
     function addToArr (item, arrName, crud) {
@@ -3334,29 +3340,33 @@ angular.module('app.services', [])
         arr['toDelete'].splice(idx, 1);
       }
       
-      arr['toCreate'].push(item);
+      arr['toWrite'].push(item);
     }
     
     function toggleItem (item, arrName) {
       var e = 'exists';
       var d = 'toDelete';
-      var c = 'toCreate';
+      var c = 'toWrite';
 
       if (find(item, arrName, e)) {
-        arr['toDelete'].push(item);
+        console.log('is in exists');
+        arrs[arrName][d].push(item);
       } else if (find(item, arrName, c)) {
+        console.log('is in create');
         removeFromArr(item, arrName, c);
-        return;
       } else {
+        console.log('added to create');
         addToArr(item, arrName, c);
       }
+      
+      console.log('CrudMan toggle triggered', arrs);
     }
     
     return {
       setExists: setExists,
       toggleItem: toggleItem,
-      newItem: newItem,
-      getArrs: arrs
+      createArr: createArr,
+      getArrs: getArrs
     }
   }
 ])
