@@ -4952,7 +4952,7 @@ p.white { color: #FFF; }
 .talents-icon.azmodan.gluttony { background-position: 0px -30px; }
 .talents-icon.azmodan.army-of-hell { background-position: 0px -120px; }
 .talents-icon.azmodan.bound-minion { background-position: 0px -150px; }
-.talents-icon.azmodan.mercenary-lord { background-position: 0px -180px; }
+.talents-icon.azmodan.sins-grasp { background-position: 0px -180px; }
 
 /* Tier 3 */
 .talents-icon.azmodan.enduring-warriors { background-position: 0px -120px; }
@@ -4996,7 +4996,7 @@ p.white { color: #FFF; }
 .talents-icon.azmodan.large.gluttony { background-position: -30px -102px; }
 .talents-icon.azmodan.large.army-of-hell { background-position: -30px -408px; }
 .talents-icon.azmodan.large.bound-minion { background-position: -30px -510px; }
-.talents-icon.azmodan.large.mercenary-lord { background-position: -30px -612px; }
+.talents-icon.azmodan.large.sins-grasp { background-position: -30px -612px; }
 
 /* Tier 3 */
 .talents-icon.azmodan.large.enduring-warriors { background-position: -30px -408px; }
@@ -6805,7 +6805,7 @@ p.white { color: #FFF; }
 .talents-icon.sgthammer.ambush { background-position: 0px -60px; }
 .talents-icon.sgthammer.regeneration-master { background-position: 0px -90px; }
 /* Tier 2 */
-.talents-icon.sgthammer.cleanse { background-position: 0px -120px; }
+.talents-icon.sgthammer.focused-attack { background-position: 0px -120px; }
 .talents-icon.sgthammer.vampiric-assault { background-position: 0px -150px; }
 .talents-icon.sgthammer.maelstrom-shells { background-position: 0px 0px; }
 .talents-icon.sgthammer.excessive-force { background-position: 0px -30px; }
