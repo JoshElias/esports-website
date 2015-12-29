@@ -676,6 +676,10 @@
                 padding: 0;
                 width: 401px;
                 
+                &.filtered {
+                    width: 73px;
+                }
+                
                 li {
                     display: inline-block;
                     list-style: none;
@@ -729,38 +733,42 @@
             } /* .card-filter-classes */
             
             .draft-build-pool {
+                position: relative;
                 
-                .draft-build-cards-pagination {
+                button.draft-build-cards-pagination {
                     position: absolute;
-                    top: 300px;
+                    margin-top: -25px;
+                    top: 50%;
+                    background: none;
+                    height: 50px;
+                    outline: none;
+                    border: none;
+                    box-shadow: none;
+                    z-index: 101;
+                    opacity: .8;
                     
-                    &.draft-build-cards-pagination-left {
-                        left: 0px;
-                    } /* .draft-build-cards-pagination-left */
+                    &:hover {
+                        opacity: 1;
+                    } /* :hover */
                     
-                    &.draft-build-cards-pagination-right {
-                        right: 0px;
-                    } /* .draft-build-cards-pagination-right */
-                    
-                    button {
-                        background: none;
-                        height: 50px;
-                        outline: none;
-                        border: none;
-                        box-shadow: none;
-                        
-                        &:disabled {
-                            opacity: .2;
-                        } /* :disabled */
-                        
-                        i {
-                            font-size: 48px;
-                            color: rgba(255,255,255,1);
-                        } /* i */
+                    &:disabled {
+                        opacity: .2;
+                    } /* :disabled */
 
-                    } /* button */
-                    
-                } /* .draft-build-cards-pagination */
+                    &.left {
+                        left: 0px;
+                    } /* .left */
+
+                    &.right {
+                        right: 0px;
+                    } /* .right */
+
+                    i {
+                        font-size: 48px;
+                        color: rgba(255,255,255,1);
+                    } /* i */
+
+                } /* button */
 
                 .draft-build-cards-view-wrapper {
                     position: relative;
