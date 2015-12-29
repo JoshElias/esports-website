@@ -428,6 +428,7 @@ angular.module('app.directives', ['ui.load'])
                 if (!_.isEmpty(s)) {
                     return s[key];
                 } else if (!_.isEmpty(e)) {
+					console.log('e[key]:', e[key]);
                     return e[key];
                 }
             }

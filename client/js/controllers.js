@@ -2484,29 +2484,29 @@ angular.module('app.controllers', ['ngCookies'])
 				// remove from toCreate
 				// push to toDelete if it exist in db
 
-//				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
-//					if (toCrArticle.id === a.id) {
-//						relatedArticleChanges.toCreate.splice(index, 1);
-//						console.log('relatedArticleChanges:', relatedArticleChanges);
-//						return;
-//					}
-//				});
-//
-//				ArticleArticle.find({
-//					filter: {
-//						where: {
-//							childArticleId: a.id,
-//							parentArticleId: $scope.article.id
-//						}
-//					}
-//				}).$promise
-//				.then(function (relatedArticle) {
-//					// related article exist in db
-//					if (relatedArticle.length !== 0) {
-//						relatedArticleChanges.toDelete.push(a);
-//					}
-//					console.log('relatedArticleChanges:', relatedArticleChanges);
-//				});
+				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
+					if (toCrArticle.id === a.id) {
+						relatedArticleChanges.toCreate.splice(index, 1);
+						console.log('relatedArticleChanges:', relatedArticleChanges);
+						return;
+					}
+				});
+
+				ArticleArticle.find({
+					filter: {
+						where: {
+							childArticleId: a.id,
+							parentArticleId: $scope.article.id
+						}
+					}
+				}).$promise
+				.then(function (relatedArticle) {
+					// related article exist in db
+					if (relatedArticle.length !== 0) {
+						relatedArticleChanges.toDelete.push(a);
+					}
+					console.log('relatedArticleChanges:', relatedArticleChanges);
+				});
 
 				angular.forEach($scope.article.related, function(relArticle, index) {
 					if (relArticle.id === a.id) {
@@ -5440,8 +5440,9 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.imgPath = 'team/';
                 if (!$scope.member) { return '/img/blank.png'; }
 				console.log('$scope.path:', $scope.imgPath);
+				console.log('$scope.member.photoName:', $scope.member.photoName);
 				var URL = (tpl === './') ? cdn2 : tpl;
-                return ($scope.member.photoName && $scope.member.photoName === '') ?  URL + '/img/blank.png' : URL + $scope.imgPath + $scope.member.photoName;
+                return ($scope.member.photoName && $scope.member.photoName === '') ?  '' : URL + $scope.imgPath + $scope.member.photoName;
             };
 
             // save member
@@ -6509,13 +6510,25 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.saveDeck = function (deck) {
                 console.log('deck to create: ', deck);
                 $scope.deckSubmitting = true;
+				
+				if (!deck.name > 0) {
+					$window.scrollTo(0, 0);
+					$scope.deckSubmitting = false;
+					return AlertService.setError({
+						show: true,
+						msg: 'Unable to save deck',
+						errorList: ['Deck must have a name']
+					});
+				}
                 
                 if(!deck.validDeck()) {
-                    $scope.errors = ['Deck must have exactly 30 cards'];
-                    $scope.showError = true;
                     $window.scrollTo(0, 0);
                     $scope.deckSubmitting = false;
-                    return false;
+                    return AlertService.setError({
+						show: true,
+						msg: 'Unable to save deck',
+						errorList: ['Deck must have exactly 30 cards']
+					});
                 }
                 
                 console.log('User.isAuthenticated(): ', User.isAuthenticated());
@@ -7151,12 +7164,24 @@ angular.module('app.controllers', ['ngCookies'])
                 console.log('deck to upsert: ', deck);
                 $scope.deckSubmitting = true;
                 
+                if (!deck.name > 0) {
+					$window.scrollTo(0, 0);
+					$scope.deckSubmitting = false;
+					return AlertService.setError({
+						show: true,
+						msg: 'Unable to save deck',
+						errorList: ['Deck must have a name']
+					});
+				}
+                
                 if(!deck.validDeck()) {
-                    $scope.errors = ['Deck must have exactly 30 cards.'];
-                    $scope.showError = true;
                     $window.scrollTo(0, 0);
                     $scope.deckSubmitting = false;
-                    return false;
+                    return AlertService.setError({
+						show: true,
+						msg: 'Unable to save deck',
+						errorList: ['Deck must have exactly 30 cards']
+					});
                 }
                 
                 console.log('User.isAuthenticated(): ', User.isAuthenticated());
@@ -7331,7 +7356,7 @@ angular.module('app.controllers', ['ngCookies'])
                                             cardId: cardWithCoin.id,
                                             deckId: deck.id,
                                         };
-                                            console.log('realCardWithCoin: ', realCardWithCoin);
+										console.log('realCardWithCoin: ', realCardWithCoin);
 
                                         Mulligan.mulligansWithCoin.create({
 											id: mulligan.id
@@ -8113,28 +8138,12 @@ angular.module('app.controllers', ['ngCookies'])
                 Poll.create($scope.poll)
 				.$promise
 				.then(function (pollInstance) {
-					
-					Poll.items.createMany({
-						id: pollInstance.id
-					}, $scope.poll.items).$promise
-					.then(function (itemsCreated) {
-						$scope.fetching = false;
-						$state.go('app.admin.polls.list');
-						AlertService.setSuccess({
-							persist: true,
-							show: false,
-							msg: pollInstance.title + ' created successfully'
-						});
-						
-					})
-					.catch(function (err) {
-						$scope.fetching = false;
-						$window.scrollTo(0,0);
-						AlertService.setError({
-							show: true,
-							msg: 'Unable to create ' + $scope.poll.title,
-							lbErr: err
-						});
+					$scope.fetching = false;
+					$state.go('app.admin.polls.list');
+					return AlertService.setSuccess({
+						persist: true,
+						show: false,
+						msg: pollInstance.title + ' created successfully'
 					});
                 })
                 .catch(function(err){
@@ -8258,8 +8267,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }).progress(function(evt) {
                         $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
-                        console.log('data:', data);
-                        $scope.currentItem.photos = {
+						console.log('data:', data);
+                        $scope.currentItem.photoNames = {
                             large: data.large,
                             thumb: data.thumb
                         };
@@ -8287,7 +8296,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.poll.items.splice(index, 1);
 				
 				if (item.id) {
-					console.log('added to delete');
 					onSave.toDelete.push(item);
 				}
 				var index = onSave.toCreate.indexOf(item);
@@ -8323,9 +8331,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getImage = function () {
-                if (!$scope.currentItem) { return 'img/blank.png'; }
 				var URL = (tpl === './') ? cdn2 : tpl;
-                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.currentItem.photos.thumb;
+                return ($scope.currentItem.photoNames && $scope.currentItem.photoNames.thumb === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.currentItem.photoNames.thumb;
             };
 
             $scope.editPoll = function () {
@@ -9189,12 +9196,24 @@ angular.module('app.controllers', ['ngCookies'])
                 console.log('deck to create: ', deck);
                 $scope.deckSubmitting = true;
                 
+				if (!deck.name > 0) {
+					$window.scrollTo(0, 0);
+					$scope.deckSubmitting = false;
+					return AlertService.setError({
+						show: true,
+						msg: 'Unable to save deck',
+						errorList: ['Deck must have a name']
+					});
+				}
+				
                 if(!deck.validDeck()) {
-                    $scope.errors = ['Deck must have exactly 30 cards'];
-                    $scope.showError = true;
                     $window.scrollTo(0, 0);
                     $scope.deckSubmitting = false;
-                    return false;
+                    return AlertService.setError({
+						show: true,
+						msg: 'Unable to save deck',
+						errorList: ['Deck must have exactly 30 cards']
+					});
                 }
                 
                 console.log('User.isAuthenticated(): ', User.isAuthenticated());
@@ -9836,13 +9855,25 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.updateDeck = function (deck) {
                 console.log('deck to upsert: ', deck);
                 $scope.deckSubmitting = true;
+				
+				if (!deck.name > 0) {
+					$window.scrollTo(0, 0);
+					$scope.deckSubmitting = false;
+					return AlertService.setError({
+						show: true,
+						msg: 'Unable to save deck',
+						errorList: ['Deck must have a name']
+					});
+				}
                 
                 if(!deck.validDeck()) {
-                    $scope.errors = 'Deck must have exactly 30 cards.';
-                    $scope.showError = true;
-                    $window.scrollTo(0, 0);
-                    $scope.deckSubmitting = false;
-                    return false;
+					$window.scrollTo(0, 0);
+					$scope.deckSubmitting = false;
+					return AlertService.setError({
+						show: true,
+						msg: 'Unable to update deck',
+						errorList: ['Deck must have exactly 30 cards.']
+					});
                 }
                 
                 console.log('User.isAuthenticated(): ', User.isAuthenticated());
@@ -11251,7 +11282,8 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             };
             
-            $scope.currentMulligan = $scope.getFirstMulligan(deckWithMulligans.mulligans);
+			// inits any configured mulligans to show iniitally.
+//            $scope.currentMulligan = $scope.getFirstMulligan(deckWithMulligans.mulligans);
 
             $scope.mulliganHide = function (card) {
                 if (!$scope.anyMulliganSet()) { return false; }
@@ -14552,8 +14584,37 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService) {
+			
+			$scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
+            
+            // Listen for login/logout events and update role accordingly
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
+            });
+            
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                console.log("event listener response:", data);
+                $scope.isUserAdmin = false;
+                $scope.isUserContentProvider = false;
+            });
+			
             var box;
 
             // create guide
@@ -14656,16 +14717,19 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
+            $scope.premiumTypes = [
+                { text: 'No', value: false },
+                { text: 'Yes', value: true }
+            ];
+
             $scope.isPremium = function () {
-                if (!$scope.guide.premium.isPremium) { return false; }
-                var now = new Date().getTime(),
-                    expiry = new Date($scope.guide.premium.expiryDate).getTime();
-                if (expiry > now) {
-                    return true;
-                } else {
-                    return false;
+                var premium = $scope.guide.premium.isPremium;
+                for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                    if ($scope.premiumTypes[i].value === premium) {
+                        return $scope.premiumTypes[i].text;
+                    }
                 }
-            };
+            }
 
             // featured
             $scope.featuredTypes = [
@@ -14674,7 +14738,7 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.guide.featured;
+                var featured = $scope.guide.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
@@ -14775,8 +14839,37 @@ angular.module('app.controllers', ['ngCookies'])
             };
           }
     ])
-    .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util',
-        function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util) {
+    .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util', 'userRoles', 'EventService',
+        function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util, userRoles, EventService) {
+			
+			$scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
+            
+            // Listen for login/logout events and update role accordingly
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
+            });
+            
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                console.log("event listener response:", data);
+                $scope.isUserAdmin = false;
+                $scope.isUserContentProvider = false;
+            });
+			
             var box;
 
             // create guide
@@ -14861,7 +14954,7 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.guide.featured;
+                var featured = $scope.guide.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;

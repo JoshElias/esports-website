@@ -10,7 +10,7 @@
     <div class="db-deck-cards">
         <div class="db-deck-card" ng-class="{multi:getQty(card.id) > 1 || card.card.rarity == 'Legendary', 'mulligan-hide': mulliganHide(card)}" 
              ng-repeat="card in deck.cards | orderBy: 'cost'" 
-             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" 
+             data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
              data-tooltip-pos="left" hs-card>
             <div class="db-deck-card-mana">{{card.card.cost}}</div>
             <div class="db-deck-card-qty" ng-show="getQty(card.id) > 1">{{getQty(card.id)}}</div>

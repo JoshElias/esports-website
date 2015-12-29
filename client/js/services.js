@@ -584,8 +584,10 @@ angular.module('app.services', [])
 			(value.persist !== undefined) ? this.setPersist(value.persist) : null;
 
 			// array of errors
+			console.log('errorList:', value.errorList);
 			console.log('lbErr:', value.lbErr);
 			var errorList = [];
+			value.errorList ? errorList = value.errorList : errorList = [];
 			if (value.lbErr
 				&& value.lbErr.data
 				&& value.lbErr.data.error

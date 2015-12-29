@@ -129,7 +129,7 @@
                         </div>
                         <span ng-show="deck.basic">
                             <div class="deck-title">
-                                <input placeholder="DECK NAME..." ng-maxlength="35" ng-model="deck.name"/>
+                                <input placeholder="DECK NAME..." ng-maxlength="35" ng-model="deck.name" required/>
                             </div>
                             <div class="deck-description">
                                 <textarea placeholder="Deck description" resize="none" ng-model="deck.description"></textarea>
@@ -157,12 +157,9 @@
                         </div>
                     </div>
                     <button ng-if="deck.basic" class="basic-submit-btn m-t-md"
-                            ng-click="saveDeck(deck)" ng-disabled="deckSubmitting">
+                            ng-click="saveDeck(deck)" type="button" ng-disabled="deckSubmitting">
                         <span ng-if="!deckSubmitting">SUBMIT</span>
-                        <span ng-if="deckSubmitting">SUBMITTING</span>
-                        <span ng-if="deckSubmitting">
-                            <i class="fa fa-spinner fa-pulse"></i>
-                        </span>
+                        <span ng-if="deckSubmitting">SUBMITTING <i class="fa fa-spinner fa-pulse"></i></span>
                     </button>
                 </div>
                 <!-- / db-right -->
@@ -324,7 +321,7 @@
             <!-- / step 1 -->
             <!-- step 2 -->
         <div class="container-fluid-max">
-            <form class="form-horizontal" name="dbForm" novalidate>
+            <form class="form-horizontal" name="dbForm" id="dbForm" novalidate>
                 <div class="db-builder clearfix">
                     <div class="db-section db-mulligans" ng-hide="step !== 2">
                         <div class="class-select clearfix">
