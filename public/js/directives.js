@@ -60,9 +60,8 @@ angular.module('app.directives', ['ui.load'])
         }
 
         $scope.setState = function (s) {
-          console.log('setting state', s);
           switch(s) {
-            case 'verify': console.log('verify fired'); $scope.state = "verify"; $scope.title = "Verify Email"; break;
+            case 'verify': $scope.state = "verify"; $scope.title = "Verify Email"; break;
             case 'login' : $scope.state = "login" ; $scope.title = "User Login"; break;
             case 'signup': $scope.state = "signup"; $scope.title = "User Signup"; break;
             case 'forgot': $scope.state = "forgot"; $scope.title = "Forgot Password"; break;
@@ -154,17 +153,17 @@ angular.module('app.directives', ['ui.load'])
           $scope.captchaFailed = false;
 
           $scope.setResponse = function (response) {
-            console.log('Resonse available:', response);
+//            console.log('Resonse available:', response);
 
             $scope.response = response;
           }
 
           $scope.setWidgetId = function (widgetId) {
-            console.log('Created widget ID: %s', widgetId);
+//            console.log('Created widget ID: %s', widgetId);
           }
 
           $scope.cbExpiration = function () {
-            console.log('Captcha expired. Resetting response object');
+//            console.log('Captcha expired. Resetting response object');
 
             $scope.response = null;
           }
@@ -275,7 +274,6 @@ angular.module('app.directives', ['ui.load'])
                         $scope.commentPost();
                     });
                 } else {
-                    console.log($scope.comment, $scope.comment.replace(/<[^>]+>/gm, ''));
                     $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
                         if (data.success) {
                             $scope.commentable.comments.push(data.comment);
