@@ -49,36 +49,37 @@ angular.module('app.directives', ['ui.load'])
 })
 .directive('loginModal', ['LoginModalService', '$rootScope', function (LoginModalService, $rootScope) {
     return {
-        templateUrl: tpl + 'views/frontend/directives/login/login.modal.html',
-        scope: true,
-        controller: ['$scope', function ($scope) {
-            $scope.state = $rootScope.LoginModalService.state;
-            $scope.callback = $rootScope.LoginModalService.callback;
+      templateUrl: tpl + 'views/frontend/directives/login/login.modal.html',
+      scope: true,
+      controller: ['$scope', function ($scope) {
+        $scope.state = $rootScope.LoginModalService.state;
+        $scope.callback = $rootScope.LoginModalService.callback;
 
-            $scope.getState = function () {
-                return $scope.state;
-            }
-            
-            $scope.setState = function (s) {
-                switch(s) {
-                    case 'login':  $scope.state = "login" ; $scope.title = "User Login"; break;
-                    case 'signup': $scope.state = "signup"; $scope.title = "User Signup"; break;
-                    case 'forgot': $scope.state = "forgot"; $scope.title = "Forgot Password"; break;
-                    case 'verify': $scope.state = "verify"; $scope.title = "Verify Email"; break;
-                    default:       $scope.state = "login" ; $scope.title = "UserLogin"; break;
-                }
-            }
-            $scope.setState($scope.state);
-            
-            $scope.closeModal = function () {
-                LoginModalService.hideModal();
-            }
-        }],
-        link: function($scope, el, attr) {
-            $scope.setTitle = function(s) {
-                $(".modal-title")[0].innerHTML = s;
-            }
+        $scope.getState = function () {
+            return $scope.state;
         }
+
+        $scope.setState = function (s) {
+          console.log('setting state', s);
+          switch(s) {
+            case 'verify': console.log('verify fired'); $scope.state = "verify"; $scope.title = "Verify Email"; break;
+            case 'login' : $scope.state = "login" ; $scope.title = "User Login"; break;
+            case 'signup': $scope.state = "signup"; $scope.title = "User Signup"; break;
+            case 'forgot': $scope.state = "forgot"; $scope.title = "Forgot Password"; break;
+            default:       $scope.state = "login" ; $scope.title = "User Login"; break;
+          }
+        }
+        $scope.setState($scope.state);
+
+        $scope.closeModal = function () {
+          LoginModalService.hideModal();
+        }
+      }],
+      link: function($scope, el, attr) {
+        $scope.setTitle = function(s) {
+          $(".modal-title")[0].innerHTML = s;
+        }
+      }
     }
 }])
 .directive('loginForm', ['$window', '$cookies', '$state', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, $cookies, $state, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
@@ -141,28 +142,55 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
+.directive('signupForm', ['$state', '$timeout', 'UserService', 'LoginModalService', function ($state, $timeout, UserService, LoginModalService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
         scope: true,
         link: function ($scope, el, attr) {
+          /* recaptcha */
+          $scope.key = '6LeLJhQTAAAAAEnLKxtQmTkRkrGpqmbQGTRzu3u8';
+          $scope.response = null;
+          $scope.widgetId = null;
+          $scope.captchaFailed = false;
+
+          $scope.setResponse = function (response) {
+            console.log('Resonse available:', response);
+
+            $scope.response = response;
+          }
+
+          $scope.setWidgetId = function (widgetId) {
+            console.log('Created widget ID: %s', widgetId);
+          }
+
+          $scope.cbExpiration = function () {
+            console.log('Captcha expired. Resetting response object');
+
+            $scope.response = null;
+          }
+
+          /* !recaptcha */
             $scope.verify = {
                 email: "",
                 code: ""
             }
             
-            $scope.signup = function signup(email, username, password, cpassword) {
-                if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
-                    UserService.signup(email, username, password, cpassword).success(function (data) {
+            $scope.signup = function signup(email, username, password, cpassword, captchaResponse) {
+                if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined && captchaResponse !== null) {
+                    UserService.signup(email, username, password, cpassword, captchaResponse).success(function (data) {
                         if (!data.success) {
                             $scope.errors = data.errors;
                             $scope.showError = true;
+                            $scope.cbExpiration();
+                          if($scope.errors.captcha) {
+                            $scope.captchaFailed = true;
+                          }
                         } else {
                             $scope.verify.email = email;
                             if ($scope.setState) {
-                                $scope.state = "verify";
+                              $scope.setState('verify');
                             } else {
-                                $state.go('app.verify');
+                              $state.go('app.verify');
                             }
 //                            return $state.transitionTo('app.verify', { email: email });
                         }
@@ -191,7 +219,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('verifyForm', ['LoginModalService', function (LoginModalService) {
+.directive('verifyForm', ['$window', 'LoginModalService', 'UserService', 'AuthenticationService', 'SubscriptionService', function ($window, LoginModalService, UserService, AuthenticationService, SubscriptionService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/verify.form.html',
         scope: true,

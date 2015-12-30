@@ -1,3 +1,5 @@
+var request = require('request');
+
 module.exports = {
     hots: require('./frontend/hots'),
     overwatch: require('./frontend/overwatch'),
@@ -190,8 +192,51 @@ module.exports = {
             var email = req.body.email,
             username = req.body.username,
             password = req.body.password,
+            captchaResponse = req.body.captchaResponse,
+            captchaSecret = '6LeLJhQTAAAAAPU4djVaXiNX28hLIKGdC7XM9QG4',
+            captchaPostUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + captchaSecret + ';response=' + captchaResponse,
             userID,
             activationCode = uuid.v4();
+          
+            console.log(captchaResponse);
+          
+            function captcha (callback) {
+              request.post(
+                'https://www.google.com/recaptcha/api/siteverify',
+                { 
+                  form: { 
+                    secret: captchaSecret,
+                    response: captchaResponse
+                  }
+                },
+                function (err, cres, body) {
+                  if (!err && JSON.parse(body).success && cres.statusCode == 200) {
+                    return callback();
+                  } else {
+                    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+                    var FCA = new Schemas.FailedCaptchaAttempt({
+                        ip: ip,
+                        username: username,
+                        email: email,
+                        password: password,
+                        createdDate: new Date().toISOString()
+                    });
+                    
+                    FCA.save(function(err, data){
+                        if (err) {
+                            return res.json({ 
+                                success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                            });
+                        }
+                    });
+                    console.log('captcha request failed and was logged');
+                    return res.json({ 
+                        success: false, errors: { captcha: { msg: "Captcha validation failed and the attempt has been logged" }}
+                    });
+                  }
+                }
+              )
+            }
             
             req.assert('email', 'A valid email address is required').notEmpty().isEmail();
             req.assert('username', 'Username is required').notEmpty();
@@ -303,16 +348,18 @@ module.exports = {
                 }
                 
                 
-                checkEmail(function (){
-                    checkUsername(function (){
-                        completeNewUser(function () {
-                            addActivity(function () {
-                                sendEmail(function () {
-                                    return res.json({ success: true });
-                                }); 
-                            });
-                        });
-                    });
+                captcha(function () {
+                  checkEmail(function (){
+                      checkUsername(function (){
+                          completeNewUser(function () {
+                              addActivity(function () {
+                                  sendEmail(function () {
+                                      return res.json({ success: true });
+                                  }); 
+                              });
+                          });
+                      });
+                  });
                 });
                 
             }

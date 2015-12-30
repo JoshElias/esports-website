@@ -31,6 +31,8 @@
     <script src="{cdnUrl}js/{assets.vendor_min_js}"></script>
     <!-- angular -->
     <script src="{cdnUrl}js/{assets.angular_min_js}"></script>
+    <!-- recaptcha -->
+    <script src="//www.google.com/recaptcha/api.js?render=explicit&onload=vcRecaptchaApiLoaded" async defer></script>
     <!-- app -->
     <script src="{cdnUrl}js/{assets.app_min_js}"></script>
     <!-- stripe -->

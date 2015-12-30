@@ -74,6 +74,9 @@
     <script src="./js/angular/ngStorage.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="./js/angular/angular-youtube-embed.js"></script>
+    <!-- recaptcha -->
+    <script src="//www.google.com/recaptcha/api.js?render=explicit&onload=vcRecaptchaApiLoaded" async defer></script>
+    <script type="text/javascript" src="./js/vendor/angular-recaptcha/release/angular-recaptcha.js"></script>
     <!-- app -->
     <script src="./js/app.js"></script>
     <script src="./js/controllers.js"></script>

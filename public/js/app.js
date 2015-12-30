@@ -23,7 +23,8 @@ var app = angular.module('app', [
     'app.services',
     'app.filters',
     'app.directives',
-    'app.animations'
+    'app.animations',
+    'vcRecaptcha'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", "LoginModalService",

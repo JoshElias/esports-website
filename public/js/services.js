@@ -122,12 +122,13 @@ angular.module('app.services', [])
             return $http.post('/login', {email: email, password: password});
         },
         
-        signup: function (email, username, password, cpassword) {
+        signup: function (email, username, password, cpassword, captchaResponse) {
             return $http.post('/signup', {
                 email: email,
                 username: username,
                 password: password,
-                cpassword: cpassword
+                cpassword: cpassword,
+                captchaResponse: captchaResponse
             });
         },
         
