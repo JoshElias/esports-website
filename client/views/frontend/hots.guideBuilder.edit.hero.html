@@ -61,8 +61,10 @@
             <div>
                 <div class="hero" ng-repeat="hero in row">
                     <span class="icon-wrap">
-                        <span class="icon" ng-class="{ active: guide.hasHero(hero) }">
-                            <a href="#" class="icon-{{hero.className}}" ng-if="hero.active" ng-click="guide.toggleHero(hero)" hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
+                        <span class="icon" ng-class="{'active': guide.hasHero(hero) }">
+                            <a class="icon-{{hero.className == null ? 'missing' : hero.className}}" 
+                                    ng-click="toggleHero(hero)" 
+                                    hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
                             <span class="icon-ts" ng-if="!hero.active"></span>
                         </span>
                     </span>

@@ -15072,10 +15072,10 @@ angular.module('app.controllers', ['ngCookies'])
             console.log('dataHeroes:', dataHeroes);
             console.log('dataMaps:', dataMaps);
             // heroes
-            $scope.heroes = dataHeroes.heroes;
+            $scope.heroes = dataHeroes;
 
             // maps
-            $scope.maps = dataMaps.maps;
+            $scope.maps = dataMaps;
 
             // steps
             $scope.step = 2;
@@ -15098,8 +15098,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < heroRows.length; row++) {
                 var heroes = [];
                 for (var i = 0; i < heroRows[row]; i++) {
-                    if (dataHeroes.heroes[index]) {
-                        heroes.push(dataHeroes.heroes[index]);
+                    if (dataHeroes[index]) {
+                        heroes.push(dataHeroes[index]);
                     } else {
                         heroes.push({});
                     }
@@ -15107,6 +15107,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.heroRows.push(heroes);
             }
+            console.log('$scope.heroRows:', $scope.heroRows);
 
             // draw map rows
             var mapRows = HOTS.mapRows;
@@ -15115,8 +15116,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if (dataMaps.maps[index]) {
-                        maps.push(dataMaps.maps[index]);
+                    if ($scope.maps[index]) {
+                        maps.push($scope.maps[index]);
                     }
                     index++;
                 }
@@ -15210,8 +15211,11 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.showError = true;
                     });
                 }
-            }
-
+            };
+            
+            $scope.isFetching = function() {
+                return $scope.fetching;
+            };
 
             // save guide
             $scope.saveGuide = function () {

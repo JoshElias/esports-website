@@ -2131,7 +2131,7 @@ angular.module('app.services', [])
 //            }
 //        };
 
-        gb.toggleHero = function (hero) {
+        gb.toggleHero = function (hero, callback) {
           if (gb.hasHero(hero)) {
             for (var i = 0; i < gb.heroes.length; i++) {
               if (gb.heroes[i].hero.id === hero.id) {
@@ -2169,9 +2169,13 @@ angular.module('app.services', [])
               .then(function (data) {
                 var heroes = gb.heroes;
                 var index = heroes.indexOf(obj);
-
+                  
                 hero.talents = data;
                 heroes[index].hero.talents = data;
+              
+                if (callback) {
+                    return callback('all done');
+                }
               });
             }
           }
