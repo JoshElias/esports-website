@@ -198,8 +198,6 @@ module.exports = {
             userID,
             activationCode = uuid.v4();
           
-            console.log(captchaResponse);
-          
             function captcha (callback) {
               request.post(
                 'https://www.google.com/recaptcha/api/siteverify',
