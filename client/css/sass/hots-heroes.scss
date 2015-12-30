@@ -458,7 +458,7 @@ This is the template for hots-hero-talents.
 //talents: artanis
 
 @include hots-hero-talents ( artanis, (
-    ( class: (khaydarian-resonance, chrono-surge, graviton-vortex ), pos: 0 ), // 0
+    ( class: (khaydarian-resonance, chrono-surge, graviton-vortex, warp-sickness), pos: 0 ), // 0
     ( class: (reactive-parry, amateur-opponent, triple-strike, zealot-charge, titan-killer, psionic-wound), pos: 1 ), // -30
     ( class: (seasoned-marksman), pos: 2 ), // -60
     ( class: (shield-battery, phase-bulwark, shield-surge, force-of-will), pos: 3 ), // -90
@@ -480,7 +480,7 @@ This is the template for hots-hero-talents.
     ( class: (bribe), pos: 3 ), // -90
     ( class: (enduring-warriors, army-of-hell, hellforged-armor, blazing-demons), pos: 4 ), // -120
     ( class: (bound-minion, demonic-smite ), pos: 5 ), // -150
-    ( class: (mercenary-lord), pos: 6 ), // -180
+    ( class: (sins-grasp), pos: 6 ), // -180
     ( class: (mercenary-lord), pos: 7 ), // -210
     ( class: (first-aid), pos: 8 ), // -240
     ( class: (demonic-invasion, perishing-flame), pos: 9 ), // -270
@@ -849,7 +849,7 @@ This is the template for hots-hero-talents.
     ( class: (gale-force, mass-vortex, lingering-blind, hindering-winds, surging-winds), pos: 3 ), // -90
     ( class: (healing-ward), pos: 4 ), // -120
     ( class: (shake-it-off), pos: 5 ), // -150
-    ( class: (jug-of-1000-cups), pos: 6 ), // -180
+    ( class: (jug-of-1000000-cups, jug-of-1000-cups), pos: 6 ), // -180
     ( class: (water-dragon, double-dragon), pos: 7 ), // -210
     ( class: (elusive-feet, safety-sprint), pos: 8 ), // -240
     ( class: (shrink-ray), pos: 9 ), // -270
@@ -1085,7 +1085,7 @@ This is the template for hots-hero-talents.
     ( class: (lethal-blast, excessive-force, barricade), pos: 1 ), // -30
     ( class: (resistant, ambush, hover-siege-mode, graduating-range), pos: 2 ), // -60
     ( class: (regeneration-master), pos: 3 ), // -90
-    ( class: (cleanse), pos: 4 ), // -120
+    ( class: (cleanse, focused-attack), pos: 4 ), // -120
     ( class: (vampiric-assault), pos: 5 ), // -150
     ( class: (slowing-mines, bullhead-mines, mine-field), pos: 6 ), // -180
     ( class: (hyper-cooling-engines), pos: 7 ), // -210
@@ -1216,7 +1216,7 @@ This is the template for hots-hero-talents.
     ( class: (sixtyfour-kb-marathon), pos: 11 ), // -330
     ( class: (norse-force), pos: 12 ), // -360
     ( class: (the-sequel), pos: 13 ), // -390
-    ( class: (fury-of-the-storm), pos: 14 ), // -420
+    ( class: (viking-fury-of-the-storm), pos: 14 ), // -420
     ( class: (nordic-attack-squad), pos: 15 ) // -450
 ) );
 

@@ -2049,13 +2049,19 @@ var app = angular.module('app', [
                         resolve: {
                             dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return Guide.guideEdit(slug);
+                                return Guide.findOne({
+                                    filter: {
+                                        where: {
+                                            slug: slug
+                                        }
+                                    }
+                                }).$promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                                return Hero.getHeroes();
+                                return Hero.find().$promise;
                             }],
                             dataMaps: ['Guide', function (Guide) {
-                                return Guide.getMaps();
+                                return Guide.find().$promise;
                             }]
                         }
                     }
@@ -2230,205 +2236,206 @@ var app = angular.module('app', [
                         controller: 'ForumCategoryCtrl',
                         resolve: {
                             forumCategories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
-//                                var startTime = new Date().getMilliseconds();
-//                                var d = $q.defer();
-//                                
-//                                async.waterfall([
-//                                    function(waterCB) {
-//                                        
-//                                        ForumCategory.find({
-//                                            filter: {
-//                                                where: {
-//                                                    isActive: true
-//                                                },
-//                                                fields: {
-//                                                    id: true,
-//                                                    title: true
-//                                                },
-//                                                order: 'orderNum ASC'
-//                                            }
-//                                        }).$promise
-//                                        .then(function (forumCategories) {
-//                                            return waterCB(null, forumCategories);
-//                                        })
-//                                        .catch(function (err) {
-//                                            return waterCB(err);
-//                                        });
-//                                        
-//                                    },
-//                                    function(forumCategories, waterCB) {
-//                                        
-//                                        async.each(forumCategories, function (category, categoryCB) {
-//                                            
-//                                            ForumCategory.forumThreads({
-//                                                id: category.id,
-//                                                filter: {
-//                                                    fields: {
-//                                                        id: true,
-//                                                        title: true,
-//                                                        description: true,
-//                                                        slug: true
-//                                                    }
-//                                                }
-//                                            }).$promise
-//                                            .then(function (threads) {
-//                                                category.forumThreads = threads;
-//                                                
-//                                                async.each(category.forumThreads, function (thread, threadCB) {
-//                                                
-//                                                   async.parallel([
-//                                                       function (paraCB) {
-//
-//                                                           ForumThread.forumPosts({
-//                                                               id: thread.id,
-//                                                               filter: {
-//                                                                   fields: {
-//                                                                       title: true,
-//                                                                       slug: true,
-//                                                                       authorId: true
-//                                                                   },
-//                                                                   include: {
-//                                                                       relation: 'author',
-//                                                                       scope: {
-//                                                                           fields: {
-//                                                                               username: true,
-//                                                                               email: true
-//                                                                           }
-//                                                                       }
-//                                                                   },
-//                                                                   order: 'createdDate DESC',
-//                                                                   limit: 1
-//                                                               }
-//                                                           }).$promise
-//                                                           .then(function (forumPost) {
-//                                                               thread.forumPosts = forumPost;
-//                                                               return paraCB();
-//                                                           })
-//                                                           .catch(function (err) {
-//                                                               return paraCB(err);
-//                                                           });
-//
-//                                                       },
-//                                                       function (paraCB) {
-//
-//                                                           ForumThread.forumPosts.count({
-//                                                                id: thread.id
-//                                                            }).$promise
-//                                                            .then(function (postCount) {
-//                                                                thread.forumPostsCount = postCount.count;
-//                                                                return paraCB();
-//                                                            })
-//                                                            .catch(function (err) {
-//                                                                return paraCB(err);
-//                                                            });
-//
-//                                                       }
-//                                                   ], function(err, results) {
-//                                                       if (err) {
-//                                                           return categoryCB(err);
-//                                                       }
-//                                                       return categoryCB();
-//                                                   });
-//
-//                                                }, function(err) {
-//                                                    if (err) {
-//                                                        return waterCB(err);
-//                                                    }
-//                                                    return waterCB();
-//                                                });
-//                                                
-//                                            })
-//                                            .catch(function (err) {
-//                                                return categoryCB(err);
-//                                            });
-//                                            
-//                                        }, function(err) {
-//                                            if (err) {
-//                                                return waterCB(err);
-//                                            }
-//                                            return waterCB(null, forumCategories);
-//                                        });
-//                                        
-//                                    }
-//                                ], function(err, results) {
-//                                    if (err) {
-//                                        return d.resolve(err);
-//                                    }
-//                                    var endTime = new Date().getMilliseconds();
-//                                    var elapsedTime = startTime - endTime;
-//                                    console.log('elapsed: ', elapsedTime);
-//                                    return d.resolve(results);
-//                                });
-//                                return d.promise;
-                                
+								// Alex's Resolve
                                 var d = $q.defer();
-                                ForumCategory.find({
-                                    where: {
-                                        isActive: true
-                                    },
-                                    fields: {
-                                        id: true,
-                                        title: true
-                                    }
-                                }).$promise
-                                .then(function (categories) {
-                                    async.forEach(categories, function (category, eachCategoryCallback) {
-                                        ForumCategory.forumThreads({
-                                            id: category.id,
+                                async.waterfall([
+                                    function(waterCB) {
+                                        
+                                        ForumCategory.find({
                                             filter: {
                                                 where: {
                                                     isActive: true
                                                 },
                                                 fields: {
                                                     id: true,
-                                                    title: true,
-                                                    description: true,
-                                                    slug: true
+                                                    title: true
                                                 },
                                                 order: 'orderNum ASC'
                                             }
-                                        }).$promise.then(function (threads) {
-                                            category.forumThreads = threads;
-                                            
-                                            async.forEach(threads, function (thread, eachThreadCallback) {
-                                                ForumThread.forumPosts({
-                                                    id: thread.id,
-                                                    filter: {
-                                                        fields: {
-                                                            title: true,
-                                                            slug: true,
-                                                            authorId: true
-                                                        },
-                                                        include: {
-                                                            relation: 'author',
-                                                            scope: {
-                                                                fields: {
-                                                                    username: true,
-                                                                    email: true
-                                                                }
-                                                            }
-                                                        },
-                                                        order: 'createdDate DESC',
-                                                        limit: 1
-                                                    }
-                                                }).$promise.then(function (posts) {
-                                                    thread.forumPosts = posts;
-                                                    ForumThread.forumPosts.count({ id: thread.id }).$promise
-                                                    .then(function (results) {
-                                                        thread.forumPostsCount = results.count;
-                                                        return eachThreadCallback();
-                                                    });
-                                                });
-                                            }, function () {
-                                                return eachCategoryCallback();
-                                            });
+                                        }).$promise
+                                        .then(function (forumCategories) {
+                                            return waterCB(null, forumCategories);
+                                        })
+                                        .catch(function (err) {
+                                            return waterCB(err);
                                         });
-                                    }, function () {
-//                                        console.log(categories);
-                                        d.resolve(categories);
-                                    });
+                                        
+                                    },
+                                    function(forumCategories, waterCB) {
+                                        
+                                        async.each(forumCategories, function (category, categoryCB) {
+                                            
+                                            ForumCategory.forumThreads({
+                                                id: category.id,
+                                                filter: {
+                                                    fields: {
+                                                        id: true,
+                                                        title: true,
+                                                        description: true,
+                                                        slug: true
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (threads) {
+                                                category.forumThreads = threads;
+                                                
+                                                async.each(category.forumThreads, function (thread, threadCB) {
+                                                
+                                                   async.parallel([
+                                                       function (paraCB) {
+
+                                                           ForumThread.forumPosts({
+                                                               id: thread.id,
+                                                               filter: {
+                                                                   fields: {
+                                                                       title: true,
+                                                                       slug: true,
+                                                                       authorId: true
+                                                                   },
+                                                                   include: {
+                                                                       relation: 'author',
+                                                                       scope: {
+                                                                           fields: {
+                                                                               username: true,
+                                                                               email: true
+                                                                           }
+                                                                       }
+                                                                   },
+                                                                   order: 'createdDate DESC',
+                                                                   limit: 1
+                                                               }
+                                                           }).$promise
+                                                           .then(function (forumPost) {
+                                                               thread.forumPosts = forumPost;
+                                                               return paraCB();
+                                                           })
+                                                           .catch(function (err) {
+                                                               return paraCB(err);
+                                                           });
+
+                                                       },
+                                                       function (paraCB) {
+
+                                                           ForumThread.forumPosts.count({
+                                                                id: thread.id
+                                                            }).$promise
+                                                            .then(function (postCount) {
+                                                                thread.forumPostsCount = postCount.count;
+                                                                return paraCB();
+                                                            })
+                                                            .catch(function (err) {
+                                                                return paraCB(err);
+                                                            });
+
+                                                       }
+                                                   ], function(err, results) {
+                                                       if (err) {
+                                                           return threadCB(err);
+                                                       }
+                                                       return threadCB();
+                                                   });
+
+                                                }, function(err) {
+                                                    if (err) {
+                                                        return categoryCB(err);
+                                                    }
+                                                    return categoryCB();
+                                                });
+                                                
+                                            })
+                                            .catch(function (err) {
+                                                return categoryCB(err);
+                                            });
+                                            
+                                        }, function(err) {
+                                            if (err) {
+                                                return waterCB(err);
+                                            }
+                                            return waterCB(null, forumCategories);
+                                        });
+                                        
+                                    }
+                                ], function(err, results) {
+                                    if (err) {
+                                        return d.resolve(err);
+                                    }
+                                    return d.resolve(results);
                                 });
                                 return d.promise;
+								
+								// Martin's Resolve
+//								var startTime = new Date().getMilliseconds();
+//								var d = $q.defer();
+//								ForumCategory.find({
+//									where: {
+//										isActive: true
+//									},
+//									fields: {
+//										id: true,
+//										title: true
+//									}
+//								}).$promise
+//								.then(function (categories) {
+//									async.forEach(categories, function (category, eachCategoryCallback) {
+//										ForumCategory.forumThreads({
+//											id: category.id,
+//											filter: {
+//												where: {
+//													isActive: true
+//												},
+//												fields: {
+//													id: true,
+//													title: true,
+//													description: true,
+//													slug: true
+//												},
+//												order: 'orderNum ASC'
+//											}
+//										}).$promise.then(function (threads) {
+//											category.forumThreads = threads;
+//
+//											async.forEach(threads, function (thread, eachThreadCallback) {
+//												ForumThread.forumPosts({
+//													id: thread.id,
+//													filter: {
+//														fields: {
+//															title: true,
+//															slug: true,
+//															authorId: true
+//														},
+//														include: {
+//															relation: 'author',
+//															scope: {
+//																fields: {
+//																	username: true,
+//																	email: true
+//																}
+//															}
+//														},
+//														order: 'createdDate DESC',
+//														limit: 1
+//													}
+//												}).$promise.then(function (posts) {
+//													thread.forumPosts = posts;
+//													ForumThread.forumPosts.count({ id: thread.id }).$promise
+//													.then(function (results) {
+//														thread.forumPostsCount = results.count;
+//														return eachThreadCallback();
+//													});
+//												});
+//											}, function () {
+//												return eachCategoryCallback();
+//											});
+//										});
+//									}, function () {
+////                                        console.log(categories);
+//										var endTime = new Date().getMilliseconds();
+//										var elapsedTime = startTime - endTime;
+//										console.log('elapsedTime:', elapsedTime);
+//										d.resolve(categories);
+//									});
+//								});
+//								return d.promise;
                             }]
                         }
                     }
@@ -3013,10 +3020,40 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'author'
+                                            },
+                                            {
+                                                relation: 'guideHeroes',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'guideTalents',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'talent'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'maps'
                                             }
                                         ]
                                     }
-                                })
+                                }).$promise;
                             }]
                         }
                     }

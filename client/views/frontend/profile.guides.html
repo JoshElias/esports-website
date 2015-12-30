@@ -1,7 +1,7 @@
 <div class="profile-col-header"><h2>GUIDES</h2></div>
  
     
-<div class="row no-wrap" ng-show="guides.length">
+<div class="row no-wrap hots-styles" ng-show="guides.length">
     <div ng-repeat="guide in guides" class="col-xs-12 col-sm-6 m-b-sm">
         <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide large {{getGuideClass(guide)}}">
             <div class="inner"></div>
@@ -15,15 +15,22 @@
                 <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
             </div>
             <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
-                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier1.name}}"></li>
-                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier4.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier4.name}}"></li>
-                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier7.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier7.name}}"></li>
-                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier10.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier10.name}}"></li>
-                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier13.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier13.name}}"></li>
-                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier16.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier16.name}}"></li>
-                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier20.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier20.name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getTalent(getGuideCurrentHero(guide), guide, 1).className}}"
+                    ng-tooltip title="{{getTalent(getGuideCurrentHero(guide), guide, 1).name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getTalent(getGuideCurrentHero(guide), guide, 4).className}}" 
+                    ng-tooltip title="{{getTalent(getGuideCurrentHero(guide), guide, 4).name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getTalent(getGuideCurrentHero(guide), guide, 7).className}}" 
+                    ng-tooltip title="{{getTalent(getGuideCurrentHero(guide), guide, 7).name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getTalent(getGuideCurrentHero(guide), guide, 10).className}}" 
+                    ng-tooltip title="{{getTalent(getGuideCurrentHero(guide), guide, 10).name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getTalent(getGuideCurrentHero(guide), guide, 13).className}}" 
+                    ng-tooltip title="{{getTalent(getGuideCurrentHero(guide), guide, 13).name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getTalent(getGuideCurrentHero(guide), guide, 16).className}}" 
+                    ng-tooltip title="{{getTalent(getGuideCurrentHero(guide), guide, 16).name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getTalent(getGuideCurrentHero(guide), guide, 20).className}}" 
+                    ng-tooltip title="{{getTalent(getGuideCurrentHero(guide), guide, 20).name}}"></li>
             </ul>
-            <div class="hots-guide-owner" ng-if="app.user.getUserID() == guide.author._id">
+            <div class="hots-guide-owner" ng-if="$parent.$parent.user.id == guide.author.id">
                 <button class="btn btn-blue btn-xs" ng-click="guideEdit($event, guide)">Edit</button>
                 <button class="btn btn-danger btn-xs" ng-click="guideDelete($event, guide)">Delete</button>
             </div>
