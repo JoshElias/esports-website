@@ -14,3 +14,27 @@
         }
     }
 }
+
+@mixin draft-deck ($hero, $r, $g, $b) {
+    &.#{$hero} {
+        .deck-title-bar {
+            background: url(../img/meta-snapshot/hero-portrait/#{$hero}-sm.png) no-repeat top right;
+        }
+
+        .deck-count {
+            background-color: rgba($r, $g, $b, .8);
+        }
+
+        &:hover {
+            .deck-title-bar {
+                background-color: rgba($r, $g, $b, .5);
+            }
+        }
+
+        &.active {
+            .deck-title-bar {
+                background-color: rgba($r, $g, $b, .8);
+            }
+        }
+    }
+}

@@ -85,7 +85,7 @@ module.exports = {
             ],
         }
     },
-    modules: {
+    modules_: {
         options: {
             separator: '',
             stripBanners: true,

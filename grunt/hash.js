@@ -14,5 +14,15 @@ module.exports = {
     css: {
         src: ['client/dist/css/style.min.css', 'client/dist/css/vendor.min.css', 'client/dist/css/modules.min.css'],
         dest: 'client/dist/css/'
+    },
+    modules_: {
+        js: {
+            src: ['client/dist/js/modules.min.js'],
+            dest: 'client/dist/js/'
+        },
+        css: {
+            src: ['client/dist/css/modules.min.css'],
+            dest: 'client/dist/css/'
+        },
     }
 };

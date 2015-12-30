@@ -6,17 +6,6 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    cursor: url("../img/modules/redbull/client/img/cursor.png"), auto;
-
-    div, img {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-    a {
-      cursor: url("../img/modules/redbull/client/img/cursor.png"), auto;
-    }
     
     .draft {
         position: absolute;
@@ -25,6 +14,17 @@
         right: 0px;
         bottom: 0px;
         background-color: #161213;
+        cursor: url("../img/modules/redbull/client/img/cursor.png"), auto;
+
+        div, img {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        a {
+          cursor: url("../img/modules/redbull/client/img/cursor.png"), auto;
+        }
         
         &.blurred,
         &.fast-forward {

@@ -19,7 +19,7 @@ module.exports = {
             }
         ]
     },
-    modules: {
+    modules_: {
         files: [
             {
                 expand: true,
