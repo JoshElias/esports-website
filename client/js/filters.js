@@ -36,4 +36,22 @@ angular.module('app.filters', [])
         return results;
     };
 }])
-;
+
+.filter('filterInq', [function() {
+    // takes data Array, Array of Queries & keyIdentifier
+    return function(dataArr, queryArr, keyIdentifier) {
+        var out = [];
+        
+        angular.forEach(dataArr, function(dataItem) {
+            angular.forEach(queryArr, function(queryValue) {
+                
+                if (dataItem[keyIdentifier] === queryValue) {
+                    out.push(dataItem);
+                }
+                
+            });
+        });
+        
+        return out;
+    };
+}]);

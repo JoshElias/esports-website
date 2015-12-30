@@ -786,15 +786,18 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth',
-    function ($scope, $sce, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth) {
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth', 'Deck', 'Guide',
+    function ($scope, $sce, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth, Deck, Guide) {
 
         $scope.activities = activities;
+        console.log('$scope.activities:', $scope.activities);
         $scope.total = activityCount.count;
+        console.log('$scope.total:', $scope.total);
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
         $scope.LoopBackAuth = LoopBackAuth;
-        var queryFilter = [],
-          filters = {
+        $scope.queryFilter = [];
+        
+        var filters = {
             comments: [
               'articleComment',
               'deckComment',
@@ -806,7 +809,7 @@ angular.module('app.controllers', ['ngCookies'])
             decks: ['createDeck'],
             guides: ['createGuide'],
             forumposts: ['createPost']
-          }
+          };
 
         $scope.isFiltered = function (type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
@@ -816,12 +819,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-
+        
         $scope.toggleFilter = function (filter) {
           for (var i = 0; i < $scope.filterActivities.length; i++) {
             if (filter == $scope.filterActivities[i]) {
+              console.log('filter:', filter);
               $scope.filterActivities.splice(i,1);
               buildFilter();
+              console.log('$scope.queryFilter:', $scope.queryFilter);
               console.log("TRUE toggle filter", filter, $scope.filterActivities);
               $scope.loadActivities(true);
               return;
@@ -831,27 +836,30 @@ angular.module('app.controllers', ['ngCookies'])
           buildFilter();
           console.log("FALSE toggle filter", filter, $scope.filterActivities);
           $scope.loadActivities(true);
+          console.log('$scope.queryFilter:', $scope.queryFilter);
         }
 
         var buildFilter = function () {
-          queryFilter = [];
+          $scope.queryFilter = [];
           for (var i = 0; i < $scope.filterActivities.length; i++) {
             for (var j = 0; j < filters[$scope.filterActivities[i]].length; j++) {
-              queryFilter.push(filters[$scope.filterActivities[i]][j]);
+              $scope.queryFilter.push(filters[$scope.filterActivities[i]][j]);
             }
           }
+          console.log('$scope.filterActivities:', $scope.filterActivities);
+          console.log('$scope.queryFilter:', $scope.queryFilter);
         }
+        buildFilter();
 
         $scope.loadActivities = function (isFilter) {
           console.log(typeof $scope.user.id);
           var options = {
                 filter: {
                   order: "createdDate DESC",
-                  limit: (!isFilter) ? 3 : $scope.activities.length,
+                  limit: 3,
                   skip: $scope.activities.length,
                   where: {
-                    authorId: $scope.user.id,
-                    isActive: true
+                    authorId: $scope.user.id
                   },
                   include: [
                     {
@@ -859,6 +867,9 @@ angular.module('app.controllers', ['ngCookies'])
                     },
                     {
                       relation: 'deck'
+                    },
+                    {
+                      relation: 'guide'
                     }
                   ]
                 }
@@ -868,7 +879,7 @@ angular.module('app.controllers', ['ngCookies'])
             options.filter.where = {
               authorId: $scope.user.id,
               isActive: true,
-              activityType: { inq : queryFilter }
+              activityType: { inq : $scope.queryFilter }
             }
           }
 
@@ -926,15 +937,22 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                HOTSGuideService.guideDelete(activity.guide._id).success(function (data) {
-                                    if (data.success) {
-                                        activity.exists = false;
-                                        $scope.success = {
-                                            show: true,
-                                            msg: 'guide "' + activity.guide.name + '" deleted successfully.'
-                                        };
-                                    }
+                                console.log('activity:', activity);
+                                return Guide.deleteById({
+                                    id: activity.guide.id
+                                }).$promise
+                                .then(function (guideDeleted) {
+                                    activity.guide = undefined;
                                 });
+//                                HOTSGuideService.guideDelete(activity.guide._id).success(function (data) {
+//                                    if (data.success) {
+//                                        activity.exists = false;
+//                                        $scope.success = {
+//                                            show: true,
+//                                            msg: 'guide "' + activity.guide.name + '" deleted successfully.'
+//                                        };
+//                                    }
+//                                });
                             }
                         },
                         cancel: {
@@ -958,15 +976,23 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                DeckService.deckDelete(activity.deck._id).success(function (data) {
-                                    if (data.success) {
-                                        activity.exists = false;
-                                        $scope.success = {
-                                            show: true,
-                                            msg: 'deck "' + activity.deck.name + '" deleted successfully.'
-                                        };
-                                    }
+                                console.log('activity:', activity);
+                                
+                                return Deck.deleteById({
+                                    id: activity.deck.id
+                                }).$promise
+                                .then(function (deckDeleted) {
+                                  activity.deck = undefined;
                                 });
+//                                DeckService.deckDelete(activity.deck._id).success(function (data) {
+//                                    if (data.success) {
+//                                        activity.exists = false;
+//                                        $scope.success = {
+//                                            show: true,
+//                                            msg: 'deck "' + activity.deck.name + '" deleted successfully.'
+//                                        };
+//                                    }
+//                                });
                             }
                         },
                         cancel: {
@@ -1008,7 +1034,6 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($event.preventDefault) $event.preventDefault();
                 $event.cancelBubble = true;
                 $event.returnValue = false;
-
                 $state.transitionTo('app.hs.deckBuilder.edit', { slug: deck.slug });
             };
 
@@ -1056,13 +1081,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'guides',
-        function ($scope, $state, bootbox, HOTSGuideService, guides) {
+    .controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'guides', 'Guide',
+        function ($scope, $state, bootbox, HOTSGuideService, guides, Guide) {
             $scope.guides = guides;
-
+            console.log('$scope.guides:', $scope.guides);
             // guides
             $scope.getGuideCurrentHero = function (guide) {
-                return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+                return (guide.currentHero) ? guide.currentHero : guide.guideHeroes[0];
             };
 
             $scope.getGuideClass = function (guide) {
@@ -1096,7 +1121,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                 // get index of current hero
                 for (var i = 0; i < guide.heroes.length; i++) {
-                    if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    if (currentHero.hero.id == guide.heroes[i].hero.id) {
                         index = i;
                         break;
                     }
@@ -1104,6 +1129,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                 guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
             };
+            
+            $scope.getTalent = function (hero, guide, tier) {
+//              console.log(hero);
+              var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
+              var out = (t.talent.className !== '__missing') ? t.talent : { className: '__missing', name: "Missing Talent" };
+              
+              return out;
+            }
 
             $scope.getTalents = function (hero, tier) {
                 var out = [];
@@ -1118,17 +1151,17 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.selectedTalent = function (hero, tier, talent) {
-                return (hero.talents['tier' + tier]._id == talent._id);
+                return (hero.talents['tier' + tier].id == talent.id);
             };
 
-            $scope.getTalent = function (hero, tier) {
-                for (var i = 0; i < hero.hero.talents.length; i++) {
-                    if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
-                        return hero.hero.talents[i];
-                    }
-                }
-                return false;
-            };
+//            $scope.getTalent = function (hero, tier) {
+//                for (var i = 0; i < hero.hero.talents.length; i++) {
+//                    if (hero.talents['tier' + tier] == hero.hero.talents[i].id) {
+//                        return hero.hero.talents[i];
+//                    }
+//                }
+//                return false;
+//            };
 
             //is premium
             $scope.isPremium = function (guide) {
@@ -1147,7 +1180,9 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($event.preventDefault) $event.preventDefault();
                 $event.cancelBubble = true;
                 $event.returnValue = false;
-
+                
+                console.log('guide:', guide);
+                console.log('guide.slug:', guide.slug);
                 if (guide.guideType == 'hero') {
                     $state.transitionTo('app.hots.guideBuilder.edit.hero', { slug: guide.slug });
                 } else {
@@ -1169,18 +1204,28 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                HOTSGuideService.guideDelete(guide._id).success(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.guides.indexOf(guide);
-                                        if (index !== -1) {
-                                            $scope.guides.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: 'guide "' + guide.name + '" deleted successfully.'
-                                        };
+                                
+                                return Guide.deleteById({
+                                    id: guide.id
+                                }).$promise
+                                .then(function (guideDeleted) {
+                                    var index = $scope.guides.indexOf(guide);
+                                    if (index !== -1) {
+                                        $scope.guides.splice(index, 1);
                                     }
                                 });
+//                                HOTSGuideService.guideDelete(guide._id).success(function (data) {
+//                                    if (data.success) {
+//                                        var index = $scope.guides.indexOf(guide);
+//                                        if (index !== -1) {
+//                                            $scope.guides.splice(index, 1);
+//                                        }
+//                                        $scope.success = {
+//                                            show: true,
+//                                            msg: 'guide "' + guide.name + '" deleted successfully.'
+//                                        };
+//                                    }
+//                                });
                             }
                         },
                         cancel: {
@@ -10870,7 +10915,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // related
             $scope.relatedActive = function () {
-                var related = $scope.article.related;
+                var related = $scope.article.relatedArticles;
                 if (!related || !related.length) { return false; }
                 for (var i = 0; i < related.length; i++) {
                     if (related[i].isActive) { return true; }
@@ -15024,7 +15069,8 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $state, $window, GuideBuilder, HOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps, LoginModalService) {
             // create guide
             $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
-
+            console.log('dataHeroes:', dataHeroes);
+            console.log('dataMaps:', dataMaps);
             // heroes
             $scope.heroes = dataHeroes.heroes;
 
