@@ -238,8 +238,14 @@
             } /* .deck-add-button */
             
             .decks {
-                
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+
                 .deck {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 0;
                     
                     .deck-title-bar {
                         position: relative;
@@ -292,170 +298,21 @@
                         
                     } /* .deck-title-bar */
                     
-                    &.druid {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/druid-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(255, 125, 10, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(255, 125, 10, .8);
-                            }
-                        }
-                    }
-                    
-                    &.hunter {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/hunter-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(171, 212, 115, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(171, 212, 115, .8);
-                            }
-                        }
-                    }
-                    
-                    &.mage {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/mage-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(105, 204, 240, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(105, 204, 240, .8);
-                            }
-                        }
-                    }
-                    
-                    &.paladin {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/paladin-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(245, 140, 186, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(245, 140, 186, .8);
-                            }
-                        }
-                    }
-                    
-                    &.priest {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/priest-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(255, 255, 255, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(255, 255, 255, .8);
-                            }
-                        }
-                    }
-                    
-                    &.rogue {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/rogue-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(255, 245, 105, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(255, 245, 105, .8);
-                            }
-                        }
-                    }
-                    
-                    &.shaman {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/shaman-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(0, 112, 222, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(0, 112, 222, .8);
-                            }
-                        }
-                    }
-                    
-                    &.warlock {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/warlock-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(148, 130, 201, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(148, 130, 201, .8);
-                            }
-                        }
-                    }
-                    
-                    &.warrior {
-                        .deck-title-bar {
-                            background: url(../img/meta-snapshot/hero-portrait/warrior-sm.png) no-repeat top right;
-                        }
-                        
-                        &:hover {
-                            .deck-title-bar {
-                                background-color: rgba(199, 156, 110, .5);
-                            }
-                        }
-                        
-                        &.active {
-                            .deck-title-bar {
-                                background-color: rgba(199, 156, 110, .8);
-                            }
-                        }
-                    }
+                    @include draft-deck (druid, 255, 125, 10);
+                    @include draft-deck (hunter, 171, 212, 115);
+                    @include draft-deck (mage, 105, 204, 240);
+                    @include draft-deck (paladin, 245, 140, 186);
+                    @include draft-deck (priest, 255, 255, 255);
+                    @include draft-deck (rogue, 255, 245, 105);
+                    @include draft-deck (shaman, 0, 112, 222);
+                    @include draft-deck (warlock, 148, 130, 201);
+                    @include draft-deck (warrior, 199, 156, 110);
                     
                     .deck-cards {
                         display: none;
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 0;
                         
                         .deck-card {
                             margin-right: 9px;
@@ -470,6 +327,7 @@
                             -webkit-transition: opacity .3s linear;
                             transition: opacity .3s linear;
                             background: #262626;
+                            -webkit-user-drag: none;
 
                             &.druid {
                                 background: rgba(255, 125, 10, .5);
@@ -612,6 +470,7 @@
                                     top: 0px; right: 0px;
                                     width: 110px;
                                     height: 26px;
+                                    -webkit-user-drag: none;
                                 }/* img */
                             }/* .card-pool-card-photo */
 
@@ -657,8 +516,22 @@
                         
                     } /* .deck-cards */
                     
+                    .deck-count {
+                        display: none;
+                        color: #FFF;
+                        text-align: right;
+                        font-family: 'Open Sans Bold';
+                        font-size: 20px;
+                        padding: 5px 20px;
+                    }
+                    
                     &.active {
                         .deck-cards {
+                            flex-grow: 1 !important;
+                        }
+                        
+                        .deck-cards,
+                        .deck-count {
                             display: block;
                         }
                     }
@@ -781,6 +654,11 @@
                         width:20%;
                         display: block;
                         height: 221px;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                        user-select: none;
+                        -webkit-user-drag: none;
                         
                         a,
                         img {
@@ -788,6 +666,7 @@
                             display: block;
                             width: 160px;
                             height: 221px;
+                            -webkit-user-drag: none;
                         } /* a, img */
                         
                     } /* .draft-build-card */

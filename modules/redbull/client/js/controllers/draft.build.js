@@ -1,7 +1,12 @@
 angular.module('redbull.controllers')
 .controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'cards', 'Pagination', 
     function ($scope, $compile, $filter, Hearthstone, DeckBuilder, bootbox, AlertService, cards, Pagination) {
-    
+        
+        $scope.tournament = {
+            allowDuplicateClasses: false,
+            decksLimit: 3
+        };
+        
         $scope.klasses = angular.copy(Hearthstone.classes);
         $scope.klasses.splice(0, 1);
 
@@ -11,6 +16,7 @@ angular.module('redbull.controllers')
             current: [],
         };
         $scope.decks = [];
+        $scope.decksLimit = 3;
 
         $scope.search = '';
         $scope.manaCosts = [0,1,2,3,4,5,6,7];
@@ -37,9 +43,15 @@ angular.module('redbull.controllers')
         $scope.perpage = 15;
         $scope.pagination = Pagination.new($scope.perpage, $scope.cards.current.length);
         
+        function updatePagination () {
+            console.log('total:', filteredCards($scope.cards.current).length);
+            $scope.pagination.page = 1;
+            $scope.pagination.total = filteredCards($scope.cards.current).length;
+        }
+        
         function filteredCards (cards) {
             var filtered = cards;
-            
+                
             // filter search
             var s = $scope.filters.search;
             filtered = $filter('filter')(filtered, {
@@ -105,11 +117,13 @@ angular.module('redbull.controllers')
         // set search
         $scope.setSearch = function () {
             $scope.filters.search = $scope.search;
+            updatePagination();
         };
 
         // toggle mana filtering
         $scope.toggleFilterByMana = function (cost) {
             $scope.filters.mana = ($scope.filters.mana === cost) ? false : cost;
+            updatePagination();
         };
 
         // has mechanics filtering
@@ -126,6 +140,7 @@ angular.module('redbull.controllers')
             } else {
                 $scope.filters.mechanics.push(mechanic);
             }
+            updatePagination();
         };
 
         $scope.hasFilterClass = function (klass) {
@@ -136,9 +151,18 @@ angular.module('redbull.controllers')
             if ($scope.filters.class === klass) { return false; }
             $scope.filters.class = klass;
             $scope.cards.current = $scope.cards.sorted[klass];
-            $scope.pagination = Pagination.new($scope.perpage, $scope.cards.current.length);
+            updatePagination();
         };
 
+        $scope.decksHaveClass = function (klass) {
+            for (var i = 0; i < $scope.decks.length; i++) {
+                if ($scope.decks[i].playerClass === klass) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
         $scope.isCurrentDeck = function (deck) {
             return ($scope.currentDeck === deck);
         };
@@ -211,6 +235,23 @@ angular.module('redbull.controllers')
 
         // add deck modal
         $scope.addDeckWnd = function () {
+            if ($scope.decks.length >= $scope.decksLimit) {
+                var box = bootbox.dialog({
+                    title: 'Add Deck',
+                    message: $compile('<div>You can only create <strong>{{decksLimit}}</strong> decks. To create another deck, you must first delete an existing one.</div>')($scope),
+                    buttons: {
+                        okay: {
+                            label: 'Okay',
+                            className: 'btn-primary',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    }
+                });
+                box.modal('show');
+                return false;
+            }
             $scope.newDeck = {
                 name: '',
                 playerClass: '',

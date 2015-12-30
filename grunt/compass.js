@@ -7,7 +7,7 @@ module.exports = {
             cacheDir:    'client/css/.sass-cache',
         }
     },
-    modules: {
+    modules_: {
         options: {
             outputStyle: 'expanded',
             sassDir:     'modules/redbull/client/css',
