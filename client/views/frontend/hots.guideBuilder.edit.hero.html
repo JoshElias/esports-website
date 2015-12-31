@@ -61,10 +61,8 @@
             <div>
                 <div class="hero" ng-repeat="hero in row">
                     <span class="icon-wrap">
-                        <span class="icon" ng-class="{'active': guide.hasHero(hero) }">
-                            <a class="icon-{{hero.className == null ? 'missing' : hero.className}}" 
-                                    ng-click="toggleHero(hero)" 
-                                    hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
+                        <span class="icon" ng-class="{ active: guide.hasHero(hero) }">
+                            <a href="#" class="icon-{{hero.className == null ? 'missing' : hero.className}}" ng-if="hero.isActive" ng-click="guide.toggleHero(hero)" hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
                             <span class="icon-ts" ng-if="!hero.active"></span>
                         </span>
                     </span>
@@ -85,7 +83,8 @@
                         <span>{{tier}}</span>
                         <ul class="gb-talents-icons clearfix">
                             <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: 'orderNum'">
-                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" ng-click="guide.toggleTalent(hero, talent)" hots-talent hero="hero.hero" talent="talent" tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
+                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" 
+                                   ng-click="guide.toggleTalent(hero, talent)" hots-talent hero="hero.hero" talent="talent" tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
                             </li>
                         </ul>
                     </li>
@@ -131,7 +130,7 @@
     <div class="map-selection">
         <div class="map-row map-row-{{row.length}}" ng-repeat="row in mapRows">
             <div>
-                <div class="map" ng-repeat="map in row">
+                <div class="map" ng-repeat="map in row track by $index">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasMap(map) }">
                             <a href="#" class="icon-{{map.className}}" ng-click="guide.toggleMap(map)" hots-map tooltip-pos="{{tooltipPos(row, $index)}}"></a>
@@ -211,7 +210,7 @@
                             <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.video">
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Premium</label>
                             <div class="col-sm-10">
@@ -231,11 +230,15 @@
                         <div class="form-group row" ng-show="guide.premium.isPremium">
                             <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
                             <div class="col-sm-10">
-                                <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="guide.premium.expiryDate" ng-disabled="!guide.premium.isPremium"></div>
+                                <div date-picker data-id="expiryDate" 
+									 data-name="expiryDate" 
+									 data-class="input-dark" 
+									 ng-model="guide.premium.expiryDate" 
+									 ng-disabled="!guide.premium.isPremium"></div>
                             </div>
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Featured</label>
                             <div class="col-sm-10">
@@ -245,8 +248,8 @@
                                         <b class="caret"></b>
                                     </button>
                                     <ul class="list-group dropdown-menu dropdown-dark">
-                                        <li class="list-group-item" ng-class="{active: guide.featured === type.value}" ng-repeat="type in featuredTypes">
-                                            <a href="#" ng-click="guide.featured = type.value">{{type.text}}</a>
+                                        <li class="list-group-item" ng-class="{active: guide.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                            <a href="#" ng-click="guide.isFeatured = type.value">{{type.text}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -269,7 +272,7 @@
                     </div>
                     <div class="form-group row m-b-none">
                         <div class="col-sm-10 col-sm-offset-2">
-                            <button type="submit" class="btn btn-blue" ng-disabled="gbForm.$invalid" ng-click="saveGuide()">Save Guide</button>
+                            <button type="submit" class="btn btn-blue" ng-disabled="gbForm.$invalid" ng-click="updateGuide()">Save Guide</button>
                         </div>
                     </div>
                 </form>

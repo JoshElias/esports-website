@@ -2038,19 +2038,59 @@ angular.module('app.services', [])
     var guideBuilder = {};
 
     guideBuilder.new = function (guideType, data) {
+        console.log('DATA:', data);
+        if (data.guideHeroes) {
+            data.heroes = data.guideHeroes
+        }
         data = data || {};
 
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
+        
+        function createTiers(heroes) {
+            var guideHeroes = [];
+            console.log('heroes:', heroes);
+            _.each(heroes, function(hero) {
+                console.log('hero:', hero);
+                var newObj = {};
+                newObj.hero = hero.hero;
+                newObj.talents = {
+                    tier1: null,
+                    tier4: null,
+                    tier7: null,
+                    tier10: null,
+                    tier13: null,
+                    tier16: null,
+                    tier20: null
+                };
+                
+                _.each(hero.hero.talents, function(heroTalent) {
+                    _.each(data.guideTalents, function(guideTalent) {
+                        console.log('heroTalent:', heroTalent);
+                        console.log('guideTalent:', guideTalent);
+                        if (heroTalent.talent.id === guideTalent.talentId) {
+                            newObj.talents['tier'+guideTalent.tier] = guideTalent.talentId;
+                        }
+                    });
+                });
+                
+                guideHeroes.push(newObj);
+                
+            });
+            
+            console.log('guideHeroes:', guideHeroes);
+            return guideHeroes;
+        }
 
         var gb = {
+            id: data.id || null,
             name: data.name || '',
             slug: data.slug || '',
             guideType: guideType,
             description: data.description || '',
             content: data.content || [],
-            heroes: data.heroes || [],
-            createdDate: new Date().toISOString(),
+            heroes: data.heroes ? createTiers(data.heroes) : [],
+            createdDate: data.createdDate || new Date().toISOString(),
             maps: data.maps || [],
             synergy: data.synergy || [],
             against: data.against || {
@@ -2131,7 +2171,7 @@ angular.module('app.services', [])
 //            }
 //        };
 
-        gb.toggleHero = function (hero, callback) {
+        gb.toggleHero = function (hero) {
           if (gb.hasHero(hero)) {
             for (var i = 0; i < gb.heroes.length; i++) {
               if (gb.heroes[i].hero.id === hero.id) {
@@ -2172,10 +2212,6 @@ angular.module('app.services', [])
                   
                 hero.talents = data;
                 heroes[index].hero.talents = data;
-              
-                if (callback) {
-                    return callback('all done');
-                }
               });
             }
           }
@@ -2212,7 +2248,6 @@ angular.module('app.services', [])
         gb.talentsByTier = function (hero, tier) {
           var temp = _.filter(hero.talents, function (val) { return val.tier == tier });
           var talents = _.map(temp, function (val) { return val.talent; });
-
           return talents;
         };
 
@@ -2225,6 +2260,7 @@ angular.module('app.services', [])
 //        };
 
         gb.toggleTalent = function (hero, talent) {
+          console.log('hero:', hero);
           var talentId = talent.id;
           var tal = _.find(hero.hero.talents, function (val) { return val.talentId == talentId });
 
@@ -2361,6 +2397,7 @@ angular.module('app.services', [])
             } else {
                 gb.maps.push(map.id);
             }
+            console.log('gb.maps:', gb.maps);
         };
 
         gb.hasMap = function (map) {

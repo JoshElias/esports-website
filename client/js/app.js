@@ -1937,7 +1937,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.hero.html',
                         controller: 'HOTSGuideBuilderHeroCtrl',
                         resolve: {
-							userRoles: ['User', function(User) {
+							             userRoles: ['User', function(User) {
                                 if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
@@ -2049,19 +2049,81 @@ var app = angular.module('app', [
                         resolve: {
                             dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
+                                console.log('slug:', slug);
                                 return Guide.findOne({
                                     filter: {
                                         where: {
                                             slug: slug
-                                        }
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            },
+                                            {
+                                                relation: 'guideTalents'
+                                            },
+                                            {
+                                                relation: 'guideHeroes',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents',
+                                                                        scope: {
+                                                                            include: [
+                                                                                {
+                                                                                    relation: 'talent'
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
                                 }).$promise;
                             }],
-                            dataHeroes: ['Hero', function (Hero) {
-                                return Hero.find().$promise;
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
                             }],
-                            dataMaps: ['Guide', function (Guide) {
-                                return Guide.find().$promise;
+                            dataHeroes: ['Hero', function (Hero) {
+                              return Hero.find({
+                                filter: {
+                                  fields: {
+                                    oldTalents: false,
+                                    oldAbilities: false,
+                                    price: false,
+                                    title: false,
+                                    manaType: false,
+                                    characters: false
+                                  }
+                                }
+                              }).$promise;
+                            }],
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }

@@ -9,7 +9,7 @@
             <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
             <h1>{{guide.name}}</h1>
             <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
-            <div class="hots-guide-votes">{{guide.votesCount}}</div>
+            <div class="hots-guide-votes">{{guide.voteScore}}</div>
             <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
                 <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
                 <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
@@ -30,7 +30,7 @@
                 <li class="talents-icon active {{getGuideClass(guide)}} {{getTalent(getGuideCurrentHero(guide), guide, 20).className}}" 
                     ng-tooltip title="{{getTalent(getGuideCurrentHero(guide), guide, 20).name}}"></li>
             </ul>
-            <div class="hots-guide-owner" ng-if="$parent.$parent.user.id == guide.author.id">
+            <div class="hots-guide-owner" ng-if="$parent.$parent.User.getCurrentId() == guide.author.id">
                 <button class="btn btn-blue btn-xs" ng-click="guideEdit($event, guide)">Edit</button>
                 <button class="btn btn-danger btn-xs" ng-click="guideDelete($event, guide)">Delete</button>
             </div>

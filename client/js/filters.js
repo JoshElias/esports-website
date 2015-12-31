@@ -37,8 +37,9 @@ angular.module('app.filters', [])
     };
 }])
 
-.filter('filterInq', [function() {
-    // takes data Array, Array of Queries & keyIdentifier
+.filter('inq', [function() {
+    // filter dataArr with an array of Values by using a keyIdentifier
+    // usage: ng-repeat="activity in activities | inq: queryFilter:'activityType'"
     return function(dataArr, queryArr, keyIdentifier) {
         var out = [];
         
@@ -47,11 +48,13 @@ angular.module('app.filters', [])
                 
                 if (dataItem[keyIdentifier] === queryValue) {
                     out.push(dataItem);
+                    return;
                 }
                 
             });
         });
         
+        console.log('out:', out);
         return out;
     };
 }]);
