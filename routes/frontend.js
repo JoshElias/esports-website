@@ -1568,21 +1568,52 @@ module.exports = {
                 });
                 return callback();
             }
-            
-            
-            checkForm(function () {
-                checkSlug(function () {
-                    getUser(function () {
-                        checkDeck(function () {
-                            addActivity(function () {
-                                createDeck(function () {
-                                    return res.json({ success: true, slug: Util.slugify(req.body.name) });
+
+
+            // DARREN LOOK HERE
+            // Let's prepare for spam, we need to pass an ARRAY of STRINGS of the data we want to spam check
+            function spamFilter(callback) {
+
+                // chapters is an array of objects, so let's make sure we only get an array of string of fields we need
+                var chapters = function () {
+                    var chapterArray = [];
+                    req.body.chapters.forEach(function (val) {
+                        chapterArray.push(val.title, val.content);
+                    });
+                    return chapterArray;
+                };
+
+                // build the array
+                var spamArray = [req.body.description, req.body.name, chapters().join(" ")];
+
+                Util.spamFilter(spamArray, function(err){
+
+                    if (!err){
+                        return callback();
+                    } else {
+                        
+                        return res.json({
+                            success: false,
+                            errors: {spam: {msg: "Spam Filter detected bad match: " + err[0] + "."}}
+                        });
+                    }
+                });
+            }
+
+            spamFilter(function () {
+                checkForm(function () {
+                    checkSlug(function () {
+                        getUser(function () {
+                            checkDeck(function () {
+                                addActivity(function () {
+                                    createDeck(function () {
+                                        return res.json({success: true, slug: Util.slugify(req.body.name)});
+                                    });
                                 });
                             });
                         });
                     });
                 });
-                
             });
         };
     },
@@ -1906,7 +1937,7 @@ module.exports = {
             });
         };
     },
-    articleCommentAdd: function (Schemas, mongoose) {
+    articleCommentAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
             var articleID = req.body.articleID,
                 userID = req.user._id,
@@ -1978,15 +2009,37 @@ module.exports = {
                 });
                 return callback();
             }
-            
+
+            // Let's prepare for spam, we need to pass an ARRAY of STRINGS of the data we want to spam check
+            function spamFilter(callback) {
+
+                // build the array
+                var spamArray = [comment];
+
+                Util.spamFilter(spamArray, function(err){
+
+                    if (!err){
+                        return callback();
+                    } else {
+                        
+                        return res.json({
+                            success: false,
+                            errors: {spam: {msg: "Spam Filter detected bad match: " + err[0] + "."}}
+                        });
+                    }
+                });
+            }
+
             // actions
-            createComment(function () {
-                addComment(function () {
-                    addActivity(function() {
-                        getComment(function (comment) {
-                            return res.json({
-                                success: true,
-                                comment: comment
+            spamFilter(function () {
+                createComment(function () {
+                    addComment(function () {
+                        addActivity(function () {
+                            getComment(function (comment) {
+                                return res.json({
+                                    success: true,
+                                    comment: comment
+                                });
                             });
                         });
                     });
@@ -2652,13 +2705,35 @@ module.exports = {
                 });
                 return callback();
             }
-            
-            checkForm(function () {
-                checkSlug(function () {
-                    createPost(function () {
-                        addActivity(function () {
-                            addToThread(function () {
-                                return res.json({ success: true });
+
+            // Let's prepare for spam, we need to pass an ARRAY of STRINGS of the data we want to spam check
+            function spamFilter(callback) {
+
+                // build the array
+                var spamArray = [req.body.post.content, req.body.post.title];
+
+                Util.spamFilter(spamArray, function(err){
+
+                    if (!err){
+                        return callback();
+                    } else {
+                        
+                        return res.json({
+                            success: false,
+                            errors: {spam: {msg: "Spam Filter detected bad match: " + err[0] + "."}}
+                        });
+                    }
+                });
+            }
+
+            spamFilter(function () {
+                checkForm(function () {
+                    checkSlug(function () {
+                        createPost(function () {
+                            addActivity(function () {
+                                addToThread(function () {
+                                    return res.json({success: true});
+                                });
                             });
                         });
                     });

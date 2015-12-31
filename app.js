@@ -203,7 +203,7 @@ app.post('/vod', routes.frontend.vod(Schemas));
 app.post('/api/verify', routes.frontend.verify(Schemas));
 
 app.post('/api/article/vote', routes.frontend.articleVote(Schemas));
-app.post('/api/article/comment/add', routes.frontend.articleCommentAdd(Schemas, mongoose));
+app.post('/api/article/comment/add', routes.frontend.articleCommentAdd(Schemas, Util, mongoose));
 
 app.post('/api/deck', routes.frontend.deckEdit(Schemas));
 app.post('/api/deck/add', routes.frontend.deckAdd(Schemas, Util, mongoose));
