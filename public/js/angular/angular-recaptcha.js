@@ -117,14 +117,15 @@
             restrict: 'A',
             require: "?^^form",
             scope: {
-                response: '=?ngModel',
-                key: '=',
-                theme: '=?',
-                size: '=?',
-                tabindex: '=?',
-                onCreate: '&',
-                onSuccess: '&',
-                onExpire: '&'
+              response: '=?ngModel',
+              key: '=',
+              reload: '=',
+              theme: '=?',
+              size: '=?',
+              tabindex: '=?',
+              onCreate: '&',
+              onSuccess: '&',
+              onExpire: '&'
             },
             link: function (scope, elm, attrs, ctrl) {
                 if (!attrs.hasOwnProperty('key')) {
@@ -133,6 +134,10 @@
 
                 scope.widgetId = null;
 
+                function reload (widgetId) {
+                  return vcRecaptchaService.reload(widgetId);
+                }  
+              
                 var sessionTimeout;
                 var removeCreationListener = scope.$watch('key', function (key) {
                     if (!key) {

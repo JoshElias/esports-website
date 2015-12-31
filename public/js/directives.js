@@ -141,7 +141,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('signupForm', ['$state', '$timeout', 'UserService', 'LoginModalService', function ($state, $timeout, UserService, LoginModalService) {
+.directive('signupForm', ['$state', '$timeout', 'UserService', 'LoginModalService', 'vcRecaptchaService', function ($state, $timeout, UserService, LoginModalService, vcRecaptchaService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
         scope: true,
@@ -168,34 +168,40 @@ angular.module('app.directives', ['ui.load'])
             $scope.response = null;
           }
 
+          $scope.getStyle = function () {
+            console.log($scope.setState);
+            return (!$scope.setState) ? 'transform:scale(1.06);-webkit-transform:scale(1.06);transform-origin:0 0;-webkit-transform-origin:0 0;' : 'transform:scale(.99);-webkit-transform:scale(.99);transform-origin:0 0;-webkit-transform-origin:0 0;';
+          }
           /* !recaptcha */
-            $scope.verify = {
-                email: "",
-                code: ""
-            }
+          
+          $scope.verify = {
+              email: "",
+              code: ""
+          }
+//          $scope.zipRegex = /(?!.*)/;
             
-            $scope.signup = function signup(email, username, password, cpassword, captchaResponse) {
-                if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined && captchaResponse !== null) {
-                    UserService.signup(email, username, password, cpassword, captchaResponse).success(function (data) {
-                        if (!data.success) {
-                            $scope.errors = data.errors;
-                            $scope.showError = true;
-                            $scope.cbExpiration();
-                          if($scope.errors.captcha) {
-                            $scope.captchaFailed = true;
-                          }
-                        } else {
-                            $scope.verify.email = email;
-                            if ($scope.setState) {
-                              $scope.setState('verify');
-                            } else {
-                              $state.go('app.verify');
-                            }
+          $scope.signup = function signup(email, username, password, cpassword, captchaResponse, zipcode) {
+            if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined && captchaResponse !== null) {
+              UserService.signup(email, username, password, cpassword, captchaResponse, zipcode).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    vcRecaptchaService.reload($scope.widgetId);
+                  if($scope.errors.captcha) {
+                    $scope.captchaFailed = true;
+                  }
+                } else {
+                  $scope.verify.email = email;
+                  if ($scope.setState) {
+                    $scope.setState('verify');
+                  } else {
+                    $state.go('app.verify');
+                  }
 //                            return $state.transitionTo('app.verify', { email: email });
-                        }
-                    });
                 }
+              });
             }
+          }
         }
     }
 }])
@@ -1332,5 +1338,12 @@ angular.module('app.directives', ['ui.load'])
             });
         }
     };
+}])
+.directive('formValidate', ['$compile', function ($compile) {
+  return {
+    replace: true,
+    restrict: 'E',
+    template: '<span class="hide"><label for="zipcode" class="hide">Your zipcode</label><input type="text" id="zipcode" value="" data-ng-pattern="zipRegex" data-ng-model="zipcode" class="hide"/></span>'
+  }
 }])
 ;

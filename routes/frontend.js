@@ -195,10 +195,11 @@ module.exports = {
             captchaResponse = req.body.captchaResponse,
             captchaSecret = '6LeLJhQTAAAAAPU4djVaXiNX28hLIKGdC7XM9QG4',
             captchaPostUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + captchaSecret + ';response=' + captchaResponse,
+            zipcode = req.body.zipcode,
             userID,
             activationCode = uuid.v4();
           
-            function captcha (callback) {
+            function validateHuman (callback) {
               request.post(
                 'https://www.google.com/recaptcha/api/siteverify',
                 { 
@@ -208,7 +209,7 @@ module.exports = {
                   }
                 },
                 function (err, cres, body) {
-                  if (!err && JSON.parse(body).success && cres.statusCode == 200) {
+                  if (!err && JSON.parse(body).success && cres.statusCode == 200 && !zipcode) {
                     return callback();
                   } else {
                     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -216,8 +217,9 @@ module.exports = {
                         ip: ip,
                         username: username,
                         email: email,
-                        password: password,
-                        createdDate: new Date().toISOString()
+                        createdDate: new Date().toISOString(),
+                        userAgent: req.headers['user-agent'],
+                        referer: req.header('Referer')
                     });
                     
                     FCA.save(function(err, data){
@@ -229,7 +231,7 @@ module.exports = {
                     });
                     console.log('captcha request failed and was logged');
                     return res.json({ 
-                        success: false, errors: { captcha: { msg: "Captcha validation failed and the attempt has been logged" }}
+                        success: false, errors: { captcha: { msg: "Our robot detection has determined that you are a robot" }}
                     });
                   }
                 }
@@ -346,7 +348,7 @@ module.exports = {
                 }
                 
                 
-                captcha(function () {
+                validateHuman(function () {
                   checkEmail(function (){
                       checkUsername(function (){
                           completeNewUser(function () {
