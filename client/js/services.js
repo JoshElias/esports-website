@@ -2039,11 +2039,12 @@ angular.module('app.services', [])
 
     guideBuilder.new = function (guideType, data) {
         console.log('DATA:', data);
-        if (data.guideHeroes) {
+      
+        if (data && data.guideHeroes) {
             data.heroes = data.guideHeroes
         }
+      
         data = data || {};
-
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
         
@@ -2066,8 +2067,6 @@ angular.module('app.services', [])
                 
                 _.each(hero.hero.talents, function(heroTalent) {
                     _.each(data.guideTalents, function(guideTalent) {
-                        console.log('heroTalent:', heroTalent);
-                        console.log('guideTalent:', guideTalent);
                         if (heroTalent.talent.id === guideTalent.talentId) {
                             newObj.talents['tier'+guideTalent.tier] = guideTalent.talentId;
                         }
@@ -2081,7 +2080,9 @@ angular.module('app.services', [])
             console.log('guideHeroes:', guideHeroes);
             return guideHeroes;
         }
-
+        
+        console.log('data.maps:', data.maps);
+        
         var gb = {
             id: data.id || null,
             name: data.name || '',
@@ -2105,12 +2106,12 @@ angular.module('app.services', [])
             isFeatured: data.featured || false,
             isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
             votes: data.votes || [],
-            voteScore: data.votesCount || 0,
-            viewCount: data.viewcount || 0,
+            voteScore: data.voteScore || 0,
+            viewCount: data.viewCount || 0,
             authorId: data.authorId || User.getCurrentId(),
             talentTiers: data.talentTiers || {}
         };
-
+        console.log('gb:', gb);
         // constrain maps to 1 if map guide
         if (guideType === 'map' && gb.maps.length > 1) {
             gb.maps = [gb.maps[0]];
@@ -2383,27 +2384,27 @@ angular.module('app.services', [])
         };
 
         gb.setMap = function (map) {
-            gb.maps = [map.id];
+            gb.maps = [map];
         };
 
         gb.toggleMap = function (map) {
             if (gb.hasMap(map)) {
                 for (var i = 0; i < gb.maps.length; i++) {
-                    if (gb.maps[i] === map.id) {
+                    if (gb.maps[i].id === map.id) {
                         gb.maps.splice(i, 1);
                         return true;
                     }
                 }
             } else {
-                gb.maps.push(map.id);
+                gb.maps.push(map);
             }
-            console.log('gb.maps:', gb.maps);
         };
 
         gb.hasMap = function (map) {
             for (var i = 0; i < gb.maps.length; i++) {
-                if (gb.maps[i] === map.id) {
+                if (gb.maps[i].id === map.id) {
                     return true;
+                  
                 }
             }
             return false;

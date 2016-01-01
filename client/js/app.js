@@ -1984,7 +1984,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.map.html',
                         controller: 'HOTSGuideBuilderMapCtrl',
                         resolve: {
-							userRoles: ['User', function(User) {
+                           userRoles: ['User', function(User) {
                                 if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
@@ -2140,19 +2140,35 @@ var app = angular.module('app', [
                         resolve: {
                             dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return Guide.find({
+                                return Guide.findOne({
                                     filter: {
                                         where: {
                                             slug: slug
-                                        }
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            }
+                                        ]
                                     }
-                                });
+                                }).$promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                                return Hero.getHeroes();
+                              return Hero.find({
+                                filter: {
+                                  fields: {
+                                    oldTalents: false,
+                                    oldAbilities: false,
+                                    price: false,
+                                    title: false,
+                                    manaType: false,
+                                    characters: false
+                                  }
+                                }
+                              }).$promise;
                             }],
                             dataMaps: ['Map', function (Map) {
-                                return Map.getMaps();
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
