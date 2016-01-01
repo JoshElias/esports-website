@@ -125,10 +125,11 @@
 
                 <div class="draft-build-cards-view-wrapper clearfix">
                     <div class="draft-build-cards-view clearfix">
-                        <div class="draft-build-card" ng-class="{ disabled: !currentDeck.isAddable(card) }" ng-repeat="card in getCardsCurrent()">
-                            <a href="#" data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.photoNames.large" ng-click="addCardToDeck(card)" ng-right-click="currentDeck.removeCardFromDeck(card)" hs-card>
-                                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
+                        <div class="draft-build-card" ng-class="{ disabled: (currentDeck && !currentDeck.isAddable(card.card)) || (qtyUsed(card) === card.qty) }" ng-repeat="card in getCardsCurrent()">
+                            <a href="#" data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" ng-click="addCardToDeck(card)" ng-right-click="currentDeck.removeCardFromDeck(card.card)" hs-card>
+                                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.medium}}" alt="{{card.card.name}}">
                             </a>
+                            <div class="card-qty">{{card.qty - qtyUsed(card)}}/{{card.qty}}</div>
                         </div>
                         <div class="draft-build-pool-no-match" ng-show="!cards.current.length">No Matches Found</div>
                     </div>

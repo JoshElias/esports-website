@@ -1896,6 +1896,15 @@ angular.module('app.services', [])
 //            return cnt;
 //        };
         
+        db.cardQuantityById = function (cardId) {
+            for(var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i].card.id === cardId) {
+                    return db.cards[i].cardQuantity;
+                }
+            }
+            return 0;
+        };
+        
         db.getSize = function() {
             var size = 0;
             for(var i = 0; i < db.cards.length; i++) {
