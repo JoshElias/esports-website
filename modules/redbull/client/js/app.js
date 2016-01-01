@@ -86,16 +86,12 @@ var redbull = angular.module('app.redbull', [
                     templateUrl: moduleTpl + 'draft.build.html',
                     controller: 'DraftBuildCtrl',
                     resolve: {
-                        cards: ['Card', function (Card) {
-                            return Card.find({
-                                filter: {
-                                    where: {
-                                        deckable: true,
-                                        isActive: true
-                                    },
-                                    order: ['cost ASC', 'name ASC']
-                                }
-                            }).$promise;
+                        cards: ['$state', 'DraftCards', function ($state, DraftCards) {
+                            var cards = DraftCards.getCards();
+                            if (!cards.length) {
+                                return $state.go('app.redbull.draft.packs');
+                            }
+                            return cards;
                         }]
                     }
                 }

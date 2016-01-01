@@ -250,6 +250,7 @@
                     .deck-title-bar {
                         position: relative;
                         height: 48px;
+                        cursor: pointer;
                         
                         .deck-title-bar-inner {
                             height: 48px;
@@ -310,9 +311,6 @@
                     
                     .deck-cards {
                         display: none;
-                        display: flex;
-                        flex-direction: column;
-                        flex-grow: 0;
                         
                         .deck-card {
                             margin-right: 9px;
@@ -328,7 +326,7 @@
                             transition: opacity .3s linear;
                             background: #262626;
                             -webkit-user-drag: none;
-
+                            
                             &.druid {
                                 background: rgba(255, 125, 10, .5);
 
@@ -526,10 +524,6 @@
                     }
                     
                     &.active {
-                        .deck-cards {
-                            flex-grow: 1 !important;
-                        }
-                        
                         .deck-cards,
                         .deck-count {
                             display: block;
@@ -646,28 +640,50 @@
                 .draft-build-cards-view-wrapper {
                     position: relative;
                     padding: 30px;
-                    min-height: 723px;
+                    min-height: 810px;
                     
                     .draft-build-card {
                         float: left;
                         position: relative;
                         width:20%;
                         display: block;
-                        height: 221px;
+                        height: 250px;
                         -webkit-user-select: none;
                         -moz-user-select: none;
                         -ms-user-select: none;
                         user-select: none;
                         -webkit-user-drag: none;
                         
+                        &.disabled {
+                            opacity: .3;
+                        }
+                            
                         a,
                         img {
+                            position: relative;
                             margin: 0 auto;
                             display: block;
                             width: 160px;
                             height: 221px;
                             -webkit-user-drag: none;
+                            z-index: 2;
                         } /* a, img */
+                        
+                        .card-qty {
+                            position: relative;
+                            z-index: 1;
+                            margin: -10px auto 0px auto;
+                            width: 45px;
+                            height: 29px;
+                            background: url(../img/modules/redbull/client/img/card-bottom.png) no-repeat;
+                            color: #FFF;
+                            font-size: 10px;
+                            font-family: 'Open Sans Bold';
+                            letter-spacing: 2px;
+                            line-height: 18px;
+                            text-align: center;
+                            opacity: .5;
+                        } /* .card-qty */
                         
                     } /* .draft-build-card */
                     

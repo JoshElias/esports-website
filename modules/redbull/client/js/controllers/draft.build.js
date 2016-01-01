@@ -1,6 +1,10 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'cards', 'Pagination', 
-    function ($scope, $compile, $filter, Hearthstone, DeckBuilder, bootbox, AlertService, cards, Pagination) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'DraftCards', 
+    function ($scope, $compile, $filter, $state, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, DraftCards) {
+        var allCards = DraftCards.getCards();
+        if (!allCards.length) {
+            return $state.go('app.redbull.draft.packs');
+        }
         
         $scope.tournament = {
             allowDuplicateClasses: false,
@@ -29,11 +33,12 @@ angular.module('redbull.controllers')
         };
         
         function sortCards () {
-            for (var i = 0; i < cards.length; i++) {
-                if (!$scope.cards.sorted[cards[i].playerClass]) {
-                    $scope.cards.sorted[cards[i].playerClass] = [];
-                }
-                $scope.cards.sorted[cards[i].playerClass].push(cards[i]);
+            for (var i = 0; i < Hearthstone.classes.length; i++) {
+                $scope.cards.sorted[Hearthstone.classes[i]] = [];
+            }
+            
+            for (var i = 0; i < allCards.length; i++) {
+                $scope.cards.sorted[allCards[i].card.playerClass].push(allCards[i]);
             }
             $scope.cards.current = $scope.cards.sorted[$scope.klasses[0]];
         }
@@ -44,7 +49,6 @@ angular.module('redbull.controllers')
         $scope.pagination = Pagination.new($scope.perpage, $scope.cards.current.length);
         
         function updatePagination () {
-            console.log('total:', filteredCards($scope.cards.current).length);
             $scope.pagination.page = 1;
             $scope.pagination.total = filteredCards($scope.cards.current).length;
         }
@@ -62,9 +66,9 @@ angular.module('redbull.controllers')
             filtered = $filter('filter')(filtered, function (value, index, arr) {
                 if ($scope.filters.mana !== false) {
                     if ($scope.filters.mana < 7) {
-                        return (value.cost === $scope.filters.mana);
+                        return (value.card.cost === $scope.filters.mana);
                     } else {
-                        return (value.cost >= 7);
+                        return (value.card.cost >= 7);
                     }
                 }
                 return true;
@@ -74,7 +78,7 @@ angular.module('redbull.controllers')
             if ($scope.filters.mechanics.length) {
                 filtered = $filter('filter')(filtered, function (value, index, arr) {
                     for (var i = 0; i < $scope.filters.mechanics.length; i++) {
-                        if (value.mechanics.indexOf($scope.filters.mechanics[i]) === -1) {
+                        if (value.card.mechanics.indexOf($scope.filters.mechanics[i]) === -1) {
                             return false;
                         }
                     }
@@ -86,16 +90,25 @@ angular.module('redbull.controllers')
         }
         
         $scope.getCardsCurrent = function () {
-            var cards = filteredCards($scope.cards.current);
+            var cards = filteredCards($scope.cards.current) || [];
             var start = (($scope.pagination.getPage() * $scope.perpage) - $scope.perpage);
             // return page of results
             return cards.slice(start, start + $scope.perpage);
         }
 
         $scope.addCardToDeck = function (card) {
-            if (!$scope.currentDeck) { return false; }
-            if ($scope.currentDeck.isAddable(card)) {
-                $scope.currentDeck.addCard(card);
+            var deck = $scope.currentDeck;
+            var cardQty = card.qty;
+            var cardUsed = $scope.qtyUsed(card);
+            
+            console.log('deck: ', deck);
+            console.log('cardQty: ', cardQty);
+            console.log('cardUsed: ', cardUsed);
+            
+            if (!deck || cardUsed === cardQty) { return false; }
+            
+            if ($scope.currentDeck.isAddable(card.card)) {
+                $scope.currentDeck.addCard(card.card);
             }
         };
 
@@ -103,7 +116,15 @@ angular.module('redbull.controllers')
             if (!$scope.currentDeck) { return false; }
             $scope.currentDeck.removeCard(card);
         };
-
+        
+        $scope.qtyUsed = function (card) {
+            var count = 0;
+            for (var i = 0; i < $scope.decks.length; i++) {
+                count += $scope.decks[i].cardQuantityById(card.card.id);
+            }
+            return count;
+        };
+        
         $scope.manaCount = function (cost) {
             if (!$scope.currentDeck) { return 0; }
             return $scope.currentDeck.manaCount(cost);
