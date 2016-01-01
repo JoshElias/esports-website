@@ -728,7 +728,7 @@ module.exports = {
             });
         };
     },
-    guideCommentAdd: function (Schemas, mongoose) {
+    guideCommentAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
             var guideID = req.body.guideID,
                 userID = req.user._id,
@@ -820,18 +820,40 @@ module.exports = {
                 });
             }
             
-            // actions
-            createComment(function () {
-                addComment(function () {
-                    addActivity(function () {
-                        getComment(function (comment) {
-                            return res.json({
-                                success: true,
-                                comment: comment
-                            });
+            // Let's prepare for spam, we need to pass an ARRAY of STRINGS of the data we want to spam check
+            function spamFilter(callback) {
+
+                // build the array
+                var spamArray = [comment];
+
+                Util.spamFilter(spamArray, req, userID, function(err){
+
+                    if (!err){
+                        return callback();
+                    } else {
+                        
+                        return res.json({
+                            success: false,
+                            errors: {spam: {msg: "Spam Filter detected bad match: " + err[0] + "."}}
                         });
-                    });
+                    }
                 });
+            }
+          
+            // actions
+            spamFilter(function () {
+              createComment(function () {
+                  addComment(function () {
+                      addActivity(function () {
+                          getComment(function (comment) {
+                              return res.json({
+                                  success: true,
+                                  comment: comment
+                              });
+                          });
+                      });
+                  });
+              });
             });
         };
     },

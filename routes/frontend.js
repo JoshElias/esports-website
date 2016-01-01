@@ -1586,7 +1586,7 @@ module.exports = {
                 // build the array
                 var spamArray = [req.body.description, req.body.name, chapters().join(" ")];
 
-                Util.spamFilter(spamArray, function(err){
+                Util.spamFilter(spamArray, req, userID, function(err){
 
                     if (!err){
                         return callback();
@@ -2016,7 +2016,7 @@ module.exports = {
                 // build the array
                 var spamArray = [comment];
 
-                Util.spamFilter(spamArray, function(err){
+                Util.spamFilter(spamArray, req, userID, function(err){
 
                     if (!err){
                         return callback();
@@ -2373,7 +2373,7 @@ module.exports = {
             });
         };
     },
-    deckCommentAdd: function (Schemas, mongoose) {
+    deckCommentAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
             var deckID = req.body.deckID,
                 userID = req.user._id,
@@ -2464,19 +2464,41 @@ module.exports = {
                 });
                 return callback();
             }
+          
+            // Let's prepare for spam, we need to pass an ARRAY of STRINGS of the data we want to spam check
+            function spamFilter(callback) {
+
+                // build the array
+                var spamArray = [comment];
+
+                Util.spamFilter(spamArray, req, userID, function(err){
+
+                    if (!err){
+                        return callback();
+                    } else {
+                        
+                        return res.json({
+                            success: false,
+                            errors: {spam: {msg: "Spam Filter detected bad match: " + err[0] + "."}}
+                        });
+                    }
+                });
+            }
             
             // actions
-            createComment(function () {
-                addComment(function () {
-                    addActivity(function () {
-                        getComment(function (comment) {
-                            return res.json({
-                                success: true,
-                                comment: comment
-                            });
-                        });
-                    });
-                });
+            spamFilter(function () {
+              createComment(function () {
+                  addComment(function () {
+                      addActivity(function () {
+                          getComment(function (comment) {
+                              return res.json({
+                                  success: true,
+                                  comment: comment
+                              });
+                          });
+                      });
+                  });
+              });
             });
         };
     },
@@ -2712,7 +2734,7 @@ module.exports = {
                 // build the array
                 var spamArray = [req.body.post.content, req.body.post.title];
 
-                Util.spamFilter(spamArray, function(err){
+                Util.spamFilter(spamArray, req, req.user._id, function(err){
 
                     if (!err){
                         return callback();
@@ -2741,7 +2763,7 @@ module.exports = {
             });
         };
     },
-    forumCommentAdd: function (Schemas, mongoose) {
+    forumCommentAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
             // vars
             var postID = req.body.post._id,
@@ -2818,16 +2840,36 @@ module.exports = {
                 return callback();
             }
             
-            
-            
-            createComment(function () {
-                addToPost(function () {
-                    addActivity(function () {
-                        getComment(function () {
-                            res.json({ success: true, comment: dataComment });
+            // Let's prepare for spam, we need to pass an ARRAY of STRINGS of the data we want to spam check
+            function spamFilter(callback) {
+
+                // build the array
+                var spamArray = [req.body.comment];
+
+                Util.spamFilter(spamArray, req, req.user._id, function(err){
+
+                    if (!err){
+                        return callback();
+                    } else {
+                        
+                        return res.json({
+                            success: false,
+                            errors: {spam: {msg: "Spam Filter detected bad match: " + err[0] + "."}}
                         });
-                    });
+                    }
                 });
+            }
+            
+            spamFilter(function () {
+              createComment(function () {
+                  addToPost(function () {
+                      addActivity(function () {
+                          getComment(function () {
+                              res.json({ success: true, comment: dataComment });
+                          });
+                      });
+                  });
+              });
             });
         };
     },
@@ -3172,7 +3214,7 @@ module.exports = {
             });
         }
     },
-    snapshotCommentAdd: function (Schemas, mongoose) {
+    snapshotCommentAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
             var snapshotID = req.body.snapshotID,
                 userID = req.user._id,
@@ -3245,18 +3287,39 @@ module.exports = {
                 return callback();
             }
             
-            // actions
-            createComment(function () {
-                addComment(function () {
-                    addActivity(function() {
-                        getComment(function (comment) {
-                            return res.json({
-                                success: true,
-                                comment: comment
-                            });
+            function spamFilter(callback) {
+
+                // build the array
+                var spamArray = [comment];
+
+                Util.spamFilter(spamArray, req, userID, function(err){
+
+                    if (!err){
+                        return callback();
+                    } else {
+                        
+                        return res.json({
+                            success: false,
+                            errors: {spam: {msg: "Spam Filter detected bad match: " + err[0] + "."}}
                         });
-                    });
+                    }
                 });
+            }
+          
+            // actions
+            spamFilter(function () {
+              createComment(function () {
+                  addComment(function () {
+                      addActivity(function() {
+                          getComment(function (comment) {
+                              return res.json({
+                                  success: true,
+                                  comment: comment
+                              });
+                          });
+                      });
+                  });
+              });
             });
         }
     },

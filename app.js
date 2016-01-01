@@ -210,20 +210,20 @@ app.post('/api/deck/add', routes.frontend.deckAdd(Schemas, Util, mongoose));
 app.post('/api/deck/update', routes.frontend.deckUpdate(Schemas, Util));
 app.post('/api/deck/delete', routes.frontend.deckDelete(Schemas));
 app.post('/api/deck/vote', routes.frontend.deckVote(Schemas));
-app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, mongoose));
+app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, Util, mongoose));
 
 app.post('/api/snapshot/vote', routes.frontend.snapshotVote(Schemas));
-app.post('/api/snapshot/comment/add', routes.frontend.snapshotCommentAdd(Schemas, mongoose));
+app.post('/api/snapshot/comment/add', routes.frontend.snapshotCommentAdd(Schemas, Util, mongoose));
 
 app.post('/api/hots/guide', routes.frontend.hots.guideEdit(Schemas));
 app.post('/api/hots/guide/add', routes.frontend.hots.guideAdd(Schemas, Util, mongoose));
 app.post('/api/hots/guide/update', routes.frontend.hots.guideUpdate(Schemas, Util));
 app.post('/api/hots/guide/delete', routes.frontend.hots.guideDelete(Schemas));
 app.post('/api/hots/guide/vote', routes.frontend.hots.guideVote(Schemas));
-app.post('/api/hots/guide/comment/add', routes.frontend.hots.guideCommentAdd(Schemas, mongoose));
+app.post('/api/hots/guide/comment/add', routes.frontend.hots.guideCommentAdd(Schemas, Util, mongoose));
 
 app.post('/api/forum/post/add', routes.frontend.forumPostAdd(Schemas, Util, mongoose));
-app.post('/api/forum/post/comment/add', routes.frontend.forumCommentAdd(Schemas, mongoose));
+app.post('/api/forum/post/comment/add', routes.frontend.forumCommentAdd(Schemas, Util, mongoose));
 
 app.post('/api/comment/vote', routes.frontend.commentVote(Schemas));
 

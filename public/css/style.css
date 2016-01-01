@@ -500,7 +500,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
 .home-content h3.sub-title { font-size: 14px; color: #d3eefa; }
 
-.home-content .g2a-banner {
+.home-content .sponsor-link {
   border: 1px solid rgba(0,0,0,.2);
   outline: 1px solid rgba(255,255,255,.2);
   outline-offset: -2px;
