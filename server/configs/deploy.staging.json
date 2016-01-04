@@ -12,7 +12,7 @@
     },
     "error_file"       : "server/logs/tempostorm.err",
     "out_file"         : "server/logs/tempostorm.log",
-    "pid_file"         : "/home/ec2-user/tempostorm-web-server.pid",
+    "pid_file"         : "tempostorm-web-server.pid",
     "env": {
       "NODE_ENV": "development"
     },
