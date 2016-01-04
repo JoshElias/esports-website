@@ -1,5 +1,5 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'cards', function ($scope, $localStorage, $window, $compile, bootbox, Preloader, AlertService, DraftPacks, cards){
+.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'cards', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, cards){
     // temp tournament settings
     var defaultTournament = {
             packs: [
@@ -239,8 +239,10 @@ angular.module('redbull.controllers')
         box.modal('show');
     };
     
-    $scope.buildInfo = function () {
-        var box = bootbox.dialog({
+    $scope.goToBuild = function () {
+        return $state.go('app.redbull.draft.build');
+        
+        /*var box = bootbox.dialog({
             title: 'Build Decks',
             message: 'This feature has not been completed yet.',
             buttons: {
@@ -254,6 +256,7 @@ angular.module('redbull.controllers')
             }
         });
         box.modal('show');
+        */
     };
     
 }]);

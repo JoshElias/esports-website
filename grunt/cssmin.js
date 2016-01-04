@@ -15,5 +15,12 @@ module.exports = {
                 'client/dist/css/modules.css'
             ],
         }
+    },
+    modules_: {
+        files: {
+            'client/dist/css/modules.min.css': [
+                'client/dist/css/modules.css'
+            ],
+        }
     }
 };

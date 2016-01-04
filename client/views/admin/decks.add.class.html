@@ -20,7 +20,7 @@
                  ng-class="{ 'no-select': ($parent.klass && $parent.klass != hero.class) || ($parent.selectedHero && $parent.selectedHero != hero.class)}" 
                  ng-mouseover="$parent.klass = hero.class" ng-mouseout="$parent.klass = false">
                 <div class="db-class-clip">
-                    <button class="select-hero-btn" ui-sref="app.hs.deckBuilder.build({ playerClass: hero.class })">
+                    <button class="select-hero-btn" ui-sref="app.admin.hearthstone.decks.addBuild({ playerClass: hero.class })">
                         <div class="hero-img"></div>
                     </button>
                 </div>

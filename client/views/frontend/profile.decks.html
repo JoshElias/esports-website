@@ -11,7 +11,7 @@
                 <h3>by {{deck.author.username || '[Deleted User]'}} - <span am-time-ago="deck.createdDate"></span></h3>
             </div>
             <div class="hs-deck-votes">{{deck.voteScore}}</div>
-            <div class="hs-deck-owner" ng-if="app.user.getUserID() == deck.author._id">
+            <div class="hs-deck-owner" ng-if="$parent.$parent.User.getCurrentId() === deck.author.id">
                 <button class="btn btn-blue btn-xs" ng-click="deckEdit($event, deck)">Edit</button>
                 <button class="btn btn-danger btn-xs" ng-click="deckDelete($event, deck)">Delete</button>
             </div>

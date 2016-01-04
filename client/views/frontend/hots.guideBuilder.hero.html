@@ -210,7 +210,7 @@
                             <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.video">
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Premium</label>
                             <div class="col-sm-10">
@@ -230,11 +230,15 @@
                         <div class="form-group row" ng-show="guide.premium.isPremium">
                             <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
                             <div class="col-sm-10">
-                                <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="guide.premium.expiryDate" ng-disabled="!guide.premium.isPremium"></div>
+                                <div date-picker data-id="expiryDate" 
+									 data-name="expiryDate" 
+									 data-class="input-dark" 
+									 ng-model="guide.premium.expiryDate" 
+									 ng-disabled="!guide.premium.isPremium"></div>
                             </div>
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Featured</label>
                             <div class="col-sm-10">
@@ -244,8 +248,8 @@
                                         <b class="caret"></b>
                                     </button>
                                     <ul class="list-group dropdown-menu dropdown-dark">
-                                        <li class="list-group-item" ng-class="{active: guide.featured === type.value}" ng-repeat="type in featuredTypes">
-                                            <a href="#" ng-click="guide.featured = type.value">{{type.text}}</a>
+                                        <li class="list-group-item" ng-class="{active: guide.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                            <a href="#" ng-click="guide.isFeatured = type.value">{{type.text}}</a>
                                         </li>
                                     </ul>
                                 </div>

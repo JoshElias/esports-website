@@ -134,8 +134,8 @@
                     <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)" 
-                             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                             ng-click="deck.removeCardFromDeck(card.card)" 
+                             tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
                              data-tooltip-pos="left" hs-card>
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
@@ -167,20 +167,7 @@
 
                 <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
         
-                    <div class="panel panel-danger error-modal animated" ng-show="showError">
-                        <div class="panel-heading">
-                            <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                            <strong>Unable to save deck</strong>
-                        </div>
-                        <div class="panel-body">
-                            <ul>
-                                <li ng-repeat="error in errors">
-                                    <span ng-if="error === 'Slug already exists'">Deck name already exists</span>
-                                    <span ng-if="!(error === 'Slug already exists')">{{error}}</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <alert-box theme="admin"></alert-box>
                     
                     <div class="db-section-title clearfix">
                         <div class="row">
@@ -209,9 +196,11 @@
                             <div class="col-md-6">
                                 <h1>MANA COST</h1>
                                 <div class="mana-crystals">
+<!--
                                     <div ng-class="{active: filters.mana === 'all'}">
                                         <a href="#" ng-click="doFilterByMana('all'); pagination.setPage(1)">All</a>
                                     </div>
+-->
                                     <div ng-class="{active: filters.mana === 0}">
                                         <a href="#" ng-click="doFilterByMana(0); pagination.setPage(1)">0</a>
                                     </div>
@@ -322,7 +311,7 @@
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
                                     <div class="db-card" ng-class="{'db-card-disabled': !deck.isAddable(card)}" 
                                          ng-repeat="card in cards.current">
-                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" 
+                                        <a href="#" tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.photoNames.large"
                                            ng-click="deck.addCard(card)" 
                                            ng-right-click="deck.removeCardFromDeck(card)" hs-card>
                                             <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
@@ -411,7 +400,7 @@
                         </div>  
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
-                                 data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                 tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
                                  data-tooltip-pos="left" hs-card>
                                 <button ng-class="{'active': isMulliganCard(true, card)}"
                                         ng-click="deck.toggleMulligan(mulligan, true, card.card)">
@@ -455,7 +444,7 @@
                         </div>
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
-                                 data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                 tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
                                  data-tooltip-pos="left" hs-card>
                                 <button ng-class="{'active': isMulliganCard(false, card)}"
                                         ng-click="deck.toggleMulligan(mulligan, false, card.card)">
@@ -541,20 +530,7 @@
                 <!-- step 5 -->
                 <div class="db-section" ng-hide="step !== 5">
                     
-                    <div class="panel panel-danger error-modal animated" ng-show="showError">
-                        <div class="panel-heading">
-                            <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                            <strong>Unable to save deck</strong>
-                        </div>
-                        <div class="panel-body">
-                            <ul>
-                                <li ng-repeat="error in errors">
-                                    <span ng-if="error === 'Slug already exists'">Deck name already exists</span>
-                                    <span ng-if="!(error === 'Slug already exists')">{{error}}</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <alert-box theme="admin"></alert-box>
                     
                     <div class="db-section-title">
                         <h1>SAVE YOUR DECK</h1>

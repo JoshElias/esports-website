@@ -21,7 +21,8 @@
     "articleId": {},
     "deckId": {},
     "snapshotId": {},
-    "forumPostId": {}
+    "forumPostId": {},
+    "guideId": {}
   },
   "validations": [],
   "relations": {

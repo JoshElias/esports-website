@@ -12,7 +12,7 @@ var redbull = angular.module('app.redbull', [
     function() {
     }
 ])
-.config(['$stateProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
+.config(['$stateProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide',
     function($stateProvider, $controllerProvider, $compileProvider, $filterProvider, $provide) {
 
         redbull.controller = $controllerProvider.register;
@@ -22,7 +22,7 @@ var redbull = angular.module('app.redbull', [
         redbull.service    = $provide.service;
         redbull.constant   = $provide.constant;
         redbull.value      = $provide.value;
-
+        
         // cdn templates
         var moduleTpl = (tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/';
 
@@ -86,15 +86,12 @@ var redbull = angular.module('app.redbull', [
                     templateUrl: moduleTpl + 'draft.build.html',
                     controller: 'DraftBuildCtrl',
                     resolve: {
-                        cards: ['Card', function (Card) {
-                            return Card.find({
-                                filter: {
-                                    where: {
-                                        deckable: true,
-                                        isActive: true
-                                    }
-                                }
-                            }).$promise;
+                        cards: ['$state', 'DraftCards', function ($state, DraftCards) {
+                            var cards = DraftCards.getCards();
+                            if (!cards.length) {
+                                return $state.go('app.redbull.draft.packs');
+                            }
+                            return cards;
                         }]
                     }
                 }

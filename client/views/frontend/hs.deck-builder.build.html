@@ -129,7 +129,7 @@
                         </div>
                         <span ng-show="deck.basic">
                             <div class="deck-title">
-                                <input placeholder="DECK NAME..." ng-maxlength="35" ng-model="deck.name"/>
+                                <input placeholder="DECK NAME..." ng-maxlength="35" ng-model="deck.name" required/>
                             </div>
                             <div class="deck-description">
                                 <textarea placeholder="Deck description" resize="none" ng-model="deck.description"></textarea>
@@ -138,8 +138,8 @@
                         <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)"
-                             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                             ng-click="deck.removeCardFromDeck(card.card)"
+                             tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
                              data-tooltip-pos="left" hs-card>
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
@@ -157,12 +157,9 @@
                         </div>
                     </div>
                     <button ng-if="deck.basic" class="basic-submit-btn m-t-md"
-                            ng-click="saveDeck(deck)" ng-disabled="deckSubmitting">
+                            ng-click="saveDeck(deck)" type="button" ng-disabled="deckSubmitting">
                         <span ng-if="!deckSubmitting">SUBMIT</span>
-                        <span ng-if="deckSubmitting">SUBMITTING</span>
-                        <span ng-if="deckSubmitting">
-                            <i class="fa fa-spinner fa-pulse"></i>
-                        </span>
+                        <span ng-if="deckSubmitting">SUBMITTING <i class="fa fa-spinner fa-pulse"></i></span>
                     </button>
                 </div>
                 <!-- / db-right -->
@@ -201,32 +198,34 @@
                                 <div class="col-md-6">
                                     <h1>MANA COST</h1>
                                     <div class="mana-crystals">
+<!--
                                         <div ng-class="{active: filters.mana === 'all'}">
                                             <a href="#" ng-click="doFilterByMana('all'); pagination.setPage(1)">All</a>
                                         </div>
+-->
                                         <div ng-class="{active: filters.mana === 0}">
-                                            <a href="#" ng-click="doFilterByMana(0); pagination.setPage(1)">0</a>
+                                            <a href="#" ng-click="doFilterByMana(0)">0</a>
                                         </div>
                                         <div ng-class="{active: filters.mana === 1}">
-                                            <a href="#" ng-click="doFilterByMana(1); pagination.setPage(1)">1</a>
+                                            <a href="#" ng-click="doFilterByMana(1)">1</a>
                                         </div>
                                         <div ng-class="{active: filters.mana === 2}">
-                                            <a href="#" ng-click="doFilterByMana(2); pagination.setPage(1)">2</a>
+                                            <a href="#" ng-click="doFilterByMana(2)">2</a>
                                         </div>
                                         <div ng-class="{active: filters.mana === 3}">
-                                            <a href="#" ng-click="doFilterByMana(3); pagination.setPage(1)">3</a>
+                                            <a href="#" ng-click="doFilterByMana(3)">3</a>
                                         </div>
                                         <div ng-class="{active: filters.mana === 4}">
-                                            <a href="#" ng-click="doFilterByMana(4); pagination.setPage(1)">4</a>
+                                            <a href="#" ng-click="doFilterByMana(4)">4</a>
                                         </div>
                                         <div ng-class="{active: filters.mana === 5}">
-                                            <a href="#" ng-click="doFilterByMana(5); pagination.setPage(1)">5</a>
+                                            <a href="#" ng-click="doFilterByMana(5)">5</a>
                                         </div>
                                         <div ng-class="{active: filters.mana === 6}">
-                                            <a href="#" ng-click="doFilterByMana(6); pagination.setPage(1)">6</a>
+                                            <a href="#" ng-click="doFilterByMana(6)">6</a>
                                         </div>
                                         <div ng-class="{active: filters.mana === '7+'}">
-                                            <a href="#" ng-click="doFilterByMana('7+'); pagination.setPage(1)">7+</a>
+                                            <a href="#" ng-click="doFilterByMana('7+')">7+</a>
                                         </div>
                                     </div>
                                 </div>
@@ -305,7 +304,9 @@
                             <div class="db-cards-view-wrapper clearfix">
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
                                     <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
-                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
+                                        <a href="#" 
+										   tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.photoNames.large" 
+										   ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
                                             <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
                                         </a>
                                     </div>
@@ -320,7 +321,7 @@
             <!-- / step 1 -->
             <!-- step 2 -->
         <div class="container-fluid-max">
-            <form class="form-horizontal" name="dbForm" novalidate>
+            <form class="form-horizontal" name="dbForm" id="dbForm" novalidate>
                 <div class="db-builder clearfix">
                     <div class="db-section db-mulligans" ng-hide="step !== 2">
                         <div class="class-select clearfix">
@@ -391,7 +392,7 @@
                             </div>  
                             <div class="col-xs-4 right">
                                 <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
-                                     data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                     tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
                                      data-tooltip-pos="left" hs-card>
                                     <button ng-class="{'active': isMulliganCard(true, card)}"
                                             ng-click="deck.toggleMulligan(mulligan, true, card.card)">
@@ -435,7 +436,7 @@
                             </div>
                             <div class="col-xs-4 right">
                                 <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
-                                     data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                     tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
                                      data-tooltip-pos="left" hs-card>
                                     <button ng-class="{'active': isMulliganCard(false, card)}"
                                             ng-click="deck.toggleMulligan(mulligan, false, card.card)">

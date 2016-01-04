@@ -572,30 +572,42 @@ angular.module('app.services', [])
           this.reset();
           (value.persist !== undefined) ? this.setPersist(value.persist) : null;
           success = value;
-          alert = value.show || true;
+		  alert = value.show
         },
         getError: function () {
           return error;
         },
         setError: function (value) {
-          this.reset();
-          error = value;
-          alert = value.show || true;
-          if (value.lbErr
-            && value.lbErr.data
-            && value.lbErr.data.error
-            && value.lbErr.data.error.details
-            && value.lbErr.data.error.details.messages) {
-            var errorList = [];
-            var errMsgs = value.lbErr.data.error.details.messages;
-            angular.forEach(errMsgs, function(errArr) {
-              angular.forEach(errArr, function(errMsg) {
-                errorList.push(errMsg);
-              });
-            });
-            // attach lb errors to error object
-            error.errorList = errorList;
-          }
+			this.reset();
+			error = value;
+			alert = value.show;
+			(value.persist !== undefined) ? this.setPersist(value.persist) : null;
+
+			// array of errors
+			console.log('errorList:', value.errorList);
+			console.log('lbErr:', value.lbErr);
+			var errorList = [];
+			value.errorList ? errorList = value.errorList : errorList = [];
+			if (value.lbErr
+				&& value.lbErr.data
+				&& value.lbErr.data.error
+				&& value.lbErr.data.error.details
+				&& value.lbErr.data.error.details.messages) {
+				var errMsgs = value.lbErr.data.error.details.messages;
+				angular.forEach(errMsgs, function(errArr) {
+					angular.forEach(errArr, function(errMsg) {
+						errorList.push(errMsg);
+					});
+				});
+			// attach lb errors to error object
+			} else if (value.lbErr
+						 && value.lbErr.data
+						 && value.lbErr.data.error
+						 && value.lbErr.data.error.message) {
+				errorList.push(value.lbErr.data.error.message);
+			}
+			error.errorList = errorList;
+			console.log('error.errorList:', error.errorList);
         },
         reset: function () {
           success = {};
@@ -604,7 +616,13 @@ angular.module('app.services', [])
         },
         hasAlert: function () {
           return alert;
-        }
+        },
+		setShow: function(showVal) {
+			alert = showVal;
+		},
+		getShow: function() {
+			return alert;
+		}
     }
 })
 .factory('AdminArticleService', ['$http', '$q', function ($http, $q) {
@@ -1059,19 +1077,20 @@ angular.module('app.services', [])
 
     var pagination = {};
 
-    pagination.new = function (perpage) {
+    pagination.new = function (perpage, total) {
 
         perpage = perpage || 50;
 
         var paginate = {
             page: 1,
-            perpage: perpage
+            perpage: perpage,
+            total: total
         };
 
         paginate.results = function () {
-            return 0;
+            return paginate.total;
         };
-
+        
         paginate.pages = function () {
             return Math.ceil(paginate.results() / paginate.perpage);
         };
@@ -1102,6 +1121,10 @@ angular.module('app.services', [])
             return (paginate.page === page);
         };
 
+        paginate.getPage = function () {
+            return paginate.page;
+        };
+        
         paginate.setPage = function (page) {
             paginate.page = page;
         };
@@ -1629,6 +1652,7 @@ angular.module('app.services', [])
 
         db.isAddable = function (card) {
             if (db.gameModeType === 'arena') { return true; }
+            if (card.playerClass !== db.playerClass && card.playerClass !== 'Neutral') { return false; }
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false;
@@ -1727,7 +1751,7 @@ angular.module('app.services', [])
                         result = 0;
 
                     while(result === 0 && i < props.length) {
-                        result = dynamicSort(props[i])(a, b);
+                        result = dynamicSort(props[i])(a.card, b.card);
                         i++;
                     }
                     return result;
@@ -1744,17 +1768,18 @@ angular.module('app.services', [])
                 cardMulliganExists = false,
                 cancel = false;
             
+			console.log('db.cards:', db.cards);
             for (var i = 0; i < db.cards.length; i++) {
-                if (card.card.id === db.cards[i].card.id) {
+                if (card.id === db.cards[i].card.id) {
+					console.log('card.id:', card.id);
+					console.log('db.cards[i].card.id:', db.cards[i].card.id);
                     if (db.cards[i].cardQuantity > 1) {
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
                     } else {
-                        index = db.cards.indexOf(card);
-                        console.log('index: ', index);
-                        if (index !== -1) {
-                            cardRemovedFromDeck = true;
-                        }
+						index = i;
+						cardRemovedFromDeck = true;
+						break;
                     }
                 }
             }
@@ -1762,26 +1787,32 @@ angular.module('app.services', [])
             if(cardRemovedFromDeck) {
                 console.log('card was removed');
                 // search all card with coin mulligans
+				console.log('db.mulligans:', db.mulligans);
                 for(var i = 0; i < db.mulligans.length; i++) {
-                    for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
-                        if (db.mulligans[i].mulligansWithCoin[j].id === card.card.id) {
-                            cardMulliganExists = true;
-                            break;
-                        }
-                    }
-                    for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
-                        if (db.mulligans[i].mulligansWithoutCoin[j].id === card.card.id) {
-                            cardMulliganExists = true;
-                            break;
-                        }
-                    }
+					if (db.mulligans[i].mulligansWithCoin.length > 0) {
+						for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
+							if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
+								cardMulliganExists = true;
+								break;
+							}
+						}
+					}
+                    
+                    if (db.mulligans[i].mulligansWithoutCoin.length > 0) {
+						for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
+							if (db.mulligans[i].mulligansWithoutCoin[j].id === card.id) {
+								cardMulliganExists = true;
+								break;
+							}
+						}
+					}
                 }
             }
             
             if (cardMulliganExists) {
                     var box = bootbox.dialog({
-                        title: 'Are you sure you want to remove <strong>' + card.card.name + '</strong>?',
-                        message: 'Current mulligans for ' + card.card.name + ' will be lost as well.',
+                        title: 'Are you sure you want to remove <strong>' + card.name + '</strong>?',
+                        message: 'Current mulligans for ' + card.name + ' will be lost as well.',
                         buttons: {
                             delete: {
                                 label: 'Continue',
@@ -1792,12 +1823,12 @@ angular.module('app.services', [])
                                     });
                                     for(var i = 0; i < db.mulligans.length; i++) {
                                         for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
-                                            if (db.mulligans[i].mulligansWithCoin[j].id === card.card.id) {
+                                            if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
                                                 db.mulligans[i].mulligansWithCoin.splice(j, 1);
                                             }
                                         }
                                         for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
-                                            if (db.mulligans[i].mulligansWithoutCoin[j].id === card.card.id) {
+                                            if (db.mulligans[i].mulligansWithoutCoin[j].id === card.id) {
                                                 db.mulligans[i].mulligansWithoutCoin.splice(j, 1);
                                             }
                                         }
@@ -1816,9 +1847,10 @@ angular.module('app.services', [])
                     });
                     box.modal('show');
                 } else {
-                    db.cards.splice(index, 1);
-                    return;
-                }
+					if (index !== -1) {
+						db.cards.splice(index, 1);
+					}
+				}
         };
 
         db.removeCard = function (card) {
@@ -1863,6 +1895,15 @@ angular.module('app.services', [])
 //            }
 //            return cnt;
 //        };
+        
+        db.cardQuantityById = function (cardId) {
+            for(var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i].card.id === cardId) {
+                    return db.cards[i].cardQuantity;
+                }
+            }
+            return 0;
+        };
         
         db.getSize = function() {
             var size = 0;
@@ -2006,19 +2047,60 @@ angular.module('app.services', [])
     var guideBuilder = {};
 
     guideBuilder.new = function (guideType, data) {
+        console.log('DATA:', data);
+      
+        if (data && data.guideHeroes) {
+            data.heroes = data.guideHeroes
+        }
+      
         data = data || {};
-
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
-
+        
+        function createTiers(heroes) {
+            var guideHeroes = [];
+            console.log('heroes:', heroes);
+            _.each(heroes, function(hero) {
+                console.log('hero:', hero);
+                var newObj = {};
+                newObj.hero = hero.hero;
+                newObj.talents = {
+                    tier1: null,
+                    tier4: null,
+                    tier7: null,
+                    tier10: null,
+                    tier13: null,
+                    tier16: null,
+                    tier20: null
+                };
+                
+                _.each(hero.hero.talents, function(heroTalent) {
+                    _.each(data.guideTalents, function(guideTalent) {
+                        if (heroTalent.talent.id === guideTalent.talentId) {
+                            newObj.talents['tier'+guideTalent.tier] = guideTalent.talentId;
+                        }
+                    });
+                });
+                
+                guideHeroes.push(newObj);
+                
+            });
+            
+            console.log('guideHeroes:', guideHeroes);
+            return guideHeroes;
+        }
+        
+        console.log('data.maps:', data.maps);
+        
         var gb = {
+            id: data.id || null,
             name: data.name || '',
             slug: data.slug || '',
             guideType: guideType,
             description: data.description || '',
             content: data.content || [],
-            heroes: data.heroes || [],
-            createdDate: new Date().toISOString(),
+            heroes: data.heroes ? createTiers(data.heroes) : [],
+            createdDate: data.createdDate || new Date().toISOString(),
             maps: data.maps || [],
             synergy: data.synergy || [],
             against: data.against || {
@@ -2033,12 +2115,12 @@ angular.module('app.services', [])
             isFeatured: data.featured || false,
             isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
             votes: data.votes || [],
-            voteScore: data.votesCount || 0,
-            viewCount: data.viewcount || 0,
+            voteScore: data.voteScore || 0,
+            viewCount: data.viewCount || 0,
             authorId: data.authorId || User.getCurrentId(),
             talentTiers: data.talentTiers || {}
         };
-
+        console.log('gb:', gb);
         // constrain maps to 1 if map guide
         if (guideType === 'map' && gb.maps.length > 1) {
             gb.maps = [gb.maps[0]];
@@ -2137,7 +2219,7 @@ angular.module('app.services', [])
               .then(function (data) {
                 var heroes = gb.heroes;
                 var index = heroes.indexOf(obj);
-
+                  
                 hero.talents = data;
                 heroes[index].hero.talents = data;
               });
@@ -2176,7 +2258,6 @@ angular.module('app.services', [])
         gb.talentsByTier = function (hero, tier) {
           var temp = _.filter(hero.talents, function (val) { return val.tier == tier });
           var talents = _.map(temp, function (val) { return val.talent; });
-
           return talents;
         };
 
@@ -2189,6 +2270,7 @@ angular.module('app.services', [])
 //        };
 
         gb.toggleTalent = function (hero, talent) {
+          console.log('hero:', hero);
           var talentId = talent.id;
           var tal = _.find(hero.hero.talents, function (val) { return val.talentId == talentId });
 
@@ -2311,26 +2393,27 @@ angular.module('app.services', [])
         };
 
         gb.setMap = function (map) {
-            gb.maps = [map.id];
+            gb.maps = [map];
         };
 
         gb.toggleMap = function (map) {
             if (gb.hasMap(map)) {
                 for (var i = 0; i < gb.maps.length; i++) {
-                    if (gb.maps[i] === map.id) {
+                    if (gb.maps[i].id === map.id) {
                         gb.maps.splice(i, 1);
                         return true;
                     }
                 }
             } else {
-                gb.maps.push(map.id);
+                gb.maps.push(map);
             }
         };
 
         gb.hasMap = function (map) {
             for (var i = 0; i < gb.maps.length; i++) {
-                if (gb.maps[i] === map.id) {
+                if (gb.maps[i].id === map.id) {
                     return true;
+                  
                 }
             }
             return false;
@@ -3270,6 +3353,81 @@ angular.module('app.services', [])
         emit : emit
      }
 }])
+.factory('CrudMan', [
+  function () {
+    var arrs = {};
+    var crud = {
+      exists  : [],
+      toDelete: [],
+      toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
+    }
+    
+    function getArrs () {
+      return arrs;
+    }
+    
+    function find (item, arrName, crud) {
+      return _.find(arrs[arrName][crud], function (val) { return val == item });
+    }
+    
+    function createArr (arrName) {
+      arrs[arrName] = angular.copy(crud);
+    }
+    
+    function setExists (inArr, arrName) {
+      if (!arrs[arrName]) {
+        this.createArr(arrName);
+      }
+      
+      _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
+    }
+    
+    function removeFromArr (item, arrName, crud) {
+      var arr = arrs[arrName];
+      var idx = arr[crud].indexOf(item);
+      
+      arr[crud].splice(idx, 1);
+    }
+    
+    function addToArr (item, arrName, crud) {
+      var arr = arrs[arrName];
+      
+      if (find(item, arrName, crud)) {
+        var idx = arr[crud].indexOf(item);
+        
+        arr['toDelete'].splice(idx, 1);
+      }
+      
+      arr['toWrite'].push(item);
+    }
+    
+    function toggleItem (item, arrName) {
+      var e = 'exists';
+      var d = 'toDelete';
+      var c = 'toWrite';
+
+      if (find(item, arrName, e)) {
+        console.log('is in exists');
+        arrs[arrName][d].push(item);
+      } else if (find(item, arrName, c)) {
+        console.log('is in create');
+        removeFromArr(item, arrName, c);
+      } else {
+        console.log('added to create');
+        addToArr(item, arrName, c);
+      }
+      
+      console.log('CrudMan toggle triggered', arrs);
+    }
+    
+    return {
+      setExists: setExists,
+      toggleItem: toggleItem,
+      createArr: createArr,
+      getArrs: getArrs
+    }
+  }
+])
 .factory('markitupSettings', [
   function() {
     var factory, markset;

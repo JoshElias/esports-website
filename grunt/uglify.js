@@ -11,5 +11,10 @@ module.exports = {
             'client/dist/js/app.min.js': ['client/dist/js/app.js'],
             'client/dist/js/modules.min.js': ['client/dist/js/modules.js'],
         }
+    },
+    modules_: {
+        files: {
+            'client/dist/js/modules.min.js': ['client/dist/js/modules.js'],
+        }
     }
 };

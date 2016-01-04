@@ -36,4 +36,25 @@ angular.module('app.filters', [])
         return results;
     };
 }])
-;
+
+.filter('inq', [function() {
+    // filter dataArr with an array of Values by using a keyIdentifier
+    // usage: ng-repeat="activity in activities | inq: queryFilter:'activityType'"
+    return function(dataArr, queryArr, keyIdentifier) {
+        var out = [];
+        
+        angular.forEach(dataArr, function(dataItem) {
+            angular.forEach(queryArr, function(queryValue) {
+                
+                if (dataItem[keyIdentifier] === queryValue) {
+                    out.push(dataItem);
+                    return;
+                }
+                
+            });
+        });
+        
+        console.log('out:', out);
+        return out;
+    };
+}]);

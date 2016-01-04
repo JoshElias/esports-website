@@ -5,7 +5,10 @@
     </div>
     <ul class="new-deck-classes">
         <li ng-repeat="klass in klasses">
-            <button class="{{klass.toLowerCase()}}" ng-click="newDeck.playerClass = klass" ng-class="{ active: newDeck.playerClass === klass }">{{klass}}</button>
+            <button class="{{klass.toLowerCase()}}"
+                    ng-click="newDeck.playerClass = klass"
+                    ng-class="{ active: newDeck.playerClass === klass, inactive: (newDeck.playerClass.length && newDeck.playerClass !== klass) || (!tournament.allowDuplicateClasses && decksHaveClass(klass)) }"
+                    ng-disabled="!tournament.allowDuplicateClasses && decksHaveClass(klass)">{{klass}}</button>
         </li>
     </ul>
 </form>

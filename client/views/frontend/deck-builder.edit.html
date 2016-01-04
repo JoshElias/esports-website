@@ -320,17 +320,9 @@
             <!-- / step 4 -->
             <!-- step 5 -->
             <div class="db-section" ng-hide="step !== 5">
-                <div class="panel panel-danger error-modal animated" ng-show="showError">
-                    <div class="panel-heading">
-                        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                        <strong>Unable to add deck</strong>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="error text-danger">
-                            <li ng-repeat="error in errors">{{error.msg}}</li>
-                        </ul>
-                    </div>
-                </div>
+				
+                <alert-box theme="admin"></alert-box>
+				
                 <div class="db-section-title">
                     <h1>SAVE YOUR DECK</h1>
                 </div>

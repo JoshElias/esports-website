@@ -13,18 +13,28 @@ module.exports = {
     },
     sass: {
         files: ['client/css/sass/*.scss'],
-        tasks: ['clean:sass', 'compass:build', 'newer:concat', 'newer:cssmin', 'hash:css']
+        tasks: [/*'clean:sass', */'compass:build', 'newer:concat', 'newer:cssmin', 'hash:css']
     },
-    img: {
-        files: ['client/img/**/*.{png,jpg,gif}'],
-        tasks: ['newer:imagemin']
-    },
+    //img: {
+    //    files: ['client/img/**/*.{png,jpg,gif}'],
+    //    tasks: ['newer:imagemin']
+    //},
     html: {
         files: ['client/views/**/*.html'],
         tasks: ['newer:htmlmin:dist']
     },
     modules: {
-        files: ['modules/**/client/js/**/*.js', 'modules/**/client/views/**/*.html', 'modules/**/client/css/**/*.scss', 'modules/**/client/img/**/*.{png,jpg,gif}'],
-        tasks: ['newer:htmlmin:modules', 'compass:modules', 'newer:concat:modules', 'newer:imagemin:modules']
+        files: [
+            'modules/**/client/js/**/*.js',
+            'modules/**/client/views/**/*.html',
+            'modules/**/client/css/**/*.scss',
+            //'modules/**/client/img/**/*.{png,jpg,gif}'
+        ],
+        tasks: [
+            'newer:htmlmin:modules_',
+            'compass:modules_',
+            'newer:concat:modules_',
+            //'newer:imagemin:modules_'
+        ]
     }
 };

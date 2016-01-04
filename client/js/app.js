@@ -69,10 +69,12 @@ var app = angular.module('app', [
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
                 }
                 
+			  console.log('STATE CHANGE SUCCESSING');
                 //we're resetting the alertService if unless persist is set to true, then we reset persist and the alertservice will reset on the NEXT state change
                 if (!AlertService.getPersist()) {
                   AlertService.reset();
                 } else {
+				  AlertService.setShow(true);
                   AlertService.setPersist(false);
                 }
                 
@@ -113,8 +115,8 @@ var app = angular.module('app', [
     ]
 )
 .config(
-    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider', '$animateProvider',
-    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider, $animateProvider) {
+    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider',
+    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
 
         app.controller = $controllerProvider.register;
         app.directive  = $compileProvider.directive;
@@ -140,7 +142,7 @@ var app = angular.module('app', [
         ]);
 
         // ignore ng-animate on font awesome spin
-        $animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
+        //$animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
 
 //        $urlRouterProvider.otherwise('404');
         $stateProvider
@@ -1935,6 +1937,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.hero.html',
                         controller: 'HOTSGuideBuilderHeroCtrl',
                         resolve: {
+							             userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
                                 filter: {
@@ -1964,6 +1984,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.map.html',
                         controller: 'HOTSGuideBuilderMapCtrl',
                         resolve: {
+                           userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
                             dataHeroes: ['Hero', function (Hero) {
                                 return Hero.find({}).$promise;
                             }],
@@ -2011,13 +2049,81 @@ var app = angular.module('app', [
                         resolve: {
                             dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return Guide.guideEdit(slug);
+                                console.log('slug:', slug);
+                                return Guide.findOne({
+                                    filter: {
+                                        where: {
+                                            slug: slug
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            },
+                                            {
+                                                relation: 'guideTalents'
+                                            },
+                                            {
+                                                relation: 'guideHeroes',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents',
+                                                                        scope: {
+                                                                            include: [
+                                                                                {
+                                                                                    relation: 'talent'
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
+                            }],
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                                return Hero.getHeroes();
+                              return Hero.find({
+                                filter: {
+                                  fields: {
+                                    oldTalents: false,
+                                    oldAbilities: false,
+                                    price: false,
+                                    title: false,
+                                    manaType: false,
+                                    characters: false
+                                  }
+                                }
+                              }).$promise;
                             }],
-                            dataMaps: ['Guide', function (Guide) {
-                                return Guide.getMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -2034,19 +2140,35 @@ var app = angular.module('app', [
                         resolve: {
                             dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return Guide.find({
+                                return Guide.findOne({
                                     filter: {
                                         where: {
                                             slug: slug
-                                        }
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            }
+                                        ]
                                     }
-                                });
+                                }).$promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                                return Hero.getHeroes();
+                              return Hero.find({
+                                filter: {
+                                  fields: {
+                                    oldTalents: false,
+                                    oldAbilities: false,
+                                    price: false,
+                                    title: false,
+                                    manaType: false,
+                                    characters: false
+                                  }
+                                }
+                              }).$promise;
                             }],
                             dataMaps: ['Map', function (Map) {
-                                return Map.getMaps();
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -2192,205 +2314,206 @@ var app = angular.module('app', [
                         controller: 'ForumCategoryCtrl',
                         resolve: {
                             forumCategories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
-//                                var startTime = new Date().getMilliseconds();
-//                                var d = $q.defer();
-//                                
-//                                async.waterfall([
-//                                    function(waterCB) {
-//                                        
-//                                        ForumCategory.find({
-//                                            filter: {
-//                                                where: {
-//                                                    isActive: true
-//                                                },
-//                                                fields: {
-//                                                    id: true,
-//                                                    title: true
-//                                                },
-//                                                order: 'orderNum ASC'
-//                                            }
-//                                        }).$promise
-//                                        .then(function (forumCategories) {
-//                                            return waterCB(null, forumCategories);
-//                                        })
-//                                        .catch(function (err) {
-//                                            return waterCB(err);
-//                                        });
-//                                        
-//                                    },
-//                                    function(forumCategories, waterCB) {
-//                                        
-//                                        async.each(forumCategories, function (category, categoryCB) {
-//                                            
-//                                            ForumCategory.forumThreads({
-//                                                id: category.id,
-//                                                filter: {
-//                                                    fields: {
-//                                                        id: true,
-//                                                        title: true,
-//                                                        description: true,
-//                                                        slug: true
-//                                                    }
-//                                                }
-//                                            }).$promise
-//                                            .then(function (threads) {
-//                                                category.forumThreads = threads;
-//                                                
-//                                                async.each(category.forumThreads, function (thread, threadCB) {
-//                                                
-//                                                   async.parallel([
-//                                                       function (paraCB) {
-//
-//                                                           ForumThread.forumPosts({
-//                                                               id: thread.id,
-//                                                               filter: {
-//                                                                   fields: {
-//                                                                       title: true,
-//                                                                       slug: true,
-//                                                                       authorId: true
-//                                                                   },
-//                                                                   include: {
-//                                                                       relation: 'author',
-//                                                                       scope: {
-//                                                                           fields: {
-//                                                                               username: true,
-//                                                                               email: true
-//                                                                           }
-//                                                                       }
-//                                                                   },
-//                                                                   order: 'createdDate DESC',
-//                                                                   limit: 1
-//                                                               }
-//                                                           }).$promise
-//                                                           .then(function (forumPost) {
-//                                                               thread.forumPosts = forumPost;
-//                                                               return paraCB();
-//                                                           })
-//                                                           .catch(function (err) {
-//                                                               return paraCB(err);
-//                                                           });
-//
-//                                                       },
-//                                                       function (paraCB) {
-//
-//                                                           ForumThread.forumPosts.count({
-//                                                                id: thread.id
-//                                                            }).$promise
-//                                                            .then(function (postCount) {
-//                                                                thread.forumPostsCount = postCount.count;
-//                                                                return paraCB();
-//                                                            })
-//                                                            .catch(function (err) {
-//                                                                return paraCB(err);
-//                                                            });
-//
-//                                                       }
-//                                                   ], function(err, results) {
-//                                                       if (err) {
-//                                                           return categoryCB(err);
-//                                                       }
-//                                                       return categoryCB();
-//                                                   });
-//
-//                                                }, function(err) {
-//                                                    if (err) {
-//                                                        return waterCB(err);
-//                                                    }
-//                                                    return waterCB();
-//                                                });
-//                                                
-//                                            })
-//                                            .catch(function (err) {
-//                                                return categoryCB(err);
-//                                            });
-//                                            
-//                                        }, function(err) {
-//                                            if (err) {
-//                                                return waterCB(err);
-//                                            }
-//                                            return waterCB(null, forumCategories);
-//                                        });
-//                                        
-//                                    }
-//                                ], function(err, results) {
-//                                    if (err) {
-//                                        return d.resolve(err);
-//                                    }
-//                                    var endTime = new Date().getMilliseconds();
-//                                    var elapsedTime = startTime - endTime;
-//                                    console.log('elapsed: ', elapsedTime);
-//                                    return d.resolve(results);
-//                                });
-//                                return d.promise;
-                                
+								// Alex's Resolve
                                 var d = $q.defer();
-                                ForumCategory.find({
-                                    where: {
-                                        isActive: true
-                                    },
-                                    fields: {
-                                        id: true,
-                                        title: true
-                                    }
-                                }).$promise
-                                .then(function (categories) {
-                                    async.forEach(categories, function (category, eachCategoryCallback) {
-                                        ForumCategory.forumThreads({
-                                            id: category.id,
+                                async.waterfall([
+                                    function(waterCB) {
+                                        
+                                        ForumCategory.find({
                                             filter: {
                                                 where: {
                                                     isActive: true
                                                 },
                                                 fields: {
                                                     id: true,
-                                                    title: true,
-                                                    description: true,
-                                                    slug: true
+                                                    title: true
                                                 },
                                                 order: 'orderNum ASC'
                                             }
-                                        }).$promise.then(function (threads) {
-                                            category.forumThreads = threads;
-                                            
-                                            async.forEach(threads, function (thread, eachThreadCallback) {
-                                                ForumThread.forumPosts({
-                                                    id: thread.id,
-                                                    filter: {
-                                                        fields: {
-                                                            title: true,
-                                                            slug: true,
-                                                            authorId: true
-                                                        },
-                                                        include: {
-                                                            relation: 'author',
-                                                            scope: {
-                                                                fields: {
-                                                                    username: true,
-                                                                    email: true
-                                                                }
-                                                            }
-                                                        },
-                                                        order: 'createdDate DESC',
-                                                        limit: 1
-                                                    }
-                                                }).$promise.then(function (posts) {
-                                                    thread.forumPosts = posts;
-                                                    ForumThread.forumPosts.count({ id: thread.id }).$promise
-                                                    .then(function (results) {
-                                                        thread.forumPostsCount = results.count;
-                                                        return eachThreadCallback();
-                                                    });
-                                                });
-                                            }, function () {
-                                                return eachCategoryCallback();
-                                            });
+                                        }).$promise
+                                        .then(function (forumCategories) {
+                                            return waterCB(null, forumCategories);
+                                        })
+                                        .catch(function (err) {
+                                            return waterCB(err);
                                         });
-                                    }, function () {
-//                                        console.log(categories);
-                                        d.resolve(categories);
-                                    });
+                                        
+                                    },
+                                    function(forumCategories, waterCB) {
+                                        
+                                        async.each(forumCategories, function (category, categoryCB) {
+                                            
+                                            ForumCategory.forumThreads({
+                                                id: category.id,
+                                                filter: {
+                                                    fields: {
+                                                        id: true,
+                                                        title: true,
+                                                        description: true,
+                                                        slug: true
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (threads) {
+                                                category.forumThreads = threads;
+                                                
+                                                async.each(category.forumThreads, function (thread, threadCB) {
+                                                
+                                                   async.parallel([
+                                                       function (paraCB) {
+
+                                                           ForumThread.forumPosts({
+                                                               id: thread.id,
+                                                               filter: {
+                                                                   fields: {
+                                                                       title: true,
+                                                                       slug: true,
+                                                                       authorId: true
+                                                                   },
+                                                                   include: {
+                                                                       relation: 'author',
+                                                                       scope: {
+                                                                           fields: {
+                                                                               username: true,
+                                                                               email: true
+                                                                           }
+                                                                       }
+                                                                   },
+                                                                   order: 'createdDate DESC',
+                                                                   limit: 1
+                                                               }
+                                                           }).$promise
+                                                           .then(function (forumPost) {
+                                                               thread.forumPosts = forumPost;
+                                                               return paraCB();
+                                                           })
+                                                           .catch(function (err) {
+                                                               return paraCB(err);
+                                                           });
+
+                                                       },
+                                                       function (paraCB) {
+
+                                                           ForumThread.forumPosts.count({
+                                                                id: thread.id
+                                                            }).$promise
+                                                            .then(function (postCount) {
+                                                                thread.forumPostsCount = postCount.count;
+                                                                return paraCB();
+                                                            })
+                                                            .catch(function (err) {
+                                                                return paraCB(err);
+                                                            });
+
+                                                       }
+                                                   ], function(err, results) {
+                                                       if (err) {
+                                                           return threadCB(err);
+                                                       }
+                                                       return threadCB();
+                                                   });
+
+                                                }, function(err) {
+                                                    if (err) {
+                                                        return categoryCB(err);
+                                                    }
+                                                    return categoryCB();
+                                                });
+                                                
+                                            })
+                                            .catch(function (err) {
+                                                return categoryCB(err);
+                                            });
+                                            
+                                        }, function(err) {
+                                            if (err) {
+                                                return waterCB(err);
+                                            }
+                                            return waterCB(null, forumCategories);
+                                        });
+                                        
+                                    }
+                                ], function(err, results) {
+                                    if (err) {
+                                        return d.resolve(err);
+                                    }
+                                    return d.resolve(results);
                                 });
                                 return d.promise;
+								
+								// Martin's Resolve
+//								var startTime = new Date().getMilliseconds();
+//								var d = $q.defer();
+//								ForumCategory.find({
+//									where: {
+//										isActive: true
+//									},
+//									fields: {
+//										id: true,
+//										title: true
+//									}
+//								}).$promise
+//								.then(function (categories) {
+//									async.forEach(categories, function (category, eachCategoryCallback) {
+//										ForumCategory.forumThreads({
+//											id: category.id,
+//											filter: {
+//												where: {
+//													isActive: true
+//												},
+//												fields: {
+//													id: true,
+//													title: true,
+//													description: true,
+//													slug: true
+//												},
+//												order: 'orderNum ASC'
+//											}
+//										}).$promise.then(function (threads) {
+//											category.forumThreads = threads;
+//
+//											async.forEach(threads, function (thread, eachThreadCallback) {
+//												ForumThread.forumPosts({
+//													id: thread.id,
+//													filter: {
+//														fields: {
+//															title: true,
+//															slug: true,
+//															authorId: true
+//														},
+//														include: {
+//															relation: 'author',
+//															scope: {
+//																fields: {
+//																	username: true,
+//																	email: true
+//																}
+//															}
+//														},
+//														order: 'createdDate DESC',
+//														limit: 1
+//													}
+//												}).$promise.then(function (posts) {
+//													thread.forumPosts = posts;
+//													ForumThread.forumPosts.count({ id: thread.id }).$promise
+//													.then(function (results) {
+//														thread.forumPostsCount = results.count;
+//														return eachThreadCallback();
+//													});
+//												});
+//											}, function () {
+//												return eachCategoryCallback();
+//											});
+//										});
+//									}, function () {
+////                                        console.log(categories);
+//										var endTime = new Date().getMilliseconds();
+//										var elapsedTime = startTime - endTime;
+//										console.log('elapsedTime:', elapsedTime);
+//										d.resolve(categories);
+//									});
+//								});
+//								return d.promise;
                             }]
                         }
                     }
@@ -2975,10 +3098,40 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'author'
+                                            },
+                                            {
+                                                relation: 'guideHeroes',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'guideTalents',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'talent'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'maps'
                                             }
                                         ]
                                     }
-                                })
+                                }).$promise;
                             }]
                         }
                     }
@@ -3430,8 +3583,8 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
-                                    var playerClass = $stateParams.playerClass;
+                            classCardsList: ['$stateParams', 'Card', function($stateParams, Card) {
+                                var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
 
                                 return Card.find({
                                     filter: {
@@ -3442,16 +3595,25 @@ var app = angular.module('app', [
                                         order: ['cost ASC', 'cardType ASC', 'name ASC'],
                                         limit: 15
                                     }
-                                }).$promise;
+                                }).$promise
+								.then(function(classCards) {
+									console.log('classCards:', classCards);
+									return classCards;
+								});
                             }],
 
-                            classCardsCount: ['$stateParams', 'deck', 'Card', function ($stateParams, deck, Card) {
-                                var playerClass = $stateParams.playerClass;
+                            classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
+								var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
+								console.log('playerClass:', playerClass);
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass
                                     }
-                                }).$promise;
+                                }).$promise
+								.then(function (classCardCounts) {
+									console.log('classCardCounts:', classCardCounts);
+									return classCardCounts;
+								});
                             }],
 
                             neutralCardsCount: ['Card', function (Card) {
@@ -3474,6 +3636,12 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
+							
+							toStep: ['$stateParams', function ($stateParams) {
+                                if ($stateParams.goTo) {
+                                    return $stateParams.goTo;
+                                }
+                            }]
                         }
                     }
                 },
@@ -4547,7 +4715,9 @@ var app = angular.module('app', [
                                         filter: {
                                             fields: {
                                                 id: true,
-                                                username: true
+                                                username: true,
+                                                email: true,
+                                                isActive: true
                                             },
                                             limit: 50,
                                             order: 'createdDate DESC'
@@ -5348,7 +5518,7 @@ var app = angular.module('app', [
                                         fields: paginationParams.options.filter.fields
                                     }
                                 };
-
+							  console.log('VOD LIST RESOLVE');
                                 return Vod.find(options).$promise;
                             }]
                         }

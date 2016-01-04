@@ -1,6 +1,6 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util',
-    function ($q, $timeout, $interval, $rootScope, Util){
+.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util', 'DraftCards', 
+    function ($q, $timeout, $interval, $rootScope, Util, DraftCards){
         return {
             restrict: 'A',
             templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/redbull-draft.html',
@@ -503,6 +503,8 @@ angular.module('redbull.directives')
                             card: card
                         });
                     }
+                    // TODO: remove this for production
+                    DraftCards.setCards(scope.cardPool);
                 }
 
                 // sorted card pool
