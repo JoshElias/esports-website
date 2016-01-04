@@ -266,6 +266,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
+            $scope.loading = false;
             
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
@@ -275,6 +276,7 @@ angular.module('app.directives', ['ui.load'])
             }
             
             $scope.commentPost = function () {
+                $scope.loading = true;
                 if (!$scope.app.user.isLogged()) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost();
@@ -286,6 +288,7 @@ angular.module('app.directives', ['ui.load'])
                             $scope.comment = '';
                             updateCommentVotes();
                         }
+                        $scope.loading = false;
                     });
                 }
             };
