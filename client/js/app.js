@@ -1967,7 +1967,11 @@ var app = angular.module('app', [
                                     characters: false
                                   }
                                 }
-                              }).$promise;
+                              }).$promise
+                              .then(function(heroData) {
+                                console.log('heroData:', heroData);
+                                return heroData;
+                              });
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({}).$promise;
@@ -2138,6 +2142,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
                         controller: 'HOTSGuideBuilderEditMapCtrl',
                         resolve: {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider', '$premium']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
                             dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
                                 return Guide.findOne({

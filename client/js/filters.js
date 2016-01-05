@@ -47,8 +47,7 @@ angular.module('app.filters', [])
             angular.forEach(queryArr, function(queryValue) {
                 
                 if (dataItem[keyIdentifier] === queryValue) {
-                    out.push(dataItem);
-                    return;
+                    return out.push(dataItem);
                 }
                 
             });
