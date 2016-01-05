@@ -26,6 +26,10 @@
             }
             
             .mana-curve {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 299px;
                 
                 ul {
                     display: block;
@@ -96,6 +100,10 @@
             } /* .mana-curve */
             
             .card-search {
+                position: absolute;
+                top: 200px;
+                left: 0px;
+                width: 299px;
                 
                 form {
                     margin: 10px;
@@ -104,18 +112,23 @@
             } /* .card-search */
             
             .mana-cost {
+                position: absolute;
+                top: 285px;
+                left: 0px;
+                width: 299px;
                 
                 .mana-crystals {
-                    margin: 10px;
+                    margin: 10px 21px 10px 22px;
                     
                     div {
                         margin-right: 8px;
                         opacity: .6;
-                        background-image: url("../img/manacrystal.png");
+                        background-image: url("../img/modules/redbull/client/img/manacrystal_sm.png");
                         background-position: bottom;
-                        width: 38px;
-                        height: 38px;
-                        line-height: 2.75;
+                        width: 25px;
+                        height: 25px;
+                        line-height: 25px;
+                        font-size: 10px;
                         text-align: center;
                         float: left;
                         
@@ -130,8 +143,8 @@
                         
                         a {
                             display: block;
-                            height: 38px;
-                            width: 38px;
+                            height: 25px;
+                            width: 25px;
                             color: white;
                             
                             &:focus,
@@ -143,15 +156,19 @@
                         }
                     }
                     
+                    div:last-child {
+                        margin-right: 0px;
+                    }
+                    
                 }
                 
             } /* .mana-cost */
             
             .card-mechanics {
                 position: absolute;
-                top: 50%;
+                top: 365px;
                 bottom: 0px;
-                width: 300px;
+                width: 299px;
                 
                 .mechanics-wrapper {
                     position: absolute;
@@ -237,15 +254,39 @@
                 
             } /* .deck-add-button */
             
+            .deck-save-button {
+                position: absolute;
+                bottom: 0px;
+                right: 0px;
+                width: 300px;
+                height: 50px;
+                border-top: 1px solid #000;
+                
+                button {
+                    display: block;
+                    width: 300px;
+                    height: 50px;
+                    outline: none;
+                    border: none;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                } /* button */
+                
+            } /* .deck-add-button */
+            
             .decks {
-                display: flex;
-                flex-direction: column;
-                height: 100%;
+                min-height: calc(100% - 100px);
+				height: calc(100% - 100px);
+				display: -webkit-flex;
+				display: -moz-flex;
+				display: -ms-flex;
+				display: flex;
+				-webkit-flex-direction: column;
 
                 .deck {
-                    display: flex;
-                    flex-direction: column;
-                    flex-grow: 0;
+                    height: 48px;
+                    overflow: hidden;
+                    position: relative;
                     
                     .deck-title-bar {
                         position: relative;
@@ -310,7 +351,10 @@
                     @include draft-deck (warrior, 199, 156, 110);
                     
                     .deck-cards {
-                        display: none;
+                        position: absolute;
+                        top: 48px;
+                        bottom: 38px;
+                        width: 100%;
                         
                         .deck-card {
                             margin-right: 9px;
@@ -520,10 +564,37 @@
                         text-align: right;
                         font-family: 'Open Sans Bold';
                         font-size: 20px;
-                        padding: 5px 20px;
+                        position: absolute;
+                        left: 0px;
+                        right: 0px;
+                        bottom: 0px;
+                        height: 38px;
+                        line-height: 38px;
+                        
+                        .deck-count-inner {
+                            position: absolute;
+                            top: 0px;
+                            left: 0px;
+                            right: 0px;
+                            bottom: 0px;
+                            border: 1px solid rgba(255,255,255,.4);
+                            padding: 0 20px;
+                            line-height: 38px;
+                        }
                     }
                     
                     &.active {
+                        height: 15px;
+                        height: auto;
+                        -webkit-flex: 1 1 auto;
+                        -moz-flex: 1 1 auto;
+                        -ms-flex: 1 1 auto;
+                        flex: 1 1 auto;
+                        
+                        .deck-cards {
+                            flex-grow: 1;
+                        }
+                        
                         .deck-cards,
                         .deck-count {
                             display: block;
@@ -690,6 +761,13 @@
                 } /* .draft-build-cards-view-wrapper */
                 
             } /* .draft-build-pool */
+            
+            .draft-build-pool-no-match {
+                font-size: 30px;
+                color: #FFF;
+                text-align: center;
+                line-height: 750px;
+            }
             
         } /* .draft-build-cards */
         
