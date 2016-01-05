@@ -31,15 +31,10 @@ module.exports = function(User) {
 
     var filter = {
         fieldNames: ["subscription", "isProvider", "isAdmin", "lastLoginDate",
-            "resetPasswordCode", "newEmail", "newEmailCode"],
+            "resetPasswordCode", "newEmail", "email", "newEmailCode"],
         acceptedRoles: ["$owner", "$admin"]
     };
     User.observe("loaded", utils.filterFields(filter));
-
-
-    User.observe("before save", function(ctx, next) {
-        protectFields(ctx, next);
-    });
 
 
 
@@ -184,41 +179,6 @@ module.exports = function(User) {
             finalCallback(err);
         }
     };
-
-
-
-
-    // Filter out sensitive user information depending on ACL
-    var protectedFields = ["password", "email"];
-    
-    function protectFields(ctx, finalCb) {
-        var Role = User.app.models.Role;
-        var RoleMapping = User.app.models.RoleMapping;
-
-        // sets the private fields to false
-        function removeFields() {
-            var data = ctx.data || ctx.instance;
-            protectedFields.forEach(function(field) {
-                data[field] = undefined;
-            });
-            finalCb();
-        }
-
-        if(ctx.isNewInstance) {
-            return finalCb();
-        }
-
-        ctx = loopback.getCurrentContext();
-        if(!ctx || !ctx.active || !ctx.active.accessToken)
-            return removeFields();
-
-        User.isInRoles(ctx.active.accessToken.userId.toString(), ["$admin"], function(err, isInRoles) {
-            if(err) return finalCb();
-            else if(isInRoles.none) return removeFields();
-            else return finalCb();
-        });
-    };
-
 
 
     //send password reset link when requested

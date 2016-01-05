@@ -1,11 +1,12 @@
 angular.module('redbull.controllers')
 .controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'cards', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, cards){
     // temp tournament settings
+    $localStorage.draftDecks = [];
     var defaultTournament = {
             packs: [
                 {
                     expansion: 'Soulbound',
-                    packs: 10,
+                    packs: 15,
                     chances: {
                         basic: 100,
                         common: 0,
@@ -20,10 +21,10 @@ angular.module('redbull.controllers')
                     packs: 10,
                     chances: {
                         basic: 0,
-                        common: 74,
+                        common: 72,
                         rare: 21,
                         epic: 4,
-                        legendary: 1
+                        legendary: 3
                     },
                     isActive: true
                 },
@@ -44,10 +45,10 @@ angular.module('redbull.controllers')
                     packs: 10,
                     chances: {
                         basic: 0,
-                        common: 74,
+                        common: 72,
                         rare: 21,
                         epic: 4,
-                        legendary: 1
+                        legendary: 3
                     },
                     isActive: true
                 },
@@ -65,19 +66,19 @@ angular.module('redbull.controllers')
                 },
                 {
                     expansion: 'The Grand Tournament',
-                    packs: 9,
+                    packs: 10,
                     chances: {
                         basic: 0,
-                        common: 74,
+                        common: 72,
                         rare: 21,
                         epic: 4,
-                        legendary: 1
+                        legendary: 3
                     },
                     isActive: true
                 },
                 {
                     expansion: 'League of Explorers',
-                    packs: 5,
+                    packs: 8,
                     chances: {
                         basic: 0,
                         common: 74,
