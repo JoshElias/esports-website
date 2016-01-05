@@ -841,7 +841,7 @@ angular.module('app.directives', ['ui.load'])
         }
         
         $scope.setCurrent = function (talent) {
-          $scope.currentTalent = talent;
+          $scope.currentTalent.talent = talent;
         }
       }]
     };
