@@ -11,22 +11,20 @@ module.exports = function(Deck) {
     });
 
 
+    var fieldFilter =  {
+        fieldNames: ["chapters", "oldCards", "oldComments", "oldMulligans"],
+        acceptedRoles: ["$owner", "$admin", "$premium", "$contentProvider"]
+    }
+    Deck.observe("loaded", utils.filterFields(fieldFilter));
 
-    var filters =  [
-        {
-            acceptedRoles: ["$owner", "$admin"],
-            predicate: function isPrivate(deck) {
-                if(!deck || typeof deck.isPublic === "undefined")
-                    return false;
-                return !deck.isPublic;
-            }
-        },
-        {
-          fieldNames: ["allowComments", "description", "playerClass"],
-          acceptedRoles: ["chapters", "oldCards", "oldComments", "oldMulligans"]
+
+    var docFilter =  {
+        acceptedRoles: ["$owner", "$admin"],
+        filter: {
+            isPublic : true
         }
-    ];
-    Deck.observe("loaded", utils.filterFields(filters));
+    }
+    Deck.observe("access", utils.filterDocs(docFilter));
 
 
     Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
