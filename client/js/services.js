@@ -3353,13 +3353,28 @@ angular.module('app.services', [])
         emit : emit
      }
 }])
-.factory('CrudMan', [
+.service('CrudMan', [
   function () {
-    var arrs = {};
+    this.arrs = {};
+    
+    var arrs = this.arrs;
     var crud = {
       exists  : [],
       toDelete: [],
       toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
+    }
+    var e = 'exists';
+    var d = 'toDelete';
+    var w = 'toWrite';
+    
+    function CrudMan () {
+      return {
+        setExists: setExists,
+        toggle: toggleItem,
+        add: addToArr,
+        createArr: createArr,
+        getArrs: getArrs
+      }
     }
     
     function getArrs () {
@@ -3375,6 +3390,7 @@ angular.module('app.services', [])
     }
     
     function setExists (inArr, arrName) {
+      console.log('SET EXISTS WAS CALLED:', inArr, arrName);
       if (!arrs[arrName]) {
         this.createArr(arrName);
       }
@@ -3389,43 +3405,41 @@ angular.module('app.services', [])
       arr[crud].splice(idx, 1);
     }
     
-    function addToArr (item, arrName, crud) {
+    function addToArr (item, arrName) {
       var arr = arrs[arrName];
       
       if (find(item, arrName, crud)) {
         var idx = arr[crud].indexOf(item);
         
-        arr['toDelete'].splice(idx, 1);
+        arr[d].splice(idx, 1);
       }
       
-      arr['toWrite'].push(item);
+      console.log('CrudMan: ADD triggered', arrs);
+      if (!find(item, arrName, w)) {
+        arr[w].push(item);
+        console.log('CrudMan: item not found. added toWrite');
+      } else {
+        console.log('CrudMan: item found in toWrite. did NOT add');
+      }
+      
     }
     
     function toggleItem (item, arrName) {
-      var e = 'exists';
-      var d = 'toDelete';
-      var c = 'toWrite';
-
       if (find(item, arrName, e)) {
         console.log('is in exists');
         arrs[arrName][d].push(item);
-      } else if (find(item, arrName, c)) {
+      } else if (find(item, arrName, w)) {
         console.log('is in create');
-        removeFromArr(item, arrName, c);
+        removeFromArr(item, arrName, w);
       } else {
         console.log('added to create');
-        addToArr(item, arrName, c);
+        addToArr(item, arrName, w);
       }
       
-      console.log('CrudMan toggle triggered', arrs);
+      console.log('CrudMan TOGGLE triggered', arrs);
     }
     
-    return {
-      setExists: setExists,
-      toggleItem: toggleItem,
-      createArr: createArr,
-      getArrs: getArrs
-    }
+    return CrudMan;
   }
 ])
 .factory('markitupSettings', [

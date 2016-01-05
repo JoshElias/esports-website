@@ -8,7 +8,7 @@
       <div class="row form-group m-r-none m-l-none">
           <label for="talentName" class="col-sm-3 control-label">Name</label>
           <div class="col-sm-9">
-              <input type="text" id="talentName" name="talentName" class="form-control" ng-model="currentTalent.name" ng-change="searchTalents(currentTalent.name)" required>
+              <input type="text" id="talentName" name="talentName" class="form-control" ng-model="currentTalent.talent.name" ng-change="searchTalents(currentTalent.talent.name)" required>
           </div>
       </div>
       <div class="row form-group m-r-none m-l-none">
@@ -20,7 +20,7 @@
       <div class="row form-group m-r-none m-l-none">
           <label for="talentDescription" class="col-sm-3 control-label">Descrip.</label>
           <div class="col-sm-9">
-              <input type="text" id="talentDescription" name="talentDescription" class="form-control" ng-model="currentTalent.description" required>
+              <input type="text" id="talentDescription" name="talentDescription" class="form-control" ng-model="currentTalent.talent.description" required>
           </div>
       </div>
       <div class="row form-group m-r-none m-l-none">
@@ -32,7 +32,7 @@
       <div class="row form-group m-r-none m-l-none">
           <label for="talentClassName" class="col-sm-3 control-label">CSS Class</label>
           <div class="col-sm-9">
-              <input type="text" id="talentClassName" name="talentClassName" class="form-control" ng-model="currentTalent.className" required>
+              <input type="text" id="talentClassName" name="talentClassName" class="form-control" ng-model="currentTalent.talent.className" required>
           </div>
       </div>
     </div>
