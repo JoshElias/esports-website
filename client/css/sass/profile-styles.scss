@@ -44,12 +44,63 @@
 .profile-page .profile-info .profile-info-body .description { margin: 30px 0px; }
 
 
-.profile-page .activity-filter li { display: inline-block; }
-.profile-page .activity-filter .profile-filter-btn { background-color: rgba(0,0,0,.6); border-radius: 0; opacity: .8 }
-.profile-page .activity-filter .profile-filter-btn:hover { opacity: 1; }
-.profile-page .activity-filter .profile-filter-btn.active { background-color: #2766ad; opacity: 1; }
-.profile-page .activity-filter .profile-filter-btn:focus { background-color: rgba(0,0,0,.6); outline:none; }
-.profile-page .activity-filter .profile-filter-btn:focus.active { background-color: #2766ad; outline:none; }
+//.profile-page .activity-filter li { display: inline-block; }
+//.profile-page .activity-filter .profile-filter-btn { background-color: rgba(0,0,0,.6); border-radius: 0; opacity: .8 }
+//.profile-page .activity-filter .profile-filter-btn:hover { opacity: 1; text-shadow: none; font-weight: 700; border-color: black;}
+//.profile-page .activity-filter .profile-filter-btn.active { background-color: #2766ad; opacity: 1; text-shadow: none; border-color: black; font-weight: 700;}
+//.profile-page .activity-filter .profile-filter-btn:focus { background-color: rgba(0,0,0,.6); outline:none; text-shadow: none; border-color: black;}
+//.profile-page .activity-filter .profile-filter-btn:focus.active { background-color: #2766ad; outline:none; text-shadow: none; border-color: black;}
+
+
+.profile-page {
+    .activity-filter {
+        li { 
+            display: inline-block; 
+        }
+
+        .profile-filter-btn { 
+            background-color: rgba(0,0,0,.7); 
+            border-radius: 0;
+            font-weight: 700;
+            opacity: .8;
+            text-shadow: none;
+            color: rgba(255, 255, 255, .7);
+
+            &:hover { 
+                opacity: 1; 
+                border-color: black;
+                font-weight: 700;
+                color: rgba(255, 255, 255, 1);
+            }
+
+            &.active { 
+                background-color: #2766ad; 
+                opacity: 1; 
+                border-color: black;
+                font-weight: 700;    
+            }
+            
+            &:focus { 
+                background-color: rgba(0,0,0,.6); 
+                outline:none; 
+                border-color: black;
+                font-weight: 700;
+                color: rgba(255, 255, 255, .7);
+                
+                &.active { 
+                    background-color: #2766ad; 
+                    outline:none; 
+                    border-color: black;
+                    font-weight: 700;
+                    color: rgba(255, 255, 255, .7);
+                }
+            }
+        }
+    }
+}
+
+.profile-page .activity-filter .profile-filter-btn:focus { background-color: rgba(0,0,0,.6); outline:none; text-shadow: none; border-color: black;}
+.profile-page .activity-filter .profile-filter-btn:focus.active { background-color: #2766ad; outline:none; text-shadow: none; border-color: black;}
 
 
 .profile-page .activity-list .activity { padding: 30px 25px 25px 25px; display: flex; overflow: hidden; opacity: 1; transition: .2s; -moz-transition: .2s; -webkit-transition: .2s; }

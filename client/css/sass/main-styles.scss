@@ -161,6 +161,12 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 // 2.2.. content styles
 
+.ts-outline {
+    border: 1px solid rgba(0,0,0,.2);
+    outline: rgba(255,255,255,.2)solid 1px;
+    outline-offset: -2px;
+}
+
 .games-btns { background: #000; }
 .games-btn { position: relative; display: block; height: 291px; overflow: hidden; text-align: center; white-space: nowrap; -webkit-backface-visibility: hidden;}
 
@@ -274,6 +280,13 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .home-content .btn-hots { width: 100% !important; }
 .home-content .btn-hots .inner { width: 100% !important; }
+
+.home-content {
+    .home-spons {
+        width: 100%;
+    }
+}
+
 
 // 2.5.. padding
 

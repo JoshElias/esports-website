@@ -1,0 +1,52 @@
+@import 'ts-colors.scss';
+
+// Description: styles for alerts throughout the site
+
+//*************************************
+
+// 1... admin alerts
+// 2... hots guidebuilder alerts
+
+//*************************************
+
+//*************************************
+// 1... admin alerts
+//*************************************
+
+alert-box {
+
+    .panel-body {
+        background-color: white;
+    }
+
+    .default {
+        margin-top: 20px;
+        overflow: hidden;
+        font-weight: bold;
+        color: white;
+        background: black;
+        padding: 20px;
+    }
+    
+    .default.success {
+        border: 2px solid green;
+    }
+    
+    .default.error {
+        border: 2px solid red;
+    }
+}
+
+
+//*************************************
+// 2... hots guidebuilder alerts
+//*************************************
+
+.guide-builder {
+
+    .panel {
+        .panel-body {
+            background-color: white;
+        }
+    }    
+}

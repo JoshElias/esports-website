@@ -273,6 +273,25 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Overwatch', description: 'Tempo Storm is your top source for Blizzard Entertainment\'s Overwatch. Tournament news, strategy, and patch details.', keywords: 'blizzard overwatch' }
             })
+            .state('app.overwatch.snapshot', {
+                abstrat: true,
+                url: '/meta-snapshot',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/frontend/overwatch.snapshots.html'
+                    }
+                }
+            })
+            
+            .state('app.overwatch.snapshot.snapshot', {
+                url: '/test',
+                views: {
+                    overwatchSnapshots: {
+                        templateUrl: tpl + 'views/frontend/overwatch.snapshots.snapshot.html',
+                    }
+                }
+            })
+            
             .state('app.overwatch.heroes', {
                 abstract: true,
                 url: '/heroes',
