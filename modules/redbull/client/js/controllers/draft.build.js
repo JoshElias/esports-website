@@ -1,6 +1,6 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'DraftCards', 
-    function ($scope, $compile, $filter, $state, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, DraftCards) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'DraftCards', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, DraftCards) {
         var allCards = DraftCards.getCards();
         if (!allCards.length) {
             return $state.go('app.redbull.draft.packs');
@@ -43,6 +43,21 @@ angular.module('redbull.controllers')
             $scope.cards.current = $scope.cards.sorted[$scope.klasses[0]];
         }
         sortCards();
+        
+        function initDecks () {
+            var decks = $localStorage.draftDecks;
+            if (decks && decks.length) {
+                for (var i = 0; i < decks.length; i++) {
+                    $scope.decks.push(DeckBuilder.new(decks[i].playerClass, decks[i]));
+                }
+            }
+        }
+        initDecks();
+        
+        // save decks to local storage for now
+        $scope.$watch(function () { return $scope.decks; }, function (newValue) {
+            $localStorage.draftDecks = newValue;
+        }, true);
         
         // pagination
         $scope.perpage = 15;
@@ -314,6 +329,35 @@ angular.module('redbull.controllers')
                 }
             });
             box.modal('show');
+        };
+        
+        $scope.decksComplete = function () {
+            var decks = $scope.decks;
+            if (!decks || !decks.length || decks.length !== 3) { return false; }
+            for (var i = 0; i < decks.length; i++) {
+                if (decks[i].getSize() !== 30) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        
+        $scope.saveDecks = function () {
+            var box = bootbox.dialog({
+                title: 'Save Decks',
+                message: 'This feature has not been completed yet.',
+                buttons: {
+                    cancel: {
+                        label: 'OK',
+                        className: 'btn-blue',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+
         };
 
     }
