@@ -19,20 +19,7 @@
 	background-color: white;
 }
 
-alert-box .default {
-    margin-top: 20px;
-    overflow: hidden;
-    font-weight: bold;
-    color: white;
-    background: black;
-    padding: 20px;
-}
-alert-box .default.success {
-    border: 2px solid green;
-}
-alert-box .default.error {
-    border: 2px solid red;
-}
+
 
 
 /*

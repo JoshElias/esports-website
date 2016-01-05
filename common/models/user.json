@@ -60,6 +60,7 @@
       "type": "object"
     }
   },
+  "hidden": ["password"],
   "validations": [],
   "relations": {
     "activities": {
