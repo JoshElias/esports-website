@@ -135,6 +135,7 @@ angular.module('redbull.controllers')
     }
 
     // audio files
+    $scope.volume = 35;
     $scope.audioFiles = {
         'announcer_epic':           { file: 'announcer_epic' + ext, volume: .3 },
         'announcer_legendary':      { file: 'announcer_legendary' + ext, volume: .3 },
