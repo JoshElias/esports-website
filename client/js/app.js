@@ -398,8 +398,15 @@ var app = angular.module('app', [
                                             isActive: true
                                         },
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            id: true,
+                                            articleType: true,
+                                            isFeatured: true,
+                                            themeName: true,
+                                            description: true,
+                                            title: true,
+                                            premium: true,
+                                            slug: true,
+                                            photoNames: true
                                         },
                                         order: "createdDate DESC",
                                         limit: perpage,
@@ -458,6 +465,11 @@ var app = angular.module('app', [
 
                                 return Article.findOne({
                                     filter: {
+                                        fields: {
+                                          oldComments: false,
+                                          oldRelatedArticles: false,
+                                          isActive: false,
+                                        },
                                         where: {
                                             "slug.url": slug
                                         },
@@ -465,11 +477,12 @@ var app = angular.module('app', [
                                             {
                                                 relation: "author",
                                                 scope: {
-                                                    filter: [
+                                                    fields: [
                                                         "username",
                                                         "about",
                                                         "providerDescription",
-                                                        "social"
+                                                        "social",
+                                                        "email"
                                                     ]
                                                 }
                                             },
@@ -651,7 +664,17 @@ var app = angular.module('app', [
                                             playerClass: true,
                                             createdDate: true
                                         },
-                                        include: ["author"],
+                                        include: [
+                                          {
+                                            relation: "author",
+                                            scope: {
+                                              fields: [
+                                                'id',
+                                                'username'
+                                              ]
+                                            }
+                                          }
+                                        ],
                                         order: "createdDate DESC",
                                         skip: (page * perpage) - perpage,
                                         limit: perpage
@@ -786,7 +809,16 @@ var app = angular.module('app', [
                                                 }
                                             },
                                             {
-                                                relation: 'author'
+                                                relation: 'author',
+                                                scope: {
+                                                    fields: [
+                                                      'id',
+                                                      'email',
+                                                      'username',
+                                                      'social',
+                                                      'subscription'
+                                                    ]
+                                                }
                                             },
                                             {
                                                 relation: 'matchups'
@@ -1645,7 +1677,7 @@ var app = angular.module('app', [
                             communityGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
-                                        featured: false
+                                        isFeatured: false
                                     }
                                 }).$promise;
                             }],
@@ -1785,7 +1817,7 @@ var app = angular.module('app', [
                             tempostormGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
-                                        featured: true
+                                        isFeatured: true
                                     }
                                 }).$promise;
                             }],
@@ -1974,19 +2006,59 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            dataHeroes: ['Hero', function (Hero) {
-                              return Hero.find({
-                                filter: {
-                                  fields: {
-                                    oldTalents: false,
-                                    oldAbilities: false,
-                                    price: false,
-                                    title: false,
-                                    manaType: false,
-                                    characters: false
-                                  }
+                            dataHeroes: ['Hero', 'HeroTalent', '$q', function (Hero, HeroTalent, $q) {
+                              var d = $q.defer();
+                              async.waterfall([
+                                function(waterCB) {
+                                  Hero.find({
+                                    filter: {
+                                      fields: {
+                                        oldTalents: false,
+                                        oldAbilities: false,
+                                        price: false,
+                                        title: false,
+                                        manaType: false,
+                                        characters: false
+                                      }
+                                    }
+                                  }).$promise
+                                  .then(function(heroData) {
+                                    return waterCB(null, heroData);
+                                  })
+                                  .catch(function (err) {
+                                    return waterCB();
+                                  });
+                                },
+                                function (heroData, waterCB) {
+                                  async.each(heroData, function(hero, heroCB) {
+                                    HeroTalent.find({
+                                      filter: {
+                                        where: {
+                                          heroId: hero.id
+                                        },
+                                        include: ['talent']
+                                      }
+                                    }).$promise
+                                    .then(function (heroTalents) {
+                                      console.log('heroTalents:', heroTalents);
+                                      hero.talents = heroTalents;
+                                      console.log('heroData:', heroData);
+                                      return heroCB();
+                                    })
+                                    .catch(function (err) {
+                                      return heroCB(err);
+                                    });
+
+                                  }, function(err) {
+                                    return waterCB(null, heroData);
+                                  });
                                 }
-                              }).$promise;
+                              ], function(err, results) {
+                                console.log('results:', results);
+                                return d.resolve(results);
+                              });
+                              
+                              return d.promise;
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({}).$promise;
@@ -2127,19 +2199,57 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            dataHeroes: ['Hero', function (Hero) {
-                              return Hero.find({
-                                filter: {
-                                  fields: {
-                                    oldTalents: false,
-                                    oldAbilities: false,
-                                    price: false,
-                                    title: false,
-                                    manaType: false,
-                                    characters: false
-                                  }
+                            dataHeroes: ['Hero', 'HeroTalent', '$q', function (Hero, HeroTalent, $q) {
+                              var d = $q.defer();
+                              async.waterfall([
+                                function(waterCB) {
+                                  Hero.find({
+                                    filter: {
+                                      fields: {
+                                        oldTalents: false,
+                                        oldAbilities: false,
+                                        price: false,
+                                        title: false,
+                                        manaType: false,
+                                        characters: false
+                                      }
+                                    }
+                                  }).$promise
+                                  .then(function(heroData) {
+                                    return waterCB(null, heroData);
+                                  })
+                                  .catch(function (err) {
+                                    return waterCB();
+                                  });
+                                },
+                                function (heroData, waterCB) {
+                                  async.each(heroData, function(hero, heroCB) {
+                                    HeroTalent.find({
+                                      filter: {
+                                        where: {
+                                          heroId: hero.id
+                                        },
+                                        include: ['talent']
+                                      }
+                                    }).$promise
+                                    .then(function (heroTalents) {
+                                      hero.talents = heroTalents;
+                                      return heroCB();
+                                    })
+                                    .catch(function (err) {
+                                      return heroCB(err);
+                                    });
+
+                                  }, function(err) {
+                                    return waterCB(null, heroData);
+                                  });
                                 }
-                              }).$promise;
+                              ], function(err, results) {
+                                console.log('results:', results);
+                                return d.resolve(results);
+                              });
+                              
+                              return d.promise;
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({}).$promise;
@@ -2157,6 +2267,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
                         controller: 'HOTSGuideBuilderEditMapCtrl',
                         resolve: {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider', '$premium']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
                             dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
                                 return Guide.findOne({
@@ -3045,7 +3173,8 @@ var app = angular.module('app', [
                             activityCount: ['userProfile', 'Activity', function (userProfile, Activity) {
                                 return Activity.count({
                                     where: {
-                                        authorId: userProfile.id
+                                        authorId: userProfile.id,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }]

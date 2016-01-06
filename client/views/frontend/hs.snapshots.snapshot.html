@@ -261,7 +261,7 @@
             <!-- AUTHORS -->
             <div class="row m-l-none m-r-none m-b-md">
                 <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors" >
-                    <button class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}">
+                    <a class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}">
                         <div class="author-img-wrapper pull-left hidden-xs">
                             <img ng-if="author.expertClasses.length === 1" class="author-class-icon m-l-sm" ng-src="../../img/meta-snapshot/class-icons/{{author.expertClasses[0]}}.png" />
                             <span ng-if="author.expertClasses.length > 1">
@@ -286,7 +286,7 @@
                             <a ng-if="author.user.social.twitter" class="btn twitter-btn soc-btn" ng-click="goToTwitter($event, author.user.social.twitter)"><i class="fa fa-twitter"></i></a>
                             <a ng-if="!author.user.social.twitter" class="btn twitter-btn soc-btn disable" disabled><i class="fa fa-twitter"></i></a>
                         </div>
-                    </button>
+                    </a>
                     
                     <div class="author-collapse collapse" id="{{author.user.id}}">
                         <p> {{author.description}} </p>
