@@ -3336,77 +3336,93 @@ angular.module('app.services', [])
 }])
 .factory('CrudMan', [
   function () {
-    var arrs = {};
+//    var arrs = {};
     var crud = {
       exists  : [],
       toDelete: [],
       toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
     }
+    var e = 'exists';
+    var d = 'toDelete';
+    var w = 'toWrite';
     
-    function getArrs () {
-      return arrs;
-    }
-    
-    function find (item, arrName, crud) {
-      return _.find(arrs[arrName][crud], function (val) { return val == item });
-    }
-    
-    function createArr (arrName) {
-      arrs[arrName] = angular.copy(crud);
-    }
-    
-    function setExists (inArr, arrName) {
-      if (!arrs[arrName]) {
-        this.createArr(arrName);
+    var CrudMan = function () {
+      var arrs = {};
+      
+      function getArrs () {
+        return arrs;
       }
-      
-      _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
-    }
-    
-    function removeFromArr (item, arrName, crud) {
-      var arr = arrs[arrName];
-      var idx = arr[crud].indexOf(item);
-      
-      arr[crud].splice(idx, 1);
-    }
-    
-    function addToArr (item, arrName, crud) {
-      var arr = arrs[arrName];
-      
-      if (find(item, arrName, crud)) {
-        var idx = arr[crud].indexOf(item);
-        
-        arr['toDelete'].splice(idx, 1);
-      }
-      
-      arr['toWrite'].push(item);
-    }
-    
-    function toggleItem (item, arrName) {
-      var e = 'exists';
-      var d = 'toDelete';
-      var c = 'toWrite';
 
-      if (find(item, arrName, e)) {
-        console.log('is in exists');
-        arrs[arrName][d].push(item);
-      } else if (find(item, arrName, c)) {
-        console.log('is in create');
-        removeFromArr(item, arrName, c);
-      } else {
-        console.log('added to create');
-        addToArr(item, arrName, c);
+      function find (item, arrName, crud) {
+        return _.find(arrs[arrName][crud], function (val) { return val == item });
+      }
+
+      function createArr (arrName) {
+        arrs[arrName] = angular.copy(crud);
+      }
+
+      function setExists (inArr, arrName) {
+        console.log('SET EXISTS WAS CALLED:', inArr, arrName);
+        if (!arrs[arrName]) {
+          this.createArr(arrName);
+        }
+
+        _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
+      }
+
+      function removeFromArr (item, arrName, crud) {
+        var arr = arrs[arrName];
+        var idx = arr[crud].indexOf(item);
+
+        arr[crud].splice(idx, 1);
+      }
+
+      function addToArr (item, arrName) {
+        var arr = arrs[arrName];
+
+        if (find(item, arrName, crud)) {
+          var idx = arr[crud].indexOf(item);
+
+          arr[d].splice(idx, 1);
+        }
+
+        console.log('CrudMan: ADD triggered', arrs);
+        if (!find(item, arrName, w)) {
+          arr[w].push(item);
+          console.log('CrudMan: item not found. added toWrite');
+        } else {
+          console.log('CrudMan: item found in toWrite. did NOT add');
+        }
+
+      }
+
+      function toggleItem (item, arrName) {
+        if (find(item, arrName, e)) {
+          console.log('is in exists');
+          arrs[arrName][d].push(item);
+        } else if (find(item, arrName, w)) {
+          console.log('is in create');
+          removeFromArr(item, arrName, w);
+        } else {
+          console.log('added to create');
+          addToArr(item, arrName, w);
+        }
+
+        console.log('CrudMan TOGGLE triggered', arrs);
       }
       
-      console.log('CrudMan toggle triggered', arrs);
+      return {
+        setExists: setExists,
+        toggle: toggleItem,
+        add: addToArr,
+        createArr: createArr,
+        getArrs: getArrs
+      }
     }
     
-    return {
-      setExists: setExists,
-      toggleItem: toggleItem,
-      createArr: createArr,
-      getArrs: getArrs
-    }
+    
+    
+    return CrudMan;
   }
 ])
 .factory('markitupSettings', [

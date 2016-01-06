@@ -5146,7 +5146,7 @@ var app = angular.module('app', [
                                         filter: {
                                             limit: 50,
                                             order: 'createdDate DESC',
-                                            fields: ['id', 'title', 'createdDate']
+                                            fields: ['id', 'title', 'snapNum']
                                         }
                                     }
                                 };

@@ -13,6 +13,7 @@
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">
         Add a Hero
+      {{hero}}
     </div>
     <div class="panel-body">
         <div class="row form-group">
@@ -96,22 +97,22 @@
                 </a>
                 <strong class="lh-lg">Talents</strong>
             </div>
-            <ul class="list-group" dnd-list="talents" dnd-allowed-types="['talent']" ng-show="talents.length">
+            <ul class="list-group" dnd-list="talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
                 <li class="list-group-item admin-list-item lh-lg clearfix"
-                    ng-repeat="talent in talents track by $index"
+                    ng-repeat="talent in hero.talents"
                     dnd-draggable="talent"
-                    dnd-moved="updateDND(talents, $index)"
-                    dnd-disable-if="talents.length < 2"
+                    dnd-moved="updateDND(hero.talents, $index)"
+                    dnd-disable-if="hero.talents.length < 2"
                     dnd-type="'talent'"
                 >
-                    Level {{talent.tier}} - {{talent.name}}
+                    Level {{talent.tier}} - {{talent.name || talent.talent.name}}
                     <div class="pull-right">
                         <button class="btn btn-sm btn-default" ng-click="talentEditWnd(talent)">Edit</button>
                         <button class="btn btn-sm btn-danger" ng-click="deleteTalent(talent)">Delete</button>
                     </div>
                 </li>
             </ul>
-            <div class="panel-body" ng-show="!talents.length">
+            <div class="panel-body" ng-show="!hero.talents.length">
                 <p class="m-b-none">There are no talents added for this hero yet.</p>
             </div>
         </div>
