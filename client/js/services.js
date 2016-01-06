@@ -2195,7 +2195,6 @@ angular.module('app.services', [])
 
             var obj = {};
             obj.hero = hero;
-//            obj.hero.talents = tals;
             obj.talents = {
               tier1: null,
               tier4: null,
@@ -2206,29 +2205,6 @@ angular.module('app.services', [])
               tier20: null
             };
             gb.heroes.push(obj);
-            
-//            if (_.isEmpty(hero.talents)) {
-//              HeroTalent.find({
-//                filter: {
-//                  where: {
-//                    heroId: hero.id
-//                  },
-//                  include: ['talent']
-//                }
-//              })
-//              .$promise
-//              .then(function (data) {
-//                console.log('data:', data);
-//                var heroes = gb.heroes;
-//                var index = heroes.indexOf(obj);
-//                
-//                console.log('heroes:', heroes);
-//                console.log('hero:', hero);
-//                  
-//                hero.talents = data;
-//                heroes[index].hero.talents = data;
-//              });
-//            }
           }
         };
 

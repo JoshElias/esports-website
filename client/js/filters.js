@@ -52,8 +52,6 @@ angular.module('app.filters', [])
                 
             });
         });
-        
-        console.log('out:', out);
         return out;
     };
 }]);

@@ -793,11 +793,10 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.activities = activities;
         console.log('$scope.activities:', $scope.activities);
         $scope.total = activityCount.count;
-        console.log('$scope.total:', $scope.total);
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
         $scope.LoopBackAuth = LoopBackAuth;
         $scope.queryFilter = [];
-        $scope.unfilteredCount = activityCount.count;
+        $scope.unfilteredCount = $scope.activities.length;
         
         var filters = {
             comments: [
@@ -812,6 +811,8 @@ angular.module('app.controllers', ['ngCookies'])
             guides: ['createGuide'],
             forumposts: ['createPost']
           };
+      
+        buildFilter();
 
         $scope.isFiltered = function (type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
@@ -825,18 +826,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.toggleFilter = function (filter) {
           for (var i = 0; i < $scope.filterActivities.length; i++) {
             if (filter == $scope.filterActivities[i]) {
-              console.log('filter:', filter);
               $scope.filterActivities.splice(i,1);
               buildFilter();
-              console.log('$scope.queryFilter:', $scope.queryFilter);
-              console.log("TRUE toggle filter", filter, $scope.filterActivities);
               return;
             }
           }
           $scope.filterActivities.push(filter);
           buildFilter();
-          console.log("FALSE toggle filter", filter, $scope.filterActivities);
-          console.log('$scope.queryFilter:', $scope.queryFilter);
         }
 
         var buildFilter = function () {
@@ -846,57 +842,60 @@ angular.module('app.controllers', ['ngCookies'])
               $scope.queryFilter.push(filters[$scope.filterActivities[i]][j]);
             }
           }
-          console.log('$scope.filterActivities:', $scope.filterActivities);
-          console.log('$scope.queryFilter:', $scope.queryFilter);
         }
-        buildFilter();
-
+      
+        // ugh this function kinda turned into a mess
+        var activityLimit = 3;
         $scope.loadActivities = function (isFilter) {
-          $scope.unfilteredCount = $filter('inq')($scope.activities, $scope.queryFilter, 'activityType').length;
-          console.log('$scope.unfilteredCount:', $scope.unfilteredCount);
-          if ($scope.unfilteredCount >= 3 && isFilter === true) {
+        $scope.unfilteredCount = $filter('inq')($scope.activities, $scope.queryFilter, 'activityType').length;
+          if (activityLimit >= $scope.total) {
             return;
           } else {
-            var options = {
-                  filter: {
-                    order: "createdDate DESC",
-                    limit: $scope.unfilteredCount < 3 ? 3 - $scope.unfilteredCount : 3,
-                    skip: $scope.activities.length - 1,
-                    where: {
-                      authorId: $scope.user.id,
-                      isActive: true
-                    },
-                    include: [
-                      {
-                        relation: 'article'
-                      },
-                      {
-                        relation: 'deck'
-                      },
-                      {
-                        relation: 'guide'
-                      }
-                    ]
+            if (!isFilter) {
+              // increment limit variable
+              activityLimit += 3;
+            }
+            if ($scope.unfilteredCount >= 3 && isFilter === true) {
+              return;
+            } else {
+              var options = {
+                filter: {
+                  order: "createdDate DESC",
+                  limit: activityLimit,
+                  where: {
+                    authorId: $scope.user.id,
+                    isActive: true
+                  }
+                }
+              }
+              
+              if (isFilter) {
+                options.filter = {
+                  order: "createdDate DESC",
+                  limit: activityLimit,
+                  where: {
+                    authorId: $scope.user.id,
+                    isActive: true,
+                    activityType: { inq : $scope.queryFilter }
                   }
                 }
 
-            if (isFilter) {
-              options.filter.where = {
-                authorId: $scope.user.id,
-                isActive: true,
-                activityType: { inq : $scope.queryFilter }
+                Activity.find(options)
+                .$promise
+                .then(function (data) {
+                  $scope.activities = data;
+                  $scope.unfilteredCount = $filter('inq')($scope.activities, $scope.queryFilter, 'activityType').length;
+                });
+
+              } else {
+                // clicked show more
+                Activity.find(options)
+                .$promise
+                .then(function (data) {
+                  $scope.activities = data;
+                });
               }
             }
-
-            console.log('options:', options);
-            Activity.find(options)
-            .$promise
-            .then(function (data) {
-              console.log('DATA', data);
-              console.log('$scope.activities:', $scope.activities);
-              console.log('$scope.activities.length:', $scope.activities.length);
-              $scope.activities = $scope.activities.concat(data);
-            });
           }
         }
 
@@ -905,36 +904,6 @@ angular.module('app.controllers', ['ngCookies'])
             return $sce.trustAsHtml(activity.activity);
           };
         });
-
-//            $scope.loadActivities = function () {
-//                Activity.find({
-//                    filter: {
-//                        order: "createdDate DESC",
-//                        limit: 3,
-//                        skip: $scope.activities.length,
-//                        where: {
-//                            authorId: $scope.user.id,
-//                            active: true
-//                        },
-//                        include: [
-//                            {
-//                                relation: 'article'
-//                            },
-//                            {
-//                                relation: 'deck'
-//                            }
-//                        ]
-//                    }
-//                })
-//                .$promise
-//                .then(function (data) {
-//                    console.log("activity data:", data);
-//                    $scope.activities = $scope.activities.concat(data);
-//                })
-//                .catch(function (err) {
-//                    console.log("err loading activity data:", err);
-//                });
-//            }
 
             // delete guide
             $scope.deleteGuide = function deleteGuide(activity) {
@@ -946,22 +915,12 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                console.log('activity:', activity);
                                 return Guide.deleteById({
                                     id: activity.guide.id
                                 }).$promise
                                 .then(function (guideDeleted) {
                                     activity.guide = undefined;
                                 });
-//                                HOTSGuideService.guideDelete(activity.guide._id).success(function (data) {
-//                                    if (data.success) {
-//                                        activity.exists = false;
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: 'guide "' + activity.guide.name + '" deleted successfully.'
-//                                        };
-//                                    }
-//                                });
                             }
                         },
                         cancel: {
@@ -10733,7 +10692,8 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'articlesTotal', 'MetaService', 'AjaxPagination',
         function ($scope, $state, $q, $timeout, Article, articles, articlesTotal, MetaService, AjaxPagination) {
             //if (!data.success) { return $state.transitionTo('app.articles.list'); }
-
+          
+          console.log('articles:', articles);
             // articles
             $scope.articles = articles;
             $scope.total = articlesTotal.count;
@@ -11040,7 +11000,8 @@ angular.module('app.controllers', ['ngCookies'])
             
             console.log('tempostormCount:', tempostormCount);
             console.log('communityCount:', communityCount);
-            
+            console.log('tempostormDecks:', tempostormDecks);
+            console.log('communityDecks:', communityDecks);
             // decks
             $scope.deckSearch = '';
             $scope.tempostormDecks = tempostormDecks;
@@ -14190,6 +14151,8 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
         function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
+          
+            console.log('hi');
 
             $scope.tempostormGuides = dataTempostormGuides;
 //            $scope.tempostormGuideTalents = tempostormTalents;
@@ -14698,8 +14661,6 @@ angular.module('app.controllers', ['ngCookies'])
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === null ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
 
-            console.log('guide: ', $scope.guide);
-
             $scope.$watch('guide', function() {
                 $scope.app.settings.guide = $scope.guide;
             }, true);
@@ -14731,6 +14692,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < heroRows.length; row++) {
                 var heroes = [];
                 for (var i = 0; i < heroRows[row]; i++) {
+                  console.log('index:', index);
+                  console.log('dataHeroes:', dataHeroes);
                     if (dataHeroes[index]) {
                         heroes.push(dataHeroes[index]);
                     } else {

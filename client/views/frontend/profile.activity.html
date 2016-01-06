@@ -73,9 +73,6 @@
     </div>
     <!-- / activity -->
 </div>
-<p class="profile-no-content" ng-show="unfilteredCount - activites.length === 0">
-  No activities found for the current search filters.
-</p>
-<p class="profile-no-content" ng-show="!activities.length">@{{user.username}} has no site activity yet.</p>
+<p class="profile-no-content" ng-show="!activities.length || unfilteredCount === 0">@{{user.username}} has no site activity yet.</p>
 <div ng-if="activities.length != total" class="show-more m-b-md"><a class="show-more-btn" ng-click="loadActivities(false)" href="#">Show More</a></div>
 <!-- / activities -->
