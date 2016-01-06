@@ -14,7 +14,7 @@
         right: 0px;
         bottom: 0px;
         background-color: #161213;
-        cursor: url("../img/modules/redbull/client/img/cursor.png"), auto;
+        cursor: url("../img/modules/redbull/client/img/cursor.png") 10 2, auto;
 
         div, img {
             -webkit-user-select: none;
@@ -23,13 +23,13 @@
             user-select: none;
         }
         a {
-          cursor: url("../img/modules/redbull/client/img/cursor.png"), auto;
+          cursor: url("../img/modules/redbull/client/img/cursor.png") 10 2, auto;
         }
         
         &.blurred,
         &.fast-forward {
             .bg,
-            .pack-wrapper {
+            .expansion-wrapper {
                 -webkit-filter: blur(5px);
                 -moz-filter: blur(5px);
                 -o-filter: blur(5px);
@@ -47,7 +47,7 @@
         }
         
         .bg,
-        .pack-wrapper {
+        .expansion-wrapper {
             -webkit-filter: blur(0px);
             -moz-filter: blur(0px);
             -o-filter: blur(0px);
@@ -137,7 +137,7 @@
                 left: 0px;
                 bottom: 0px;
                 width: 300px;
-                background: rgba(0,0,0,.4);
+                background: rgba(46,43,41,.4);
                 border-right: 1px solid #000;
                 z-index: 99;
                 
@@ -171,88 +171,195 @@
                 }
                 /* end temp button for settings */
                 
-                .pack-wrapper {
-                    position: relative;
-                    margin: 30px auto;
-                    width: 155px;
-                    height: 212px;
-                    z-index: 100;
+                .volume-control {
+                    position: absolute;
+                    top: auto;
+                    bottom: 0px;
+                    left: 0px;
+                    right: 0px;
+                    height: 50px;
+                    border-top: 1px solid #000;
+                    background: rgba(46,43,41,1);
                     
-                    .pack-tab {
+                    .volume-tooltip {
+                        display: block;
                         position: absolute;
-                        top: 10px;
-                        right: 30px;
-                        min-width: 23px;
-                        height: 37px;
-                        background: url("../img/modules/redbull/client/img/pack-tab.png") center top no-repeat;
-                        z-index: 103;
-                        color: #FFF;
-                        font-family: hs;
+                        top: -25px;
+                        left: 35%;
+                        padding: 2px 5px;
+                        width: 40px;
+                        margin-left: -20px;
+                        font-size: 14px;
+                        line-height: 14px;
                         text-align: center;
-                        line-height: 26px;
-                        font-size: 20px;
-                        text-shadow: 0px 0px 1px rgba(0,0,0,.4);
-                        
-                        &.goblins-vs-gnomes {
-                            top: 15px;
-                        }
-                        
-                        &.the-grand-tournament {
-                            top: 15px;
-                        }
+                        background: #2766ad;
+                        color: #FFF;
+                        border: 1px solid #000;
+                        border-radius: 4px;
+                        z-index: 3;
                     }
                     
-                    .pack,
-                    .pack-next {
-                        position: absolute;
-                        left: 0px;
-                        top: 0px;
-                        width: 155px;
-                        height: 212px;
-                        background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
-                        z-index: 101;
-
-                        &.league-of-explorers {
-                            background: url("../img/modules/redbull/client/img/pack-loe.png") no-repeat;
-                        }
-
-                        &.blackrock-mountain {
-                            background: url("../img/modules/redbull/client/img/pack-brm.png") no-repeat;
-                        }
-
-                        &.naxxramas {
-                            background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
-                        }
-
-                        &.goblins-vs-gnomes {
-                            background: url("../img/modules/redbull/client/img/pack-gvg.png") no-repeat;
-                        }
-
-                        &.the-grand-tournament {
-                            background: url("../img/modules/redbull/client/img/pack-tgt.png") no-repeat;
-                        }
-
-                        &.soulbound {
-                            background: url("../img/modules/redbull/client/img/pack-soulbound.png") no-repeat;
-                        }
-                        
-                        &.disabled {
-                            background: none !important;
-                        }
-                    }
-                    
-                    .pack {
+                    .volume-slider-wrapper {
                         position: relative;
-                        z-index: 102;
-                        
-                        &.ui-draggable-dragging {
-                            transform: scale(1.05) perspective(300px) rotateY(10deg);
-                            webkit-transform: scale(1.05) perspective(300px) rotateY(10deg);
-                            z-index: 104;
-                        }
+                        margin: 6px auto;
+                        padding: 3px 32px 4px 34px;
+                        width: 282px;
+                        height: 38px;
+                        background: url("../img/modules/redbull/client/img/volume-slider.png") center top no-repeat;
+                    }
+                    
+                    .volume-slider {
+                        position: relative;
+                        width: 216px;
+                        height: 31px;
+                    }
+                    
+                    .ui-slider-handle {
+                        position: absolute;
+                        top: 0px;
+                        margin-left: -8px;
+                        width: 16px;
+                        height: 31px;
+                        z-index: 2;
+                        cursor: pointer;
+                        background: url("../img/modules/redbull/client/img/volume-nob.png") center top no-repeat;
+                        outline: none;
+                    }
+                    
+                    .ui-slider-range {
+                        position: absolute;
+                        top: 0;
+                        width: 185px;
+                        height: 100%;
                     }
                 }
                 
+                .expansion-wrapper {
+                    position: relative;
+                    margin: 15px auto;
+                    padding-top: 7px;
+                    width: 187px;
+                    height: 271px;
+                    background: url("../img/modules/redbull/client/img/pack-frame.png") center top no-repeat;
+                    
+                    &.goblins-vs-gnomes,
+                    &.the-grand-tournament {
+                        padding-top: 12px;
+                    }
+                    
+                    .pack-wrapper {
+                        position: relative;
+                        margin: 0 auto;
+                        width: 155px;
+                        height: 212px;
+                        z-index: 100;
+
+                        .pack-tab {
+                            position: absolute;
+                            top: 10px;
+                            right: 30px;
+                            min-width: 23px;
+                            height: 37px;
+                            background: url("../img/modules/redbull/client/img/pack-tab.png") center top no-repeat;
+                            z-index: 103;
+                            color: #FFF;
+                            font-family: hs;
+                            text-align: center;
+                            line-height: 26px;
+                            font-size: 20px;
+                            text-shadow: 0px 0px 1px rgba(0,0,0,.4);
+
+                            &.goblins-vs-gnomes,
+                            &.the-grand-tournament {
+                                top: 15px;
+                            }
+                        }
+
+                        .pack,
+                        .pack-next {
+                            position: absolute;
+                            left: 0px;
+                            top: 0px;
+                            width: 155px;
+                            height: 212px;
+                            background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
+                            z-index: 101;
+
+                            &.league-of-explorers {
+                                background: url("../img/modules/redbull/client/img/pack-loe.png") no-repeat;
+                            }
+
+                            &.blackrock-mountain {
+                                background: url("../img/modules/redbull/client/img/pack-brm.png") no-repeat;
+                            }
+
+                            &.naxxramas {
+                                background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
+                            }
+
+                            &.goblins-vs-gnomes {
+                                background: url("../img/modules/redbull/client/img/pack-gvg.png") no-repeat;
+                            }
+
+                            &.the-grand-tournament {
+                                background: url("../img/modules/redbull/client/img/pack-tgt.png") no-repeat;
+                            }
+
+                            &.soulbound {
+                                background: url("../img/modules/redbull/client/img/pack-soulbound.png") no-repeat;
+                            }
+
+                            &.disabled {
+                                background: none !important;
+                            }
+                        }
+
+                        .pack {
+                            position: relative;
+                            z-index: 102;
+
+                            &.ui-draggable-dragging {
+                                transform: scale(1.05) perspective(300px) rotateY(10deg);
+                                webkit-transform: scale(1.05) perspective(300px) rotateY(10deg);
+                                z-index: 104;
+                            }
+                        }
+
+                    }
+
+                    .pack-label {
+                        margin: 0 0 0 -70px;
+                        position: absolute;
+                        bottom: 0px;
+                        left: 50%;
+                        width: 141px;
+                        height: 44px;
+                        //background: url("../img/modules/redbull/client/img/card-pack-tab.png") no-repeat;
+                        text-align: center;
+                        font-size: 14px;
+                        font-family: 'Open Sans Bold';
+                        letter-spacing: 2px;
+                        line-height: 14px;
+
+                        span {
+                            position: absolute;
+                            top: 13px;
+                            left: 0px;
+                            width: 141px;
+                            transform: rotate(-3deg);
+                            text-transform: uppercase;
+
+                            &.goblins-vs-gnomes,
+                            &.blackrock-mountain,
+                            &.the-grand-tournament,
+                            &.league-of-explorers {
+                                top: 8px;
+                            }
+
+                        } /* span */
+                    } /* .pack-label */
+                } /* .expansion-wrapper */
+
             }/* .packs */
 
             .pack-drop {

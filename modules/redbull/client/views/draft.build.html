@@ -41,7 +41,7 @@
             <h3>Card Mechanics</h3>
             
             <div class="mechanics-wrapper">
-                <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+                <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
                     <div class="iscroll-scroller">
                         <ul>
                             <li ng-repeat="mechanic in cardMechanics">
@@ -77,7 +77,7 @@
                 </div>
                 
                 <div class="deck-cards">
-                    <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+                    <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
                         <div class="iscroll-scroller">
                             
                             <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}" 

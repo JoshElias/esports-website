@@ -12237,44 +12237,45 @@ angular.module('app.controllers', ['ngCookies'])
 
             // delete hero
             $scope.deleteHero = function deleteHero(hero) {
-                var box = bootbox.dialog({
-                    title: 'Delete hero: ' + hero.name + '?',
-                    message: 'Are you sure you want to delete the hero <strong>' + hero.name + '</strong>?',
-                    buttons: {
-                        delete: {
-                            label: 'Delete',
-                            className: 'btn-danger',
-                            callback: function () {
-                                AdminHeroService.deleteHero(hero._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.heroes.indexOf(hero);
-                                        if (index !== -1) {
-                                            $scope.heroes.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: hero.name + ' deleted successfully.'
-                                        };
-                                    }
-                                });
-                            }
-                        },
-                        cancel: {
-                            label: 'Cancel',
-                            className: 'btn-default pull-left',
-                            callback: function () {
-                                box.modal('hide');
-                            }
+              var box = bootbox.dialog({
+                title: 'Delete hero: ' + hero.name + '?',
+                message: 'Are you sure you want to delete the hero <strong>' + hero.name + '</strong>?',
+                buttons: {
+                  delete: {
+                    label: 'Delete',
+                    className: 'btn-danger',
+                    callback: function () {
+                      Hero.destroyById({
+                        id: hero.id
+                      })
+                      .$promise
+                      .then(function (data) {
+                        var index = $scope.heroes.indexOf(hero);
+                        if (index !== -1) {
+                          $scope.heroes.splice(index, 1);
                         }
+
+                        AlertService.setSuccess({show: true, msg: hero.name + " has been deleted successfully."})
+                      })
                     }
-                });
-                box.modal('show');
+                  },
+                  cancel: {
+                    label: 'Cancel',
+                    className: 'btn-default pull-left',
+                    callback: function () {
+                      box.modal('hide');
+                    }
+                  }
+                }
+              });
+              box.modal('show');
             }
         }
     ])
     .controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 'Hero', 'Ability', 'Talent', 'HeroTalent', 'CrudMan',
         function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService, Hero, Ability, Talent, HeroTalent, CrudMan) {
-          var CrudMan = new CrudMan;
+          var CrudMan = new CrudMan();
+          
           CrudMan.createArr('talents');
           CrudMan.createArr('abilities');
           // default hero
@@ -12610,19 +12611,19 @@ angular.module('app.controllers', ['ngCookies'])
             }).catch(function (err) { console.log(err); });
           };
           
-          $scope.$on('$destroy', function() {
-            CrudMan.reset();
-          });
+//          $scope.$on('$destroy', function() {
+//            CrudMan.reset();
+//          });
           
         }
     ])
     .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'Ability', 'HeroTalent', 'Talent', 'CrudMan',
         function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, Ability, HeroTalent, Talent, CrudMan) {
             // defaults
-            var CrudMan = new CrudMan;
+            var CrudMan = new CrudMan();
+          
             CrudMan.setExists(hero.talents, 'talents');
             CrudMan.setExists(hero.abilities, 'abilities');
-            console.log(CrudMan.getArrs());
             var defaultAbility = {
                 name: '',
                 abilityType: HOTS.abilityTypes[0],
