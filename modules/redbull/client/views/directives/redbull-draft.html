@@ -13,20 +13,29 @@
     <!-- packs -->
     <div class="packs">
         <div class="packs-scroller">
-            <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, fadeScrollbars: true}">
+            <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, fadeScrollbars: true, interactiveScrollbars: true}">
                 <div class="iscroll-scroller">
-                    <div class="pack-wrapper" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
-                        <div class="pack-tab {{packs[expansion].expansionClass}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
-                        <div class="pack-next {{packs[expansion].expansionClass}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
-                        <div class="pack {{packs[expansion].expansionClass}}" data-expansion="{{expansion}}"></div>
+                    <div class="expansion-wrapper {{packs[expansion].expansionClass}}" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
+                        <div class="pack-wrapper">
+                            <div class="pack-tab {{packs[expansion].expansionClass}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
+                            <div class="pack-next {{packs[expansion].expansionClass}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
+                            <div class="pack {{packs[expansion].expansionClass}}" data-expansion="{{expansion}}"></div>
+                        </div>
+                        <div class="pack-label">
+                            <span class="{{packs[expansion].expansionClass}}" ng-if="expansion !== 'Basic'">{{expansion}}</span>
+                            <span class="{{packs[expansion].expansionClass}}" ng-if="expansion === 'Basic'">Classic</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="pack-settings-button">
+        <!--<div class="pack-settings-button">
             <button class="btn btn-blue btn-block" ng-click="$parent.settingsWnd()">
                 Pack Settings
             </button>
+        </div>-->
+        <div class="volume-control">
+            <draft-volume></draft-volume>
         </div>
     </div>
     <div class="pack-drop"></div>
@@ -65,7 +74,7 @@
             Start opening packs to see what cards you can use to build your decks.<br><br>
             Drag and drop packs to open them one at a time, or speed up the process by clicking the <i>Open All Packs</i> button below.
         </p>
-        <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+        <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
             <div class="iscroll-scroller">
                 <div class="card-pool-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.qty > 1, legendary: card.card.rarity === 'Legendary'}" 
                      ng-repeat="card in sortedPool() track by card.card.id" 
