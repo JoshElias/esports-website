@@ -87,10 +87,11 @@
     }
     
     .box-border { 
-        background-color: rgba(19, 18, 19, 0.7);
+        background-color: rgba(19, 18, 19, 0.9);
         box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.75);
         border: 1px solid rgba(0, 0, 0, 0.9);
         outline: 1px solid #000; 
+        position: relative;
  
         &.no-outline {
             outline: 1px solid transparent; 
@@ -123,11 +124,24 @@
         width: 800px;
         height: auto;
         
-        @media screen and (max-width: 1700px) {
+        @media screen and (max-width: 1600px) {
                 display: none;
             }
-    
     }
+        
+    .hero-img-left {
+        position: fixed;
+        left: -385px;
+        top: 125px;
+
+        width: 800px;
+        height: auto;
+        
+        @media screen and (max-width: 1600px) {
+                display: none;
+            }
+    }
+
     
     
 
@@ -190,7 +204,7 @@
                     color: $white;
 
                         @media screen and (max-width: 750px) {
-                            font-size: 40px !important;
+                            font-size: 30px !important;
                         }
                 }
                 
@@ -207,8 +221,7 @@
             }
             
             .hero-content {
-                    padding-bottom: 50px;
-                
+                                    
                 @media screen and (max-width: 750px) {
                         padding-bottom: 0px;
                     }
@@ -310,9 +323,26 @@
     
     .hero-image {
         
-        height: 270px;
+        height: 300px;
+        text-align: center;
+        
+        img {
+            height: 390px;
+            width: auto;
+            margin: 0 auto;
+            position: absolute;
+            top: -50px;
+            left: 0;
+            
+            
+            @media screen and (max-width: 991px) {
+                    left: 170px;    
+                 }
+        }
 
-        //mixin for positioning hero image is in hots-heroes
+        .widowmaker {
+        
+        }
        
     }
     
@@ -323,23 +353,24 @@
 
     
 //*************************************
-// 6... against boxes
+// 6... against box
 //*************************************
     
-    .strong-against {
-    
-        h4 {
-            color: #d3eefa !important;
-        }
-    
-    }
-    
-    .weak-against {
+    h3 {
         
-        h4 {
-            color: #d3eefa !important;
+        &.strong-against {
+            color: $strong-vs !important;
         }
+        
+        &.weak-against {
+            color: $weak-vs !important;
+        }
+    }
   
+    .ow-meta-chart {
+        height: 300px;
+        width: 100%;
+        background-color: $ts-dark-grey;
     }
     
     .hero-head a {
@@ -347,225 +378,61 @@
         margin-bottom: 16px;
     }
     
+
+    
     
 
 //*************************************
 // 7... filter styles
 //*************************************
     
+    .tiers-section {
+        
+        position: relative;
+        
+        .ow-class-filters {
+        
+            position: absolute;
+            top: -40px;
+            right: 0;
+            padding-right: 12px;
+            
+            ul {
+                text-decoration: none;
+                list-style-type: none;
+            }
+            
+            
+            .hero-class {
+                float: right;
+                background-repeat: no-repeat;
+                background-size: cover;
+                width: 35px;
+                height: 35px;
+                margin-left: 10px;
+                cursor: pointer;
+            }
+            
+            .offense {
+                background-image: url(../img/overwatch/icons/offense.png);
+            }
+            
+            .tank {
+                background-image: url(../img/overwatch/icons/tank.png);
+            }
+            
+            .support {
+                background-image: url(../img/overwatch/icons/support.png);
+            }
+            
+            .defense {
+                background-image: url(../img/overwatch/icons/defense.png);
+            }
+        }
+    }
    
     
     
-    .tier-hero-filters {
-        float: right;
-        margin-top: 7px;
-        margin-right: 10px;
-    }
-
-     .mobile-filter {
-        background: -webkit-linear-gradient(left, #1F2650, #20365F);
-        background: -o-linear-gradient(right, #1F2650, #20365F);
-        background: -moz-linear-gradient(right, #1F2650, #20365F);
-        background: linear-gradient(to right, #1F2650, #20365F);
-        width: 100%;
-        
-        .tier-hero-filters {
-            float: none;
-            margin: 0;
-            
-            .center {
-                width: 374px;
-                overflow: auto;
-                margin: 10px auto;    
-
-                @media screen and (max-width: 500px) {
-                    width: 172px;
-                    margin: 15px auto 0;
-                    
-                }
-             }
-        }
-         
-         .filter {
-             
-             @media screen and (max-width: 500px) {
-                 
-                 margin-bottom: 10px;
-                 
-                 &.filter-specialist {
-                     margin-right: 0px;
-                 }
-
-                 &.filter-universe-sc {
-                    clear: both;
-                 }
-             }
-         
-         
-         }
-
-    }
     
-    .filter {
-        background-image: url(../img/hots/filter-sprites.png);
-        height: 49px;
-        width: 42px;
-        background-color: transparent;
-        border: transparent;
-        float: left;
-        margin-left: 1px;
-        
-        
-
-        //filters on the hero
-
-        &.filter-role {
-            
-            position: absolute;
-            top:6px;
-            right: 370px;
-
-            &.warrior {
-            background-position: -43px -1px;
-            }
-
-            &.support {
-                background-position: -43px -99px;
-            }
-
-            &.specialist {
-                background-position: -43px -148px;
-            }
-
-            &.assasin {
-                background-position: -43px -50px;
-            }
-            
-            @media screen and (max-width: 770px) {
-              right: 60px;            
-            }
-        }
-
-        &.filter-universe {
-
-            
-            position: absolute;
-            top:6px;
-            right: 320px;
-
-            @media screen and (max-width: 770px) {
-              right: 10px;
-            }
-                    
-        }
-
-        //filters on the tier
-        //class filters
-
-         &.filter-warrior {
-            background-position: -1px -1px;
-            //position: absolute;
-//            top:8px;
-//            right: 380px;
-
-             &.active {
-                background-position: -43px -1px;
-            }
-
-        }
-
-
-
-        &.filter-assasin {
-            background-position: -1px -50px;
-            //position: absolute;
-            //top:8px;
-            //right: 330px;
-
-             &.active {
-                 background-position: -43px -50px;
-            }
-
-        }
-
-
-        &.filter-support {
-
-            background-position: -1px -99px;
-//            position: absolute;
-//            top:8px;
-//            right: 280px;
-
-             &.active {
-                background-position: -43px -99px;
-            }
-
-        }
-
-        &.filter-specialist {
-            background-position: -1px -148px;
-            margin-right: 30px;
-//            position: absolute;
-//            top:8px;
-//            right: 230px;
-
-            &.active {
-                background-position: -43px -148px;
-            }
-        }
-
-        //world filters
-
-        &.filter-universe-sc {
-            background-position: -87px -50px;
-//            position: absolute;
-//            top:8px;
-//            right: 160px;
-
-             &.active {
-                background-position: -130px -50px;
-            }
-
-        }
-
-
-
-        &.filter-universe-diablo {
-            background-position: -87px -99px;
-//            position: absolute;
-//            top:8px;
-//            right: 110px;
-
-             &.active {
-                background-position: -130px -99px;
-            }
-
-        }
-
-
-        &.filter-blizzard {
-
-            background-position: -87px -148px;
-//            position: absolute;
-//            top:8px;
-//            right: 60px;
-//            
-             &.active {
-                background-position: -130px 48px;
-            }
-
-        }
-
-        &.filter-universe-wc {
-            background-position: -87px -1px;
-//            position: absolute;
-//            top:8px;
-//            right: 10px;
-
-            &.active {
-                background-position: -130px -1px;
-            }
-        }    
-    }
     
 }
