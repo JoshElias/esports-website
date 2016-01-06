@@ -1,0 +1,51 @@
+{
+  "name": "spamRegex",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "regex": {
+      "type": "string"
+    },
+    "isActive": {
+      "type": "boolean"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "spamOffences": {
+      "type": "hasMany",
+      "model": "spamOffence",
+      "foreignKey": "spamRegexId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
+  "methods": {}
+}
