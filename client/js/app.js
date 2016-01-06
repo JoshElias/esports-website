@@ -1677,7 +1677,7 @@ var app = angular.module('app', [
                             communityGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
-                                        featured: false
+                                        isFeatured: false
                                     }
                                 }).$promise;
                             }],
@@ -1817,7 +1817,7 @@ var app = angular.module('app', [
                             tempostormGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
-                                        featured: true
+                                        isFeatured: true
                                     }
                                 }).$promise;
                             }],

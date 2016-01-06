@@ -811,8 +811,6 @@ angular.module('app.controllers', ['ngCookies'])
             guides: ['createGuide'],
             forumposts: ['createPost']
           };
-      
-        buildFilter();
 
         $scope.isFiltered = function (type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
@@ -843,6 +841,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
           }
         }
+        buildFilter();
       
         // ugh this function kinda turned into a mess
         var activityLimit = 3;
@@ -10571,8 +10570,10 @@ angular.module('app.controllers', ['ngCookies'])
                 d.collapse('show');
                 $scope.scrollToDeck(d);
             }
-
+          
             $scope.goToTwitch = function ($event, usr) {
+                event = event || window.event;
+                console.log('$event:', $event);
                 $event.stopPropagation();
                 var url = 'http://twitch.tv/' + usr
                 window.open(url, '_blank');
@@ -14151,8 +14152,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
         function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
-          
-            console.log('hi');
 
             $scope.tempostormGuides = dataTempostormGuides;
 //            $scope.tempostormGuideTalents = tempostormTalents;
@@ -14438,14 +14437,140 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.tempostormPagination = AjaxPagination.new(4, tempostormGuideCount.count,
                 function (page, perpage) {
+              console.log('page:', page);
+              console.log('perpage:', perpage);
+              console.log('$scope.filters:', $scope.filters);
                     var d = $q.defer();
 
-                    updateTempostormGuides(page, perpage, $scope.search, function (data) {
+                    updateTempostormGuides(page, perpage, $scope.search, $scope.filters, function (data) {
                         d.resolve(data);
                     });
                     return d.promise;
                 }
             );
+          
+          function updateTempostormGuides (page, perpage, search, filters, callback) {
+            var options = {
+              filter: {
+                fields: [
+                  "name", 
+                  "authorId", 
+                  "slug", 
+                  "voteScore", 
+                  "guideType", 
+                  "premium", 
+                  "id", 
+                  "talentTiers",
+                  "createdDate"
+                ],
+                order: 'createdDate DESC',
+                skip: ((page*perpage)-perpage),
+                limit: perpage,
+                where: {
+                  isFeatured: true
+                }
+              }
+            };
+          }
+          
+//          $scope.searchCards = function() {
+//                updateCards(1, $scope.perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, data) {
+//                    if (err) return console.log('err: ', err);
+//                });
+//            };
+//
+//            // pagination
+//            function updateCards (page, perpage, search, filterExpansion, filterClass, filterType, filterRarity, callback) {
+////                console.log('filterClass: ', filterClass);
+//                $scope.fetching = true;
+//
+//                var options = {
+//                    filter: {
+//                        fields: paginationParams.options.filter.fields,
+//                        order: paginationParams.options.filter.order,
+//                        skip: ((page*perpage)-perpage),
+//                        limit: paginationParams.perpage,
+//                        where: {}
+//                    }
+//                };
+//                
+//                var countOptions = {
+//                    where: {}
+//                };
+//                
+//                // if queries exist, iniiate empty arrays
+//                if (search.length > 0) {
+//                    options.filter.where.or = [];
+//                    countOptions.where.or = [];
+//                }
+//                
+//                if (filterClass.length > 0 
+//                    || filterExpansion.length > 0 
+//                    || filterType.length > 0
+//                    || filterRarity.length > 0) {
+//                    options.filter.where.and = [];
+//                    countOptions.where.and = [];
+//                }
+//                
+//                // push query values to arrays
+//                if (search.length > 0) {
+//                    options.filter.where.or.push({ expansion: { regexp: search } });
+//                    options.filter.where.or.push({ name: { regexp: search } });
+//                    options.filter.where.or.push({ cardtype: { regexp: search } });
+//                    options.filter.where.or.push({ rarity: { regexp: search } });
+//                    options.filter.where.or.push({ mechanics: { regexp: search } });
+//                    
+//                    countOptions.where.or.push({ expansion: { regexp: search } });
+//                    countOptions.where.or.push({ name: { regexp: search } });
+//                    countOptions.where.or.push({ cardType: { regexp: search } });
+//                    countOptions.where.or.push({ rarity: { regexp: search } });
+//                    countOptions.where.or.push({ mechanics: { regexp: search } });
+//                }
+//                
+//                if (filterExpansion.length > 0) {
+//                    options.filter.where.and.push({ expansion: filterExpansion });
+//                    countOptions.where.and.push({ expansion: filterExpansion });
+//                }
+//                
+//                if (filterClass.length > 0) {
+//                    options.filter.where.and.push({ playerClass: filterClass });
+//                    countOptions.where.and.push({ playerClass: filterClass });
+//                }
+//                
+//                if (filterType.length > 0) {
+//                    options.filter.where.and.push({ cardType: filterType });
+//                    countOptions.where.and.push({ cardType: filterType });
+//                }
+//                
+//                if (filterRarity.length > 0) {
+//                    options.filter.where.and.push({ rarity: filterRarity });
+//                    countOptions.where.and.push({ rarity: filterRarity });
+//                }
+//
+//                AjaxPagination.update(Card, options, countOptions, function (err, data, count) {
+//                    $scope.fetching = false;
+//                    if (err) return console.log('got err:', err);
+//                    $scope.cardPagination.page = page;
+//                    $scope.cardPagination.perpage = perpage;
+//                    $scope.cards = data;
+//                    $scope.cardPagination.total = count.count;
+//                    if (callback) {
+//                        callback(null, count);
+//                    }
+//                });
+//            }
+//
+//            // page flipping
+//            $scope.cardPagination = AjaxPagination.new($scope.perpage, $scope.total,
+//                function (page, perpage) {
+//                    var d = $q.defer();
+//                    updateCards(page, perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, count) {
+//                        if (err) return console.log('pagination err:', err);
+//                        d.resolve(count.count);
+//                    });
+//                    return d.promise;
+//                }
+//            );
 
             $scope.communityPagination = AjaxPagination.new(10, communityGuideCount.count,
                 function (page, perpage) {
