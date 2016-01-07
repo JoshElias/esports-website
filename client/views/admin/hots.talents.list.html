@@ -33,16 +33,10 @@
         </div>
     </div>
     <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix wrapper-none">
-            <a ng-click="openTalent('Add a talent')" class="btn btn-green wide">
-                <i class="fa fa-plus-circle m-r-xs"></i>
-                Add a Talent
-            </a>
-        </div>
         <div class="list-group-item admin-list-item clearfix" ng-repeat="talent in talents">
             <span>{{talent.name}}</span>
             <div class="pull-right btn-toolbar">
-                <a ng-click="openTalent('Edit a talent', talent)" class="btn btn-default">Edit</a>
+                <a ui-sref="app.admin.hots.talents.edit({ talentId: talent.id })" class="btn btn-default">Edit</a>
                 <button class="btn btn-danger" ng-click="deleteTalent(talent)">Delete</button>
             </div>
         </div>
