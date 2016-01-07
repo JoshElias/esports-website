@@ -11164,7 +11164,7 @@ angular.module('app.controllers', ['ngCookies'])
 //                    console.log("There's been an error 2:", err);
 //                });
             }
-
+          
             $scope.communityPagination = AjaxPagination.new(12, $scope.communityPagination.total,
                 function (page, perpage) {
                     var d = $q.defer();
@@ -14292,6 +14292,231 @@ angular.module('app.controllers', ['ngCookies'])
                 heroes: [],
                 map: undefined
             };
+          
+            function doQuery (fnCallback) {
+              console.log('DOING QUERY');
+              initializing = true;
+              // generate filters
+              var guideFilters = [];
+              for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                  guideFilters.push($scope.filters.heroes[i].id);
+              }
+              if ($scope.filters.map) {
+                  guideFilters.push($scope.filters.map.id);
+              }
+
+               if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+                async.parallel([
+                  function (seriesCallback) {
+                    doGetHeroMapGuides(1, 1, $scope.search, $scope.filters, null, function(guides) {
+                      
+                      $timeout(function () {
+                        $scope.topGuides = guides;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }, function (seriesCallback) {
+                    doGetHeroMapGuides(1, 4, $scope.search, $scope.filters, true, function(guides, count) {
+                      
+                      $timeout(function () {
+                        
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }, function (seriesCallback) {
+                    doGetHeroMapGuides(1, 10, $scope.search, $scope.filters, false, function(guides, count) {
+
+                      $timeout(function () {
+                        
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }
+                ], fnCallback);
+              } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
+                async.parallel([
+                  function (seriesCallback) {
+                    doGetHeroGuides(1, 1, $scope.search, $scope.filters, null, function (err, guides) {
+                      $timeout(function () {
+
+                        $scope.topGuides = guides;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }, function (seriesCallback) {
+                    doGetHeroGuides(1, 4, $scope.search, $scope.filters, true, function (err, guides, count) {
+                      $timeout(function () {
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }, function (seriesCallback) {
+                    doGetHeroGuides(1, 10, $scope.search, $scope.filters, false, function (err, guides, count) {
+                      $timeout(function () {
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }
+                ], fnCallback);
+              } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
+                async.parallel([
+                  function (seriesCallback) {
+                    $scope.topGuides = null;
+                    initializing = false;
+                    return seriesCallback();
+                  }, function (seriesCallback) {
+                    doGetMapGuides(1, 4, $scope.search, $scope.filters, true, function (err, guides, count) {
+                      $timeout(function () {
+                        console.log('err:', err);
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        
+                        if (err) return seriesCallback(err);
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }, function (seriesCallback) {
+                    doGetMapGuides(1, 10, $scope.search, $scope.filters, false, function (err, guides, count) {
+                      $timeout(function () {
+                        console.log('err:', err);
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        
+                        if (err) return seriesCallback(err);
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }
+                ], fnCallback);
+              } else {
+                async.parallel([
+                  function (seriesCallback) {
+                    doGetGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides, count) {
+
+                      $timeout(function () {
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        
+                        $scope.topGuides = guides;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }, function (seriesCallback) {
+                    doGetGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
+
+                      $timeout(function () {
+                        console.log('err:', err);
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        
+                        if (err) return seriesCallback(err);
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  },
+                  function (seriesCallback) { 
+                   doGetGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
+
+                     $timeout(function () {
+                        console.log('err:', err);
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        
+                       if (err) return seriesCallback(err);
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        initializing = false;
+                        return seriesCallback();
+                      });
+                    });
+                  }
+                ], fnCallback);;
+              }
+            }
+          
+            function doGetHeroMapGuides (page, perpage, search, filters, isFeatured, callback) {
+              HOTSGuideQueryService.getHeroMapGuides(filters, isFeatured, perpage, page, function (err, guides, count) {
+                  $timeout(function () {
+                    
+                    initializing = false;
+                    return callback(guides, count);
+                  });
+              });
+            }
+          
+            function doGetHeroGuides (page, perpage, search, filters, isFeatured, callback) {
+              console.log('page:', page);
+              console.log('perpage:', perpage);
+              console.log('search:', search);
+              console.log('filters:', filters);
+              console.log('isFeatured:', isFeatured);
+              console.log('callback:', callback);
+              HOTSGuideQueryService.getHeroGuides(filters, isFeatured, perpage, page, function (err, guides, count) {
+                  $timeout(function () {
+                    console.log('err:', err);
+                    console.log('guides:', guides);
+                    console.log('count:', count);
+                    
+                      initializing = false;
+                      return callback(guides, count);
+                  });
+              });
+            }
+          
+            function doGetMapGuides (page, perpage, search, filters, isFeatured, callback) {
+              HOTSGuideQueryService.getMapGuides(filters, isFeatured, search, perpage, page, function (err, guides, count) {
+                $timeout(function () {
+                  
+                  initializing = false;
+                  return callback(err, guides, count);
+                });
+              });
+            }
+          
+            function doGetGuides (page, perpage, search, filters, isFeatured, callback) {
+              console.log('asdf page:', page);
+              console.log('asdf perpage:', perpage);
+              HOTSGuideQueryService.getGuides(filters, isFeatured, search, perpage, page, function (err, guides, count) {
+                $timeout(function () {
+                  console.log('doGetGuides');
+                  console.log('err:', err);
+                  console.log('guides:', guides);
+                  console.log('count:', count);
+                  
+                  initializing = false;
+                  return callback(err, guides, count);
+                });
+              });
+            }
 
             var initializing = true;
             $scope.$watch(function() { return $scope.filters; }, function (value) {
@@ -14300,143 +14525,7 @@ angular.module('app.controllers', ['ngCookies'])
                         initializing = false;
                     });
                 } else {
-                    initializing = true;
-                    // generate filters
-                    var guideFilters = [];
-                    for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                        guideFilters.push($scope.filters.heroes[i].id);
-                    }
-                    if ($scope.filters.map) {
-                        guideFilters.push($scope.filters.map.id);
-                    }
-
-                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
-                        async.parallel([
-                            function (seriesCallback) {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, null, 1, function(err, guides) {
-                                  console.log(guides);
-
-                                    $timeout(function () {
-                                        $scope.topGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }, function (seriesCallback) {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 4, function(err, guides) {
-                                  console.log(guides);
-
-                                    $timeout(function () {
-                                        $scope.tempostormGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }, function (seriesCallback) {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
-                                  console.log(guides);
-
-                                    $timeout(function () {
-                                        $scope.communityGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }
-                        ]);
-                    } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                        async.parallel([
-                            function (seriesCallback) {
-                                HOTSGuideQueryService.getHeroGuides($scope.filters, null, 1, function (err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.topGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }, function (seriesCallback) {
-                                HOTSGuideQueryService.getHeroGuides($scope.filters, true, 4, function (err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.tempostormGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }, function (seriesCallback) {
-                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, function (err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.communityGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }
-                        ])
-                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
-                        async.parallel([
-                            function (seriesCallback) {
-                                $scope.topGuides = null;
-                                initializing = false;
-                                return seriesCallback();
-                            }, function (seriesCallback) {
-                                HOTSGuideQueryService.getMapGuides($scope.filters, true, 4, function(err, guides) {
-                                  console.log(guides);
-                                    $timeout(function () {
-                                        $scope.tempostormGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }, function (seriesCallback) {
-                                HOTSGuideQueryService.getMapGuides($scope.filters, false, 10, function(err, guides) {
-                                  console.log(guides);
-                                    $timeout(function () {
-                                        $scope.communityGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }
-                        ]);
-                    } else {
-                        async.parallel([
-                            function (seriesCallback) {
-                                HOTSGuideQueryService.getGuides($scope.filters, null, 1, function(err, guides) {
-                                  console.log(guides);
-
-                                    $timeout(function () {
-                                        $scope.topGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }, function (seriesCallback) {
-                                HOTSGuideQueryService.getGuides($scope.filters, true, 4, function(err, guides) {
-                                  console.log(guides);
-
-                                    $timeout(function () {
-                                        $scope.tempostormGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            },
-                            function (seriesCallback) {
-                               HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
-                                 console.log(guides);
-
-                                   $timeout(function () {
-                                        $scope.communityGuides = guides;
-                                        initializing = false;
-                                        return seriesCallback();
-                                    });
-                                });
-                            }
-                        ]);
-                    }
+                    doQuery();
                 }
             }, true);
 
@@ -14553,154 +14642,97 @@ angular.module('app.controllers', ['ngCookies'])
 //                });
 //            });
 //        }
-
+            console.log('tempostormGuideCount:', tempostormGuideCount);
             $scope.tempostormPagination = AjaxPagination.new(4, tempostormGuideCount.count,
                 function (page, perpage) {
-              console.log('page:', page);
-              console.log('perpage:', perpage);
-              console.log('$scope.filters:', $scope.filters);
+                  console.log('page:', page);
+                  console.log('perpage:', perpage);
+                  console.log('$scope.filters:', $scope.filters);
+                  console.log('$scope.search:', $scope.search);
+                  
                     var d = $q.defer();
-
-                    updateTempostormGuides(page, perpage, $scope.search, $scope.filters, function (data) {
-                        d.resolve(data);
-                    });
+              
+                    if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+                      console.log('1');
+                      doGetHeroMapGuides();
+                    } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
+                      console.log('2');
+                      doGetHeroGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
+                        if (err) return d.resolve(err);
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
+                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
+                      console.log('3');
+                      doGetMapGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
+                        console.log('err:', err);
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        if (err) return d.resolve(err);
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
+                    } else {
+                      console.log('4');
+                      doGetGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
+                        console.log('err:', err);
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        if (err) return d.resolve(err);
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
+                    }
+              
                     return d.promise;
                 }
             );
           
-          function updateTempostormGuides (page, perpage, search, filters, callback) {
-            var options = {
-              filter: {
-                fields: [
-                  "name", 
-                  "authorId", 
-                  "slug", 
-                  "voteScore", 
-                  "guideType", 
-                  "premium", 
-                  "id", 
-                  "talentTiers",
-                  "createdDate"
-                ],
-                order: 'createdDate DESC',
-                skip: ((page*perpage)-perpage),
-                limit: perpage,
-                where: {
-                  isFeatured: true
-                }
-              }
-            };
-          }
-          
-//          $scope.searchCards = function() {
-//                updateCards(1, $scope.perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, data) {
-//                    if (err) return console.log('err: ', err);
-//                });
-//            };
-//
-//            // pagination
-//            function updateCards (page, perpage, search, filterExpansion, filterClass, filterType, filterRarity, callback) {
-////                console.log('filterClass: ', filterClass);
-//                $scope.fetching = true;
-//
-//                var options = {
-//                    filter: {
-//                        fields: paginationParams.options.filter.fields,
-//                        order: paginationParams.options.filter.order,
-//                        skip: ((page*perpage)-perpage),
-//                        limit: paginationParams.perpage,
-//                        where: {}
-//                    }
-//                };
-//                
-//                var countOptions = {
-//                    where: {}
-//                };
-//                
-//                // if queries exist, iniiate empty arrays
-//                if (search.length > 0) {
-//                    options.filter.where.or = [];
-//                    countOptions.where.or = [];
-//                }
-//                
-//                if (filterClass.length > 0 
-//                    || filterExpansion.length > 0 
-//                    || filterType.length > 0
-//                    || filterRarity.length > 0) {
-//                    options.filter.where.and = [];
-//                    countOptions.where.and = [];
-//                }
-//                
-//                // push query values to arrays
-//                if (search.length > 0) {
-//                    options.filter.where.or.push({ expansion: { regexp: search } });
-//                    options.filter.where.or.push({ name: { regexp: search } });
-//                    options.filter.where.or.push({ cardtype: { regexp: search } });
-//                    options.filter.where.or.push({ rarity: { regexp: search } });
-//                    options.filter.where.or.push({ mechanics: { regexp: search } });
-//                    
-//                    countOptions.where.or.push({ expansion: { regexp: search } });
-//                    countOptions.where.or.push({ name: { regexp: search } });
-//                    countOptions.where.or.push({ cardType: { regexp: search } });
-//                    countOptions.where.or.push({ rarity: { regexp: search } });
-//                    countOptions.where.or.push({ mechanics: { regexp: search } });
-//                }
-//                
-//                if (filterExpansion.length > 0) {
-//                    options.filter.where.and.push({ expansion: filterExpansion });
-//                    countOptions.where.and.push({ expansion: filterExpansion });
-//                }
-//                
-//                if (filterClass.length > 0) {
-//                    options.filter.where.and.push({ playerClass: filterClass });
-//                    countOptions.where.and.push({ playerClass: filterClass });
-//                }
-//                
-//                if (filterType.length > 0) {
-//                    options.filter.where.and.push({ cardType: filterType });
-//                    countOptions.where.and.push({ cardType: filterType });
-//                }
-//                
-//                if (filterRarity.length > 0) {
-//                    options.filter.where.and.push({ rarity: filterRarity });
-//                    countOptions.where.and.push({ rarity: filterRarity });
-//                }
-//
-//                AjaxPagination.update(Card, options, countOptions, function (err, data, count) {
-//                    $scope.fetching = false;
-//                    if (err) return console.log('got err:', err);
-//                    $scope.cardPagination.page = page;
-//                    $scope.cardPagination.perpage = perpage;
-//                    $scope.cards = data;
-//                    $scope.cardPagination.total = count.count;
-//                    if (callback) {
-//                        callback(null, count);
-//                    }
-//                });
-//            }
-//
-//            // page flipping
-//            $scope.cardPagination = AjaxPagination.new($scope.perpage, $scope.total,
-//                function (page, perpage) {
-//                    var d = $q.defer();
-//                    updateCards(page, perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, count) {
-//                        if (err) return console.log('pagination err:', err);
-//                        d.resolve(count.count);
-//                    });
-//                    return d.promise;
-//                }
-//            );
-
+            console.log('communityGuideCount:', communityGuideCount);
             $scope.communityPagination = AjaxPagination.new(10, communityGuideCount.count,
                 function (page, perpage) {
+                    console.log('page:', page);
+                    console.log('perpage:', perpage);
                     var d = $q.defer();
-
-                    console.log('page: ', page);
-                    console.log('perpag: ', perpage);
-
-                    updateCommunityGuides(page, perpage, $scope.search, function (data) {
-                        d.resolve(data);
-                    });
+              
+                    if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+                      console.log('1');
+                      doGetHeroMapGuides();
+                    } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
+                      console.log('2');
+                      doGetHeroGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
+                        if (err) return d.resolve(err);
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
+                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
+                      console.log('3');
+                      doGetMapGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
+                        console.log('err:', err);
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        if (err) return d.resolve(err);
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
+                    } else {
+                      console.log('4');
+                      doGetGuides(page, perpage, $scope.search, $scope.filters, false, function (err, guides, count) {
+                        console.log('err:', err);
+                        console.log('guides:', guides);
+                        console.log('count:', count);
+                        if (err) return d.resolve(err);
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
+                    }
+              
                     return d.promise;
                 }
             );

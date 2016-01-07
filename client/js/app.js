@@ -869,11 +869,6 @@ var app = angular.module('app', [
                                     if (err) console.log('err: ', err);
                                 });
                             }],
-                            
-                            resolveCheck: ['deckWithMulligans', 'deck', function(deckWithMulligans, deck) {
-                                console.log('deck resolve: ', deckWithMulligans);
-                                console.log('deck resolve2: ', deck);
-                            }]
                         }
                     }
                 }
@@ -1678,7 +1673,8 @@ var app = angular.module('app', [
                             communityGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
-                                        isFeatured: false
+                                        isFeatured: false,
+                                        isPublic: true
                                     }
                                 }).$promise;
                             }],
@@ -1748,7 +1744,8 @@ var app = angular.module('app', [
                                     }
                                   ]
                                 }
-                              }).$promise.then(function (guides) {
+                              }).$promise
+                              .then(function (guides) {
                                   return guides;
                               }).catch(function(err) {
                                   console.log("error", err);

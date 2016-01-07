@@ -1179,6 +1179,7 @@ angular.module('app.services', [])
     };
 
     pagination.new = function (perpage, total, callback) {
+      console.log('callback:', callback);
         var paginate = {
             page: 1,
             perpage: perpage || 10,
@@ -1201,6 +1202,10 @@ angular.module('app.services', [])
         paginate.getPerpage = function () {
             return paginate.perpage;
         };
+      
+        paginate.setTotal = function (total) {
+            paginate.total = total;
+        }
 
         paginate.getTotal = function () {
             return paginate.total;
@@ -2616,7 +2621,13 @@ angular.module('app.services', [])
             }
           ])
         },
-        getGuides: function (filters, isFeatured, limit, finalCallback) {
+        getGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
+          console.log('filters:', filters);
+          console.log('isFeatured:', isFeatured);
+          console.log('search:', search);
+          console.log('limit:', limit);
+          console.log('page:', page);
+          
             var order = "voteScore DESC",
                 heroWhere = {}, 
                 guideWhere = {
@@ -2685,6 +2696,7 @@ angular.module('app.services', [])
                       filter: {
                         limit: limit,
                         order: order,
+                        skip: ((page*limit) - limit),
                         where: guideWhere,
                         fields: [
                           "name", 
@@ -2738,20 +2750,40 @@ angular.module('app.services', [])
                         ]
                       }
                     }).$promise.then(function (guides) {
-                        return finalCallback(undefined, guides);
+                        return seriesCallback(undefined, guides, guideWhere);
                     }).catch(function (err) {
-                        return finalCallback(err);
+                        return seriesCallback(err);
+                    });
+                }, function (guides, guideWhere, seriesCallback) {
+                    Guide.count({
+                      where: guideWhere
+                    })
+                    .$promise
+                    .then(function (heroGuideCount) {
+                      return seriesCallback(null, guides, heroGuideCount);
+                    })
+                    .catch(function (err) {
+                      return seriesCallback(err);
                     });
                 }
-            ])
+            ], function (err, guides, count) {
+                if (err) return finalCallback(err);
+                return finalCallback(undefined, guides, count);
+            });
         },
-        getHeroGuides: function (filters, isFeatured, limit, finalCallback) {
+        getHeroGuides: function (filters, isFeatured, limit, page, finalCallback) {
+          console.log('got here');
+          console.log('filters:', filters);
+          console.log('isFeatured:', isFeatured);
+          console.log('limit:', limit);
+          console.log('page:', page);
+          console.log('selectedHeroes:', selectedHeroes);
             var selectedHeroes = filters.heroes,
                 order = "voteScore DESC";
 
-            if (_.isEmpty(selectedHeroes)) {
-                return;
-            }
+//            if (_.isEmpty(selectedHeroes)) {
+//                return;
+//            }
             
             var where = {
                 guideType: "hero"
@@ -2802,10 +2834,12 @@ angular.module('app.services', [])
                     return seriesCallback(undefined, selectedGuideIds);
                 }, function (guideIds, seriesCallback) {
                     guideIds = _.flatten(guideIds);
+                    console.log('guideIds:', guideIds);
 
                     Guide.find({
                         filter: {
                             limit: limit,
+                            skip: ((limit * page) - limit),
                             order: order,
                             where: {
                                 id: { inq: guideIds }
@@ -2862,14 +2896,35 @@ angular.module('app.services', [])
                           ]
                         }
                     }).$promise.then(function (guides) {
-                        return finalCallback(undefined, guides);
+                        return seriesCallback(undefined, guides, guideIds);
                     }).catch(function (err) {
-                        return finalCallback(err);
+                        return seriesCallback(err);
                     })
+                },
+                function (guides, guideIds, seriesCallback) {
+                  Guide.count({
+                    where: {
+                        id: { inq: guideIds }
+                    },
+                  }).$promise
+                  .then(function (heroGuideCount) {
+                    return seriesCallback(null, guides, heroGuideCount);
+                  })
+                  .catch(function (err) {
+                    return seriesCallback(err);
+                  });
                 }
-            ])
+            ], function(err, guides, count) {
+              console.log('err:', err);
+              console.log('guides:', guides);
+              console.log('count:', count);
+              if (err) {
+                return finalCallback(err);
+              }
+              return finalCallback(null, guides, count);
+            })
         },
-        getMapGuides: function (filters, isFeatured, limit, finalCallback) {
+        getMapGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
             var selectedMap = filters.map;
 
             if (_.isEmpty(selectedMap)) {
@@ -2884,75 +2939,92 @@ angular.module('app.services', [])
                 where.isFeatured = isFeatured
             }
             
-            async.waterfall(
-                [
-                    function (seriesCallback) {
-                        Map.findOne({
-                            filter: {
-                                fields: ["id"],
-                                where: {
-                                    id: filters.map.id
-                                },
-                                include: [
-                                    {
-                                        relation: "guides",
-                                        scope: {
-                                            fields: ["id"],
-                                            where: where
-                                        }
+            async.waterfall([
+                function (seriesCallback) {
+                    Map.findOne({
+                        filter: {
+                            fields: ["id"],
+                            where: {
+                                id: filters.map.id
+                            },
+                            include: [
+                                {
+                                    relation: "guides",
+                                    scope: {
+                                        fields: ["id"],
+                                        where: where
                                     }
-                                ]
-                            }
-                        }, function (maps) {
-                            return seriesCallback(undefined, maps);
-                        }, function (err) {
-                            return finalCallback(err);
-                        })
-                    },
-                    function (map, seriesCallback) {
-                        var guides = map.guides;
-                        var guideIds = _.map(guides, function(guide) { return guide.id })
+                                }
+                            ]
+                        }
+                    }, function (maps) {
+                        return seriesCallback(undefined, maps);
+                    }, function (err) {
+                        return finalCallback(err);
+                    })
+                },
+                function (map, seriesCallback) {
+                    var guides = map.guides;
+                    var guideIds = _.map(guides, function(guide) { return guide.id })
 
-                        Guide.find({
-                            filter: {
-                                limit: limit,
-                                order: "createdDate DESC",
-                                where: {
-                                    id: { inq: guideIds }
+                    Guide.find({
+                        filter: {
+                            limit: limit,
+                            order: "createdDate DESC",
+                            skip: ((limit * page) - limit),
+                            where: {
+                                id: { inq: guideIds }
+                            },
+                            fields: [
+                                "id",
+                                "name",
+                                "createdDate",
+                                "voteScore",
+                                "slug",
+                                "guideType",
+                                "authorId",
+                                "public",
+                                "premium"
+                            ],
+                            include: [
+                                {
+                                  relation: "author",
+                                  scope: {
+                                    fields: ['username']
+                                  }
                                 },
-                                fields: [
-                                    "id",
-                                    "name",
-                                    "createdDate",
-                                    "voteScore",
-                                    "slug",
-                                    "guideType",
-                                    "authorId",
-                                    "public",
-                                    "premium"
-                                ],
-                                include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                        relation: "maps"
-                                    }
-                                ]
-                            }
-                        }).$promise.then(function (guides) {
-                            return finalCallback(undefined, guides);
-                        }).catch(function (err) {
-                            return finalCallback(err)
-                        })
-                    }
-                ]
-            )
+                                {
+                                    relation: "maps"
+                                }
+                            ]
+                        }
+                    })
+                    .$promise
+                    .then(function (guides) {
+                        return seriesCallback(undefined, guides, guideIds);
+                    })
+                    .catch(function (err) {
+                        return seriesCallback(err)
+                    })
+                }, function (guides, guideIds, seriesCallback) {
+                  Guide.count({
+                    where: {
+                        id: { inq: guideIds }
+                    },
+                  }).$promise
+                  .then(function (heroGuideCount) {
+                    return seriesCallback(null, guides, heroGuideCount);
+                  })
+                  .catch(function (err) {
+                    return seriesCallback(err);
+                  });
+                }
+            ], function (err, guides, count) {
+                if (err) return finalCallback(err);
+                return finalCallback(undefined, guides, count);
+            });
         },
-        getHeroMapGuides: function (filters, isFeatured, limit, finalCallback) {
+        getHeroMapGuides: function (filters, isFeatured, limit, page, finalCallback) {
             var selectedHeroes = filters.heroes;
 
             if (_.isEmpty(selectedHeroes)) {
@@ -3028,7 +3100,9 @@ angular.module('app.services', [])
                 },
                 //populate heroes, talents
                 function (selectedGuideIds, seriesCallback) {
-                    Guide.find({
+                  async.waterfall([
+                    function (waterCallback) {
+                      Guide.find({
                         filter: {
                             limit: limit,
                             order: "createdDate DESC",
@@ -3086,18 +3160,33 @@ angular.module('app.services', [])
                             },
                           ]
                         }
-                    }).$promise.then(function (guides) {
-                        return seriesCallback(undefined, guides);
-                    }).catch(function (err) {
-                        return seriesCallback(err);
-                    })
+                      }).$promise.then(function (guides) {
+                          return waterCallback(undefined, guides);
+                      }).catch(function (err) {
+                          return waterCallback(err);
+                      })
+                    },
+                    function (guides, waterCallback) {
+                      Guide.count({
+                        where: {
+                            id: { inq: selectedGuideIds }
+                        },
+                      }).$promise
+                      .then(function (heroGuideCount) {
+                        return seriesCallback(null, guides, heroGuideCount);
+                      })
+                      .catch(function (err) {
+                        return waterCallback(err);
+                      });
+                    }
+                  ]);
                 }
             ],
-            function (err, guides) {
+            function (err, guides, count) {
                 if (err) {
                     console.log("Error:", err);
                 };
-                return finalCallback(err, guides);
+                return finalCallback(err, guides, count);
             })
         }
     }
