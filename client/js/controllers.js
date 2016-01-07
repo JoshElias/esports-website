@@ -14308,19 +14308,26 @@ angular.module('app.controllers', ['ngCookies'])
                if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetHeroMapGuides(1, 1, $scope.search, $scope.filters, null, function(guides) {
+                    doGetHeroMapGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides) {
                       
                       $timeout(function () {
+                        console.log('doGetHeroMapGuides err:', err);
+                        console.log('doGetHeroMapGuides guides:', guides);
+                        if (err) return seriesCallback(err);
                         $scope.topGuides = guides;
                         initializing = false;
                         return seriesCallback();
                       });
                     });
                   }, function (seriesCallback) {
-                    doGetHeroMapGuides(1, 4, $scope.search, $scope.filters, true, function(guides, count) {
+                    doGetHeroMapGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
                       
                       $timeout(function () {
+                        console.log('doGetHeroMapGuides err:', err);
+                        console.log('doGetHeroMapGuides guides:', guides);
+                        console.log('doGetHeroMapGuides count:', count);
                         
+                        if (err) return seriesCallback(err);
                         $scope.tempostormGuides = guides;
                         $scope.tempostormPagination.total = count.count;
                         initializing = false;
@@ -14328,10 +14335,14 @@ angular.module('app.controllers', ['ngCookies'])
                       });
                     });
                   }, function (seriesCallback) {
-                    doGetHeroMapGuides(1, 10, $scope.search, $scope.filters, false, function(guides, count) {
+                    doGetHeroMapGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
 
                       $timeout(function () {
+                        console.log('doGetHeroMapGuides err:', err);
+                        console.log('doGetHeroMapGuides guides:', guides);
+                        console.log('doGetHeroMapGuides count:', count);
                         
+                        if (err) return seriesCallback(err);
                         $scope.communityGuides = guides;
                         $scope.communityPagination.total = count.count;
                         initializing = false;
@@ -14345,7 +14356,8 @@ angular.module('app.controllers', ['ngCookies'])
                   function (seriesCallback) {
                     doGetHeroGuides(1, 1, $scope.search, $scope.filters, null, function (err, guides) {
                       $timeout(function () {
-
+                        
+                        if (err) return seriesCallback(err);
                         $scope.topGuides = guides;
                         initializing = false;
                         return seriesCallback();
@@ -14354,9 +14366,11 @@ angular.module('app.controllers', ['ngCookies'])
                   }, function (seriesCallback) {
                     doGetHeroGuides(1, 4, $scope.search, $scope.filters, true, function (err, guides, count) {
                       $timeout(function () {
-                        console.log('guides:', guides);
-                        console.log('count:', count);
+                        console.log('doGetHeroGuides err:', err);
+                        console.log('doGetHeroGuides guides:', guides);
+                        console.log('doGetHeroGuides count:', count);
                         
+                        if (err) return seriesCallback(err);
                         $scope.tempostormGuides = guides;
                         $scope.tempostormPagination.total = count.count;
                         initializing = false;
@@ -14366,9 +14380,11 @@ angular.module('app.controllers', ['ngCookies'])
                   }, function (seriesCallback) {
                     doGetHeroGuides(1, 10, $scope.search, $scope.filters, false, function (err, guides, count) {
                       $timeout(function () {
-                        console.log('guides:', guides);
-                        console.log('count:', count);
-
+                        console.log('doGetHeroGuides err:', err);
+                        console.log('doGetHeroGuides guides:', guides);
+                        console.log('doGetHeroGuides count:', count);
+                        
+                        if (err) return seriesCallback(err);
                         $scope.communityGuides = guides;
                         $scope.communityPagination.total = count.count;
                         initializing = false;
@@ -14386,9 +14402,9 @@ angular.module('app.controllers', ['ngCookies'])
                   }, function (seriesCallback) {
                     doGetMapGuides(1, 4, $scope.search, $scope.filters, true, function (err, guides, count) {
                       $timeout(function () {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
+                        console.log('doGetMapGuides err:', err);
+                        console.log('doGetMapGuides guides:', guides);
+                        console.log('doGetMapGuides count:', count);
                         
                         if (err) return seriesCallback(err);
                         $scope.tempostormGuides = guides;
@@ -14400,9 +14416,9 @@ angular.module('app.controllers', ['ngCookies'])
                   }, function (seriesCallback) {
                     doGetMapGuides(1, 10, $scope.search, $scope.filters, false, function (err, guides, count) {
                       $timeout(function () {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
+                        console.log('doGetMapGuides err:', err);
+                        console.log('doGetMapGuides guides:', guides);
+                        console.log('doGetMapGuides count:', count);
                         
                         if (err) return seriesCallback(err);
                         $scope.communityGuides = guides;
@@ -14419,9 +14435,11 @@ angular.module('app.controllers', ['ngCookies'])
                     doGetGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides, count) {
 
                       $timeout(function () {
-                        console.log('guides:', guides);
-                        console.log('count:', count);
+                        console.log('doGetGuide err:', err);
+                        console.log('doGetGuide guides:', guides);
+                        console.log('doGetGuide count:', count);
                         
+                        if (err) return seriesCallback(err);
                         $scope.topGuides = guides;
                         initializing = false;
                         return seriesCallback();
@@ -14431,9 +14449,9 @@ angular.module('app.controllers', ['ngCookies'])
                     doGetGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
 
                       $timeout(function () {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
+                        console.log('doGetGuide err:', err);
+                        console.log('doGetGuide guides:', guides);
+                        console.log('doGetGuide count:', count);
                         
                         if (err) return seriesCallback(err);
                         $scope.tempostormGuides = guides;
@@ -14447,9 +14465,9 @@ angular.module('app.controllers', ['ngCookies'])
                    doGetGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
 
                      $timeout(function () {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
+                        console.log('doGetGuide err:', err);
+                        console.log('doGetGuide guides:', guides);
+                        console.log('doGetGuide count:', count);
                         
                        if (err) return seriesCallback(err);
                         $scope.communityGuides = guides;
@@ -14468,7 +14486,7 @@ angular.module('app.controllers', ['ngCookies'])
                   $timeout(function () {
                     
                     initializing = false;
-                    return callback(guides, count);
+                    return callback(err, guides, count);
                   });
               });
             }
@@ -14487,7 +14505,7 @@ angular.module('app.controllers', ['ngCookies'])
                     console.log('count:', count);
                     
                       initializing = false;
-                      return callback(guides, count);
+                      return callback(err, guides, count);
                   });
               });
             }
@@ -14938,7 +14956,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === null ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
 
             $scope.$watch('guide', function() {
-                $scope.app.settings.guide = $scope.guide;
+                $scope.app.settings.guide = JSON.stringify($scope.guide);
+              console.log('$scope.app.settings.guide:', $scope.app.settings.guide);
             }, true);
 
             // heroes
@@ -15124,6 +15143,8 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (guideData) {
                   console.log('guideData:', guideData);
+                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
+                  
                   Guide.guideHeroes.createMany({
                     id: guideData.id
                   }, $scope.guide.guideHeroes)
