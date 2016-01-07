@@ -1,0 +1,74 @@
+//*************************************
+    // 2... guides
+//*************************************
+
+.hots-styles .hots-guide-styles-new {
+    
+    .guide-header { 
+        background: transparent; 
+        border-bottom: 0px solid transparent;
+        
+        h1 { 
+            margin-top: 10px; 
+            font-family: 'Open Sans Bold'; 
+            color: #FFF; 
+            font-size: 26px;
+        }
+    }
+    
+    
+    .guide-header p,
+    .guide-header p a { color: #FFF; }
+
+    .guide-votes { margin: 15px 0; }
+
+    .guide-page .guide-right { float: right; width: 300px; }
+    .guide-page .guide-left { margin-right: 320px; overflow: hidden; }
+
+    .guide-page .guide-content { position: relative; }
+    .guide-page .guide-content iframe { width: 100% !important; }
+
+    .guide-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
+    .guide-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
+    .guide-section-title a { color: #FFF; }
+    .guide-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
+    .guide-section-content { padding: 20px; border-top: 1px solid #000; }
+    .guide-section-content.unpadded { padding: 0px; }
+    .guide-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
+    .guide-section-content p { color: #FFF; }
+
+    .guide-heroes { margin-right: -20px; }
+    .guide-hero-wrapper { float: left; padding-right: 20px; }
+    .guide-hero { border: 1px solid #000; opacity: .5; }
+    .guide-hero:hover { opacity: .8; }
+    .guide-hero.active { border: 1px solid #2766ad; opacity: 1; }
+
+    .guide-hero a { text-decoration: none; }
+
+    .guide-hero-title { padding: 5px 10px; font-family: 'Open Sans Bold'; color: #FFF; text-transform: uppercase; background: #222; }
+    .guide-hero.active .guide-hero-title { background: #2766ad; }
+    .guide-hero-image { height: 60px; border-top: 1px solid #000; }
+    .guide-hero.active .guide-hero-image { border-top: 1px solid #2766ad; }
+
+
+
+    .guide-heroes-1 { width: 100%; }
+    .guide-heroes-2 { width: 50%; }
+    .guide-heroes-3 { width: 33.33%; }
+    .guide-heroes-4 { width: 25%; }
+    .guide-heroes-5 { width: 20%; }
+
+    .guide-talents { margin-right: -10px; }
+    .guide-talent-wrapper { float: left; width: 14.28%; padding-right: 10px; }
+    .guide-talent { border: 1px solid #000; background: rgba(0,0,0,.4); }
+    .guide-talent-level { padding: 5px 0px; font-family: 'Open Sans Bold'; color: #FFF; text-transform: uppercase; background: #2766ad; text-align: center; border-bottom: 1px solid #000; }
+    .guide-talent-icon { margin: 10px auto; }
+
+    .guide-talent-dots { margin: 10px auto; width: 80px; padding: 3px 0; text-align: center; border-radius: 4px; background: rgba(0,0,0,.3); border: 1px solid rgba(0,0,0,.8); }
+    .guide-talent-dot { margin-right: 3px; display: inline-block; *display: inline; zoom: 1; width: 10px; height: 10px; background: #666; border-radius: 50%; }
+    .guide-talent-dot:last-child { margin-right: 0px; }
+    .guide-talent-dot.active { background: #2766ad; }
+
+    .guide-map-header { margin-bottom: 20px; width: 100%; height: auto; }
+    .guide-content-title { text-transform: uppercase; }
+}

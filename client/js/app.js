@@ -1960,8 +1960,8 @@ var app = angular.module('app', [
                 },
                 og: true
             })
-                        .state('app.hots.guides.guide_new', {
-                url: '/:slug',
+                .state('app.hots.guides.guide_new', {
+                url: '/new/:slug',
                 views: {
                     guides: {
                         templateUrl: tpl + 'views/frontend/hots.guides.guide_new.html',
