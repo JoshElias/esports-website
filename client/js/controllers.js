@@ -5131,6 +5131,7 @@ angular.module('app.controllers', ['ngCookies'])
               _.each($scope.snapshot.tiers, function (tier) {
                 _.each(tier.decks, function (deck) {
                   deck.tier = tier.tier;
+                  deck.name = deck.name || deck.deck.name;
                   $scope.snapshot.deckTiers.push(deck)
                 })
               });
@@ -10600,6 +10601,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.goToDeck = function ($event, slug) {
+                console.log(slug);
                 $event.stopPropagation();
                 var url = $state.href('app.hs.decks.deck', { slug: slug });
                 window.open(url,'_blank');
@@ -12941,6 +12943,18 @@ angular.module('app.controllers', ['ngCookies'])
                       })
                       .catch(eachCb);
                     }, seriesCb);
+                  },
+                  function (seriesCb) {
+                    async.each(arrs.abilities.toDelete, function (abil, eachCb) {
+                      Ability.destroyById({
+                        id: abil.id
+                      })
+                      .$promise
+                      .then(function () {
+                        return eachCb();
+                      })
+                      .catch(eachCb);
+                    }, seriesCb);
                   }
                 ], function (err) {
                   if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
@@ -13130,6 +13144,50 @@ angular.module('app.controllers', ['ngCookies'])
                 box.modal('show');
             }
         }
+    ])
+    .controller('AdminTalentsAddCtrl', ['$scope', '$window', '$state', 'Talent', 'AlertService',
+      function ($scope, $window, $state, Talent, AlertService) {
+        $scope.talent = {};
+        
+        $scope.addTalent = function () {
+          var tal = angular.copy($scope.talent);
+          $scope.showError = false;
+
+          $window.scrollTo(0,0);
+          Talent.create({}, tal)
+          .$promise
+          .then(function (data) {
+            $state.go('app.admin.hots.talents.list');
+            AlertService.setSuccess({ persist: true, show: true, msg: tal.name + " created successfully." });
+          })
+          .catch(function (err) {
+            AlertService.setError({ show: true, msg: 'There was an error creating a new talent.' });
+          });
+        }
+      }
+    ])
+    .controller('AdminTalentsEditCtrl', ['$scope', '$window', '$state', 'Talent', 'AlertService', 'talent',
+      function ($scope, $window, $state, Talent, AlertService, talent) {
+        $scope.talent = talent;
+        
+        $scope.editTalent = function () {
+          var tal = angular.copy($scope.talent);
+          $scope.showError = false;
+
+          $window.scrollTo(0,0);
+          Talent.upsert({
+            id: $scope.talent.id
+          }, tal)
+          .$promise
+          .then(function (data) {
+            $state.go('app.admin.hots.talents.list');
+            AlertService.setSuccess({ persist: true, show: true, msg: tal.name + " edited successfully." });
+          })
+          .catch(function (err) {
+            AlertService.setError({ show: true, msg: 'There was an error editing ' + tal.name });
+          });
+        }
+      }
     ])
     .controller('AdminMapsListCtrl', ['$scope', '$q', '$timeout', 'Map', 'AlertService', 'maps', 'paginationParams', 'mapCount', 'AjaxPagination',
         function ($scope, $q, $timeout, Map, AlertService, maps, paginationParams, mapCount, AjaxPagination) {
@@ -14531,7 +14589,8 @@ angular.module('app.controllers', ['ngCookies'])
               var hero = $scope.getGuideCurrentHero(guide).hero;
               
               _.each(hero.talents, function(value, key) { if (value.tier == tier) { talents.push(value) } });
-              return talents;
+              var out = _.sortBy(talents, function (obj) { return obj.orderNum; });
+              return out;
             }
 
             $scope.activeTalent = function (guide, tier, talent) {
@@ -14788,7 +14847,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getTalents = function (hero, tier) {
               var filt = _.filter(hero.hero.talents, function (val) { return (val.tier === tier); });
-              var out = _.sortBy(filt, function (val) { return val.talent.orderNum });
+              var out = _.sortBy(filt, function (val) { return val.orderNum });
               
               return out;
             };

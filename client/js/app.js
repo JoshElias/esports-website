@@ -25,6 +25,7 @@ var app = angular.module('app', [
     'app.directives',
     'app.animations',
     'app.redbull',
+    'angular-google-adsense',
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User',
@@ -4276,7 +4277,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.talents.list.html',
                         controller: 'AdminTalentsListCtrl',
                         resolve: {
-                            paginationParams: [function() {
+                            paginationParams: function() {
                                 return {
                                     page: 1,
                                     perpage: 50,
@@ -4291,7 +4292,7 @@ var app = angular.module('app', [
                                         }
                                     }
                                 };
-                            }],
+                            },
                             talents: ['Talent', 'paginationParams', function (Talent, paginationParams) {
                                 return Talent.find(
                                     paginationParams.options
@@ -4311,6 +4312,45 @@ var app = angular.module('app', [
                         }
                     }
                 }
+            })
+            .state('app.admin.hots.talents.add', {
+              url: '/add',
+              views: {
+                talents: {
+                  templateUrl: tpl + 'views/admin/hots.heroes.talents.add.page.html',
+                  controller: 'AdminTalentsAddCtrl'
+                }
+              },
+              access: { auth: true, admin: true },
+              seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.hots.talents.edit', {
+              url: '/:talentId',
+              views: {
+                talents: {
+                  templateUrl: tpl + 'views/admin/hots.heroes.talents.edit.page.html',
+                  controller: 'AdminTalentsEditCtrl',
+                  resolve: {
+                    talent: ['$stateParams', 'Talent', function ($stateParams, Talent) {
+                      var talentId = $stateParams.talentId;
+                      
+                      return Talent.findOne({
+                        filter: {
+                          where: {
+                            id: talentId
+                          }
+                        }
+                      })
+                      .$promise
+                      .then(function (data) {
+                        return data;
+                      });
+                    }]
+                  }
+                }
+              },
+              access: { auth: true, admin: true },
+              seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.maps', {
                 abstract: true,

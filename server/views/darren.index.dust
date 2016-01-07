@@ -63,6 +63,7 @@
     <script src="./vendor/angular-ui-validate/dist/validate.min.js"></script>
     <script src="./vendor/angular-animate/angular-animate.min.js"></script>
     <script src="./vendor/angular-route/angular-route.min.js"></script>
+    <script src="./vendor/angular-google-adsense/dist/angular-google-adsense.js"></script>
     <script src="./js/vendor/angular-bootbox.js"></script>
     <script src="./vendor/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"></script>
     <script src="./vendor/angular-file-upload/dist/angular-file-upload.min.js"></script>
