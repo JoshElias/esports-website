@@ -2057,6 +2057,7 @@ angular.module('app.services', [])
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
         
+        // init tiers to null for existing/cached heros if their talents do not currently exist
         function createTiers(heroes) {
             var guideHeroes = [];
             console.log('heroes:', heroes);
@@ -2065,13 +2066,13 @@ angular.module('app.services', [])
                 var newObj = {};
                 newObj.hero = hero.hero;
                 newObj.talents = {
-                    tier1: null,
-                    tier4: null,
-                    tier7: null,
-                    tier10: null,
-                    tier13: null,
-                    tier16: null,
-                    tier20: null
+                    tier1: hero.talents && hero.talents.tier1 ? hero.talents.tier1 : null,
+                    tier4: hero.talents && hero.talents.tier4 ? hero.talents.tier4 : null,
+                    tier7: hero.talents && hero.talents.tier7 ? hero.talents.tier7 : null,
+                    tier10: hero.talents && hero.talents.tier10 ? hero.talents.tier10 : null,
+                    tier13: hero.talents && hero.talents.tier13 ? hero.talents.tier13 : null,
+                    tier16: hero.talents && hero.talents.tier16 ? hero.talents.tier16 : null,
+                    tier20: hero.talents && hero.talents.tier20 ? hero.talents.tier20 : null
                 };
                 
                 _.each(hero.hero.talents, function(heroTalent) {
@@ -2194,7 +2195,6 @@ angular.module('app.services', [])
 
             var obj = {};
             obj.hero = hero;
-//            obj.hero.talents = tals;
             obj.talents = {
               tier1: null,
               tier4: null,
@@ -2205,25 +2205,6 @@ angular.module('app.services', [])
               tier20: null
             };
             gb.heroes.push(obj);
-            
-            if (_.isEmpty(hero.talents)) {
-              HeroTalent.find({
-                filter: {
-                  where: {
-                    heroId: hero.id
-                  },
-                  include: ['talent']
-                }
-              })
-              .$promise
-              .then(function (data) {
-                var heroes = gb.heroes;
-                var index = heroes.indexOf(obj);
-                  
-                hero.talents = data;
-                heroes[index].hero.talents = data;
-              });
-            }
           }
         };
 
