@@ -1179,6 +1179,7 @@ angular.module('app.services', [])
     };
 
     pagination.new = function (perpage, total, callback) {
+      console.log('callback:', callback);
         var paginate = {
             page: 1,
             perpage: perpage || 10,
@@ -2620,7 +2621,13 @@ angular.module('app.services', [])
             }
           ])
         },
-        getGuides: function (filters, isFeatured, limit, page, finalCallback) {
+        getGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
+          console.log('filters:', filters);
+          console.log('isFeatured:', isFeatured);
+          console.log('search:', search);
+          console.log('limit:', limit);
+          console.log('page:', page);
+          
             var order = "voteScore DESC",
                 heroWhere = {}, 
                 guideWhere = {
@@ -2765,12 +2772,18 @@ angular.module('app.services', [])
             });
         },
         getHeroGuides: function (filters, isFeatured, limit, page, finalCallback) {
+          console.log('got here');
+          console.log('filters:', filters);
+          console.log('isFeatured:', isFeatured);
+          console.log('limit:', limit);
+          console.log('page:', page);
+          console.log('selectedHeroes:', selectedHeroes);
             var selectedHeroes = filters.heroes,
                 order = "voteScore DESC";
 
-            if (_.isEmpty(selectedHeroes)) {
-                return;
-            }
+//            if (_.isEmpty(selectedHeroes)) {
+//                return;
+//            }
             
             var where = {
                 guideType: "hero"
@@ -2902,13 +2915,16 @@ angular.module('app.services', [])
                   });
                 }
             ], function(err, guides, count) {
+              console.log('err:', err);
+              console.log('guides:', guides);
+              console.log('count:', count);
               if (err) {
                 return finalCallback(err);
               }
               return finalCallback(null, guides, count);
             })
         },
-        getMapGuides: function (filters, isFeatured, limit, page, finalCallback) {
+        getMapGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
             var selectedMap = filters.map;
 
             if (_.isEmpty(selectedMap)) {
