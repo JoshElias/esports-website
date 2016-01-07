@@ -107,6 +107,25 @@ angular.module('redbull.controllers')
     var ext = '.mp3';
     var audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/';
     
+    // load cards for preloader
+    var cardImages = [];
+    var cardPath = 'cards/';
+    for (var key in $scope.packs) {
+        for (var x = 0; x < $scope.packs[key].packs.length; x++) {
+            for (var y = 0; y < $scope.packs[key].packs[x].cards.length; y++) {
+                if (cardImages.indexOf($scope.packs[key].packs[x].cards[y].photoNames.small) === -1) {
+                    cardImages.push($scope.packs[key].packs[x].cards[y].photoNames.small);
+                    cardImages.push($scope.packs[key].packs[x].cards[y].photoNames.large);
+                }
+            }
+        }
+    }
+    for (var i = 0; i < cardImages.length; i++) {
+        // TODO: make https
+        fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
+    }
+    
+    
     // image files
     var imageFiles = [
         'bg.jpg',
@@ -127,6 +146,12 @@ angular.module('redbull.controllers')
         'back-naxx.png',
         'back-soulbound.png',
         'back-tgt.png',
+        'pack-frame.png',
+        'pack-tab.png',
+        'volume-nob.png',
+        'volume-slider.png',
+        'hero-select.png',
+        'card-bottom.png',
     ];
     
     // load images for preloader

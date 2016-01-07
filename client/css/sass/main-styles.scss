@@ -1388,7 +1388,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 
 .input-dark { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; outline: none; }
-.input-dark:hover { border: 1px solid #444; background: url('../img/black-60.png'); color: #FFF; }
+.input-dark:hover { border: 1px solid #444; background: url('../img/black-60.png'); color: #FFF !important; }
 .input-dark:focus { border: 1px solid #2766ad; background: url('../img/black-60.png'); color: #FFF; }
 
 .input-dark:read-only { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; outline: none; box-shadow: none; }
@@ -1405,6 +1405,10 @@ input[type=range]:focus::-ms-fill-upper {
 .dropdown-dark > li:hover { background: #000; }
 .dropdown-dark > li > a:hover, .dropdown-menu > li > a:focus { background: transparent; color: #FFF; }
 .dropdown-dark > li.active { background: #2766ad; }
+
+.open .dropdown-menu.dropdown-dark li a:hover {
+    color: #FFF;
+}
 
 .btn-default { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; outline: none; }
 .btn-default:hover { border: 1px solid #444; background: url('../img/black-60.png'); color: #FFF; }

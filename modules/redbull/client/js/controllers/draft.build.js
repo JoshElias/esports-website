@@ -11,9 +11,20 @@ angular.module('redbull.controllers')
             decksLimit: 3
         };
         
+        // classes
         $scope.klasses = angular.copy(Hearthstone.classes);
         $scope.klasses.splice(0, 1);
-
+        
+        // rarities
+        $scope.rarities = [
+            { name: 'All', value: '' },
+            { name: 'Soulbound', value: 'Basic' },
+            { name: 'Common', value: 'Common' },
+            { name: 'Rare', value: 'Rare' },
+            { name: 'Epic', value: 'Epic' },
+            { name: 'Legendary', value: 'Legendary' },
+        ];
+        
         $scope.currentDeck = null;
         $scope.cards = {
             sorted: {},
@@ -28,6 +39,7 @@ angular.module('redbull.controllers')
         $scope.filters = {
             search: '',
             mana: false,
+            rarity: $scope.rarities[0],
             mechanics: [],
             class: $scope.klasses[0],
         };
@@ -89,6 +101,16 @@ angular.module('redbull.controllers')
                 return true;
             });
             
+            // filter rarity
+            if ($scope.filters.rarity.value.length) {
+                filtered = $filter('filter')(filtered, function (value, index, arr) {
+                    if (value.card.rarity === $scope.filters.rarity.value) {
+                        return true;
+                    }
+                    return false;
+                });
+            }
+            
             // filter mechanics
             if ($scope.filters.mechanics.length) {
                 filtered = $filter('filter')(filtered, function (value, index, arr) {
@@ -115,10 +137,6 @@ angular.module('redbull.controllers')
             var deck = $scope.currentDeck;
             var cardQty = card.qty;
             var cardUsed = $scope.qtyUsed(card);
-            
-            console.log('deck: ', deck);
-            console.log('cardQty: ', cardQty);
-            console.log('cardUsed: ', cardUsed);
             
             if (!deck || cardUsed === cardQty) { return false; }
             
@@ -161,7 +179,11 @@ angular.module('redbull.controllers')
             $scope.filters.mana = ($scope.filters.mana === cost) ? false : cost;
             updatePagination();
         };
-
+        
+        $scope.setFilterRarity = function (rarity) {
+            $scope.filters.rarity = rarity;
+        };
+        
         // has mechanics filtering
         $scope.hasFilterMechanic = function (mechanic) {
             var index = $scope.filters.mechanics.indexOf(mechanic);
@@ -271,10 +293,10 @@ angular.module('redbull.controllers')
 
         // add deck modal
         $scope.addDeckWnd = function () {
-            if ($scope.decks.length >= $scope.decksLimit) {
+            if ($scope.decks.length >= 9) {
                 var box = bootbox.dialog({
                     title: 'Add Deck',
-                    message: $compile('<div>You can only create <strong>{{decksLimit}}</strong> decks. To create another deck, you must first delete an existing one.</div>')($scope),
+                    message: $compile('<div>You can only create one deck for each class while building. To create another deck, you must first delete an existing one.</div>')($scope),
                     buttons: {
                         okay: {
                             label: 'Okay',
@@ -306,7 +328,6 @@ angular.module('redbull.controllers')
                             if (!error) {
                                 if (!$scope.newDeck.name.length) { $scope.newDeck.name = $scope.newDeck.playerClass + ' Deck'; }
                                 var newDeck = DeckBuilder.new($scope.newDeck.playerClass, $scope.newDeck);
-                                console.log('newDeck: ', newDeck);
                                 $scope.decks.push(newDeck);
                                 $scope.currentDeck = newDeck;
                                 if ($scope.filters.class !== $scope.newDeck.playerClass && $scope.filters.class !== 'Neutral') {
