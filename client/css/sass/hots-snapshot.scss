@@ -225,7 +225,15 @@
 
              
         }
+        
     
+        .tier-hero:nth-child(2n+2)  {
+            
+            .tier-hero-heading {
+                background-color: rgba(#32234c, 1) !important;
+            }
+        }
+        
         .hero-button {
                 position: absolute;
                 top: 16px;

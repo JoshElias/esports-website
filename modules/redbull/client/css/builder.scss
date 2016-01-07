@@ -164,9 +164,27 @@
                 
             } /* .mana-cost */
             
-            .card-mechanics {
+            .card-rarity {
                 position: absolute;
                 top: 365px;
+                left: 0px;
+                width: 299px;
+                
+                button {
+                    width: 100%;
+                    text-align: left;
+                }
+                
+                ul,
+                ul li {
+                    width: 100%;
+                }
+                
+            } /* .card-rarity */
+            
+            .card-mechanics {
+                position: absolute;
+                top: 454px;
                 bottom: 0px;
                 width: 299px;
                 

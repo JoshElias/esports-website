@@ -37,11 +37,33 @@
             
         </div>
         
+        <div class="card-rarity">
+            <h3>Card Rarity</h3>
+            
+            <div class="dropdown m-t-sm m-l-sm m-r-sm m-b-sm">
+                <button class="btn card-rarity-btn input-dark" type="button" data-toggle="dropdown">
+                    <span>
+                        Rarity:
+                        <strong class="m-l-md">{{filters.rarity.name}}</strong>
+                    </span>
+                    <span class="pull-right">
+                        <b class="caret"></b>
+                    </span>
+                </button>
+                <ul class="list-group dropdown-menu dropdown-dark">
+                    <li class="list-group-item" ng-class="{active: filters.rarity === rarity}" ng-repeat="rarity in rarities">
+                        <a href="#" ng-click="setFilterRarity(rarity); pagination.setPage(1);">{{rarity.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+        
         <div class="card-mechanics">
             <h3>Card Mechanics</h3>
             
             <div class="mechanics-wrapper">
-                <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+                <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
                     <div class="iscroll-scroller">
                         <ul>
                             <li ng-repeat="mechanic in cardMechanics">
@@ -77,7 +99,7 @@
                 </div>
                 
                 <div class="deck-cards">
-                    <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+                    <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
                         <div class="iscroll-scroller">
                             
                             <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}" 

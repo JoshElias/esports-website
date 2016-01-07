@@ -39,7 +39,8 @@ $pos-y: 4px;
 
 @mixin ow-hero-list ($hero, $size, $pos-x, $pos-y) { 
      
-  .ow-hero-filters li a.#{$hero} {
+  .ow-hero-filters li a.#{$hero},
+    .hero-head a.#{$hero} {
         background: url("../img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
         width: 65px;
         height: 65px;
@@ -56,7 +57,15 @@ $pos-y: 4px;
         background-position: #{$pos-x} #{$pos-y};
         background-size: #{$size} auto;                
         z-index: 100;    
-        }   
+        }
+    
+    .strong-against .hero-head a.#{$hero} {
+        border: 2px solid aqua; 
+    }
+    
+    .weak-against .hero-head a.#{$hero} {
+        border: 2px solid crimson; 
+    }
     
     .ow-hero-selected.#{$hero} {
         
@@ -504,7 +513,7 @@ $pos-y: 4px;
         }
 
         .ow-role-icon {
-            content: url(../img/overwatch/icons/support.png);
+            //content: url(../img/overwatch/icons/support.png);
             margin-left: 5px;
         }
 

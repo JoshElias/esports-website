@@ -341,13 +341,15 @@
     border-right: 1px solid rgba(255,255,255,.2);
     border-top: 1px solid rgba(255,255,255,.2);
     border-bottom: 1px solid rgba(255,255,255,.2);
-
-
-
+    
+    min-height: 100px;
+    padding-top: 14px;
+    
+    display: block;
     margin-bottom: 1px;
 }
 
-.meta-author .meta-author-collapser { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
+.meta-author .meta-author-collapser { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; cursor: pointer;}
 
 .meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-transform: uppercase; }
 .meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -357,7 +359,7 @@
 .author-text-wrapper .classExpert { text-transform: uppercase; }
 .author-text-wrapper h3 { text-transform: uppercase; }
 .author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
-.author-collapse p { color: white; padding: 0px 75px 20px 105px; font-size: 14px; }
+.author-collapse p { color: white; padding: 20px 75px 20px 105px; font-size: 14px; }
 
 .twitch-btn { background: #6441A5 }
 .twitch-btn:hover { background: #6441A5 }
@@ -372,7 +374,7 @@
 @media (max-width: 767px) {
     .meta-author h2 { text-indent: 0px; }
     .meta-author h3 { text-indent: 0px; }
-    .author-collapse p { padding: 0px 20px 20px; }
+    .author-collapse p { padding: 10px 0px 20px;}
     .soc-btns { position: relative; top: 0px; left: 0px; padding-left: 20px; }
 }
 

@@ -787,16 +787,16 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth', 'Deck', 'Guide',
-    function ($scope, $sce, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth, Deck, Guide) {
+.controller('ProfileActivityCtrl', ['$scope', '$sce', '$filter', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth', 'Deck', 'Guide',
+    function ($scope, $sce, $filter, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth, Deck, Guide) {
 
         $scope.activities = activities;
         console.log('$scope.activities:', $scope.activities);
         $scope.total = activityCount.count;
-        console.log('$scope.total:', $scope.total);
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
         $scope.LoopBackAuth = LoopBackAuth;
         $scope.queryFilter = [];
+        $scope.unfilteredCount = $scope.activities.length;
         
         var filters = {
             comments: [
@@ -824,18 +824,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.toggleFilter = function (filter) {
           for (var i = 0; i < $scope.filterActivities.length; i++) {
             if (filter == $scope.filterActivities[i]) {
-              console.log('filter:', filter);
               $scope.filterActivities.splice(i,1);
               buildFilter();
-              console.log('$scope.queryFilter:', $scope.queryFilter);
-              console.log("TRUE toggle filter", filter, $scope.filterActivities);
               return;
             }
           }
           $scope.filterActivities.push(filter);
           buildFilter();
-          console.log("FALSE toggle filter", filter, $scope.filterActivities);
-          console.log('$scope.queryFilter:', $scope.queryFilter);
         }
 
         var buildFilter = function () {
@@ -845,49 +840,62 @@ angular.module('app.controllers', ['ngCookies'])
               $scope.queryFilter.push(filters[$scope.filterActivities[i]][j]);
             }
           }
-          console.log('$scope.filterActivities:', $scope.filterActivities);
-          console.log('$scope.queryFilter:', $scope.queryFilter);
         }
         buildFilter();
-
+      
+        // ugh this function kinda turned into a mess
+        var activityLimit = 3;
         $scope.loadActivities = function (isFilter) {
-          console.log(typeof $scope.user.id);
-          var options = {
+        $scope.unfilteredCount = $filter('inq')($scope.activities, $scope.queryFilter, 'activityType').length;
+          if (activityLimit >= $scope.total) {
+            return;
+          } else {
+            if (!isFilter) {
+              // increment limit variable
+              activityLimit += 3;
+            }
+            if ($scope.unfilteredCount >= 3 && isFilter === true) {
+              return;
+            } else {
+              var options = {
                 filter: {
                   order: "createdDate DESC",
-                  limit: 3,
-                  skip: $scope.activities.length,
+                  limit: activityLimit,
                   where: {
-                    authorId: $scope.user.id
-                  },
-                  include: [
-                    {
-                      relation: 'article'
-                    },
-                    {
-                      relation: 'deck'
-                    },
-                    {
-                      relation: 'guide'
-                    }
-                  ]
+                    authorId: $scope.user.id,
+                    isActive: true
+                  }
                 }
               }
+              
+              if (isFilter) {
+                options.filter = {
+                  order: "createdDate DESC",
+                  limit: activityLimit,
+                  where: {
+                    authorId: $scope.user.id,
+                    isActive: true,
+                    activityType: { inq : $scope.queryFilter }
+                  }
+                }
 
-          if (isFilter) {
-            options.filter.where = {
-              authorId: $scope.user.id,
-              isActive: true,
-              activityType: { inq : $scope.queryFilter }
+                Activity.find(options)
+                .$promise
+                .then(function (data) {
+                  $scope.activities = data;
+                  $scope.unfilteredCount = $filter('inq')($scope.activities, $scope.queryFilter, 'activityType').length;
+                });
+
+              } else {
+                // clicked show more
+                Activity.find(options)
+                .$promise
+                .then(function (data) {
+                  $scope.activities = data;
+                });
+              }
             }
           }
-
-          Activity.find(options)
-          .$promise
-          .then(function (data) {
-            console.log('DATA', data);
-            $scope.activities = $scope.activities.concat(data);
-          });
         }
 
         $scope.activities.forEach(function (activity) {
@@ -895,36 +903,6 @@ angular.module('app.controllers', ['ngCookies'])
             return $sce.trustAsHtml(activity.activity);
           };
         });
-
-//            $scope.loadActivities = function () {
-//                Activity.find({
-//                    filter: {
-//                        order: "createdDate DESC",
-//                        limit: 3,
-//                        skip: $scope.activities.length,
-//                        where: {
-//                            authorId: $scope.user.id,
-//                            active: true
-//                        },
-//                        include: [
-//                            {
-//                                relation: 'article'
-//                            },
-//                            {
-//                                relation: 'deck'
-//                            }
-//                        ]
-//                    }
-//                })
-//                .$promise
-//                .then(function (data) {
-//                    console.log("activity data:", data);
-//                    $scope.activities = $scope.activities.concat(data);
-//                })
-//                .catch(function (err) {
-//                    console.log("err loading activity data:", err);
-//                });
-//            }
 
             // delete guide
             $scope.deleteGuide = function deleteGuide(activity) {
@@ -936,22 +914,12 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                console.log('activity:', activity);
                                 return Guide.deleteById({
                                     id: activity.guide.id
                                 }).$promise
                                 .then(function (guideDeleted) {
                                     activity.guide = undefined;
                                 });
-//                                HOTSGuideService.guideDelete(activity.guide._id).success(function (data) {
-//                                    if (data.success) {
-//                                        activity.exists = false;
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: 'guide "' + activity.guide.name + '" deleted successfully.'
-//                                        };
-//                                    }
-//                                });
                             }
                         },
                         cancel: {
@@ -10605,8 +10573,10 @@ angular.module('app.controllers', ['ngCookies'])
                 d.collapse('show');
                 $scope.scrollToDeck(d);
             }
-
+          
             $scope.goToTwitch = function ($event, usr) {
+                event = event || window.event;
+                console.log('$event:', $event);
                 $event.stopPropagation();
                 var url = 'http://twitch.tv/' + usr
                 window.open(url, '_blank');
@@ -10727,7 +10697,8 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'articlesTotal', 'MetaService', 'AjaxPagination',
         function ($scope, $state, $q, $timeout, Article, articles, articlesTotal, MetaService, AjaxPagination) {
             //if (!data.success) { return $state.transitionTo('app.articles.list'); }
-
+          
+          console.log('articles:', articles);
             // articles
             $scope.articles = articles;
             $scope.total = articlesTotal.count;
@@ -11031,12 +11002,21 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount',
         function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, tempostormCount, communityDecks, communityCount) {
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
-
+            
+            console.log('tempostormCount:', tempostormCount);
+            console.log('communityCount:', communityCount);
+            console.log('tempostormDecks:', tempostormDecks);
+            console.log('communityDecks:', communityDecks);
             // decks
             $scope.deckSearch = '';
             $scope.tempostormDecks = tempostormDecks;
+            $scope.tempostormPagination = {
+                total: tempostormCount.count
+            };
             $scope.communityDecks = communityDecks;
-
+            $scope.communityPagination = {
+                total: communityCount.count
+            };
             // filters
             $scope.filters = {
                 classes: [],
@@ -11057,12 +11037,12 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }, true);
 
-            $scope.dustFormatted = function (dust) {
+                $scope.dustFormatted = function (dust) {
                 return Util.numberWithCommas(dust);
             }
 
             $scope.newSearch = function () {
-				console.log('$scope.filters.search:', $scope.filters.search);
+				        console.log('$scope.filters.search:', $scope.filters.search);
                 $scope.filters.search = $scope.deckSearch;
             }
             
@@ -11098,10 +11078,10 @@ angular.module('app.controllers', ['ngCookies'])
 
                 if ($scope.filters.search.length > 0) {
                     options.filter.where.or = [
-						{ name: { regexp: $scope.filters.search } },
-						{ description: { regexp: $scope.filters.search } },
-						{ deckType: { regexp: $scope.filters.search } }
-					]
+                    { name: { regexp: $scope.filters.search } },
+                    { description: { regexp: $scope.filters.search } },
+                    { deckType: { regexp: $scope.filters.search } }
+                  ]
                 }
                 
                 console.log('options:', options);
@@ -11110,62 +11090,88 @@ angular.module('app.controllers', ['ngCookies'])
 
             // pagination
             function updateTempostormDecks (page, perpage, callback) {
-				var test = getQuery(true, page, perpage);
-				console.log('test:', test);
-                Deck.find(getQuery(true, page, perpage))
-                .$promise
-                .then(function (data) {
-                    $scope.tempostormPagination.total = data.total;
+                console.log('getQuery(false, page, perpage):', getQuery(false, page, perpage).filter.where);
+                AjaxPagination.update(Deck, getQuery(false, page, perpage), getQuery(false, page, perpage).filter, function (err, data, count) {
+                    console.log('data:', data);
+                    console.log('count:', count);
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
                     $scope.tempostormPagination.page = page;
-                    $timeout(function () {
-                        $scope.tempostormDecks = data;
-
-                        if (callback) {
-                            return callback(data);
-                        }
-                    });
-                })
-                .then(function (err) {
-                    console.log("There's been an error:", err);
+                    $scope.tempostormPagination.perpage = perpage;
+                    $scope.tempostormDecks = data;
+                    $scope.tempostormPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
+//                Deck.find(getQuery(true, page, perpage))
+//                .$promise
+//                .then(function (data) {
+//                    $scope.tempostormPagination.total = data.total;
+//                    $scope.tempostormPagination.page = page;
+//                    $timeout(function () {
+//                        $scope.tempostormDecks = data;
+//
+//                        if (callback) {
+//                            return callback(data);
+//                        }
+//                    });
+//                })
+//                .then(function (err) {
+//                    console.log("There's been an error 1:", err);
+//                });
             }
 
-            $scope.tempostormPagination = AjaxPagination.new(4, tempostormCount,
+            $scope.tempostormPagination = AjaxPagination.new(4, $scope.tempostormPagination.total,
                 function (page, perpage) {
                     var d = $q.defer();
 
-                    updateTempostormDecks(page, perpage, function (data) {
-                        d.resolve(data.total);
+                    updateTempostormDecks(page, perpage, function (err, data) {
+                        console.log('data:', data);
+                        d.resolve(data.count);
                     });
 
                     return d.promise;
                 }
             );
+            
             //TODO: MAKE CASE-INSENSITIVE QUERY WORK
             function updateCommunityDecks (page, perpage, callback) {
-                Deck.find(getQuery(false, page, perpage))
-                .$promise
-                .then(function (data) {
-                    $scope.communityPagination.total = data.total;
+                AjaxPagination.update(Deck, getQuery(false, page, perpage), getQuery(false, page, perpage).filter, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
                     $scope.communityPagination.page = page;
-                    $timeout(function () {
-                        $scope.communityDecks = data;
-
-                        if (callback) {
-                            return callback(data);
-                        }
-                    });
-                }).then(function (err) {
-                    console.log("There's been an error:", err);
-                });;
+                    $scope.communityPagination.perpage = perpage;
+                    $scope.communityDecks = data;
+                    $scope.communityPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+//                Deck.find(getQuery(false, page, perpage))
+//                .$promise
+//                .then(function (data) {
+//                    $scope.communityPagination.total = data.total;
+//                    $scope.communityPagination.page = page;
+//                    $timeout(function () {
+//                        $scope.communityDecks = data;
+//
+//                        if (callback) {
+//                            return callback(data);
+//                        }
+//                    });
+//                }).then(function (err) {
+//                    console.log("There's been an error 2:", err);
+//                });
             }
 
-            $scope.communityPagination = AjaxPagination.new(12, communityCount,
+            $scope.communityPagination = AjaxPagination.new(12, $scope.communityPagination.total,
                 function (page, perpage) {
                     var d = $q.defer();
 
-                    updateCommunityDecks(page, perpage, function (data) {
-                        d.resolve(data.total);
+                    updateCommunityDecks(page, perpage, function (err, data) {
+                        console.log('data:', data);
+                        d.resolve(data.count);
                     });
 
                     return d.promise;
@@ -13748,8 +13754,7 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'Guide', 'HOTS', 'guide', 'heroes', 'maps',
         function ($scope, $state, $window, AlertService, GuideBuilder, Guide, HOTS, guide, heroes, maps) {
             // create guide
-            $scope.guide = GuideBuilder.new('hero', guide);
-
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero', guide);
             // heroes
             $scope.heroes = heroes;
 
@@ -13891,7 +13896,7 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'Guide', 'guide', 'heroes', 'maps',
         function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, Guide, guide, heroes, maps) {
             // create guide
-            $scope.guide = GuideBuilder.new('map', guide);
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map', guide);
 
             // heroes
             $scope.heroes = heroes;
@@ -14551,14 +14556,140 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.tempostormPagination = AjaxPagination.new(4, tempostormGuideCount.count,
                 function (page, perpage) {
+              console.log('page:', page);
+              console.log('perpage:', perpage);
+              console.log('$scope.filters:', $scope.filters);
                     var d = $q.defer();
 
-                    updateTempostormGuides(page, perpage, $scope.search, function (data) {
+                    updateTempostormGuides(page, perpage, $scope.search, $scope.filters, function (data) {
                         d.resolve(data);
                     });
                     return d.promise;
                 }
             );
+          
+          function updateTempostormGuides (page, perpage, search, filters, callback) {
+            var options = {
+              filter: {
+                fields: [
+                  "name", 
+                  "authorId", 
+                  "slug", 
+                  "voteScore", 
+                  "guideType", 
+                  "premium", 
+                  "id", 
+                  "talentTiers",
+                  "createdDate"
+                ],
+                order: 'createdDate DESC',
+                skip: ((page*perpage)-perpage),
+                limit: perpage,
+                where: {
+                  isFeatured: true
+                }
+              }
+            };
+          }
+          
+//          $scope.searchCards = function() {
+//                updateCards(1, $scope.perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, data) {
+//                    if (err) return console.log('err: ', err);
+//                });
+//            };
+//
+//            // pagination
+//            function updateCards (page, perpage, search, filterExpansion, filterClass, filterType, filterRarity, callback) {
+////                console.log('filterClass: ', filterClass);
+//                $scope.fetching = true;
+//
+//                var options = {
+//                    filter: {
+//                        fields: paginationParams.options.filter.fields,
+//                        order: paginationParams.options.filter.order,
+//                        skip: ((page*perpage)-perpage),
+//                        limit: paginationParams.perpage,
+//                        where: {}
+//                    }
+//                };
+//                
+//                var countOptions = {
+//                    where: {}
+//                };
+//                
+//                // if queries exist, iniiate empty arrays
+//                if (search.length > 0) {
+//                    options.filter.where.or = [];
+//                    countOptions.where.or = [];
+//                }
+//                
+//                if (filterClass.length > 0 
+//                    || filterExpansion.length > 0 
+//                    || filterType.length > 0
+//                    || filterRarity.length > 0) {
+//                    options.filter.where.and = [];
+//                    countOptions.where.and = [];
+//                }
+//                
+//                // push query values to arrays
+//                if (search.length > 0) {
+//                    options.filter.where.or.push({ expansion: { regexp: search } });
+//                    options.filter.where.or.push({ name: { regexp: search } });
+//                    options.filter.where.or.push({ cardtype: { regexp: search } });
+//                    options.filter.where.or.push({ rarity: { regexp: search } });
+//                    options.filter.where.or.push({ mechanics: { regexp: search } });
+//                    
+//                    countOptions.where.or.push({ expansion: { regexp: search } });
+//                    countOptions.where.or.push({ name: { regexp: search } });
+//                    countOptions.where.or.push({ cardType: { regexp: search } });
+//                    countOptions.where.or.push({ rarity: { regexp: search } });
+//                    countOptions.where.or.push({ mechanics: { regexp: search } });
+//                }
+//                
+//                if (filterExpansion.length > 0) {
+//                    options.filter.where.and.push({ expansion: filterExpansion });
+//                    countOptions.where.and.push({ expansion: filterExpansion });
+//                }
+//                
+//                if (filterClass.length > 0) {
+//                    options.filter.where.and.push({ playerClass: filterClass });
+//                    countOptions.where.and.push({ playerClass: filterClass });
+//                }
+//                
+//                if (filterType.length > 0) {
+//                    options.filter.where.and.push({ cardType: filterType });
+//                    countOptions.where.and.push({ cardType: filterType });
+//                }
+//                
+//                if (filterRarity.length > 0) {
+//                    options.filter.where.and.push({ rarity: filterRarity });
+//                    countOptions.where.and.push({ rarity: filterRarity });
+//                }
+//
+//                AjaxPagination.update(Card, options, countOptions, function (err, data, count) {
+//                    $scope.fetching = false;
+//                    if (err) return console.log('got err:', err);
+//                    $scope.cardPagination.page = page;
+//                    $scope.cardPagination.perpage = perpage;
+//                    $scope.cards = data;
+//                    $scope.cardPagination.total = count.count;
+//                    if (callback) {
+//                        callback(null, count);
+//                    }
+//                });
+//            }
+//
+//            // page flipping
+//            $scope.cardPagination = AjaxPagination.new($scope.perpage, $scope.total,
+//                function (page, perpage) {
+//                    var d = $q.defer();
+//                    updateCards(page, perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, count) {
+//                        if (err) return console.log('pagination err:', err);
+//                        d.resolve(count.count);
+//                    });
+//                    return d.promise;
+//                }
+//            );
 
             $scope.communityPagination = AjaxPagination.new(10, communityGuideCount.count,
                 function (page, perpage) {
@@ -14772,9 +14903,7 @@ angular.module('app.controllers', ['ngCookies'])
             var box;
 
             // create guide
-            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
-
-            console.log('guide: ', $scope.guide);
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === null ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
 
             $scope.$watch('guide', function() {
                 $scope.app.settings.guide = $scope.guide;
@@ -14807,6 +14936,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < heroRows.length; row++) {
                 var heroes = [];
                 for (var i = 0; i < heroRows[row]; i++) {
+                  console.log('index:', index);
+                  console.log('dataHeroes:', dataHeroes);
                     if (dataHeroes[index]) {
                         heroes.push(dataHeroes[index]);
                     } else {
@@ -15073,7 +15204,8 @@ angular.module('app.controllers', ['ngCookies'])
             var box;
 
             // create guide
-            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') && $scope.app.settings.guide.id === null ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
+            
             $scope.$watch('guide', function(){
                 $scope.app.settings.guide = $scope.guide;
             }, true);
@@ -15207,30 +15339,6 @@ angular.module('app.controllers', ['ngCookies'])
                     .catch(function (err) {
                         console.log("Creating the guide failed:", err);
                     })
-                
-                
-                
-//                if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
-//                    return false;
-//                }
-//                if (!$scope.app.user.isLogged()) {
-//                    LoginModalService.showModal('login');
-//                } else {
-//                    console.log('guide: ', $scope.guide);
-//                    console.log('name: ',$scope.guide.name);
-//                    $scope.guide.slug = Util.slugify($scope.guide.name);
-//                    console.log('slug: ',$scope.guide.slug);
-//                    HOTSGuideService.addGuide($scope.guide).success(function (data) {
-//                        if (!data.success) {
-//                            $scope.errors = data.errors;
-//                            $scope.showError = true;
-//                            $window.scrollTo(0,0);
-//                        } else {
-//                            $scope.app.settings.guide = null;
-//                            $state.go('app.hots.guides.guide', { slug: data.slug });
-//                        }
-//                    });
-//                }
                 }
             };
         }
@@ -15277,8 +15385,8 @@ angular.module('app.controllers', ['ngCookies'])
             var existingMaps = angular.copy(dataGuide.maps);
           
             // create guide
-            $scope.guide = GuideBuilder.new('hero', dataGuide);
-
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === dataGuide.id ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero', dataGuide);
+            
             console.log('guide: ', $scope.guide);
 
             $scope.$watch('guide', function() {
@@ -15617,6 +15725,7 @@ angular.module('app.controllers', ['ngCookies'])
                   if (err) {
                     return console.log('PARA err:', err);
                   }
+                  $scope.app.settings.guide = null;
                   $state.go('app.hots.guides.guide', { slug: guideInfo.slug });
                 });
                 
@@ -15670,8 +15779,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide',
-        function ($scope, $state, $window, HOTS, GuideBuilder,  dataGuide, dataHeroes, dataMaps, LoginModalService, User, Guide) {
+    .controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'userRoles', 'EventService',
+        function ($scope, $state, $window, HOTS, GuideBuilder,  dataGuide, dataHeroes, dataMaps, LoginModalService, User, Guide, userRoles, EventService) {
           
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -15703,7 +15812,7 @@ angular.module('app.controllers', ['ngCookies'])
           
             console.log('dataGuide:', dataGuide);
             // create guide
-            $scope.guide = GuideBuilder.new('map', dataGuide);
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map' && $scope.app.settings.guide.id === dataGuide.id) ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map', dataGuide);
             
             console.log('$scope.guide:', $scope.guide);
             // heroes

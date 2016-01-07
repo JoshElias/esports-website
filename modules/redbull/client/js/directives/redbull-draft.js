@@ -9,6 +9,7 @@ angular.module('redbull.directives')
                 isLoading: '=',
                 currentPack: '=',
                 audioFiles: '=',
+                volume: '=',
             },
             link: function (scope, el, attrs) {
                 var startShake = null,
@@ -95,7 +96,7 @@ angular.module('redbull.directives')
                     var audio = new Audio();
                     audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
                     audio.load();
-                    audio.volume = scope.audioFiles[audioName].volume;
+                    audio.volume = scope.audioFiles[audioName].volume * (scope.volume / 100);
                     audio.playbackRate = (!fastForward) ? 1 : 2;
                     audio.play();
                 }
@@ -359,7 +360,7 @@ angular.module('redbull.directives')
                         // fade out pack
                         $pack.fadeOut(0, function() {
                             if (!anotherPack) {
-                                $pack.closest('.pack-wrapper').slideUp(fadeDuration);
+                                $pack.closest('.expansion-wrapper').slideUp(fadeDuration);
                             }
                             
                             // return hidden pack
