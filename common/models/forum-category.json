@@ -9,7 +9,8 @@
   },
   "properties": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "validators": ["spam"]
     },
     "isActive": {
       "type": "boolean"

@@ -6,6 +6,7 @@ module.exports = function(_server) {
    server = _server;
 
     async.series([
+            /*
         addMissingTalent,
         createAbilitiesAndTalents,
         assignGameTypeMode,
@@ -21,6 +22,8 @@ module.exports = function(_server) {
         createSnapshotModels,
         createUserIdentities,
         createUserRoles,
+        */
+        createSpamRegexes,
         //createRedbullExpansions
     ],
     function(err) {
@@ -968,6 +971,31 @@ function assignGameTypeMode(finalCb) {
         }
     ],
     function(err) {
+        finalCb(err);
+    });
+}
+
+var spamRegexes = [
+    "(stream|watch) (free|movies|movie|online|video)",
+    "(click link|(to (stream|watch)))",
+    "(stream|watch|free)(.*)(free|movies|movie|online|video)",
+    "movieonfullhd",
+    "moviesclash",
+    "(full.?hd)",
+    "(free|online|video) (video|free|online)",
+    "(1080|hd|full|movie)(.*)online"
+]
+
+function createSpamRegexes(finalCb) {
+    var SpamRegex = server.models.spamRegex;
+
+    async.each(spamRegexes, function(spamRegex, eachCb) {
+        SpamRegex.create({
+            regex: spamRegex,
+            isActive: true
+        }, eachCb);
+    }, function(err) {
+        if(!err) console.log("successfully created spam regexes");
         finalCb(err);
     });
 }

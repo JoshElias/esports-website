@@ -12,7 +12,11 @@
       "required": true
     },
     "slug": {
-      "type": "object"
+      "url": {
+        "type": "string",
+        "validators": ["unique"]
+      },
+      "linked": {"type": "boolean"}
     },
     "description": {
       "type": "string"
@@ -23,22 +27,18 @@
     "photoNames": {
       "type": "object"
     },
-    "classTags": {
-      "type": [
-        "string"
-      ]
-    },
+    "classTags": [
+      "string"
+    ],
     "themeName": {
       "type": "string"
     },
     "viewCount": {
       "type": "number"
     },
-    "votes": {
-      "type": [
-        "string"
-      ]
-    },
+    "votes": [
+      "string"
+    ],
     "voteScore": {
       "type": "number"
     },
@@ -51,21 +51,15 @@
     "premium": {
       "type": "object"
     },
-    "articleType": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldRelatedArticles": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldComments": {
-      "type": [
-        "string"
-      ]
-    },
+    "articleType": [
+      "string"
+    ],
+    "oldRelatedArticles": [
+      "string"
+    ],
+    "oldComments": [
+      "string"
+    ],
     "isActive": {
       "type": "boolean"
     },

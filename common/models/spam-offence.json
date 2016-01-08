@@ -15,14 +15,20 @@
     "ip": {
       "type": "string"
     },
-    "match": {
-      "type": "string"
+    "matches": {
+      "type": ["string"]
     },
-    "referrer": {
+    "referer": {
       "type": "string"
     },
     "createdDate": {
       "type": "date"
+    },
+    "modelName": {
+      "type": "string"
+    },
+    "propertyName": {
+      "type": "string"
     }
   },
   "validations": [],
