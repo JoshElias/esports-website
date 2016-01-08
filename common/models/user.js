@@ -23,6 +23,7 @@ module.exports = function(User) {
 
 
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
+        console.log("after remote login");
         ctx.req.logIn(ctx.result.toJSON().user, function (err) {
             next(err);
         });
@@ -71,7 +72,7 @@ module.exports = function(User) {
                         from: {name: "Tempostorm", email: "admin@tempostorm.com"},
                         to: {name: user.username, email: user.email, type: "to"},
                         template: {
-                            name: "testactivation",
+                            name: "testactivation"
                         },
                         subject: "Confirm your account",
                         //text: "text message",
