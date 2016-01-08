@@ -14962,10 +14962,10 @@ angular.module('app.controllers', ['ngCookies'])
             var box;
 
             // create guide
-            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === null ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === null ? GuideBuilder.new('hero', JSON.parse($scope.app.settings.guide)) : GuideBuilder.new('hero');
 
             $scope.$watch('guide', function() {
-                $scope.app.settings.guide = $scope.guide;
+                $scope.app.settings.guide = JSON.stringify($scope.guide);
             }, true);
 
             // heroes
