@@ -8,13 +8,12 @@
   },
   "properties": {
     "text": {
-      "type": "string"
+      "type": "string",
+      "validators": ["spam"]
     },
-    "votes": {
-      "type": [
-        "object"
-      ]
-    },
+    "votes": [
+      "object"
+    ],
     "oldReplies": {},
     "createdDate": {
       "type": "date",

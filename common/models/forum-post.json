@@ -15,13 +15,15 @@
       "type": "boolean"
     },
     "content": {
-      "type": "string"
+      "type": "string",
+      "validators": ["spam"]
     },
     "createdDate": {
       "type": "date"
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "validators": ["spam"]
     },
     "viewCount": {
       "type": "number"

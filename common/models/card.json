@@ -54,20 +54,16 @@
       "type": "boolean",
       "required": true
     },
-    "mechanics": {
-      "type": [
-        "string"
-      ]
-    },
+    "mechanics": [
+      "string"
+    ],
     "cardType": {
       "type": "string",
       "required": true
     },
-    "deckIds": {
-      "type": [
-        "string"
-      ]
-    },
+    "deckIds": [
+      "string"
+    ],
     "deckable": {
       "type": "boolean"
     },

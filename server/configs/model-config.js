@@ -240,5 +240,13 @@ module.exports = {
     "redbullTournament": {
         "dataSource": "mongodb",
         "public": true
+    },
+    "spamRegex": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "spamOffence": {
+        "dataSource": "mongodb",
+        "public": true
     }
 }
