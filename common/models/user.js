@@ -23,7 +23,6 @@ module.exports = function(User) {
 
 
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
-        console.log("after remote login");
         ctx.req.logIn(ctx.result.toJSON().user, function (err) {
             next(err);
         });
