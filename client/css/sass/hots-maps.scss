@@ -29,6 +29,10 @@
         .map-selection .map .icon-wrap .icon a.icon-#{$map} { background: url('../img/hots/maps/#{$map}.png') no-repeat center center; }
     } //hots styles wrapper ends
     .hots-modal .map.#{$map} { background: url('../img/hots/maps/modal/#{$map}.jpg') no-repeat center center; }
+
+    .hots-styles .hots-guide-styles-new {
+        .guide-map.#{$map} { background: url('../img/hots/maps/modal/#{$map}.jpg') no-repeat center center; }  
+    }
 }
 
 
