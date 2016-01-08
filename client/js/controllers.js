@@ -15438,12 +15438,13 @@ angular.module('app.controllers', ['ngCookies'])
             var existingMaps = angular.copy(dataGuide.maps);
           
             // create guide
-            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === dataGuide.id ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero', dataGuide);
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === dataGuide.id ? GuideBuilder.new('hero', JSON.stringify($scope.app.settings.guide)) : GuideBuilder.new('hero', dataGuide);
             
             console.log('guide: ', $scope.guide);
 
             $scope.$watch('guide', function() {
-                $scope.app.settings.guide = $scope.guide;
+                $scope.app.settings.guide = JSON.stringify($scope.guide);
+                console.log('$scope.guide:', $scope.guide);
             }, true);
 
             // heroes
@@ -15568,12 +15569,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.updateGuide = function () {
+              console.log('updating guide:', $scope.guide);
               if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
               }
               if (!User.isAuthenticated()) {
                 LoginModalService.showModal('login', function () {
-                  return $scope.saveGuide();
+                  return $scope.updateGuide();
                 });
               } else {
                 $scope.guide.slug = Util.slugify($scope.guide.name);
@@ -15620,6 +15622,7 @@ angular.module('app.controllers', ['ngCookies'])
                     Guide.upsert(stripped)
                     .$promise
                     .then(function (guideUpdated) {
+                      console.log('guideUpdated:', guideUpdated);
                       guideInfo = guideUpdated;
                       return waterCB();
                     })
@@ -15644,6 +15647,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function(seriesCB) {
+                        console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
                         Guide.guideHeroes.createMany({
                           id: stripped.id
                         }, $scope.guide.guideHeroes).$promise
@@ -15666,7 +15670,7 @@ angular.module('app.controllers', ['ngCookies'])
                     
                   },
                   function(guideHeroData, waterCB) {
-                    
+                    console.log('guideHeroData:', guideHeroData);
                     async.series([
                       function(seriesCB) {
                         Guide.guideTalents.destroyAll({
@@ -15694,11 +15698,8 @@ angular.module('app.controllers', ['ngCookies'])
                             innerEachVal.guideHeroId = eachVal.id;
                             tals.push(innerEachVal);
                           });
-                          
-                          console.log('tals now:', tals);
                         });
                         
-                        console.log('tals:', tals);
                         Guide.guideTalents.createMany({
                           id: stripped.id
                         }, tals).$promise

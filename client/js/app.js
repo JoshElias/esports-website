@@ -1688,7 +1688,7 @@ var app = angular.module('app', [
                                   order: 'votesCount DESC',
                                   limit: 1,
                                   where: {
-                                      guideType: "hero"
+                                      guideType: "hero",
                                   },
                                   fields: [
                                     "name", 
