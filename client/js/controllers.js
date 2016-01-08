@@ -14671,8 +14671,12 @@ angular.module('app.controllers', ['ngCookies'])
                     var d = $q.defer();
               
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
-                      console.log('1');
-                      doGetHeroMapGuides();
+                      doGetHeroMapGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
+                        if (err) return d.resolve(err);
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
                       console.log('2');
                       doGetHeroGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
@@ -14718,7 +14722,12 @@ angular.module('app.controllers', ['ngCookies'])
               
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                       console.log('1');
-                      doGetHeroMapGuides();
+                      doGetHeroMapGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
+                        if (err) return d.resolve(err);
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
                       console.log('2');
                       doGetHeroGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
@@ -14956,8 +14965,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === null ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
 
             $scope.$watch('guide', function() {
-                $scope.app.settings.guide = JSON.stringify($scope.guide);
-              console.log('$scope.app.settings.guide:', $scope.app.settings.guide);
+                $scope.app.settings.guide = $scope.guide;
             }, true);
 
             // heroes
