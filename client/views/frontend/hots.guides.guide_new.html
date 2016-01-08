@@ -15,8 +15,9 @@
 
         
         <!-- header -->
-        <div class="container">
-            <div class="row m-t-md">
+        
+        <div class="row m-t-md">
+            <div class="container">
                 <div class="padding-none guide-header">
                     <div class="col-md-7 guide-header-inner clearfix">
                         <div class="pull-left">
@@ -39,8 +40,39 @@
                 </div>
             </div>
         </div>
+            <div class="row dark-background"> <!-- ADD BACKGROUND HERE -->
+                <div class="container">
+            <!-- guide talents -->
+                    <div class="guide-section" ng-if="guide.guideType == 'hero'">
+                        
+                        <div class="" ng-show="show.talents">
+                            <!-- hero talents -->
+                            <div class="col-md-8 col-sm-12 guide-talents clearfix" ng-repeat="hero in [getCurrentHero()]">
+                                <div class="guide-talent-wrapper m-t-lg m-b-lg" ng-repeat="talent in currentTalents track by $index">
+                                    <div class="guide-talent">
+                                        <div class="guide-talent-level"><span class="hidden-xs hidden-sm">LEVEL </span>{{talent.tier}}</div>
+                                        <div class="guide-talent-icon talents-icon active {{hero.hero.className}} {{talent.talent.className}} {{isLarge}}" talent-icon-md hots-talent hero="hero" talent="talent.talent"></div>
+                                        <div class="guide-talent-dots hidden-xs">
+                                            <div class="guide-talent-dot" ng-class="{ active: selectedTalent(hero, talent.tier, dot) }" ng-repeat="dot in getTalents(hero, talent.tier)"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- / hero talents -->
+                            <!-- / hero image -->
+                            <div class="col-md-4 hidden-sm hero-image-section">
+                                <img ng-src="../img/hots/modal/heroes/{{getCurrentHero().hero.className}}.png" class="talents-hero-image">
+                            
+                            </div>
+                            <!-- / hero image -->
+                        </div>
+                    </div>
+                </div>
+                <!-- / guide talents -->
+            </div>
+        </div>
         <!-- / header -->
-
+    <div class="container">
         <div class="row m-t-md">
                 
             <!-- guide left -->
@@ -48,33 +80,7 @@
 
                 
 
-                <!-- guide talents -->
-                <div class="guide-section" ng-if="guide.guideType == 'hero'">
-                    <div class="guide-section-title clearfix">
-                        <a href="#" ng-click="show.talents = !show.talents"><h3 class="pull-left">{{getCurrentHero().name.toUpperCase()}} TALENTS</h3></a>
-                        <div class="m-l-md m-r-md pull-right">
-                            <a href="#" ng-click="show.talents = !show.talents">
-                                <i class="fa" ng-class="{ 'fa-angle-down': !show.talents, 'fa-angle-up': show.talents }"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="guide-section-content" ng-show="show.talents">
-                        <!-- hero talents -->
-                        <div class="guide-talents clearfix" ng-repeat="hero in [getCurrentHero()]">
-                            <div class="guide-talent-wrapper" ng-repeat="talent in currentTalents track by $index">
-                                <div class="guide-talent">
-                                    <div class="guide-talent-level"><span class="hidden-xs hidden-sm">LEVEL </span>{{talent.tier}}</div>
-                                    <div class="guide-talent-icon talents-icon active {{hero.hero.className}} {{talent.talent.className}} {{isLarge}}" talent-icon-md hots-talent hero="hero" talent="talent.talent"></div>
-                                    <div class="guide-talent-dots hidden-xs">
-                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(hero, talent.tier, dot) }" ng-repeat="dot in getTalents(hero, talent.tier)"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- / hero talents -->
-                    </div>
-                </div>
-                <!-- / guide talents -->
+                
 
                 <!-- guide map image -->
                 <div class="m-t-md" ng-if="guide.guideType == 'map'">
