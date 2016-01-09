@@ -31,7 +31,10 @@
     .hots-modal .map.#{$map} { background: url('../img/hots/maps/modal/#{$map}.jpg') no-repeat center center; }
 
     .hots-styles .hots-guide-styles-new {
-        .guide-map.#{$map} { background: url('../img/hots/maps/modal/#{$map}.jpg') no-repeat center center; }  
+        .guide-map.#{$map} { 
+            background: url('../img/hots/maps/modal/#{$map}.jpg') no-repeat center center; 
+            background-size: 100% 100%; 
+        }  
     }
 }
 
