@@ -6,7 +6,7 @@
             </button>
         </li>
         <li ng-class="{active:step === 1}">
-            <button ng-click="stepOne()">
+            <button ui-sref="app.admin.hots.guides.add.step1">
                 STEP 1
                 <small>GUIDE TYPE</small>
             </button>
@@ -62,8 +62,8 @@
                 <div class="hero" ng-repeat="hero in row">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasHero(hero) }">
-                            <a href="#" class="icon-{{hero.className}}" ng-if="hero.isActive" ng-click="guide.toggleHero(hero)" hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
-                            <span class="icon-ts" ng-if="!hero.isActive"></span>
+                            <a href="#" class="icon-{{hero.className == null ? 'missing' : hero.className}}" ng-if="hero.isActive" ng-click="guide.toggleHero(hero)" hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
+                            <span class="icon-ts" ng-if="!hero.active"></span>
                         </span>
                     </span>
                 </div>
@@ -73,17 +73,18 @@
 </div>
 <div class="container" ng-show="step === 3">
     <div class="guide-text talent-select"></div>
-    <p ng-show="!guide.heroes.length" class="white wrapper-md">You must select at least 1 hero before you can choose talents.</p>
+    <p ng-show="!guide.heroes.length" class="white darkbox wrapper-md">You must select at least 1 hero before you can choose talents.</p>
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="hero in guide.heroes">
             <div class="gb-talents">
-                <div class="gb-talents-title talents-title {{hero.className}}">{{hero.name}}</div>
+                <div class="gb-talents-title talents-title {{hero.hero.className}}">{{hero.hero.name}}</div>
                 <ul class="gb-talents-tiers">
                     <li class="clearfix" ng-repeat="tier in guide.tiers()">
                         <span>{{tier}}</span>
                         <ul class="gb-talents-icons clearfix">
-                            <li ng-repeat="talent in guide.talentsByTier(hero, tier) | orderBy: 'orderNum'">
-                                <a href="#" class="talents-icon {{hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" ng-click="guide.toggleTalent(hero, talent)" hots-talent hero="hero" talent="talent" tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
+                            <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: 'orderNum'">
+                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" 
+                                   ng-click="guide.toggleTalent(hero, talent)" hots-talent hero="hero.hero" talent="talent" tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
                             </li>
                         </ul>
                     </li>
@@ -129,7 +130,7 @@
     <div class="map-selection">
         <div class="map-row map-row-{{row.length}}" ng-repeat="row in mapRows">
             <div>
-                <div class="map" ng-repeat="map in row">
+                <div class="map" ng-repeat="map in row track by $index">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasMap(map) }">
                             <a href="#" class="icon-{{map.className}}" ng-click="guide.toggleMap(map)" hots-map tooltip-pos="{{tooltipPos(row, $index)}}"></a>
@@ -209,7 +210,7 @@
                             <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.video">
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Premium</label>
                             <div class="col-sm-10">
@@ -229,11 +230,15 @@
                         <div class="form-group row" ng-show="guide.premium.isPremium">
                             <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
                             <div class="col-sm-10">
-                                <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="guide.premium.expiryDate" ng-disabled="!guide.premium.isPremium"></div>
+                                <div date-picker data-id="expiryDate" 
+									 data-name="expiryDate" 
+									 data-class="input-dark" 
+									 ng-model="guide.premium.expiryDate" 
+									 ng-disabled="!guide.premium.isPremium"></div>
                             </div>
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Featured</label>
                             <div class="col-sm-10">
@@ -243,8 +248,8 @@
                                         <b class="caret"></b>
                                     </button>
                                     <ul class="list-group dropdown-menu dropdown-dark">
-                                        <li class="list-group-item" ng-class="{active: guide.featured === type.value}" ng-repeat="type in featuredTypes">
-                                            <a href="#" ng-click="guide.featured = type.value">{{type.text}}</a>
+                                        <li class="list-group-item" ng-class="{active: guide.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                            <a href="#" ng-click="guide.isFeatured = type.value">{{type.text}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -255,19 +260,19 @@
                         <div class="col-sm-10 col-sm-offset-2">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="public" ng-model="guide.public" value="true"> Make this guide public
+                                    <input type="radio" name="public" ng-model="guide.isPublic" ng-value="true"> Make this guide public
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="public" ng-model="guide.public" value="false"> Make this guide private
+                                    <input type="radio" name="public" ng-model="guide.isPublic" ng-value="false"> Make this guide private
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="form-group row m-b-none">
                         <div class="col-sm-10 col-sm-offset-2">
-                            <button type="submit" class="btn btn-blue" ng-disabled="gbForm.$invalid" ng-click="saveGuide()">Save Guide</button>
+                            <button type="submit" class="btn btn-blue" ng-disabled="gbForm.$invalid" ng-click="updateGuide()">Save Guide</button>
                         </div>
                     </div>
                 </form>
