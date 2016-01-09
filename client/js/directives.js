@@ -673,8 +673,6 @@ angular.module('app.directives', ['ui.load'])
 
             function updateVotes(direction) {
                 checkVotes($scope.votable);
-
-                
                 
                 $scope.votable.voteScore = voteCount($scope.votable.votes);
             }

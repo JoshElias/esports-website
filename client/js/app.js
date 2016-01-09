@@ -1694,7 +1694,7 @@ var app = angular.module('app', [
                                   order: 'votesCount DESC',
                                   limit: 1,
                                   where: {
-                                      guideType: "hero"
+                                      guideType: "hero",
                                   },
                                   fields: [
                                     "name", 
@@ -2177,31 +2177,6 @@ var app = angular.module('app', [
                                     return waterCB();
                                   });
                                 },
-                                function (heroData, waterCB) {
-                                  async.each(heroData, function(hero, heroCB) {
-                                    HeroTalent.find({
-                                      filter: {
-                                        where: {
-                                          heroId: hero.id
-                                        },
-                                        include: ['talent']
-                                      }
-                                    }).$promise
-                                    .then(function (heroTalents) {
-                                      console.log('heroTalents:', heroTalents);
-                                      hero.talents = heroTalents;
-                                      console.log('heroData:', heroData);
-                                      console.log('talents:', hero.talents);
-                                      return heroCB();
-                                    })
-                                    .catch(function (err) {
-                                      return heroCB(err);
-                                    });
-
-                                  }, function(err) {
-                                    return waterCB(null, heroData);
-                                  });
-                                }
                               ], function(err, results) {
                                 console.log('results:', results);
                                 return d.resolve(results);
@@ -2371,28 +2346,28 @@ var app = angular.module('app', [
                                     return waterCB();
                                   });
                                 },
-                                function (heroData, waterCB) {
-                                  async.each(heroData, function(hero, heroCB) {
-                                    HeroTalent.find({
-                                      filter: {
-                                        where: {
-                                          heroId: hero.id
-                                        },
-                                        include: ['talent']
-                                      }
-                                    }).$promise
-                                    .then(function (heroTalents) {
-                                      hero.talents = heroTalents;
-                                      return heroCB();
-                                    })
-                                    .catch(function (err) {
-                                      return heroCB(err);
-                                    });
-
-                                  }, function(err) {
-                                    return waterCB(null, heroData);
-                                  });
-                                }
+//                                function (heroData, waterCB) {
+//                                  async.each(heroData, function(hero, heroCB) {
+//                                    HeroTalent.find({
+//                                      filter: {
+//                                        where: {
+//                                          heroId: hero.id
+//                                        },
+//                                        include: ['talent']
+//                                      }
+//                                    }).$promise
+//                                    .then(function (heroTalents) {
+//                                      hero.talents = heroTalents;
+//                                      return heroCB();
+//                                    })
+//                                    .catch(function (err) {
+//                                      return heroCB(err);
+//                                    });
+//
+//                                  }, function(err) {
+//                                    return waterCB(null, heroData);
+//                                  });
+//                                }
                               ], function(err, results) {
                                 console.log('results:', results);
                                 return d.resolve(results);
@@ -4685,13 +4660,80 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.add.hero.html',
                         controller: 'AdminHOTSGuideAddHeroCtrl',
                         resolve: {
-                            heroes: ['Hero', function (Hero) {
-                                return Hero.find({})
-                                .$promise;
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
                             }],
-                            maps: ['Map', function (Map) {
-                                return Map.find({})
-                                .$promise;
+                            dataHeroes: ['Hero', 'HeroTalent', '$q', function (Hero, HeroTalent, $q) {
+                              var d = $q.defer();
+                              async.waterfall([
+                                function(waterCB) {
+                                  Hero.find({
+                                    filter: {
+                                      fields: {
+                                        oldTalents: false,
+                                        oldAbilities: false,
+                                        price: false,
+                                        title: false,
+                                        manaType: false,
+                                        characters: false
+                                      }
+                                    }
+                                  }).$promise
+                                  .then(function(heroData) {
+                                    return waterCB(null, heroData);
+                                  })
+                                  .catch(function (err) {
+                                    return waterCB();
+                                  });
+                                },
+//                                function (heroData, waterCB) {
+//                                  async.each(heroData, function(hero, heroCB) {
+//                                    HeroTalent.find({
+//                                      filter: {
+//                                        where: {
+//                                          heroId: hero.id
+//                                        },
+//                                        include: ['talent']
+//                                      }
+//                                    }).$promise
+//                                    .then(function (heroTalents) {
+//                                      console.log('heroTalents:', heroTalents);
+//                                      hero.talents = heroTalents;
+//                                      console.log('heroData:', heroData);
+//                                      return heroCB();
+//                                    })
+//                                    .catch(function (err) {
+//                                      return heroCB(err);
+//                                    });
+//
+//                                  }, function(err) {
+//                                    return waterCB(null, heroData);
+//                                  });
+//                                }
+                              ], function(err, results) {
+                                console.log('results:', results);
+                                return d.resolve(results);
+                              });
+                              
+                              return d.promise;
+                            }],
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -4761,31 +4803,118 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.hero.html',
                         controller: 'AdminHOTSGuideEditHeroCtrl',
                         resolve: {
-                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                                var guideID = $stateParams.guideID;
-                                
-                                return Guide.find({
+                          dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                                return Guide.findOne({
                                     filter: {
                                         where: {
-                                            id: guideID
+                                            id: $stateParams.guideID
                                         },
-                                        include: ['maps', 'guideHeroes']
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            },
+                                            {
+                                                relation: 'guideTalents'
+                                            },
+                                            {
+                                                relation: 'guideHeroes',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents',
+                                                                        scope: {
+                                                                            include: [
+                                                                                {
+                                                                                    relation: 'talent'
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
-                                })
-                                .$promise
-                                .then(function(data){
-                                    data[0].heroes = data[0].guideHeroes;
-                                    
-                                     console.log('heroes', data.heroes);
-                                    console.log('data', data);
-                                    
-                                    return data[0];
-                                })
+                                }).$promise;
                             }],
-                            heroes: ['Hero', function (Hero) {
-                                return Hero.find({}).$promise;
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
                             }],
-                            maps: ['Map', function (Map) {
+                            dataHeroes: ['Hero', 'HeroTalent', '$q', function (Hero, HeroTalent, $q) {
+                              var d = $q.defer();
+                              async.waterfall([
+                                function(waterCB) {
+                                  Hero.find({
+                                    filter: {
+                                      fields: {
+                                        oldTalents: false,
+                                        oldAbilities: false,
+                                        price: false,
+                                        title: false,
+                                        manaType: false,
+                                        characters: false
+                                      }
+                                    }
+                                  }).$promise
+                                  .then(function(heroData) {
+                                    return waterCB(null, heroData);
+                                  })
+                                  .catch(function (err) {
+                                    return waterCB();
+                                  });
+                                },
+//                                function (heroData, waterCB) {
+//                                  async.each(heroData, function(hero, heroCB) {
+//                                    HeroTalent.find({
+//                                      filter: {
+//                                        where: {
+//                                          heroId: hero.id
+//                                        },
+//                                        include: ['talent']
+//                                      }
+//                                    }).$promise
+//                                    .then(function (heroTalents) {
+//                                      hero.talents = heroTalents;
+//                                      return heroCB();
+//                                    })
+//                                    .catch(function (err) {
+//                                      return heroCB(err);
+//                                    });
+//
+//                                  }, function(err) {
+//                                    return waterCB(null, heroData);
+//                                  });
+//                                }
+                              ], function(err, results) {
+                                console.log('results:', results);
+                                return d.resolve(results);
+                              });
+                              
+                              return d.promise;
+                            }],
+                            dataMaps: ['Map', function (Map) {
                                 return Map.find({}).$promise;
                             }]
                         }
