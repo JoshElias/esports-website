@@ -47,8 +47,10 @@ var app = angular.module('app', [
                     $state.transitionTo('app.home');
                 }
                 if (toState.access && toState.access.auth && !User.isAuthenticated()) {
+                    var redirect = toState.name;
                     event.preventDefault();
-                    $state.transitionTo('app.login', { redirect: $location.url() });
+                    
+                    $state.go('app.login', { redirect: redirect });
                 }
 //                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
 //                    //event.preventDefault();
@@ -283,7 +285,6 @@ var app = angular.module('app', [
                     }
                 }
             })
-            
             .state('app.overwatch.snapshot.snapshot', {
                 url: '/test',
                 views: {
@@ -580,6 +581,7 @@ var app = angular.module('app', [
                                 return Deck.find({
                                   filter: {
                                     limit: 10,
+                                    order: "createdDate DESC",
                                     where: {
                                       isFeatured: true
                                     },
@@ -592,7 +594,8 @@ var app = angular.module('app', [
                                       premium: true,
                                       voteScore: true,
                                       authorId: true,
-                                      slug: true
+                                      slug: true,
+                                      createdDate: true
                                     },
                                     include: ['author']
                                   }
@@ -602,6 +605,7 @@ var app = angular.module('app', [
                                 return Deck.find({
                                   filter: {
                                     limit: 10,
+                                    order: "createdDate DESC",
                                     where: {
                                       isFeatured: false
                                     },
@@ -614,7 +618,8 @@ var app = angular.module('app', [
                                       premium: true,
                                       voteScore: true,
                                       authorId: true,
-                                      slug: true
+                                      slug: true,
+                                      createdDate: true
                                     },
                                     include: ['author']
                                   }
@@ -1238,7 +1243,7 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/frontend/hs.snapshots.snapshot.html',
-                        controller: 'SnapshotCtrl',
+                        controller: 'HearthstoneSnapshotCtrl',
                         resolve: {
                             dataSnapshot: ['$stateParams', 'Snapshot', function ($stateParams, Snapshot) {
                                 var slug = $stateParams.slug;
@@ -1271,7 +1276,8 @@ var app = angular.module('app', [
                                                             scope: {
                                                                 fields: {
                                                                     id: true,
-                                                                    username: true
+                                                                    username: true,
+                                                                    email: true
                                                                 }
                                                             }
                                                         }
@@ -1878,6 +1884,11 @@ var app = angular.module('app', [
                                         where: {
                                             slug: slug
                                         },
+                                        fields: {
+                                            oldMaps: false,
+                                            oldComments: false,
+                                            oldHeroes: false
+                                          },
                                         include: [
                                           {
                                             relation: 'author'
@@ -1892,6 +1903,13 @@ var app = angular.module('app', [
                                               {
                                                 relation: 'hero',
                                                 scope: {
+                                                  fields: [
+                                                    'className',
+                                                    'description',
+                                                    'heroType',
+                                                    'name',
+                                                    'role'
+                                                  ],
                                                   include: [
                                                     {
                                                       relation: 'talents',
@@ -1920,10 +1938,21 @@ var app = angular.module('app', [
                                           relation: 'maps'
                                         },
                                         {
-                                          relation: 'comments',
-                                          scope: {
-                                            include: ['author']
-                                          }
+                                            relation: 'comments',
+                                            scope: {
+                                                include: [
+                                                    {
+                                                        relation: 'author',
+                                                        scope: {
+                                                            fields: {
+                                                                id: true,
+                                                                username: true,
+                                                                email: true
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
                                         }
                                       ]
                                     }
@@ -1935,24 +1964,30 @@ var app = angular.module('app', [
                                     console.log('err: ', err);
                                 });
                             }],
-                            heroes: ['Hero', function(Hero) {
+                            heroes: ['Hero', 'guide', function(Hero, guide) {
+                                var toLoad = _.union(guide.synergy, guide.against.strong, guide.against.weak);
 
                                 return Hero.find({
                                   filter: {
+                                    where: {
+                                      id: { inq: toLoad }
+                                    },
                                     fields: {
-                                      oldTalents: false,
-                                      oldAbilities: false
+                                      className: true,
+                                      heroType: true,
+                                      name: true,
+                                      orderNum: true,
+                                      role: true,
+                                      universe: true,
+                                      id: true,
+                                      description: true
                                     }
                                   }
                                 })
                                 .$promise
-
                             }],
                             maps: ['Map', function(Map) {
-
-                                return Map.find({
-
-                                })
+                                return Map.find({})
                                 .$promise;
                             }]
                         }
@@ -2041,6 +2076,7 @@ var app = angular.module('app', [
                                       console.log('heroTalents:', heroTalents);
                                       hero.talents = heroTalents;
                                       console.log('heroData:', heroData);
+                                      console.log('talents:', hero.talents);
                                       return heroCB();
                                     })
                                     .catch(function (err) {
@@ -2816,7 +2852,18 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'comments',
                                                 scope: {
-                                                    include: ['author']
+                                                    include: [
+                                                        {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    username: true,
+                                                                    email: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
                                                 }
                                             },
                                             {
@@ -3018,12 +3065,13 @@ var app = angular.module('app', [
                 seo: { title: 'Privacy Policy', description: 'TempoStorm Privacy Policy', keywords: '' }
             })
             .state('app.login', {
-                url: 'login?redirect',
+                url: 'login',
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/login.html',
                     }
                 },
+                params: { redirect: undefined },
                 access: { noauth: true },
                 seo: { title: 'Login', description: 'Login to TempoStorm', keywords: '' }
             })
@@ -5157,23 +5205,23 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
-            .state('app.admin.snapshots', {
+            .state('app.admin.hearthstone.snapshots', {
                 abstract: true,
                 url: '/snapshots',
                 views: {
-                    admin: {
-                        templateUrl: tpl + 'views/admin/snapshots.html'
+                    hearthstone: {
+                        templateUrl: tpl + 'views/admin/hs.snapshots.html'
                     }
                 },
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
-            .state('app.admin.snapshots.list', {
+            .state('app.admin.hearthstone.snapshots.list', {
                 url: '',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/snapshots.list.html',
-                        controller: 'AdminSnapshotListCtrl',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.list.html',
+                        controller: 'AdminHearthstoneSnapshotListCtrl',
                         resolve: {
                             paginationParams: [function() {
                                 return {
@@ -5202,12 +5250,12 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
-            .state('app.admin.snapshots.add', {
+            .state('app.admin.hearthstone.snapshots.add', {
                 url: '/add',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/snapshots.add.html',
-                        controller: 'AdminSnapshotAddCtrl',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.add.html',
+                        controller: 'AdminHearthstoneSnapshotAddCtrl',
                         resolve: {
                             dataPrevious: ['Snapshot', function (Snapshot) {
                                 return Snapshot.findOne({
@@ -5315,12 +5363,12 @@ var app = angular.module('app', [
                 access: {auth: true, admin: true},
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
-            .state('app.admin.snapshots.edit', {
+            .state('app.admin.hearthstone.snapshots.edit', {
                 url: '/:snapshotID',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/snapshots.edit.html',
-                        controller: 'AdminSnapshotEditCtrl',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.edit.html',
+                        controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
 //                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
 //                                var snapshotID = $stateParams.snapshotID;
@@ -5401,7 +5449,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (snapshot) {
-                                    console.log("resolve snapshot:", snapshot);
                                     
                                     snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
                                     
