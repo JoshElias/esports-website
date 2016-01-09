@@ -2,7 +2,7 @@ module.exports = function(Guide) {
     var utils = require("../../lib/utils");
 
 
-    Guide.observe("before save", utils.validateYoutubeId);
+    //Guide.observe("before save", utils.validateYoutubeId);
 
 
     var fieldFilter = {

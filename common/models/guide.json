@@ -23,7 +23,8 @@
       "type": "string"
     },
     "youtubeId": {
-      "type": "string"
+      "type": "string",
+      "validators": ["youtubeId"]
     },
     "createdDate": {
       "type": "date"

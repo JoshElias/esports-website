@@ -3,7 +3,7 @@ module.exports = function(Deck) {
     var async = require('async');
 
 
-    var funcs = [utils.validateYoutubeId, utils.generateSlug];
+    var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug];
     Deck.observe("before save", function(ctx, next) {
         async.each(funcs, function(func, funcCB) {
             func(ctx, funcCB);

@@ -94,7 +94,8 @@
       "object"
     ],
     "youtubeId": {
-      "type": "string"
+      "type": "string",
+      "validators": ["youtubeId"]
     },
     "chapters": [
       {
