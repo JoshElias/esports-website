@@ -16614,9 +16614,11 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 'Poll',
-        function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide, Poll) {
-
+    .controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 'Poll', 'PollItem',
+        function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide, Poll, PollItem) {
+            console.log('dataPollsMain:', dataPollsMain);
+            console.log('dataPollsSide:', dataPollsSide);
+          
             var box;
             var votes = {};
             
@@ -16688,11 +16690,12 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getVotes = function (poll) {
-                return poll.votes
+                console.log('getVotes poll:', poll);
+                return poll.votes;
             };
 
             $scope.getLocalVotes = function (poll, item) {
-                var localVotes = PollService.getStorage(poll._id).split(',');
+                var localVotes = PollService.getStorage(poll.id).split(',');
                 for (var i = 0; i < localVotes.length; i++) {
                     if(item._id == localVotes[i]) {
                         return true;
@@ -16716,12 +16719,25 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.submitVote = function (poll) {
                 console.log('poll:', poll);
-              
-                async.parallel([
-                  function(paraCB) {
-//                    Poll.update(
+                
+                async.each(poll.items, function(pollItem, pollItemCB) {
+
+                  PollItem.upsert(pollItem)
+                  .$promise
+                  .then(function (pollItemUpdated) {
+                    console.log('pollItemUpdated: ', pollItemUpdated);
+                    return pollItemCB();
+                  })
+                  .catch(function (err) {
+                    return pollItemCB(err);
+                  });
+
+                }, function(err, results) {
+                  if (err) {
+                    return console.log('err:', err);
                   }
-                ]);
+                  return console.log('done');
+                });
                 
 //                Poll.update(poll, poll.votes).success(function (data) {
 //                    if(!data.success) {
