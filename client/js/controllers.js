@@ -15193,8 +15193,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService) {
 			
 			      $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -15365,8 +15365,9 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                var cleanGuide = angular.copy($scope.guide);
+                cleanGuide.slug = Util.slugify(cleanGuide.name);
+                cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
                 
                 var keys = ['name',
                             'authorId',
@@ -15477,6 +15478,11 @@ angular.module('app.controllers', ['ngCookies'])
                       }
                     ], function (err, results) {
                       if (err) {
+                        AlertService.setError({
+                          show: true,
+                          lbErr: err,
+                          msg: 'Unable to Create Guide'
+                        });
                         return console.log('series err:', err);
                       }
                       $scope.app.settings.guide = null;
@@ -15485,10 +15491,20 @@ angular.module('app.controllers', ['ngCookies'])
                     
                   })
                   .catch(function (err) {
+                    AlertService.setError({
+                      show: true,
+                      lbErr: err,
+                      msg: 'Unable to Create Guide'
+                    });
                     console.log('guide hero err', err);
                   });
                 })
                 .catch(function (err) {
+                    AlertService.setError({
+                      show: true,
+                      lbErr: err,
+                      msg: 'Unable to Create Guide'
+                    });
                   console.log('guide err', err);
                 });
                 
@@ -15674,8 +15690,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guide = dataGuide.guide;
         }
     ])
-    .controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide) {
+    .controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide', 'AlertService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide, AlertService) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
