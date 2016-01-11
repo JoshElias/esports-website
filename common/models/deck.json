@@ -43,14 +43,16 @@
       "required": true
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "validators": ["spam"]
     },
     "isFeatured": {
       "type": "boolean"
     },
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "validators": ["spam"]
     },
     "heroName": {
       "type": "string"
@@ -67,48 +69,48 @@
       "required": true
     },
     "slug": {
-      "type": "string"
+      "type": "string",
+      "validators": ["unique"]
     },
     "viewCount": {
       "type": "number"
     },
-    "votes": {
-      "type": [
-        "object"
-      ]
-    },
+    "votes": [
+      "object"
+    ],
     "voteScore": {
       "type": "number"
     },
     "authorId": {},
-    "cardIds": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldComments": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldMulligans": {
-      "type": [
-        "object"
-      ]
-    },
-    "oldCards": {
-      "type": [
-        "object"
-      ]
-    },
+    "cardIds": [
+      "string"
+    ],
+    "oldComments": [
+      "string"
+    ],
+    "oldMulligans": [
+      "object"
+    ],
+    "oldCards": [
+      "object"
+    ],
     "youtubeId": {
-      "type": "string"
+      "type": "string",
+      "validators": ["youtubeId"]
     },
-    "chapters": {
-      "type": [
-        "object"
-      ]
-    },
+    "chapters": [
+      {
+        "title": {
+          "type": "string",
+          "validators": ["spam"]
+        },
+        "orderNum": {"type": "number"},
+        "content": {
+          "type": "string",
+          "validators": ["spam"]
+        }
+      }
+    ],
     "dust": {
       "type": "number"
     }

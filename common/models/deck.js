@@ -3,7 +3,7 @@ module.exports = function(Deck) {
     var async = require('async');
 
 
-    var funcs = [utils.validateYoutubeId, utils.generateSlug];
+    var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug];
     Deck.observe("before save", function(ctx, next) {
         async.each(funcs, function(func, funcCB) {
             func(ctx, funcCB);
@@ -27,5 +27,5 @@ module.exports = function(Deck) {
     Deck.observe("access", utils.filterDocs(docFilter));
 
 
-    Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
+    //Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
 };

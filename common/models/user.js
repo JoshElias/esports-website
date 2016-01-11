@@ -1,11 +1,13 @@
-module.exports = function(User) {
-    var async = require("async");
-    var uuid = require("node-uuid");
-    var loopback = require("loopback");
-    var bcrypt = require('bcrypt-nodejs');
-    var utils = require("./../../lib/utils");
-    var subscription = require("./../../lib/subscription");
+var async = require("async");
+var uuid = require("node-uuid");
+var loopback = require("loopback");
+var bcrypt = require('bcrypt-nodejs');
+var request = require("request");
 
+var utils = require("./../../lib/utils");
+var subscription = require("./../../lib/subscription");
+
+module.exports = function(User) {
 
     var DEFAULT_TTL = 1209600; // 2 weeks in seconds
     var DEFAULT_RESET_PW_TTL = 15 * 60; // 15 mins in seconds
@@ -19,6 +21,10 @@ module.exports = function(User) {
     var invalidTokenErr = new Error('Invalid token');
     invalidTokenErr.statusCode = 400;
     invalidTokenErr.code = 'INVALID_TOKEN';
+
+    var invalidCatpchaTokenErr = new Error('Invalid captcha token');
+    invalidCatpchaTokenErr.statusCode = 400;
+    invalidCatpchaTokenErr.code = 'INVALID_CAPTCHA_TOKEN';
 
 
 
@@ -39,9 +45,8 @@ module.exports = function(User) {
 
 
     // Handle user registeration
-    User.afterRemote("create", function (context, user, next) {
-        var potentialOptions = {};
-        user.verify(potentialOptions, function (err) {
+    User.afterRemote("create", function (ctx, user, next) {
+        user.verify(ctx, function (err) {
             next(err);
         });
     });
@@ -50,12 +55,43 @@ module.exports = function(User) {
     // Override the base User's verify method
     User.on('attached', function (obj) {
 
-        User.prototype.verify = function (options, finalCallback) {
+        User.prototype.verify = function (ctx, finalCallback) {
             var user = this;
             var userModel = this.constructor;
             //var registry = userModel.registry;
 
             async.waterfall([
+                // Verify Capcha
+                function(seriesCb) {
+                    console.log("CTX KEYS NIGGA:", Object.keys(ctx));
+                    if(typeof ctx.options !== "object" || typeof ctx.options.captchaToken !== "string") {
+                        seriesCb(invalidCatpchaTokenErr);
+                    }
+
+                    var loopbackContext = loopback.getCurrentContext();
+                    var captchaSecret = loopbackContext.get("captchaSecret");
+                    var captchaUrl = "https://www.google.com/recaptcha/api/siteverify";
+                    var captchaOptions = {
+                        form: {
+                            secret: captchaSecret,
+                            response: ctx.options.captchaToken
+                        }
+                    }
+
+                    request.post(captchaUrl, captchaOptions, function (err, res, body) {
+                        if(err) return seriesCb(err);
+                        else if(res.statusCode !== 200) {
+                            return seriesCb(invalidCatpchaTokenErr);
+                        }
+
+                        var body = JSON.parse(body);
+                        if(!body.success) {
+                            return seriesCb(invalidCatpchaTokenErr);
+                        }
+
+                        return seriesCb();
+                    });
+                },
                 // Generate token
                 function (seriesCallback) {
                     var tokenGenerator = options.generateVerificationToken || generateVerificationToken;
@@ -71,7 +107,7 @@ module.exports = function(User) {
                         from: {name: "Tempostorm", email: "admin@tempostorm.com"},
                         to: {name: user.username, email: user.email, type: "to"},
                         template: {
-                            name: "testactivation",
+                            name: "testactivation"
                         },
                         subject: "Confirm your account",
                         //text: "text message",

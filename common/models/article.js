@@ -5,10 +5,10 @@ module.exports = function(Article) {
     var filter =  {
       fieldNames: ["content", "oldComments", "oldRelatedArticles"],
       acceptedRoles: ["$owner", "$admin", "$premium", "$contentProvider"]
-    }
+    };
     Article.observe("loaded", utils.filterFields(filter));
 
-
+/*
     Article.observe("persist", function(ctx, next) {
         var data = ctx.data || ctx.instance;
 
@@ -28,6 +28,6 @@ module.exports = function(Article) {
                 return next();
             });
         }
-    });
+    });*/
     //Article.validatesUniquenessOf('slug.url', {message: 'Slug url already exists'});
 };

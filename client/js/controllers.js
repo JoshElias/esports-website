@@ -293,6 +293,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var options = {
                     filter: {
                         limit: 10,
+                        order: "createdDate DESC",
                         where: {
                             isFeatured: true
                         },
@@ -303,7 +304,8 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: true,
                             premium: true,
                             voteScore: true,
-                            heroName: true
+                            heroName: true,
+                            createdDate: true
                         },
                         include: ['author']
                     }
@@ -330,6 +332,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var options = {
                     filter: {
                         limit: 10,
+                        order: "createdDate DESC",
                         where: {
                             isFeatured: false
                         },
@@ -340,7 +343,8 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: true,
                             premium: true,
                             voteScore: true,
-                            heroName: true
+                            heroName: true,
+                            createdDate: true
                         },
                         include: ['author']
                     }
@@ -2968,7 +2972,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminSnapshotListCtrl', [ '$scope', '$q', '$timeout', 'snapshotsCount', 'snapshots', 'paginationParams', 'AlertService', 'Snapshot', 'AjaxPagination', 'DeckTier', 'DeckTech', 'CardTech',
+    .controller('AdminHearthstoneSnapshotListCtrl', [ '$scope', '$q', '$timeout', 'snapshotsCount', 'snapshots', 'paginationParams', 'AlertService', 'Snapshot', 'AjaxPagination', 'DeckTier', 'DeckTech', 'CardTech',
         function ($scope, $q, $timeout, snapshotsCount, snapshots, paginationParams, AlertService, Snapshot, AjaxPagination, DeckTier, DeckTech, CardTech) {
 
             // grab alerts
@@ -3184,7 +3188,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image',
+    .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image',
         function ($scope, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image) {
 
             $scope.snapshot = snapshot;
@@ -3988,14 +3992,16 @@ angular.module('app.controllers', ['ngCookies'])
             /* TIERS METHODS */
 
             $scope.editSnapshot = function () {
-              console.log($scope.snapshot);
-              
               $scope.snapshot.deckTiers = [];
+              $scope.snapshot.deckMatchups = [];
+              $scope.snapshot.deckMatchups = $scope.snapshot.matches;
+              
               _.each($scope.snapshot.tiers, function (tier) {
                 _.each(tier.decks, function (deck) {
                   deck.tier = tier.tier;
-                  $scope.snapshot.deckTiers.push(deck)
-                })
+                  deck.name = deck.name || deck.deck.name;
+                  $scope.snapshot.deckTiers.push(deck);
+                });
               });
               
               var snapVar = Util.cleanObj($scope.snapshot, [
@@ -4021,7 +4027,7 @@ angular.module('app.controllers', ['ngCookies'])
               .$promise
               .then(function (data) {
                 console.log("data:", data);
-                $state.go('app.admin.snapshots.list');
+                $state.go('app.admin.hearthstone.snapshots.list');
               });
 
 //                async.waterfall([
@@ -4158,7 +4164,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
+    .controller('AdminHearthstoneSnapshotAddCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
         function ($scope, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
 
             var deckBootBox = undefined,
@@ -4308,131 +4314,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ? URL + '/img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
             };
             
-//            function removeAuthorAJAX(obj, cb) {
-//                if (!obj.id) { return cb(); }
-//                
-//                Snapshot.authors.destroyById({
-//                    id: $scope.snapshot.id,
-//                    fk: obj.id
-//                })
-//                .$promise
-//                .then(function () {
-//                    console.log("successfully removed author from db");
-//                    return cb();
-//                })
-//                .catch(function (err) {
-//                    console.log("error removing author from db:", err);
-//                    return cb();
-//                })
-//            }
-//
-//            function removeTierAJAX(id, obj, cb) {
-//
-//                removeDeckAJAX(id, obj, function () {
-//                    return cb();
-//                });
-//            }
-//
-//            function removeDeckAJAX(id, obj, cb) {
-////                if (!obj.id) { return cb(); }
-//
-//                if (id === undefined) {
-//                    async.each(obj.decks, function (deck, eachCb) {
-//                        removeDeckTechAJAX(deck.id, deck, function () {
-//                            DeckTier.destroyById({
-//                                id: deck.id
-//                            })
-//                            .$promise
-//                            .then(function(data) {
-//                                console.log("succesfully removed ALL deckTier:", data);
-//                                return eachCb();
-//                            }).catch(function(err) {
-//                                return eachCb(err);
-//                            });
-//                        });
-//                    }, function () {
-//                        return cb();
-//                    });
-//                } else {
-//                    removeDeckTechAJAX(id, obj, function () {
-//                        DeckTier.destroyById({
-//                            id: id
-//                        })
-//                        .$promise
-//                        .then(function(data) {
-//                            console.log("successfully removed deckTier:", data);
-//                            return cb();
-//                        }).catch(function(err) {
-//                            return cb(err);
-//                        });
-//                    });
-//                }
-//            }
-//
-//            function removeDeckTechAJAX(id, obj, cb) {
-//                if (!obj.id) { return cb(); }
-//
-//                if (obj.deckTech) {
-//                    async.each(obj.deckTech, function (deckTech, eachCb) {
-//                        removeCardTechAJAX(deckTech.id, deckTech, function () {
-//                            DeckTier.deckTech.destroyAll({
-//                                id: id
-//                            })
-//                            .$promise
-//                            .then(function(data) {
-//                                console.log("successfully removed ALL deckTech:::", data);
-//                                return eachCb();
-//                            }).catch(function(err) {
-//                                return eachCb(err);
-//                            });
-//                        });
-//                    }, function () {
-//                        return cb();
-//                    });
-//                } else {
-//                    removeCardTechAJAX(id, obj, function () {
-//                        DeckTech.destroyById({
-//                            id: id
-//                        })
-//                        .$promise
-//                        .then(function(data) {
-//                            console.log("successfully removed deckTech:", data);
-//                            return cb();
-//                        }).catch(function(err) {
-//                            return cb(err);
-//                        });
-//                    });
-//                }
-//            }
-//
-//            function removeCardTechAJAX(id, obj, cb) {
-//                if (!obj.id) { return cb(); }
-//                
-//                if (obj.cardTech) {
-//                    DeckTech.cardTech.destroyAll({
-//                        id: id
-//                    })
-//                    .$promise
-//                    .then(function(data) {
-//                        console.log("successfully removed cardTech:", data);
-//                        return cb();
-//                    }).catch(function(err) {
-//                        return cb();
-//                    });
-//                } else {
-//                    CardTech.destroyById({
-//                        id: id
-//                    })
-//                    .$promise
-//                    .then(function(data) {
-//                        console.log("successfully removed cardTech:", data);
-//                        return cb();
-//                    }).catch(function(err) {
-//                        return cb(err);
-//                    });
-//                }
-//            }
-
             function escapeStr( str ) {
                 return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             }
@@ -4699,11 +4580,10 @@ angular.module('app.controllers', ['ngCookies'])
 //                console.log($scope.selectedDecks);
                 for (var i = 0; i < $scope.selectedDecks.length; i++) {
                     if ($scope.tier < 3) {
-                        console.log("updating matches", $scope);
+                        console.log("updating matches", $scope.matches);
                         $scope.matches.push($scope.selectedDecks[i]);
                         for (var j = 0; j < $scope.matches.length; j++) {
                             $scope.snapshot.matches.push({
-                                'snapshotId': $scope.snapshot.id,
                                 'forDeck': $scope.selectedDecks[i].deck,
                                 'forDeckId': $scope.selectedDecks[i].deck.id,
                                 'againstDeck': $scope.matches[j].deck,
@@ -4770,10 +4650,9 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                     $scope.removeDeck(sel);
                 }
-                console.log($scope.selectedDecks);
                 $scope.deckRanks();
             }
-
+            
             $scope.isDeck = function (d) {
 //                console.log(d);
                 for (var j = 0; j < $scope.matches.length; j++) {
@@ -4853,7 +4732,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             function removeMatch(d) {
-                console.log(d);
                 for (var j = 0; j < $scope.snapshot.matches.length; j++) {
                     if (d.id == $scope.snapshot.matches[j].forDeck.id || d.id == $scope.snapshot.matches[j].againstDeck.id) {
                         $scope.snapshot.matches.splice(j,1);
@@ -4949,7 +4827,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTechCard = function (tech, c) {
-                console.log(tech, c);
 //                removeCardTechAJAX(c.id, c, function (err) {
 //                    if (err) { console.log("ERR REMOVING CARD TECH:", err); }
                     
@@ -5128,10 +5005,14 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.addSnapshot = function () {
               $scope.snapshot.deckTiers = [];
+              $scope.snapshot.deckMatchups = [];
+              $scope.snapshot.deckMatchups = $scope.snapshot.matches;
+              
               _.each($scope.snapshot.tiers, function (tier) {
                 _.each(tier.decks, function (deck) {
                   deck.tier = tier.tier;
                   deck.name = deck.name || deck.deck.name;
+                  
                   $scope.snapshot.deckTiers.push(deck)
                 })
               });
@@ -5152,11 +5033,16 @@ angular.module('app.controllers', ['ngCookies'])
                 'deckTiers'
               ]);
               
+              var d = new Date();
+              snapVar.createdDate = d.toISOString();
+              
+              
+              
               Snapshot.create({}, snapVar)
               .$promise
               .then(function (data) {
                 console.log("data:", data);
-                $state.go('app.admin.snapshots.list');
+                $state.go('app.admin.hearthstone.snapshots.list');
               });
 //                async.waterfall([
 //                    function (waterfallCb) {
@@ -6993,13 +6879,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-				if ($scope.filters.mana === m) {
-					$scope.filters.mana = 'all';
-					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
-				} else {
-					$scope.filters.mana = m;
-					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
-				}
+              if ($scope.filters.mana === m) {
+                $scope.filters.mana = 'all';
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+              } else {
+                $scope.filters.mana = m;
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+              }
             }
 
             $scope.filters.byMana = function () {
@@ -7180,23 +7066,23 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.deckSubmitting = true;
                 
                 if (!deck.name > 0) {
-					$window.scrollTo(0, 0);
-					$scope.deckSubmitting = false;
-					return AlertService.setError({
-						show: true,
-						msg: 'Unable to save deck',
-						errorList: ['Deck must have a name']
-					});
-				}
+                  $window.scrollTo(0, 0);
+                  $scope.deckSubmitting = false;
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to save deck',
+                    errorList: ['Deck must have a name']
+                  });
+                }
                 
                 if(!deck.validDeck()) {
-                    $window.scrollTo(0, 0);
-                    $scope.deckSubmitting = false;
-                    return AlertService.setError({
-						show: true,
-						msg: 'Unable to save deck',
-						errorList: ['Deck must have exactly 30 cards']
-					});
+                  $window.scrollTo(0, 0);
+                  $scope.deckSubmitting = false;
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to save deck',
+                    errorList: ['Deck must have exactly 30 cards']
+                  });
                 }
                 
                 console.log('User.isAuthenticated(): ', User.isAuthenticated());
@@ -7283,7 +7169,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Updates Deck, Mulligan, and Matchup Models
             function updateDeck(deckSubmitted) {
-				var deck = angular.copy(deckSubmitted);
+				      var deck = angular.copy(deckSubmitted);
 				
                 async.series([
                     function (seriesCallback) {
@@ -9871,24 +9757,24 @@ angular.module('app.controllers', ['ngCookies'])
                 console.log('deck to upsert: ', deck);
                 $scope.deckSubmitting = true;
 				
-				if (!deck.name > 0) {
-					$window.scrollTo(0, 0);
-					$scope.deckSubmitting = false;
-					return AlertService.setError({
-						show: true,
-						msg: 'Unable to save deck',
-						errorList: ['Deck must have a name']
-					});
-				}
+                if (!deck.name > 0) {
+                  $window.scrollTo(0, 0);
+                  $scope.deckSubmitting = false;
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to save deck',
+                    errorList: ['Deck must have a name']
+                  });
+                }
                 
                 if(!deck.validDeck()) {
-					$window.scrollTo(0, 0);
-					$scope.deckSubmitting = false;
-					return AlertService.setError({
-						show: true,
-						msg: 'Unable to update deck',
-						errorList: ['Deck must have exactly 30 cards.']
-					});
+                  $window.scrollTo(0, 0);
+                  $scope.deckSubmitting = false;
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to update deck',
+                    errorList: ['Deck must have exactly 30 cards.']
+                  });
                 }
                 
                 console.log('User.isAuthenticated(): ', User.isAuthenticated());
@@ -10007,11 +9893,11 @@ angular.module('app.controllers', ['ngCookies'])
                             async.each(deck.cards, function(deckCard, deckCardCB) {
                                 var deckId = deck.id;
 								
-								var newDeckCard = {
-									deckId: deckId,
-									cardQuantity: deckCard.cardQuantity,
-									cardId: deckCard.cardId
-								};
+                                var newDeckCard = {
+                                  deckId: deckId,
+                                  cardQuantity: deckCard.cardQuantity,
+                                  cardId: deckCard.cardId
+                                };
                                 console.log('current deckCard: ', newDeckCard);
                                 DeckCard.create(newDeckCard)
                                 .$promise
@@ -10220,7 +10106,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('SnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'dataSnapshot', 'LoginModalService', 'User', 'Snapshot', 'LoopBackAuth',
+    .controller('HearthstoneSnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'dataSnapshot', 'LoginModalService', 'User', 'Snapshot', 'LoopBackAuth',
         function ($scope, $state, $rootScope, $compile, $window, dataSnapshot, LoginModalService, User, Snapshot, LoopBackAuth) {
 
             console.log('snapshot: ', dataSnapshot);
@@ -10736,7 +10622,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {},
+                    pattern = '/.*'+search+'.*/i';//new RegExp('.*'+search+'.*', "i")'';
 
                 countOptions['where'] = {
                     isActive: true,
@@ -10763,14 +10650,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                 if ($scope.search.length > 0) {
                     options.filter.where['or'] = [
-                        { title: { regexp: search } },
-                        { description: { regexp: search } },
-                        { content: { regexp: search } }
+                        { title: { regexp: pattern } },
+                        { description: { regexp: pattern } },
+                        { content: { regexp: pattern } }
                     ];
                     countOptions.where.or = [
-                        { title: { regexp: search } },
-                        { description: { regexp: search } },
-                        { content: { regexp: search } }
+                        { title: { regexp: pattern } },
+                        { description: { regexp: pattern } },
+                        { content: { regexp: pattern } }
                     ];
                 }
 
@@ -11047,7 +10934,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             function getQuery (featured, page, perpage) {
-                console.log("getting query");
                 var options = {
                     filter: {
                         where: {
@@ -11061,7 +10947,8 @@ angular.module('app.controllers', ['ngCookies'])
                             authorId: true,
                             voteScore: true,
                             playerClass: true,
-                            dust: true
+                            dust: true,
+                            createdDate: true
                         },
                         include: ["author"],
                         order: "createdDate DESC",
@@ -11084,16 +10971,12 @@ angular.module('app.controllers', ['ngCookies'])
                   ]
                 }
                 
-                console.log('options:', options);
                 return options;
             }
 
             // pagination
             function updateTempostormDecks (page, perpage, callback) {
-                console.log('getQuery(false, page, perpage):', getQuery(false, page, perpage).filter.where);
-                AjaxPagination.update(Deck, getQuery(false, page, perpage), getQuery(false, page, perpage).filter, function (err, data, count) {
-                    console.log('data:', data);
-                    console.log('count:', count);
+                AjaxPagination.update(Deck, getQuery(true, page, perpage), getQuery(true, page, perpage).filter, function (err, data, count) {
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.tempostormPagination.page = page;
@@ -11127,7 +11010,6 @@ angular.module('app.controllers', ['ngCookies'])
                     var d = $q.defer();
 
                     updateTempostormDecks(page, perpage, function (err, data) {
-                        console.log('data:', data);
                         d.resolve(data.count);
                     });
 
@@ -11170,7 +11052,6 @@ angular.module('app.controllers', ['ngCookies'])
                     var d = $q.defer();
 
                     updateCommunityDecks(page, perpage, function (err, data) {
-                        console.log('data:', data);
                         d.resolve(data.count);
                     });
 
@@ -13494,24 +13375,55 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'Guide', 'GuideBuilder', 'HOTS', 'heroes', 'maps',
-        function ($scope, $state, AlertService, Guide, GuideBuilder, HOTS, heroes, maps) {
+    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService) {
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
+            
+            // Listen for login/logout events and update role accordingly
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
+            });
+            
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                console.log("event listener response:", data);
+                $scope.isUserAdmin = false;
+                $scope.isUserContentProvider = false;
+            });
+			
+            var box;
+
             // create guide
-            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === null ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
+
             $scope.$watch('guide', function() {
                 $scope.app.settings.guide = $scope.guide;
             }, true);
 
             // heroes
-            $scope.heroes = heroes;
+            $scope.heroes = dataHeroes;
 
             // maps
-            $scope.maps = maps;
+            $scope.maps = dataMaps;
 
             // steps
             $scope.step = 2;
             $scope.prevStep = function () {
-                if ($scope.step == 2) { return $state.go('app.admin.hots.guides.add.step1', {}); }
+                if ($scope.step == 2) { return $state.go('app.hots.guideBuilder.step1', {}); }
                 if ($scope.step > 1) $scope.step = $scope.step - 1;
             }
             $scope.nextStep = function () {
@@ -13519,7 +13431,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.stepOne = function () {
-                $state.go('app.admin.hots.guides.add.step1', {});
+                $state.go('app.hots.guideBuilder.step1', {});
             };
 
             // draw hero rows
@@ -13529,8 +13441,10 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < heroRows.length; row++) {
                 var heroes = [];
                 for (var i = 0; i < heroRows[row]; i++) {
-                    if ($scope.heroes[index]) {
-                        heroes.push($scope.heroes[index]);
+                  console.log('index:', index);
+                  console.log('dataHeroes:', dataHeroes);
+                    if (dataHeroes[index]) {
+                        heroes.push(dataHeroes[index]);
                     } else {
                         heroes.push({});
                     }
@@ -13538,6 +13452,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.heroRows.push(heroes);
             }
+
+            console.log('hero row: ',$scope.heroRows);
 
             $scope.tooltipPos = function (row, $index) {
                 return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
@@ -13554,8 +13470,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if ($scope.maps[index]) {
-                        maps.push($scope.maps[index]);
+                    if (dataMaps[index]) {
+                        maps.push(dataMaps[index]);
                     }
                     index++;
                 }
@@ -13567,9 +13483,16 @@ angular.module('app.controllers', ['ngCookies'])
                 return $scope.guide.sortTalents(hero);
             }
 
+            $scope.hasTalent = function (hero, talent) {
+                return ($scope.guide.hasTalent(hero, talent)) ? ' active' : '';
+            }
+
+            $scope.hasAnyTalent = function (hero, talent) {
+                return ($scope.guide.hasAnyTalent(hero, talent)) ? ' tier-selected' : '';
+            }
+
             // summernote options
             $scope.options = {
-                disableDragAndDrop: true,
                 height: 100,
                 toolbar: [
                     ['style', ['style']],
@@ -13605,31 +13528,152 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.guide.featured;
+                var featured = $scope.guide.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
                     }
                 }
-            }
+            };
 
             // save guide
             $scope.saveGuide = function () {
-                if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
-                    return false;
-                }
-
-                AdminHOTSGuideService.addGuide($scope.guide).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        $scope.app.settings.guide = null;
-                        AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been added successfully.' });
-                        $state.go('app.admin.hots.guides.list');
-                    }
+              if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                return false;
+              }
+              if (!User.isAuthenticated()) {
+                LoginModalService.showModal('login', function () {
+                  $scope.saveGuide();
                 });
+              } else {
+                $scope.guide.slug = Util.slugify($scope.guide.name);
+                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                
+                var keys = ['name',
+                            'authorId',
+                            'slug',
+                            'guideType',
+                            'description',
+                            'createdDate',
+                            'premium',
+                            'votes',
+                            'against',
+                            'synergy',
+                            'content',
+                            'isFeatured',
+                            'isPublic',
+                            'youtubeId',
+                            'viewCount',
+                            'voteScore',
+                           ];
+                var stripped = Util.cleanObj($scope.guide, keys);
+                var temp = _.map($scope.guide.heroes, function (hero) { 
+                  return _.map(hero.talents, function (talent, tier) {
+                    var str = tier.slice(4, tier.length);
+
+                    return {
+                      heroId: hero.hero.id,
+                      talentId: talent,
+                      tier: parseInt(str)
+                    }
+                  });
+                });
+                
+                $scope.guide.guideTalents = _.flatten(temp);
+                
+                stripped.votes = [
+                  {
+                    userId: User.getCurrentId(),
+                    direction: 1
+                  }
+                ];
+                
+                stripped.voteScore = 1;
+                
+                console.log('saving stripped:', stripped);
+                console.log('$scope.guide:', $scope.guide);
+                  Guide.create({}, stripped)
+                .$promise
+                .then(function (guideData) {
+                  console.log('guideData:', guideData);
+                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
+                  
+                  Guide.guideHeroes.createMany({
+                    id: guideData.id
+                  }, $scope.guide.guideHeroes)
+                  .$promise
+                  .then(function (guideHeroData) {
+                    var tals = [];
+                    
+                    _.each(guideHeroData, function(eachVal) {
+                      var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                        return filterVal.heroId === eachVal.heroId;
+                      });
+                      
+                      _.each(heroTals, function (innerEachVal, index, list) {
+                        innerEachVal.guideId = guideData.id;
+                        innerEachVal.guideHeroId = eachVal.id; 
+                      });
+                      
+                      tals.push(heroTals);
+                    });
+                    
+                    async.series([
+                      function (seriesCB) { 
+                        Guide.guideTalents.createMany({
+                          id: guideData.id 
+                        }, tals)
+                        .$promise
+                        .then(function (guideTalentData) {
+                          return seriesCB();
+                        })
+                        .catch(function (err) {
+                          console.log('guide talent err', err);
+                          return seriesCB(err);
+                        });
+                      },
+                      function (seriesCB) {
+                        async.each($scope.guide.maps, function(map, mapCB) {
+                          console.log('map.id:', map.id);
+                          console.log('guideData:', guideData);
+                          Guide.maps.link({ 
+                            id: guideData.id, 
+                            fk: map.id
+                          }, null).$promise
+                          .then(function (mapLinkData) {
+                            console.log('mapLinkData:', mapLinkData);
+                            return mapCB();
+                          })
+                          .catch(function (err) {
+                            console.log('map link err:', err);
+                            return mapCB(err);
+                          });
+                        }, function (err, results) {
+                          if (err) {
+                            return seriesCB(err);
+                          }
+                          return seriesCB();
+                        });
+                        
+                      }
+                    ], function (err, results) {
+                      if (err) {
+                        return console.log('series err:', err);
+                      }
+                      $scope.app.settings.guide = null;
+                      $state.go('app.hots.guides.guide', { slug: guideData.slug });
+                    });
+                    
+                  })
+                  .catch(function (err) {
+                    console.log('guide hero err', err);
+                  });
+                })
+                .catch(function (err) {
+                  console.log('guide err', err);
+                });
+                
+              }
             };
         }
     ])
@@ -13751,20 +13795,61 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guide = guide;
         }
     ])
-    .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'Guide', 'HOTS', 'guide', 'heroes', 'maps',
-        function ($scope, $state, $window, AlertService, GuideBuilder, Guide, HOTS, guide, heroes, maps) {
+    .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide) {
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
+            
+            // Listen for login/logout events and update role accordingly
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
+            });
+            
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                console.log("event listener response:", data);
+                $scope.isUserAdmin = false;
+                $scope.isUserContentProvider = false;
+            });
+			
+            var box;
+            
+            console.log('dataGuide:', dataGuide);
+            // copy maps that exist in DB alraedy
+            var existingMaps = angular.copy(dataGuide.maps);
+          
             // create guide
-            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero', guide);
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === dataGuide.id ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero', dataGuide);
+            
+            console.log('guide: ', $scope.guide);
+
+            $scope.$watch('guide', function() {
+                $scope.app.settings.guide = $scope.guide;
+            }, true);
+
             // heroes
-            $scope.heroes = heroes;
+            $scope.heroes = dataHeroes;
 
             // maps
-            $scope.maps = maps;
+            $scope.maps = dataMaps;
 
             // steps
             $scope.step = 2;
             $scope.prevStep = function () {
-                if ($scope.step == 2) { return $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id }); }
+                if ($scope.step == 2) { return $state.go('app.hots.guideBuilder.step1', {}); }
                 if ($scope.step > 1) $scope.step = $scope.step - 1;
             }
             $scope.nextStep = function () {
@@ -13772,7 +13857,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.stepOne = function () {
-                $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id });
+                $state.go('app.hots.guideBuilder.step1', {});
             };
 
             // draw hero rows
@@ -13782,8 +13867,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < heroRows.length; row++) {
                 var heroes = [];
                 for (var i = 0; i < heroRows[row]; i++) {
-                    if ($scope.heroes[index]) {
-                        heroes.push($scope.heroes[index]);
+                    if (dataHeroes[index]) {
+                        heroes.push(dataHeroes[index]);
                     } else {
                         heroes.push({});
                     }
@@ -13792,20 +13877,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.heroRows.push(heroes);
             }
 
-            // draw map rows
-            var mapRows = HOTS.mapRows;
-            $scope.mapRows = [];
-            var index = 0;
-            for (var row = 0; row < mapRows.length; row++) {
-                var maps = [];
-                for (var i = 0; i < mapRows[row]; i++) {
-                    if ($scope.maps[index]) {
-                        maps.push($scope.maps[index]);
-                    }
-                    index++;
-                }
-                $scope.mapRows.push(maps);
-            }
+            console.log('hero row: ',$scope.heroRows);
 
             $scope.tooltipPos = function (row, $index) {
                 return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
@@ -13814,6 +13886,21 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.tooltipPosTalent = function ($index) {
                 return ($index === 2) ? 'left' : 'right';
             };
+
+            // draw map rows
+            var mapRows = HOTS.mapRows;
+            $scope.mapRows = [];
+            var index = 0;
+            for (var row = 0; row < mapRows.length; row++) {
+                var maps = [];
+                for (var i = 0; i < mapRows[row]; i++) {
+                    if (dataMaps[index]) {
+                        maps.push(dataMaps[index]);
+                    }
+                    index++;
+                }
+                $scope.mapRows.push(maps);
+            }
 
             // talents
             $scope.getTalents = function (hero) {
@@ -13830,7 +13917,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // summernote options
             $scope.options = {
-                disableDragAndDrop: true,
                 height: 100,
                 toolbar: [
                     ['style', ['style']],
@@ -13866,30 +13952,237 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.guide.featured;
+                var featured = $scope.guide.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
                     }
                 }
-            }
+            };
 
             // save guide
-            $scope.saveGuide = function () {
-                if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
-                    return false;
-                }
-
-                AdminHOTSGuideService.editGuide($scope.guide).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hots.guides.list');
-                    }
+            $scope.updateGuide = function () {
+              console.log('updating guide:', $scope.guide);
+              if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                return false;
+              }
+              if (!User.isAuthenticated()) {
+                LoginModalService.showModal('login', function () {
+                  return $scope.updateGuide();
                 });
+              } else {
+                $scope.guide.slug = Util.slugify($scope.guide.name);
+                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                
+                var keys = ['id',
+                            'name',
+                            'authorId',
+                            'slug',
+                            'guideType',
+                            'description',
+                            'createdDate',
+                            'premium',
+                            'votes',
+                            'against',
+                            'synergy',
+                            'content',
+                            'isFeatured',
+                            'isPublic',
+                            'youtubeId',
+                            'viewCount',
+                            'voteScore'
+                           ];
+                var stripped = Util.cleanObj($scope.guide, keys);
+                var temp = _.map($scope.guide.heroes, function (hero) { 
+                  return _.map(hero.talents, function (talent, tier) {
+                    var str = tier.slice(4, tier.length);
+
+                    return {
+                      heroId: hero.hero.id,
+                      talentId: talent,
+                      tier: parseInt(str)
+                    }
+                  });
+                });
+                
+                $scope.guide.guideTalents = _.flatten(temp);
+                
+                console.log('STRIPPED GUIDE:', stripped);
+                console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
+                console.log('$scope.guide.guideTalents:', $scope.guide.guideTalents);
+                
+                var guideInfo;
+                async.waterfall([
+                  function(waterCB){ 
+                    Guide.upsert($scope.guide)
+                    .$promise
+                    .then(function (guideUpdated) {
+                      console.log('guideUpdated:', guideUpdated);
+                      guideInfo = guideUpdated;
+                      return waterCB();
+                    })
+                    .catch(function (err) {
+                      return waterCB(err);
+                    });
+                  },
+                  function(waterCB){
+                    
+                    async.series([
+                      function(seriesCB) {
+                        Guide.guideHeroes.destroyAll({
+                          id: stripped.id
+                        }).$promise
+                        .then(function (herosDestroyed) {
+                          console.log('herosDestroyed: ', herosDestroyed);
+                          return seriesCB(null);
+                        })
+                        .catch(function (err) {
+                          console.log('guideHero err: ', err);
+                          return seriesCB(err);
+                        });
+                      },
+                      function(seriesCB) {
+                        console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
+                        Guide.guideHeroes.createMany({
+                          id: stripped.id
+                        }, $scope.guide.guideHeroes).$promise
+                        .then(function (guideHeroData) {
+                          console.log('guideHeroData1: ', guideHeroData);
+                          return seriesCB(null, guideHeroData);
+                        })
+                        .catch(function (err) {
+                          console.log('err: ', err);
+                          return seriesCB(err);
+                        });
+                      }
+                    ], function(err, results) {
+                      if (err) {
+                        return waterCB(err);
+                      }
+                      return waterCB(null, results[1]);
+                    });
+                    
+                  },
+                  function(guideHeroData, waterCB) {
+                    console.log('guideHeroData:', guideHeroData);
+                    async.series([
+                      function(seriesCB) {
+                        Guide.guideTalents.destroyAll({
+                          id: stripped.id
+                        }).$promise
+                        .then(function (guideTalent) {
+                          console.log('guideTalentsDestroyed: ', guideTalent);
+                          return seriesCB();
+                        })
+                        .catch(function (err) {
+                          console.log('guideTalent err: ', err);
+                          return seriesCB(err);
+                        });
+                      },
+                      function(seriesCB) {
+                        
+                        var tals = [];
+                        _.each(guideHeroData, function(eachVal) {
+                          var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                            return filterVal.heroId === eachVal.heroId;
+                          });
+
+                          _.each(heroTals, function (innerEachVal, index, list) {
+                            innerEachVal.guideId = stripped.id;
+                            innerEachVal.guideHeroId = eachVal.id;
+                            tals.push(innerEachVal);
+                          });
+                        });
+                        
+                        console.log('tals:', tals);
+                        Guide.guideTalents.createMany({
+                          id: stripped.id
+                        }, tals).$promise
+                        .then(function (talentsCreated) {
+                          console.log('talentsCreated: ', talentsCreated);
+                          return seriesCB();
+                        })
+                        .catch(function (err) {
+                          console.log('talent err: ', err);
+                          return seriesCB(err);
+                        });
+                        
+                      }
+                    ], function(err, results) {
+                      if (err) {
+                        return waterCB(err);
+                      }
+                      return waterCB();
+                    });
+                    
+                  },
+                  function (waterCB) {
+                    
+                    async.series([
+                      function(seriesCB) {
+                        
+                        async.each(existingMaps, function(map, mapCB) {
+                          Guide.maps.unlink({
+                              id: stripped.id,
+                              fk: map.id
+                          }).$promise
+                          .then(function (mapUnlinkData) {
+                            return mapCB();
+                          })
+                          .catch(function (err) {
+                            return mapCB(err);
+                          });
+                        }, function(err, results) {
+                          if (err) {
+                            return seriesCB(err);
+                          }
+                          return seriesCB();
+                        });
+                        
+                      },
+                      
+                      function(seriesCB) {
+                        
+                        async.each($scope.guide.maps, function(map, mapCB) {
+                          Guide.maps.link({
+                            id: stripped.id,
+                            fk: map.id
+                          }, null)
+                          .$promise
+                          .then(function (mapLinkData) {
+                            console.log('mapLinkData:', mapLinkData);
+                            return mapCB();
+                          })
+                          .catch(function (err) {
+                            return mapCB(err);
+                          });
+                        }, function(err, results) {
+                          if (err) {
+                            return seriesCB(err);
+                          }
+                          return seriesCB();
+                        });
+                        
+                      }
+                      
+                    ], function(err, results) {
+                      if (err) {
+                        return waterCB(err);
+                      }
+                      return waterCB();
+                    });
+                    
+                  }
+                ], function(err, results) {
+                  if (err) {
+                    return console.log('PARA err:', err);
+                  }
+                  console.log('results:', results);
+                  $scope.app.settings.guide = null;
+                  $state.go('app.hots.guides.guide', { slug: guideInfo.slug });
+                });
+                
+              }
             };
         }
     ])
@@ -14272,9 +14565,11 @@ angular.module('app.controllers', ['ngCookies'])
         function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
 
             $scope.tempostormGuides = dataTempostormGuides;
+          console.log('dataTempostormGuides:', dataTempostormGuides);
 //            $scope.tempostormGuideTalents = tempostormTalents;
 
             $scope.communityGuides = dataCommunityGuides;
+          console.log('dataCommunityGuides:', dataCommunityGuides);
 //            $scope.communityGuideTalents = communityTalents;
 
             $scope.topGuides = dataTopGuide ? dataTopGuide : false;
@@ -14308,35 +14603,41 @@ angular.module('app.controllers', ['ngCookies'])
                if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetHeroMapGuides(1, 1, $scope.search, $scope.filters, null, function(guides) {
-                      
-                      $timeout(function () {
-                        $scope.topGuides = guides;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                    doGetHeroMapGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides) {
+                      console.log('doGetHeroMapGuides err:', err);
+                      console.log('doGetHeroMapGuides guides:', guides);
+                      if (err) return seriesCallback(err);
+                      $scope.topGuides = guides;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   }, function (seriesCallback) {
-                    doGetHeroMapGuides(1, 4, $scope.search, $scope.filters, true, function(guides, count) {
+                    doGetHeroMapGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
                       
-                      $timeout(function () {
-                        
-                        $scope.tempostormGuides = guides;
-                        $scope.tempostormPagination.total = count.count;
-                        initializing = false;
-                        return seriesCallback();
-                      });
-                    });
-                  }, function (seriesCallback) {
-                    doGetHeroMapGuides(1, 10, $scope.search, $scope.filters, false, function(guides, count) {
+                      console.log('doGetHeroMapGuides err:', err);
+                      console.log('doGetHeroMapGuides guides:', guides);
+                      console.log('doGetHeroMapGuides count:', count);
 
-                      $timeout(function () {
-                        
-                        $scope.communityGuides = guides;
-                        $scope.communityPagination.total = count.count;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                      if (err) return seriesCallback(err);
+                      $scope.tempostormGuides = guides;
+                      $scope.tempostormPagination.total = count.count;
+                      $scope.tempostormPagination.page = 1;
+                      initializing = false;
+                      return seriesCallback();
+                    });
+                  }, function (seriesCallback) {
+                    doGetHeroMapGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
+
+                      console.log('doGetHeroMapGuides err:', err);
+                      console.log('doGetHeroMapGuides guides:', guides);
+                      console.log('doGetHeroMapGuides count:', count);
+
+                      if (err) return seriesCallback(err);
+                      $scope.communityGuides = guides;
+                      $scope.communityPagination.total = count.count;
+                      $scope.communityPagination.page = 1;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   }
                 ], fnCallback);
@@ -14344,36 +14645,37 @@ angular.module('app.controllers', ['ngCookies'])
                 async.parallel([
                   function (seriesCallback) {
                     doGetHeroGuides(1, 1, $scope.search, $scope.filters, null, function (err, guides) {
-                      $timeout(function () {
-
-                        $scope.topGuides = guides;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                        
+                      if (err) return seriesCallback(err);
+                      $scope.topGuides = guides;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   }, function (seriesCallback) {
                     doGetHeroGuides(1, 4, $scope.search, $scope.filters, true, function (err, guides, count) {
-                      $timeout(function () {
-                        console.log('guides:', guides);
-                        console.log('count:', count);
-                        
-                        $scope.tempostormGuides = guides;
-                        $scope.tempostormPagination.total = count.count;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                      console.log('doGetHeroGuides err:', err);
+                      console.log('doGetHeroGuides guides:', guides);
+                      console.log('doGetHeroGuides count:', count);
+
+                      if (err) return seriesCallback(err);
+                      $scope.tempostormGuides = guides;
+                      $scope.tempostormPagination.total = count.count;
+                      $scope.tempostormPagination.page = 1;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   }, function (seriesCallback) {
                     doGetHeroGuides(1, 10, $scope.search, $scope.filters, false, function (err, guides, count) {
-                      $timeout(function () {
-                        console.log('guides:', guides);
-                        console.log('count:', count);
-
+                        console.log('doGetHeroGuides err:', err);
+                        console.log('doGetHeroGuides guides:', guides);
+                        console.log('doGetHeroGuides count:', count);
+                        
+                        if (err) return seriesCallback(err);
                         $scope.communityGuides = guides;
                         $scope.communityPagination.total = count.count;
+                        $scope.communityPagination.page = 1;
                         initializing = false;
                         return seriesCallback();
-                      });
                     });
                   }
                 ], fnCallback);
@@ -14385,31 +14687,29 @@ angular.module('app.controllers', ['ngCookies'])
                     return seriesCallback();
                   }, function (seriesCallback) {
                     doGetMapGuides(1, 4, $scope.search, $scope.filters, true, function (err, guides, count) {
-                      $timeout(function () {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
-                        
-                        if (err) return seriesCallback(err);
-                        $scope.tempostormGuides = guides;
-                        $scope.tempostormPagination.total = count.count;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                      console.log('doGetMapGuides err:', err);
+                      console.log('doGetMapGuides guides:', guides);
+                      console.log('doGetMapGuides count:', count);
+
+                      if (err) return seriesCallback(err);
+                      $scope.tempostormGuides = guides;
+                      $scope.tempostormPagination.total = count.count;
+                      $scope.tempostormPagination.page = 1;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   }, function (seriesCallback) {
                     doGetMapGuides(1, 10, $scope.search, $scope.filters, false, function (err, guides, count) {
-                      $timeout(function () {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
-                        
-                        if (err) return seriesCallback(err);
-                        $scope.communityGuides = guides;
-                        $scope.communityPagination.total = count.count;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                      console.log('doGetMapGuides err:', err);
+                      console.log('doGetMapGuides guides:', guides);
+                      console.log('doGetMapGuides count:', count);
+
+                      if (err) return seriesCallback(err);
+                      $scope.communityGuides = guides;
+                      $scope.communityPagination.total = count.count;
+                      $scope.communityPagination.page = 1;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   }
                 ], fnCallback);
@@ -14418,45 +14718,43 @@ angular.module('app.controllers', ['ngCookies'])
                   function (seriesCallback) {
                     doGetGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides, count) {
 
-                      $timeout(function () {
-                        console.log('guides:', guides);
-                        console.log('count:', count);
-                        
-                        $scope.topGuides = guides;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                      console.log('doGetGuide err:', err);
+                      console.log('doGetGuide guides:', guides);
+                      console.log('doGetGuide count:', count);
+
+                      if (err) return seriesCallback(err);
+                      $scope.topGuides = guides;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   }, function (seriesCallback) {
                     doGetGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
 
-                      $timeout(function () {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
-                        
-                        if (err) return seriesCallback(err);
-                        $scope.tempostormGuides = guides;
-                        $scope.tempostormPagination.total = count.count;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                      console.log('doGetGuide err:', err);
+                      console.log('doGetGuide guides:', guides);
+                      console.log('doGetGuide count:', count);
+
+                      if (err) return seriesCallback(err);
+                      $scope.tempostormGuides = guides;
+                      $scope.tempostormPagination.total = count.count;
+                      $scope.tempostormPagination.page = 1;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   },
                   function (seriesCallback) { 
                    doGetGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
 
-                     $timeout(function () {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
-                        
-                       if (err) return seriesCallback(err);
-                        $scope.communityGuides = guides;
-                        $scope.communityPagination.total = count.count;
-                        initializing = false;
-                        return seriesCallback();
-                      });
+                      console.log('doGetGuide err:', err);
+                      console.log('doGetGuide guides:', guides);
+                      console.log('doGetGuide count:', count);
+
+                     if (err) return seriesCallback(err);
+                      $scope.communityGuides = guides;
+                      $scope.communityPagination.total = count.count;
+                      $scope.communityPagination.page = 1;
+                      initializing = false;
+                      return seriesCallback();
                     });
                   }
                 ], fnCallback);;
@@ -14465,11 +14763,9 @@ angular.module('app.controllers', ['ngCookies'])
           
             function doGetHeroMapGuides (page, perpage, search, filters, isFeatured, callback) {
               HOTSGuideQueryService.getHeroMapGuides(filters, isFeatured, perpage, page, function (err, guides, count) {
-                  $timeout(function () {
                     
-                    initializing = false;
-                    return callback(guides, count);
-                  });
+                  initializing = false;
+                  return callback(err, guides, count);
               });
             }
           
@@ -14481,24 +14777,20 @@ angular.module('app.controllers', ['ngCookies'])
               console.log('isFeatured:', isFeatured);
               console.log('callback:', callback);
               HOTSGuideQueryService.getHeroGuides(filters, isFeatured, perpage, page, function (err, guides, count) {
-                  $timeout(function () {
-                    console.log('err:', err);
-                    console.log('guides:', guides);
-                    console.log('count:', count);
-                    
-                      initializing = false;
-                      return callback(guides, count);
-                  });
+                  console.log('err:', err);
+                  console.log('guides:', guides);
+                  console.log('count:', count);
+
+                  initializing = false;
+                  return callback(err, guides, count);
               });
             }
           
             function doGetMapGuides (page, perpage, search, filters, isFeatured, callback) {
               HOTSGuideQueryService.getMapGuides(filters, isFeatured, search, perpage, page, function (err, guides, count) {
-                $timeout(function () {
                   
-                  initializing = false;
-                  return callback(err, guides, count);
-                });
+                initializing = false;
+                return callback(err, guides, count);
               });
             }
           
@@ -14506,27 +14798,19 @@ angular.module('app.controllers', ['ngCookies'])
               console.log('asdf page:', page);
               console.log('asdf perpage:', perpage);
               HOTSGuideQueryService.getGuides(filters, isFeatured, search, perpage, page, function (err, guides, count) {
-                $timeout(function () {
-                  console.log('doGetGuides');
-                  console.log('err:', err);
-                  console.log('guides:', guides);
-                  console.log('count:', count);
-                  
-                  initializing = false;
-                  return callback(err, guides, count);
-                });
+                console.log('doGetGuides');
+                console.log('err:', err);
+                console.log('guides:', guides);
+                console.log('count:', count);
+
+                initializing = false;
+                return callback(err, guides, count);
               });
             }
 
             var initializing = true;
             $scope.$watch(function() { return $scope.filters; }, function (value) {
-                if (initializing) {
-                    $timeout(function () {
-                        initializing = false;
-                    });
-                } else {
                     doQuery();
-                }
             }, true);
 
             // top guide
@@ -14653,8 +14937,12 @@ angular.module('app.controllers', ['ngCookies'])
                     var d = $q.defer();
               
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
-                      console.log('1');
-                      doGetHeroMapGuides();
+                      doGetHeroMapGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
+                        if (err) return d.resolve(err);
+                        $scope.tempostormGuides = guides;
+                        $scope.tempostormPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
                       console.log('2');
                       doGetHeroGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
@@ -14700,7 +14988,12 @@ angular.module('app.controllers', ['ngCookies'])
               
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                       console.log('1');
-                      doGetHeroMapGuides();
+                      doGetHeroMapGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
+                        if (err) return d.resolve(err);
+                        $scope.communityGuides = guides;
+                        $scope.communityPagination.total = count.count;
+                        return d.resolve(count.count);
+                      });
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
                       console.log('2');
                       doGetHeroGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
@@ -14842,8 +15135,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // matchups
-            $scope.hasSynergy = function (hero) {
-                return ($scope.guide.synergy.indexOf(hero.id) !== -1);
+            $scope.getMatchHero = function (hero) {
+                return _.find(heroes, function (val) { return val.id === hero });
             };
             $scope.hasStrong = function (hero) {
                 return ($scope.guide.against.strong.indexOf(hero.id) !== -1);
@@ -14901,8 +15194,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService) {
 			
 			      $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -15073,8 +15366,9 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                var cleanGuide = angular.copy($scope.guide);
+                cleanGuide.slug = Util.slugify(cleanGuide.name);
+                cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
                 
                 var keys = ['name',
                             'authorId',
@@ -15119,11 +15413,12 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 console.log('saving stripped:', stripped);
                 console.log('$scope.guide:', $scope.guide);
-                
-                Guide.create({}, stripped)
+                  Guide.create({}, stripped)
                 .$promise
                 .then(function (guideData) {
                   console.log('guideData:', guideData);
+                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
+                  
                   Guide.guideHeroes.createMany({
                     id: guideData.id
                   }, $scope.guide.guideHeroes)
@@ -15184,6 +15479,11 @@ angular.module('app.controllers', ['ngCookies'])
                       }
                     ], function (err, results) {
                       if (err) {
+                        AlertService.setError({
+                          show: true,
+                          lbErr: err,
+                          msg: 'Unable to Create Guide'
+                        });
                         return console.log('series err:', err);
                       }
                       $scope.app.settings.guide = null;
@@ -15192,12 +15492,23 @@ angular.module('app.controllers', ['ngCookies'])
                     
                   })
                   .catch(function (err) {
+                    AlertService.setError({
+                      show: true,
+                      lbErr: err,
+                      msg: 'Unable to Create Guide'
+                    });
                     console.log('guide hero err', err);
                   });
                 })
                 .catch(function (err) {
+                    AlertService.setError({
+                      show: true,
+                      lbErr: err,
+                      msg: 'Unable to Create Guide'
+                    });
                   console.log('guide err', err);
                 });
+                
               }
             };
           }
@@ -15380,8 +15691,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guide = dataGuide.guide;
         }
     ])
-    .controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide) {
+    .controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide', 'AlertService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide, AlertService) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -15547,12 +15858,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.updateGuide = function () {
+              console.log('updating guide:', $scope.guide);
               if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
               }
               if (!User.isAuthenticated()) {
                 LoginModalService.showModal('login', function () {
-                  return $scope.saveGuide();
+                  return $scope.updateGuide();
                 });
               } else {
                 $scope.guide.slug = Util.slugify($scope.guide.name);
@@ -15592,13 +15904,16 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.guide.guideTalents = _.flatten(temp);
                 
                 console.log('STRIPPED GUIDE:', stripped);
+                console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
+                console.log('$scope.guide.guideTalents:', $scope.guide.guideTalents);
                 
                 var guideInfo;
                 async.waterfall([
                   function(waterCB){ 
-                    Guide.upsert(stripped)
+                    Guide.upsert($scope.guide)
                     .$promise
                     .then(function (guideUpdated) {
+                      console.log('guideUpdated:', guideUpdated);
                       guideInfo = guideUpdated;
                       return waterCB();
                     })
@@ -15623,6 +15938,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function(seriesCB) {
+                        console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
                         Guide.guideHeroes.createMany({
                           id: stripped.id
                         }, $scope.guide.guideHeroes).$promise
@@ -15639,13 +15955,12 @@ angular.module('app.controllers', ['ngCookies'])
                       if (err) {
                         return waterCB(err);
                       }
-                      console.log('results:', results);
                       return waterCB(null, results[1]);
                     });
                     
                   },
                   function(guideHeroData, waterCB) {
-                    
+                    console.log('guideHeroData:', guideHeroData);
                     async.series([
                       function(seriesCB) {
                         Guide.guideTalents.destroyAll({
@@ -15673,8 +15988,6 @@ angular.module('app.controllers', ['ngCookies'])
                             innerEachVal.guideHeroId = eachVal.id;
                             tals.push(innerEachVal);
                           });
-                          
-                          console.log('tals now:', tals);
                         });
                         
                         console.log('tals:', tals);
@@ -15730,8 +16043,10 @@ angular.module('app.controllers', ['ngCookies'])
                           Guide.maps.link({
                             id: stripped.id,
                             fk: map.id
-                          }, null).$promise
+                          }, null)
+                          .$promise
                           .then(function (mapLinkData) {
+                            console.log('mapLinkData:', mapLinkData);
                             return mapCB();
                           })
                           .catch(function (err) {
@@ -15745,6 +16060,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                         
                       }
+                      
                     ], function(err, results) {
                       if (err) {
                         return waterCB(err);
@@ -15757,55 +16073,10 @@ angular.module('app.controllers', ['ngCookies'])
                   if (err) {
                     return console.log('PARA err:', err);
                   }
+                  console.log('results:', results);
                   $scope.app.settings.guide = null;
                   $state.go('app.hots.guides.guide', { slug: guideInfo.slug });
                 });
-                
-//                Guide.create({}, stripped)
-//                .$promise
-//                .then(function (guideData) {
-//                  console.log('guideData', guideData);
-//                  Guide.guideHeroes.createMany({
-//                    id: guideData.id
-//                  }, $scope.guide.guideHeroes)
-//                  .$promise
-//                  .then(function (guideHeroData) {
-//                    console.log('guideHeroData', guideHeroData);
-//                    var tals = [];
-//                    
-//                    _.each(guideHeroData, function(eachVal) {
-//                      var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
-//                        return filterVal.heroId === eachVal.heroId;
-//                      });
-//                      
-//                      _.each(heroTals, function (innerEachVal, index, list) {
-//                        innerEachVal.guideId = guideData.id;
-//                        innerEachVal.guideHeroId = eachVal.id; 
-//                      });
-//                      
-//                      tals.push(heroTals);
-//                    });
-//                    console.log(tals);
-//                    Guide.guideTalents.createMany({
-//                      id: guideData.id 
-//                    }, tals)
-//                    .$promise
-//                    .then(function (guideTalentData) {
-//                      console.log("YEP:", guideTalentData);
-////                      $scope.app.settings.guide = null;
-//                      $state.go('app.hots.guides.guide', { slug: guideData.slug });
-//                    })
-//                    .catch(function (err) {
-//                      console.log('guide talent err', err);
-//                    });
-//                  })
-//                  .catch(function (err) {
-//                    console.log('guide hero err', err);
-//                  });
-//                })
-//                .catch(function (err) {
-//                  console.log('guide err', err);
-//                });
                 
               }
             };

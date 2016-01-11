@@ -77,6 +77,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
     <script src="./vendor/angular-iscroll/dist/lib/angular-iscroll.js"></script>
+    <script src="./vendor/angular-recaptcha/release/angular-recaptcha.min.js"></script>
 
     <!-- app -->
     <script src="./dist/js/services/lb-services.js"></script>

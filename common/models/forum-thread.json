@@ -15,10 +15,12 @@
       "type": "boolean"
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "validators": ["spam"]
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "validators": ["spam"]
     },
     "forumCategoryId": {},
     "slug": {

@@ -2119,7 +2119,7 @@ angular.module('app.services', [])
                 expiryDate: d
             },
             isFeatured: data.featured || false,
-            isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
+            isPublic:  data.isPublic === false ? false : true,
             votes: data.votes || [],
             voteScore: data.voteScore || 0,
             viewCount: data.viewCount || 0,
@@ -2162,31 +2162,6 @@ angular.module('app.services', [])
             gb.content.splice(newIndex, 0, content);
         };
 
-//        gb.toggleHero = function (hero) {
-//            if (gb.hasHero(hero)) {
-//                for (var i = 0; i < gb.heroes.length; i++) {
-//                    if (gb.heroes[i].hero._id === hero._id) {
-//                        gb.heroes.splice(i, 1);
-//                        return true;
-//                    }
-//                }
-//            } else {
-//                if (gb.heroes.length === 5) { return false; }
-//                var obj = {};
-//                obj.hero = hero;
-//                obj.talents = {
-//                    tier1: null,
-//                    tier4: null,
-//                    tier7: null,
-//                    tier10: null,
-//                    tier13: null,
-//                    tier16: null,
-//                    tier20: null
-//                };
-//                gb.heroes.push(obj);
-//            }
-//        };
-
         gb.toggleHero = function (hero) {
           if (gb.hasHero(hero)) {
             for (var i = 0; i < gb.heroes.length; i++) {
@@ -2197,6 +2172,21 @@ angular.module('app.services', [])
             }
           } else {
             if (gb.heroes.length === 5) { return false; }
+            
+            HeroTalent.find({
+              filter: {
+                where: {
+                  heroId: hero.id
+                },
+                include: ['talent']
+              }
+            }).$promise
+            .then(function (heroTalents) {
+              console.log('heroTalents:', heroTalents);
+              hero.talents = heroTalents;
+            })
+            .catch(function (err) {
+            });
 
             var obj = {};
             obj.hero = hero;
@@ -2242,7 +2232,9 @@ angular.module('app.services', [])
         };
 
         gb.talentsByTier = function (hero, tier) {
-          var temp = _.filter(hero.talents, function (val) { return val.tier == tier });
+          var temp = _.filter(hero.talents, function (val) { 
+            return val.tier == tier 
+          });
           var talents = _.map(temp, function (val) { return val.talent; });
           return talents;
         };
@@ -2691,6 +2683,7 @@ angular.module('app.services', [])
                     return seriesCallback(undefined, selectedGuideIds);
                 }, function (selectedGuideIds, seriesCallback) {
                     guideWhere.id = { inq: selectedGuideIds };
+                    guideWhere.isPublic = true;
                     
                     Guide.find({
                       filter: {
@@ -2842,7 +2835,8 @@ angular.module('app.services', [])
                             skip: ((limit * page) - limit),
                             order: order,
                             where: {
-                                id: { inq: guideIds }
+                                id: { inq: guideIds },
+                                isPublic: true
                             },
                             fields: [
                                 "name", 
@@ -2904,7 +2898,8 @@ angular.module('app.services', [])
                 function (guides, guideIds, seriesCallback) {
                   Guide.count({
                     where: {
-                        id: { inq: guideIds }
+                        id: { inq: guideIds },
+                        isPublic: true
                     },
                   }).$promise
                   .then(function (heroGuideCount) {
@@ -2932,7 +2927,8 @@ angular.module('app.services', [])
             }
 
             var where = {
-                guideType: "map"
+                guideType: "map",
+                isPublic: true
             }
             
             if (isFeatured !== null) {
@@ -2945,7 +2941,7 @@ angular.module('app.services', [])
                         filter: {
                             fields: ["id"],
                             where: {
-                                id: filters.map.id
+                                id: filters.map.id,
                             },
                             include: [
                                 {
@@ -2973,7 +2969,8 @@ angular.module('app.services', [])
                             order: "createdDate DESC",
                             skip: ((limit * page) - limit),
                             where: {
-                                id: { inq: guideIds }
+                                id: { inq: guideIds },
+                                isPublic: true
                             },
                             fields: [
                                 "id",
@@ -3009,7 +3006,8 @@ angular.module('app.services', [])
                 }, function (guides, guideIds, seriesCallback) {
                   Guide.count({
                     where: {
-                        id: { inq: guideIds }
+                        id: { inq: guideIds },
+                        isPublic: true
                     },
                   }).$promise
                   .then(function (heroGuideCount) {
@@ -3107,7 +3105,8 @@ angular.module('app.services', [])
                             limit: limit,
                             order: "createdDate DESC",
                             where: {
-                                id: { inq: selectedGuideIds }
+                                id: { inq: selectedGuideIds },
+                                isPublic: true
                             },
                             fields: [
                                 "name", 
@@ -3169,7 +3168,8 @@ angular.module('app.services', [])
                     function (guides, waterCallback) {
                       Guide.count({
                         where: {
-                            id: { inq: selectedGuideIds }
+                            id: { inq: selectedGuideIds },
+                            isPublic: true
                         },
                       }).$promise
                       .then(function (heroGuideCount) {

@@ -127,8 +127,8 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth', 'LoginService',
-    function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth, LoginService) {
+.directive('loginForm', ['$window', '$cookies', '$state', '$location', '$stateParams', 'LoginModalService', 'User', 'LoopBackAuth', 'LoginService', 'AlertService',
+    function ($window, $cookies, $state, $location, $stateParams, LoginModalService, User, LoopBackAuth, LoginService, AlertService) {
         return {
             templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
             scope: true,
@@ -154,24 +154,27 @@ angular.module('app.directives', ['ui.load'])
                 $scope.login = function login(email, password) {
                     $scope.setLoggingIn(1);
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
-                        
                         LoginService.login(email, password, $scope.remember, function(err, data) {
-                            if (err) { 
-                                console.log("ERROR LOGGING IN:", err);
+                            if (err) {
+                                AlertService.setError({ show: true, msg: "Error logging in" });
+                              
                                 $scope.showError = true;
                                 $scope.setLoggingIn(0);
                             } else {
-                                console.log('sup');
                                 LoginModalService.hideModal();
                                 $scope.setLoggingIn(2);
                                 if ($scope.callback) {
                                     $scope.callback(LoopBackAuth);
+                                } else if (!$scope.state) {
+                                  var goto = $stateParams.redirect;
+                                  
+                                  (goto !== undefined) ? $state.go($stateParams.redirect) : false;
                                 }
                             }
                         });
                         
                     } else {
-                        // TODO: Display modal for missing username and/or password
+                      AlertService.setError({ show: true, msg: "Missing username and/or password" });
                     }
                 };
 
@@ -187,42 +190,66 @@ angular.module('app.directives', ['ui.load'])
     }
 ])
 .directive('signupForm', ['$state', 'User', 'LoginModalService', function ($state, User, LoginModalService) {
-    return {
-        templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
-        scope: true,
-        link: function ($scope, el, attr) {
-            $scope.verify = {
-                email: "",
-                code: ""
-            }
+  return {
+    templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
+    scope: true,
+    link: function ($scope, el, attr) {
 
-            $scope.signup = function(email, username, password) {
-              console.log("what is life?");
-                if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
-                  console.log("creating this thing")
-                    User.create({
-                      email: email,
-                      username: username,
-                      password:password
-                    }, function (user) {
-                        console.log("signup succeeded");
-                          $scope.verify.email = email;
-                          if ($scope.setState) {
-                              console.log("fuck");
-                              $scope.setState("verify");
-                          } else {
-                              $state.go('app.verify');
-                          }
-//                            return $state.transitionTo('app.verify', { email: email });
-                    }, function(err) {
-                      console.log("signup returned with err:", err);
-                        $scope.errors = err;
-                        $scope.showError = true;
-                    });
-                }
-            }
-        }
+    // recaptcha
+    $scope.captchaKey = '6LeLJhQTAAAAAEnLKxtQmTkRkrGpqmbQGTRzu3u8';
+    $scope.captchaToken = null;
+    $scope.widgetId = null;
+    $scope.captchaFailed = false;
+
+    $scope.setToken = function (token) {
+//            console.log('Resonse available:', response);
+        $scope.captchaToken = token;
     }
+
+    $scope.setWidgetId = function (widgetId) {
+//            console.log('Created widget ID: %s', widgetId);
+    }
+
+    $scope.cbExpiration = function () {
+//            console.log('Captcha expired. Resetting response object');
+        $scope.captchaToken = null;
+    }
+
+    $scope.getStyle = function () {
+        console.log($scope.setState);
+        return (!$scope.setState) ? 'transform:scale(1.06);-webkit-transform:scale(1.06);transform-origin:0 0;-webkit-transform-origin:0 0;' : 'transform:scale(.99);-webkit-transform:scale(.99);transform-origin:0 0;-webkit-transform-origin:0 0;';
+    }
+
+
+
+      $scope.verify = {
+        email: "",
+        code: ""
+      }
+
+      $scope.signup = function(email, username, password) {
+        if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined && typeof $scope.captchaToken === "string" ) {
+          User.create({
+            email: email,
+            username: username,
+            password:password
+          }, {
+            captchaToken: $scope.captchaToken
+          }, function (user) {
+            $scope.verify.email = email;
+            if ($scope.setState) {
+                $scope.setState("verify");
+            } else {
+                $state.go('app.verify');
+            }
+          }, function(err) {
+            $scope.errors = err;
+            $scope.showError = true;
+          });
+        }
+      }
+    }
+  }
 }])
 .directive('forgotPasswordForm', ['LoginModalService', 'User', 'AlertService', function (LoginModalService, User, AlertService) {
     return {
@@ -251,8 +278,6 @@ angular.module('app.directives', ['ui.load'])
         scope: true,
         link: function ($scope, el, attr) {
 
-            console.log('FUCK');
-            
             //TODO: VerifyForm: Do Verify
 
 //            $scope.verifyEmail = function (email, code) {
@@ -487,8 +512,6 @@ angular.module('app.directives', ['ui.load'])
                 ], function (err) {
                     if (err) { console.log("ERROR:", err); }
 
-                    console.log("FUCK THIS SHIT", $scope.isLoading());
-
                     $scope.loading = false;
                 });
             }
@@ -680,8 +703,6 @@ angular.module('app.directives', ['ui.load'])
 
             function updateVotes(direction) {
                 checkVotes($scope.votable);
-
-                
                 
                 $scope.votable.voteScore = voteCount($scope.votable.votes);
             }
@@ -1093,17 +1114,17 @@ angular.module('app.directives', ['ui.load'])
 ])
 .directive('snapshotAddAuthor', [function () {
     return {
-        templateUrl: tpl + "views/admin/snapshot.add.author.html"
+        templateUrl: tpl + "views/admin/hs.snapshot.add.author.html"
     };
 }])
 .directive('snapshotAddDeck', [function () {
     return {
-        templateUrl: tpl + "views/admin/snapshot.add.deck.html"
+        templateUrl: tpl + "views/admin/hs.snapshot.add.deck.html"
     }
 }])
 .directive('snapshotAddCard', [function () {
     return {
-        templateUrl: tpl + "views/admin/snapshot.add.card.html"
+        templateUrl: tpl + "views/admin/hs.snapshot.add.card.html"
     };
 }])
 .directive("fbLikeButton", [function () {
