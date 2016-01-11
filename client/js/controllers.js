@@ -8981,13 +8981,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-				if ($scope.filters.mana === m) {
-					$scope.filters.mana = 'all';
-					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
-				} else {
-					$scope.filters.mana = m;
-					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
-				}
+              if ($scope.filters.mana === m) {
+                $scope.filters.mana = 'all';
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+              } else {
+                $scope.filters.mana = m;
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+              }
             }
 
             $scope.filters.byMana = function () {
@@ -9097,24 +9097,24 @@ angular.module('app.controllers', ['ngCookies'])
                 console.log('deck to create: ', deck);
                 $scope.deckSubmitting = true;
                 
-				if (!deck.name > 0) {
-					$window.scrollTo(0, 0);
-					$scope.deckSubmitting = false;
-					return AlertService.setError({
-						show: true,
-						msg: 'Unable to save deck',
-						errorList: ['Deck must have a name']
-					});
-				}
+                if (!deck.name > 0) {
+                  $window.scrollTo(0, 0);
+                  $scope.deckSubmitting = false;
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to save deck',
+                    errorList: ['Deck must have a name']
+                  });
+                }
 				
                 if(!deck.validDeck()) {
-                    $window.scrollTo(0, 0);
-                    $scope.deckSubmitting = false;
-                    return AlertService.setError({
-						show: true,
-						msg: 'Unable to save deck',
-						errorList: ['Deck must have exactly 30 cards']
-					});
+                  $window.scrollTo(0, 0);
+                  $scope.deckSubmitting = false;
+                            return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to save deck',
+                    errorList: ['Deck must have exactly 30 cards']
+                  });
                 }
                 
                 console.log('User.isAuthenticated(): ', User.isAuthenticated());
@@ -13374,8 +13374,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService) {
+    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -13545,8 +13545,9 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                var cleanGuide = angular.copy($scope.guide);
+                cleanGuide.slug = Util.slugify(cleanGuide.name);
+                cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
                 
                 var keys = ['name',
                             'authorId',
@@ -13565,7 +13566,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'viewCount',
                             'voteScore',
                            ];
-                var stripped = Util.cleanObj($scope.guide, keys);
+                var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
@@ -13578,7 +13579,7 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 });
                 
-                $scope.guide.guideTalents = _.flatten(temp);
+                cleanGuide.guideTalents = _.flatten(temp);
                 
                 stripped.votes = [
                   {
@@ -13599,13 +13600,13 @@ angular.module('app.controllers', ['ngCookies'])
                   
                   Guide.guideHeroes.createMany({
                     id: guideData.id
-                  }, $scope.guide.guideHeroes)
+                  }, cleanGuide.guideHeroes)
                   .$promise
                   .then(function (guideHeroData) {
                     var tals = [];
                     
                     _.each(guideHeroData, function(eachVal) {
-                      var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
                         return filterVal.heroId === eachVal.heroId;
                       });
                       
@@ -13617,6 +13618,7 @@ angular.module('app.controllers', ['ngCookies'])
                       tals.push(heroTals);
                     });
                     
+                    console.log('tals:', tals);
                     async.series([
                       function (seriesCB) { 
                         Guide.guideTalents.createMany({
@@ -13632,7 +13634,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function (seriesCB) {
-                        async.each($scope.guide.maps, function(map, mapCB) {
+                        async.each(cleanGuide.maps, function(map, mapCB) {
                           console.log('map.id:', map.id);
                           console.log('guideData:', guideData);
                           Guide.maps.link({ 
@@ -13657,6 +13659,12 @@ angular.module('app.controllers', ['ngCookies'])
                       }
                     ], function (err, results) {
                       if (err) {
+                        $window.scrollTo(0, 0);
+                        AlertService.setError({
+                          show: true,
+                          lbErr: err,
+                          msg: 'Unable to Save Guide'
+                        });
                         return console.log('series err:', err);
                       }
                       $scope.app.settings.guide = null;
@@ -13665,10 +13673,22 @@ angular.module('app.controllers', ['ngCookies'])
                     
                   })
                   .catch(function (err) {
+                    $window.scrollTo(0, 0);
+                    AlertService.setError({
+                      show: true,
+                      lbErr: err,
+                      msg: 'Unable to Save Guide'
+                    });
                     console.log('guide hero err', err);
                   });
                 })
                 .catch(function (err) {
+                    $window.scrollTo(0, 0);
+                    AlertService.setError({
+                      show: true,
+                      lbErr: err,
+                      msg: 'Unable to Save Guide'
+                    });
                   console.log('guide err', err);
                 });
                 
@@ -13794,8 +13814,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guide = guide;
         }
     ])
-    .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide) {
+    .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide', 'AlertService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide, AlertService) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -13832,8 +13852,6 @@ angular.module('app.controllers', ['ngCookies'])
           
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === dataGuide.id ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero', dataGuide);
-            
-            console.log('guide: ', $scope.guide);
 
             $scope.$watch('guide', function() {
                 $scope.app.settings.guide = $scope.guide;
@@ -13970,8 +13988,9 @@ angular.module('app.controllers', ['ngCookies'])
                   return $scope.updateGuide();
                 });
               } else {
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                var guideCopy = angular.copy($scope.guide);
+                guideCopy.slug = Util.slugify(guideCopy.name);
+                guideCopy.guideHeroes = _.map(guideCopy.heroes, function (val) { return { heroId: val.hero.id } });
                 
                 var keys = ['id',
                             'name',
@@ -13991,8 +14010,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'viewCount',
                             'voteScore'
                            ];
-                var stripped = Util.cleanObj($scope.guide, keys);
-                var temp = _.map($scope.guide.heroes, function (hero) { 
+                var stripped = Util.cleanObj(guideCopy, keys);
+                var temp = _.map(guideCopy.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
 
@@ -14004,16 +14023,12 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 });
                 
-                $scope.guide.guideTalents = _.flatten(temp);
-                
-                console.log('STRIPPED GUIDE:', stripped);
-                console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-                console.log('$scope.guide.guideTalents:', $scope.guide.guideTalents);
+                guideCopy.guideTalents = _.flatten(temp);
                 
                 var guideInfo;
                 async.waterfall([
                   function(waterCB){ 
-                    Guide.upsert($scope.guide)
+                    Guide.upsert(guideCopy)
                     .$promise
                     .then(function (guideUpdated) {
                       console.log('guideUpdated:', guideUpdated);
@@ -14041,10 +14056,9 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function(seriesCB) {
-                        console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
                         Guide.guideHeroes.createMany({
                           id: stripped.id
-                        }, $scope.guide.guideHeroes).$promise
+                        }, guideCopy.guideHeroes).$promise
                         .then(function (guideHeroData) {
                           console.log('guideHeroData1: ', guideHeroData);
                           return seriesCB(null, guideHeroData);
@@ -14082,7 +14096,7 @@ angular.module('app.controllers', ['ngCookies'])
                         
                         var tals = [];
                         _.each(guideHeroData, function(eachVal) {
-                          var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                          var heroTals = _.filter(guideCopy.guideTalents, function (filterVal) {
                             return filterVal.heroId === eachVal.heroId;
                           });
 
@@ -14142,7 +14156,7 @@ angular.module('app.controllers', ['ngCookies'])
                       
                       function(seriesCB) {
                         
-                        async.each($scope.guide.maps, function(map, mapCB) {
+                        async.each(guideCopy.maps, function(map, mapCB) {
                           Guide.maps.link({
                             id: stripped.id,
                             fk: map.id
@@ -14174,6 +14188,12 @@ angular.module('app.controllers', ['ngCookies'])
                   }
                 ], function(err, results) {
                   if (err) {
+                    $window.scrollTo(0, 0);
+                    AlertService.setError({
+                      show: true,
+                      msg: 'Unable to Update Guide',
+                      lbErr: err
+                    });
                     return console.log('PARA err:', err);
                   }
                   console.log('results:', results);
@@ -15386,7 +15406,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'viewCount',
                             'voteScore',
                            ];
-                var stripped = Util.cleanObj($scope.guide, keys);
+                var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
@@ -15399,7 +15419,7 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 });
                 
-                $scope.guide.guideTalents = _.flatten(temp);
+                cleanGuide.guideTalents = _.flatten(temp);
                 
                 stripped.votes = [
                   {
@@ -15420,13 +15440,13 @@ angular.module('app.controllers', ['ngCookies'])
                   
                   Guide.guideHeroes.createMany({
                     id: guideData.id
-                  }, $scope.guide.guideHeroes)
+                  }, cleanGuide.guideHeroes)
                   .$promise
                   .then(function (guideHeroData) {
                     var tals = [];
                     
                     _.each(guideHeroData, function(eachVal) {
-                      var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
                         return filterVal.heroId === eachVal.heroId;
                       });
                       
@@ -15438,6 +15458,7 @@ angular.module('app.controllers', ['ngCookies'])
                       tals.push(heroTals);
                     });
                     
+                    console.log('tals:', tals);
                     async.series([
                       function (seriesCB) { 
                         Guide.guideTalents.createMany({
@@ -15453,7 +15474,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function (seriesCB) {
-                        async.each($scope.guide.maps, function(map, mapCB) {
+                        async.each(cleanGuide.maps, function(map, mapCB) {
                           console.log('map.id:', map.id);
                           console.log('guideData:', guideData);
                           Guide.maps.link({ 
@@ -15478,10 +15499,11 @@ angular.module('app.controllers', ['ngCookies'])
                       }
                     ], function (err, results) {
                       if (err) {
+                        $window.scrollTo(0, 0);
                         AlertService.setError({
                           show: true,
                           lbErr: err,
-                          msg: 'Unable to Create Guide'
+                          msg: 'Unable to Save Guide'
                         });
                         return console.log('series err:', err);
                       }
@@ -15491,19 +15513,21 @@ angular.module('app.controllers', ['ngCookies'])
                     
                   })
                   .catch(function (err) {
+                    $window.scrollTo(0, 0);
                     AlertService.setError({
                       show: true,
                       lbErr: err,
-                      msg: 'Unable to Create Guide'
+                      msg: 'Unable to Save Guide'
                     });
                     console.log('guide hero err', err);
                   });
                 })
                 .catch(function (err) {
+                    $window.scrollTo(0, 0);
                     AlertService.setError({
                       show: true,
                       lbErr: err,
-                      msg: 'Unable to Create Guide'
+                      msg: 'Unable to Save Guide'
                     });
                   console.log('guide err', err);
                 });
@@ -15866,8 +15890,9 @@ angular.module('app.controllers', ['ngCookies'])
                   return $scope.updateGuide();
                 });
               } else {
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                var guideCopy = angular.copy($scope.guide);
+                guideCopy.slug = Util.slugify(guideCopy.name);
+                guideCopy.guideHeroes = _.map(guideCopy.heroes, function (val) { return { heroId: val.hero.id } });
                 
                 var keys = ['id',
                             'name',
@@ -15887,8 +15912,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'viewCount',
                             'voteScore'
                            ];
-                var stripped = Util.cleanObj($scope.guide, keys);
-                var temp = _.map($scope.guide.heroes, function (hero) { 
+                var stripped = Util.cleanObj(guideCopy, keys);
+                var temp = _.map(guideCopy.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
 
@@ -15900,16 +15925,12 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 });
                 
-                $scope.guide.guideTalents = _.flatten(temp);
-                
-                console.log('STRIPPED GUIDE:', stripped);
-                console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-                console.log('$scope.guide.guideTalents:', $scope.guide.guideTalents);
+                guideCopy.guideTalents = _.flatten(temp);
                 
                 var guideInfo;
                 async.waterfall([
                   function(waterCB){ 
-                    Guide.upsert($scope.guide)
+                    Guide.upsert(guideCopy)
                     .$promise
                     .then(function (guideUpdated) {
                       console.log('guideUpdated:', guideUpdated);
@@ -15937,10 +15958,9 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function(seriesCB) {
-                        console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
                         Guide.guideHeroes.createMany({
                           id: stripped.id
-                        }, $scope.guide.guideHeroes).$promise
+                        }, guideCopy.guideHeroes).$promise
                         .then(function (guideHeroData) {
                           console.log('guideHeroData1: ', guideHeroData);
                           return seriesCB(null, guideHeroData);
@@ -15978,7 +15998,7 @@ angular.module('app.controllers', ['ngCookies'])
                         
                         var tals = [];
                         _.each(guideHeroData, function(eachVal) {
-                          var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                          var heroTals = _.filter(guideCopy.guideTalents, function (filterVal) {
                             return filterVal.heroId === eachVal.heroId;
                           });
 
@@ -16038,7 +16058,7 @@ angular.module('app.controllers', ['ngCookies'])
                       
                       function(seriesCB) {
                         
-                        async.each($scope.guide.maps, function(map, mapCB) {
+                        async.each(guideCopy.maps, function(map, mapCB) {
                           Guide.maps.link({
                             id: stripped.id,
                             fk: map.id
@@ -16070,6 +16090,12 @@ angular.module('app.controllers', ['ngCookies'])
                   }
                 ], function(err, results) {
                   if (err) {
+                    $window.scrollTo(0, 0);
+                    AlertService.setError({
+                      show: true,
+                      msg: 'Unable to Update Guide',
+                      lbErr: err
+                    });
                     return console.log('PARA err:', err);
                   }
                   console.log('results:', results);
@@ -16588,8 +16614,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide',
-        function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
+    .controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 'Poll',
+        function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide, Poll) {
 
             var box;
             var votes = {};
@@ -16689,7 +16715,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.submitVote = function (poll) {
-                console.log(votes);
+                console.log('poll:', poll);
+              
+                async.parallel([
+                  function(paraCB) {
+//                    Poll.update(
+                  }
+                ]);
                 
 //                Poll.update(poll, poll.votes).success(function (data) {
 //                    if(!data.success) {
