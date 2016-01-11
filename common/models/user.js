@@ -56,6 +56,10 @@ module.exports = function(User) {
             //var registry = userModel.registry;
 
             async.waterfall([
+                // Verify Capcha
+                function(seriesCb) {
+                    seriesCb();
+                },
                 // Generate token
                 function (seriesCallback) {
                     var tokenGenerator = options.generateVerificationToken || generateVerificationToken;
