@@ -31,5 +31,7 @@ module.exports = {
   "cdnUrl" : "https://cdn-tempostorm.netdna-ssl.com/",
   "cdnUrl2" : "https://cdn-tempostorm.netdna-ssl.com/",
   "appIndex" : "staging-index",
-  "stripeKey" : "sk_live_FHjluwAxnn5yISh7lMs0vxMx"
+  "stripeKey" : "sk_live_FHjluwAxnn5yISh7lMs0vxMx",
+  "captchaKey": "6LeLJhQTAAAAAEnLKxtQmTkRkrGpqmbQGTRzu3u8",
+  "captchaSecret": "6LeLJhQTAAAAAPU4djVaXiNX28hLIKGdC7XM9QG4"
 }

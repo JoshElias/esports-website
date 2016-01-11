@@ -31,5 +31,6 @@ module.exports = {
   "cdnUrl" : "./", //TODO CHANGE CDN
   "cdnUrl2" : "https://staging-cdn-tempostorm.netdna-ssl.com/",
   "appIndex" : "staging-index",
-  "endpoint": "staging-cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com"
+  "captchaKey": "6LeLJhQTAAAAAEnLKxtQmTkRkrGpqmbQGTRzu3u8",
+  "captchaSecret": "6LeLJhQTAAAAAPU4djVaXiNX28hLIKGdC7XM9QG4"
 }
