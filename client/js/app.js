@@ -19,14 +19,14 @@ var app = angular.module('app', [
     'ui.validate',
     'ui.date',
     'ui.gravatar',
+    'vcRecaptcha',
     'app.controllers',
     'app.services',
     'app.filters',
     'app.directives',
     'app.animations',
     //'app.redbull',
-    'angular-google-adsense',
-    'vcRecaptcha'
+    'angular-google-adsense'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User',

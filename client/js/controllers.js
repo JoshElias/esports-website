@@ -3190,8 +3190,12 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image',
-        function ($scope, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image) {
+    .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image', 'CrudMan',
+        function ($scope, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image, CrudMan) {
+            var CrudMan = new CrudMan();
+          
+            CrudMan.createArr('talents');
+            CrudMan.createArr('abilities');
 
             $scope.snapshot = snapshot;
             $scope.search = "";
@@ -3497,7 +3501,6 @@ angular.module('app.controllers', ['ngCookies'])
 
                 User.find({
                     filter: {
-                        limit: 10,
                         where: where
                     }
                 })
@@ -3949,34 +3952,23 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTech = function (t) {
-                removeDeckTechAJAX(t.id, t, function (err) {
-                    if (err) { console.log("ERR REMOVING DECKTECH:", err); }
-                    
-                    for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                        for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
-                            for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
-                                if (t.orderNum == $scope.snapshot.tiers[i].decks[k].deckTech[j].orderNum) {
-                                    $scope.snapshot.tiers[i].decks[k].deckTech.splice(j, 1);
-                                    return;
-                                }
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
+                        for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
+                            if (t.orderNum == $scope.snapshot.tiers[i].decks[k].deckTech[j].orderNum) {
+                                $scope.snapshot.tiers[i].decks[k].deckTech.splice(j, 1);
+                                return;
                             }
                         }
                     }
-                });
+                }
             }
 
             $scope.removeTechCard = function (tech, c) {
-                console.log(tech, c);
-                removeCardTechAJAX(c.id, c, function (err) {
-                    if (err) { console.log("ERR REMOVING CARDTECH:", err); }
-                    
-                    for (var card in tech.cardTech) {
-                        if (c.id == tech.cardTech[card].id) {
-                            tech.cardTech.splice(card,1);
-                            break;
-                        }
-                    }
-                });
+              var ct = _.find(tech.cardTech, function (val) { return val.card.id === c.card.id });
+              var idx = tech.cardTech.indexOf(ct);
+              
+              tech.cardTech.splice(idx,1);
             }
 
             $scope.setBoth = function (c) {
@@ -4353,7 +4345,6 @@ angular.module('app.controllers', ['ngCookies'])
 
                 User.find({
                     filter: {
-                        limit: 10,
                         where: where
                     }
                 })
@@ -4812,33 +4803,24 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTech = function (t) {
-//                removeDeckTechAJAX(t.id, t, function (err) {
-//                    if (err) { console.log("ERR REMOVING DECK:", err); }
-                    
-                    for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                        for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
-                            for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
-                                if (t.orderNum == $scope.snapshot.tiers[i].decks[k].deckTech[j].orderNum) {
-                                    $scope.snapshot.tiers[i].decks[k].deckTech.splice(j, 1);
-                                    return;
-                                }
+              console.log(t);
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
+                        for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
+                            if (t.orderNum == $scope.snapshot.tiers[i].decks[k].deckTech[j].orderNum) {
+                                $scope.snapshot.tiers[i].decks[k].deckTech.splice(j, 1);
+                                return;
                             }
                         }
                     }
-//                });
+                }
             }
 
             $scope.removeTechCard = function (tech, c) {
-//                removeCardTechAJAX(c.id, c, function (err) {
-//                    if (err) { console.log("ERR REMOVING CARD TECH:", err); }
-                    
-                    for (var card in tech.cardTech) {
-                        if (c.id == tech.cardTech[card].id) {
-                            tech.cardTech.splice(card,1);
-                            break;
-                        }
-                    }
-//                });
+              var ct = _.find(tech.cardTech, function (val) { return val.card.id === c.card.id });
+              var idx = tech.cardTech.indexOf(ct);
+              
+              tech.cardTech.splice(idx,1);
             }
 
             $scope.setBoth = function (c) {
@@ -12050,8 +12032,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
     /* admin hots */
-    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams', 'CrudMan',
-        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams, CrudMan) {
+    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams',
+        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams) {
             // grab alerts
 //            if (AlertService.hasAlert()) {
 //                $scope.success = AlertService.getSuccess();
