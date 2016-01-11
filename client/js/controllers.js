@@ -2841,20 +2841,22 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 				
                 var options = {
-					filter: {
-						fields: paginationParams.options.filter.fields,
-						order: paginationParams.options.filter.order,
-						skip: ((page*perpage)-perpage),
-						limit: perpage,
-						where: {}
-					}
-				};
+                  filter: {
+                    fields: paginationParams.options.filter.fields,
+                    order: paginationParams.options.filter.order,
+                    skip: ((page*perpage)-perpage),
+                    limit: perpage,
+                    where: {}
+                  }
+                };
+              
+                var pattern = '/.*'+search+'.*/i';
 				
                 var countOptions = {
-					where: {}
-				};
+                  where: {}
+                };
 				
-				// if queries exist, iniiate empty arrays
+				        // if queries exist, iniiate empty arrays
                 if (search.length > 0) {
                     options.filter.where.or = [];
                     countOptions.where.or = [];
@@ -2867,24 +2869,24 @@ angular.module('app.controllers', ['ngCookies'])
                 }
 
                 if ($scope.search.length > 0) {
-					options.filter.where.or.push({ title: { regexp: search } });
-					options.filter.where.or.push({ description: { regexp: search } });
-					options.filter.where.or.push({ content: { regexp: search } });
-					
-					countOptions.where.or.push({ title: { regexp: search } });
-					countOptions.where.or.push({ description: { regexp: search } });
-					countOptions.where.or.push({ content: { regexp: search } });
+                  options.filter.where.or.push({ title: { regexp: pattern } });
+                  options.filter.where.or.push({ description: { regexp: pattern } });
+                  options.filter.where.or.push({ content: { regexp: pattern } });
+
+                  countOptions.where.or.push({ title: { regexp: pattern } });
+                  countOptions.where.or.push({ description: { regexp: pattern } });
+                  countOptions.where.or.push({ content: { regexp: pattern } });
                 }
 				
-				if ($scope.filterAuthor.length > 0) {
-					options.filter.where.and.push({ authorId: $scope.filterAuthor });
-					countOptions.where.and.push({ authorId: $scope.filterAuthor });
-				}
-				
-				if ($scope.filterType.length > 0) {
-					options.filter.where.and.push({ articleType: $scope.filterType });
-					countOptions.where.and.push({ articleType: $scope.filterType });
-				}
+                if ($scope.filterAuthor.length > 0) {
+                  options.filter.where.and.push({ authorId: $scope.filterAuthor });
+                  countOptions.where.and.push({ authorId: $scope.filterAuthor });
+                }
+
+                if ($scope.filterType.length > 0) {
+                  options.filter.where.and.push({ articleType: $scope.filterType });
+                  countOptions.where.and.push({ articleType: $scope.filterType });
+                }
                 
                 AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
@@ -6576,7 +6578,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
 			
-			console.log('deckCardMulligans:', deckCardMulligans);
+			       console.log('deckCardMulligans:', deckCardMulligans);
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
@@ -6717,7 +6719,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             function updateCards (page, perpage, search, mechanics, mana, callback) {
                 $scope.fetching = true;
-
+              
+                var pattern = pattern = '/.*'+search+'.*/i';
+              
                 var options = {
                     filter: {
                         where: {
@@ -6744,24 +6748,24 @@ angular.module('app.controllers', ['ngCookies'])
 
                 if (search.length > 0) {
                     options.filter.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
                 }
 
@@ -8813,7 +8817,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             function updateCards (page, perpage, search, mechanics, mana, callback) {
                 $scope.fetching = true;
-
+              
+                var pattern = pattern = '/.*'+search+'.*/i';
+              
                 var options = {
                     filter: {
                         where: {
@@ -8840,24 +8846,24 @@ angular.module('app.controllers', ['ngCookies'])
 
                 if (search.length > 0) {
                     options.filter.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
                 }
 
@@ -9408,7 +9414,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             function updateCards (page, perpage, search, mechanics, mana, callback) {
                 $scope.fetching = true;
-
+              
+                var pattern = '/.*'+search+'.*/i';
+              
                 var options = {
                     filter: {
                         where: {
@@ -9435,24 +9443,24 @@ angular.module('app.controllers', ['ngCookies'])
 
                 if (search.length > 0) {
                     options.filter.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
                 }
 
@@ -10584,7 +10592,7 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $state, $q, $timeout, Article, articles, articlesTotal, MetaService, AjaxPagination) {
             //if (!data.success) { return $state.transitionTo('app.articles.list'); }
           
-          console.log('articles:', articles);
+            console.log('articles:', articles);
             // articles
             $scope.articles = articles;
             $scope.total = articlesTotal.count;
@@ -10934,6 +10942,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             function getQuery (featured, page, perpage) {
+                var pattern = '/.*'+$scope.filters.search+'.*/i';
+              
                 var options = {
                     filter: {
                         where: {
@@ -10965,9 +10975,9 @@ angular.module('app.controllers', ['ngCookies'])
 
                 if ($scope.filters.search.length > 0) {
                     options.filter.where.or = [
-                    { name: { regexp: $scope.filters.search } },
-                    { description: { regexp: $scope.filters.search } },
-                    { deckType: { regexp: $scope.filters.search } }
+                    { name: { regexp: pattern } },
+                    { description: { regexp: pattern } },
+                    { deckType: { regexp: pattern } }
                   ]
                 }
                 
@@ -14964,7 +14974,6 @@ angular.module('app.controllers', ['ngCookies'])
                         return d.resolve(count.count);
                       });
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                      console.log('2');
                       doGetHeroGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
                         if (err) return d.resolve(err);
                         $scope.tempostormGuides = guides;
@@ -14972,7 +14981,6 @@ angular.module('app.controllers', ['ngCookies'])
                         return d.resolve(count.count);
                       });
                     } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
-                      console.log('3');
                       doGetMapGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
                         console.log('err:', err);
                         console.log('guides:', guides);
@@ -14983,7 +14991,6 @@ angular.module('app.controllers', ['ngCookies'])
                         return d.resolve(count.count);
                       });
                     } else {
-                      console.log('4');
                       doGetGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
                         console.log('err:', err);
                         console.log('guides:', guides);
