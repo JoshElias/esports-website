@@ -13,7 +13,8 @@
     },
     "slug": {
       "type": "string",
-      "required": true
+      "required": true,
+      "validators": ["unique"]
     },
     "guideType": {
       "type": "string",

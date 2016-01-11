@@ -12,11 +12,13 @@
       "required": true
     },
     "slug": {
-      "url": {
-        "type": "string",
-        "validators": ["unique"]
-      },
-      "linked": {"type": "boolean"}
+      "properties": {
+        "url": {
+          "type": "string",
+          "validators": ["unique"]
+        },
+        "linked": {"type": "boolean"}
+      }
     },
     "description": {
       "type": "string"

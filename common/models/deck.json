@@ -69,7 +69,8 @@
       "required": true
     },
     "slug": {
-      "type": "string"
+      "type": "string",
+      "validators": ["unique"]
     },
     "viewCount": {
       "type": "number"

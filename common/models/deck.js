@@ -27,5 +27,5 @@ module.exports = function(Deck) {
     Deck.observe("access", utils.filterDocs(docFilter));
 
 
-    Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
+    //Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
 };
