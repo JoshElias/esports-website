@@ -832,6 +832,16 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .sub-nav .sub-nav-links ul li a:hover { color: rgba(255,255,255,1); }
 .sub-nav .sub-nav-links ul li a.active { color: rgba(255,255,255,1) }
 
+.sub-nav .sub-nav-links ul li {
+    
+    &.active {
+         > a {
+            color: rgba(255,255,255,1); 
+            font-size: bold;
+        }
+    }
+}
+
 .sub-nav.sticky { position: fixed; top: 52px; z-index: 1000; width: 100%; box-shadow: none; }
 .sub-nav.sticky .sub-nav-links ul { margin: 10px 0; }
 
@@ -1635,6 +1645,17 @@ input[type=range]:focus::-ms-fill-upper {
     width: 100%;
 }
 
+.login-form {
+    .login-form-oauth {
+        .bat-net-img {
+            position: absolute;
+            top: 7px;
+            left: 7px;
+            width: 40px;
+            height: auto;
+        } 
+    }
+}
 
 //*************************************
 // 20...photo upload
@@ -1870,6 +1891,6 @@ input[type=range]:focus::-ms-fill-upper {
 .db-section-chapter-title { padding: 0 45px; min-height: 60px; line-height: 60px; background: rgba(0,0,0,.5); position: relative; }
 .db-section-chapter-title i { position: absolute; color: rgba(255,255,255,.4); right: 20px; top: 15px; cursor: pointer; font-size: 24px; }
 .db-section-chapter-title h1 { margin: 0 20px 0 0; padding: 0; height: 50px; line-height: 60px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 18px; }
-.db-section-chapter-title input { height: 45px; background: none; width: 50%; outline: none; border: none; }
+.db-section-chapter-title input { background: none; width: 50%; outline: none; border: none; }
 
 .db-section label { color: #FFF; }

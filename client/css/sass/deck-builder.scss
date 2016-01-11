@@ -188,7 +188,7 @@
     .db-section-chapter-title { padding: 0 45px; min-height: 60px; line-height: 60px; background: rgba(0,0,0,.5); position: relative; }
     .db-section-chapter-title i { position: absolute; color: rgba(255,255,255,.4); right: 20px; top: 15px; cursor: pointer; font-size: 24px; }
     .db-section-chapter-title h1 { margin: 0 20px 0 0; padding: 0; height: 50px; line-height: 60px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 18px; }
-    .db-section-chapter-title input { height: 45px; background: none; width: 50%; outline: none; border: none; }
+    .db-section-chapter-title input { background: none; width: 50%; outline: none; border: none; }
 
     .db-section label { color: #FFF; }
 
@@ -312,9 +312,9 @@
 
     
     .db-builder .btn .caret {
-        position: absolute;
-        right: 10px;
-        top: 15px;
+        //position: absolute;
+        //right: 10px;
+        // top: 7px;
     }
 
     //*************************************
@@ -794,7 +794,7 @@
     
     .panel-heading.note-toolbar .note-color .dropdown-toggle {
         width: 20px;
-        padding-left: 19px;
-        padding-bottom: 23px;
+        //padding-left: 19px;
+        //padding-bottom: 23px;
     }
 }
