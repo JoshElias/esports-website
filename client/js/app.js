@@ -24,7 +24,7 @@ var app = angular.module('app', [
     'app.filters',
     'app.directives',
     'app.animations',
-    'app.redbull',
+    //'app.redbull',
     'angular-google-adsense',
 ])
 .run(
@@ -1988,121 +1988,6 @@ var app = angular.module('app', [
                             }],
                             maps: ['Map', function(Map) {
                                 return Map.find({})
-                                .$promise;
-                            }]
-                        }
-                    }
-                },
-                og: true
-            })
-                .state('app.hots.guides.guide_new', {
-                url: '/new/:slug',
-                views: {
-                    guides: {
-                        templateUrl: tpl + 'views/frontend/hots.guides.guide_new.html',
-                        controller: 'HOTSGuideCtrl',
-                        resolve: {
-                            userRoles: ['User', function(User) {
-                                if (!User.isAuthenticated()) {
-                                    return false;
-                                } else {
-                                    return User.isInRoles({
-                                        uid: User.getCurrentId(),
-                                        roleNames: ['$admin', '$contentProvider', '$premium']
-                                    })
-                                    .$promise
-                                    .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
-                                        return userRoles;
-                                    })
-                                    .catch(function (roleErr) {
-                                        console.log('roleErr: ', roleErr);
-                                    });
-                                }
-                            }],
-                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                                var slug = $stateParams.slug;
-                                console.log('slug: ', slug);
-                                return Guide.findOne({
-                                    filter: {
-                                        where: {
-                                            slug: slug
-                                        },
-                                        include: [
-                                          {
-                                            relation: 'author'
-                                          },
-                                          {
-                                          relation: 'guideHeroes',
-                                          scope: {
-                                            include: [
-                                              {
-                                                relation: 'talents'
-                                              },
-                                              {
-                                                relation: 'hero',
-                                                scope: {
-                                                  include: [
-                                                    {
-                                                      relation: 'talents',
-                                                      scope: {
-                                                        include: {
-                                                          relation: 'talent',
-                                                          scope: {
-                                                            fields: ['orderNum']
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  ]
-                                                }
-                                              }
-                                            ]
-                                          }
-                                        },
-                                        {
-                                          relation: 'guideTalents',
-                                          scope: {
-                                            include: ['talent']
-                                          }
-                                        },
-                                        {
-                                          relation: 'maps'
-                                        },
-                                        {
-                                          relation: 'comments',
-                                          scope: {
-                                            include: ['author']
-                                          }
-                                        }
-                                      ]
-                                    }
-                                }).$promise.then(function (data) {
-                                    console.log("tojson", data.toJSON());
-                                    return data;
-                                })
-                                .catch(function (err) {
-                                    console.log('err: ', err);
-                                });
-                            }],
-                            heroes: ['Hero', function(Hero) {
-
-                                return Hero.find({
-                                  filter: {
-                                    fields: {
-                                      oldTalents: false,
-                                      oldAbilities: false
-                                    }
-                                  }
-                                })
-                                .$promise
-
-                            }],
-                            maps: ['Map', function(Map) {
-
-                                return Map.find({
-
-                                })
                                 .$promise;
                             }]
                         }
