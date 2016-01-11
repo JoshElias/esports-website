@@ -34,6 +34,8 @@
 
     <!-- angular -->
     <script src="{cdnUrl}js/{assets.angular_min_js}"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
 
     <!-- lbServices -->
     <script src="{cdnUrl}js/services/lb-services.js"></script>
