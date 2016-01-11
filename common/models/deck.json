@@ -100,16 +100,14 @@
     },
     "chapters": [
       {
-        "properties": {
-          "title": {
-            "type": "string",
-            "validators": ["spam"]
-          },
-          "orderNum": {"type": "number"},
-          "content": {
-            "type": "string",
-            "validators": ["spam"]
-          }
+        "title": {
+          "type": "string",
+          "validators": ["spam"]
+        },
+        "orderNum": {"type": "number"},
+        "content": {
+          "type": "string",
+          "validators": ["spam"]
         }
       }
     ],
