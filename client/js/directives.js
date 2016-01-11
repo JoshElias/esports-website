@@ -194,17 +194,47 @@ angular.module('app.directives', ['ui.load'])
     templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
     scope: true,
     link: function ($scope, el, attr) {
+
+    // recaptcha
+    $scope.captchaKey = '6LeLJhQTAAAAAEnLKxtQmTkRkrGpqmbQGTRzu3u8';
+    $scope.captchaToken = null;
+    $scope.widgetId = null;
+    $scope.captchaFailed = false;
+
+    $scope.setToken = function (token) {
+//            console.log('Resonse available:', response);
+        $scope.captchaToken = token;
+    }
+
+    $scope.setWidgetId = function (widgetId) {
+//            console.log('Created widget ID: %s', widgetId);
+    }
+
+    $scope.cbExpiration = function () {
+//            console.log('Captcha expired. Resetting response object');
+        $scope.captchaToken = null;
+    }
+
+    $scope.getStyle = function () {
+        console.log($scope.setState);
+        return (!$scope.setState) ? 'transform:scale(1.06);-webkit-transform:scale(1.06);transform-origin:0 0;-webkit-transform-origin:0 0;' : 'transform:scale(.99);-webkit-transform:scale(.99);transform-origin:0 0;-webkit-transform-origin:0 0;';
+    }
+
+
+
       $scope.verify = {
         email: "",
         code: ""
       }
 
       $scope.signup = function(email, username, password) {
-        if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
+        if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined && typeof $scope.captchaToken === "string" ) {
           User.create({
             email: email,
             username: username,
             password:password
+          }, {
+            captchaToken: $scope.captchaToken
           }, function (user) {
             $scope.verify.email = email;
             if ($scope.setState) {

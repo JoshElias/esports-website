@@ -10622,7 +10622,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {},
+                    pattern = '/.*'+search+'.*/i';//new RegExp('.*'+search+'.*', "i")'';
 
                 countOptions['where'] = {
                     isActive: true,
@@ -10649,14 +10650,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                 if ($scope.search.length > 0) {
                     options.filter.where['or'] = [
-                        { title: { regexp: search } },
-                        { description: { regexp: search } },
-                        { content: { regexp: search } }
+                        { title: { regexp: pattern } },
+                        { description: { regexp: pattern } },
+                        { content: { regexp: pattern } }
                     ];
                     countOptions.where.or = [
-                        { title: { regexp: search } },
-                        { description: { regexp: search } },
-                        { content: { regexp: search } }
+                        { title: { regexp: pattern } },
+                        { description: { regexp: pattern } },
+                        { content: { regexp: pattern } }
                     ];
                 }
 

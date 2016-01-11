@@ -10,7 +10,7 @@
                             <sub-nav-stream class="pull-left"></sub-nav-stream>
                             <div class="sub-nav-links">
                                 <ul>
-                                    <li><a ui-sref="app.profile.activity">ACTIVITY</a></li><li><a ui-sref="app.profile.articles">ARTICLES</a></li><li><a ui-sref="app.profile.decks">DECKS</a></li><li><a ui-sref="app.profile.guides">GUIDES</a></li>
+                                    <li ng-class="{active:$state.includes('app.profile.activity')}"><a ui-sref="app.profile.activity">ACTIVITY</a></li><li ng-class="{active:$state.includes('app.profile.articles')}"><a ui-sref="app.profile.articles">ARTICLES</a></li><li ng-class="{active:$state.includes('app.profile.decks')}"><a ui-sref="app.profile.decks">DECKS</a></li><li ng-class="{active:$state.includes('app.profile.guides')}"><a ui-sref="app.profile.guides">GUIDES</a></li>
                                 </ul>
                             </div>
                         </div>
