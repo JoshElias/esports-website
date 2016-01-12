@@ -262,18 +262,60 @@
     //*************************************
 
     .gb-content-title { position: relative; min-height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
-    .input-content-title { padding-right: 125px; height: 60px; line-height: 60px; font-size: 20px; color: #FFF; font-family: 'Open Sans Bold'; background: transparent; border: none; text-transform: uppercase; }
+    
+    .input-content-title { 
+        padding-right: 125px; 
+        padding-left: 40px;
+        height: 60px; 
+        line-height: 60px; 
+        font-size: 20px; 
+        color: #FFF; 
+        font-family: 'Open Sans Bold'; 
+        background: transparent; 
+        border: none; 
+        text-transform: uppercase; 
+    }
+    
     .gb-content-btns { position: absolute; top: 20px; right: 20px; }
-    .gb-content-down,
-    .gb-content-up,
-    .gb-content-delete { float: left; width: 20px; height: 20px; line-height: 20px; text-align: center; background: rgba(255,255,255,.4); color: #000 !important; border-radius: 4px; font-size: 20px; }
+    
+    .gb-chapter-carets {
+        position: absolute;
+        top: 7px;
+        left: 17px;
+        width: 20px;
+        
+        .gb-content-up
+        .gb-content-down {
+            height: 10px;
+        }
+        
+        .gb-content-up {
+            top: -20px;
+        }
+        
+        a {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 18px;
+            height: 10px;
+            color: white;
+            
+            &.disabled {
+                color: rgba(255, 255, 255, 0.4);
+            }
+        
+        }
+    }
+    
+    .gb-content-delete { float: left; width: 20px; height: 20px; line-height: 20px; text-align: center; color: rgba(255, 255, 255, 0.4) !important; border-radius: 4px; font-size: 20px; }
 
-    .gb-content-down:hover,
-    .gb-content-up:hover,
-    .gb-content-delete:hover { background: rgba(255,255,255,.8); }
+//    .gb-content-down:hover,
+//    .gb-content-up:hover,
+//    .gb-content-delete:hover { background: rgba(255,255,255,.8); }
 
     .gb-content-down.disabled,
-    .gb-content-up.disabled { opacity: .3; cursor: default; }
+    .gb-content-up.disabled { color: rgba(255, 255, 255, 0.4); cursor: default; }
 
     /* synergy */
     .gb-synergy,

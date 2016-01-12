@@ -112,6 +112,9 @@
 </div>
 <div class="container" ng-show="step === 5">
     <div class="guide-text save-guide-now"></div>
+  
+    <alert-box theme="admin"></alert-box>
+  
     <div class="panel panel-danger error-modal" ng-show="!guide.hasAnyMap() || !guide.hasAnyChapter()">
         <div class="panel-heading">
             <strong>UNABLE TO SAVE GUIDE</strong>
@@ -205,12 +208,12 @@
                         <div class="col-sm-10 col-sm-offset-2">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="public" ng-model="guide.isPublic" value="true"> Make this guide public
+                                    <input type="radio" name="public" ng-model="guide.isPublic" ng-value="true"> Make this guide public
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="public" ng-model="guide.isPublic" value="false"> Make this guide private
+                                    <input type="radio" name="public" ng-model="guide.isPublic" ng-value="false"> Make this guide private
                                 </label>
                             </div>
                         </div>

@@ -112,6 +112,9 @@
 </div>
 <div class="container" ng-show="step === 5">
     <div class="guide-text save-guide-now"></div>
+  
+    <alert-box theme="admin"></alert-box>
+  
     <div class="panel panel-danger error-modal" ng-show="!guide.hasAnyMap() || !guide.hasAnyChapter()">
         <div class="panel-heading">
             <strong>UNABLE TO SAVE GUIDE</strong>
@@ -159,7 +162,7 @@
                             <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.video">
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Premium</label>
                             <div class="col-sm-10">
@@ -169,7 +172,9 @@
                                         <b class="caret"></b>
                                     </button>
                                     <ul class="list-group dropdown-menu dropdown-dark">
-                                        <li class="list-group-item" ng-class="{active: guide.premium.isPremium === type.value}" ng-repeat="type in premiumTypes">
+                                        <li class="list-group-item" 
+                                            ng-class="{active: guide.premium.isPremium === type.value}" 
+                                            ng-repeat="type in premiumTypes">
                                             <a href="#" ng-click="guide.premium.isPremium = type.value">{{type.text}}</a>
                                         </li>
                                     </ul>
@@ -183,7 +188,7 @@
                             </div>
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Featured</label>
                             <div class="col-sm-10">
@@ -193,8 +198,10 @@
                                         <b class="caret"></b>
                                     </button>
                                     <ul class="list-group dropdown-menu dropdown-dark">
-                                        <li class="list-group-item" ng-class="{active: guide.featured === type.value}" ng-repeat="type in featuredTypes">
-                                            <a href="#" ng-click="guide.featured = type.value">{{type.text}}</a>
+                                        <li class="list-group-item" 
+                                            ng-class="{active: guide.isFeatured === type.value}" 
+                                            ng-repeat="type in featuredTypes">
+                                            <a href="#" ng-click="guide.isFeatured = type.value">{{type.text}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -205,12 +212,12 @@
                         <div class="col-sm-10 col-sm-offset-2">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="public" ng-model="guide.isPublic" value="true"> Make this guide public
+                                    <input type="radio" name="public" ng-model="guide.isPublic" ng-value="true"> Make this guide public
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="public" ng-model="guide.isPublic" value="false"> Make this guide private
+                                    <input type="radio" name="public" ng-model="guide.isPublic" ng-value="false"> Make this guide private
                                 </label>
                             </div>
                         </div>
