@@ -4055,7 +4055,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (cards) {
-                                    console.log('cards: ', cards);
                                     return cards;
                                 })
                                 .catch(function (err) {
@@ -4093,7 +4092,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (cardFound) {
-                                    console.log('cardFound:', cardFound);
                                     return cardFound;
                                 })
                                 .catch(function (err) {
@@ -4371,7 +4369,6 @@ var app = angular.module('app', [
                                 )
                                 .$promise
                                 .then(function (data) {
-                                    console.log('maps: ', data);
                                     return data;
                                 });
                             }],
@@ -4514,7 +4511,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -4570,7 +4566,6 @@ var app = angular.module('app', [
 //                                  });
 //                                }
                               ], function(err, results) {
-                                console.log('results:', results);
                                 return d.resolve(results);
                               });
                               
@@ -4698,7 +4693,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -4752,7 +4746,6 @@ var app = angular.module('app', [
 //                                  });
 //                                }
                               ], function(err, results) {
-                                console.log('results:', results);
                                 return d.resolve(results);
                               });
                               
@@ -4776,8 +4769,6 @@ var app = angular.module('app', [
                         resolve: {
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                
-                                console.log("guide id", guideID);
                                 
                                 return Guide.find({
                                     filter: {
@@ -4867,7 +4858,6 @@ var app = angular.module('app', [
                                             });
                                         });
                                     }, function () {
-                                        console.log(categories);
                                         d.resolve(categories);
                                     });
                                 });
@@ -4939,7 +4929,7 @@ var app = angular.module('app', [
                                     return allCategories;
                                 })
                                 .catch(function (err) {
-//                                    console.log('allCategories: ', err);
+                                    console.log('allCategories: ', err);
                                 });
                                 
                             }]
@@ -4973,7 +4963,7 @@ var app = angular.module('app', [
                                     return forumThread;
                                 })
                                 .catch(function (err) {
-//                                    console.log('err: ', err);
+                                    console.log('err: ', err);
                                 });
                             }],
                             
@@ -4990,7 +4980,7 @@ var app = angular.module('app', [
                                     return allCategories;
                                 })
                                 .catch(function (err) {
-//                                    console.log('ForumCategory.find: ', err);
+                                    console.log('ForumCategory.find: ', err);
                                 });
                                 
                             }]
@@ -5054,7 +5044,7 @@ var app = angular.module('app', [
                                     return usersCount;
                                 })
                                 .catch(function (err) {
-//                                    console.log('Users.count err: ',err);
+                                    console.log('Users.count err: ',err);
                                 });
                             }],
                             users: ['User', 'paginationParams', function (User, paginationParams) {
@@ -5066,7 +5056,7 @@ var app = angular.module('app', [
                                     return allUsers;
                                 })
                                 .catch(function (err) {
-//                                    console.log('Snapshot.find err: ', err);
+                                    console.log('Snapshot.find err: ', err);
                                 });
                             }]
                         }
@@ -5227,7 +5217,6 @@ var app = angular.module('app', [
                                 return Poll.count({})
                                 .$promise
                                 .then(function (pollCount) {
-                                    console.log('pollCount: ', pollCount);
                                     return pollCount;
                                 })
                                 .catch(function (err) {
@@ -5239,7 +5228,6 @@ var app = angular.module('app', [
                                     paginationParams.options
                                 ).$promise
                                 .then(function (allPolls) {
-                                    console.log('allPolls: ', allPolls);
                                     return allPolls;
                                 })
                                 .catch(function (err) {
@@ -5282,7 +5270,6 @@ var app = angular.module('app', [
                                 }) 
                                 .$promise
                                 .then(function (data) {
-									console.log('data:', data);
                                     return data;
                                 })
                             }]
@@ -5542,7 +5529,6 @@ var app = angular.module('app', [
                                     
                                     //BUILD TIERS//
                                     snapshot.tiers = [];
-                                    console.log("post resolve snapshot:", snapshot);
                                     _.each(snapshot.deckTiers, function (deck) {
                                         if (snapshot.tiers[deck.tier-1] === undefined) {
                                             snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier }; 
@@ -5838,7 +5824,6 @@ var app = angular.module('app', [
                                         fields: paginationParams.options.filter.fields
                                     }
                                 };
-							  console.log('VOD LIST RESOLVE');
                                 return Vod.find(options).$promise;
                             }]
                         }
