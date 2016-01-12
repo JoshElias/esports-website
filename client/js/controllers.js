@@ -58,7 +58,7 @@ angular.module('app.controllers', ['ngCookies'])
 
 
         $scope.currentUser = currentUser;
-        console.log("Current User:", currentUser);
+
         EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
             $scope.currentUser = data;
         });
@@ -74,7 +74,6 @@ angular.module('app.controllers', ['ngCookies'])
                     return;
                 }
                 $scope.currentUser = undefined;
-                console.log("logged out successful");
             });
         }
     }])

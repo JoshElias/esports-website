@@ -166,11 +166,11 @@ var app = angular.module('app', [
                             if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
                               return User.getCurrent().$promise;
                             }
+                            return LoopBackAuth.currentUserData;
                         }
                     ]
                 },
                 onEnter: ['$cookies', '$state', 'EventService', function($cookies, $state, EventService) {
-
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
                     if(redirectState) {

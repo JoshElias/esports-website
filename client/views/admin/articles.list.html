@@ -15,14 +15,14 @@
             <form class="form-inline" ng-submit="searchArticles()" novalidate>
                 <div class="form-group">
                     <div class="input-group">
-                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
-                    <div class="input-group-addon">
-                        <button type="submit" class="btn btn-sm btn-blue" 
-                                ng-disabled="fetching">
-                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
-                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
-                        </button>
-                    </div>
+                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-sm btn-blue" 
+                                    ng-disabled="fetching">
+                                <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                                <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                            </button>
+                        </span>
                     </div>
                 </div>
             </form>
@@ -86,7 +86,7 @@
                 <div class="form-group">
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
-                    <div class="input-group-addon">
+                    <div class="input-group-btn">
                         <button type="submit" class="btn btn-sm btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
