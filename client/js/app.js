@@ -72,23 +72,17 @@ var app = angular.module('app', [
                 if (!toState.og) {
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
                 }
-                
-			  console.log('STATE CHANGE SUCCESSING');
+              
                 //we're resetting the alertService if unless persist is set to true, then we reset persist and the alertservice will reset on the NEXT state change
                 if (!AlertService.getPersist()) {
                   AlertService.reset();
                 } else {
-				  AlertService.setShow(true);
+				          AlertService.setShow(true);
                   AlertService.setPersist(false);
                 }
                 
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
-                console.log("Event:", event);
-                console.log("To State:", toState);
-                console.log("From State", fromState);
-				console.log("Error: ", error);
-                console.log('State change failed!');
 //                $state.go('app.404');
             });
 
@@ -130,7 +124,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('sk_live_FHjluwAxnn5yISh7lMs0vxMx');
+        Stripe.setPublishableKey('sk_test_Li9eL2cuhrnTNjp5UJXg7RH6');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 
@@ -456,7 +450,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -527,7 +520,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log(data);
                                     return data;
                                 });
                             }]
@@ -767,7 +759,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -836,7 +827,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
-                                    console.log('deck: ', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -848,7 +838,6 @@ var app = angular.module('app', [
                             
                             deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
                                 var deckID = deck.id;
-                                console.log('deckid: ', deck.id);
                                 
                                 return Mulligan.find({
                                     filter: {
@@ -869,7 +858,6 @@ var app = angular.module('app', [
                                 .then(function (mulligans) {
 //                                    console.log('mullies: ', mulligans);
                                     deck.mulligans = mulligans;
-                                    console.log('deck in resolve: ', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -916,7 +904,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -1001,7 +988,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -1062,7 +1048,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
-//                                    console.log('deck: ', deck);
                                     return deck;
                                 });
 
@@ -1070,7 +1055,6 @@ var app = angular.module('app', [
                             
                             deck: ['Mulligan', 'deckNoMulligans', function(Mulligan, deckNoMulligans) {
                                 var deckID = deckNoMulligans.id;
-//                                console.log('deckid: ', deck.id);
                                 
                                 return Mulligan.find({
                                     filter: {
@@ -1108,7 +1092,6 @@ var app = angular.module('app', [
 											id: cardWithoutCoin.cardId
 										}).$promise
 										.then(function (cardFound) {
-											console.log('cardFound:', cardFound);
 											var cardIndex = mulligan.mulligansWithoutCoin.indexOf(cardWithoutCoin);
 											deck.mulligans[mulliganIndex].mulligansWithoutCoin[cardIndex] = cardFound;
 											return cardWithoutCoinCB();
@@ -1139,7 +1122,6 @@ var app = angular.module('app', [
 									
 								}, function(err) {
 									if (err) return d.resolve(err);
-									console.log('deck now!!!!!: ', deck);
 									d.resolve(deck);
 								});
 								return d.promise;
@@ -1373,7 +1355,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (data) {
-                                    console.log(data);
                                     return data;
                                 });
                             }]
@@ -1415,7 +1396,6 @@ var app = angular.module('app', [
                               })
                               .$promise
                               .then(function (data) {
-                                  console.log(1, data);
                                   return data;
                               })
                               .catch(function (err) {
@@ -1484,7 +1464,6 @@ var app = angular.module('app', [
                               })
                               .$promise
                               .then(function (data) {
-                                  console.log(2, data);
                                   return data;
                               })
                               .catch(function (err) {
@@ -1553,7 +1532,6 @@ var app = angular.module('app', [
                               })
                               .$promise
                               .then(function (data) {
-                                  console.log(3, data);
                                   return data;
                               })
                               .catch(function (err) {
@@ -1693,7 +1671,7 @@ var app = angular.module('app', [
 
                               return Guide.find({
                                 filter: {
-                                  order: 'votesCount DESC',
+                                  order: 'voteScore DESC',
                                   limit: 1,
                                   where: {
                                       guideType: "hero",
@@ -1754,6 +1732,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise
                               .then(function (guides) {
+                                console.log(guides);
                                   return guides;
                               }).catch(function(err) {
                                   console.log("error", err);
@@ -1870,7 +1849,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -1880,7 +1858,6 @@ var app = angular.module('app', [
                             }],
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                console.log('slug: ', slug);
                                 return Guide.findOne({
                                     filter: {
                                         where: {
@@ -1959,7 +1936,6 @@ var app = angular.module('app', [
                                       ]
                                     }
                                 }).$promise.then(function (data) {
-                                    console.log("tojson", data.toJSON());
                                     return data;
                                 })
                                 .catch(function (err) {
@@ -2033,7 +2009,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -2065,7 +2040,6 @@ var app = angular.module('app', [
                                   });
                                 },
                               ], function(err, results) {
-                                console.log('results:', results);
                                 return d.resolve(results);
                               });
                               
@@ -2096,7 +2070,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -2162,7 +2135,6 @@ var app = angular.module('app', [
                         resolve: {
                             dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                console.log('slug:', slug);
                                 return Guide.findOne({
                                     filter: {
                                         where: {
@@ -2213,7 +2185,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -2267,7 +2238,6 @@ var app = angular.module('app', [
 //                                  });
 //                                }
                               ], function(err, results) {
-                                console.log('results:', results);
                                 return d.resolve(results);
                               });
                               
@@ -2299,7 +2269,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -2439,7 +2408,6 @@ var app = angular.module('app', [
                               return hero;
                             })
                             .catch(function(err) {
-                              console.log(err.status, err.data.error.code, "REDIRECTING");
                               $state.go('app.hots.talentCalculator.redirect')
                             });
                           }]
@@ -2879,7 +2847,6 @@ var app = angular.module('app', [
                                 .then(function (t) {
                                     async.each(t, function (tm, eachCb) {
                                         if (typeof tm.isActive === 'string') {
-                                            console.log('IT\'S A STRING');
                                             tm.isActive = true;
                                             
                                             TeamMember.update({ 
@@ -2889,7 +2856,6 @@ var app = angular.module('app', [
                                             }, tm)
                                             .$promise
                                             .then(function (data) {
-                                                console.log(data);
                                                 return eachCb();
                                             })
                                         } else {
@@ -2910,7 +2876,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (tm) {
-                                    console.log(tm);
                                     return tm;
                                 });
                             }],
@@ -2926,7 +2891,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (tm) {
-                                    console.log(tm);
                                     return tm;
                                 });
                             }],
@@ -2942,7 +2906,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (tm) {
-                                    console.log(tm);
                                     return tm;
                                 });
                             }],
@@ -2958,7 +2921,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (tm) {
-                                    console.log(tm);
                                     return tm;
                                 });
                             }],
@@ -2974,7 +2936,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (tm) {
-                                    console.log(tm);
                                     return tm;
                                 });
                             }]
@@ -3120,7 +3081,6 @@ var app = angular.module('app', [
                       })
                       .$promise
                       .then(function (data) {
-                          console.log(data);
                           return data[0];
                       });
                     }]
@@ -3178,7 +3138,6 @@ var app = angular.module('app', [
                         controller: 'ProfileActivityCtrl',
                         resolve: {
                             activities: ['userProfile', 'Activity', function (userProfile, Activity) {
-                                console.log("o-o-o-o-okay", userProfile.id);
                                 return Activity.find({
                                     filter: {
                                         order: "createdDate DESC",
@@ -3541,7 +3500,6 @@ var app = angular.module('app', [
                                 return User.find(options)
                                 .$promise
                                 .then(function (data) {
-                                    console.log(data);
                                     return data;
                                 });
                             }]
@@ -3596,7 +3554,6 @@ var app = angular.module('app', [
                         resolve: {
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var articleID = $stateParams.articleID;
-                                console.log(articleID);
                                 return Article.findOne({
                                     filter: {
                                         where: {
@@ -3620,7 +3577,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('article: ', data);
                                     data.related = data.relatedArticles;
                                     return data;
                                 });
@@ -3757,7 +3713,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -3778,24 +3733,21 @@ var app = angular.module('app', [
                                         limit: 15
                                     }
                                 }).$promise
-								.then(function(classCards) {
-									console.log('classCards:', classCards);
-									return classCards;
-								});
+                                .then(function(classCards) {
+                                  return classCards;
+                                });
                             }],
 
                             classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
 								var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
-								console.log('playerClass:', playerClass);
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass
                                     }
                                 }).$promise
-								.then(function (classCardCounts) {
-									console.log('classCardCounts:', classCardCounts);
-									return classCardCounts;
-								});
+                                .then(function (classCardCounts) {
+                                  return classCardCounts;
+                                });
                             }],
 
                             neutralCardsCount: ['Card', function (Card) {
@@ -3847,7 +3799,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -3920,7 +3871,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (data) {
-//                                    console.log('mulligan data: ', data);
                                     return data;
                                 })
                                 .catch(function (err) {
@@ -3937,7 +3887,6 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     data.mulligans = mulligans;
-                                    console.log('mulligans resolve: ', mulligans);
                                     return data;
                                 })
                                 .catch(function(err) {
@@ -3956,7 +3905,6 @@ var app = angular.module('app', [
 											id: cardWithoutCoin.cardId
 										}).$promise
 										.then(function (cardFound) {
-											console.log('cardFound:', cardFound);
 											var cardIndex = mulligan.mulligansWithoutCoin.indexOf(cardWithoutCoin);
 											deck.mulligans[mulliganIndex].mulligansWithoutCoin[cardIndex] = cardFound;
 											return cardWithoutCoinCB();
@@ -3969,32 +3917,30 @@ var app = angular.module('app', [
 									
 									async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
 										
-										Card.findById({
-											id: cardWithCoin.cardId
-										}).$promise
-										.then(function (cardFound) {
-											console.log('cardFound:', cardFound);
-											var cardIndex = mulligan.mulligansWithCoin.indexOf(cardWithCoin);
-											deck.mulligans[mulliganIndex].mulligansWithCoin[cardIndex] = cardFound;
-											return cardWithCoinCB();
-										})
-										.catch(function (err) {
-											return cardWithCoinCB(err);
-										});
-										
-									});
-									
-									mulliganCB();
-									
-								}, function(err) {
-									if (err) return d.resolve(err);
-									console.log('deck now!!!!!: ', deck);
-									d.resolve(deck);
-								});
-								return d.promise;
-							}],
+                        Card.findById({
+                          id: cardWithCoin.cardId
+                        }).$promise
+                        .then(function (cardFound) {
+                          var cardIndex = mulligan.mulligansWithCoin.indexOf(cardWithCoin);
+                          deck.mulligans[mulliganIndex].mulligansWithCoin[cardIndex] = cardFound;
+                          return cardWithCoinCB();
+                        })
+                        .catch(function (err) {
+                          return cardWithCoinCB(err);
+                        });
+
+                      });
+
+                      mulliganCB();
+
+                    }, function(err) {
+                      if (err) return d.resolve(err);
+                      d.resolve(deck);
+                    });
+                    return d.promise;
+                  }],
                                 
-                            classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
+                          classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
                                 var perpage = 15,
                                     playerClass = deck.playerClass;
 
@@ -4091,7 +4037,8 @@ var app = angular.module('app', [
                                 return Card.count({})
                                 .$promise
                                 .then(function (cardCount) {
-                                    console.log('cardCount: ', cardCount);
+                                    0-
+                                      ('cardCount: ', cardCount);
                                     return cardCount;
                                 })
                                 .catch(function (err) {
@@ -4109,7 +4056,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (cards) {
-                                    console.log('cards: ', cards);
                                     return cards;
                                 })
                                 .catch(function (err) {
@@ -4147,7 +4093,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (cardFound) {
-                                    console.log('cardFound:', cardFound);
                                     return cardFound;
                                 })
                                 .catch(function (err) {
@@ -4425,7 +4370,6 @@ var app = angular.module('app', [
                                 )
                                 .$promise
                                 .then(function (data) {
-                                    console.log('maps: ', data);
                                     return data;
                                 });
                             }],
@@ -4568,7 +4512,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -4624,7 +4567,6 @@ var app = angular.module('app', [
 //                                  });
 //                                }
                               ], function(err, results) {
-                                console.log('results:', results);
                                 return d.resolve(results);
                               });
                               
@@ -4752,7 +4694,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -4806,7 +4747,6 @@ var app = angular.module('app', [
 //                                  });
 //                                }
                               ], function(err, results) {
-                                console.log('results:', results);
                                 return d.resolve(results);
                               });
                               
@@ -4830,8 +4770,6 @@ var app = angular.module('app', [
                         resolve: {
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                
-                                console.log("guide id", guideID);
                                 
                                 return Guide.find({
                                     filter: {
@@ -4921,7 +4859,6 @@ var app = angular.module('app', [
                                             });
                                         });
                                     }, function () {
-                                        console.log(categories);
                                         d.resolve(categories);
                                     });
                                 });
@@ -4993,7 +4930,7 @@ var app = angular.module('app', [
                                     return allCategories;
                                 })
                                 .catch(function (err) {
-//                                    console.log('allCategories: ', err);
+                                    console.log('allCategories: ', err);
                                 });
                                 
                             }]
@@ -5027,7 +4964,7 @@ var app = angular.module('app', [
                                     return forumThread;
                                 })
                                 .catch(function (err) {
-//                                    console.log('err: ', err);
+                                    console.log('err: ', err);
                                 });
                             }],
                             
@@ -5044,7 +4981,7 @@ var app = angular.module('app', [
                                     return allCategories;
                                 })
                                 .catch(function (err) {
-//                                    console.log('ForumCategory.find: ', err);
+                                    console.log('ForumCategory.find: ', err);
                                 });
                                 
                             }]
@@ -5108,7 +5045,7 @@ var app = angular.module('app', [
                                     return usersCount;
                                 })
                                 .catch(function (err) {
-//                                    console.log('Users.count err: ',err);
+                                    console.log('Users.count err: ',err);
                                 });
                             }],
                             users: ['User', 'paginationParams', function (User, paginationParams) {
@@ -5120,7 +5057,7 @@ var app = angular.module('app', [
                                     return allUsers;
                                 })
                                 .catch(function (err) {
-//                                    console.log('Snapshot.find err: ', err);
+                                    console.log('Snapshot.find err: ', err);
                                 });
                             }]
                         }
@@ -5281,7 +5218,6 @@ var app = angular.module('app', [
                                 return Poll.count({})
                                 .$promise
                                 .then(function (pollCount) {
-                                    console.log('pollCount: ', pollCount);
                                     return pollCount;
                                 })
                                 .catch(function (err) {
@@ -5293,7 +5229,6 @@ var app = angular.module('app', [
                                     paginationParams.options
                                 ).$promise
                                 .then(function (allPolls) {
-                                    console.log('allPolls: ', allPolls);
                                     return allPolls;
                                 })
                                 .catch(function (err) {
@@ -5336,7 +5271,6 @@ var app = angular.module('app', [
                                 }) 
                                 .$promise
                                 .then(function (data) {
-									console.log('data:', data);
                                     return data;
                                 })
                             }]
@@ -5596,7 +5530,6 @@ var app = angular.module('app', [
                                     
                                     //BUILD TIERS//
                                     snapshot.tiers = [];
-                                    console.log("post resolve snapshot:", snapshot);
                                     _.each(snapshot.deckTiers, function (deck) {
                                         if (snapshot.tiers[deck.tier-1] === undefined) {
                                             snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier }; 
@@ -5892,7 +5825,6 @@ var app = angular.module('app', [
                                         fields: paginationParams.options.filter.fields
                                     }
                                 };
-							  console.log('VOD LIST RESOLVE');
                                 return Vod.find(options).$promise;
                             }]
                         }
