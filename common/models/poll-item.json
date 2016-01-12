@@ -30,6 +30,13 @@
         "foreignKey": "pollId"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
   "methods": {}
 }

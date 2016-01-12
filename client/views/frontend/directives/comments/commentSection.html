@@ -15,7 +15,7 @@
                 </div>
                 
                 <div class="post col-xs-2">
-                    <button ng-click="commentPost()">POST</button>
+                    <button ng-click="commentPost()" ng-disabled="!comment.length">POST</button>
                 </div>
             </div>
         </div>

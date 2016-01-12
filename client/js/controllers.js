@@ -55,9 +55,10 @@ angular.module('app.controllers', ['ngCookies'])
         }])
     .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService', 'EventService',
         function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
-            
+
+
         $scope.currentUser = currentUser;
-            
+
         EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
             $scope.currentUser = data;
         });
@@ -73,7 +74,6 @@ angular.module('app.controllers', ['ngCookies'])
                     return;
                 }
                 $scope.currentUser = undefined;
-                console.log("logged out successful");
             });
         }
     }])
@@ -3188,8 +3188,12 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image',
-        function ($scope, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image) {
+    .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image', 'CrudMan',
+        function ($scope, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image, CrudMan) {
+            var CrudMan = new CrudMan();
+          
+            CrudMan.createArr('talents');
+            CrudMan.createArr('abilities');
 
             $scope.snapshot = snapshot;
             $scope.search = "";
@@ -3495,7 +3499,6 @@ angular.module('app.controllers', ['ngCookies'])
 
                 User.find({
                     filter: {
-                        limit: 10,
                         where: where
                     }
                 })
@@ -3947,34 +3950,23 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTech = function (t) {
-                removeDeckTechAJAX(t.id, t, function (err) {
-                    if (err) { console.log("ERR REMOVING DECKTECH:", err); }
-                    
-                    for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                        for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
-                            for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
-                                if (t.orderNum == $scope.snapshot.tiers[i].decks[k].deckTech[j].orderNum) {
-                                    $scope.snapshot.tiers[i].decks[k].deckTech.splice(j, 1);
-                                    return;
-                                }
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
+                        for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
+                            if (t.orderNum == $scope.snapshot.tiers[i].decks[k].deckTech[j].orderNum) {
+                                $scope.snapshot.tiers[i].decks[k].deckTech.splice(j, 1);
+                                return;
                             }
                         }
                     }
-                });
+                }
             }
 
             $scope.removeTechCard = function (tech, c) {
-                console.log(tech, c);
-                removeCardTechAJAX(c.id, c, function (err) {
-                    if (err) { console.log("ERR REMOVING CARDTECH:", err); }
-                    
-                    for (var card in tech.cardTech) {
-                        if (c.id == tech.cardTech[card].id) {
-                            tech.cardTech.splice(card,1);
-                            break;
-                        }
-                    }
-                });
+              var ct = _.find(tech.cardTech, function (val) { return val.card.id === c.card.id });
+              var idx = tech.cardTech.indexOf(ct);
+              
+              tech.cardTech.splice(idx,1);
             }
 
             $scope.setBoth = function (c) {
@@ -4351,7 +4343,6 @@ angular.module('app.controllers', ['ngCookies'])
 
                 User.find({
                     filter: {
-                        limit: 10,
                         where: where
                     }
                 })
@@ -4810,33 +4801,24 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTech = function (t) {
-//                removeDeckTechAJAX(t.id, t, function (err) {
-//                    if (err) { console.log("ERR REMOVING DECK:", err); }
-                    
-                    for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                        for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
-                            for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
-                                if (t.orderNum == $scope.snapshot.tiers[i].decks[k].deckTech[j].orderNum) {
-                                    $scope.snapshot.tiers[i].decks[k].deckTech.splice(j, 1);
-                                    return;
-                                }
+              console.log(t);
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
+                        for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
+                            if (t.orderNum == $scope.snapshot.tiers[i].decks[k].deckTech[j].orderNum) {
+                                $scope.snapshot.tiers[i].decks[k].deckTech.splice(j, 1);
+                                return;
                             }
                         }
                     }
-//                });
+                }
             }
 
             $scope.removeTechCard = function (tech, c) {
-//                removeCardTechAJAX(c.id, c, function (err) {
-//                    if (err) { console.log("ERR REMOVING CARD TECH:", err); }
-                    
-                    for (var card in tech.cardTech) {
-                        if (c.id == tech.cardTech[card].id) {
-                            tech.cardTech.splice(card,1);
-                            break;
-                        }
-                    }
-//                });
+              var ct = _.find(tech.cardTech, function (val) { return val.card.id === c.card.id });
+              var idx = tech.cardTech.indexOf(ct);
+              
+              tech.cardTech.splice(idx,1);
             }
 
             $scope.setBoth = function (c) {
@@ -8981,13 +8963,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-				if ($scope.filters.mana === m) {
-					$scope.filters.mana = 'all';
-					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
-				} else {
-					$scope.filters.mana = m;
-					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
-				}
+              if ($scope.filters.mana === m) {
+                $scope.filters.mana = 'all';
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+              } else {
+                $scope.filters.mana = m;
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+              }
             }
 
             $scope.filters.byMana = function () {
@@ -9097,24 +9079,24 @@ angular.module('app.controllers', ['ngCookies'])
                 console.log('deck to create: ', deck);
                 $scope.deckSubmitting = true;
                 
-				if (!deck.name > 0) {
-					$window.scrollTo(0, 0);
-					$scope.deckSubmitting = false;
-					return AlertService.setError({
-						show: true,
-						msg: 'Unable to save deck',
-						errorList: ['Deck must have a name']
-					});
-				}
+                if (!deck.name > 0) {
+                  $window.scrollTo(0, 0);
+                  $scope.deckSubmitting = false;
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to save deck',
+                    errorList: ['Deck must have a name']
+                  });
+                }
 				
                 if(!deck.validDeck()) {
-                    $window.scrollTo(0, 0);
-                    $scope.deckSubmitting = false;
-                    return AlertService.setError({
-						show: true,
-						msg: 'Unable to save deck',
-						errorList: ['Deck must have exactly 30 cards']
-					});
+                  $window.scrollTo(0, 0);
+                  $scope.deckSubmitting = false;
+                            return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to save deck',
+                    errorList: ['Deck must have exactly 30 cards']
+                  });
                 }
                 
                 console.log('User.isAuthenticated(): ', User.isAuthenticated());
@@ -10622,7 +10604,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {},
+                    pattern = '/.*'+search+'.*/i';//new RegExp('.*'+search+'.*', "i")'';
 
                 countOptions['where'] = {
                     isActive: true,
@@ -10649,14 +10632,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                 if ($scope.search.length > 0) {
                     options.filter.where['or'] = [
-                        { title: { regexp: search } },
-                        { description: { regexp: search } },
-                        { content: { regexp: search } }
+                        { title: { regexp: pattern } },
+                        { description: { regexp: pattern } },
+                        { content: { regexp: pattern } }
                     ];
                     countOptions.where.or = [
-                        { title: { regexp: search } },
-                        { description: { regexp: search } },
-                        { content: { regexp: search } }
+                        { title: { regexp: pattern } },
+                        { description: { regexp: pattern } },
+                        { content: { regexp: pattern } }
                     ];
                 }
 
@@ -12039,8 +12022,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
     /* admin hots */
-    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams', 'CrudMan',
-        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams, CrudMan) {
+    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams',
+        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams) {
             // grab alerts
 //            if (AlertService.hasAlert()) {
 //                $scope.success = AlertService.getSuccess();
@@ -13374,8 +13357,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService) {
+    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -13545,8 +13528,9 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                var cleanGuide = angular.copy($scope.guide);
+                cleanGuide.slug = Util.slugify(cleanGuide.name);
+                cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
                 
                 var keys = ['name',
                             'authorId',
@@ -13565,7 +13549,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'viewCount',
                             'voteScore',
                            ];
-                var stripped = Util.cleanObj($scope.guide, keys);
+                var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
@@ -13578,7 +13562,7 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 });
                 
-                $scope.guide.guideTalents = _.flatten(temp);
+                cleanGuide.guideTalents = _.flatten(temp);
                 
                 stripped.votes = [
                   {
@@ -13599,13 +13583,13 @@ angular.module('app.controllers', ['ngCookies'])
                   
                   Guide.guideHeroes.createMany({
                     id: guideData.id
-                  }, $scope.guide.guideHeroes)
+                  }, cleanGuide.guideHeroes)
                   .$promise
                   .then(function (guideHeroData) {
                     var tals = [];
                     
                     _.each(guideHeroData, function(eachVal) {
-                      var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
                         return filterVal.heroId === eachVal.heroId;
                       });
                       
@@ -13617,6 +13601,7 @@ angular.module('app.controllers', ['ngCookies'])
                       tals.push(heroTals);
                     });
                     
+                    console.log('tals:', tals);
                     async.series([
                       function (seriesCB) { 
                         Guide.guideTalents.createMany({
@@ -13632,7 +13617,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function (seriesCB) {
-                        async.each($scope.guide.maps, function(map, mapCB) {
+                        async.each(cleanGuide.maps, function(map, mapCB) {
                           console.log('map.id:', map.id);
                           console.log('guideData:', guideData);
                           Guide.maps.link({ 
@@ -13657,6 +13642,12 @@ angular.module('app.controllers', ['ngCookies'])
                       }
                     ], function (err, results) {
                       if (err) {
+                        $window.scrollTo(0, 0);
+                        AlertService.setError({
+                          show: true,
+                          lbErr: err,
+                          msg: 'Unable to Save Guide'
+                        });
                         return console.log('series err:', err);
                       }
                       $scope.app.settings.guide = null;
@@ -13665,10 +13656,22 @@ angular.module('app.controllers', ['ngCookies'])
                     
                   })
                   .catch(function (err) {
+                    $window.scrollTo(0, 0);
+                    AlertService.setError({
+                      show: true,
+                      lbErr: err,
+                      msg: 'Unable to Save Guide'
+                    });
                     console.log('guide hero err', err);
                   });
                 })
                 .catch(function (err) {
+                    $window.scrollTo(0, 0);
+                    AlertService.setError({
+                      show: true,
+                      lbErr: err,
+                      msg: 'Unable to Save Guide'
+                    });
                   console.log('guide err', err);
                 });
                 
@@ -13794,8 +13797,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guide = guide;
         }
     ])
-    .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide) {
+    .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide', 'AlertService',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, dataGuide, AlertService) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -13832,8 +13835,6 @@ angular.module('app.controllers', ['ngCookies'])
           
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') && $scope.app.settings.guide.id === dataGuide.id ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero', dataGuide);
-            
-            console.log('guide: ', $scope.guide);
 
             $scope.$watch('guide', function() {
                 $scope.app.settings.guide = $scope.guide;
@@ -13970,8 +13971,9 @@ angular.module('app.controllers', ['ngCookies'])
                   return $scope.updateGuide();
                 });
               } else {
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                var guideCopy = angular.copy($scope.guide);
+                guideCopy.slug = Util.slugify(guideCopy.name);
+                guideCopy.guideHeroes = _.map(guideCopy.heroes, function (val) { return { heroId: val.hero.id } });
                 
                 var keys = ['id',
                             'name',
@@ -13991,8 +13993,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'viewCount',
                             'voteScore'
                            ];
-                var stripped = Util.cleanObj($scope.guide, keys);
-                var temp = _.map($scope.guide.heroes, function (hero) { 
+                var stripped = Util.cleanObj(guideCopy, keys);
+                var temp = _.map(guideCopy.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
 
@@ -14004,16 +14006,12 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 });
                 
-                $scope.guide.guideTalents = _.flatten(temp);
-                
-                console.log('STRIPPED GUIDE:', stripped);
-                console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-                console.log('$scope.guide.guideTalents:', $scope.guide.guideTalents);
+                guideCopy.guideTalents = _.flatten(temp);
                 
                 var guideInfo;
                 async.waterfall([
                   function(waterCB){ 
-                    Guide.upsert($scope.guide)
+                    Guide.upsert(guideCopy)
                     .$promise
                     .then(function (guideUpdated) {
                       console.log('guideUpdated:', guideUpdated);
@@ -14041,10 +14039,9 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function(seriesCB) {
-                        console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
                         Guide.guideHeroes.createMany({
                           id: stripped.id
-                        }, $scope.guide.guideHeroes).$promise
+                        }, guideCopy.guideHeroes).$promise
                         .then(function (guideHeroData) {
                           console.log('guideHeroData1: ', guideHeroData);
                           return seriesCB(null, guideHeroData);
@@ -14082,7 +14079,7 @@ angular.module('app.controllers', ['ngCookies'])
                         
                         var tals = [];
                         _.each(guideHeroData, function(eachVal) {
-                          var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                          var heroTals = _.filter(guideCopy.guideTalents, function (filterVal) {
                             return filterVal.heroId === eachVal.heroId;
                           });
 
@@ -14142,7 +14139,7 @@ angular.module('app.controllers', ['ngCookies'])
                       
                       function(seriesCB) {
                         
-                        async.each($scope.guide.maps, function(map, mapCB) {
+                        async.each(guideCopy.maps, function(map, mapCB) {
                           Guide.maps.link({
                             id: stripped.id,
                             fk: map.id
@@ -14174,6 +14171,12 @@ angular.module('app.controllers', ['ngCookies'])
                   }
                 ], function(err, results) {
                   if (err) {
+                    $window.scrollTo(0, 0);
+                    AlertService.setError({
+                      show: true,
+                      msg: 'Unable to Update Guide',
+                      lbErr: err
+                    });
                     return console.log('PARA err:', err);
                   }
                   console.log('results:', results);
@@ -15386,7 +15389,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'viewCount',
                             'voteScore',
                            ];
-                var stripped = Util.cleanObj($scope.guide, keys);
+                var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
@@ -15399,7 +15402,7 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 });
                 
-                $scope.guide.guideTalents = _.flatten(temp);
+                cleanGuide.guideTalents = _.flatten(temp);
                 
                 stripped.votes = [
                   {
@@ -15420,13 +15423,13 @@ angular.module('app.controllers', ['ngCookies'])
                   
                   Guide.guideHeroes.createMany({
                     id: guideData.id
-                  }, $scope.guide.guideHeroes)
+                  }, cleanGuide.guideHeroes)
                   .$promise
                   .then(function (guideHeroData) {
                     var tals = [];
                     
                     _.each(guideHeroData, function(eachVal) {
-                      var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
                         return filterVal.heroId === eachVal.heroId;
                       });
                       
@@ -15438,6 +15441,7 @@ angular.module('app.controllers', ['ngCookies'])
                       tals.push(heroTals);
                     });
                     
+                    console.log('tals:', tals);
                     async.series([
                       function (seriesCB) { 
                         Guide.guideTalents.createMany({
@@ -15453,7 +15457,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function (seriesCB) {
-                        async.each($scope.guide.maps, function(map, mapCB) {
+                        async.each(cleanGuide.maps, function(map, mapCB) {
                           console.log('map.id:', map.id);
                           console.log('guideData:', guideData);
                           Guide.maps.link({ 
@@ -15478,10 +15482,11 @@ angular.module('app.controllers', ['ngCookies'])
                       }
                     ], function (err, results) {
                       if (err) {
+                        $window.scrollTo(0, 0);
                         AlertService.setError({
                           show: true,
                           lbErr: err,
-                          msg: 'Unable to Create Guide'
+                          msg: 'Unable to Save Guide'
                         });
                         return console.log('series err:', err);
                       }
@@ -15491,19 +15496,21 @@ angular.module('app.controllers', ['ngCookies'])
                     
                   })
                   .catch(function (err) {
+                    $window.scrollTo(0, 0);
                     AlertService.setError({
                       show: true,
                       lbErr: err,
-                      msg: 'Unable to Create Guide'
+                      msg: 'Unable to Save Guide'
                     });
                     console.log('guide hero err', err);
                   });
                 })
                 .catch(function (err) {
+                    $window.scrollTo(0, 0);
                     AlertService.setError({
                       show: true,
                       lbErr: err,
-                      msg: 'Unable to Create Guide'
+                      msg: 'Unable to Save Guide'
                     });
                   console.log('guide err', err);
                 });
@@ -15866,8 +15873,9 @@ angular.module('app.controllers', ['ngCookies'])
                   return $scope.updateGuide();
                 });
               } else {
-                $scope.guide.slug = Util.slugify($scope.guide.name);
-                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                var guideCopy = angular.copy($scope.guide);
+                guideCopy.slug = Util.slugify(guideCopy.name);
+                guideCopy.guideHeroes = _.map(guideCopy.heroes, function (val) { return { heroId: val.hero.id } });
                 
                 var keys = ['id',
                             'name',
@@ -15887,8 +15895,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'viewCount',
                             'voteScore'
                            ];
-                var stripped = Util.cleanObj($scope.guide, keys);
-                var temp = _.map($scope.guide.heroes, function (hero) { 
+                var stripped = Util.cleanObj(guideCopy, keys);
+                var temp = _.map(guideCopy.heroes, function (hero) { 
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
 
@@ -15900,16 +15908,12 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 });
                 
-                $scope.guide.guideTalents = _.flatten(temp);
-                
-                console.log('STRIPPED GUIDE:', stripped);
-                console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-                console.log('$scope.guide.guideTalents:', $scope.guide.guideTalents);
+                guideCopy.guideTalents = _.flatten(temp);
                 
                 var guideInfo;
                 async.waterfall([
                   function(waterCB){ 
-                    Guide.upsert($scope.guide)
+                    Guide.upsert(guideCopy)
                     .$promise
                     .then(function (guideUpdated) {
                       console.log('guideUpdated:', guideUpdated);
@@ -15937,10 +15941,9 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function(seriesCB) {
-                        console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
                         Guide.guideHeroes.createMany({
                           id: stripped.id
-                        }, $scope.guide.guideHeroes).$promise
+                        }, guideCopy.guideHeroes).$promise
                         .then(function (guideHeroData) {
                           console.log('guideHeroData1: ', guideHeroData);
                           return seriesCB(null, guideHeroData);
@@ -15978,7 +15981,7 @@ angular.module('app.controllers', ['ngCookies'])
                         
                         var tals = [];
                         _.each(guideHeroData, function(eachVal) {
-                          var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                          var heroTals = _.filter(guideCopy.guideTalents, function (filterVal) {
                             return filterVal.heroId === eachVal.heroId;
                           });
 
@@ -16038,7 +16041,7 @@ angular.module('app.controllers', ['ngCookies'])
                       
                       function(seriesCB) {
                         
-                        async.each($scope.guide.maps, function(map, mapCB) {
+                        async.each(guideCopy.maps, function(map, mapCB) {
                           Guide.maps.link({
                             id: stripped.id,
                             fk: map.id
@@ -16070,6 +16073,12 @@ angular.module('app.controllers', ['ngCookies'])
                   }
                 ], function(err, results) {
                   if (err) {
+                    $window.scrollTo(0, 0);
+                    AlertService.setError({
+                      show: true,
+                      msg: 'Unable to Update Guide',
+                      lbErr: err
+                    });
                     return console.log('PARA err:', err);
                   }
                   console.log('results:', results);
@@ -16588,9 +16597,11 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide',
-        function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
-
+    .controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 'Poll', 'PollItem',
+        function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide, Poll, PollItem) {
+            console.log('dataPollsMain:', dataPollsMain);
+            console.log('dataPollsSide:', dataPollsSide);
+          
             var box;
             var votes = {};
             
@@ -16662,11 +16673,12 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getVotes = function (poll) {
-                return poll.votes
+                console.log('getVotes poll:', poll);
+                return poll.votes;
             };
 
             $scope.getLocalVotes = function (poll, item) {
-                var localVotes = PollService.getStorage(poll._id).split(',');
+                var localVotes = PollService.getStorage(poll.id).split(',');
                 for (var i = 0; i < localVotes.length; i++) {
                     if(item._id == localVotes[i]) {
                         return true;
@@ -16689,7 +16701,26 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.submitVote = function (poll) {
-                console.log(votes);
+                console.log('poll:', poll);
+                
+                async.each(poll.items, function(pollItem, pollItemCB) {
+
+                  PollItem.upsert(pollItem)
+                  .$promise
+                  .then(function (pollItemUpdated) {
+                    console.log('pollItemUpdated: ', pollItemUpdated);
+                    return pollItemCB();
+                  })
+                  .catch(function (err) {
+                    return pollItemCB(err);
+                  });
+
+                }, function(err, results) {
+                  if (err) {
+                    return console.log('err:', err);
+                  }
+                  return console.log('done');
+                });
                 
 //                Poll.update(poll, poll.votes).success(function (data) {
 //                    if(!data.success) {
