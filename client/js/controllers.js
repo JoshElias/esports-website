@@ -11897,22 +11897,22 @@ angular.module('app.controllers', ['ngCookies'])
 //                    console.log('newCategory: ', newCategory);
                     $scope.fetching = false;
                     $window.scrollTo(0,0);
-				    AlertService.setSuccess({
-					  persist: true,
-					  show: false,
-					  msg: newCategory.title + ' created successfully'
-					});
+                    AlertService.setSuccess({
+                      persist: true,
+                      show: false,
+                      msg: newCategory.title + ' created successfully'
+                    });
                     $state.go('app.admin.forum.structure.list');
                 })
                 .catch(function (err) {
                     console.log('err: ', err);
-					AlertService.setError({ 
-					  show: true, 
-					  msg: 'Unable to create Forum Category', 
-					  lbErr: err
-					});
-					$scope.fetching = false;
-					$window.scrollTo(0,0);
+                    AlertService.setError({ 
+                      show: true, 
+                      msg: 'Unable to create Forum Category', 
+                      lbErr: err
+                    });
+                    $scope.fetching = false;
+                    $window.scrollTo(0,0);
                 });
             };
         }
@@ -14267,7 +14267,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.stepOne = function () {
-                $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id });
+                $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide.id });
             };
 
             // draw map rows
@@ -15573,8 +15573,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
           }
     ])
-    .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util', 'userRoles', 'EventService',
-        function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util, userRoles, EventService) {
+    .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util', 'userRoles', 'EventService', 'AlertService',
+        function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util, userRoles, EventService, AlertService) {
 			
 			$scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -15695,7 +15695,7 @@ angular.module('app.controllers', ['ngCookies'])
                         return $scope.featuredTypes[i].text;
                     }
                 }
-            }
+            };
 
             // save guide
             $scope.saveGuide = function () {
@@ -15736,10 +15736,22 @@ angular.module('app.controllers', ['ngCookies'])
                           $state.go('app.hots.guides.guide', { slug: guideData.slug });
                         })
                         .catch(function (err) {
+                            $window.scrollTo(0, 0);
+                            AlertService.setError({
+                              show: true,
+                              msg: 'Unable to Save Guide',
+                              lbErr: err
+                            });
                             console.log("Creating the guide - map link failed:", err);
                         })
                     })
                     .catch(function (err) {
+                        $window.scrollTo(0, 0);
+                        AlertService.setError({
+                          show: true,
+                          msg: 'Unable to Save Guide',
+                          lbErr: err
+                        });
                         console.log("Creating the guide failed:", err);
                     })
                 }
@@ -15748,7 +15760,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuideBuilderEditStep1Ctrl', ['$scope', 'dataGuide',
         function ($scope, dataGuide) {
-            $scope.guide = dataGuide.guide;
+            $scope.guide = dataGuide;
         }
     ])
     .controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'dataGuide', 'AlertService',
@@ -15813,7 +15825,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.stepOne = function () {
-                $state.go('app.hots.guideBuilder.step1', {});
+                $state.go('app.hots.guideBuilder.edit.step1', {slug: $scope.guide.slug});
             };
 
             // draw hero rows
@@ -16144,8 +16156,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'userRoles', 'EventService',
-        function ($scope, $state, $window, HOTS, GuideBuilder,  dataGuide, dataHeroes, dataMaps, LoginModalService, User, Guide, userRoles, EventService) {
+    .controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'userRoles', 'EventService', 'AlertService', 'Util',
+        function ($scope, $state, $window, HOTS, GuideBuilder,  dataGuide, dataHeroes, dataMaps, LoginModalService, User, Guide, userRoles, EventService, AlertService, Util) {
           
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -16259,7 +16271,7 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.guide.featured;
+                var featured = $scope.guide.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
@@ -16279,6 +16291,8 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.saveGuide();
                     });
                 } else {
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+                  
                     async.parallel([
                         function(paraCB){ 
                             Guide.upsert($scope.guide)
@@ -16317,6 +16331,12 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     ], function(err, results) {
                         if (err) {
+                            $window.scrollTo(0, 0);
+                            AlertService.setError({
+                              show: true,
+                              msg: 'Unable to Update Guide',
+                              lbErr: err
+                            });
                             return console.log('para err: ', err);
                         }
                         $scope.app.settings.guide = null;

@@ -2132,9 +2132,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.step1.html',
                         controller: 'HOTSGuideBuilderEditStep1Ctrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return HOTSGuideService.guideEdit(slug);
+                                return Guide.findOne({
+                                    filter: {
+                                        where: {
+                                            slug: slug
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
