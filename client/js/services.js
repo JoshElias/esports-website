@@ -2639,9 +2639,10 @@ angular.module('app.services', [])
                     heroWhere.and.push({ role: { inq: filters.roles } });
                 }
             } else if (filters.search != "") {
+                var pattern = '/.*'+fiilters.search+'.*/i';
                 heroGuideWhere.or = [
-                    { name: { regexp: filters.search } },
-                    { description: { regexp: filters.search } }
+                    { name: { regexp: pattern } },
+                    { description: { regexp: pattern } }
                 ]
             }
             
