@@ -3294,7 +3294,6 @@ angular.module('app.controllers', ['ngCookies'])
                             })
                             .$promise
                             .then(function(data) {
-                                console.log("succesfully removed ALL deckTier:", data);
                                 return eachCb();
                             }).catch(function(err) {
                                 return eachCb(err);
@@ -3310,7 +3309,6 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function(data) {
-                            console.log("successfully removed deckTier:", data);
                             return cb();
                         }).catch(function(err) {
                             return cb(err);
@@ -9836,10 +9834,34 @@ angular.module('app.controllers', ['ngCookies'])
             function updateDeck(deckSubmitted) {
 				      var deck = angular.copy(deckSubmitted);
               console.log('saving deck:', deck);
-				
+              
+              _.each(deck.mulligans, function(mulligan, index) {
+                console.log('current mulligan:', mulligan);
+                console.log('index:', index);
+                var cardsWithCoinMulligan = _.each(mulligan.mulligansWithCoin, function(cardWithCoin) {
+                  var realCardWithCoin = {
+                    cardId: cardWithCoin.id,
+                    deckId: deck.id
+                  };
+                  cardWithCoin = realCardWithCoin;
+                });
+                deck.mulligans[index].mulligansWithCoin = cardsWithCoinMulligan;
+                
+                var cardsWithoutCoinMulligan = _.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin) {
+                  var realCardWithoutCoin = {
+                    cardId: cardWithoutCoin.id,
+                    deckId: deck.id
+                  };
+                  cardWithoutCoin = realCardWithoutCoin;
+                });
+                deck.mulligans[index].mulligansWithoutCoin = cardsWithoutCoinMulligan;
+              });
+              
+              console.log('deck now:', deck);
+              
                 async.series([
                     function (seriesCallback) {
-                        Deck.upsert({
+                        Deck.update({
                             where: {
                                 id: deck.id
                             }
