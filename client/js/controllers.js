@@ -1508,6 +1508,8 @@ angular.module('app.controllers', ['ngCookies'])
                         where: {}
                     }
                 };
+              
+                var pattern = '/.*'+search+'.*/i';
                 
                 var countOptions = {
                     where: {}
@@ -1529,17 +1531,27 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 // push query values to arrays
                 if (search.length > 0) {
-                    options.filter.where.or.push({ expansion: { regexp: search } });
-                    options.filter.where.or.push({ name: { regexp: search } });
-                    options.filter.where.or.push({ cardtype: { regexp: search } });
-                    options.filter.where.or.push({ rarity: { regexp: search } });
-                    options.filter.where.or.push({ mechanics: { regexp: search } });
+                    options.filter.where.or.push({ expansion: { regexp: pattern } });
+                    options.filter.where.or.push({ name: { regexp: pattern } });
+                    options.filter.where.or.push({ cardtype: { regexp: pattern } });
+                    options.filter.where.or.push({ rarity: { regexp: pattern } });
+                    options.filter.where.or.push({ mechanics: { regexp: pattern } });
+                    options.filter.where.or.push({ expansion: { regexp: pattern } });
+                    options.filter.where.or.push({ name: { regexp: pattern } });
+                    options.filter.where.or.push({ cardtype: { regexp: pattern } });
+                    options.filter.where.or.push({ rarity: { regexp: pattern } });
+                    options.filter.where.or.push({ mechanics: { regexp: pattern } });
                     
-                    countOptions.where.or.push({ expansion: { regexp: search } });
-                    countOptions.where.or.push({ name: { regexp: search } });
-                    countOptions.where.or.push({ cardType: { regexp: search } });
-                    countOptions.where.or.push({ rarity: { regexp: search } });
-                    countOptions.where.or.push({ mechanics: { regexp: search } });
+                    countOptions.where.or.push({ expansion: { regexp: pattern } });
+                    countOptions.where.or.push({ name: { regexp: pattern } });
+                    countOptions.where.or.push({ cardType: { regexp: pattern } });
+                    countOptions.where.or.push({ rarity: { regexp: pattern } });
+                    countOptions.where.or.push({ mechanics: { regexp: pattern } });
+                    countOptions.where.or.push({ expansion: { regexp: pattern } });
+                    countOptions.where.or.push({ name: { regexp: pattern } });
+                    countOptions.where.or.push({ cardType: { regexp: pattern } });
+                    countOptions.where.or.push({ rarity: { regexp: pattern } });
+                    countOptions.where.or.push({ mechanics: { regexp: pattern } });
                 }
                 
                 if (filterExpansion.length > 0) {
@@ -1715,14 +1727,15 @@ angular.module('app.controllers', ['ngCookies'])
                         order: "createdDate DESC",
                         fields: ["name", "id"]
                     }
-                }
+                },
+                pattern = '/.*'+search+'.*/i';
                 
                 if($scope.search) {
                     console.log("yep");
                     options.filter.where = {
                         or: [
-                            {name: { regexp: $scope.search }},
-                            {slug: { regexp: $scope.search }}
+                            {name: { regexp: pattern }},
+                            {slug: { regexp: pattern }}
                         ]
                     }
                 }
@@ -1744,13 +1757,15 @@ angular.module('app.controllers', ['ngCookies'])
                         order: "createdDate DESC",
                         fields: ["title", "id", "photoNames"]
                     }
-                }
+                };
+              
+                var pattern = '/.*'+$scope.search+'.*/i';
                 
                 if($scope.search) {
                     options.filter.where = {
                         or: [
-                            {title: { regexp: $scope.search }},
-                            {slug: { regexp: $scope.search }}
+                            {title: { regexp: pattern }},
+                            {slug: { regexp: pattern }}
                         ]
                     }
                 }
@@ -1771,13 +1786,15 @@ angular.module('app.controllers', ['ngCookies'])
                         order: "createdDate DESC",
                         fields: ["name", "id"]
                     }
-                }
+                };
+              
+                var pattern = '/.*'+$scope.search+'.*/i';
                 
                 if($scope.search) {
                     options.filter.where = {
                         or: [
-                            {name: { regexp: $scope.search }},
-                            {slug: { regexp: $scope.search }}
+                            {name: { regexp: pattern }},
+                            {slug: { regexp: pattern }}
                         ]
                     }
                 }
@@ -1802,11 +1819,13 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 
+                var pattern = '/.*'+$scope.search+'.*/i';
+                
                 if($scope.search) {
                     options.filter.where = {
                         or: [
-                            {username: { regexp: $scope.search }},
-							{email: { regexp: $scope.search }}
+                            {username: { regexp: pattern }},
+							              {email: { regexp: pattern }}
                         ]
                     }
                 }
@@ -1835,12 +1854,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setAuthor = function (user) {
-				$scope.article.authorId = (user) ? user : null;
+				        $scope.article.authorId = (user) ? user : null;
                 $scope.article.author = (user) ? user : null;
                 $scope.search = '';
                 if (itemAddBox) {
-					itemAddBox.modal('hide');
-				}
+                  itemAddBox.modal('hide');
+                }
             }
             
             
@@ -1859,7 +1878,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setDeck = function (deck) {
-				$scope.article.deckId = (deck) ? deck.id : null;
+				        $scope.article.deckId = (deck) ? deck.id : null;
                 $scope.article.deck = (deck) ? deck : null;
             };
             
@@ -1878,7 +1897,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setGuide = function (guide) {
-				$scope.article.guideId = (guide) ? guide.id : null;
+                $scope.article.guideId = (guide) ? guide.id : null;
                 $scope.article.guide = (guide) ? guide : null;
             }
 
@@ -2214,13 +2233,15 @@ angular.module('app.controllers', ['ngCookies'])
                         order: "createdDate DESC",
                         fields: ["name", "id"]
                     }
-                }
+                };
+              
+                var pattern = '/.*'+$scope.search+'.*/i';
                 
                 if($scope.search) {
                     options.filter.where = {
                         or: [
-                            {name: { regexp: $scope.search }},
-                            {slug: { regexp: $scope.search }}
+                            {name: { regexp: pattern }},
+                            {slug: { regexp: pattern }}
                         ]
                     }
                 }
@@ -2241,13 +2262,15 @@ angular.module('app.controllers', ['ngCookies'])
                         order: "createdDate DESC",
                         fields: ["title", "id", "photoNames"]
                     }
-                }
+                };
+              
+                var pattern = '/.*'+$scope.search+'.*/i';
                 
                 if($scope.search) {
                     options.filter.where = {
                         or: [
-                            {title: { regexp: $scope.search }},
-                            {slug: { regexp: $scope.search }}
+                            {title: { regexp: pattern }},
+                            {slug: { regexp: pattern }}
                         ]
                     }
                 }
@@ -2255,8 +2278,8 @@ angular.module('app.controllers', ['ngCookies'])
                 Article.find(options)
                     .$promise
                     .then(function (data) {
-                    $scope.articles = data;
-                    if (cb !== undefined) { return cb(data); }
+                      $scope.articles = data;
+                      if (cb !== undefined) { return cb(data); }
                 });
             }
 
@@ -2267,13 +2290,15 @@ angular.module('app.controllers', ['ngCookies'])
                         order: "createdDate DESC",
                         fields: ["name", "id"]
                     }
-                }
+                };
+              
+                var pattern = '/.*'+$scope.search+'.*/i';
                 
                 if($scope.search) {
                     options.filter.where = {
                         or: [
-                            {name: { regexp: $scope.search }},
-                            {slug: { regexp: $scope.search }}
+                            {name: { regexp: pattern }},
+                            {slug: { regexp: pattern }}
                         ]
                     }
                 }
@@ -2281,8 +2306,8 @@ angular.module('app.controllers', ['ngCookies'])
                 Guide.find(options)
                     .$promise
                     .then(function (data) {
-                    $scope.guides = data;
-                    if (cb !== undefined) { return cb(); }
+                      $scope.guides = data;
+                      if (cb !== undefined) { return cb(); }
                 });
             }
             
@@ -2296,13 +2321,15 @@ angular.module('app.controllers', ['ngCookies'])
                             isProvider: true
                         }
                     }
-                }
+                };
+              
+                var pattern = '/.*'+$scope.search+'.*/i';
                 
                 if($scope.search) {
                     options.filter.where = {
                         and: [
-                            {name: { regexp: $scope.search }},
-                            {email: { regexp: $scope.search }}
+                            {name: { regexp: pattern }},
+                            {email: { regexp: pattern }}
                         ]
                     }
                 }
@@ -2310,8 +2337,8 @@ angular.module('app.controllers', ['ngCookies'])
                 User.find(options)
                     .$promise
                     .then(function (data) {
-                    $scope.users = data;
-                    if (cb !== undefined) { return cb(data); }
+                      $scope.users = data;
+                      if (cb !== undefined) { return cb(data); }
                 });
             }
             //!search functions
@@ -2333,12 +2360,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setAuthor = function (user) {
-				$scope.article.authorId = (user) ? user : null;
+				      $scope.article.authorId = (user) ? user : null;
                 $scope.article.author = (user) ? user : null;
                 $scope.search = '';
                 if (itemAddBox) {
-					itemAddBox.modal('hide');
-				}
+                  itemAddBox.modal('hide');
+                }
             }
             
             
@@ -2366,7 +2393,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             $scope.setDeck = function (deck) {
-				$scope.article.deckId = (deck) ? deck.id : null;
+				        $scope.article.deckId = (deck) ? deck.id : null;
                 $scope.article.deck = (deck) ? deck : null;
             }
             
@@ -2385,7 +2412,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.setGuide = function (guide) {
-				$scope.article.guideId = (guide) ? guide.id : null;
+                $scope.article.guideId = (guide) ? guide.id : null;
                 $scope.article.guide = (guide) ? guide : null;
             }
 
@@ -2585,11 +2612,11 @@ angular.module('app.controllers', ['ngCookies'])
 
             // article types
             $scope.articleTypes = [
-				{ name: 'Tempo Storm', value: 'ts' },
-				{ name: 'Hearthstone', value: 'hs' },
-				{ name: 'Heroes of the Storm', value: 'hots' },
-				{ name: 'Overwatch', value: 'overwatch' }
-			];
+              { name: 'Tempo Storm', value: 'ts' },
+              { name: 'Hearthstone', value: 'hs' },
+              { name: 'Heroes of the Storm', value: 'hots' },
+              { name: 'Overwatch', value: 'overwatch' }
+            ];
 			
 			$scope.activeType = function() {
 				console.log('$scope.article.articleType:', $scope.article.articleType);
@@ -2999,7 +3026,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {},
+                    pattern = '/.*'+search+'.*/i';
 
                 options.filter = {
                     fields: paginationParams.options.filter.fields,
@@ -3011,33 +3039,33 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.search.length > 0) {
                     options.filter.where = {
                         or: [
-                            { title: { regexp: search } },
-                            { content: { regexp: search } }
+                            { title: { regexp: pattern } },
+                            { content: { regexp: pattern } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { title: { regexp: search } },
-                            { content: { regexp: search } }
+                            { title: { regexp: pattern } },
+                            { content: { regexp: pattern } }
                         ]
                     }
                 }
 
-                Snapshot.count(countOptions, function (count) {
-                    Snapshot.find(options, function (snapshots) {
-                        $scope.snapshotPagination.total = count.count;
-                        $scope.snapshotPagination.page = page;
-                        $scope.snapshotPagination.perpage = perpage;
-
-                        $timeout(function () {
-                            $scope.snapshots = snapshots;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
-                });
+//                Snapshot.count(countOptions, function (count) {
+//                    Snapshot.find(options, function (snapshots) {
+//                        $scope.snapshotPagination.total = count.count;
+//                        $scope.snapshotPagination.page = page;
+//                        $scope.snapshotPagination.perpage = perpage;
+//
+//                        $timeout(function () {
+//                            $scope.snapshots = snapshots;
+//                            $scope.fetching = false;
+//                            if (callback) {
+//                                return callback(count.count);
+//                            }
+//                        });
+//                    });
+//                });
                 
                 AjaxPagination.update(Snapshot, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
@@ -3471,9 +3499,11 @@ angular.module('app.controllers', ['ngCookies'])
             /* GET METHODS */
             function getDecks (callback) {
                 var where = {};
+                
+                var pattern = '/.*'+search+'.*/i';
 
                 if(!_.isEmpty($scope.search)) {
-                    where['name'] = { regexp: $scope.search }
+                    where['name'] = { regexp: pattern }
                 }
 
                 Deck.find({
@@ -3494,9 +3524,11 @@ angular.module('app.controllers', ['ngCookies'])
                 var where = {
                     isProvider: true
                 }
+                
+                var pattern = '/.*'+search+'.*/i';
 
                 if(!_.isEmpty($scope.search)) {
-                    where['username'] = { regexp: $scope.search }
+                    where['username'] = { regexp: pattern }
                 }
 
                 User.find({
@@ -4315,9 +4347,11 @@ angular.module('app.controllers', ['ngCookies'])
             /* GET METHODS */
             function getDecks (callback) {
                 var where = {};
+              
+                var pattern = '/.*'+$scope.search+'.*/i';
 
                 if(!_.isEmpty($scope.search)) {
-                    where['name'] = { regexp: $scope.search }
+                    where['name'] = { regexp: pattern }
                 }
 
                 Deck.find({
@@ -4338,9 +4372,11 @@ angular.module('app.controllers', ['ngCookies'])
                 var where = {
                     isProvider: true
                 }
+                
+                var pattern = '/.*'+$scope.search+'.*/i';
 
                 if(!_.isEmpty($scope.search)) {
-                    where['username'] = { regexp: $scope.search }
+                    where['username'] = { regexp: pattern }
                 }
 
                 User.find({
@@ -5444,7 +5480,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {},
+                    pattern = '/.*'+search+'.*/i';
 
                 options.filter = {
                     fields: paginationParams.options.filter.fields,
@@ -5456,14 +5493,14 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.search.length > 0) {
                     options.filter.where = {
                         or: [
-                            { subtitle: { regexp: search } },
-                            { displayDate: { regexp: search } },
+                            { subtitle: { regexp: pattern } },
+                            { displayDate: { regexp: pattern } },
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { subtitle: { regexp: search } },
-                            { displayDate: { regexp: search } },
+                            { subtitle: { regexp: pattern } },
+                            { displayDate: { regexp: pattern } },
                         ]
                     }
                 }
@@ -5644,7 +5681,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {},
+                    pattern = '/.*'+search+'.*/i';
 
                 options.filter = {
                     fields: paginationParams.options.filter.fields,
@@ -5656,16 +5694,16 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.search.length > 0) {
                     options.filter.where = {
                         or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { name: { regexp: search } }
+                            { title: { regexp: pattern } },
+                            { description: { regexp: pattern } },
+                            { name: { regexp: pattern } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { name: { regexp: search } }
+                            { title: { regexp: pattern } },
+                            { description: { regexp: pattern } },
+                            { name: { regexp: pattern } }
                         ]
                     }
                 }
@@ -6138,25 +6176,26 @@ angular.module('app.controllers', ['ngCookies'])
                 }
 
                 if (search.length > 0) {
+                  var pattern = '/.*'+search+'.*/i';
                     options.filter.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
-                        { name: { regexp: search } },
-                        { text: { regexp: search } },
-                        { rarity: { regexp: search } },
-                        { cardType: { regexp: search } }
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } },
+                        { rarity: { regexp: pattern } },
+                        { cardType: { regexp: pattern } }
                     ]
                 }
 
@@ -7431,7 +7470,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {},
+                    pattern = '/.*'+search+'.*/i';
 
                 options.filter = {
                     fields: paginationParams.options.filter.fields,
@@ -7443,16 +7483,16 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.search.length > 0) {
                     options.filter.where = {
                         or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
+                            { email: { regexp: pattern } },
+                            { username: { regexp: pattern } },
+                            { twitchID: { regexp: pattern } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
+                            { email: { regexp: pattern } },
+                            { username: { regexp: pattern } },
+                            { twitchID: { regexp: pattern } }
                         ]
                     }
                 }
@@ -7781,7 +7821,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {},
+                    pattern = '/.*'+search+'.*/i';
 
                 options.filter = {
                     fields: paginationParams.options.filter.fields,
@@ -7793,18 +7834,18 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.search.length > 0) {
                     options.filter.where = {
                         or: [
-                            { title: { regexp: search } },
-                            { subtitle: { regexp: search } },
-                            { description: { regexp: search } },
-                            { type: { regexp: search } }
+                            { title: { regexp: pattern } },
+                            { subtitle: { regexp: pattern } },
+                            { description: { regexp: pattern } },
+                            { type: { regexp: pattern } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { title: { regexp: search } },
-                            { subtitle: { regexp: search } },
-                            { description: { regexp: search } },
-                            { type: { regexp: search } }
+                            { title: { regexp: pattern } },
+                            { subtitle: { regexp: pattern } },
+                            { description: { regexp: pattern } },
+                            { type: { regexp: pattern } }
                         ]
                     }
                 }
@@ -12070,22 +12111,23 @@ angular.module('app.controllers', ['ngCookies'])
                 };
 
                 if ($scope.search.length > 0) {
+                  var pattern = '/.*'+search+'.*/i';
                     options.filter.where = {
                         or: [
-                            { name: { regexp: search } },
-                            { className: { regexp: search } },
-                            { heroType: { regexp: search } },
-                            { role: { regexp: search } },
-                            { universe: { regexp: search } }
+                            { name: { regexp: pattern } },
+                            { className: { regexp: pattern } },
+                            { heroType: { regexp: pattern } },
+                            { role: { regexp: pattern } },
+                            { universe: { regexp: pattern } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { name: { regexp: search } },
-                            { className: { regexp: search } },
-                            { heroType: { regexp: search } },
-                            { role: { regexp: search } },
-                            { universe: { regexp: search } }
+                            { name: { regexp: pattern } },
+                            { className: { regexp: pattern } },
+                            { heroType: { regexp: pattern } },
+                            { role: { regexp: pattern } },
+                            { universe: { regexp: pattern } }
                         ]
                     }
                 }
@@ -12938,16 +12980,17 @@ angular.module('app.controllers', ['ngCookies'])
                 };
 
                 if ($scope.search.length > 0) {
+                  var pattern = '/.*'+search+'.*/i';
                     options.filter.where = {
                         or: [
-                            { name: { regexp: search } },
-                            { description: { regexp: search } },
+                            { name: { regexp: pattern } },
+                            { description: { regexp: pattern } },
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { name: { regexp: search } },
-                            { description: { regexp: search } },
+                            { name: { regexp: pattern } },
+                            { description: { regexp: pattern } },
                         ]
                     }
                 }
@@ -13099,16 +13142,17 @@ angular.module('app.controllers', ['ngCookies'])
                 };
 
                 if ($scope.search.length > 0) {
+                    var pattern = '/.*'+search+'.*/i';
                     options.filter.where = {
                         or: [
-                            { className: { regexp: search } },
-                            { name: { regexp: search } }
+                            { className: { regexp: pattern } },
+                            { name: { regexp: pattern } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { className: { regexp: search } },
-                            { name: { regexp: search } }
+                            { className: { regexp: pattern } },
+                            { name: { regexp: pattern } }
                         ]
                     }
                 }
@@ -13277,18 +13321,19 @@ angular.module('app.controllers', ['ngCookies'])
                 };
 
                 if ($scope.search.length > 0) {
+                    var pattern = '/.*'+search+'.*/i';
                     options.filter.where = {
                         or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
+                            { email: { regexp: pattern } },
+                            { username: { regexp: pattern } },
+                            { twitchID: { regexp: pattern } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
+                            { email: { regexp: pattern } },
+                            { username: { regexp: pattern } },
+                            { twitchID: { regexp: pattern } }
                         ]
                     }
                 }
@@ -16865,30 +16910,30 @@ angular.module('app.controllers', ['ngCookies'])
                                 .then(function () {
                                     OverwatchHero.destroyById({ id: hero.id }).$promise
                                     .then(function() {
-										var index = $scope.heroes.indexOf(hero);
-                   					    $scope.heroes.splice(index, 1);
-										
-										AlertService.setSuccess({
-											show: true,
-											msg: hero.heroName + ' deleted successfully'
-										});
-										$window.scrollTo(0, 0);
-									})
+                                        var index = $scope.heroes.indexOf(hero);
+                                                    $scope.heroes.splice(index, 1);
+
+                                        AlertService.setSuccess({
+                                          show: true,
+                                          msg: hero.heroName + ' deleted successfully'
+                                        });
+                                        $window.scrollTo(0, 0);
+                                      })
                                     .catch(function (err) {
                                         AlertService.setError({
-											show: true,
-											msg: 'An error occured while trying to delete the hero',
-											lbErr: err
-										});
+                                          show: true,
+                                          msg: 'An error occured while trying to delete the hero',
+                                          lbErr: err
+                                        });
                                         $window.scrollTo(0,0);
                                     });
                                 })
                                 .catch(function (err) {
-									AlertService.setError({
-										show: true,
-										msg: 'An error occurred while trying to delete the hero abilities.',
-										lbErr: err
-									});
+                                    AlertService.setError({
+                                      show: true,
+                                      msg: 'An error occurred while trying to delete the hero abilities.',
+                                      lbErr: err
+                                    });
                                     $window.scrollTo(0,0);
                                 });
                             }
