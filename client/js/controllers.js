@@ -9601,13 +9601,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filter by mana
             $scope.doFilterByMana = function (m) {
-				if ($scope.filters.mana === m) {
-					$scope.filters.mana = 'all';
-					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
-				} else {
-					$scope.filters.mana = m;
-					updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
-				}
+              if ($scope.filters.mana === m) {
+                $scope.filters.mana = 'all';
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+              } else {
+                $scope.filters.mana = m;
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+              }
             }
 
             $scope.filters.byMana = function () {
@@ -9892,7 +9892,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Updates Deck, Mulligan, and Matchup Models
             function updateDeck(deckSubmitted) {
-				var deck = angular.copy(deckSubmitted);
+				      var deck = angular.copy(deckSubmitted);
 				
                 async.series([
                     function (seriesCallback) {
@@ -9904,7 +9904,7 @@ angular.module('app.controllers', ['ngCookies'])
                         .$promise
                         .then(function (deckUpdated) {
                             console.log('deck upserted: ',deckUpdated);
-                            seriesCallback(null, 'deck updated');
+                            seriesCallback(null, deckUpdated);
                         })
                         .catch(function (err) {
                             if(err) {
@@ -10132,7 +10132,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                     console.log('series results: ', results);
                     $scope.deckSubmitting = false;
-                    $state.transitionTo('app.hs.decks.deck', { slug: deck.slug });
+                    $state.transitionTo('app.hs.decks.deck', { slug: results.slug });
                 });
             }
         }
