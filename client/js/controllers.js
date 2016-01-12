@@ -11621,6 +11621,7 @@ angular.module('app.controllers', ['ngCookies'])
                         title: $scope.post.title,
                         content: $scope.post.content,
                         createdDate: new Date().toISOString(),
+                        isActive: true,
                         slug: {
                             url: Util.slugify($scope.post.title),
                             linked: true
@@ -11634,6 +11635,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                     ForumPost.create(newPost).$promise
                     .then(function (results) {
+                        console.log('results:', results);
                         return $state.transitionTo('app.forum.threads', { thread: $scope.thread.slug.url });
                     })
                     .catch(function (HttpResponse) {
@@ -11661,7 +11663,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // inc post on load
             $scope.post.viewCount++;
-            ForumPost.upsert($scope.post);
 
             var defaultComment = {
                 comment: ''
