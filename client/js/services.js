@@ -123,13 +123,13 @@ angular.module('app.services', [])
             
             
         },
-        thirdPartyLogin: function (provider) {
+        thirdPartyRedirect: function (path, provider) {
             var redirectObj = {
                 name: $state.current.name,
                 params: $state.params
             }
             $cookies.put("redirectStateString", JSON.stringify(redirectObj));
-            window.location.replace("/login/"+provider);
+            window.location.replace("/"+path+"/"+provider);
         }
     }
 }])
