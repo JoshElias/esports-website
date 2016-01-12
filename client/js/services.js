@@ -896,6 +896,7 @@ angular.module('app.services', [])
             return $http.post('/polls/vote', { poll: poll, votes: votes});
         },
         setStorage: function (poll, votes) {
+            console.log(poll, votes);
             return $localStorage['tspoll-' + poll] = votes;
         },
         getStorage: function (poll) {

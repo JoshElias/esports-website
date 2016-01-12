@@ -460,8 +460,8 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService',
-        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService) {
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService',
+        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService) {
             
             $scope.user = user;
             $scope.plan = user.subscription.plan || 'tempostorm_quarterly';
@@ -527,7 +527,6 @@ angular.module('app.controllers', ['ngCookies'])
                 User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
                 .$promise
                 .then(function (data) {
-                    
                     $scope.number = undefined;
                     $scope.cvc = undefined;
                     $scope.expiry = undefined;
@@ -541,9 +540,7 @@ angular.module('app.controllers', ['ngCookies'])
                 })
                 .catch(function (err) {
                     
-                    console.log("ERROR:", err);
                     AlertService.setError({ show: true, msg: 'There has been an error processing your payment. ' + err.status + ": " + err.data.error.message });
-                    console.log(AlertService);
                     $scope.setLoading(false);
                 });
             };
@@ -590,7 +587,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.updateProfile = function () {
-                console.log(LoopBackAuth);
                 async.series([
                     function (seriesCb) {
                         if ($scope.email !== $scope.user.email) {
@@ -6032,11 +6028,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             //get the hero name based on the index of portraitSettings' index
             $scope.getName = function (index, klass) {
-                try {
-                    return Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
-                } catch(err) {
-                    $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
-                    $scope.getName(index, caps);
+                var classHero = Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+                if (classHero) {
+                  return classHero;
+                } else {
+                  $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+                  $scope.getName(index, klass);
                 }
             }
 
@@ -6624,11 +6621,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             //get the hero name based on the index of portraitSettings' index
             $scope.getName = function (index, klass) {
-                try {
-                    return Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
-                } catch(err) {
-                    $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
-                    $scope.getName(index, caps);
+                var classHero = Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+                if (classHero) {
+                  return classHero;
+                } else {
+                  $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+                  $scope.getName(index, klass);
                 }
             }
 
@@ -8585,7 +8583,7 @@ angular.module('app.controllers', ['ngCookies'])
                 if (caps) {
                     return Hearthstone.heroNames[getClass(index)][portraitSettings[index]];
                 } else {
-                    var name = Hearthstone.heroNames[getClass(index)][portraitSettings[index]]
+                    var name = Hearthstone.heroNames[getClass(index)][portraitSettings[index]];
                     return name[0].toLowerCase() + name.slice(1);
                 }
             } catch(err) {
@@ -8717,11 +8715,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             //get the hero name based on the index of portraitSettings' index
             $scope.getName = function (index, klass) {
-                try {
-                    return Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
-                } catch(err) {
-                    $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
-                    $scope.getName(index, caps);
+                var classHero = Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+                if (classHero) {
+                  return classHero;
+                } else {
+                  $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+                  $scope.getName(index, klass);
                 }
             }
 
@@ -9315,11 +9314,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             //get the hero name based on the index of portraitSettings' index
             $scope.getName = function (index, klass) {
-                try {
-                    return Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
-                } catch(err) {
-                    $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
-                    $scope.getName(index, caps);
+                var classHero = Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+                if (classHero) {
+                  return classHero;
+                } else {
+                  $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+                  $scope.getName(index, klass);
                 }
             }
 
@@ -14567,11 +14567,11 @@ angular.module('app.controllers', ['ngCookies'])
         function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
 
             $scope.tempostormGuides = dataTempostormGuides;
-          console.log('dataTempostormGuides:', dataTempostormGuides);
+            console.log('dataTempostormGuides:', dataTempostormGuides);
 //            $scope.tempostormGuideTalents = tempostormTalents;
 
             $scope.communityGuides = dataCommunityGuides;
-          console.log('dataCommunityGuides:', dataCommunityGuides);
+            console.log('dataCommunityGuides:', dataCommunityGuides);
 //            $scope.communityGuideTalents = communityTalents;
 
             $scope.topGuides = dataTopGuide ? dataTopGuide : false;
@@ -14589,9 +14589,9 @@ angular.module('app.controllers', ['ngCookies'])
                 heroes: [],
                 map: undefined
             };
+            var initializing = true;
           
             function doQuery (fnCallback) {
-              console.log('DOING QUERY');
               initializing = true;
               // generate filters
               var guideFilters = [];
@@ -14606,8 +14606,6 @@ angular.module('app.controllers', ['ngCookies'])
                 async.parallel([
                   function (seriesCallback) {
                     doGetHeroMapGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides) {
-                      console.log('doGetHeroMapGuides err:', err);
-                      console.log('doGetHeroMapGuides guides:', guides);
                       if (err) return seriesCallback(err);
                       $scope.topGuides = guides;
                       initializing = false;
@@ -14615,10 +14613,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                   }, function (seriesCallback) {
                     doGetHeroMapGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
-                      
-                      console.log('doGetHeroMapGuides err:', err);
-                      console.log('doGetHeroMapGuides guides:', guides);
-                      console.log('doGetHeroMapGuides count:', count);
 
                       if (err) return seriesCallback(err);
                       $scope.tempostormGuides = guides;
@@ -14629,10 +14623,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                   }, function (seriesCallback) {
                     doGetHeroMapGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
-
-                      console.log('doGetHeroMapGuides err:', err);
-                      console.log('doGetHeroMapGuides guides:', guides);
-                      console.log('doGetHeroMapGuides count:', count);
 
                       if (err) return seriesCallback(err);
                       $scope.communityGuides = guides;
@@ -14655,9 +14645,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                   }, function (seriesCallback) {
                     doGetHeroGuides(1, 4, $scope.search, $scope.filters, true, function (err, guides, count) {
-                      console.log('doGetHeroGuides err:', err);
-                      console.log('doGetHeroGuides guides:', guides);
-                      console.log('doGetHeroGuides count:', count);
 
                       if (err) return seriesCallback(err);
                       $scope.tempostormGuides = guides;
@@ -14668,9 +14655,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                   }, function (seriesCallback) {
                     doGetHeroGuides(1, 10, $scope.search, $scope.filters, false, function (err, guides, count) {
-                        console.log('doGetHeroGuides err:', err);
-                        console.log('doGetHeroGuides guides:', guides);
-                        console.log('doGetHeroGuides count:', count);
                         
                         if (err) return seriesCallback(err);
                         $scope.communityGuides = guides;
@@ -14689,9 +14673,6 @@ angular.module('app.controllers', ['ngCookies'])
                     return seriesCallback();
                   }, function (seriesCallback) {
                     doGetMapGuides(1, 4, $scope.search, $scope.filters, true, function (err, guides, count) {
-                      console.log('doGetMapGuides err:', err);
-                      console.log('doGetMapGuides guides:', guides);
-                      console.log('doGetMapGuides count:', count);
 
                       if (err) return seriesCallback(err);
                       $scope.tempostormGuides = guides;
@@ -14702,9 +14683,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                   }, function (seriesCallback) {
                     doGetMapGuides(1, 10, $scope.search, $scope.filters, false, function (err, guides, count) {
-                      console.log('doGetMapGuides err:', err);
-                      console.log('doGetMapGuides guides:', guides);
-                      console.log('doGetMapGuides count:', count);
 
                       if (err) return seriesCallback(err);
                       $scope.communityGuides = guides;
@@ -14720,10 +14698,6 @@ angular.module('app.controllers', ['ngCookies'])
                   function (seriesCallback) {
                     doGetGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides, count) {
 
-                      console.log('doGetGuide err:', err);
-                      console.log('doGetGuide guides:', guides);
-                      console.log('doGetGuide count:', count);
-
                       if (err) return seriesCallback(err);
                       $scope.topGuides = guides;
                       initializing = false;
@@ -14731,10 +14705,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                   }, function (seriesCallback) {
                     doGetGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
-
-                      console.log('doGetGuide err:', err);
-                      console.log('doGetGuide guides:', guides);
-                      console.log('doGetGuide count:', count);
 
                       if (err) return seriesCallback(err);
                       $scope.tempostormGuides = guides;
@@ -14746,10 +14716,6 @@ angular.module('app.controllers', ['ngCookies'])
                   },
                   function (seriesCallback) { 
                    doGetGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
-
-                      console.log('doGetGuide err:', err);
-                      console.log('doGetGuide guides:', guides);
-                      console.log('doGetGuide count:', count);
 
                      if (err) return seriesCallback(err);
                       $scope.communityGuides = guides;
@@ -14772,16 +14738,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
           
             function doGetHeroGuides (page, perpage, search, filters, isFeatured, callback) {
-              console.log('page:', page);
-              console.log('perpage:', perpage);
-              console.log('search:', search);
-              console.log('filters:', filters);
-              console.log('isFeatured:', isFeatured);
-              console.log('callback:', callback);
               HOTSGuideQueryService.getHeroGuides(filters, isFeatured, perpage, page, function (err, guides, count) {
-                  console.log('err:', err);
-                  console.log('guides:', guides);
-                  console.log('count:', count);
 
                   initializing = false;
                   return callback(err, guides, count);
@@ -14797,22 +14754,19 @@ angular.module('app.controllers', ['ngCookies'])
             }
           
             function doGetGuides (page, perpage, search, filters, isFeatured, callback) {
-              console.log('asdf page:', page);
-              console.log('asdf perpage:', perpage);
               HOTSGuideQueryService.getGuides(filters, isFeatured, search, perpage, page, function (err, guides, count) {
-                console.log('doGetGuides');
-                console.log('err:', err);
-                console.log('guides:', guides);
-                console.log('count:', count);
 
                 initializing = false;
                 return callback(err, guides, count);
               });
             }
 
-            var initializing = true;
             $scope.$watch(function() { return $scope.filters; }, function (value) {
-                    doQuery();
+              if (initializing) {
+                $timeout(function () { initializing = false });
+              } else {
+                doQuery();
+              }
             }, true);
 
             // top guide
@@ -14931,11 +14885,6 @@ angular.module('app.controllers', ['ngCookies'])
             console.log('tempostormGuideCount:', tempostormGuideCount);
             $scope.tempostormPagination = AjaxPagination.new(4, tempostormGuideCount.count,
                 function (page, perpage) {
-                  console.log('page:', page);
-                  console.log('perpage:', perpage);
-                  console.log('$scope.filters:', $scope.filters);
-                  console.log('$scope.search:', $scope.search);
-                  
                     var d = $q.defer();
               
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
@@ -14946,7 +14895,6 @@ angular.module('app.controllers', ['ngCookies'])
                         return d.resolve(count.count);
                       });
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                      console.log('2');
                       doGetHeroGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
                         if (err) return d.resolve(err);
                         $scope.tempostormGuides = guides;
@@ -14954,22 +14902,14 @@ angular.module('app.controllers', ['ngCookies'])
                         return d.resolve(count.count);
                       });
                     } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
-                      console.log('3');
                       doGetMapGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
                         if (err) return d.resolve(err);
                         $scope.tempostormGuides = guides;
                         $scope.tempostormPagination.total = count.count;
                         return d.resolve(count.count);
                       });
                     } else {
-                      console.log('4');
                       doGetGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
                         if (err) return d.resolve(err);
                         $scope.tempostormGuides = guides;
                         $scope.tempostormPagination.total = count.count;
@@ -14984,12 +14924,9 @@ angular.module('app.controllers', ['ngCookies'])
             console.log('communityGuideCount:', communityGuideCount);
             $scope.communityPagination = AjaxPagination.new(10, communityGuideCount.count,
                 function (page, perpage) {
-                    console.log('page:', page);
-                    console.log('perpage:', perpage);
                     var d = $q.defer();
               
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
-                      console.log('1');
                       doGetHeroMapGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
                         if (err) return d.resolve(err);
                         $scope.communityGuides = guides;
@@ -14997,7 +14934,6 @@ angular.module('app.controllers', ['ngCookies'])
                         return d.resolve(count.count);
                       });
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                      console.log('2');
                       doGetHeroGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
                         if (err) return d.resolve(err);
                         $scope.communityGuides = guides;
@@ -15005,22 +14941,14 @@ angular.module('app.controllers', ['ngCookies'])
                         return d.resolve(count.count);
                       });
                     } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
-                      console.log('3');
                       doGetMapGuides(page, perpage, $scope.search, $scope.filters, false, function(err, guides, count) {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
                         if (err) return d.resolve(err);
                         $scope.communityGuides = guides;
                         $scope.communityPagination.total = count.count;
                         return d.resolve(count.count);
                       });
                     } else {
-                      console.log('4');
                       doGetGuides(page, perpage, $scope.search, $scope.filters, false, function (err, guides, count) {
-                        console.log('err:', err);
-                        console.log('guides:', guides);
-                        console.log('count:', count);
                         if (err) return d.resolve(err);
                         $scope.communityGuides = guides;
                         $scope.communityPagination.total = count.count;
@@ -16599,11 +16527,10 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 'Poll', 'PollItem',
         function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide, Poll, PollItem) {
-            console.log('dataPollsMain:', dataPollsMain);
-            console.log('dataPollsSide:', dataPollsSide);
           
             var box;
             var votes = {};
+            var submitting = false;
             
             $scope.pollsMain = dataPollsMain;
             $scope.pollsSide = dataPollsSide;
@@ -16669,18 +16596,17 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.setDoneVoting = function (poll, votes) {
-                return PollService.setStorage(poll.id, votes);
+                return PollService.setStorage(poll.id, votes[poll.id]);
             };
 
             $scope.getVotes = function (poll) {
-                console.log('getVotes poll:', poll);
                 return poll.votes;
             };
 
             $scope.getLocalVotes = function (poll, item) {
-                var localVotes = PollService.getStorage(poll.id).split(',');
+                var localVotes = PollService.getStorage(poll.id);
                 for (var i = 0; i < localVotes.length; i++) {
-                    if(item._id == localVotes[i]) {
+                    if(item.id == localVotes[i]) {
                         return true;
                     }
                 }
@@ -16701,42 +16627,33 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.submitVote = function (poll) {
-                console.log('poll:', poll);
+              if (!submitting) {
+                submitting = true;
+                var v = [];
+                _.each(votes[poll.id], function (vote) {
+                  v.push(_.find(poll.items, function (item) {
+                    return item.id === vote;
+                  }));
+                })
                 
-                async.each(poll.items, function(pollItem, pollItemCB) {
-
+                async.each(v, function(pollItem, pollItemCB) {
+                  pollItem.votes++;
+                  
                   PollItem.upsert(pollItem)
                   .$promise
                   .then(function (pollItemUpdated) {
-                    console.log('pollItemUpdated: ', pollItemUpdated);
                     return pollItemCB();
                   })
                   .catch(function (err) {
                     return pollItemCB(err);
                   });
-
                 }, function(err, results) {
-                  if (err) {
-                    return console.log('err:', err);
-                  }
-                  return console.log('done');
+                  if (err) { return console.log('err:', err); }
+                  
+                  $scope.setDoneVoting(poll, votes);
+                  submitting = false;
                 });
-                
-//                Poll.update(poll, poll.votes).success(function (data) {
-//                    if(!data.success) {
-//                        $data.errors = data.errors;
-//                    } else {
-//                        var votesString = $scope.getVotes(poll).join(',');
-//                        $scope.setDoneVoting(poll, votesString);
-//                        for (var i = 0; i != poll.items.length; i++){
-//                            for (var j = 0; j != $scope.getVotes(poll).length; j++) {
-//                                if (poll.items[i]._id == $scope.getVotes(poll)[j]) {
-//                                    poll.items[i].votes++;
-//                                }
-//                            }
-//                        }
-//                    }
-//                })
+              }
             };
         }
     ])
