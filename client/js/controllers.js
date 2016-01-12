@@ -57,8 +57,8 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
 
 
-        $scope.currentUser = LoopBackAuth.currentUserData;
-        console.log("Current User:", $scope.currentUser);
+        $scope.currentUser = currentUser;
+
         EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
             $scope.currentUser = data;
         });
@@ -74,7 +74,6 @@ angular.module('app.controllers', ['ngCookies'])
                     return;
                 }
                 $scope.currentUser = undefined;
-                console.log("logged out successful");
             });
         }
     }])

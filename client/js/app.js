@@ -163,17 +163,14 @@ var app = angular.module('app', [
                   // Load the current user data if we don't have it
                     currentUser: ['User', 'LoopBackAuth',
                         function(User, LoopBackAuth) {
-                            console.log("Populating user data");
-                            console.log("User isAuthenticated:", User.isAuthenticated());
-                            console.log("LoopBackAuth.currentUserData:", LoopBackAuth.currentUserData);
                             if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
                               return User.getCurrent().$promise;
                             }
+                            return LoopBackAuth.currentUserData;
                         }
                     ]
                 },
                 onEnter: ['$cookies', '$state', 'EventService', function($cookies, $state, EventService) {
-
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
                     if(redirectState) {
