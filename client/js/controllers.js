@@ -57,8 +57,8 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
 
 
-        $scope.currentUser = currentUser;
-        console.log("Current User:", currentUser);
+        $scope.currentUser = LoopBackAuth.currentUserData;
+        console.log("Current User:", $scope.currentUser);
         EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
             $scope.currentUser = data;
         });
