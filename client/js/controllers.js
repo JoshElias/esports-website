@@ -9837,27 +9837,25 @@ angular.module('app.controllers', ['ngCookies'])
 				      var deck = angular.copy(deckSubmitted);
               console.log('saving deck:', deck);
               
-              _.each(deck.mulligans, function(mulligan, index) {
-                console.log('current mulligan:', mulligan);
-                console.log('index:', index);
-                var cardsWithCoinMulligan = _.each(mulligan.mulligansWithCoin, function(cardWithCoin) {
-                  var realCardWithCoin = {
-                    cardId: cardWithCoin.id,
-                    deckId: deck.id
-                  };
-                  cardWithCoin = realCardWithCoin;
-                });
-                deck.mulligans[index].mulligansWithCoin = cardsWithCoinMulligan;
-                
-                var cardsWithoutCoinMulligan = _.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin) {
-                  var realCardWithoutCoin = {
-                    cardId: cardWithoutCoin.id,
-                    deckId: deck.id
-                  };
-                  cardWithoutCoin = realCardWithoutCoin;
-                });
-                deck.mulligans[index].mulligansWithoutCoin = cardsWithoutCoinMulligan;
-              });
+//              _.each(deck.mulligans, function(mulligan, index) {
+//                console.log('current mulligan:', mulligan);
+//                console.log('index:', index);
+//                var cardsWithCoinMulligan = _.each(mulligan.mulligansWithCoin, function(cardWithCoin, index2) {
+//                  var realCardWithCoin = {
+//                    cardId: cardWithCoin.id,
+//                    deckId: deck.id
+//                  };
+//                  deck.mulligans[index].mulligansWithCoin[index2] = cardsWithCoinMulligan;
+//                });
+//                
+//                var cardsWithoutCoinMulligan = _.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, index2) {
+//                  var realCardWithoutCoin = {
+//                    cardId: cardWithoutCoin.id,
+//                    deckId: deck.id
+//                  };
+//                  deck.mulligans[index].mulligansWithoutCoin[index2] = cardsWithoutCoinMulligan;
+//                });
+//              });
               
               console.log('deck now:', deck);
               
