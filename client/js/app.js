@@ -115,7 +115,7 @@ var app = angular.module('app', [
 .config(
     ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider',
     function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
-
+      
         app.controller = $controllerProvider.register;
         app.directive  = $compileProvider.directive;
         app.filter     = $filterProvider.register;

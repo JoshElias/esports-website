@@ -84,7 +84,7 @@ angular.module('app.services', [])
             User.login(options, where)
             .$promise
             .then(function (data) {
-              console.log(data);
+//              console.log(data);
                 var user = data.user;
                 
                 EventService.emit("EVENT_LOGIN", user);
@@ -584,8 +584,8 @@ angular.module('app.services', [])
 			(value.persist !== undefined) ? this.setPersist(value.persist) : null;
 
 			// array of errors
-			console.log('errorList:', value.errorList);
-			console.log('lbErr:', value.lbErr);
+//			console.log('errorList:', value.errorList);
+//			console.log('lbErr:', value.lbErr);
 			var errorList = [];
 			value.errorList ? errorList = value.errorList : errorList = [];
 			if (value.lbErr
@@ -607,7 +607,7 @@ angular.module('app.services', [])
 				errorList.push(value.lbErr.data.error.message);
 			}
 			error.errorList = errorList;
-			console.log('error.errorList:', error.errorList);
+//			console.log('error.errorList:', error.errorList);
         },
         reset: function () {
           success = {};
@@ -896,7 +896,7 @@ angular.module('app.services', [])
             return $http.post('/polls/vote', { poll: poll, votes: votes});
         },
         setStorage: function (poll, votes) {
-            console.log(poll, votes);
+//            console.log(poll, votes);
             return $localStorage['tspoll-' + poll] = votes;
         },
         getStorage: function (poll) {
@@ -1180,7 +1180,7 @@ angular.module('app.services', [])
     };
 
     pagination.new = function (perpage, total, callback) {
-      console.log('callback:', callback);
+//      console.log('callback:', callback);
         var paginate = {
             page: 1,
             perpage: perpage || 10,
@@ -1551,9 +1551,9 @@ angular.module('app.services', [])
         };
 
         db.toggleMulligan = function (mulligan, withCoin, card) {
-            console.log('mulligan: ', mulligan);
-            console.log('card: ', card);
-            console.log('with coin: ', withCoin);
+//            console.log('mulligan: ', mulligan);
+//            console.log('card: ', card);
+//            console.log('with coin: ', withCoin);
             
             var cardMulligans = (withCoin) ? mulligan.mulligansWithCoin : mulligan.mulligansWithoutCoin,
                 exists = false,
@@ -1570,7 +1570,7 @@ angular.module('app.services', [])
 
             if (exists) {
                 cardMulligans.splice(index, 1);
-                console.log('spliced coinMulligan: ', cardMulligans);
+//                console.log('spliced coinMulligan: ', cardMulligans);
             } else {
                 // card doesn't exist in deck.mulligans
                 if (cardMulligans.length < 6) {
@@ -1645,7 +1645,7 @@ angular.module('app.services', [])
             var mulligans = db.mulligans;
             for (var i = 0; i < mulligans.length; i++) {
                 if (mulligans[i].className === klass) {
-                    console.log('mulligan: ', mulligans[i]);
+//                    console.log('mulligan: ', mulligans[i]);
                     return mulligans[i];
                 }
             }
@@ -1687,7 +1687,7 @@ angular.module('app.services', [])
                 isLegendary = (card.rarity === 'Legendary') ? true : false,
                 totalCards = db.getSize();
             
-            console.log('adding card: ', card);
+//            console.log('adding card: ', card);
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
@@ -1768,17 +1768,17 @@ angular.module('app.services', [])
         };
 
         db.removeCardFromDeck = function (card) {
-            console.log('card rem: ', card);
+//            console.log('card rem: ', card);
             var cardRemovedFromDeck = false,
                 index = -1,
                 cardMulliganExists = false,
                 cancel = false;
             
-			console.log('db.cards:', db.cards);
+//			console.log('db.cards:', db.cards);
             for (var i = 0; i < db.cards.length; i++) {
                 if (card.id === db.cards[i].card.id) {
-					console.log('card.id:', card.id);
-					console.log('db.cards[i].card.id:', db.cards[i].card.id);
+//					console.log('card.id:', card.id);
+//					console.log('db.cards[i].card.id:', db.cards[i].card.id);
                     if (db.cards[i].cardQuantity > 1) {
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
@@ -1791,9 +1791,9 @@ angular.module('app.services', [])
             }
             
             if(cardRemovedFromDeck) {
-                console.log('card was removed');
+//                console.log('card was removed');
                 // search all card with coin mulligans
-				console.log('db.mulligans:', db.mulligans);
+//				console.log('db.mulligans:', db.mulligans);
                 for(var i = 0; i < db.mulligans.length; i++) {
 					if (db.mulligans[i].mulligansWithCoin.length > 0) {
 						for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
@@ -1978,7 +1978,7 @@ angular.module('app.services', [])
         }
 
         db.newMatch = function (klass) {
-            console.log('vhat class?: ', klass);
+//            console.log('vhat class?: ', klass);
             var m = {
                 deckName: '',
                 className: '',
@@ -2053,7 +2053,7 @@ angular.module('app.services', [])
     var guideBuilder = {};
 
     guideBuilder.new = function (guideType, data) {
-        console.log('DATA:', data);
+//        console.log('DATA:', data);
       
         if (data && data.guideHeroes) {
             data.heroes = data.guideHeroes
@@ -2066,9 +2066,9 @@ angular.module('app.services', [])
         // init tiers to null for existing/cached heros if their talents do not currently exist
         function createTiers(heroes) {
             var guideHeroes = [];
-            console.log('heroes:', heroes);
+//            console.log('heroes:', heroes);
             _.each(heroes, function(hero) {
-                console.log('hero:', hero);
+//                console.log('hero:', hero);
                 var newObj = {};
                 newObj.hero = hero.hero;
                 newObj.talents = {
@@ -2093,11 +2093,11 @@ angular.module('app.services', [])
                 
             });
             
-            console.log('guideHeroes:', guideHeroes);
+//            console.log('guideHeroes:', guideHeroes);
             return guideHeroes;
         }
         
-        console.log('data.maps:', data.maps);
+//        console.log('data.maps:', data.maps);
         
         var gb = {
             id: data.id || null,
@@ -2127,7 +2127,7 @@ angular.module('app.services', [])
             authorId: data.authorId || User.getCurrentId(),
             talentTiers: data.talentTiers || {}
         };
-        console.log('gb:', gb);
+//        console.log('gb:', gb);
         // constrain maps to 1 if map guide
         if (guideType === 'map' && gb.maps.length > 1) {
             gb.maps = [gb.maps[0]];
@@ -2183,7 +2183,7 @@ angular.module('app.services', [])
               }
             }).$promise
             .then(function (heroTalents) {
-              console.log('heroTalents:', heroTalents);
+//              console.log('heroTalents:', heroTalents);
               hero.talents = heroTalents;
             })
             .catch(function (err) {
@@ -2249,7 +2249,7 @@ angular.module('app.services', [])
 //        };
 
         gb.toggleTalent = function (hero, talent) {
-          console.log('hero:', hero);
+//          console.log('hero:', hero);
           var talentId = talent.id;
           var tal = _.find(hero.hero.talents, function (val) { return val.talentId == talentId });
 
@@ -2615,11 +2615,11 @@ angular.module('app.services', [])
           ])
         },
         getGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
-          console.log('filters:', filters);
-          console.log('isFeatured:', isFeatured);
-          console.log('search:', search);
-          console.log('limit:', limit);
-          console.log('page:', page);
+//          console.log('filters:', filters);
+//          console.log('isFeatured:', isFeatured);
+//          console.log('search:', search);
+//          console.log('limit:', limit);
+//          console.log('page:', page);
           
             var order = "voteScore DESC",
                 heroWhere = {}, 
@@ -2767,12 +2767,12 @@ angular.module('app.services', [])
             });
         },
         getHeroGuides: function (filters, isFeatured, limit, page, finalCallback) {
-          console.log('got here');
-          console.log('filters:', filters);
-          console.log('isFeatured:', isFeatured);
-          console.log('limit:', limit);
-          console.log('page:', page);
-          console.log('selectedHeroes:', selectedHeroes);
+//          console.log('got here');
+//          console.log('filters:', filters);
+//          console.log('isFeatured:', isFeatured);
+//          console.log('limit:', limit);
+//          console.log('page:', page);
+//          console.log('selectedHeroes:', selectedHeroes);
             var selectedHeroes = filters.heroes,
                 order = "voteScore DESC";
 
@@ -2829,7 +2829,7 @@ angular.module('app.services', [])
                     return seriesCallback(undefined, selectedGuideIds);
                 }, function (guideIds, seriesCallback) {
                     guideIds = _.flatten(guideIds);
-                    console.log('guideIds:', guideIds);
+//                    console.log('guideIds:', guideIds);
 
                     Guide.find({
                         filter: {
@@ -2913,8 +2913,8 @@ angular.module('app.services', [])
                 }
             ], function(err, guides, count) {
               console.log('err:', err);
-              console.log('guides:', guides);
-              console.log('count:', count);
+//              console.log('guides:', guides);
+//              console.log('count:', count);
               if (err) {
                 return finalCallback(err);
               }
@@ -3453,7 +3453,7 @@ angular.module('app.services', [])
       }
 
       function setExists (inArr, arrName) {
-        console.log('SET EXISTS WAS CALLED:', inArr, arrName);
+//        console.log('SET EXISTS WAS CALLED:', inArr, arrName);
         if (!arrs[arrName]) {
           this.createArr(arrName);
         }
@@ -3477,29 +3477,29 @@ angular.module('app.services', [])
           arr[d].splice(idx, 1);
         }
 
-        console.log('CrudMan: ADD triggered', arrs);
+//        console.log('CrudMan: ADD triggered', arrs);
         if (!find(item, arrName, w)) {
           arr[w].push(item);
-          console.log('CrudMan: item not found. added toWrite');
+//          console.log('CrudMan: item not found. added toWrite');
         } else {
-          console.log('CrudMan: item found in toWrite. did NOT add');
+//          console.log('CrudMan: item found in toWrite. did NOT add');
         }
 
       }
 
       function toggleItem (item, arrName) {
         if (find(item, arrName, e)) {
-          console.log('is in exists');
+//          console.log('is in exists');
           arrs[arrName][d].push(item);
         } else if (find(item, arrName, w)) {
-          console.log('is in create');
+//          console.log('is in create');
           removeFromArr(item, arrName, w);
         } else {
-          console.log('added to create');
+//          console.log('added to create');
           addToArr(item, arrName, w);
         }
 
-        console.log('CrudMan TOGGLE triggered', arrs);
+//        console.log('CrudMan TOGGLE triggered', arrs);
       }
       
       return {
