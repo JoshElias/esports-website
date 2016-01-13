@@ -1,4 +1,5 @@
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
 
 // Description: styles for the hots meta snapshot only. WARNING!! Some styles may be affected by deck styles from the hs-deck.scss file.
 
@@ -79,11 +80,9 @@
         }
     }
     
-    .box-border { 
-        background-color: rgba(19, 18, 19, 0.7);
-        box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.75);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        outline: 1px solid #000; 
+    .box-border {
+        
+        @include ts-div-styles;
  
         &.no-outline {
             outline: 1px solid transparent; 

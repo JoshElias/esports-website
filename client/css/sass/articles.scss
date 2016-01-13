@@ -87,19 +87,56 @@
 // 2... article
 //*************************************
 
+.articles-list { 
+    margin-right: -20px; 
 
-.articles-list { margin-right: -20px; }
-.articles-list .article-wrapper { margin-right: 20px; }
-.articles-list-sm { margin-right: -10px; }
+    .article-wrapper { 
+        margin-right: 20px; 
+    }
+}
 
-.article-votes { position: absolute; right: 20px; top: 20px; }
-.article-votes .vote-wrap { position: relative; text-align: center; }
-.article-votes .vote-wrap a { cursor: pointer; }
-.article-votes .vote-wrap i { margin-top: 10px; font-size: 24px }
+.articles-list-sm { 
+    margin-right: -10px; 
+}
+
+.article-votes { 
+    position: absolute; 
+    right: 20px; 
+    top: 20px; 
+
+    .vote-wrap { 
+        position: relative; 
+        text-align: center;
+        
+        a { 
+            cursor: pointer; 
+        }
+        
+        i { 
+            margin-top: 10px; 
+            font-size: 24px 
+        }
+    }
+}
+
+.article-photo-banner { 
+    width: 100%; 
+    min-height: 293px; 
+    border-bottom: 1px solid rgba(255,255,255,.2); 
+}
 
 
-.article-photo-banner { width: 100%; min-height: 293px; border-bottom: 1px solid rgba(255,255,255,.2); }
-.article-page { background: rgba(0,0,0,.5); border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); padding: 0; position: relative; }
+
+
+.article-page { 
+    background: rgba(0,0,0,.5); 
+    border-left: 1px solid rgba(255,255,255,.2); 
+    border-right: 1px solid rgba(255,255,255,.2); 
+    padding: 0; 
+    position: relative; 
+}
+
+
 .article-page .title-wrapper { padding: 30px 90px 30px 30px; }
 .article-page .title-wrapper h1 { color: #FFFFFF; text-shadow: 1px 1px 1px black; font-weight: bold; letter-spacing: 3px; }
 .article-page .title-wrapper h2 { color: #FFFFFF; font-size: 18px; text-shadow: 1px 1px 1px black; }

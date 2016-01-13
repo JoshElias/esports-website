@@ -24,6 +24,7 @@
 
 
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
 
 //*************************************
 // 2... local variables
@@ -95,7 +96,6 @@ $pos-y: 4px;
     }
 }
 
-
 .overwatch {
 
     //styles start
@@ -115,9 +115,7 @@ $pos-y: 4px;
     }
 
     .ts-div {
-        background-color: $opac-div; 
-        box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
-        border: 1px solid rgba(255,255,255,0.2); outline: 1px solid #000;
+       @include ts-div-styles;
     }
 
     .m-b-18 {

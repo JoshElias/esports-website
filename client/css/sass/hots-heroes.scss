@@ -1,5 +1,6 @@
 
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
 
 // Description: hots heroes scss file specifically for adding heroes using mixins
 // used to enter heroes and their talents into mixins to auto gen css.
@@ -88,9 +89,7 @@
                     &.large.#{$talentName} { background-position: -30px #{$large}px; }
 
                 }
-
             }
-
         }
     }
 }
@@ -165,8 +164,6 @@
         }
     }
 }
-
-
 
 
 // Mixin is for Hero filters, it sets position of the heros image on a sprite sheet
@@ -385,8 +382,6 @@ This is the template for hots-hero-talents.
 @include hots-hero(lunara);
 @include hots-hero(greymane);
 
-
-
 //*************************************
 //5... HOTS heroes talents
 //*************************************
@@ -396,9 +391,6 @@ This is the template for hots-hero-talents.
 //*************************************
 
 //abathur Talents
-
-
-
 
 @include hots-hero-talents ( abathur, (
     ( class: (pressurized-glands, soma-transferance, envenomed-spikes), pos: 0 ), // 0
