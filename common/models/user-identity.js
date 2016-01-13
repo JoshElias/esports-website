@@ -52,7 +52,7 @@ module.exports = function(UserIdentity) {
 	          });
 	        });
 	      } else {
-	      	return cb("You must link your profile first");
+	      	return cb(undefined, new Error("You must link your profile first"));
 	      }
 	  });
 	};
