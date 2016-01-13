@@ -1,54 +1,55 @@
+
 module.exports = {
-  "twitch-login": {
-    "provider": "twitch",
-    "module": "passport-twitch",
-    "clientID": "226rnm5263dzbn13wrs3q5bvuc9aeml",
-    "clientSecret": "edg5nj934q127ayqlmfapsbj7e2navx",
-    "callbackURL": "https://52.26.75.137/login/twitch/callback",
-    "authPath": "/login/twitch",
-    "callbackPath": "/login/twitch/callback",
-    "successRedirect": "/",
-    "failureRedirect": "/login",
-    "scope": ["user_read"]
-  },
-  "twitch-link": {
-    "provider": "twitch",
-    "module": "passport-twitch",
-    "clientID": "n5unbtqp62v5422v5ylegn0hp20po6m",
-    "clientSecret": "l57vitpor6j09bzmxjus0b5ldbtpru7",
-    "callbackURL": "https://52.26.75.137/link/twitch/callback",
-    "authPath": "/link/twitch",
-    "callbackPath": "/link/twitch/callback",
-    "successRedirect": "/",
-    "failureRedirect": "/login",
-    "scope": ["user_read"],
-    "link": true,
-    "session": true
-  },
-  "bnet-login": {
-    "provider": "bnet",
-    "module": "passport-bnet",
-    "clientID": "6xjg4e2va25ag3mdsbuzpqp5faa59pqm",
-    "clientSecret": "yrq9yt5KtHtA3feEwU59BcvkYcyc2uMJ",
-    "callbackURL": "https://52.26.75.137/login/bnet/callback",
-    "authPath": "/login/bnet",
-    "callbackPath": "/login/bnet/callback",
-    "emailOptional": true,
-    "successRedirect": "/",
-    "failureRedirect": "/login"
-  },
-  "bnet-link": {
-    "provider": "bnet",
-    "module": "passport-bnet",
-    "clientID": "dabvc6wpmq93c7m3z9626zeny9crppyb",
-    "clientSecret": "U9AeqwXauXBsewhKQn6ZEUygmZsmBgPT",
-    "callbackURL": "https://52.26.75.137/link/bnet/callback",
-    "authPath": "/link/bnet",
-    "callbackPath": "/link/bnet/callback",
-    "emailOptional": true,
-    "successRedirect": "/",
-    "failureRedirect": "/login",
-    "link": true,
-    "session": true
-  }
+ "twitch-login": {
+   "provider": "twitch",
+   "module": "passport-twitch",
+   "clientID": "ms556wfz0hr0adtraypjo2i7m2pmvam",
+   "clientSecret": "hzrci57rtvfw9r915linb2gmfyzr30r",
+   "callbackURL": "https://staging.tempostorm.com/login/twitch/callback",
+   "authPath": "/login/twitch",
+   "callbackPath": "/login/twitch/callback",
+   "successRedirect": "/",
+   "failureRedirect": "/login",
+   "scope": ["user_read"]
+ },
+ "twitch-link": {
+   "provider": "twitch",
+   "module": "passport-twitch",
+   "clientID": "6raft682814tfrgr00pvmek4tb543n8",
+   "clientSecret": "q1coxxl8ly4yel676ttkht705z0fkju",
+   "callbackURL": "https://staging.tempostorm.com/link/twitch/callback",
+   "authPath": "/link/twitch",
+   "callbackPath": "/link/twitch/callback",
+   "successRedirect": "/",
+   "failureRedirect": "/login",
+   "scope": ["user_read"],
+   "link": true,
+   "session": true
+ },
+ "bnet-login": {
+   "provider": "bnet",
+   "module": "passport-bnet",
+   "clientID": "se9jxsk6ykxbwtcbn9ept3eptp6h7t56",
+   "clientSecret": "96dC8cCNMmjsMpjJ8BYSZ8BEpB2jQMQF",
+   "callbackURL": "https://staging.tempostorm.com/login/bnet/callback",
+   "authPath": "/login/bnet",
+   "callbackPath": "/login/bnet/callback",
+   "emailOptional": true,
+   "successRedirect": "/",
+   "failureRedirect": "/login"
+ },
+ "bnet-link": {
+   "provider": "bnet",
+   "module": "passport-bnet",
+   "clientID": "xdq2yg3anetayzuyn89maqdn4bd76ct2",
+   "clientSecret": "K7qNUmrqVXgfxDnUVCHfBk3AQeE5HG7a",
+   "callbackURL": "https://staging.tempostorm.com/link/bnet/callback",
+   "authPath": "/link/bnet",
+   "callbackPath": "/link/bnet/callback",
+   "emailOptional": true,
+   "successRedirect": "/",
+   "failureRedirect": "/login",
+   "link": true,
+   "session": true
+ }
 }

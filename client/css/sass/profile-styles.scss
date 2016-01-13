@@ -344,6 +344,11 @@
     margin: 0px 2.5%;
     width: 95%;
     background: #cd201f;
+    height: 45px;
+  
+    &:hover {
+      background: #E82424;
+    }
 }
 
 .profile-edit-wrapper .reset-password h2 {

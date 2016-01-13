@@ -117,8 +117,8 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('UserResetPasswordCtrl', ['$scope', '$state', '$stateParams', '$location', 'User',
-        function ($scope, $state, $stateParams, $location, User) {
+    .controller('UserResetPasswordCtrl', ['$scope', '$state', '$stateParams', '$location', 'User', 'AlertService',
+        function ($scope, $state, $stateParams, $location, User, AlertService) {
 
             $scope.reset = {
                 password: '',
@@ -12893,7 +12893,6 @@ angular.module('app.controllers', ['ngCookies'])
                     Talent.upsert({}, talent)
                     .$promise
                     .then(function (data) {
-                        console.log(data);
                         updateTalents(1, 50, $scope.search);
                         box.modal('hide');
                     })
@@ -12918,7 +12917,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                 options.filter = {
                     fields: paginationParams.options.filter.fields,
-                    order: paginationParams.options.filter.order,
+                    order: "name ASC",
                     skip: ((page*perpage)-perpage),
                     limit: paginationParams.perpage
                 };
