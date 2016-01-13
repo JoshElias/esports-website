@@ -123,13 +123,13 @@ angular.module('app.services', [])
             
             
         },
-        thirdPartyLogin: function (provider) {
+        thirdPartyRedirect: function (path, provider) {
             var redirectObj = {
                 name: $state.current.name,
                 params: $state.params
             }
             $cookies.put("redirectStateString", JSON.stringify(redirectObj));
-            window.location.replace("/login/"+provider);
+            window.location.replace("/"+path+"/"+provider);
         }
     }
 }])
@@ -896,6 +896,7 @@ angular.module('app.services', [])
             return $http.post('/polls/vote', { poll: poll, votes: votes});
         },
         setStorage: function (poll, votes) {
+            console.log(poll, votes);
             return $localStorage['tspoll-' + poll] = votes;
         },
         getStorage: function (poll) {

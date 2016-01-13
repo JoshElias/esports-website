@@ -124,7 +124,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('sk_live_FHjluwAxnn5yISh7lMs0vxMx');
+        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 
@@ -1671,7 +1671,7 @@ var app = angular.module('app', [
 
                               return Guide.find({
                                 filter: {
-                                  order: 'votesCount DESC',
+                                  order: 'voteScore DESC',
                                   limit: 1,
                                   where: {
                                       guideType: "hero",
@@ -1732,6 +1732,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise
                               .then(function (guides) {
+                                console.log(guides);
                                   return guides;
                               }).catch(function(err) {
                                   console.log("error", err);

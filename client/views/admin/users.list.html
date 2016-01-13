@@ -10,7 +10,7 @@
                     to <strong>{{  userPagination.page * userPagination.perpage > userPagination.total ? userPagination.total : userPagination.page * userPagination.perpage }}</strong> 
                     of <strong>{{ userPagination.total }}</strong>
                 </span>
-                <div pagination="userPagination" theme="default" class="default"></div>
+                <div pagination="userPagination" theme="admin" class="admin"></div>
             </div>
             <div class="pull-left">
                 <form class="form-inline" ng-submit="searchUsers()" novalidate>
@@ -72,7 +72,7 @@
                 to <strong>{{  userPagination.page * userPagination.perpage > userPagination.total ? userPagination.total : userPagination.page * userPagination.perpage }}</strong> 
                 of <strong>{{ userPagination.total }}</strong>
             </span>
-            <div pagination="userPagination" theme="default" class="default"></div>
+            <div pagination="userPagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
             <form class="form-inline" ng-submit="searchUsers()" novalidate>

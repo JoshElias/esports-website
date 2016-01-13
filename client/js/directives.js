@@ -179,11 +179,11 @@ angular.module('app.directives', ['ui.load'])
                 };
 
                 $scope.twitchLogin = function() {
-                  LoginService.thirdPartyLogin('twitch');
+                  LoginService.thirdPartyRedirect('login', 'twitch');
                 };
 
                 $scope.bnetLogin = function() {
-                  LoginService.thirdPartyLogin("bnet");
+                  LoginService.thirdPartyRedirect("login", "bnet");
                 };
             }]
         }
