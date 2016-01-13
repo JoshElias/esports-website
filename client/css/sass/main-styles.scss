@@ -1129,6 +1129,10 @@ ul.premium-features li i { margin-right: 5px; color: #85c440; }
 .page-flipper.page-flipper-top { margin-bottom: 20px; }
 .page-flipper.page-flipper-bottom { margin-top: 20px; margin-bottom: 20px; }
 
+//*************************************
+// 12.1.. page flipper - default
+//*************************************
+
 .default .page-flipper .btn { position: relative; min-width: 30px; height: 30px; line-height: 28px; font-family: 'Open Sans Bold'; color: #DDD; background: rgba(19,18,19,.7); border-radius: 0px; border: 1px solid #000; outline: none; }
 
 .default .page-flipper .btn .inner { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; border: 1px solid rgba(255,255,255,.2); }
@@ -1149,6 +1153,74 @@ ul.premium-features li i { margin-right: 5px; color: #85c440; }
 
 .default .page-flipper .btn.active { background: #2766ad; }
 .default .page-flipper .btn.active .inner { border: 1px solid rgba(255,255,255,.2) !important; }
+
+//*************************************
+// 12.2.. page flipper - admin
+//*************************************
+
+.admin {
+  .page-flipper {
+    .btn {
+      position: relative;
+      min-width: 30px;
+      height: 30px;
+      line-height: 28px;
+      font-family: 'Open Sans Bold';
+      color: #DDD;
+      background: #2766AD none repeat scroll 0% 0%;
+      border-radius: 0px;
+      outline: none;
+      
+      
+      &:hover{
+        background: #083F7D none repeat scroll 0% 0%;
+        
+        .inner {
+        }
+      }
+      
+      &.active {
+        background: #083F7D none repeat scroll 0% 0%;
+        
+        .inner {
+        }
+      }
+      
+      .inner {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+      }
+      .btn-pagination-nav,
+      .btn-group {
+        box-shadow: 2px 2px 3px rgba(0,0,0,.75);
+      }
+    }
+    
+    .btn-group {
+      .btn {
+        border-left: none;
+        border-right: none;
+        
+        &:first-child {
+          border-radius: 3px 0px 0px 3px;
+          
+          .inner {
+          }
+        }
+        &:last-child {
+          border-radius: 0px 3px 3px 0px;
+          
+          .inner {
+            border-right: 1px solid rgba(255,255,255,.2);
+          }
+        }
+      }
+    }
+  }
+}
 
 //*************************************
 // 13... flex styles & fixes

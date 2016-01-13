@@ -13,7 +13,7 @@
                 to <strong>{{  snapshotPagination.page * snapshotPagination.perpage > snapshotPagination.total ? snapshotPagination.total : snapshotPagination.page * snapshotPagination.perpage }}</strong> 
                 of <strong>{{ snapshotPagination.total }}</strong>
             </span>
-            <div pagination="snapshotPagination" theme="default" class="default"></div>
+            <div pagination="snapshotPagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
             <form class="form-inline" ng-submit="searchSnapshots()" novalidate>
@@ -68,7 +68,7 @@
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
             </span>
 -->
-            <div pagination="snapshotPagination" theme="default" class="default"></div>
+            <div pagination="snapshotPagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
             <form class="form-inline" ng-submit="searchSnapshots()" novalidate>

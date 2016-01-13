@@ -9,7 +9,7 @@
                 to <strong>{{  articlePagination.page * articlePagination.perpage > articlePagination.total ? articlePagination.total : articlePagination.page * articlePagination.perpage }}</strong> 
                 of <strong>{{ articlePagination.total }}</strong>
             </span>
-            <div pagination="articlePagination" theme="default" class="admin"></div>
+            <div pagination="articlePagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
             <form class="form-inline" ng-submit="searchArticles()" novalidate>
@@ -79,7 +79,7 @@
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
             </span>
 -->
-            <div pagination="articlePagination" theme="default" class="default"></div>
+            <div pagination="articlePagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
             <form class="form-inline" ng-submit="searchArticles()" novalidate>
