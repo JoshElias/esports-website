@@ -208,7 +208,9 @@ var app = angular.module('app', [
                                         skip: (offset * num) - num,
                                         limit: num
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (data) { return _.sortBy(data, "createdDate").reverse(); });
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count().$promise;
@@ -415,7 +417,7 @@ var app = angular.module('app', [
                                 .then(function (articles) {
                                     articles.page = page;
                                     articles.perpage = perpage;
-                                    return articles;
+                                    return _.sortBy(articles, 'createdDate').reverse();
                                 });
 
                             }],
@@ -460,7 +462,7 @@ var app = angular.module('app', [
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
 
-                                return Article.find({
+                                return Article.findOne({
                                     filter: {
                                         fields: {
                                           oldComments: false,
@@ -520,7 +522,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    return data[0];
+                                    return data;
                                 });
                             }]
                         }

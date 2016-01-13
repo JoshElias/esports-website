@@ -10757,21 +10757,22 @@ angular.module('app.controllers', ['ngCookies'])
 //        });
 
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+              location.reload();
                 // Check if user is admin or contentProvider
-                User.isInRoles({
-                    uid: User.getCurrentId(),
-                    roleNames: ['$admin', '$contentProvider', '$premium']
-                })
-                .$promise
-                .then(function (userRoles) {
-                    $scope.isUser.admin = userRoles.isInRoles.$admin;
-                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
-                    $scope.isUser.premium = userRoles.isInRoles.$premium;
-                    return userRoles;
-                })
-                .catch(function (roleErr) {
-                    console.log('roleErr: ', roleErr);
-                });
+//                User.isInRoles({
+//                    uid: User.getCurrentId(),
+//                    roleNames: ['$admin', '$contentProvider', '$premium']
+//                })
+//                .$promise
+//                .then(function (userRoles) {
+//                    $scope.isUser.admin = userRoles.isInRoles.$admin;
+//                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
+//                    $scope.isUser.premium = userRoles.isInRoles.$premium;
+//                    
+//                })
+//                .catch(function (roleErr) {
+//                  console.log('roleErr: ', roleErr);
+//                });
             });
             
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
@@ -11129,22 +11130,23 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                location.reload();
                 // Check if user is admin or contentProvider
-                User.isInRoles({
-                    uid: User.getCurrentId(),
-                    roleNames: ['$admin', '$contentProvider', '$premium']
-                })
-                .$promise
-                .then(function (userRoles) {
-//                    console.log('userRoles: ', userRoles);
-                    $scope.isUser.admin = userRoles.isInRoles.$admin;
-                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
-                    $scope.isUser.premium = userRoles.isInRoles.$premium;
-                    return userRoles;
-                })
-                .catch(function (roleErr) {
-                    console.log('roleErr: ', roleErr);
-                });
+//                User.isInRoles({
+//                    uid: User.getCurrentId(),
+//                    roleNames: ['$admin', '$contentProvider', '$premium']
+//                })
+//                .$promise
+//                .then(function (userRoles) {
+////                    console.log('userRoles: ', userRoles);
+//                    $scope.isUser.admin = userRoles.isInRoles.$admin;
+//                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
+//                    $scope.isUser.premium = userRoles.isInRoles.$premium;
+//                    return userRoles;
+//                })
+//                .catch(function (roleErr) {
+//                    console.log('roleErr: ', roleErr);
+//                });
             });
             
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {

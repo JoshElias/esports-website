@@ -166,9 +166,9 @@ angular.module('app.directives', ['ui.load'])
                                 if ($scope.callback) {
                                     $scope.callback(LoopBackAuth);
                                 } else if (!$scope.state) {
-                                  var goto = $stateParams.redirect;
+                                  var goto = $stateParams.redirect || 'app.home';
                                   
-                                  (goto !== undefined) ? $state.go($stateParams.redirect) : false;
+                                  $state.go(goto);
                                 }
                             }
                         });
