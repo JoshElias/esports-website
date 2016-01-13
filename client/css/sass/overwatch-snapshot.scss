@@ -1,4 +1,5 @@
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
 
 // Description: styles for the hots meta snapshot only. WARNING!! Some styles may be affected by deck styles from the hs-deck.scss file.
 
@@ -14,13 +15,9 @@
 
 //*************************************
 
-
-
 //*************************************
 // 1... Typography
 //*************************************
-
-
 
 .overwatch-snapshot-styles {
     
@@ -45,8 +42,6 @@
                 font-size: 25px;
                 width: 70%;
             }
-        
-        
     }
     
     h3.sub-title { 
@@ -68,7 +63,6 @@
               border-bottom: 1px solid $ts-dark-grey;  
         }
         
-        
         &:before {
             content: "";
             position: absolute;
@@ -86,17 +80,8 @@
         }
     }
     
-    .box-border { 
-        background-color: rgba(19, 18, 19, 0.9);
-        box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.75);
-        border: 1px solid rgba(0, 0, 0, 0.9);
-        outline: 1px solid #000; 
-        position: relative;
- 
-        &.no-outline {
-            outline: 1px solid transparent; 
-            //this is inplace for Mozilla due to a bug with outlines and absolute positioned childrewn elements.
-        }
+    .box-border {        
+        @include ts-div-styles;
                 
         p {
             color: $ts-grey; 
@@ -120,7 +105,6 @@
         position: fixed;
         right: -260px;
         top: 125px;
-
         width: 800px;
         height: auto;
         
@@ -133,7 +117,6 @@
         position: fixed;
         left: -385px;
         top: 125px;
-
         width: 800px;
         height: auto;
         
@@ -142,15 +125,11 @@
             }
     }
 
-    
-    
-
 //*************************************
 // 3... Tiers
 //*************************************
     
-    .tier {
-        
+    .tier {        
         position: relative;
         border: 1px solid $ts-black;
         
@@ -161,14 +140,12 @@
             background: linear-gradient(to right, $ow-yellow, #f79623);
             border: 1px solid transparent;
                
-        
         @media screen and (max-width: 575px) {
                 h2 {
                     margin-left: 10px;
                 }
             }
         }
-        
     }
     
     .tier-body {
@@ -185,16 +162,12 @@
             text-overflow: ellipsis;
             position: relative;
             
-            
-            
             @media screen and (max-width: 750px) {
                 font-size: 14px;
                 margin-top: 5px;
                 //text-indent: 10px;
             }
         }
-        
-
             
         .tier-hero-body {
 
@@ -203,11 +176,10 @@
                     font-weight: bold;
                     color: $white;
 
-                        @media screen and (max-width: 750px) {
-                            font-size: 30px !important;
-                        }
+                    @media screen and (max-width: 750px) {
+                        font-size: 30px !important;
+                    }
                 }
-                
             }
             
             h3 {
@@ -224,20 +196,16 @@
                                     
                 @media screen and (max-width: 750px) {
                         padding-bottom: 0px;
-                    }
-                
+                }
             }
-                
         }
-        
 
-        
         .tier-hero-heading {
             height: 60px !important;
-            background-color: rgba($ts-dark-grey, .5) !important; 
+            background-color: rgba($ts-dark-grey, .7) !important; 
             border: 1px solid transparent;
-            border-top: 1px solid $ts-black;
-            border-bottom: 1px solid $ts-black;
+            border-top: 1px solid rgba($ts-black, .7);
+            border-bottom: 1px solid rgba($ts-black, .7);
             position: relative;
             width: 100%;
             outline: none;
@@ -245,7 +213,6 @@
             -moz-appearance: none;
             appearance: none;
             cursor: pointer;
-            
             
             h4 {
                 margin-left: 20px;
@@ -255,19 +222,13 @@
                     margin-left: 10px;
                 }
             }
-            
-      
-            
+                        
             @media screen and (min-width: 750px) {
                 
                 background-repeat: no-repeat !important;
                 background-position: right top !important;
                 padding-top: 4px;
-                
-               
             }
-
-             
         }
     
         .tier-hero:nth-child(2n+2)  {
@@ -334,7 +295,6 @@
             top: -50px;
             left: 0;
             
-            
             @media screen and (max-width: 991px) {
                     left: 170px;    
                  }
@@ -343,7 +303,6 @@
         .widowmaker {
         
         }
-       
     }
     
 //*************************************
@@ -401,8 +360,7 @@
                 text-decoration: none;
                 list-style-type: none;
             }
-            
-            
+               
             .hero-class {
                 float: right;
                 background-repeat: no-repeat;

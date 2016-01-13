@@ -1,5 +1,6 @@
 
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
 
 // Description: hots heroes scss file specifically for adding heroes using mixins
 // used to enter heroes and their talents into mixins to auto gen css.
@@ -88,9 +89,7 @@
                     &.large.#{$talentName} { background-position: -30px #{$large}px; }
 
                 }
-
             }
-
         }
     }
 }
@@ -165,8 +164,6 @@
         }
     }
 }
-
-
 
 
 // Mixin is for Hero filters, it sets position of the heros image on a sprite sheet
@@ -383,8 +380,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(zagara);
 @include hots-hero(zeratul);
 @include hots-hero(lunara);
-
-
+@include hots-hero(greymane);
 
 //*************************************
 //5... HOTS heroes talents
@@ -395,9 +391,6 @@ This is the template for hots-hero-talents.
 //*************************************
 
 //abathur Talents
-
-
-
 
 @include hots-hero-talents ( abathur, (
     ( class: (pressurized-glands, soma-transferance, envenomed-spikes), pos: 0 ), // 0
@@ -649,6 +642,29 @@ This is the template for hots-hero-talents.
     ( class: (fury-of-the-storm), pos: 16 ), // -480
     ( class: (hardened-shield), pos: 17 ) // -510
 ) );
+
+//@include hots-hero-talents ( greymane, (
+//    ( class: (), pos: 0 ), // 0
+//    ( class: (), pos: 1 ), // -30
+//    ( class: (), pos: 2 ), // -60
+//    ( class: (), pos: 3 ), // -90
+//    ( class: (), pos: 4 ), // -120
+//    ( class: (), pos: 5 ), // -150
+//    ( class: (), pos: 6 ), // -180
+//    ( class: (), pos: 7 ), // -210
+//    ( class: (), pos: 8 ), // -240
+//    ( class: (), pos: 9 ), // -270
+//    ( class: (), pos: 10 ), // -300
+//    ( class: (), pos: 11 ), // -330
+//    ( class: (), pos: 12 ), // -360
+//    ( class: (), pos: 13 ), // -390
+//    ( class: (), pos: 14 ), // -420
+//    ( class: (), pos: 15 ), // -450
+//    ( class: (), pos: 16 ), // -480
+//    ( class: (), pos: 17 ), // -510
+//    ( class: (), pos: 18 ) // -540
+//) );
+
 
 //talents: illidan
 
@@ -1605,6 +1621,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(falstad, -80, -78, -56, 50);
 @include hots-snapshot-hero(gall, -80, -78, -70, 50);
 @include hots-snapshot-hero(gazlowe, -80, -23, -40, 50);
+//@include hots-snapshot-hero(greymane, -80, -23, -40, 50);
 @include hots-snapshot-hero(illidan, -80, -58, -40, 50);
 @include hots-snapshot-hero(jaina, -54, -8, -34, 98);
 @include hots-snapshot-hero(johanna, -45, -80, -34, 34);

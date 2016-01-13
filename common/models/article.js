@@ -1,7 +1,14 @@
 module.exports = function(Article) {
     var utils = require("../../lib/utils");
-
-
+    var async = require('async');
+  
+    var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug('title')];
+    Article.observe("before save", function(ctx, next) {
+        async.each(funcs, function(func, funcCB) {
+            func(ctx, funcCB);
+        }, next);
+    });
+  
     var filter =  {
       fieldNames: ["content", "oldComments", "oldRelatedArticles"],
       acceptedRoles: ["$owner", "$admin", "$premium", "$contentProvider"]
