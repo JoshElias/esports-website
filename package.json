@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server/server.js",
   "scripts": {
-    "pretest": "jshint ."
+    "pretest": "jshint .",
+    "postinstall": "cd node_modules/grunt-contrib-imagemin/node_modules/imagemin/node_modules && del /F /Q vinyl-fs && cd.. && npm install vinyl-fs@2.2.x"
   },
   "dependencies": {
     "async": "^1.4.0",
