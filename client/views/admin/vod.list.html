@@ -16,7 +16,7 @@
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
             </span>
 -->
-            <div pagination="vodPagination" theme="default" class="default"></div>
+            <div pagination="vodPagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
             <form class="form-inline" ng-submit="searchVods()" novalidate>
@@ -39,8 +39,12 @@
         <div class="list-group-item articles-list-item clearfix" ng-repeat="vod in vods | orderBy : '-date'">
             <div class="row">
                 <div class="col-sm-6">
+                  <img class="admin-vod-list" ng-if="vod.youtubeId" ng-src="http://img.youtube.com/vi/{{vod.youtubeId}}/0.jpg">
+                  <strong class="admin-vod-list" ng-if="!vod.youtubeId">Playlist - </strong>
+<!--
                     <youtube-video class="admin-vod-list" ng-if="vod.youtubeId" video-url="vod.youtubeId"></youtube-video>
                     <youtube-video class="admin-vod-list" ng-if="vod.youtubeVars.list" player-vars="vod.youtubeVars"></youtube-video>
+-->
                     <span>{{vod.subtitle}} - {{ vod.displayDate | date}}</span>
                 </div>
                 <div class="col-sm-6">
@@ -73,7 +77,7 @@
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
             </span>
 -->
-            <div pagination="vodPagination" theme="default" class="default"></div>
+            <div pagination="vodPagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
             <form class="form-inline" ng-submit="searchVods()" novalidate>
