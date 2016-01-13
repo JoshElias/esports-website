@@ -485,11 +485,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.twitchLink = function () {
-                LoginService.thirdPartyLogin('twitch');
+                LoginService.thirdPartyRedirect('link', 'twitch');
             };
 
             $scope.bnetLink = function () {
-                LoginService.thirdPartyLogin('bnet')
+                LoginService.thirdPartyRedirect('link', 'bnet')
             };
 
 //
