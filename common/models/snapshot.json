@@ -14,7 +14,11 @@
       "type": "string"
     },
     "slug": {
-      "type": "object"
+      "url": {
+        "type": "string",
+        "validators": ["unique"]
+      },
+      "linked": {"type": "boolean"}
     },
     "content": {
       "type": "object"

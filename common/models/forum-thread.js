@@ -1,4 +1,6 @@
 module.exports = function(ForumThread) {
+    var utils = require("../../lib/utils");
 
-//    ForumThread.validatesUniquenessOf('slug.url', {message: 'Slug.url already exists'});
+
+    ForumThread.observe("before save", utils.generateSlug("title"));
 };

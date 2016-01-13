@@ -24,7 +24,11 @@
     },
     "forumCategoryId": {},
     "slug": {
-      "type": "object"
+      "url": {
+        "type": "string",
+        "validators": ["unique"]
+      },
+      "linked": {"type": "boolean"}
     },
     "oldPosts": {
       "type": [
