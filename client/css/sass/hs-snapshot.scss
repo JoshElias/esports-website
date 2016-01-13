@@ -64,7 +64,6 @@
     background-repeat: no-repeat;
     background-size: 100%;
     background-attachment: fixed;
-    min-height: 1250px;
 }
 .bg-override.polls {
     background-color: #121111;
@@ -274,21 +273,55 @@
     background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
     background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
-    border: 1px solid rgba(255,255,255,.2);
     height: 65px;
     outline: none;
 }
-.tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px; font-weight: bolder; letter-spacing:7px; line-height:63px }
+.tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px;
+  font-weight: bolder;
+  letter-spacing:7px;
+  line-height:63px }
 
-.tier-body { -webkit-transition-duration: .2s; transition-duration: .2s; }
+.tier-body { -webkit-transition-duration: .2s;
+  transition-duration: .2s;
+}
 
-.tier-body .tier-deck { height: auto; }
-.tier-body .tier-deck h4 { padding-right: 200px; text-indent: 30px; line-height: 48px; font-weight: bold; color: #F0EFEB; text-shadow: 1px 1px 0px rgba(0,0,0,.7); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tier-body .tier-deck { height: auto;
+}
+.tier-body .tier-deck h4 { padding-right: 200px;
+  text-indent: 30px;
+  line-height: 48px;
+  font-weight: bold;
+  color: #F0EFEB;
+  text-shadow: 1px 1px 0px rgba(0,0,0,.7);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 
-.tier-body .tier-deck-heading { height: 50px !important; border: 1px solid rgba(255, 255, 255, .2); position: relative; width:100%; outline: none; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; }
-.tier-body .tier-deck-heading .deck-button { position: absolute; top: 12px; right: 150px; display: block; background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px; outline: none; }
-.tier-body .tier-deck-heading .deck-button:hover { background: rgba(255, 255, 255, .7); border: 1px rgba(0, 0, 0, .7) solid; color: rgba(0, 0, 0, 1);  }
+.tier-body .tier-deck-heading { height: 50px !important;
+  border: 1px solid rgba(255, 255, 255, .2);
+  position: relative;
+  width:100%;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+.tier-body .tier-deck-heading .deck-button { position: absolute;
+  top: 12px;
+  right: 150px;
+  display: block;
+  background: rgba(0, 0, 0, .25);
+  border: 1px rgba(255, 255, 255, .7) solid;
+  color: rgba(255, 255, 255, 1);
+  padding: 2px 25px;
+  outline: none;
+}
+.tier-body .tier-deck-heading .deck-button:hover { background: rgba(255, 255, 255, .7);
+  border: 1px rgba(0, 0, 0, .7) solid;
+  color: rgba(0, 0, 0, 1);  }
 
 @media (max-width: 767px) {
     .tier-body .tier-deck h4 { padding-right: 120px; }

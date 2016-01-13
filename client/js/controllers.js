@@ -128,7 +128,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.resetPassword = function() {
               var email = $location.search().email;
               var token = $location.search().token;
-              User.changePassword({email: email, token: token, password: $scope.reset.password})
+              User.changePassword({ email: email, password: $scope.reset.password, token: token })
                 .$promise
                 .then(function (data) {
                   AlertService.setSuccess({show: true, msg: 'Your password has been reset successfully.'});
