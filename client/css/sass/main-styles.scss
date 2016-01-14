@@ -1498,11 +1498,9 @@ input[type=range]:focus::-ms-fill-upper {
 .btn-default:focus { border: 1px solid #2766ad; background: url('../img/black-60.png'); color: #FFF; }
 .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open > .dropdown-toggle.btn-default { border: 1px solid #000; background: #2766ad; color: #FFF; }
 
-.note-editor .note-editable { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; }
+.note-editor .note-editable { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF !important; }
 .note-editor .note-statusbar .note-resizebar { border-color: #000; background-color: #444; }
 .note-editor .note-statusbar .note-resizebar .note-icon-bar { border-top: 1px solid #FFF; }
-
-
 
 //*************************************
 // 18... Glows
