@@ -9195,7 +9195,6 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             function saveDeck(deck) {
-                console.log('init deck: ', deck);
                 
                 deck.votes = [
                     {
@@ -9232,8 +9231,6 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 var newCards = [];
                 angular.forEach(deckSubmitted.cards, function(card, index) {
-                    console.log('index:', index);
-                    console.log('card:', card);
                     var newCard = {
                         cardId: card.cardId,
                         cardQuantity: card.cardQuantity,
@@ -9242,13 +9239,10 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 
                 deckSubmitted.cards = newCards;
-                deckSubmitted.bullshit = "fuck my life";
-                console.log('before save deck:', deckSubmitted);
                 
                 Deck.create(deckSubmitted)
                 .$promise
                 .then(function (deckCreated) {
-                    console.log('deckCreated:', deckCreated);
                     $scope.deckSubmitting = false;
                     $scope.app.settings.deck = null;
                     $state.transitionTo('app.hs.decks.deck', { slug: deckCreated.slug });
@@ -11165,9 +11159,7 @@ angular.module('app.controllers', ['ngCookies'])
             });
             
             // load deck
-            console.log('initDeck:', deckWithMulligans);
             $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
-            console.log('$scope.deck: ', $scope.deck);
             
 //            console.log('currentMulligan: ', $scope.currentMulligan);
             
