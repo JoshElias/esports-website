@@ -662,7 +662,8 @@ var app = angular.module('app', [
                                             authorId: true,
                                             voteScore: true,
                                             playerClass: true,
-                                            createdDate: true
+                                            createdDate: true,
+                                            premium: true
                                         },
                                         include: [
                                           {
@@ -1732,7 +1733,6 @@ var app = angular.module('app', [
                                 }
                               }).$promise
                               .then(function (guides) {
-                                console.log(guides);
                                   return guides;
                               }).catch(function(err) {
                                   console.log("error", err);

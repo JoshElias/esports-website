@@ -1,6 +1,6 @@
 <div class="twitter-tweets-wrapper">
     <ul class="twitter-tweets">
-        <li ng-repeat="tweet in tweets">
+        <li ng-repeat="tweet in tweets | limitTo: 7">
             <div class="inner"></div>
             <div class="twitter-tweet-wrapper clearfix">
                 <img ng-src="{{tweet.logoUrl}}" class="pull-left img-responsive">

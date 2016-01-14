@@ -595,7 +595,7 @@ angular.module('app.directives', ['ui.load'])
         });
     };
 }])
-.directive("subNavStream", ['Stream', '$timeout', 'Util', function (Stream, $timeout, Util) {
+.directive("subNavStream", ['Twitchfeeds', '$timeout', 'Util', function (Twitchfeeds, $timeout, Util) {
     return {
         restrict: 'E',
         replace: true,
@@ -605,18 +605,19 @@ angular.module('app.directives', ['ui.load'])
             $scope.subNavStreams = [];
             $scope.showSubNavStream = false;
 
-            Stream.find({
+            Twitchfeeds.find({
                 filter: {
                     order: 'viewerCount DESC'
                 }
             })
             .$promise
             .then(function(data) {
+              data = _.sortBy(data[0].feed, 'viewerCount').reverse();
                 for (var i = 0; i < data.length; i++) {
-                    var log = data[i].logoUrl;
-                    var sub = log.substr(4);
-                    var im = "https" + sub;
-                    data[i].logoUrl = im;
+//                    var log = data[i].logoUrl;
+//                    var sub = log.substr(4);
+//                    var im = "https" + sub;
+//                    data[i].logoUrl = im;
 
                     data[i].viewerCount = +data[i].viewerCount;
                 }
@@ -1627,7 +1628,7 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('tempostormTv', ['Stream', 'Util', function (Stream, Util) {
+.directive('tempostormTv', ['Util', 'Twitchfeeds', function (Util, Twitchfeeds) {
     return {
         restrict: 'A',
         scope: false,
@@ -1639,18 +1640,18 @@ angular.module('app.directives', ['ui.load'])
             scope.getNumber = function (x) {
                 return Util.numberWithCommas(x);
             }
-
-            Stream.find({
-                filter: {
-                    order: 'viewerCount DESC'
-                }
-            }).$promise.then(function(data) {
+            
+            Twitchfeeds.find({})
+            .$promise
+            .then(function(data) {
+                data = data[0].feed;
+              
                 for (var i = 0; i < data.length; i++) {
                     var log = data[i].screenshotUrl;
                     var sub = log.substr(4);
                     var im = "https" + sub;
+                  
                     data[i].screenshotUrl = im;
-
                     data[i].viewerCount = +data[i].viewerCount;
                 }
                 scope.streamWheel = true;
@@ -1659,7 +1660,7 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('twitterFeed', ['$sce', 'Tweet', function ($sce, Tweet) {
+.directive('twitterFeed', ['$sce', 'Twitterfeeds', function ($sce, Twitterfeeds) {
     return {
         restrict: 'A',
         templateUrl: tpl + 'views/frontend/directives/twitter.tweets.html',
@@ -1668,16 +1669,12 @@ angular.module('app.directives', ['ui.load'])
             scope.tweets = undefined;
             var num = 6;
 
-            Tweet.find({
-                filter: {
-                    limit: 6,
-                    order: "createdDate DESC"
-                }
-            })
+            Twitterfeeds.find({})
             .$promise
             .then(function(tweets) {
 //                console.log(tweets);
-
+                tweets = tweets[0].feed;
+              
                 scope.twitWheel = true;
                 scope.tweets = tweets;
             });

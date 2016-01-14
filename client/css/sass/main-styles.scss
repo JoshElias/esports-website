@@ -236,6 +236,7 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 }
 
 .home-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
+.home-article .article-photo-wrap { position: relative; }
 .home-article .article-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
 
 .home-article img { width: 100%; height: auto; }
@@ -245,7 +246,7 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .home-article .home-article-content h1.hs { color: #d07828; }
 .home-article .home-article-content h1.hots { color: #8968ad; }
 .home-article .home-article-content h1.overwatch { color: #fdb813; }
-.home-article .article-icon { background-image: url(../img/article-type-icon.png); height:40px; width:40px; position: absolute; right: 5px; top: 53px; }
+.home-article .article-icon { background-image: url(../img/article-type-icon.png); height:40px; width:40px; position: absolute; right: 5px; bottom: -20px; z-index: 3; }
 .home-article .article-icon.ts { background-position: 0px 0px; }
 .home-article .article-icon.hs { background-position: -40px 0px; }
 .home-article .article-icon.hots { background-position: -80px 0px; }

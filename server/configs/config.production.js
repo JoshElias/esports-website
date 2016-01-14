@@ -27,7 +27,7 @@ module.exports = {
   "prerenderKey" : "XrpCoT3t8wTNledN5pLU",
   "jwtSecret" : "83udfhjdsfh93HJKHel338283ru",
   "sessionSecret" : "kjadhKJHJKhsdjhd82387sjJK",
-  "dbUrl": "mongodb://52.11.14.8:27017,52.8.169.246:27017,54.174.103.94:27017,52.28.87.90:27017,54.79.121.240:27017/tempostorm",
+  "dbUrl": "mongodb://52.11.14.8:27017,52.8.169.246:27017,54.174.103.94:27017,52.28.87.90:27017,54.79.121.240:27017/tempostorm?readPreference=nearest&w=1",
   "cdnUrl" : "https://cdn-tempostorm.netdna-ssl.com/",
   "cdnUrl2" : "https://cdn-tempostorm.netdna-ssl.com/",
   "appIndex" : "production-index",

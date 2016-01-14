@@ -1,9 +1,18 @@
 {
+<<<<<<< HEAD
   "angular.min.js": "angular.min.5bcabd93.js",
   "app.min.js": "app.min.fcd5cffa.js",
   "vendor.min.js": "vendor.min.c3bb62de.js",
   "modules.min.js": "modules.min.2d12637c.js",
   "style.min.css": "style.min.d38c50ac.css",
   "vendor.min.css": "vendor.min.ae26999c.css",
+=======
+  "angular.min.js": "angular.min.472975ae.js",
+  "app.min.js": "app.min.a0ca7c70.js",
+  "vendor.min.js": "vendor.min.c906488d.js",
+  "modules.min.js": "modules.min.2d12637c.js",
+  "style.min.css": "style.min.399c7d5b.css",
+  "vendor.min.css": "vendor.min.60b209a2.css",
+>>>>>>> bc0185ee661ba3416708a085d2817d7682bd4833
   "modules.min.css": "modules.min.15f16015.css"
 }
