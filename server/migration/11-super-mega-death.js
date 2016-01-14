@@ -6,7 +6,7 @@ module.exports = function(_server) {
    server = _server;
 
     async.series([
-        //addMissingTalent,
+        addMissingTalent,
         createAbilitiesAndTalents,
         assignGameTypeMode,
         createPollItems,
