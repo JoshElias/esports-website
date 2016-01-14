@@ -16,7 +16,7 @@ module.exports = function(Deck) {
     }
     Deck.observe("loaded", utils.filterFields(fieldFilter));
 
-
+/*
     var docFilter =  {
         acceptedRoles: ["$owner", "$admin"],
         filter: {
@@ -24,7 +24,7 @@ module.exports = function(Deck) {
         }
     }
     Deck.observe("access", utils.filterDocs(docFilter));
-
+*/
 
     //Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
 };

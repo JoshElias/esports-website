@@ -8620,6 +8620,7 @@ angular.module('app.controllers', ['ngCookies'])
     }])
     .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService',
         function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService) {
+          console.log('hi');
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
             
@@ -9193,7 +9194,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             function saveDeck(deck) {
-//                console.log('init deck: ', deck);
+                console.log('init deck: ', deck);
 				
                 deck.authorId = User.getCurrentId();
                 deck.votes = [
@@ -9229,9 +9230,24 @@ angular.module('app.controllers', ['ngCookies'])
 
                 });
                 
+                var newCards = [];
+                angular.forEach(deckSubmitted.cards, function(card, index) {
+                    console.log('index:', index);
+                    console.log('card:', card);
+                    var newCard = {
+                        cardId: card.cardId,
+                        cardQuantity: card.cardQuantity,
+                    };
+                    newCards.push(newCard);
+                });
+                
+                deckSubmitted.cards = newCards;
+                console.log('before save deck:', deckSubmitted);
+                
                 Deck.create(deckSubmitted)
                 .$promise
                 .then(function (deckCreated) {
+                    console.log('deckCreated:', deckCreated);
                     $scope.deckSubmitting = false;
                     $scope.app.settings.deck = null;
                     $state.transitionTo('app.hs.decks.deck', { slug: deckCreated.slug });
@@ -9246,6 +9262,26 @@ angular.module('app.controllers', ['ngCookies'])
                         msg: 'Unable to save deck.'
                     });
                 });
+                
+//                async.series([
+//                    function(seriesCB) {
+//                        Deck.create(deck)
+//                        .$promise
+//                        .then(function (deckUpdated) {
+//                            console.log('deckUpdated:', deckUpdated);
+//                            return deckUpdated();
+//                        })
+//                        .catch(function (err) {
+//                            console.log('deck create: ', err);
+//                            return deckUpdated(err);
+//                        });
+//                    },
+//                    function(seriesCB) {
+//                        
+//                    }
+//                ]);
+                
+                
             }
         }
     ])

@@ -461,6 +461,7 @@ module.exports = function(User) {
 
 
     User.isInRoles = function(uid, roleNames, cb) {
+        
         cb = cb || utils.createPromiseCallback();
 
         var Role = User.app.models.Role;
@@ -480,15 +481,35 @@ module.exports = function(User) {
                 isInRoles[key] = currentRoles[key];
             }
         }
-        isInRoles.all = true;
-        isInRoles.none = true;
+        
+        // Re evaluate isInRole report
+        if (Object.keys(isInRoles).length > 0) {
+            var all = true;
+            var none = true;
+            for(var key in isInRoles) {
+              var inRoleVal = isInRoles[key];
+                if(!inRoleVal && all) {
+                    all = false;
+                } else if(inRoleVal && none) {
+                    none = false;
+                }
+               
+            }
+            isInRoles.all = all;
+            isInRoles.none = none;
+        } else {
+            isInRoles.all = true;
+            isInRoles.none = true;
+        }
 
         async.eachSeries(roleNames, function(roleName, eachCb) {
 
-            if(typeof isInRoles[roleName] !== "undefined")
+            if(typeof isInRoles[roleName] !== "undefined") {
                 return eachCb();
+            }
 
             Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, function(err, isRole) {
+                
                 if(!isRole && isInRoles.all) {
                     isInRoles.all = false;
                 } else if(isRole && isInRoles.none) {
