@@ -206,7 +206,7 @@ angular.module('app.directives', ['ui.load'])
       }
 
       $scope.setWidgetId = function (widgetId) {
-        console.log('Created widget ID: %s', widgetId);
+//        console.log('Created widget ID: %s', widgetId);
         
         $scope.widgetId = widgetId;
       }
@@ -452,7 +452,7 @@ angular.module('app.directives', ['ui.load'])
                 if (!_.isEmpty(s)) {
                     return s[key];
                 } else if (!_.isEmpty(e)) {
-					console.log('e[key]:', e[key]);
+//					console.log('e[key]:', e[key]);
                     return e[key];
                 }
             }
@@ -488,12 +488,12 @@ angular.module('app.directives', ['ui.load'])
                 async.series([
                     function (sCb) {
                         if (result.error) {
-                            console.log(result);
+//                            console.log(result);
                         } else {
                             User.setSubscriptionCard({}, { cctoken: result.id })
                             .$promise
                             .then(function (data) {
-                                console.log(data);
+//                                console.log(data);
 
     //                                $scope.user.subscription.last4 = data.subscription.last4;
     //                                $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
@@ -1675,7 +1675,7 @@ angular.module('app.directives', ['ui.load'])
             })
             .$promise
             .then(function(tweets) {
-                console.log(tweets);
+//                console.log(tweets);
 
                 scope.twitWheel = true;
                 scope.tweets = tweets;

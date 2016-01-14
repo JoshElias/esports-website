@@ -115,7 +115,7 @@ var app = angular.module('app', [
 .config(
     ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider',
     function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
-
+      
         app.controller = $controllerProvider.register;
         app.directive  = $compileProvider.directive;
         app.filter     = $filterProvider.register;
@@ -460,7 +460,7 @@ var app = angular.module('app', [
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
 
-                                return Article.findOne({
+                                return Article.find({
                                     filter: {
                                         fields: {
                                           oldComments: false,
@@ -520,7 +520,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    return data;
+                                    return data[0];
                                 });
                             }]
                         }
