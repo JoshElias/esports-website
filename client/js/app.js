@@ -1867,7 +1867,8 @@ var app = angular.module('app', [
                                 return Guide.findOne({
                                     filter: {
                                         where: {
-                                            slug: slug
+                                            slug: slug,
+                                            isPublic: true
                                         },
                                         fields: {
                                             oldMaps: false,
