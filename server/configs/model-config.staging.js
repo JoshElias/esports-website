@@ -69,14 +69,6 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
-  "twitchFeed": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "twitterPost": {
-    "dataSource": "mongodb",
-    "public": true
-  },
   "article": {
     "dataSource": "mongodb",
     "public": true
@@ -250,6 +242,14 @@ module.exports = {
         "public": true
     },
     "spamOffence": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "twitterfeeds": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "twitchfeeds": {
         "dataSource": "mongodb",
         "public": true
     }

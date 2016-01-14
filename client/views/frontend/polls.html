@@ -31,7 +31,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="past-polls-content-body" ng-repeat="item in poll.items | orderBy: '-votes'" ng-show="show.past">
+                                <div class="past-polls-content-body" ng-repeat="item in poll.oldItems | orderBy: '-votes'" ng-show="show.past">
                                     <div class="votes-curve-bar">
                                         <span style="width: {{voteCurve(item, poll)*3}}px;"></span>
                                         <h3>{{item.name}}</h3>
@@ -65,9 +65,9 @@
 
                         <div class="row">
                             <div class="item-wrapper wrapper-xs">
-                                <div class="poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3"  ng-repeat="item in poll.items">
+                                <div class="poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3"  ng-repeat="item in poll.oldItems">
                                     <a href="#" ng-click="bigImg(item.photos.large)">
-                                        <img ng-class="{ 'active' : hasVoted(poll, item) }" ng-src="https://cdn-tempostorm.netdna-ssl.com/polls/{{item.photoNames.thumb}}" alt="">
+                                        <img ng-class="{ 'active' : hasVoted(poll, item) }" ng-src="https://cdn-tempostorm.netdna-ssl.com/polls/{{item.photos.thumb}}" alt="">
                                         <i class="fa fa-check" ng-class="{ 'active' : hasVoted(poll, item)}"></i>
                                     </a>
                                     <button class="poll-item-img-button btn btn-blue" ng-bind="btnText(poll, item)" ng-class="{ 'active' : hasVoted(poll, item) }" ng-click="toggleItem(poll, item)"></button>
@@ -89,7 +89,7 @@
                         <div class="poll-description" ng-bind-html="getContent(poll.description)"></div>
 
                         <div class="row">
-                            <div class="poll-item-txt-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-6" ng-repeat="item in poll.items">
+                            <div class="poll-item-txt-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-6" ng-repeat="item in poll.oldItems">
                                 <a href="#" ng-click="toggleItem(poll, item)">
                                     <div class="poll-item-txt" ng-class="{ active: hasVoted(poll, item) }">
                                         <i class="fa" ng-class="{ 'fa-check-circle': hasVoted(poll, item), 'fa-circle-thin': !hasVoted(poll, item) }"></i>
@@ -116,7 +116,7 @@
                         <div class="row">
                             <div class="voted-poll-item-txt-wrapper m-b-md col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-                                <div class="voted-poll-txt-item" ng-repeat="item in poll.items | orderBy: '-votes'">
+                                <div class="voted-poll-txt-item" ng-repeat="item in poll.oldItems | orderBy: '-votes'">
                                     <div class="voted-curve-bar" ng-class="{ 'active' : getLocalVotes(poll, item) }">
                                         <span style="width: {{voteCurve(item, poll)}}%;"></span>
                                         <h3 class="voted-curve-bar-name ell">{{item.name}}</h3>
@@ -136,7 +136,7 @@
                         <div class="poll-description" ng-bind-html="getContent(poll.description)"></div>
                         <div class="row">
                             <div class="clearfix voted-img-item-wrapper wrapper-xs">
-                                <div class="voted-poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3" ng-class="{ 'active' : getLocalVotes(poll, item) }"  ng-repeat="item in poll.items | orderBy: '-votes'">
+                                <div class="voted-poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3" ng-class="{ 'active' : getLocalVotes(poll, item) }"  ng-repeat="item in poll.oldItems | orderBy: '-votes'">
                                     <a href="#" ng-click="bigImg(item.photos.large)">
                                         <span style="height: {{voteCurve(item, poll)}}%;"></span>
                                         <div>

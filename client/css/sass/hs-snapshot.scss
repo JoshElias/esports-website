@@ -275,6 +275,7 @@
     background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
     height: 65px;
     outline: none;
+    border: 1px solid rgba(255,255,255,.3);
 }
 .tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px;
   font-weight: bolder;
