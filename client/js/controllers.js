@@ -6097,7 +6097,7 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
-                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                        order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
                     }
@@ -6692,7 +6692,7 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
-                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                        order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
                     }
@@ -8815,7 +8815,7 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
-                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                        order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
                     }
@@ -9444,7 +9444,7 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
-                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                        order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
                     }
