@@ -2639,7 +2639,7 @@ angular.module('app.services', [])
                     heroWhere.and.push({ role: { inq: filters.roles } });
                 }
             } else if (filters.search != "") {
-                var pattern = '/.*'+fiilters.search+'.*/i';
+                var pattern = '/.*'+filters.search+'.*/i';
                 heroGuideWhere.or = [
                     { name: { regexp: pattern } },
                     { description: { regexp: pattern } }
@@ -2912,7 +2912,7 @@ angular.module('app.services', [])
                   });
                 }
             ], function(err, guides, count) {
-              console.log('err:', err);
+//              console.log('err:', err);
 //              console.log('guides:', guides);
 //              console.log('count:', count);
               if (err) {

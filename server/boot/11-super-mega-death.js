@@ -6,8 +6,7 @@ module.exports = function(_server) {
    server = _server;
 
     async.series([
-            /*
-        addMissingTalent,
+        //addMissingTalent,
         createAbilitiesAndTalents,
         assignGameTypeMode,
         createPollItems,
@@ -22,9 +21,7 @@ module.exports = function(_server) {
         createSnapshotModels,
         createUserIdentities,
         createUserRoles,
-        */
-        createSpamRegexes,
-        //createRedbullExpansions
+        createSpamRegexes
     ],
     function(err) {
         console.log("Finished in ", convertMillisecondsToDigitalClock(Date.now() - startTime));
@@ -1081,8 +1078,3 @@ var redbullData = [
         }
     }
 ]
-
-function createRedbullExpansions(finalCb) {
-
-}
-

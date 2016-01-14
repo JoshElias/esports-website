@@ -14416,21 +14416,15 @@ angular.module('app.controllers', ['ngCookies'])
                      if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                         async.parallel([
                             function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, function(err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.guidesFeatured = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+                                    $scope.guidesFeatured = guides;
+                                    initializing = false;
                                 });
                             },
                             function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.guidesCommunity = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+                                    $scope.guidesCommunity = guides;
+                                    initializing = false;
                                 });
                             }
                         ]);
@@ -14438,28 +14432,20 @@ angular.module('app.controllers', ['ngCookies'])
                         async.parallel([
                             function () {
                                 HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
-                                    $timeout(function () {
-                                        $scope.articles = articles;
-                                        initializing = false;
-                                    });
+                                    $scope.articles = articles;
+                                    initializing = false;
                                 });
                             },
                             function () {
-                                HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, function (err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.guidesFeatured = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, 1, function (err, guides) {
+                                    $scope.guidesFeatured = guides;
+                                    initializing = false;
                                 });
                             },
                             function () {
-                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, function (err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.guidesCommunity = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, 1, function (err, guides) {
+                                    $scope.guidesCommunity = guides;
+                                    initializing = false;
                                 });
                               
                             }
@@ -14468,40 +14454,30 @@ angular.module('app.controllers', ['ngCookies'])
 //                        console.log("search");
                         async.parallel([
                             function () {
-                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.guidesFeatured = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+                                    $scope.guidesFeatured = guides;
+                                    initializing = false;
                                 });
                             },
                             function () {
-                                HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.guidesCommunity = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+                                    $scope.guidesCommunity = guides;
+                                    initializing = false;
                                 });
                             }
                         ]);
                     } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
                         async.parallel([
                             function () {
-                                HOTSGuideQueryService.getMapGuides($scope.filters, true, 10, function(err, guides) {
-                                    $timeout(function () {
-                                        $scope.guidesFeatured = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+                                    $scope.guidesFeatured = guides;
+                                    initializing = false;
                                 });
                             },
                             function () {
-                                HOTSGuideQueryService.getMapGuides($scope.filters, false, 10, function(err, guides) {
-                                    $timeout(function () {
-                                        $scope.guidesCommunity = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+                                    $scope.guidesCommunity = guides;
+                                    initializing = false;
                                 });
                             }
                         ]);
@@ -14509,28 +14485,20 @@ angular.module('app.controllers', ['ngCookies'])
                         async.parallel([
                             function () {
                                HOTSGuideQueryService.getArticles($scope.filters, true, 6, function (err, articles) {
-                                   $timeout(function () {
-                                       $scope.articles = articles;
-                                       initializing = false;
-                                   })
+                                   $scope.articles = articles;
+                                   initializing = false;
                                });
                             },
                             function () {
-                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.guidesFeatured = guides;
-                                        initializing = false;
-                                    });
+                                HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+                                    $scope.guidesFeatured = guides;
+                                    initializing = false;
                                 });
                             },
                             function () {
-                               HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
-
-                                    $timeout(function () {
-                                        $scope.guidesCommunity = guides;
-                                        initializing = false;
-                                    });
+                               HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+                                    $scope.guidesCommunity = guides;
+                                    initializing = false;
                                 });
                             }
                         ]);
