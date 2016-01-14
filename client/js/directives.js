@@ -301,6 +301,7 @@ angular.module('app.directives', ['ui.load'])
             service:     "="
         },
         controller: ['$scope', function ($scope) {
+            console.log('$scope.commentable:', $scope.commentable);
             //TODO: FIX COMMENTING
             $scope.commentable;
             $scope.service;
@@ -662,6 +663,7 @@ angular.module('app.directives', ['ui.load'])
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+            console.log('$scope.votable:', $scope.votable);
             var box,
                 callback;
             
@@ -710,6 +712,7 @@ angular.module('app.directives', ['ui.load'])
             updateVotes();
             
             $scope.vote = function (obj, direction) {
+                console.log('LoopBackAuth.currentUserId:', LoopBackAuth.currentUserId);
                 if (!User.isAuthenticated()) {
                     LoginModalService.showModal('login', function () {
                         $scope.vote(obj, direction);
@@ -1167,11 +1170,9 @@ angular.module('app.directives', ['ui.load'])
             deck: "=deck"
         },
         controller: ['$scope', function ($scope) {
+            console.log('db-deck deck:', $scope.deck);
+            
             $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
-
-//            $scope.getQty = function (id) {
-//                return $scope.deck.cardQuantities[id];
-//            }
             
             $scope.getQty = function (id) {
                 for(var i = 0; i < $scope.deck.cards.length; i++) {

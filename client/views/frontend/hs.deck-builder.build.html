@@ -303,7 +303,7 @@
                             <!-- cards -->
                             <div class="db-cards-view-wrapper clearfix">
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
-                                    <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
+                                    <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current | orderBy: ['cost', 'name'] track by $index">
                                         <a href="#" 
 										   tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.photoNames.large" 
 										   ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>

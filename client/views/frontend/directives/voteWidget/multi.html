@@ -5,6 +5,6 @@
     </div>
     <div class="vote-count-btns vote-large pull-left">
         <button href="#" class="btn btn-vote-up vote-large" ng-class="{active: votable.voted === 1}" ng-click="vote(votable, 1)" ng-disabled="votable.voted === 1"><i class="fa fa-plus-square"></i></button>
-        <button href="#" class="btn btn-vote-down vote-large" ng-class="{active: votable.voted === -1}" ng-click="vote(votable, -1)" ng-disabled="votable.voted === -1"><i class="fa fa-minus-square"></i></button>
+        <button href="#" class="btn btn-vote-down vote-large" ng-class="{'active': votable.voted === -1}" ng-click="vote(votable, -1)" ng-disabled="votable.voted === -1"><i class="fa fa-minus-square"></i></button>
     </div>
 </div>
