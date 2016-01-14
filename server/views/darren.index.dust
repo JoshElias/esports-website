@@ -63,7 +63,6 @@
     <script src="./vendor/angular-ui-validate/dist/validate.min.js"></script>
     <script src="./vendor/angular-animate/angular-animate.min.js"></script>
     <script src="./vendor/angular-route/angular-route.min.js"></script>
-    <script src="./vendor/angular-google-adsense/dist/angular-google-adsense.js"></script>
     <script src="./js/vendor/angular-bootbox.js"></script>
     <script src="./vendor/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"></script>
     <script src="./js/vendor/angular-file-upload.min.js"></script>
@@ -77,7 +76,6 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
     <script src="./vendor/angular-iscroll/dist/lib/angular-iscroll.js"></script>
-    <script src="./vendor/angular-recaptcha/release/angular-recaptcha.js"></script>
     
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>

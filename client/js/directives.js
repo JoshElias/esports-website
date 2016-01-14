@@ -195,29 +195,29 @@ angular.module('app.directives', ['ui.load'])
       scope: true,
       link: function ($scope, el, attr) {
 
-      // recaptcha
-      $scope.captchaKey = '6LeLJhQTAAAAAEnLKxtQmTkRkrGpqmbQGTRzu3u8';
+//      // recaptcha
+//      $scope.captchaKey = '6LeLJhQTAAAAAEnLKxtQmTkRkrGpqmbQGTRzu3u8';
       $scope.captchaToken = null;
-      $scope.widgetId = null;
-      $scope.captchaFailed = false;
-        
-      $scope.setToken = function (token) {
-          $scope.captchaToken = token;
-      }
-
-      $scope.setWidgetId = function (widgetId) {
-//        console.log('Created widget ID: %s', widgetId);
-        
-        $scope.widgetId = widgetId;
-      }
-
-      $scope.cbExpiration = function () {
-          $scope.captchaToken = null;
-      }
-
-      $scope.getStyle = function () {
-          return (!$scope.setState) ? 'transform:scale(1.06);-webkit-transform:scale(1.06);transform-origin:0 0;-webkit-transform-origin:0 0;' : 'transform:scale(.99);-webkit-transform:scale(.99);transform-origin:0 0;-webkit-transform-origin:0 0;';
-      }
+//      $scope.widgetId = null;
+//      $scope.captchaFailed = false;
+//        
+//      $scope.setToken = function (token) {
+//          $scope.captchaToken = token;
+//      }
+//
+//      $scope.setWidgetId = function (widgetId) {
+////        console.log('Created widget ID: %s', widgetId);
+//        
+//        $scope.widgetId = widgetId;
+//      }
+//
+//      $scope.cbExpiration = function () {
+//          $scope.captchaToken = null;
+//      }
+//
+//      $scope.getStyle = function () {
+//          return (!$scope.setState) ? 'transform:scale(1.06);-webkit-transform:scale(1.06);transform-origin:0 0;-webkit-transform-origin:0 0;' : 'transform:scale(.99);-webkit-transform:scale(.99);transform-origin:0 0;-webkit-transform-origin:0 0;';
+//      }
 
 
 
@@ -227,7 +227,8 @@ angular.module('app.directives', ['ui.load'])
       }
 
       $scope.signup = function(email, username, password) {
-        if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined && typeof $scope.captchaToken === "string" ) {
+        console.log(email);
+        if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined ) {
           User.create({
             email: email,
             username: username,

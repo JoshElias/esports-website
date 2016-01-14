@@ -19,14 +19,12 @@ var app = angular.module('app', [
     'ui.validate',
     'ui.date',
     'ui.gravatar',
-    'vcRecaptcha',
     'app.controllers',
     'app.services',
     'app.filters',
     'app.directives',
     'app.animations',
     //'app.redbull',
-    'angular-google-adsense'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User',
@@ -124,7 +122,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
+        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 

@@ -1,8 +1,8 @@
 module.exports = {
 	"mongodb": {
-	    "host": "54.68.67.60",
+	    "host": "52.11.14.8",
 	    "port": 27017,
-	    "database": "darrendb",
+	    "database": "tempostorm",
 	    "name": "mongodb",
 	    "connector": "mongodb",
 	    "server": {
