@@ -8622,7 +8622,6 @@ angular.module('app.controllers', ['ngCookies'])
     }])
     .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService',
         function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService) {
-          console.log('hi');
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
             
@@ -11116,10 +11115,10 @@ angular.module('app.controllers', ['ngCookies'])
             );
 
             //is premium
-            $scope.isPremium = function (guide) {
-                if (!guide.premium.isPremium) { return false; }
+            $scope.isPremium = function (deck) {
+                if (!deck.premium.isPremium) { return false; }
                 var now = new Date().getTime(),
-                    expiry = new Date(guide.premium.expiryDate).getTime();
+                    expiry = new Date(deck.premium.expiryDate).getTime();
                 if (expiry > now) {
                     return true;
                 } else {
@@ -11128,8 +11127,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User',
-        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User) {
+    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User', 'DeckBuilder',
+        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User, DeckBuilder) {
             
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
@@ -11166,8 +11165,9 @@ angular.module('app.controllers', ['ngCookies'])
             });
             
             // load deck
-            $scope.deck = deckWithMulligans;
-//            console.log('deck: ', deckWithMulligans);
+            console.log('initDeck:', deckWithMulligans);
+            $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
+            console.log('$scope.deck: ', $scope.deck);
             
 //            console.log('currentMulligan: ', $scope.currentMulligan);
             

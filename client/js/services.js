@@ -1409,6 +1409,7 @@ angular.module('app.services', [])
 
         var db = {
             id: data.id || null,
+            authorId: data.authorId || User.getCurrentId(),
             name: data.name || '',
             dust: data.dust || 0,
             youtubeId: data.youtubeId || '',
@@ -1426,10 +1427,12 @@ angular.module('app.services', [])
                 isPremium: false,
                 expiryDate: d
             },
+            comments: data.comments || [],
             slug: data.slug || '',
             isFeatured: data.isFeatured || false,
             isPublic: data.isPublic || true,
             voteScore: data.voteScore || 1,
+            votes: data.votes || [],
             mulligans: data.mulligans || [
                 {
                     className: 'Druid',
@@ -1495,6 +1498,12 @@ angular.module('app.services', [])
                     instructionsWithoutCoin: ''
                 },
             ]
+        };
+        
+        db.init = function() {
+            if (db.cards.length) {
+                db.sortDeck();
+            }
         };
 
         db.validVideo = function () {
@@ -1993,6 +2002,8 @@ angular.module('app.services', [])
         db.removeMatch = function (index) {
             db.matchups.splice(index,1);
         }
+        
+        db.init();
 
         return db;
     };

@@ -663,7 +663,7 @@ var app = angular.module('app', [
                                             voteScore: true,
                                             playerClass: true,
                                             createdDate: true,
-                                            premium: true
+                                            premium: true,
                                         },
                                         include: [
                                           {
@@ -717,7 +717,8 @@ var app = angular.module('app', [
                                             voteScore: true,
                                             playerClass: true,
                                             dust: true,
-                                            createdDate: true
+                                            createdDate: true,
+                                            premium: true
                                         },
                                         include: ["author"],
                                         order: "createdDate DESC",
@@ -793,7 +794,7 @@ var app = angular.module('app', [
                                             chapters: true,
                                             youtubeId: true,
                                             gameModeType: true,
-                                            isActive: true
+                                            isActive: true,
                                         },
                                         include: [
                                             {
@@ -809,7 +810,7 @@ var app = angular.module('app', [
                                                 }
                                             },
                                             {
-                                                relation: 'author',
+                                                relation: "author",
                                                 scope: {
                                                     fields: [
                                                       'id',
@@ -821,13 +822,14 @@ var app = angular.module('app', [
                                                 }
                                             },
                                             {
-                                                relation: 'matchups'
+                                                relation: "matchups"
                                             }
                                         ]
                                     }
                                 })
                                 .$promise
                                 .then(function (deck) {
+                                    console.log('resolve deck:', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -3694,7 +3696,7 @@ var app = angular.module('app', [
                                     search: '',
                                     options: {
                                         filter: {
-                                            fields: ["id", "name", "playerClass", "description"]
+                                            fields: ["id", "name", "playerClass", "description",]
                                         }
                                     }
                                 };
