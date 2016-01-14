@@ -13,6 +13,10 @@ modules:
         - 'concurrent:modules2'
         - 'concurrent:modules3'
         - 'concurrent:modules4'
+images:
+    description: 'Images'
+    tasks:
+        - 'concurrent:images1'
 deploy-staging:
     description: 'Deploy - Staging'
     tasks:

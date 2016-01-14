@@ -6159,7 +6159,7 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
-                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                        order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
                     }
@@ -6754,7 +6754,7 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
-                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                        order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
                     }
@@ -8877,7 +8877,7 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
-                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                        order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
                     }
@@ -9257,9 +9257,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             function saveDeck(deck) {
-//                console.log('init deck: ', deck);
-				
-                deck.authorId = User.getCurrentId();
+                console.log('init deck: ', deck);
+                
                 deck.votes = [
                     {
                         userID: User.getCurrentId(),
@@ -9293,9 +9292,25 @@ angular.module('app.controllers', ['ngCookies'])
 
                 });
                 
+                var newCards = [];
+                angular.forEach(deckSubmitted.cards, function(card, index) {
+                    console.log('index:', index);
+                    console.log('card:', card);
+                    var newCard = {
+                        cardId: card.cardId,
+                        cardQuantity: card.cardQuantity,
+                    };
+                    newCards.push(newCard);
+                });
+                
+                deckSubmitted.cards = newCards;
+                deckSubmitted.bullshit = "fuck my life";
+                console.log('before save deck:', deckSubmitted);
+                
                 Deck.create(deckSubmitted)
                 .$promise
                 .then(function (deckCreated) {
+                    console.log('deckCreated:', deckCreated);
                     $scope.deckSubmitting = false;
                     $scope.app.settings.deck = null;
                     $state.transitionTo('app.hs.decks.deck', { slug: deckCreated.slug });
@@ -9310,6 +9325,26 @@ angular.module('app.controllers', ['ngCookies'])
                         msg: 'Unable to save deck.'
                     });
                 });
+                
+//                async.series([
+//                    function(seriesCB) {
+//                        Deck.create(deck)
+//                        .$promise
+//                        .then(function (deckUpdated) {
+//                            console.log('deckUpdated:', deckUpdated);
+//                            return deckUpdated();
+//                        })
+//                        .catch(function (err) {
+//                            console.log('deck create: ', err);
+//                            return deckUpdated(err);
+//                        });
+//                    },
+//                    function(seriesCB) {
+//                        
+//                    }
+//                ]);
+                
+                
             }
         }
     ])
@@ -9471,7 +9506,7 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
-                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                        order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
                     }
@@ -11144,10 +11179,10 @@ angular.module('app.controllers', ['ngCookies'])
             );
 
             //is premium
-            $scope.isPremium = function (guide) {
-                if (!guide.premium.isPremium) { return false; }
+            $scope.isPremium = function (deck) {
+                if (!deck.premium.isPremium) { return false; }
                 var now = new Date().getTime(),
-                    expiry = new Date(guide.premium.expiryDate).getTime();
+                    expiry = new Date(deck.premium.expiryDate).getTime();
                 if (expiry > now) {
                     return true;
                 } else {
@@ -11156,8 +11191,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User', '$timeout',
-        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User, $timeout) {
+    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User', 'DeckBuilder',
+        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User, DeckBuilder) {
             
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
@@ -11200,8 +11235,9 @@ angular.module('app.controllers', ['ngCookies'])
             });
             
             // load deck
-            $scope.deck = deckWithMulligans;
-//            console.log('deck: ', deckWithMulligans);
+            console.log('initDeck:', deckWithMulligans);
+            $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
+            console.log('$scope.deck: ', $scope.deck);
             
 //            console.log('currentMulligan: ', $scope.currentMulligan);
             

@@ -13,11 +13,13 @@ module.exports = function(Guide) {
     Guide.observe("loaded", utils.filterFields(fieldFilter));
 
 
+    /*
     var docFilter =  {
         acceptedRoles: ["$owner", "$admin"],
         filter: {
             isPublic : true
         }
     };
-    Guide.observe("access", utils.filterDocs(docFilter))
+    */
+//    Guide.observe("access", utils.filterDocs(docFilter))
 };

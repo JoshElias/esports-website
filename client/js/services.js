@@ -1397,105 +1397,115 @@ angular.module('app.services', [])
 
     return ow;
 })
-    .factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone) {
+.factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone) {
 
-        var deckBuilder = {};
+    var deckBuilder = {};
 
-        deckBuilder.new = function (playerClass, data) {
-            data = data || {};
+    deckBuilder.new = function (playerClass, data) {
+        data = data || {};
 
-            var d = new Date();
-            d.setMonth(d.getMonth() + 1);
+        var d = new Date();
+        d.setMonth(d.getMonth() + 1);
 
-            var db = {
-                id: data.id || null,
-                name: data.name || '',
-                dust: data.dust || 0,
-                youtubeId: data.youtubeId || '',
-                description: data.description || '',
-                chapters: data.chapters || [],
-                deckType: data.deckType || 'None',
-                gameModeType: data.gameModeType || 'constructed',
-                basic: data.basic || false,
-                matchups: data.matchups || [],
-                cards: data.cards || [],
-                heroName: data.heroName || '',
-                playerClass: playerClass,
-                createdDate: data.createdDate || new Date().toISOString(),
-                premium: data.premium || {
-                    isPremium: false,
-                    expiryDate: d
+        var db = {
+            id: data.id || null,
+            authorId: data.authorId || User.getCurrentId(),
+            author: data.author || {},
+            name: data.name || '',
+            dust: data.dust || 0,
+            youtubeId: data.youtubeId || '',
+            description: data.description || '',
+            chapters: data.chapters || [],
+            deckType: data.deckType || 'None',
+            gameModeType: data.gameModeType || 'constructed',
+            basic: data.basic || false,
+            matchups: data.matchups || [],
+            cards: data.cards || [],
+            heroName: data.heroName || '',
+            playerClass: playerClass,
+            createdDate: data.createdDate || new Date().toISOString(),
+            premium: data.premium || {
+                isPremium: false,
+                expiryDate: d
+            },
+            comments: data.comments || [],
+            slug: data.slug || '',
+            isFeatured: data.isFeatured || false,
+            isPublic: data.isPublic || true,
+            voteScore: data.voteScore || 1,
+            votes: data.votes || [],
+            mulligans: data.mulligans || [
+                {
+                    className: 'Druid',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
                 },
-                slug: data.slug || '',
-                isFeatured: data.isFeatured || false,
-                isPublic: data.isPublic || true,
-                voteScore: data.voteScore || 1,
-                mulligans: data.mulligans || [
-                    {
-                        className: 'Druid',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                    {
-                        className: 'Hunter',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                    {
-                        className: 'Mage',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                    {
-                        className: 'Paladin',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                    {
-                        className: 'Priest',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                    {
-                        className: 'Rogue',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                    {
-                        className: 'Shaman',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                    {
-                        className: 'Warlock',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                    {
-                        className: 'Warrior',
-                        mulligansWithoutCoin: [],
-                        mulligansWithCoin: [],
-                        instructionsWithCoin: '',
-                        instructionsWithoutCoin: ''
-                    },
-                ]
-            };
+                {
+                    className: 'Hunter',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Mage',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Paladin',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Priest',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Rogue',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Shaman',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Warlock',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Warrior',
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+            ]
+        };
+        
+        db.init = function() {
+            if (db.cards.length) {
+                db.sortDeck();
+            }
+        };
 
             db.validVideo = function () {
                 //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -1976,6 +1986,8 @@ angular.module('app.services', [])
             db.removeChapter = function (index) {
                 db.chapters.splice(index,1);
             }
+        
+            
 
             db.newMatch = function (klass) {
                 //            console.log('vhat class?: ', klass);
@@ -1993,62 +2005,13 @@ angular.module('app.services', [])
             db.removeMatch = function (index) {
                 db.matchups.splice(index,1);
             }
-
+            
+            db.init();
             return db;
         };
-
-        deckBuilder.loadCards = function (page, perpage, search, mechanics, mana, playerClass) {
-            var d = $q.defer();
-            $http.post('/deckbuilder', { page: page, perpage: perpage, search: search, mechanics: mechanics, mana: mana, playerClass: playerClass }).success(function (data) {
-                d.resolve(data);
-            });
-            return d.promise;
-        }
-
-        deckBuilder.saveDeck = function (deck) {
-            return $http.post('/api/deck/add', {
-                name: deck.name,
-                deckType: deck.deckType,
-                description: deck.description,
-                chapters: deck.chapters,
-                matches: deck.matches,
-                type: deck.type,
-                basic: deck.basic,
-                cards: deck.cards,
-                heroName: deck.heroName,
-                playerClass: deck.playerClass,
-                mulligans: deck.mulligans,
-                video: deck.video,
-                premium: deck.premium,
-                featured: deck.featured,
-                public: deck.public
-            });
-        };
-
-        deckBuilder.updateDeck = function (deck) {
-            return $http.post('/api/deck/update', {
-                id: deck.id,
-                name: deck.name,
-                deckType: deck.deckType,
-                description: deck.description,
-                chapters: deck.chapters,
-                matches: deck.matches,
-                type: deck.type,
-                basic: deck.basic,
-                cards: deck.cards,
-                heroName: deck.heroName,
-                playerClass: deck.playerClass,
-                mulligans: deck.mulligans,
-                video: deck.video,
-                premium: deck.premium,
-                featured: deck.featured,
-                public: deck.public
-            });
-        };
-
-        return deckBuilder;
-    }])
-    .factory('GuideBuilder', ['$sce', '$http', '$q', 'User', 'HeroTalent', function ($sce, $http, $q, User, HeroTalent) {
+    return deckBuilder;
+}])
+.factory('GuideBuilder', ['$sce', '$http', '$q', 'User', 'HeroTalent', function ($sce, $http, $q, User, HeroTalent) {
 
         var guideBuilder = {};
 
