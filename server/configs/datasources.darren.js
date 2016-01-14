@@ -1,6 +1,6 @@
 module.exports = {
 	"mongodb": {
-	    "host": "52.11.14.8",
+	    "host": "localhost",
 	    "port": 27017,
 	    "database": "tempostorm",
 	    "name": "mongodb",
@@ -24,6 +24,6 @@ module.exports = {
         "key": "+KtXI6Pvdt8ijq4uOCpkIT5f76Wxf23avEdy311f",
         "keyId": "AKIAI5GMLIWXZP6TQXYQ",
         "bucket": "staging-cdn.tempostorm.com",
-		"endpoint": "staging-cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com"
+      "endpoint": "staging-cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com"
   }
 }

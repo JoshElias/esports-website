@@ -103,6 +103,14 @@
 // 2... general styles
 //*************************************
 
+button { 
+    outline: none;
+    
+    &:focus {
+        outline: none;
+    }
+}
+
 body { background: #121111; font-family: 'Open Sans Regular'; overflow-x: hidden; }
 body.admin {  }
 body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
@@ -154,10 +162,17 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 // 2.1.. colors
 
-.ts-blue { color: #2766ad; }
-.white { color: #FFF; }
+.ts-blue { 
+    color: #2766ad;
+}
 
-.ts-dark { background: #121111; }
+.white { 
+    color: #FFF;
+}
+
+.ts-dark { 
+    background: #121111;
+}
 
 // 2.2.. content styles
 
