@@ -1,0 +1,80 @@
+{
+  "name": "activity",
+  "plural": "activities",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "activityType": {
+      "type": "string"
+    },
+    "authorId": {},
+    "createdDate": {
+      "type": "date"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "articleId": {},
+    "deckId": {},
+    "snapshotId": {},
+    "forumPostId": {},
+    "guideId": {}
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "article": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "articleId"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
+    },
+    "forumPost": {
+      "type": "belongsTo",
+      "model": "forumPost",
+      "foreignKey": "forumPostId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
+  "methods": {}
+}

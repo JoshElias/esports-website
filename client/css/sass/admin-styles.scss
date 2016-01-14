@@ -1,0 +1,342 @@
+@import 'ts-colors.scss';
+
+// Description: styles related to the admin section
+
+//*************************************
+
+// 1... admin team
+// 2... admin meta snapshot
+// 4... admin banner
+// 5... admin poll
+// 6... Drag and Drop
+// 7... Progress
+// 8... Card Circles
+// 9... Admin Users styles
+
+//*************************************
+
+
+//*************************************
+// 1... admin team
+//*************************************
+
+
+.upload-drop-team {
+    height: 188px !important;
+    width: 188px !important;
+}
+
+.photo-input {
+    
+    .upload-drop {
+        border-radius: 4px; 
+        border: 1px dashed #ccc; 
+        text-align: center; 
+        color: #666; 
+    
+        &.active { 
+            border: 1px dashed #66afe9; 
+            color: #357ebd; 
+            background: #e6f7ff;
+        }
+    }
+}
+
+.social-addon-group {
+    width: 100%;
+}
+
+.social-addon {
+    width: 10%;
+    text-align: right;
+}
+
+//*************************************
+// 2... admin meta snapshot
+//*************************************
+
+.button-block {}
+.button-block button {
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.snap-num {
+    width:50px;
+}
+
+.cardBtn {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 2px 8px;
+}
+
+.cardBtn.green {
+    background: #5CB85C;
+    border: none;
+    outline: none;
+    padding: 2px 8px;
+    color: white;
+}
+
+.cardBtn.danger {
+    background: #D9534F;
+    border: none;
+    outline: none;
+    padding: 2px 8px;
+    color: white;
+}
+
+.cardAddList {
+    padding: 5px;
+    padding-right: 0px;
+}
+
+.cardAddList img {
+    margin-top: -5px;
+    height:40px;
+}
+
+.cardToss {
+    background-color: #f2dede;
+}
+
+.cardKeep {
+    background-color: #dff0d8;
+}
+
+textarea[name=intro],
+textarea[name=explanation],
+textarea[name=weeklyNotes],
+textarea[name=thoughts] {
+    resize: vertical;
+}
+
+.tierHeading {
+    line-height: 1.75
+}
+
+
+//*************************************
+// 4... admin banner
+//*************************************
+
+textarea[name=description] {
+    resize: none;
+}
+label p {
+    font-weight: 500;
+    font-size: 13px;
+}
+
+//*************************************
+// 5... admin poll
+//*************************************
+
+.poll-item-edit { width:auto; }
+.edit-button-fix .badge {padding: 5px 15px }
+
+//*************************************
+// 6... General Admin
+//*************************************
+
+.admin-article-related-bg {
+    background-color: #F5F5F5;
+}
+
+.admin-side-nav {
+    position: fixed;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+    z-index: 1000;
+    background: #1c2b36;
+    border-right: 1px solid rgba(0,0,0,.15);
+}
+
+.admin-side-nav > ul.nav > li > a {
+    color: #7ca1ae;
+}
+
+.admin-side-nav ul.nav li a:hover {
+    color: #FFF;
+    background: #16232d;
+}
+
+.admin-side-nav > ul.nav > li.active > a {
+    color: #FFF;
+    background: #131e26;
+}
+
+.admin-side-nav ul.nav li.active a:hover {
+    color: #FFF;
+    background: #131e26;
+}
+
+.nav li.active .fa-angle-right {
+    display: none;
+}
+
+.nav li .fa-angle-down {
+    display: none;
+    margin-right: 5px;
+}
+
+.nav li.active .fa-angle-down {
+    display: inline;
+}
+
+.nav-sub {
+    background: #000;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    margin-left: -20px;
+    -webkit-transition: all .2s ease-in-out 0s;
+    transition: all .2s ease-in-out 0s;
+}
+
+.active .nav-sub {
+    opacity: 1;
+    margin-left: 0;
+    height: auto !important;
+    overflow: auto;
+}
+
+.nav-sub li a {
+    text-indent: 24px;
+    color: #7ca1ae;
+}
+
+.nav-sub li.active a {
+    color: #FFF;
+}
+
+.nav-sub li a:hover {
+    background: #000;
+}
+
+.admin-content {
+    height: 100%;
+    min-height: 100%;
+    margin-left: 200px;
+}
+
+.admin-content-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: #555;
+    background-color: #f6f8f8;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-dark {  }
+
+.admin-list-heading span { line-height: 34px; }
+
+.admin-list-item span { line-height: 34px; }
+.admin-list-item:nth-child(odd) { background: #FDFDFD; }
+.list-group-item.admin-list-item:hover { background: #e6f7ff; }
+
+.nav > li > a:hover, .nav > li > a:focus { background: inherit; }
+
+
+
+/* dnd lists */
+ul[dnd-list] > li {
+	position: relative;
+}
+
+ul[dnd-list] .dndDraggingSource {
+    display: none;
+}
+
+ul[dnd-list] .dndPlaceholder {
+    list-style: none;
+    display: block;
+    background-color: #ddd;
+    min-height: 52px;
+}
+
+//*************************************
+// 7... Progress
+//*************************************
+
+
+#ngProgress {
+    margin: 0;
+    padding: 0;
+    z-index: 99998;
+    background-color: #2766ad;
+    color: #000;
+    /*box-shadow: 0 0 10px 0;  Inherits the font color */
+    height: 2px;
+    opacity: 0;
+
+    /* Add CSS3 styles for transition smoothing */
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+}
+
+/* progress container */
+#ngProgress-container {
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    top: 0px;
+    left: 0;
+    right: 0;
+    z-index: 99999;
+}
+
+
+
+//*************************************
+// 8... Admin Cards
+//*************************************
+
+.form-inline > .form-group > .input-group > .input-group-addon { padding: 0px; border: 0px; }
+
+/* cards */
+.card-list-item span { position: relative; line-height: 34px; }
+.card-list-item:nth-child(even) { background: #FDFDFD; }
+.card-list-item:hover { background: #e6f7ff; }
+
+.card-list-item .rarity { margin-top: 12px; margin-right: 10px; }
+
+/* rarity circles */
+.rarity { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #666; }
+.rarity.basic { background: #FFF; }
+.rarity.common { background: #d3ddd5; }
+.rarity.rare { background: #359cff; }
+.rarity.epic { background: #e649fc; }
+.rarity.legendary { background: #ffb629; }
+
+/* class circles */
+.class { width: 30px; height: 30px; background: #000 url('../img/class-icons.png') no-repeat; }
+
+//*************************************
+// 9... Admin Users styles
+//*************************************
+
+.blue-userbar {
+    background-color: $ts-blue;
+    color: $white;
+    padding: 10px 0 0;
+    
+    h4 {
+        font-weight: 700;
+    }
+
+}
+
+.no-top-bottom-pad {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+}

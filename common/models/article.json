@@ -1,0 +1,136 @@
+{
+  "name": "article",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "url": {
+        "type": "string",
+        "validators": ["unique"]
+      },
+      "linked": {"type": "boolean"}
+    },
+    "description": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "photoNames": {
+      "type": "object"
+    },
+    "classTags": [
+      "string"
+    ],
+    "themeName": {
+      "type": "string"
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "votes": [
+      "string"
+    ],
+    "voteScore": {
+      "type": "number"
+    },
+    "isFeatured": {
+      "type": "boolean"
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "premium": {
+      "type": "object"
+    },
+    "articleType": [
+      "string"
+    ],
+    "oldRelatedArticles": [
+      "string"
+    ],
+    "oldComments": [
+      "string"
+    ],
+    "isActive": {
+      "type": "boolean"
+    },
+    "deckId": {},
+    "guideId": {},
+    "__v": {
+      "type": "number"
+    },
+    "authorId": {}
+  },
+  "validations": [],
+  "relations": {
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "articleId",
+      "isChild": true
+    },
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "relatedArticles": {
+      "type": "hasMany",
+      "model": "article",
+      "foreignKey": "parentArticleId",
+      "through": "articleArticle",
+      "keyThrough": "childArticleId"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "findOne"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
+  "methods": {}
+}

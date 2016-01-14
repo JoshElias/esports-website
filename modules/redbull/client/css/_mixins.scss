@@ -1,0 +1,40 @@
+@mixin draft-hero-select ($hero, $pos) {
+    $width: -176;
+    $height: -129;
+    
+    &.#{$hero} {
+        background-position: #{$width * $pos}px #{$height * 0}px;
+
+        &:hover {
+            background-position: #{$width * $pos}px #{$height * 1}px;
+        }
+
+        &.active {
+            background-position: #{$width * $pos}px #{$height * 2}px;
+        }
+    }
+}
+
+@mixin draft-deck ($hero, $r, $g, $b) {
+    &.#{$hero} {
+        .deck-title-bar {
+            background: url(../img/meta-snapshot/hero-portrait/#{$hero}-sm.png) no-repeat top right;
+        }
+
+        .deck-count {
+            background-color: rgba($r, $g, $b, .8);
+        }
+
+        &:hover {
+            .deck-title-bar {
+                background-color: rgba($r, $g, $b, .5);
+            }
+        }
+
+        &.active {
+            .deck-title-bar {
+                background-color: rgba($r, $g, $b, .8);
+            }
+        }
+    }
+}

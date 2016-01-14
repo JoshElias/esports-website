@@ -1,0 +1,77 @@
+/* MegaNavbar v2.2.0 (http://www.MegaNavbar.com) Copyright 2014 MegaNavbar.com. All Rights Reserved.
+** Licensed under Regular License (http://codecanyon.net/licenses/regular) or Extended License (http://codecanyon.net/licenses/extended)
+** We will take legal action against those who copy our HTML content, CSS style sheets and JavaScript functions without a license.
+*/
+
+@keyframes SkewRightTopToBottom{
+	from{-webkit-transform:skew(0deg,-5deg);-ms-transform:skew(0deg,-5deg);transform:skew(0deg,-5deg)}
+	to{-webkit-transform:skew(0deg,0deg);-ms-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@-webkit-keyframes SkewRightTopToBottom{
+	from{-webkit-transform:skew(0deg,-5deg);transform:skew(0deg,-5deg)}
+	to{-webkit-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@keyframes SkewRightBottomToTop{
+	from{-webkit-transform:skew(0deg,5deg);-ms-transform:skew(0deg,5deg);transform:skew(0deg,5deg)}
+	to{-webkit-transform:skew(0deg,0deg);-ms-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@-webkit-keyframes SkewRightBottomToTop{
+	from{-webkit-transform:skew(0deg,5deg);transform:skew(0deg,5deg)}
+	to{-webkit-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@keyframes SkewLeftTopToBottom{
+	from{-webkit-transform:skew(0deg,5deg);-ms-transform:skew(0deg,5deg);transform:skew(0deg,5deg)}
+	to{-webkit-transform:skew(0deg,0deg);-ms-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@-webkit-keyframes SkewLeftTopToBottom{
+	from{-webkit-transform:skew(0deg,5deg);transform:skew(0deg,5deg)}
+	to{-webkit-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@keyframes SkewLeftBottomToTop{
+	from{-webkit-transform:skew(0deg,-5deg);-ms-transform:skew(0deg,-5deg);transform:skew(0deg,-5deg)}
+	to{-webkit-transform:skew(0deg,0deg);-ms-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@-webkit-keyframes SkewLeftBottomToTop{
+	from{-webkit-transform:skew(0deg,-5deg);transform:skew(0deg,-5deg)}
+	to{-webkit-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@keyframes SkewBottomLeftToRight{
+	from{-webkit-transform:skew(-10deg,0deg);-ms-transform:skew(-10deg,0deg);transform:skew(-10deg,0deg)}
+	to{-webkit-transform:skew(0deg,0deg);-ms-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@-webkit-keyframes SkewBottomLeftToRight{
+	from{-webkit-transform:skew(-10deg,0deg);transform:skew(-10deg,0deg)}
+	to{-webkit-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@keyframes SkewBottomRightToLeft{
+	from{-webkit-transform:skew(10deg,0deg);-ms-transform:skew(10deg,0deg);transform:skew(10deg,0deg)}
+	to{-webkit-transform:skew(0deg,0deg);-ms-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@-webkit-keyframes SkewBottomRightToLeft{
+	from{-webkit-transform:skew(10deg,0deg);transform:skew(10deg,0deg)}
+	to{-webkit-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@keyframes SkewTopRightToLeft{
+	from{-webkit-transform:skew(-10deg,0deg);-ms-transform:skew(-10deg,0deg);transform:skew(-10deg,0deg)}
+	to{-webkit-transform:skew(0deg,0deg);-ms-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@-webkit-keyframes SkewTopRightToLeft{
+	from{-webkit-transform:skew(-10deg,0deg);transform:skew(-10deg,0deg)}
+	to{-webkit-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@keyframes SkewTopLeftToRight{
+	from{-webkit-transform:skew(10deg,0deg);-ms-transform:skew(10deg,0deg);transform:skew(10deg,0deg)}
+	to{-webkit-transform:skew(0deg,0deg);-ms-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+@-webkit-keyframes SkewTopLeftToRight{
+	from{-webkit-transform:skew(10deg,0deg);transform:skew(10deg,0deg)}
+	to{-webkit-transform:skew(0deg,0deg);transform:skew(0deg,0deg)}
+}
+.navbar .navbar-nav .dropdown-menu.SkewRightTopToBottom,.navbar .navbar-nav.SkewRightTopToBottom .dropdown-menu,.navbar.SkewRightTopToBottom .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.SkewEndTopToBottom,.navbar .navbar-left.SkewEndTopToBottom .dropdown-menu,.navbar.SkewEndTopToBottom .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SkewStartTopToBottom,.navbar .navbar-right.SkewStartTopToBottom .dropdown-menu,.navbar.SkewStartTopToBottom .navbar-right .dropdown-menu{transform-origin:0 0;-webkit-animation-name:SkewRightTopToBottom;animation-name:SkewRightTopToBottom}
+.navbar .navbar-nav .dropdown-menu.SkewRightBottomToTop,.navbar .navbar-nav.SkewRightBottomToTop .dropdown-menu,.navbar.SkewRightBottomToTop .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.SkewEndBottomToTop,.navbar .navbar-left.SkewEndBottomToTop .dropdown-menu,.navbar.SkewEndBottomToTop .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SkewStartBottomToTop,.navbar .navbar-right.SkewStartBottomToTop .dropdown-menu,.navbar.SkewStartBottomToTop .navbar-right .dropdown-menu{transform-origin:0 0;-webkit-animation-name:SkewRightBottomToTop;animation-name:SkewRightBottomToTop}
+.navbar .navbar-nav .dropdown-menu.SkewLeftTopToBottom,.navbar .navbar-nav.SkewLeftTopToBottom .dropdown-menu,.navbar.SkewLeftTopToBottom .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.SkewStartTopToBottom,.navbar .navbar-left.SkewStartTopToBottom .dropdown-menu,.navbar.SkewStartTopToBottom .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SkewEndTopToBottom,.navbar .navbar-right.SkewEndTopToBottom .dropdown-menu,.navbar.SkewEndTopToBottom .navbar-right .dropdown-menu{transform-origin:100% 100%;-webkit-animation-name:SkewLeftTopToBottom;animation-name:SkewLeftTopToBottom}
+.navbar .navbar-nav .dropdown-menu.SkewLeftBottomToTop,.navbar .navbar-nav.SkewLeftBottomToTop .dropdown-menu,.navbar.SkewLeftBottomToTop .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.SkewStartBottomToTop,.navbar .navbar-left.SkewStartBottomToTop .dropdown-menu,.navbar.SkewStartBottomToTop .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SkewEndBottomToTop,.navbar .navbar-right.SkewEndBottomToTop .dropdown-menu,.navbar.SkewEndBottomToTop .navbar-right .dropdown-menu{transform-origin:100% 100%;-webkit-animation-name:SkewLeftBottomToTop;animation-name:SkewLeftBottomToTop}
+.navbar .navbar-nav .dropdown-menu.SkewBottomLeftToRight,.navbar .navbar-nav.SkewBottomLeftToRight .dropdown-menu,.navbar.SkewBottomLeftToRight .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.SkewBottomStartToEnd,.navbar .navbar-left.SkewBottomStartToEnd .dropdown-menu,.navbar.SkewBottomStartToEnd .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SkewBottomEndToStart,.navbar .navbar-right.SkewBottomEndToStart .dropdown-menu,.navbar.SkewBottomEndToStart .navbar-right .dropdown-menu{transform-origin:0 0;-webkit-animation-name:SkewBottomLeftToRight;animation-name:SkewBottomLeftToRight}
+.navbar .navbar-nav .dropdown-menu.SkewBottomRightToLeft,.navbar .navbar-nav.SkewBottomRightToLeft .dropdown-menu,.navbar.SkewBottomRightToLeft .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.SkewBottomEndToStart,.navbar .navbar-left.SkewBottomEndToStart .dropdown-menu,.navbar.SkewBottomEndToStart .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SkewBottomStartToEnd,.navbar .navbar-right.SkewBottomStartToEnd .dropdown-menu,.navbar.SkewBottomStartToEnd .navbar-right .dropdown-menu{transform-origin:0 0;-webkit-animation-name:SkewBottomRightToLeft;animation-name:SkewBottomRightToLeft}
+.navbar .navbar-nav .dropdown-menu.SkewTopRightToLeft,.navbar .navbar-nav.SkewTopRightToLeft .dropdown-menu,.navbar.SkewTopRightToLeft .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.SkewTopEndToStart,.navbar .navbar-left.SkewTopEndToStart .dropdown-menu,.navbar.SkewTopEndToStart .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SkewTopStartToEnd,.navbar .navbar-right.SkewTopStartToEnd .dropdown-menu,.navbar.SkewTopStartToEnd .navbar-right .dropdown-menu{transform-origin:100% 100%;-webkit-animation-name:SkewTopRightToLeft;animation-name:SkewTopRightToLeft}
+.navbar .navbar-nav .dropdown-menu.SkewTopLeftToRight,.navbar .navbar-nav.SkewTopLeftToRight .dropdown-menu,.navbar.SkewTopLeftToRight .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.SkewTopStartToEnd,.navbar .navbar-left.SkewTopStartToEnd .dropdown-menu,.navbar.SkewTopStartToEnd .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SkewTopEndToStart,.navbar .navbar-right.SkewTopEndToStart .dropdown-menu,.navbar.SkewTopEndToStart .navbar-right .dropdown-menu{transform-origin:100% 100%;-webkit-animation-name:SkewTopLeftToRight;animation-name:SkewTopLeftToRight}

@@ -1,0 +1,119 @@
+{
+  "name": "card",
+  "plural": "cards",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "cost": {
+      "type": "number",
+      "required": true
+    },
+    "rarity": {
+      "type": "string",
+      "required": true
+    },
+    "race": {
+      "type": "string"
+    },
+    "playerClass": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "flavor": {
+      "type": "string"
+    },
+    "artist": {
+      "type": "string"
+    },
+    "attack": {
+      "type": "number",
+      "required": true
+    },
+    "health": {
+      "type": "number"
+    },
+    "durability": {
+      "type": "number"
+    },
+    "dust": {
+      "type": "number"
+    },
+    "isActive": {
+      "type": "boolean",
+      "required": true
+    },
+    "mechanics": [
+      "string"
+    ],
+    "cardType": {
+      "type": "string",
+      "required": true
+    },
+    "deckIds": [
+      "string"
+    ],
+    "deckable": {
+      "type": "boolean"
+    },
+    "photoNames": {
+      "type": "object",
+      "required": true
+    },
+    "expansion": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "decks": {
+      "type": "hasMany",
+      "model": "deckCard",
+      "foreignKey": "cardId"
+    },
+    "mulligansWithCoin": {
+      "type": "hasMany",
+      "model": "mulligan",
+      "foreignKey": "cardId",
+      "through": "cardWithCoin"
+    },
+    "mulligansWithoutCoin": {
+      "type": "hasMany",
+      "model": "mulligan",
+      "foreignKey": "cardId",
+      "through": "cardWithoutCoin"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
+  "methods": {}
+}

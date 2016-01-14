@@ -1,0 +1,469 @@
+@import 'ts-colors.scss';
+
+// Description: hots home file for general styles for hots main page as well as styles for filter
+
+//*************************************
+
+// 1... hots home
+// 2... hots - home filters 
+// 3... hots - home content 
+// 4... hots - home guides list
+// 5... hots modal
+
+//*************************************
+
+
+    //*************************************
+    // 1... hots - home 
+    //*************************************
+
+.hots-dark { background: #121111; }
+
+.filters-back { transition: background .6s ease-in-out; }
+.filters-back.default { background: #121111 url('../img/hots/maps/bgs/base.jpg') center top no-repeat; }
+
+//specific map backgrounds moved to hots maps
+
+.hots-home-title { background: #2766ad url('../img/hots/top-banner.jpg') center center no-repeat; background-size: cover; }
+.hots-home-logo { margin: 60px auto; }
+
+.btn-hots { padding: 0px; width: 200px; font-family: 'Open Sans Bold'; color: rgba(255,255,255,.8); letter-spacing: 2px; background: #2766ad; border-radius: 0px; }
+.btn-hots .inner { width: 198px; padding: 15px 0px; border: 1px solid rgba(255,255,255,.2); }
+.btn-hots:hover { color: rgba(255,255,255,1); box-shadow: 0px 0px 20px rgba(255,255,255,.5); }
+
+@media (max-width: 767px) {
+    .btn-hots { margin-right: none !important; width: 100%; }
+    .btn-hots .inner { width: 100%; }
+}
+
+
+.hots-styles { //hots styles wrapper
+
+    //*************************************
+    // 2... hots - home filters 
+    //*************************************
+
+    .hero-name { margin-bottom: -10px; font-family: 'Open Sans Bold'; font-size: 60px; color: #FFF; text-shadow: 0px 0px 20px rgba(255,255,255,.6); text-transform: uppercase; }
+    .hero-description { font-family: 'Open Sans Bold'; font-size: 20px; color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
+
+    .hero-roles,
+    .hero-universes { width: 172px; padding: 0; float: left; }
+
+    .hero-roles { margin: 0 10px 0 0; }
+
+    .hero-roles li,
+    .hero-universes li { list-style: none; float: left; width: 43px; height: 49px; }
+
+    .hero-roles li button,
+    .hero-universes li button { width: 43px; height: 49px; border: none; outline: none; background-repeat: no-repeat; background: url('../img/hots/filter-sprites.png'); }
+
+    .hero-roles li button.warrior { background-position: 0px 0px; }
+    .hero-roles li button.assassin { background-position: 0px -49px; }
+    .hero-roles li button.support { background-position: 0px -98px; }
+    .hero-roles li button.specialist { background-position: 0px -147px; }
+
+    .hero-roles li button.warrior.active { background-position: -43px 0px; }
+    .hero-roles li button.assassin.active { background-position: -43px -49px; }
+    .hero-roles li button.support.active { background-position: -43px -98px; }
+    .hero-roles li button.specialist.active { background-position: -43px -147px; }
+
+    .hero-universes li button.warcraft { background-position: -86px 0px; }
+    .hero-universes li button.starcraft { background-position: -86px -49px; }
+    .hero-universes li button.diablo { background-position: -86px -98px; }
+    .hero-universes li button.retro { background-position: -86px -147px; }
+
+    .hero-universes li button.warcraft.active { background-position: -129px 0px; }
+    .hero-universes li button.starcraft.active { background-position: -129px -49px; }
+    .hero-universes li button.diablo.active { background-position: -129px -98px; }
+    .hero-universes li button.retro.active { background-position: -129px -147px; }
+
+
+    .hero-filters { position: relative; margin: 0 auto; max-width: 1448px; height: 510px; padding: 0; }
+    .hero-filters li { list-style: none; position: absolute; }
+
+    .hero-filters li:nth-child(1) { top: 0px; left: 129px; }
+    .hero-filters li:nth-child(2) { top: 0px; left: 215px; }
+    .hero-filters li:nth-child(3) { top: 0px; left: 301px; }
+    .hero-filters li:nth-child(4) { top: 0px; left: 387px; }
+    .hero-filters li:nth-child(5) { top: 0px; left: 473px; }
+
+    .hero-filters li:nth-child(6) { top: 0px; right: 473px; }
+    .hero-filters li:nth-child(7) { top: 0px; right: 387px; }
+    .hero-filters li:nth-child(8) { top: 0px; right: 301px; }
+    .hero-filters li:nth-child(9) { top: 0px; right: 215px; }
+    .hero-filters li:nth-child(10) { top: 0px; right: 129px; }
+
+    .hero-filters li:nth-child(11) { top: 80px; left: 86px; }
+    .hero-filters li:nth-child(12) { top: 80px; left: 172px; }
+    .hero-filters li:nth-child(13) { top: 80px; left: 258px; }
+    .hero-filters li:nth-child(14) { top: 80px; left: 344px; }
+    .hero-filters li:nth-child(15) { top: 80px; left: 430px; }
+
+    .hero-filters li:nth-child(16) { top: 80px; right: 430px; }
+    .hero-filters li:nth-child(17) { top: 80px; right: 344px; }
+    .hero-filters li:nth-child(18) { top: 80px; right: 258px; }
+    .hero-filters li:nth-child(19) { top: 80px; right: 172px; }
+    .hero-filters li:nth-child(20) { top: 80px; right: 86px; }
+
+    .hero-filters li:nth-child(21) { top: 160px; left: 43px; }
+    .hero-filters li:nth-child(22) { top: 160px; left: 129px; }
+    .hero-filters li:nth-child(23) { top: 160px; left: 215px; }
+    .hero-filters li:nth-child(24) { top: 160px; left: 301px; }
+    .hero-filters li:nth-child(25) { top: 160px; left: 387px; }
+
+    .hero-filters li:nth-child(26) { top: 160px; right: 387px; }
+    .hero-filters li:nth-child(27) { top: 160px; right: 301px; }
+    .hero-filters li:nth-child(28) { top: 160px; right: 215px; }
+    .hero-filters li:nth-child(29) { top: 160px; right: 129px; }
+    .hero-filters li:nth-child(30) { top: 160px; right: 43px; }
+
+    .hero-filters li:nth-child(31) { top: 240px; left: 0px; }
+    .hero-filters li:nth-child(32) { top: 240px; left: 86px; }
+    .hero-filters li:nth-child(33) { top: 240px; left: 172px; }
+    .hero-filters li:nth-child(34) { top: 240px; left: 258px; }
+    .hero-filters li:nth-child(35) { top: 240px; left: 344px; }
+
+    .hero-filters li:nth-child(36) { top: 240px; right: 344px; }
+    .hero-filters li:nth-child(37) { top: 240px; right: 258px; }
+    .hero-filters li:nth-child(38) { top: 240px; right: 172px; }
+    .hero-filters li:nth-child(39) { top: 240px; right: 86px; }
+    .hero-filters li:nth-child(40) { top: 240px; right: 0px; }
+
+    .hero-filters li:nth-child(41) { top: 320px; left: 43px; }
+    .hero-filters li:nth-child(42) { top: 320px; left: 129px; }
+    .hero-filters li:nth-child(43) { top: 320px; left: 215px; }
+    .hero-filters li:nth-child(44) { top: 320px; left: 301px; }
+
+    .hero-filters li:nth-child(45) { top: 320px; right: 301px; }
+    .hero-filters li:nth-child(46) { top: 320px; right: 215px; }
+    .hero-filters li:nth-child(47) { top: 320px; right: 129px; }
+    .hero-filters li:nth-child(48) { top: 320px; right: 43px; }
+
+    .hero-filters li:nth-child(49) { top: 400px; left: 86px; }
+    .hero-filters li:nth-child(50) { top: 400px; left: 172px; }
+    .hero-filters li:nth-child(51) { top: 400px; left: 258px; }
+    .hero-filters li:nth-child(52) { top: 400px; left: 344px; }
+
+    .hero-filters li:nth-child(53) { top: 400px; right: 344px; }
+    .hero-filters li:nth-child(54) { top: 400px; right: 258px; }
+    .hero-filters li:nth-child(55) { top: 400px; right: 172px; }
+    .hero-filters li:nth-child(56) { top: 400px; right: 86px; }
+
+    @media (min-width: 980px) and (max-width: 1199px) {
+        .hero-filters { margin-top: -30px; height: 460px; }
+
+        .hero-filters li { transform: scale(.8,.8); backface-visibility: hidden; }
+        .hero-filters li:nth-child(1) { top: 30px; left: 69px; }
+        .hero-filters li:nth-child(2) { top: 30px; left: 145px; }
+        .hero-filters li:nth-child(3) { top: 30px; left: 221px; }
+        .hero-filters li:nth-child(4) { top: 30px; left: 297px; }
+        .hero-filters li:nth-child(5) { top: 30px; left: 373px; }
+
+        .hero-filters li:nth-child(6) { top: 30px; right: 373px; }
+        .hero-filters li:nth-child(7) { top: 30px; right: 297px; }
+        .hero-filters li:nth-child(8) { top: 30px; right: 221px; }
+        .hero-filters li:nth-child(9) { top: 30px; right: 145px; }
+        .hero-filters li:nth-child(10) { top: 30px; right: 69px; }
+
+        .hero-filters li:nth-child(11) { top: 100px; left: 46px; }
+        .hero-filters li:nth-child(12) { top: 100px; left: 122px; }
+        .hero-filters li:nth-child(13) { top: 100px; left: 198px; }
+        .hero-filters li:nth-child(14) { top: 100px; left: 274px; }
+        .hero-filters li:nth-child(15) { top: 100px; left: 350px; }
+
+        .hero-filters li:nth-child(16) { top: 100px; right: 350px; }
+        .hero-filters li:nth-child(17) { top: 100px; right: 274px; }
+        .hero-filters li:nth-child(18) { top: 100px; right: 198px; }
+        .hero-filters li:nth-child(19) { top: 100px; right: 122px; }
+        .hero-filters li:nth-child(20) { top: 100px; right: 46px; }
+
+        .hero-filters li:nth-child(21) { top: 170px; left: 23px; }
+        .hero-filters li:nth-child(22) { top: 170px; left: 99px; }
+        .hero-filters li:nth-child(23) { top: 170px; left: 175px; }
+        .hero-filters li:nth-child(24) { top: 170px; left: 251px; }
+        .hero-filters li:nth-child(25) { top: 170px; left: 327px; }
+
+        .hero-filters li:nth-child(26) { top: 170px; right: 327px; }
+        .hero-filters li:nth-child(27) { top: 170px; right: 251px; }
+        .hero-filters li:nth-child(28) { top: 170px; right: 175px; }
+        .hero-filters li:nth-child(29) { top: 170px; right: 99px; }
+        .hero-filters li:nth-child(30) { top: 170px; right: 23px; }
+
+        .hero-filters li:nth-child(31) { top: 240px; left: 0px; }
+        .hero-filters li:nth-child(32) { top: 240px; left: 76px; }
+        .hero-filters li:nth-child(33) { top: 240px; left: 152px; }
+        .hero-filters li:nth-child(34) { top: 240px; left: 228px; }
+        .hero-filters li:nth-child(35) { top: 240px; left: 304px; }
+
+        .hero-filters li:nth-child(36) { top: 240px; right: 304px; }
+        .hero-filters li:nth-child(37) { top: 240px; right: 228px; }
+        .hero-filters li:nth-child(38) { top: 240px; right: 152px; }
+        .hero-filters li:nth-child(39) { top: 240px; right: 76px; }
+        .hero-filters li:nth-child(40) { top: 240px; right: 0px; }
+
+        .hero-filters li:nth-child(41) { top: 310px; left: 23px; }
+        .hero-filters li:nth-child(42) { top: 310px; left: 99px; }
+        .hero-filters li:nth-child(43) { top: 310px; left: 175px; }
+        .hero-filters li:nth-child(44) { top: 310px; left: 251px; }
+
+        .hero-filters li:nth-child(45) { top: 310px; right: 251px; }
+        .hero-filters li:nth-child(46) { top: 310px; right: 175px; }
+        .hero-filters li:nth-child(47) { top: 310px; right: 99px; }
+        .hero-filters li:nth-child(48) { top: 310px; right: 23px; }
+
+        .hero-filters li:nth-child(49) { top: 380px; left: 46px; }
+        .hero-filters li:nth-child(50) { top: 380px; left: 122px; }
+        .hero-filters li:nth-child(51) { top: 380px; left: 198px; }
+        .hero-filters li:nth-child(52) { top: 380px; left: 274px; }
+
+        .hero-filters li:nth-child(53) { top: 380px; right: 274px; }
+        .hero-filters li:nth-child(54) { top: 380px; right: 198px; }
+        .hero-filters li:nth-child(55) { top: 380px; right: 122px; }
+        .hero-filters li:nth-child(56) { top: 380px; right: 46px; }
+    }
+
+    @media (max-width: 979px) {
+        .hero-filters { height: auto; margin-bottom: 20px; text-align: center; }
+        .hero-filters li { position: inherit !important; display: inline-block; left: auto !important; top: auto !important; right: auto !important; vertical-align: top; }
+        .hero-filters li button { margin: 0 5px 5px 0; }
+        .hero-filters li button.empty { display: none; }
+        .hero-back { background: none !important; }
+        .hero-name,
+        .hero-description { display: none; }
+    }
+
+    @media (max-width: 768px) {
+        .hero-roles,
+        .hero-universes { float: none; margin: 0 auto; }
+
+        .hero-filters li button { width: 43px !important; height: 43px !important; border-width: 1px !important; }
+        .filters-maps li { margin: 0 5px 5px 0 !important; }
+        .filters-maps li button { width: 43px !important; height: 43px !important; border-width: 1px !important; }
+    }
+
+
+
+    .hots-filters-search { padding: 8px 0px 0px; }
+
+    .hero-filters li button { display:inline-block; width:75px; height:75px; overflow:hidden; background-repeat: no-repeat; background-image:url('../img/hots/heroes/hots-hero-select.png'); border-radius: 50%; border: 3px solid #FFF; text-indent: -99999px; background-color: rgba(39,102,173,.2); outline: none; opacity: 1; transition: transform .25s ease-in-out, opacity .25s ease-in-out, background-color .25s ease-in-out; }
+    .hero-filters li button:hover { background-color: #2766ad; }
+    .hero-filters li button.empty { background-image: none; cursor: default; opacity: .3; }
+    .hero-filters li button.empty:hover { background-color: rgba(39,102,173,.2); }
+
+    .hero-filters li button.filtered { transform: scale(.9,.9); opacity: .3; }
+    .hero-filters li button.not-selected { opacity: .3; }
+    .hero-filters li button.not-selected:hover { opacity: .8; }
+    .hero-filters li button.active { background-color: rgba(255,255,255,1); }
+
+
+    //this section will be moved to mixin in hots-heros once static sprite sheet constructed
+
+    .hero-filters li button.abathur {width:75px; height:75px; background-position: -2px -2px}
+    .hero-filters li button.anub-arak {width:75px; height:75px; background-position: -2px -79px}
+    .hero-filters li button.artanis {width:75px; height:75px; background-position: -79px -2px}
+    .hero-filters li button.arthas {width:75px; height:75px; background-position: -79px -79px}
+    .hero-filters li button.azmodan {width:75px; height:75px; background-position: -156px -2px}
+    .hero-filters li button.brightwing {width:75px; height:75px; background-position: -156px -79px}
+    .hero-filters li button.chen {width:75px; height:75px; background-position: -233px -2px}
+    .hero-filters li button.cho {width:75px; height:75px; background-position: -233px -79px}
+    .hero-filters li button.diablo {width:75px; height:75px; background-position: -310px -2px}
+    .hero-filters li button.etc {width:75px; height:75px; background-position: -310px -79px}
+    .hero-filters li button.falstad {width:75px; height:75px; background-position: -387px -2px}
+    .hero-filters li button.gall {width:75px; height:75px; background-position: -387px -79px}
+    .hero-filters li button.gazlowe {width:75px; height:75px; background-position: -464px -2px}
+    .hero-filters li button.illidan {width:75px; height:75px; background-position: -464px -79px}
+    .hero-filters li button.jaina {width:75px; height:75px; background-position: -541px -2px}
+    .hero-filters li button.johanna {width:75px; height:75px; background-position: -541px -79px}
+    .hero-filters li button.kaelthas {width:75px; height:75px; background-position: -618px -2px}
+    .hero-filters li button.kerrigan {width:75px; height:75px; background-position: -618px -79px}
+    .hero-filters li button.kharazim {width:75px; height:75px; background-position: -695px -2px}
+    .hero-filters li button.leoric {width:75px; height:75px; background-position: -695px -79px}
+    .hero-filters li button.lili {width:75px; height:75px; background-position: -772px -2px}
+    .hero-filters li button.lunara {width:75px; height:75px; background-position: -772px -79px}
+    .hero-filters li button.malfurion {width:75px; height:75px; background-position: -849px -2px}
+    .hero-filters li button.morales {width:75px; height:75px; background-position: -849px -79px}
+    .hero-filters li button.muradin {width:75px; height:75px; background-position: -926px -2px}
+    .hero-filters li button.murky {width:75px; height:75px; background-position: -926px -79px}
+    .hero-filters li button.nazeebo {width:75px; height:75px; background-position: -1003px -2px}
+    .hero-filters li button.nova {width:75px; height:75px; background-position: -1003px -79px}
+    .hero-filters li button.raynor {width:75px; height:75px; background-position: -1080px -2px}
+    .hero-filters li button.rehgar {width:75px; height:75px; background-position: -1080px -79px}
+    .hero-filters li button.rexxar {width:75px; height:75px; background-position: -1157px -2px}
+    .hero-filters li button.sgthammer {width:75px; height:75px; background-position: -1157px -79px}
+    .hero-filters li button.sonya {width:75px; height:75px; background-position: -1234px -2px}
+    .hero-filters li button.stitches {width:75px; height:75px; background-position: -1234px -79px}
+    .hero-filters li button.sylvanas {width:75px; height:75px; background-position: -1311px -2px}
+    .hero-filters li button.tassadar {width:75px; height:75px; background-position: -1311px -79px}
+    .hero-filters li button.the-butcher {width:75px; height:75px; background-position: -1388px -2px}
+    .hero-filters li button.thelostvikings {width:75px; height:75px; background-position: -1388px -79px}
+    .hero-filters li button.thrall {width:75px; height:75px; background-position: -1465px -2px}
+    .hero-filters li button.tychus {width:75px; height:75px; background-position: -1465px -79px}
+    .hero-filters li button.tyrael {width:75px; height:75px; background-position: -1542px -2px}
+    .hero-filters li button.tyrande {width:75px; height:75px; background-position: -1542px -79px}
+    .hero-filters li button.uther {width:75px; height:75px; background-position: -1619px -2px}
+    .hero-filters li button.valla {width:75px; height:75px; background-position: -1619px -79px}
+    .hero-filters li button.zagara {width:75px; height:75px; background-position: -1696px -2px}
+    .hero-filters li button.zeratul {width:75px; height:75px; background-position: -1696px -79px}
+
+
+    @media (max-width: 767px) {
+        .hero-filters li button { width:43px; height:43px; background-image:url('../img/hots/heroes/hots-hero-select-small.png'); }
+
+    .hero-filters li button.abathur {width:43px; height:43px; background-position: -2px -2px}
+    .hero-filters li button.anub-arak {width:43px; height:43px; background-position: -2px -47px}
+    .hero-filters li button.artanis {width:43px; height:43px; background-position: -2px -92px}
+    .hero-filters li button.arthas {width:43px; height:43px; background-position: -2px -137px}
+    .hero-filters li button.azmodan {width:43px; height:43px; background-position: -2px -182px}
+    .hero-filters li button.brightwing {width:43px; height:43px; background-position: -47px -2px}
+    .hero-filters li button.chen {width:43px; height:43px; background-position: -47px -47px}
+    .hero-filters li button.cho {width:43px; height:43px; background-position: -47px -92px}
+    .hero-filters li button.diablo {width:43px; height:43px; background-position: -47px -137px}
+    .hero-filters li button.etc {width:43px; height:43px; background-position: -47px -182px}
+    .hero-filters li button.falstad {width:43px; height:43px; background-position: -92px -2px}
+    .hero-filters li button.gall {width:43px; height:43px; background-position: -92px -47px}
+    .hero-filters li button.gazlowe {width:43px; height:43px; background-position: -92px -92px}
+    .hero-filters li button.illidan {width:43px; height:43px; background-position: -92px -137px}
+    .hero-filters li button.jaina {width:43px; height:43px; background-position: -92px -182px}
+    .hero-filters li button.johanna {width:43px; height:43px; background-position: -137px -2px}
+    .hero-filters li button.kaelthas {width:43px; height:43px; background-position: -137px -47px}
+    .hero-filters li button.kerrigan {width:43px; height:43px; background-position: -137px -92px}
+    .hero-filters li button.kharazim {width:43px; height:43px; background-position: -137px -137px}
+    .hero-filters li button.leoric {width:43px; height:43px; background-position: -137px -182px}
+    .hero-filters li button.lili {width:43px; height:43px; background-position: -182px -2px}
+    .hero-filters li button.lunara {width:43px; height:43px; background-position: -182px -47px}
+    .hero-filters li button.malfurion {width:43px; height:43px; background-position: -182px -92px}
+    .hero-filters li button.morales {width:43px; height:43px; background-position: -182px -137px}
+    .hero-filters li button.muradin {width:43px; height:43px; background-position: -182px -182px}
+    .hero-filters li button.murky {width:43px; height:43px; background-position: -227px -2px}
+    .hero-filters li button.nazeebo {width:43px; height:43px; background-position: -227px -47px}
+    .hero-filters li button.nova {width:43px; height:43px; background-position: -227px -92px}
+    .hero-filters li button.raynor {width:43px; height:43px; background-position: -227px -137px}
+    .hero-filters li button.rehgar {width:43px; height:43px; background-position: -227px -182px}
+    .hero-filters li button.rexxar {width:43px; height:43px; background-position: -272px -2px}
+    .hero-filters li button.sgthammer {width:43px; height:43px; background-position: -317px -2px}
+    .hero-filters li button.sonya {width:43px; height:43px; background-position: -362px -2px}
+    .hero-filters li button.stitches {width:43px; height:43px; background-position: -407px -2px}
+    .hero-filters li button.sylvanas {width:43px; height:43px; background-position: -272px -47px}
+    .hero-filters li button.tassadar {width:43px; height:43px; background-position: -272px -92px}
+    .hero-filters li button.the-butcher {width:43px; height:43px; background-position: -272px -137px}
+    .hero-filters li button.thelostvikings {width:43px; height:43px; background-position: -272px -182px}
+    .hero-filters li button.thrall {width:43px; height:43px; background-position: -317px -47px}
+    .hero-filters li button.tychus {width:43px; height:43px; background-position: -362px -47px}
+    .hero-filters li button.tyrael {width:43px; height:43px; background-position: -407px -47px}
+    .hero-filters li button.tyrande {width:43px; height:43px; background-position: -317px -92px}
+    .hero-filters li button.uther {width:43px; height:43px; background-position: -317px -137px}
+    .hero-filters li button.valla {width:43px; height:43px; background-position: -317px -182px}
+    .hero-filters li button.zagara {width:43px; height:43px; background-position: -362px -92px}
+    .hero-filters li button.zeratul {width:43px; height:43px; background-position: -407px -92px}
+
+    }
+
+
+    .filters-maps {}
+    .filters-maps ul { margin: 0; padding: 0; }
+    .filters-maps ul li { list-style: none; display: inline-block; margin: 0 10px 10px 0; }
+    .filters-maps ul li:last-child { margin-right: 0px; }
+
+    .filters-maps ul li button { display:inline-block; width:55px; height:55px; border-radius: 50%; border: 2px solid #FFF; overflow:hidden; background-repeat: no-repeat; background: url('../img/hots/maps/hots-map-sprite.png'); white-space: nowrap; text-indent: -99999px; outline: none; transition: transform .25s ease-in-out, opacity .25s ease-in-out; }
+
+    .filters-maps ul li button.not-selected { opacity: .3; transform: scale(.9,.9); }
+
+    //.filters-maps ul li button.battlefield-of-eternity { background-position: -2px -2px; }
+    //.filters-maps ul li button.blackheartsbay { background-position: -59px -2px; }
+    //.filters-maps ul li button.cursedhollow { background-position: -116px -2px; }
+    //.filters-maps ul li button.dragonshrine { background-position: -173px -2px; }
+    //.filters-maps ul li button.gardenofterror { background-position: -230px -2px; }
+    //.filters-maps ul li button.hauntedmines { background-position: -287px -2px; }
+    //.filters-maps ul li button.skytemple { background-position: -344px -2px; }
+    //.filters-maps ul li button.tomb-of-the-spider-queen { background-position: -401px -2px; }
+
+    .filters-maps ul li button.battlefield-of-eternity {width:55px; height:55px; background-position: -2px -2px}
+    .filters-maps ul li button.blackhearts-bay {width:55px; height:55px; background-position: -59px -2px}
+    .filters-maps ul li button.cursed-hollow {width:55px; height:55px; background-position: -116px -2px}
+    .filters-maps ul li button.dragon-shrine {width:55px; height:55px; background-position: -173px -2px}
+    .filters-maps ul li button.garden-of-terror {width:55px; height:55px; background-position: -230px -2px}
+    .filters-maps ul li button.haunted-mines {width:55px; height:55px; background-position: -287px -2px}
+    .filters-maps ul li button.infernal-shrine {width:55px; height:55px; background-position: -344px -2px}
+    .filters-maps ul li button.sky-temple {width:55px; height:55px; background-position: -401px -2px}
+    .filters-maps ul li button.towers-of-doom {width:55px; height:55px; background-position: -458px -2px}
+    .filters-maps ul li button.tomb-of-the-spider-queen {width:55px; height:55px; background-position: -515px -2px}
+
+
+
+    //*************************************
+    // 3... hots - home content 
+    //*************************************
+
+    .hots-content { margin-right: -10px; padding-top: 80px; }
+    .hots-content > .row { margin: 0 auto; max-width: 1448px; }
+    .hots-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
+    .hots-content h3.sub-title { font-size: 14px; color: #d3eefa; }
+
+    .hots-article { position: relative; top: 0px; left: 0px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out; }
+    .hots-article:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
+    .hots-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
+    .hots-article .hots-article-content { margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); }
+    .hots-article .hots-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; color: #8968ad; padding-right: 15px; }
+    .hots-article .hots-article-content p { margin-bottom: 0px; color: #bababa; }
+
+    //*************************************
+    // 4... hots - home guides list
+    //*************************************
+
+
+    .hots-guides { margin: 0; padding: 0; }
+    .hots-guides li { list-style: none; margin-bottom: 10px; }
+    .hots-guide { position: relative; top: 0px; left: 0px; display: block; height: 99px; padding: 10px 15px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
+    .hots-guide.small:hover,
+    .hots-guide.large:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
+    .hots-guide.large { height: 220px; }
+
+    .hots-guide .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
+    .hots-guide .bt-shadow { position: absolute; right: 0px; bottom: 0px; left: 0px; height: 40px; background: url('../img/hots/bt-shadow.png') repeat-x; z-index: 2; }
+    .hots-guide .hots-guide-owner { position: absolute; right: 15px; bottom: 55px; z-index: 6; }
+    .hots-guide h1 { padding-right: 30px; font-family: 'Open Sans Bold'; font-size: 10px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+    .hots-guide h3 { padding-right: 30px; font-size: 12px; color: #ccc; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+
+    .hots-guide .hots-guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+    .hots-guide .hero-flip { position: absolute; bottom: 7px; right: 5px; z-index: 6; }
+    .hots-guide.small .hots-guide-votes,
+    .hots-guide.large .hots-guide-votes { position: absolute; top: 30px; right: 5px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; z-index: 3; }
+    .hots-guide .hots-guide-talents { margin: 0; padding: 5px 0 0 5px; position: absolute; bottom: 0px; left: 0px; right: 0px; height: 40px; z-index: 5; }
+    .hots-guide .hots-guide-talents li { list-style: none; float: left; margin: 0 5px 0 0; width: 30px; height: 30px; }
+
+    .hots-guide.large .hots-guide-talents { left: 10px; bottom: 10px; }
+
+    .hots-guide.long h1 { margin: 12px 0 18px 0; font-size: 14px; }
+    .hots-guide.long .hots-guide-talents { bottom: 50%; margin-bottom: -20px; }
+    .hots-guide.long .hots-guide-votes,
+    .hots-guide.long .hots-guide-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
+    .hots-guide.long .hots-guide-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
+    .hots-guide.long:hover { background-color: rgba(255,255,255,.2); }
+
+    
+} // hots-styles wrapper ends
+
+//*************************************
+// 5... hots modal
+//*************************************
+
+
+.hots-modal { position: relative; padding: 2px; background: #90d7ed; /* Old browsers */
+    background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); /* IE6-9 */
+    /*box-shadow: 0px 0px 10px #d3eefa;*/
+    -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite;
+}
+
+.hots-modal-inner { padding: 40px; width: 500px; background: #141316 url('../img/hots/modal/modalbg.jpg') no-repeat right top; }
+.hots-modal-inner.heroes-modal { min-height: 270px; }
+.hots-modal-top-glow { position: absolute; top: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/top-glow.png') no-repeat; z-index: 1001; }
+.hots-modal-bot-glow { position: absolute; bottom: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/bottom-glow.png') no-repeat; z-index: 1001; }
+
+.hots-modal h1 { position: relative; padding: 0; color: #4992cf; font-size: 22px; font-family: 'Open Sans Bold'; text-transform: uppercase; text-shadow: 1px 1px 1px #000; z-index: 1003; }
+.hots-modal p { position: relative; padding: 0; /*color: #bcbbbb;*/ color: #F2F2F2; font-size: 12px; text-shadow: 1px 1px 5px #000; z-index: 1003; }

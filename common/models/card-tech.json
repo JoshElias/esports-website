@@ -1,0 +1,56 @@
+{
+  "name": "cardTech",
+  "plural": "cardTechs",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "orderNum": {
+      "type": "number"
+    },
+    "both": {
+      "type": "boolean"
+    },
+    "toss": {
+      "type": "boolean"
+    },
+    "cardId": {},
+    "deckTechId": {}
+  },
+  "validations": [],
+  "relations": {
+    "deckTech": {
+      "type": "belongsTo",
+      "model": "deckTech",
+      "foreignKey": "deckTechId"
+    },
+    "card": {
+      "type": "belongsTo",
+      "model": "card",
+      "foreignKey": "cardId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
+  "methods": {}
+}

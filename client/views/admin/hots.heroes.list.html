@@ -1,0 +1,77 @@
+<div class="panel panel-success animated" ng-show="success.show">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
+        <strong>{{success.msg}}</strong>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <div class="pull-right" ng-if="heroes">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ heroPagination.total === 0 ? heroPagination.total : ((heroPagination.page - 1) * heroPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  heroPagination.page * heroPagination.perpage > heroPagination.total ? heroPagination.total : heroPagination.page * heroPagination.perpage }}</strong> 
+                of <strong>{{ heroPagination.total }}</strong>
+            </span>
+            <div pagination="heroPagination" theme="admin" class="admin"></div>
+        </div>
+        <div class="pull-left">
+            <form class="form-inline" ng-submit="searchHeroes()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="list-group">
+        <div class="list-group-item admin-list-item clearfix" ng-repeat="hero in heroes">
+            <span>{{hero.name}}</span>
+            <div class="pull-right btn-toolbar">
+                <a ui-sref="app.admin.hots.heroes.edit({ heroID: hero.id })" class="btn btn-default">Edit</a>
+                <button class="btn btn-danger" ng-click="deleteHero(hero)">Delete</button>
+            </div>
+        </div>
+        <div class="list-group-item" ng-show="!heroes.length">
+            There are no heroes yet.
+        </div>
+        <div class="list-group-item b-t-none" ng-show="heroes.length && filtered && !filtered.length">
+            That search returned no results.
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="pull-right" ng-if="heroes">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ heroPagination.total === 0 ? heroPagination.total : ((heroPagination.page - 1) * heroPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  heroPagination.page * heroPagination.perpage > heroPagination.total ? heroPagination.total : heroPagination.page * heroPagination.perpage }}</strong> 
+                of <strong>{{ heroPagination.total }}</strong>
+            </span>
+            <div pagination="heroPagination" theme="admin" class="admin"></div>
+        </div>
+        <div class="pull-left">
+            <form class="form-inline" ng-submit="searchHeroes()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

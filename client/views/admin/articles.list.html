@@ -1,0 +1,101 @@
+<alert-box theme="admin"></alert-box>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <div class="pull-right">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ articlePagination.total === 0 ? articlePagination.total : ((articlePagination.page - 1) * articlePagination.perpage) + 1 }}</strong> 
+                to <strong>{{  articlePagination.page * articlePagination.perpage > articlePagination.total ? articlePagination.total : articlePagination.page * articlePagination.perpage }}</strong> 
+                of <strong>{{ articlePagination.total }}</strong>
+            </span>
+            <div pagination="articlePagination" theme="admin" class="admin"></div>
+        </div>
+        <div class="pull-left">
+            <form class="form-inline" ng-submit="searchArticles()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-sm btn-blue" 
+                                    ng-disabled="fetching">
+                                <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                                <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="pull-left m-l-sm">
+            <form>
+                <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
+                    <select id="filterAuthor" name="filterAuthor" 
+							ng-model="filterAuthor" 
+							class="form-control input-sm" 
+							ng-change="searchArticles()"
+							ng-options="articleAuthor.value as articleAuthor.name for articleAuthor in articleAuthors">
+                    </select>
+                </span>
+                <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
+                    <select id="filterType" name="filterType" ng-options="articleType.value as articleType.name for articleType in articleTypes" ng-model="filterType" class="form-control input-sm" ng-change="searchArticles()"></select>
+                </span>
+            </form>
+        </div>
+    </div>
+    <div class="list-group">
+        <div class="list-group-item admin-list-item clearfix" ng-repeat="article in articles">
+            <div class="row">
+                <div class="col-sm-6">
+                    <span>{{article.title}}</span>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right btn-toolbar">
+                        <a ui-sref="app.admin.articles.edit({ articleID: article.id })" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deleteArticle(article)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="list-group-item" ng-if="!articles.length && !search.length">
+            There are no articles yet.
+        </div>
+        <div class="list-group-item b-t-none" ng-if="search.length && articlePagination.total == 0">
+            That search returned no results.
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="pull-right">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ articlePagination.total === 0 ? articlePagination.total : ((articlePagination.page - 1) * articlePagination.perpage) + 1 }}</strong> 
+                to <strong>{{  articlePagination.page * articlePagination.perpage > articlePagination.total ? articlePagination.total : articlePagination.page * articlePagination.perpage }}</strong> 
+                of <strong>{{ articlePagination.total }}</strong>
+            </span>
+<!--
+            <span class="btn-group">
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+            </span>
+-->
+            <div pagination="articlePagination" theme="admin" class="admin"></div>
+        </div>
+        <div class="pull-left">
+            <form class="form-inline" ng-submit="searchArticles()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

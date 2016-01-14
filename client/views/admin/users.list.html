@@ -1,0 +1,94 @@
+<alert-box theme="admin"></alert-box>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix no-top-bottom-pad">
+        <div class="row panel-heading clearfix">
+            <div class="pull-right" ng-if="users">
+                <span class="m-r-sm">
+                    Showing: 
+                    <strong>{{ userPagination.total === 0 ? userPagination.total : ((userPagination.page - 1) * userPagination.perpage) + 1 }}</strong> 
+                    to <strong>{{  userPagination.page * userPagination.perpage > userPagination.total ? userPagination.total : userPagination.page * userPagination.perpage }}</strong> 
+                    of <strong>{{ userPagination.total }}</strong>
+                </span>
+                <div pagination="userPagination" theme="admin" class="admin"></div>
+            </div>
+            <div class="pull-left">
+                <form class="form-inline" ng-submit="searchUsers()" novalidate>
+                    <div class="form-group">
+                        <div class="input-group">
+                           <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-sm btn-blue" 
+                                    ng-disabled="fetching">
+                                <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                                <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row blue-userbar" ng-if="users != 0">
+            <div class="col-sm-8">
+                <div class="col-sm-4"><h4>User</h4></div>
+                <div class="col-sm-4"><h4>Email</h4></div>
+                <div class="col-sm-4"><h4>Active</h4></div>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+    </div>
+    <div class="list-group">
+        <div class="list-group-item articles-list-item clearfix" ng-repeat="user in users">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-4">{{user.username}}</div>
+                        <div class="col-sm-4" ng-if="user.email">{{user.email}}</div>
+                        <div class="col-sm-4" ng-if="!user.email"><strong>No email attached</strong></div>
+                        <div class="col-sm-4">{{isUserActive(user.isActive)}}</div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="pull-right btn-toolbar">
+                        <a href="./admin/users/edit/{{user.id}}" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deleteUser(user)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="list-group-item" ng-if="!users.length && !search.length">
+            There are no users yet.
+        </div>
+        <div class="list-group-item b-t-none" ng-if="search.length && users == 0">
+            That search returned no results.
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="pull-right" ng-if="users">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ userPagination.total === 0 ? userPagination.total : ((userPagination.page - 1) * userPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  userPagination.page * userPagination.perpage > userPagination.total ? userPagination.total : userPagination.page * userPagination.perpage }}</strong> 
+                of <strong>{{ userPagination.total }}</strong>
+            </span>
+            <div pagination="userPagination" theme="admin" class="admin"></div>
+        </div>
+        <div class="pull-left">
+            <form class="form-inline" ng-submit="searchUsers()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

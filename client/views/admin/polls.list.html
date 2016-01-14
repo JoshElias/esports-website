@@ -1,0 +1,79 @@
+<alert-box theme="admin"></alert-box>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <div class="pull-right" ng-if="polls">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ pollPagination.total === 0 ? pollPagination.total : ((pollPagination.page - 1) * pollPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  pollPagination.page * pollPagination.perpage > pollPagination.total ? pollPagination.total : pollPagination.page * pollPagination.perpage }}</strong> 
+                of <strong>{{ pollPagination.total }}</strong>
+            </span>
+            <div pagination="pollPagination" theme="admin" class="admin"></div>
+        </div>
+        <div class="pull-left">
+            <form class="form-inline" ng-submit="searchPolls()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="list-group">
+        <div class="list-group-item polls-list-item clearfix" ng-repeat="poll in polls">
+            <div class="row">
+                <div class="col-sm-6">
+                    <span>{{poll.title}}</span>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right btn-toolbar">
+                        <a href="./admin/polls/edit/{{poll.id}}" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deletePoll(poll)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="list-group-item" ng-if="!polls.length && !search.length">
+            There are no polls yet.
+        </div>
+        <div class="list-group-item b-t-none" ng-if="search.length && polls.length === 0">
+            That search returned no results.
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="pull-right" ng-if="polls">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ pollPagination.total === 0 ? pollPagination.total : ((pollPagination.page - 1) * pollPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  pollPagination.page * pollPagination.perpage > pollPagination.total ? pollPagination.total : pollPagination.page * pollPagination.perpage }}</strong> 
+                of <strong>{{ pollPagination.total }}</strong>
+            </span>
+            <div pagination="pollPagination" theme="admin" class="admin"></div>
+        </div>
+        <div class="pull-left">
+            <form class="form-inline" ng-submit="searchPolls()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

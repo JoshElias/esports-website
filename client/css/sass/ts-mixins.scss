@@ -1,0 +1,27 @@
+@import 'ts-colors.scss';
+
+// Description: scss file for tempostorms mixins for the entire site
+
+//*************************************
+
+// 1... tempo storm basic style mixins
+
+//*************************************
+
+
+//*************************************
+// 1... tempo storm basic style mixins
+//*************************************
+
+
+// mixin for opac div with box-shadow
+
+@mixin ts-div-styles {
+    
+    outline: 1px solid rgba(255,255,255,.2);
+    outline-offset: -2px;
+    border: 1px solid rgba(0,0,0,1);
+    background-color: $opac-div; 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75);
+    
+}

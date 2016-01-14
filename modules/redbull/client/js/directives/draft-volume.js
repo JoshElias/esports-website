@@ -1,0 +1,40 @@
+angular.module('redbull.directives')
+.directive('draftVolume', [function () {
+    return {
+        restrict: 'E',
+        replace: true,
+        transclude: true,
+        templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/draft-volume.html',
+        link: function (scope, el, attrs) {
+            
+            var slider = $('#volume-slider'),
+                tooltip = $('.volume-tooltip');
+
+            tooltip.hide();
+
+            slider.slider({
+                range: "min",
+                min: 0,
+                max: 100,
+                value: scope.volume,
+
+                start: function(event,ui) {
+                    tooltip.fadeIn('fast');
+                },
+
+                slide: function(event, ui) {
+
+                    var value = slider.slider('value');
+                    tooltip.css('left', value + '%').text(ui.value);
+                    scope.volume = value;
+
+                },
+
+                stop: function(event,ui) {
+                    tooltip.fadeOut('fast');
+                },
+            });
+            
+        }
+    };
+}]);

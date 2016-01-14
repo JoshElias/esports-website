@@ -1,0 +1,148 @@
+<alert-box theme="admin"></alert-box>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h3 class="panel-heading m-b-none">Hearthstone Members</h1>
+    </div>
+    <ul dnd-list="teamMembers.hs" class="list-group">
+        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in teamMembers.hs" 
+                    dnd-draggable="member"
+                    dnd-moved="updateDND(teamMembers.hs, $index)"
+                    dnd-disable-if="teamMembers.hs.length < 2">
+            <div class="row">
+                <div class="col-sm-6">
+                    <span>{{member.screenName}}&nbsp;<span ng-if="member.screenName != '' && member.fullName != ''">-</span>&nbsp;{{member.fullName}}</span>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right btn-toolbar">
+                        <a ui-sref="app.admin.teams.edit({ memberID: member.id })" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deleteMember(member)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <div class="list-group-item" ng-if="!teamMembers.hs.length">
+            There are no members yet.
+        </div>
+    </ul>
+    <div class="panel-footer clearfix">
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h3 class="panel-heading m-b-none">Heroes of the Storm Members</h1>
+    </div>
+    <ul dnd-list="teamMembers.hots" class="list-group">
+        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in teamMembers.hots | orderBy : 'orderNum'" 
+                    dnd-draggable="member"
+                    dnd-moved="updateDND(teamMembers.hots, $index)"
+                    dnd-disable-if="teamMembers.hots.length < 2">
+            <div class="row">
+                <div class="col-sm-6">
+                    <span>{{member.screenName}}&nbsp;<span ng-if="member.screenName != '' && member.fullName != ''">-</span>&nbsp;{{member.fullName}}</span>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right btn-toolbar">
+                        <a ui-sref="app.admin.teams.edit({ memberID: member.id })" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deleteMember(member)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <div class="list-group-item" ng-if="!teamMembers.hots.length">
+            There are no members yet.
+        </div>
+    </ul>
+    <div class="panel-footer clearfix">
+    </div>
+</div>
+
+<!--
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h3 class="panel-heading m-b-none">CS:GO Members</h1>
+    </div>
+    <ul dnd-list="csMembers" class="list-group">
+        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in csMembers" 
+                    dnd-draggable="member"
+                    dnd-moved="updateDND(csMembers, $index)"
+                    dnd-disable-if="csMembers.length < 2">
+            <div class="row">
+                <div class="col-sm-6">
+                    <span>{{member.screenName}}&nbsp;<span ng-if="member.screenName != '' && member.fullName != ''">-</span>&nbsp;{{member.fullName}}</span>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right btn-toolbar">
+                        <a ui-sref="app.admin.teams.edit({ memberID: member._id })" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deleteMember(member, csMembers)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <div class="list-group-item" ng-if="!csMembers.length">
+            There are no members yet.
+        </div>
+    </ul>
+    <div class="panel-footer clearfix">
+    </div>
+</div>
+-->
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h3 class="panel-heading m-b-none">FIFA Members</h1>
+    </div>
+    <ul dnd-list="teamMembers.fifa" class="list-group">
+        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in teamMembers.fifa" 
+                    dnd-draggable="member"
+                    dnd-moved="updateDND(teamMembers.fifa, $index)"
+                    dnd-disable-if="teamMembers.fifa.length < 2">
+            <div class="row">
+                <div class="col-sm-6">
+                    <span>{{member.screenName}}&nbsp;<span ng-if="member.screenName != '' && member.fullName != ''">-</span>&nbsp;{{member.fullName}}</span>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right btn-toolbar">
+                        <a ui-sref="app.admin.teams.edit({ memberID: member.id })" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deleteMember(member)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <div class="list-group-item" ng-if="!teamMembers.fifa.length">
+            There are no members yet.
+        </div>
+    </ul>
+    <div class="panel-footer clearfix">
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h3 class="panel-heading m-b-none">FGC Members</h1>
+    </div>
+    <ul dnd-list="teamMembers.fgc" class="list-group">
+        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in teamMembers.fgc" 
+                    dnd-draggable="member"
+                    dnd-moved="updateDND(teamMembers.fgc, $index)"
+                    dnd-disable-if="teamMembers.fgc.length < 2">
+            <div class="row">
+                <div class="col-sm-6">
+                    <span>{{member.screenName}}&nbsp;<span ng-if="member.screenName != '' && member.fullName != ''">-</span>&nbsp;{{member.fullName}}</span>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right btn-toolbar">
+                        <a ui-sref="app.admin.teams.edit({ memberID: member.id })" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deleteMember(member)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <div class="list-group-item" ng-if="!teamMembers.fgc.length">
+            There are no members yet.
+        </div>
+    </ul>
+    <div class="panel-footer clearfix">
+    </div>
+</div>

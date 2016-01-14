@@ -1,0 +1,213 @@
+@import 'ts-colors.scss';
+
+// Description: media queries for tempostorm
+
+//*************************************
+
+//  1... min 768px and max 1199px
+//  2... min 768px and max 979px
+//  3... mobile max 767px
+
+//*************************************
+
+/* mobile */
+@media (min-width: 768px) {
+}
+
+@media (min-width: 1199px) {
+    .col-lg-20p { width: 20%; } //overwatch specific style, abilities col fix
+}
+
+//*************************************
+//  1... min 768px and max 1199px
+//*************************************
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    /* HOME FEEDS */
+    .twitch-feed { padding-right: 10px; }
+    .twitter-feed { padding-left: 10px; }
+    
+    /* filters */
+    .filter-bar h1 { font-size: 20px; line-height: 32px; }
+    .filter-bar h1 br { display: none; }
+    .filter-class li { margin-right: 10px; width: 31px; height: 32px; }
+    .filter-class li a { width: 31px; height: 32px; }
+    .filter-class li a.warlock { background-position: -124px 0px; }
+    .filter-class li a.warrior { background-position: -124px -32px; }
+    .filter-class li a.hunter { background-position: -124px -64px; }
+    .filter-class li a.rogue { background-position: -124px -96px; }
+    .filter-class li a.priest { background-position: -124px -128px; }
+    .filter-class li a.paladin { background-position: -124px -160px; }
+    .filter-class li a.mage { background-position: -124px -192px; }
+    .filter-class li a.druid { background-position: -124px -224px; }
+    .filter-class li a.shaman { background-position: -124px -256px; }
+    .filter-class li a.all { background-position: -124px -288px; }
+    
+    /* article */
+    .article-page .article-left { margin-right: 0px; }
+    .article-page .article-right { display: none; }
+    
+    /* talent calc */
+    //.tc-section-content { background-image: none !important; }
+
+    .hots-styles {
+        
+        /* guides */
+        .gb-steps { padding: 0 30px; position: relative; }
+        .gb-steps li { display: none; float: none; }
+        .gb-steps li.active,
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { display: block; }
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+        .gb-steps li.steps-arrow-prev { left: 0px; }
+        .gb-steps li.steps-arrow-next { right: 0px; }
+
+        .gb-steps li.active,
+        .gb-steps li.active button { width: 100% !important; }
+        
+    }
+
+}
+
+//*************************************
+//  2... min 768px and max 979px
+//*************************************
+
+@media (min-width: 768px) and (max-width: 979px) {
+    /* home */
+    .twitch-feed { padding-right: 0px; }
+    .twitter-feed { padding-left: 0px; }
+    
+    /* forums */
+    .forum-post { padding-right: 0px; }
+    
+    /* decks */
+    .deck-page .deck-right { float: none; margin: 0 auto; }
+    .deck-page .deck-left { margin-right: 0px; }
+
+    /* talent calc */
+    //.tc-section-content { background-image: none !important; }
+    
+    .hots-styles {
+    
+        /* guides */
+        .guide-header { background: #2766ad; }
+        .guide-header h1 { font-size: 20px; }
+        .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
+        .guide-hero-wrapper:last-child { margin: 0; }
+
+        .gb-steps { padding: 0 30px; position: relative; }
+        .gb-steps li { display: none; float: none; }
+        .gb-steps li.active,
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { display: block; }
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+        .gb-steps li.steps-arrow-prev { left: 0px; }
+        .gb-steps li.steps-arrow-next { right: 0px; }
+
+        .gb-steps li.active,
+        .gb-steps li.active button { width: 100% !important; }
+        
+    }
+    
+    .games-btn {
+        height: 200px;
+    }
+
+}
+
+
+
+//*************************************
+//  3... mobile max 767px
+//*************************************
+
+
+@media (max-width: 767px) {
+    /* home */
+    .twitch-feed { padding-right: 0px; }
+    .twitter-feed { padding-left: 0px; }
+    
+    /* banners */
+    
+    .games-btn {height: 110px; }
+    .games-btn:hover .games-btn-back { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); opacity: 1; }
+    .games-btn:hover .games-btn-logo { -moz-transform: scale(.9,.9); -webkit-transform: scale(.9,.9); transform: scale(.9,.9); }
+    
+    .games-btn-logo {
+        width: 200px;
+    
+    }
+    
+    
+    
+    
+    /* filters */
+    .filter-bar { display: none; }
+    .filter-class li { display: none; }
+    .filter-class li.active { display: block; }
+    
+    /* forum */
+    .forum-post { padding-right: 0px; }
+
+    /* article */
+    .article-page .article-left { margin-right: 0px; }
+    .article-page .article-right { display: none; }
+    
+    /* deck builder */
+    .db-steps li { display: none; }
+    .db-steps li.steps-arrow,
+    .db-steps li.active { display: block; }
+    
+    /* decks */
+    .deck-page .deck-right { float: none; margin: 0 auto; }
+    .deck-page .deck-left { margin-right: 0px; }
+    .deck-header-inner { background: #2766ad !important; }
+    
+    /* team page */
+    .team-member { margin-left: 25px; }
+    .team-member-content { padding-left: 35px; }
+    .team-member-content h1 { font-size: 18px; }
+    .team-member-photo { left: -25px; width: 50px; height: 50px; }
+    .team-member-photo img { width: 38px; height: 38px; }
+
+    /* talent calc */
+    .tc-section-content { background-image: none !important; }
+
+    /* guides */
+    
+    .hots-styles {
+    
+        .guide-header { background: #2766ad; }
+        .guide-header h1 { font-size: 20px; }
+        .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
+        .guide-hero-wrapper:last-child { margin: 0; }
+
+        .gb-steps { padding: 0 30px; position: relative; }
+        .gb-steps li { display: none; float: none; }
+        .gb-steps li.active,
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { display: block; }
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+        .gb-steps li.steps-arrow-prev { left: 0px; }
+        .gb-steps li.steps-arrow-next { right: 0px; }
+
+        .gb-steps li.active,
+        .gb-steps li.active button { width: 100% !important; }
+        
+    }
+        
+    /* polls */
+    .poll-page .poll-left { margin-right: 20px; }
+    .poll-item-img-wrapper,
+    .poll-item-img-wrapper:hover { 
+        transition-property: none;
+        transition-duration: 0s !important; 
+        
+           
+    }
+}
+

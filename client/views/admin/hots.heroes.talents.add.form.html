@@ -1,0 +1,55 @@
+<div class="clearfix">
+  <div class="clearfix m-b-sm">
+    <div class="col-sm-7"></div>
+    <div class="col-sm-5 padding-none">Search</div>
+  </div>
+  <form name="talentForm">
+    <div class="col-sm-7">
+      <div class="row form-group m-r-none m-l-none">
+          <label for="talentName" class="col-sm-3 control-label">Name</label>
+          <div class="col-sm-9">
+              <input type="text" id="talentName" name="talentName" class="form-control" ng-model="currentTalent.talent.name" ng-change="searchTalents(currentTalent.talent.name)" required>
+          </div>
+      </div>
+      <div class="row form-group m-r-none m-l-none">
+          <label for="talentTier" class="col-sm-3 control-label">Tier</label>
+          <div class="col-sm-9">
+              <select id="talentTier" name="talentTier" class="form-control" ng-options="talentTier as talentTier for talentTier in talentTiers" ng-model="currentTalent.tier" required></select>
+          </div>
+      </div>
+      <div class="row form-group m-r-none m-l-none">
+          <label for="talentDescription" class="col-sm-3 control-label">Descrip.</label>
+          <div class="col-sm-9">
+              <input type="text" id="talentDescription" name="talentDescription" class="form-control" ng-model="currentTalent.talent.description" required>
+          </div>
+      </div>
+      <div class="row form-group m-r-none m-l-none">
+          <label for="talentAbility" class="col-sm-3 control-label">Ability</label>
+          <div class="col-sm-9">
+              <select id="talentAbility" name="talentAbility" class="form-control" ng-options="ability.name as ability.name for ability in talentAbilities" ng-model="currentTalent.ability"></select>
+          </div>
+      </div>
+      <div class="row form-group m-r-none m-l-none">
+          <label for="talentClassName" class="col-sm-3 control-label">CSS Class</label>
+          <div class="col-sm-9">
+              <input type="text" id="talentClassName" name="talentClassName" class="form-control" ng-model="currentTalent.talent.className" required>
+          </div>
+      </div>
+    </div>
+    <div class="col-sm-5 panel panel-dark padding-none">
+      <div class="row form-group m-b-none">
+        <ul class="list-group m-b-none">
+          <a ng-if="searchedTalents.length" ng-click="setCurrent(talent)" ng-repeat="talent in searchedTalents" class="list-group-item"> 
+            {{talent.name}}
+          </a>
+          <li ng-if="!searchedTalents.length" class="list-group-item">No results.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row form-group m-r-none m-l-none">
+        <div class="col-sm-9 col-sm-offset-3">
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="talentForm.$invalid" ng-click="addTalent()">Add Talent</button>
+        </div>
+    </div>
+  </form>
+</div>

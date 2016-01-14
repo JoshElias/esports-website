@@ -1,0 +1,110 @@
+
+/* profile */
+/*
+.profile-page .profile-fixed {
+    position:fixed;
+    width: 25%;
+    
+}
+
+.profile-page .profile-scroll {
+    float:right;
+    width:71%;
+    min-height:800px;
+}
+*/
+
+
+.panel-body {
+	background-color: white;
+}
+
+
+
+
+/*
+.profile-page .activity-list .articleComment .activity-right,
+.profile-page .activity-list .snapshotComment,
+.profile-page .activity-list .forumPost,
+.profile-page .activity-list .forumComment,
+.profile-page .activity-list .createArticle {
+    color: rgb(0,126,195);
+    
+    background: #007ec3; 
+    background: -moz-linear-gradient(left,  rgba(0,126,195,.75) 0%, rgba(19,68,118,.75) 75%); /
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,126,195,.75)), color-stop(75%,rgba(19,68,118,.75))); 
+    background: -webkit-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%); 
+    background: -o-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%);
+    background: -ms-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%); 
+    background: linear-gradient(to right,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#007ec3', endColorstr='#134476',GradientType=0 );
+    
+}
+
+.profile-page .activity-list .createDeck,
+.profile-page .activity-list .deckComment {
+    color: rgb(187,80,24);
+    
+    background: #faa519; 
+    background: -moz-linear-gradient(left,  rgba(250,165,25,.75) 0%, rgba(187,80,24,.75) 75%); 
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(250,165,25,.75)), color-stop(75%,rgba(187,80,24,.75))); 
+    background: -webkit-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); 
+    background: -o-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); 
+    background: -ms-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); 
+    background: linear-gradient(to right,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#faa519', endColorstr='#bb5018',GradientType=0 );
+}
+.profile-page .activity-list .createGuide,
+.profile-page .activity-list .guideComment {
+    color: rgb(70,29,109);
+    
+    background-color: background: #461d6d; 
+    background: -moz-linear-gradient(left,  rgba(70,29,109,.75) 0%, rgba(27,29,107,.75) 75%); 
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(70,29,109,.75)), color-stop(75%,rgba(27,29,107,.75))); 
+    background: -webkit-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); 
+    background: -o-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); 
+    background: -ms-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); 
+    background: linear-gradient(to right,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); 
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#461d6d', endColorstr='#1b1d6b',GradientType=0 ); 
+}
+.profile-page .activity-list .signup {
+    color: rgb(254, 162, 24);
+    
+    background-color: background: #461d6d; 
+    background: -moz-linear-gradient(left,  rgba(253,254,70,.75) 0%, rgba(254,162,24,.75) 75%); 
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(253,254,70,.75)), color-stop(75%,rgba(254,162,24,.75))); 
+    background: -webkit-linear-gradient(left,  rgba(253,254,70,.75) 0%,rgba(254,162,24,.75) 75%); 
+    background: -o-linear-gradient(left,  rgba(253,254,70,.75) 0%,rgba(254,162,24,.75) 75%); 
+    background: -ms-linear-gradient(left,  rgba(253,254,70,.75) 0%,rgba(254,162,24,.75) 75%); 
+    background: linear-gradient(to right,  rgba(253,254,70,.75) 0%,rgba(254,162,24,.75) 75%); 
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#461d6d', endColorstr='#1b1d6b',GradientType=0 ); 
+}
+*/
+
+
+/*
+.profile-banner { background: #2766ad; }
+.profile-bio { padding-left: 120px; }
+.profile-bio h3 { color: #FFF; }
+.profile-bio h3 small { margin-top: 3px; display: block; font-size: 12px; color: #FFF; }
+.profile-bio p { color: #FFF; margin: 0; }
+.profile-social { padding-bottom: 5px; }
+.profile-tabs { background: #FFF; border-top: 1px solid #083f7d; border-bottom: 1px solid #ccc; }
+.profile-tabs li.active a { background: #2766ad !important; }
+
+ profile activity 
+.activities { position: relative; margin-bottom: 20px; }
+.activities:after { content: ''; position: absolute; background-color: #fff; border: 1px solid #083f7d; border-radius: 10px; width: 9px; height: 9px; margin-left: 16px; bottom: 0; left: 0; }
+
+.activity { margin-left: 20px; padding-bottom: 10px; border-left: 1px solid #2766ad; }
+.activity:first-child { padding-top: 20px; }
+.activity:last-child { padding-bottom: 30px; }
+
+.activity .arrow:after { border-right-color: #FFF; }
+.activity .avatar { float: left; margin-left: -20px; }
+.activity .avatar img { width: 39px; height: 39px; background: #F2F2F2; border: 1px solid #083f7d; }
+.activity .panel { margin: 0 0 0 30px; border-radius: 0px; border: 1px solid #ddd; }
+.activity .panel-heading { color: #555; background-color: #FFF; }
+*/
+
+

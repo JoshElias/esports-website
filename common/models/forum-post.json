@@ -1,0 +1,101 @@
+{
+  "name": "forumPost",
+  "plural": "forumPosts",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "__v": {
+      "type": "number"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "content": {
+      "type": "string",
+      "validators": ["spam"]
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "title": {
+      "type": "string",
+      "validators": ["spam"]
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    },
+    "slug": {
+      "type": "object"
+    },
+    "voteScore": {
+      "type": "number"
+    },
+    "votes": {
+      "type": "object"
+    },
+    "forumThreadId": {},
+    "authorId": {}
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "forumThread": {
+      "type": "belongsTo",
+      "model": "forumThread",
+      "foreignKey": "forumThreadId",
+      "isChild": true
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "forumPostId",
+      "isChild": true
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "WRITE",
+      "property": "create"
+    }
+  ],
+  "methods": {}
+}

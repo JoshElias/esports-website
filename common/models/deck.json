@@ -1,0 +1,226 @@
+ {
+  "name": "deck",
+  "plural": "decks",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "against": {
+      "type": "object"
+    },
+    "allowComments": {
+      "type": "boolean"
+    },
+    "basic": {
+      "type": "boolean"
+    },
+    "gameModeType": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "cardQuantities": {
+      "type": "object"
+    },
+    "contentEarly": {
+      "type": "string"
+    },
+    "contentLate": {
+      "type": "string"
+    },
+    "contentMid": {
+      "type": "string"
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "deckType": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "validators": ["spam"]
+    },
+    "isFeatured": {
+      "type": "boolean"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "validators": ["spam"]
+    },
+    "heroName": {
+      "type": "string"
+    },
+    "playerClass": {
+      "type": "string",
+      "required": true
+    },
+    "premium": {
+      "type": "object"
+    },
+    "isPublic": {
+      "type": "boolean",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "validators": ["unique"]
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "votes": [
+      "object"
+    ],
+    "voteScore": {
+      "type": "number"
+    },
+    "authorId": {},
+    "cardIds": [
+      "string"
+    ],
+    "oldComments": [
+      "string"
+    ],
+    "oldMulligans": [
+      "object"
+    ],
+    "oldCards": [
+      "object"
+    ],
+    "youtubeId": {
+      "type": "string",
+      "validators": ["youtubeId"]
+    },
+    "chapters": [
+      {
+        "title": {
+          "type": "string",
+          "validators": ["spam"]
+        },
+        "orderNum": {"type": "number"},
+        "content": {
+          "type": "string",
+          "validators": ["spam"]
+        }
+      }
+    ],
+    "dust": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "cards": {
+      "type": "hasMany",
+      "model": "deckCard",
+      "foreignKey": "deckId",
+      "isChild": true
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "deckId"
+    },
+    "matchups": {
+      "type": "hasMany",
+      "model": "deckMatchup",
+      "foreignKey": "deckId",
+      "isChild": true
+    },
+    "mulligans": {
+      "type": "hasMany",
+      "model": "mulligan",
+      "foreignKey": "deckId",
+      "isChild": true
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "upsert"
+    },
+
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$contentProvider",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__delete__cards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__deckCards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__delete__matchups"
+    }
+  ],
+  "methods": {}
+}

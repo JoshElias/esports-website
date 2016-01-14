@@ -1,0 +1,104 @@
+<div class="sub-nav-wrapper hidden-xs sticky">
+    <div class="container-fluid sub-nav sticky">
+        <sub-nav-stream class="pull-left"></sub-nav-stream>
+        <div class="sub-nav-links">
+            <ul>
+                <li><a ui-sref="app.articles.list">ARTICLES</a></li><li><a ui-sref="app.deckBuilder">DECK BUILDER</a></li><li><a ui-sref="app.hs.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hots.guides.list">GUIDES</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="bg-override article container-fluid">
+    <div class="article-page container">
+        
+        <div class="article-photo-banner clearfix" ng-background="https://cdn-tempostorm.netdna-ssl.com/articles/{{article.photoNames.large}}">
+            <div class="article-votes pull-right"> 
+                <vote-widget service="ArticleService" votable="article" theme="single"></vote-widget>
+            </div>
+
+            <div class="title-wrapper pull-left">
+                <h1>{{article.title}}</h1>
+    <!--            <h2>{{article.description}}</h2>-->
+            </div>
+
+        </div>
+        
+        <div class="row m-r-none m-l-none m-t-md">
+            <div class="m-b-md article-left col-lg-8">
+                <div class="article-subscribe" ng-if="isPremium() && !isUser.premium && !isUser.admin && !isUser.contentProvider">
+                    <h1 class="article-title">CONTINUE READING THIS ARTICLE...</h1>
+                    <h2>Signup for T/S Premium today!</h2>
+                    
+                    <div premium-page></div>
+                </div>
+                
+                <div ng-if="!isPremium() || isUser.premium || isUser.admin || isUser.contentProvider">
+                    <!-- article content -->
+                    <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>
+                    <!-- / article content -->
+
+                    <div class="article-author m-t-md" ng-if="article.author">
+                        <a class="hidden-xs" href="./user/{{article.author.username}}">
+							<img gravatar-src-once="authorEmail" alt="" />
+						</a>
+                        
+                        <div class="author-content">
+                            <div class="author-top-wrapper clearfix">
+                                <h2 class="pull-left m-b-md">{{article.author.username}}</h2>
+                                <div class="author-social m-b-md">
+                                    <a target="_blank" href="http://twitter.com/{{article.author.social.twitter}}" ng-if="article.author.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                    <a target="_blank" href="http://twitch.tv/{{article.author.social.twitch}}" ng-if="article.author.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                    <a target="_blank" href="http://youtube.com/{{article.author.social.youtube}}" ng-if="article.author.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                    <a target="_blank" href="http://facebook.com/{{article.author.social.facebook}}" ng-if="article.author.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                    <a target="_blank" href="http://instagram.com/{{article.author.social.instagram}}" ng-if="article.author.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+                                    <a target="_blank" href="http://esea.com/{{article.author.social.esea}}" ng-if="article.author.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a>
+                                </div>
+                            </div>
+                            <p ng-if="article.author.about && !article.author.providerDescription">{{article.author.about}}</p>
+                            <p ng-if="article.author.providerDescription">{{article.author.providerDescription}}</p>
+                        </div>
+                    </div>
+
+                    <!-- comments -->
+                    <comment-section commentable="article" service="ArticleService"></comment-section>
+                    <!-- / commments -->
+                </div>
+            </div>
+            
+            <div class="m-b-md article-right col-lg-4">
+                
+                <div ng-if="article.deck" class="article-deck" db-deck deck="article.deck"></div>
+                
+                <!-- article related -->
+                <div class="article-related" ng-if="article.relatedArticles && article.relatedArticles.length && relatedActive()">
+                    <h3>RELATED ARTICLES</h3>
+                    <div class="related" ng-repeat="item in article.relatedArticles | orderBy: '-createdDate'" ng-if="item.isActive">
+                        <a href="./articles/{{item.slug.url}}" title="{{item.title}}">
+                            <div class="related-img pull-left" style="background-image: url('https://cdn-tempostorm.netdna-ssl.com/articles/{{item.photoNames.small}}')"></div>
+                            <div class="related-info">
+                                <p class="ell top related-title-{{getType(item)}}">{{item.title}}</p>
+                                <p class="ell bot">by: {{item.author.username}}</p>
+                                <p class="votes">+{{item.voteScore}}</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <!-- / article related -->
+                
+                
+                <!--  G2A  -->
+                
+                <div class="g2a-square">
+                    <a href="https://www.g2a.com/r/tempo-storm"><img src="https://cdn-tempostorm.netdna-ssl.com/img/g2a-tempo.png" alt="G2A"></a>
+                </div>                
+                <!-- / G2A -->
+                
+                
+                
+                
+            </div>
+            
+        </div>
+    </div>
+</div>

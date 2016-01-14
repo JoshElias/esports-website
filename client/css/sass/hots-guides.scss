@@ -1,0 +1,389 @@
+
+@import 'ts-colors.scss';
+
+// Description: hots guide builder styles and guides
+
+//*************************************
+
+// 1... hots guide list
+// 2... guides
+// 3... guide synergy
+// 4... guide builder link
+// 5... guide builder
+// 5.1. step 1
+// 5.2. step 2
+// 5.3. Content
+
+//*************************************
+
+// ------------------------------------- 
+// guide images in hots-heroes
+// hots map images in hots-maps
+// Hots top guide heroes in hots-heroes
+// Hots top guide heroes in hots-heroes
+// ------------------------------------- 
+
+.hots-styles { //hots styles wrapper
+
+    //*************************************
+    // 1... hots guide list
+    //*************************************
+
+    .tri-bottom { background: url('../img/hots/tri-bottom.png') no-repeat center bottom; }
+    .tri-top { background: url('../img/hots/tri-top.png') no-repeat center top; }
+    .tri-both { background: url('../img/hots/tri-top.png') no-repeat center top, url('../img/hots/tri-bottom.png') no-repeat center bottom; }
+
+    .hots-top-guide { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center -200px; }
+    .hots-top-guide h1 { font-family: 'Open Sans Bold'; font-size: 40px; color: #FFF; text-shadow: 0px 0px 20px rgba(255,255,255,.6); text-transform: uppercase; }
+    .hots-top-guide h3 { font-family: 'Open Sans Bold'; font-size: 20px; color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
+    .hots-top-guide p { padding: 0 0 72px 0; color: #FFF; max-width: 265px; }
+    .hots-top-guide .btn { position: absolute; bottom: 0px; }
+    .hots-top-guide-inner { padding: 20px 0px; }
+    .hots-top-guide .hots-top-guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+    .hots-top-guide .hots-top-guide-votes { position: absolute; top: 0px; right: 30px; width: 60px; height: 60px; line-height: 56px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 20px; text-align: center; opacity: .7; z-index: 3; }
+
+    .hots-top-guide-talents { margin: 0; padding: 0; }
+    .hots-top-guide-talents li { list-style: none; display: inline-block; vertical-align: top; }
+
+
+    .hots-list-ts-guides { margin-top: 50px; margin-bottom: 50px; }
+    .hots-list-ts-guides-wrapper { margin-right: -20px; }
+
+    .hots-list-guides-title { margin: 0 0 30px 0; }
+    .hots-list-guides-title h1 { float: left; font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
+    .hots-list-guides-title .hots-mini-filters { float: right; }
+    .hots-list-guides-title .hots-mini-filters .hero-roles,
+    .hots-list-guides-title .hots-mini-filters .hero-universes,
+    .hots-list-guides-title .hots-mini-filters .hots-filters-search { float: left; }
+    .hots-list-guides-title .hots-mini-filters .hots-filters-search .input-group-btn { width: auto; }
+
+    .hots-list-ts-guides .hots-list-ts-guides-title .hots-search { max-width: 200px; }
+
+    .hots-list-ts-guides .hots-guides li .hots-guide { margin-right: 20px; }
+
+    .hots-guide-list { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
+    .hots-guide-list-inner { padding: 30px 0; }
+
+    .hots-guides-long-title { margin-left: 0px; margin-right: 0px; padding: 15px 0px !important; border: 1px solid rgba(255,255,255,.3); background: rgba(77, 40, 108, .7); }
+    .hots-guides-long-title h1 { margin-bottom: 0px; font-family: 'Open Sans Bold'; font-size: 14px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
+
+
+    //*************************************
+    // 2... guides
+    //*************************************
+
+    .guide-header { background: #2766ad url('../img/hots/hots-blue-banner.png') no-repeat right top; border-bottom: 1px solid #083f7d; }
+    .guide-header h1 { margin-top: 10px; font-family: 'Open Sans Bold'; color: #FFF; }
+    .guide-header p,
+    .guide-header p a { color: #FFF; }
+
+    .guide-votes { margin: 15px 0; }
+
+    .guide-page .guide-right { float: right; width: 300px; }
+    .guide-page .guide-left { margin-right: 320px; overflow: hidden; }
+
+    .guide-page .guide-content { position: relative; }
+    .guide-page .guide-content iframe { width: 100% !important; }
+
+    .guide-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
+    .guide-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
+    .guide-section-title a { color: #FFF; }
+    .guide-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
+    .guide-section-content { padding: 20px; border-top: 1px solid #000; }
+    .guide-section-content.unpadded { padding: 0px; }
+    .guide-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
+    .guide-section-content p { color: #FFF; }
+
+    .guide-heroes { margin-right: -20px; }
+    .guide-hero-wrapper { float: left; padding-right: 20px; }
+    .guide-hero { border: 1px solid #000; opacity: .5; }
+    .guide-hero:hover { opacity: .8; }
+    .guide-hero.active { border: 1px solid #2766ad; opacity: 1; }
+
+    .guide-hero a { text-decoration: none; }
+
+    .guide-hero-title { padding: 5px 10px; font-family: 'Open Sans Bold'; color: #FFF; text-transform: uppercase; background: #222; }
+    .guide-hero.active .guide-hero-title { background: #2766ad; }
+    .guide-hero-image { height: 60px; border-top: 1px solid #000; }
+    .guide-hero.active .guide-hero-image { border-top: 1px solid #2766ad; }
+
+
+
+    .guide-heroes-1 { width: 100%; }
+    .guide-heroes-2 { width: 50%; }
+    .guide-heroes-3 { width: 33.33%; }
+    .guide-heroes-4 { width: 25%; }
+    .guide-heroes-5 { width: 20%; }
+
+    .guide-talents { margin-right: -10px; }
+    .guide-talent-wrapper { float: left; width: 14.28%; padding-right: 10px; }
+    .guide-talent { border: 1px solid #000; background: rgba(0,0,0,.4); }
+    .guide-talent-level { padding: 5px 0px; font-family: 'Open Sans Bold'; color: #FFF; text-transform: uppercase; background: #2766ad; text-align: center; border-bottom: 1px solid #000; }
+    .guide-talent-icon { margin: 10px auto; }
+
+    .guide-talent-dots { margin: 10px auto; width: 80px; padding: 3px 0; text-align: center; border-radius: 4px; background: rgba(0,0,0,.3); border: 1px solid rgba(0,0,0,.8); }
+    .guide-talent-dot { margin-right: 3px; display: inline-block; *display: inline; zoom: 1; width: 10px; height: 10px; background: #666; border-radius: 50%; }
+    .guide-talent-dot:last-child { margin-right: 0px; }
+    .guide-talent-dot.active { background: #2766ad; }
+
+    .guide-map-header { margin-bottom: 20px; width: 100%; height: auto; }
+    .guide-content-title { text-transform: uppercase; }
+
+
+    //*************************************
+    // 3...  guide synergy
+    //*************************************
+
+    .guide-synergy,
+    .guide-strong,
+    .guide-weak { border: 1px solid #000; padding: 10px 20px; }
+
+    .guide-synergy { background: #6cbd45; }
+    .guide-strong { background: #2766ad; }
+    .guide-weak { background: #e94c3d; }
+
+    .guide-synergy h1,
+    .guide-strong h1,
+    .guide-weak h1 { margin: 0; font-size: 20px; font-family: 'Open Sans Bold'; color: #FFF; }
+
+    .guide-synergy span,
+    .guide-strong span,
+    .guide-weak span { font-size: 10px; color: #FFF; }
+
+    .guide-votes { float: right; }
+
+    .guide-video { width: 100%; border: none; }
+
+    .guide-maps { padding: 0 20px 20px 0; }
+    .guide-map { float: left; margin: 20px 0 0 20px; display: block; width: 92px; height: 92px; }
+
+
+    //guide-map moved to hots-maps.scss
+
+
+    .guide-subscribe > h1 { margin-top: 20px; color: #2766ad; font-family: 'Open Sans Bold'; }
+    .guide-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF; }
+
+    //*************************************
+    // 4...  guide builder link
+    //*************************************
+
+    .guide-builder-link { padding: 2px; width: 100%; height: 200px; background: #90d7ed; /* Old browsers */
+        background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* IE10+ */
+        background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); /* IE6-9 */
+        -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+    .guide-builder-link-inner { position: relative; height: 196px; background: #141316 url('../img/hots/modal/modalbg.jpg') no-repeat right top; }
+    .guide-builder-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/hots/guide-builder-button.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
+    .guide-builder-link-inner a:hover { background-position: center -196px; }
+
+    //*************************************
+    // 5... hots guide builder
+    // 5.1. step 1
+    // 5.2. step 2
+    // 5.3. Content
+
+    //*************************************
+
+
+    //*************************************
+    // 5.1. step 1
+    //*************************************
+
+    .guide-builder { margin: 40px 0 120px 0; }
+    .hots-gb-step1 { margin: 0 auto; width: 695px; }
+    .hots-gb-step1-left { margin: 0 20px 0 0; width: 366px; }
+    .hots-gb-step1-right { width: 309px; }
+
+    .hots-guide-hero { margin: 72px auto 20px; width: 366px; height: 356px; background: url('../img/hots/heroguide.png'); }
+    .hots-guide-map { margin: 0 auto 20px; width: 309px; height: 428px; background: url('../img/hots/mapguide.png'); }
+    .hots-button { margin: 0 auto; display: block; width: 300px; height: 66px; line-height: 66px; text-align: center; color: #FFF; border: 1px solid #FFF; text-decoration: none; transition: background .1s linear; }
+    .hots-button:hover,
+    .hots-button:focus { background: #2766ad; color: #FFF; text-decoration: none; }
+
+    //*************************************
+    // 5.1. step 2
+    //*************************************
+
+    .hero-selection { margin: 40px auto 20px auto; }
+    .hero-selection .hero-row { margin: -20px auto 0 auto; white-space: nowrap; }
+
+    .hero-selection .hero-row.hero-1 { max-width: 90px; }
+    .hero-selection .hero-row.hero-2 { max-width: 180px; }
+    .hero-selection .hero-row.hero-3 { max-width: 270px; }
+    .hero-selection .hero-row.hero-4 { max-width: 360px; }
+    .hero-selection .hero-row.hero-5 { max-width: 450px; }
+    .hero-selection .hero-row.hero-6 { max-width: 540px; }
+    .hero-selection .hero-row.hero-7 { max-width: 630px; }
+    .hero-selection .hero-row.hero-8 { max-width: 720px; }
+    .hero-selection .hero-row.hero-9 { max-width: 810px; }
+    .hero-selection .hero-row.hero-10 { max-width: 900px; }
+
+    .hero-selection .hero { margin: 0 5px; display: inline-block; position: relative; width: 80px; height: 92px; }
+    .hero-icon { width: 80px; height: 92px; }
+
+    .hero-icon .icon-wrap,
+    .hero-selection .hero .icon-wrap { width: 80px; height: 92px; display: inline-block; overflow: hidden; }
+
+    .hero-icon .icon-wrap .icon,
+    .hero-selection .hero .icon-wrap .icon { display: inline-block; overflow: hidden; transform: translate(7px, 13px) scaleX(1.717) rotate(45deg); width: 65px; height: 65px; background-color: rgba(88, 43, 128, .25); transition: background-color .1s linear; }
+    .hero-icon .icon-wrap .icon { background-color: rgba(88,43,128,1) !important; }
+
+    .hero-icon .icon-wrap a,
+    .hero-selection .hero .icon-wrap .icon a,
+    .hero-selection .hero .icon-wrap .icon span { display: inline-block; transform: rotate(-45deg) scaleX(0.59) translate(7px, -14px); width: 80px; height: 92px; }
+
+    .hero-selection .hero .icon-wrap .icon span.icon-ts { background: url('../img/hots/heroes/ts-hex.png') no-repeat center center; }
+
+
+    /* ------------------------------------- */
+    /* icon-hero moved to hots-heroes scss */
+    /* ------------------------------------- */
+
+
+    .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
+    .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
+
+    p.white { color: #FFF; }
+    .darkbox { background: rgba(0,0,0,.6); border-radius: 4px; border: 1px solid #000; }
+
+
+    /* ------------------------------------- */
+    /* maps moved to hots-maps scss */
+    /* ------------------------------------- */
+
+
+    //*************************************
+    // 5.3. Content
+    //*************************************
+
+    .gb-content-title { position: relative; min-height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
+    
+    .input-content-title { 
+        padding-right: 125px; 
+        padding-left: 40px;
+        height: 60px; 
+        line-height: 60px; 
+        font-size: 20px; 
+        color: #FFF; 
+        font-family: 'Open Sans Bold'; 
+        background: transparent; 
+        border: none; 
+        text-transform: uppercase; 
+    }
+    
+    .gb-content-btns { position: absolute; top: 20px; right: 20px; }
+    
+    .gb-chapter-carets {
+        position: absolute;
+        top: 7px;
+        left: 17px;
+        width: 20px;
+        
+        .gb-content-up
+        .gb-content-down {
+            height: 10px;
+        }
+        
+        .gb-content-up {
+            top: -20px;
+        }
+        
+        a {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 18px;
+            height: 10px;
+            color: white;
+            
+            &.disabled {
+                color: rgba(255, 255, 255, 0.4);
+            }
+        
+        }
+    }
+    
+    .gb-content-delete { float: left; width: 20px; height: 20px; line-height: 20px; text-align: center; color: rgba(255, 255, 255, 0.4) !important; border-radius: 4px; font-size: 20px; }
+
+//    .gb-content-down:hover,
+//    .gb-content-up:hover,
+//    .gb-content-delete:hover { background: rgba(255,255,255,.8); }
+
+    .gb-content-down.disabled,
+    .gb-content-up.disabled { color: rgba(255, 255, 255, 0.4); cursor: default; }
+
+    /* synergy */
+    .gb-synergy,
+    .gb-strong,
+    .gb-weak { border: 1px solid #000; padding: 10px 20px; }
+
+    .gb-synergy { background: #6cbd45; }
+    .gb-strong { background: #2766ad; }
+    .gb-weak { background: #e94c3d; }
+
+    .gb-synergy h1,
+    .gb-strong h1,
+    .gb-weak h1 { margin: 0; font-size: 20px; font-family: 'Open Sans Bold'; color: #FFF; }
+
+    .gb-synergy span,
+    .gb-strong span,
+    .gb-weak span { font-size: 10px; color: #FFF; }
+
+    /* hero list */
+    .hero-list { margin: 0; padding: 0; border: 1px solid #000; }
+    .hero-list li { list-style: none; height: 29px; border-bottom: 1px solid #000; background: rgba(0,0,0,.4); transition: background .1s linear; }
+    .hero-list li:last-child { border-bottom: none; }
+    .hero-list li:hover { background: rgba(88,43,128,.8); }
+    .hero-list li.active { background: rgba(39,102,173,.8); }
+
+    .hero-list li a { display: block; padding: 0 20px; height: 28px; color: #FFF; font-size: 16px; line-height: 28px; text-decoration: none; }
+    .hero-list li a:hover { text-decoration: none; }
+
+    // ------------------------------------- 
+    // hero-list li a.hero moved to hots-heroes scss
+    // ------------------------------------- 
+
+    /* guide steps */
+    .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
+    .gb-steps li { float: left; list-style: none; }
+
+    .gb-steps li button { display: block; width: 154px; height: 60px; padding: 5px 10px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); color: #FFF; font-size: 20px; text-decoration: none; -webkit-transition: all .1s linear; transition: all .1s linear; text-align: left; }
+    .gb-steps.gb-steps-map li button { width: 215px; }
+    .gb-steps li button:hover { background: rgba(88, 43, 128, .8); }
+    .gb-steps li.steps-arrow button { padding: 0; width: 30px; font-size: 30px; line-height: 60px; text-align: center; }
+
+    .gb-steps li.steps-arrow-prev button { border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
+    .gb-steps li.steps-arrow-next button { border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+
+    .gb-steps li button small { display: block; font-size: 14px; }
+    .gb-steps li.active button { background: rgba(39,102,173,.8); color: #FFF; }
+
+    /* guide text */
+    .guide-text { margin: 20px auto; width: 260px; height: 152px; oveflow: hidden; white-space: nowrap; text-indent: -99999px; }
+    .guide-text.guide-builder { background: url('../img/hots/guides/guide-builder.png'); }
+    .guide-text.hero-discussion { background: url('../img/hots/guides/hero-discussion.png'); }
+    .guide-text.hero-information { background: url('../img/hots/guides/hero-information.png'); }
+    .guide-text.hero-select { background: url('../img/hots/guides/hero-select.png'); }
+    .guide-text.map-discussion { background: url('../img/hots/guides/map-discussion.png'); }
+    .guide-text.map-select { background: url('../img/hots/guides/map-select.png'); }
+    .guide-text.save-guide-now { background: url('../img/hots/guides/save-guide-now.png'); }
+    .guide-text.talent-select { background: url('../img/hots/guides/talent-select.png'); }
+
+    /* talents */
+    .gb-talents { margin-bottom: 30px; border: 1px solid #000; background: rgba(0,0,0,.3); }
+    .gb-talents-title { padding: 0 20px; height: 60px; line-height: 60px; color: #FFF; background: rgba(0,0,0,.3); border-bottom: 1px solid #000; font-family: 'Open Sans Bold';
+      font-size: 20px; }
+    .gb-talents-tiers { margin: 0; padding: 0; }
+    .gb-talents-tiers li { list-style: none; height: 40px; }
+    .gb-talents-tiers li span { float: left; line-height: 30px; padding: 5px; margin-right: 5px; color: #FFF; width: 40px; height: 40px; text-align: center; border-right: 1px solid #000; background: rgba(0,0,0,.3); }
+    .gb-talents-icons { margin: 0; padding: 0; float: left; }
+    .gb-talents-icons li { float: left; list-style: none; margin-right: 5px; padding: 5px; width: 40px; height: 40px; }
+    .gb-talents-icons li:last-child { margin-right: 0px; }
+
+} // end of hots styles wrapper
+

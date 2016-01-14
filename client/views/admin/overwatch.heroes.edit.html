@@ -1,0 +1,115 @@
+<alert-box theme="admin"></alert-box>
+
+<div class="panel panel-default br-none">
+    <form name="form" role="form" class="form-horizontal">
+    <div class="panel-heading">
+        Edit Hero
+    </div>
+    <div class="panel-body">
+        <div class="row form-group">
+            <label for="heroName" class="col-sm-2 control-label">Hero Name</label>
+            <div class="col-sm-10">
+                <input type="text" id="heroName" name="heroName" class="form-control" ng-model="hero.heroName" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="heroRole" class="col-sm-2 control-label">Role</label>
+            <div class="col-sm-10">
+                <select id="heroRole" name="heroRole" class="form-control" ng-options="role as role for role in roles" ng-model="hero.heroRole" required></select>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="realName" class="col-sm-2 control-label">Real Name</label>
+            <div class="col-sm-10">
+                <input type="text" id="realName" name="realName" class="form-control" ng-model="hero.realName" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="age" class="col-sm-2 control-label">Age</label>
+            <div class="col-sm-10">
+                <input type="text" id="age" name="age" class="form-control" ng-model="hero.age" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="occupation" class="col-sm-2 control-label">Occupation</label>
+            <div class="col-sm-10">
+                <input type="text" id="occupation" name="occupation" class="form-control" ng-model="hero.occupation" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="location" class="col-sm-2 control-label">Location</label>
+            <div class="col-sm-10">
+                <input type="text" id="location" name="location" class="form-control" ng-model="hero.location" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="organization" class="col-sm-2 control-label">Organization</label>
+            <div class="col-sm-10">
+                <input type="text" id="organization" name="organization" class="form-control" ng-model="hero.organization" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="description" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-10">
+                <textarea id="description" name="description" class="form-control" ng-model="hero.description" required></textarea>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="youtubeid" class="col-sm-2 control-label">YouTube Video ID</label>
+            <div class="col-sm-10">
+                <input type="text" id="youtubeid" name="youtubeid" class="form-control" ng-model="hero.youtubeId" required>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="abilityAddWnd()">
+                    <i class="fa fa-plus-circle m-r-xs"></i>Add
+                </a>
+                <strong class="lh-lg">Abilities</strong>
+            </div>
+            <ul class="list-group" dnd-list="hero.overwatchAbilities" dnd-allowed-types="['ability']" ng-show="hero.overwatchAbilities.length">
+                <li class="list-group-item admin-list-item lh-lg clearfix"
+                    ng-repeat="ability in hero.overwatchAbilities"
+                    dnd-draggable="ability"
+                    dnd-moved="updateDND(hero.overwatchAbilities, $index)"
+                    dnd-disable-if="hero.overwatchAbilities.length < 2"
+                    dnd-type="'ability'"
+                >
+                    {{ability.name}}
+                    <div class="pull-right">
+                        <button class="btn btn-sm btn-default" ng-click="abilityEditWnd(ability)">Edit</button>
+                        <button class="btn btn-sm btn-danger" ng-click="deleteAbility(ability)">Delete</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="panel-body" ng-show="!hero.overwatchAbilities.length">
+                <p class="m-b-none">There are no abilities added for this hero yet.</p>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="className" class="col-sm-2 control-label">CSS Class</label>
+            <div class="col-sm-10">
+                <input type="text" id="className" name="className" class="form-control" ng-model="hero.className" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="active" class="col-sm-2 control-label">Active</label>
+            <div class="col-sm-10">
+                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in heroActive" ng-model="hero.isActive" required></select>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="col-sm-10 col-sm-offset-2">
+            <button type="submit" 
+					class="btn btn-blue btn-lg" 
+					ng-disabled="form.$invalid || fetching" 
+					ng-click="editHero()">
+				<span ng-if="!fetching">Update Hero</span>
+				<span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
+			</button>
+        </div>
+    </div>
+    </form>
+    </div>
+</div>

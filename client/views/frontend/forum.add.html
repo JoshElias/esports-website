@@ -1,0 +1,37 @@
+<div class="container m-b-md">
+    <div class="forum-thread-title clearfix">
+        <h1>{{thread.title}}</h1>
+    </div>
+    <form method="post" name="form" novalidate>
+    <div class="panel panel-danger error-modal animated" ng-show="showError">
+        <div class="panel-heading">
+            <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+            <strong>Unable to add forum post</strong>
+        </div>
+        <div class="panel-body">
+            <ul class="error text-danger">
+                <li ng-repeat="error in errors">{{error.msg}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group m-b-sm clearfix">
+            <label for="title" class="control-label col-sm-12 white">Title</label>
+            <div class="col-sm-12">
+                <input type="text" id="title" name="title" class="form-control input-dark" ng-model="post.title" required>
+            </div>
+        </div>
+        <div class="form-group m-b-sm clearfix">
+            <label for="content" class="control-label col-sm-12 white">Content</label>
+            <div class="col-sm-12">
+                <summernote id="content" config="options" ng-model="post.content" required></summernote>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-blue" ng-disabled="form.$invalid" ng-click="addPost()">Add Post</button>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>

@@ -1,0 +1,31 @@
+<h2>CONNECTED SERVICES</h2>
+<h3>Attach extra services to your Tempo Storm account to make the most of your user experience.</h3>
+
+<div class="row connect-wrapper">
+    
+    <div class="connect twitchBorder">
+        <div class="logo-wrapper twitchBack">
+            <i class="fa fa-twitch"></i>
+        </div>
+        <div class="connect-body">
+            <span ng-if="!isLinked.twitch" class="hidden-xs">Link your twitch account.</span>
+            <span ng-if="isLinked.twitch" class="hidden-xs">Your account is linked.</span>
+            
+            <button ng-if="isLinked.twitch" ng-click="twitchLink()" class="link twitchBack"><i class="fa fa-chain"></i></button>
+            <button ng-if="!isLinked.twitch" ng-click="twitchLink()" class="link"><i class="fa fa-chain-broken"></i></button>
+        </div>
+    </div>
+    
+    <div class="connect blizzBorder">
+        <div class="logo-wrapper blizzBack">
+            <img src="../../img/BattleNet_white.png">
+        </div>
+        <div class="connect-body">
+            <span ng-if="!isLinked.bnet" class="hidden-xs">Link your Battlenet account.</span>
+            <span ng-if="isLinked.bnet" class="hidden-xs">Your account is linked.</span>
+            
+            <button ng-if="isLinked.bnet" ng-click="bnetLink()" class="link blizzBack"><i class="fa fa-chain"></i></button>
+            <button ng-if="!isLinked.bnet" ng-click="bnetLink()" class="link"><i class="fa fa-chain-broken"></i></button>
+        </div>
+    </div>
+</div>

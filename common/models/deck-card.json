@@ -1,0 +1,69 @@
+{
+  "name": "deckCard",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "cardId": {
+      "required": true
+    },
+    "deckId": {},
+    "redbullPackId":{},
+    "cardQuantity": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "card": {
+      "type": "belongsTo",
+      "model": "card",
+      "foreignKey": "cardId"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "pack": {
+      "type": "belongsTo",
+      "model": "redbullPack",
+      "foreignKey": "redbullPackId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
+    }
+  ],
+  "methods": {}
+}

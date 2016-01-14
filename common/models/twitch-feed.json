@@ -1,0 +1,67 @@
+{
+  "name": "twitchFeed",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "channelUrl": {
+      "type": "string",
+      "required": true
+    },
+    "gameName": {
+      "type": "string",
+      "required": true
+    },
+    "viewerCount": {
+      "type": "number",
+      "required": true
+    },
+    "displayName": {
+      "type": "string",
+      "required": true
+    },
+    "logoUrl": {
+      "type": "string",
+      "required": true
+    },
+    "screenshotUrl": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
+  "methods": {}
+}

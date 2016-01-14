@@ -1,0 +1,31 @@
+<form ng-if="!user.subscription.isSubscribed" stripe-form="subscribe" name="subscribeForm" role="form" class="form-horizontal">
+    <div class="premium-form">
+        <input type="text" id="card" name="card" ng-model="number" placeholder="{{cardPlaceholder}}" payments-format="card" payments-validate="card" required>
+        <input type="text" id="expiry" name="expiry" ng-model="expiry" placeholder="MM / YYYY" payments-format="expiry" payments-validate="expiry" required>
+        <input type="text" id="cvc" name="cvc" class="cvc" ng-model="cvc" placeholder="1234" payments-validate="cvc" required>
+    </div>
+
+    <button spinner-button="loading" type="submit" class="update-card-btn" ng-disabled="form.$invalid || loading == true"><h2>Get Premium</h2></button>
+</form>
+
+<form ng-if="user.subscription.isSubscribed" stripe-form="updateCard" name="updateForm" role="form" class="form-horizontal">
+    <div class="premium-form">
+        <input type="text" id="card" name="card" ng-model="number" placeholder="{{cardPlaceholder}}" payments-format="card" payments-validate="card" required>
+        <input type="text" id="expiry" name="expiry" ng-model="expiry" placeholder="MM / YYYY" payments-format="expiry" payments-validate="expiry" required>
+        <input type="text" id="cvc" name="cvc" class="cvc" ng-model="cvc" placeholder="1234" payments-validate="cvc" required>
+    </div>
+
+    <div class="update-card-btn-wrapper clearfix">
+        <button type="submit" class="update-card-btn" ng-class="{ 'disabled' : loading == true }" ng-disabled="loading == true">
+            <h2>Update Card</h2>
+        </button>
+<!--
+        <button type="submit" class="update-card-btn cancel-subscription" ng-click="">
+            <h2>Cancel Subscription</h2>
+        </button>
+-->
+        <!--<div ng-if="isLoading()" class="please-wait clearfix">
+            <i class="fa fa-spinner fa-pulse"></i>
+        </div>-->
+    </div>
+</form>

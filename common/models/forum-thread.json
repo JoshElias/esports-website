@@ -1,0 +1,79 @@
+{
+  "name": "forumThread",
+  "plural": "forumThreads",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "__v": {
+      "type": "number"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "description": {
+      "type": "string",
+      "validators": ["spam"]
+    },
+    "title": {
+      "type": "string",
+      "validators": ["spam"]
+    },
+    "forumCategoryId": {},
+    "slug": {
+      "url": {
+        "type": "string",
+        "validators": ["unique"]
+      },
+      "linked": {"type": "boolean"}
+    },
+    "oldPosts": {
+      "type": [
+        "string"
+      ]
+    }
+  },
+  "validations": [],
+  "relations": {
+    "forumPosts": {
+      "type": "hasMany",
+      "model": "forumPost",
+      "foreignKey": "forumThreadId",
+      "isChild": true
+    },
+    "forumCategory": {
+      "type": "belongsTo",
+      "model": "forumCategory",
+      "foreignKey": "forumCategoryId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
+  "methods": {}
+}

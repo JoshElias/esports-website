@@ -1,0 +1,82 @@
+{
+  "name": "deckMatchup",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "deckName": {
+      "type": "string"
+    },
+    "className": {
+      "type": "string"
+    },
+    "forChance": {
+      "type": "number"
+    },
+    "againstChance": {
+      "type": "number"
+    },
+    "forDeckId": {},
+    "againstDeckId": {},
+    "snapshotId": {}
+  },
+  "validations": [],
+  "relations": {
+    "forDeck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "forDeckId"
+    },
+    "againstDeck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "againstDeckId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "upsert"
+    }
+  ],
+  "methods": {}
+}

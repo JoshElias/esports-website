@@ -1,0 +1,146 @@
+{
+  "name": "guide",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "validators": ["unique"]
+    },
+    "guideType": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "youtubeId": {
+      "type": "string",
+      "validators": ["youtubeId"]
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "premium": {
+      "type": "object"
+    },
+    "isFeatured": {
+      "type": "boolean"
+    },
+    "votes": {
+      "type": [
+        "object"
+      ]
+    },
+    "voteScore": {
+      "type": "number"
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "isPublic": {
+      "type": "boolean"
+    },
+    "against": {
+      "type": "object"
+    },
+    "content": {
+      "type": "array"
+    },
+    "authorId": {},
+    "oldMaps": {
+      "type": [
+        "string"
+      ]
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    },
+    "oldHeroes": {
+      "type": [
+        "object"
+      ]
+    },
+    "talentTiers": {
+      "type": "object"
+    },
+    "synergy": {
+      "type": [
+        "string"
+      ]
+    }
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "guideId",
+      "isChild": true
+    },
+    "maps": {
+      "type": "hasAndBelongsToMany",
+      "model": "map"
+    },
+    "guideHeroes": {
+      "type": "hasMany",
+      "model": "guideHero",
+      "foreignKey": "guideId",
+      "isChild": true
+    },
+    "guideTalents": {
+      "type": "hasMany",
+      "model": "guideTalent",
+      "foreignKey": "guideId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "WRITE",
+      "property": "create"
+    }
+  ],
+  "methods": {}
+}

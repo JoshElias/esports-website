@@ -1,0 +1,109 @@
+{
+  "name": "comment",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "text": {
+      "type": "string",
+      "validators": ["spam"]
+    },
+    "votes": [
+      "object"
+    ],
+    "oldReplies": {},
+    "createdDate": {
+      "type": "date",
+      "required": true
+    },
+    "voteScore": {
+      "type": "number"
+    },
+    "authorId": {},
+    "articleId": {},
+    "guideId": {},
+    "deckId": {},
+    "snapshotId": {},
+    "forumPostId": {},
+    "parentCommentId": {}
+  },
+  "validations": [],
+  "relations": {
+    "article": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "articleId"
+    },
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
+    },
+    "forumPost": {
+      "type": "belongsTo",
+      "model": "forumPost",
+      "foreignKey": "forumPostId"
+    },
+    "parentComment": {
+      "type": "belongsTo",
+      "model": "comment",
+      "foreignKey": "parentCommentId"
+    },
+    "replies": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "parentCommentId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "WRITE",
+      "property": "create"
+    }
+  ],
+  "methods": {}
+}

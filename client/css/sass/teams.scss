@@ -1,0 +1,202 @@
+@import 'ts-colors.scss';
+@import 'ts-mixins.scss';
+
+// Description: contains styles related to the team page and teh team member modals
+
+//*************************************
+
+// 1... team page styles
+// 2... button
+// 3... team member modal
+// 4... Previous Styles
+
+//*************************************
+
+
+//*************************************
+// 1... team page styles
+//*************************************
+
+.teams { 
+    margin-top: 50px; 
+    
+    h1 {
+        color: white;
+        font-weight: bold;
+        text-shadow: 2px 2px 2px black;
+        letter-spacing: 3px;
+    }
+    
+    .team {
+        z-index:1;
+        
+        .anchor {
+            display: block!important;
+            position: relative;
+            top: -120px;
+            visibility: hidden;
+        }
+    }
+    
+    .member {
+        height: 470px;
+        padding: 0px 5px;
+        position: relative;
+        
+        button {
+        //  position: absolute;
+            z-index: 2;
+            bottom: 10px;
+            outline: none;
+            padding: 0;
+            text-align: inherit;
+            border: none;
+            background: none;
+            width:100%;
+            height:100%;
+        }
+        
+        img {
+            max-height: 250px;
+            width: 100%;
+        }
+        
+        .outline {
+           // @include ts-div-styles;
+            transition: .10s;
+            position:relative;
+            -moz-transition: .10s;
+            outline: 1px solid rgba(255,255,255,.2);
+            outline-offset: -2px;
+            height: 100%;
+            border: 1px solid rgba(0,0,0,1);
+            background-color: rgba(29,29,29,.7);
+        }    
+    }
+}
+
+
+
+.teams .member:hover .outline {
+    border: 1px solid #2766ad;
+    background-color: #2766ad;
+}
+.teams .member:hover .outline p {
+    color: white;
+}
+.teams .member .outline h1 {
+    text-shadow: none;
+    color: #D27A2A;
+    font-size: 20px;
+    text-transform: uppercase;
+}
+.teams .member .outline h3,
+.teams .member .outline p {
+    color: #BABABA;
+    font-size: 16px;
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+.teams .member .content-wrapper { position: relative; padding-bottom: 0px; }
+
+
+.teams .member .view-more-team { width: 100%; bottom:10px; position:absolute; margin:0px auto; }
+.teams .member .view-more-team h3 { margin: 0 auto; text-align:center; opacity: .5 }
+
+
+//*************************************
+// 2... button
+//*************************************
+
+
+.btn-team-wrapper { position: absolute; top: 230px; right: 20px; }
+.btn-team-wrapper-modal { position: absolute; top: 20px; right: 20px; }
+.btn-team { width: 30px; height: 30px; border-radius: 30px; display: block; float: left; text-align: center; line-height: 1.35; border: 1px solid white; text-decoration: none; color: rgba(29,29,29,1); font-size: 18px; }
+
+/*
+@media (max-width: 767px) {
+    
+    .btn-team { width: 20px; height: 20px; border-radius: 30px; float: none; }
+    .btn-team-inner { width: 14px; height: 14px; }
+
+}
+*/
+
+.btn-inner,
+.btn-team-inner { width: 24px; height: 24px; border-radius: 24px; background-color: rgba(255,255,255,1); margin: 2px; }
+.btn-team-esea { background: url('../img/esea.png') no-repeat center center; color: #0dc503 }
+
+//*************************************
+// 3... team member modal
+//*************************************
+
+
+.member-modal { background: rgba(0,0,0,.9); }
+.member-modal .modal-header { display: none; visibility: hidden; }
+.member-modal .bootbox-close-button { color: white; font-weight: bold; opacity: 1; position: absolute; right: 10px; top: 7px; }
+.member-modal .modal-content { border-radius: 0; }
+.member-modal .modal-body { padding: 0; }
+.member-modal .content-wrapper { position: relative; }
+.member-modal .content-wrapper h1 {    
+    text-shadow: none;
+    color: #D27A2A;
+    font-size: 20px;
+    text-transform: uppercase; 
+    max-width: 480px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+.member-modal .content-wrapper h3,
+.member-modal .content-wrapper p { 
+    color: #BABABA;
+    font-size: 16px;
+    white-space: pre-wrap;
+    text-overflow: ellipsis;
+}
+.member-modal img { width:100% }
+
+
+//*************************************
+// 4... Previous Styles
+//*************************************
+
+/*
+.team-member { margin-left: 100px; min-height: 200px; max-height: 200px; position: relative; background: #181919; -webkit-transition: all .5s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
+.team-member-content { padding: 20px 90px 20px 132px; max-height: 160px; overflow: hidden; -webkit-transition: all .3s ease-in-out; -moz-transition: all .5s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
+.team-member-content h1 { color: #FFF; font-family: 'Open Sans Bold'; font-size: 26px; }
+.team-member-content h3 { color: #F2F2F2; font-size: 18px; }
+.team-member-content p { color: #D2D2D2; }
+
+.team-member-photo { position: absolute; top: 0px; left: -92px; display: block; width: 200px; height: 200px; border-radius: 50%; border: 6px solid #181919; -webkit-transition: all .3s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
+.team-member-photo img { width: 188px; height: 188px; }
+
+.team-member-buttons { margin-top: 20px; }
+.btn-team { float: left; margin-right: 10px; width: 50px; height: 42px; color: #FFF !important; font-size: 20px; opacity: .8; }
+.btn-team:hover { opacity: 1; }
+.btn-team-facebook { background: #3b5998; }
+.btn-team-twitter { background: #4099FF; }
+.btn-team-twitch { background: #6441a5; }
+.btn-team-youtube { background: #e52d27; }
+.btn-team-instagram { background: #2E5E86; }
+
+
+.team-member-toggle { display: table-cell; position: absolute; top: 0px; right: 0px; width: 60px; height: 100%; background: #222; vertical-align: middle; color: #FFF !important; font-size: 30px; -webkit-transition: all .3s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
+.team-member-toggle i { margin: -15px 0 0 -10px; position: absolute; top: 50%; left: 50%; }
+.team-member-toggle:hover { background: #2766ad; }
+
+.team-member-photo:hover { border: 6px solid #2766ad; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+
+.team-member.active .team-member-photo { border: 6px solid #2766ad; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+
+.team-member.active { max-height: 1000px; }
+.team-member.active .team-member-content { max-height: 1000px; }
+
+.team-banner { border-bottom: 1px solid #000; }
+.team-banner-hs { background: url('../img/team/hs-back.jpg') center center; background-size: cover; }
+.team-banner-hots { background: url('../img/team/hots-back.jpg') center center; background-size: cover; }
+.team-banner-csgo { background: url('../img/team/csgo-back.jpg') center center; background-size: cover; }
+.team-banner-fifa { background: url('../img/team/fifa-banner.jpg') center center; background-size: cover; }
+.team-banner-fgc { background: url('../img/team/fgc-banner.jpg') center center; background-size: cover; }
+
+.team-banner img { margin: 30px auto; width: 553px; height: auto; }
+*/

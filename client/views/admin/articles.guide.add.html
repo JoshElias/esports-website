@@ -1,0 +1,19 @@
+<div class="panel panel-dark m-b-none">   
+    <div ng-show="article.articleType == 'hots'">
+        <div class="panel-heading clearfix">
+            <strong class="lh-lg">ADD GUIDE</strong>
+            <div class="pull-right m-r-sm">
+                <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="getGuides()">
+            </div>
+        </div>
+
+        <form class="list-group m-b-none">
+            <a href="#" class="list-group-item" 
+			   ng-class="{'active': article.guide.id === guide.id }"
+			   ng-click="modifyItem(guide)" 
+			   ng-repeat="guide in guides">
+                {{guide.name}}
+            </a>
+        </form>
+    </div>
+</div>

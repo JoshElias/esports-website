@@ -1,0 +1,50 @@
+{
+  "name": "articleArticle",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "parentArticleId": {
+      "required": true
+    },
+    "childArticleId": {
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "parentArticle": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "parentArticleId"
+    },
+    "childArticle": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "childArticleId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
+  "methods": {}
+}

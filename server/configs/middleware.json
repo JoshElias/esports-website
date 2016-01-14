@@ -1,0 +1,34 @@
+{
+  "initial:before": {
+    "loopback#context": {
+      "params": {
+        "enableHttpContext": true
+      }
+    },
+    "loopback#token":{},
+    "loopback#favicon": {
+        "params": "$!../favicon.ico"
+    }
+  },
+  "initial": {
+    "compression": {},
+    "cors": {
+      "params": {
+        "origin": true,
+        "credentials": true,
+        "maxAge": 86400
+      }
+    }
+  },
+  "session": {},
+  "auth": {},
+  "parse": {},
+  "routes": {},
+  "files": {},
+  "final": {
+    "loopback#urlNotFound": {}
+  },
+  "final:after": {
+    "errorhandler": {}
+  }
+}

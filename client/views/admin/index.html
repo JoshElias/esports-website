@@ -1,0 +1,157 @@
+<!-- side nav -->
+<div ui-admin-nav class="admin-side-nav">
+    <ul class="nav">
+        <li ng-class="{active:$state.includes('app.admin.dashboard')}">
+            <a ui-sref="app.admin.dashboard">
+                <i class="fa fa-tachometer m-r-sm"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li ng-class="{active:$state.includes('app.admin.articles')}">
+            <a ui-sref="app.admin.articles.list">
+                <i class="fa fa-newspaper-o m-r-sm"></i>
+                <span>Articles</span>
+            </a>
+        </li>
+        <!-- hearthstone -->
+        <li ng-class="{active:$state.includes('app.admin.hearthstone')}" class="nav-drop">
+            <a href="#" class="nav-drop-btn">
+                <span class="pull-right text-muted">
+                    <i class="fa fa-fw fa-angle-right"></i>
+                    <i class="fa fa-fw fa-angle-down"></i>
+                </span>
+                <i class="fa fa-star m-r-sm"></i>
+                <span>Hearthstone</span>
+            </a>
+            <ul class="nav nav-sub">
+                <!-- Snapshots -->
+                <li ng-class="{active:$state.includes('app.admin.hearthstone.snapshots')}">
+                    <a ui-sref="app.admin.hearthstone.snapshots.list">
+                        <span>Snapshots</span>
+                    </a>
+                </li>
+                <li ng-class="{active:$state.includes('app.admin.hearthstone.decks')}">
+                    <a ui-sref="app.admin.hearthstone.decks.list">Decks</a>
+                </li>
+                <li ng-class="{active:$state.includes('app.admin.hearthstone.cards')}">
+                    <a ui-sref="app.admin.hearthstone.cards.list">Cards</a>
+                </li>
+            </ul>
+        </li>
+        <!-- / hearthstone -->
+        <!-- hots -->
+        <li ng-class="{active:$state.includes('app.admin.hots')}" class="nav-drop">
+            <a href="#" class="nav-drop-btn">
+                <span class="pull-right text-muted">
+                    <i class="fa fa-fw fa-angle-right"></i>
+                    <i class="fa fa-fw fa-angle-down"></i>
+                </span>
+                <i class="fa fa-bolt m-r-sm"></i>
+                <span>HotS</span>
+            </a>
+            <ul class="nav nav-sub">
+                <li ng-class="{active:$state.includes('app.admin.hots.heroes')}">
+                    <a ui-sref="app.admin.hots.heroes.list">Heroes</a>
+                </li>
+                <li ng-class="{active:$state.includes('app.admin.hots.talents')}">
+                    <a ui-sref="app.admin.hots.talents.list">Talents</a>
+                </li>
+                <li ng-class="{active:$state.includes('app.admin.hots.maps')}">
+                    <a ui-sref="app.admin.hots.maps.list">Maps</a>
+                </li>
+                <li ng-class="{active:$state.includes('app.admin.hots.guides')}">
+                    <a ui-sref="app.admin.hots.guides.list">Guides</a>
+                </li>
+            </ul>
+        </li>
+        <!-- / hots -->
+        <!-- overwatch -->
+        <li ng-class="{active:$state.includes('app.admin.overwatch')}" class="nav-drop">
+            <a href="#" class="nav-drop-btn">
+                <span class="pull-right text-muted">
+                    <i class="fa fa-fw fa-angle-right"></i>
+                    <i class="fa fa-fw fa-angle-down"></i>
+                </span>
+                <i class="fa fa-bolt m-r-sm"></i>
+                <span>Overwatch</span>
+            </a>
+            <ul class="nav nav-sub">
+                <li ng-class="{active:$state.includes('app.admin.overwatch.heroes')}">
+                    <a ui-sref="app.admin.overwatch.heroes.list">Heroes</a>
+                </li>
+            </ul>
+        </li>
+        <!-- / overwatch -->
+        <li ng-class="{active:$state.includes('app.admin.forum')}" class="nav-drop">
+            <a href="#" class="nav-drop-btn">
+                <span class="pull-right text-muted">
+                    <i class="fa fa-fw fa-angle-right"></i>
+                    <i class="fa fa-fw fa-angle-down"></i>
+                </span>
+                <i class="fa fa-comments-o m-r-sm"></i>
+                <span>Forum</span>
+            </a>
+            <ul class="nav nav-sub">
+                <li ng-class="{active:$state.includes('app.admin.forum.categories')}">
+                    <a ui-sref="app.admin.forum.structure.list">
+                        Structure
+                    </a>
+                </li>
+                <!--<li ng-class="{active:$state.includes('app.admin.forum.management')}">
+                    <a ui-sref="app.admin.forum.management">
+                        Management
+                    </a>
+                </li>-->
+            </ul>
+        </li>
+        <li ng-class="{active:$state.includes('app.admin.users')}">
+            <a ui-sref="app.admin.users.list">
+                <i class="fa fa-users m-r-sm"></i>
+                <span>Users</span>
+            </a>
+        </li>
+        
+        <li ng-class="{active:$state.includes('app.admin.polls')}">
+            <a ui-sref="app.admin.polls.list">
+                <i class="fa fa-bar-chart-o m-r-sm"></i>
+                <span>Polls</span>
+            </a>
+        </li>
+<!--
+        <li ng-class="{active:$state.includes('app.admin.banners')}">
+            <a ui-sref="app.admin.banners.list">
+                <i class="fa fa-bullhorn m-r-sm"></i>
+                <span>Banners</span>
+            </a>
+        </li>
+-->
+        <li ng-class="{active:$state.includes('app.admin.teams')}">
+            <a ui-sref="app.admin.teams.list">
+                <i class="fa fa-trophy m-r-sm"></i>
+                <span>Teams</span>
+            </a>
+        </li>
+        <li ng-class="{active:$state.includes('app.admin.vod')}">
+            <a ui-sref="app.admin.vod.list">
+                <i class="fa fa-video-camera m-r-sm"></i>
+                <span>Video of the Day</span>
+            </a>
+        </li>
+        <!--<li ng-class="{active:$state.includes('app.admin.subscriptions')}">
+            <a ui-sref="app.admin.subscriptions">
+                <i class="fa fa-money m-r-sm"></i>
+                <span>Subscriptions</span>
+            </a>
+        </li>
+        <li ng-class="{active:$state.includes('app.admin.streams')}">
+            <a ui-sref="app.admin.streams">
+                <i class="fa fa-twitch m-r-sm"></i>
+                <span>Streams</span>
+            </a>
+        </li>-->
+    </ul>
+</div>
+<!-- / side nav -->
+
+<div class="admin-content" ui-view="admin">
+</div>

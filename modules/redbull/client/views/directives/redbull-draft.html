@@ -1,0 +1,106 @@
+<!-- preloader -->
+<div class="preloader" ng-if="isLoading"><i class="fa fa-refresh fa-spin"></i></div>
+<!-- / preloader -->
+
+<!-- draft wrapper -->
+<div class="draft-wrapper">
+
+    <!-- bg -->
+    <div class="bg"></div>
+    <div class="bg-glow"></div>
+    <!-- / bg -->
+
+    <!-- packs -->
+    <div class="packs">
+        <div class="packs-scroller">
+            <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, fadeScrollbars: true, interactiveScrollbars: true}">
+                <div class="iscroll-scroller">
+                    <div class="expansion-wrapper {{packs[expansion].expansionClass}}" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
+                        <div class="pack-wrapper">
+                            <div class="pack-tab {{packs[expansion].expansionClass}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
+                            <div class="pack-next {{packs[expansion].expansionClass}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
+                            <div class="pack {{packs[expansion].expansionClass}}" data-expansion="{{expansion}}"></div>
+                        </div>
+                        <div class="pack-label">
+                            <span class="{{packs[expansion].expansionClass}}" ng-if="expansion !== 'Basic'">{{expansion}}</span>
+                            <span class="{{packs[expansion].expansionClass}}" ng-if="expansion === 'Basic'">Classic</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pack-settings-button">
+            <button class="btn btn-blue btn-block" ng-click="$parent.settingsWnd()">
+                Pack Settings
+            </button>
+        </div>
+        <div class="volume-control">
+            <draft-volume></draft-volume>
+        </div>
+    </div>
+    <div class="pack-drop"></div>
+    <!-- / packs -->
+    
+    <!-- cards -->
+    <div class="cards">
+        <div class="card"
+             ng-controller="DraftPacksCardCtrl"
+             ng-repeat="card in cards() track by $index"
+             ng-mouseenter="cardMouseEnter($event, card)"
+             ng-mouseleave="cardMouseLeave($event, card)"
+             ng-mousedown="cardMouseDown($event, card)"
+             ng-class="{'flipped-left': card.flipped === 'left', 'flipped-right': card.flipped === 'right'}">
+            <div class="card-glow {{expansionToClass(card.expansion)}} {{card.rarity.toLowerCase()}}"></div>
+            <div class="card-front">
+                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" />
+            </div>
+            <div class="card-back {{expansionToClass(card.expansion)}}"></div>
+        </div>
+    </div>
+    <!-- / cards -->
+
+    <!-- done button -->
+    <div class="btn-done" ng-mousedown="doneMouseDown($event)"></div>
+    <!-- / done button -->
+
+</div>
+<!-- / draft wrapper -->
+
+<!-- card pool -->
+<div class="card-pool">
+    <div class="card-pool-title">Card Pool</div>
+    <div class="card-pool-cards">
+        <p ng-if="!cardPool.length">
+            Start opening packs to see what cards you can use to build your decks.<br><br>
+            Drag and drop packs to open them one at a time, or speed up the process by clicking the <i>Open All Packs</i> button below.
+        </p>
+        <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
+            <div class="iscroll-scroller">
+                <div class="card-pool-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.qty > 1, legendary: card.card.rarity === 'Legendary'}" 
+                     ng-repeat="card in sortedPool() track by card.card.id" 
+                     data-card-id="card.card.id" 
+                     data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
+                     data-tooltip-pos="left" pool-card>
+                    <div class="card-pool-card-mana">{{card.card.cost}}</div>
+                    <div class="card-pool-card-qty" ng-if="card.qty > 1">{{card.qty}}</div>
+                    <div class="card-pool-card-legendary" ng-if="card.card.rarity === 'Legendary'">
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <div class="card-pool-card-photo">
+                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" alt="card.card.name">
+                    </div>
+                    <div class="card-pool-card-name">{{card.card.name}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-pool-button">
+        <button class="btn btn-blue btn-block" ng-click="fastForwardToggle()" ng-if="!draftComplete">
+            <span ng-if="!isFastForward()">Open All Packs</span>
+            <span ng-if="isFastForward()">Stop Opening Packs</span>
+            <i class="fa fa-refresh fa-spin" ng-if="isFastForward()"></i>
+        </button>
+        <button class="btn btn-blue btn-block" ng-show="draftComplete" ng-click="$parent.goToBuild()">Build Decks</button>
+    </div>
+</div>
+<!-- / card pool -->

@@ -1,0 +1,34 @@
+{
+  "name": "post",
+  "plural": "posts",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "views": {
+      "type": "number"
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "active": {
+      "type": "boolean"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,14 @@
+<div class="{{theme}} panel animated" ng-if="show()" ng-class="{'panel-danger': !isSuccess(), 'panel-success': isSuccess()}">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="reset()">&times;</button>
+        <strong>{{getMessage('msg')}}</strong>
+    </div>
+    <div class="panel-body" ng-if="!isSuccess()">
+        <ul class="error text-danger">
+            <li ng-repeat="error in getMessage('errorList') track by $index">
+				<span ng-if="error !== 'Slug already exists'">{{error}}</span>
+				<span ng-if="error === 'Slug already exists'">Name already exists</span>
+			</li>
+        </ul>
+    </div>
+</div>

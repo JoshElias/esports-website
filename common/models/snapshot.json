@@ -1,0 +1,115 @@
+{
+  "name": "snapshot",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "snapNum": {
+      "type": "number"
+    },
+    "title": {
+      "type": "string"
+    },
+    "slug": {
+      "url": {
+        "type": "string",
+        "validators": ["unique"]
+      },
+      "linked": {"type": "boolean"}
+    },
+    "content": {
+      "type": "object"
+    },
+    "tiers": {
+      "type": "object"
+    },
+    "oldMatches": {
+      "type": [
+        "object"
+      ]
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "photoNames": {
+      "type": "object"
+    },
+    "voteScore": {
+      "type": "number"
+    },
+    "votes": {
+      "type": [
+        "string"
+      ]
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "oldAuthors": {
+      "type": [
+        "object"
+      ]
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    }
+  },
+  "validations": [],
+  "relations": {
+    "deckMatchups": {
+      "type": "hasMany",
+      "model": "deckMatchup",
+      "foreignKey": "snapshotId",
+      "isChild": true
+    },
+    "authors": {
+      "type": "hasMany",
+      "model": "snapshotAuthor",
+      "foreignKey": "snapshotId",
+      "isChild": true
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "snapshotId",
+      "isChild": true
+    },
+    "deckTiers": {
+      "type": "hasMany",
+      "model": "deckTier",
+      "foreignKey": "snapshotId",
+      "isChild": true
+    }
+  },
+  "acls": [{
+    "principalType": "ROLE",
+    "principalId": "$everyone",
+    "permission": "DENY"
+  },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+
+  ],
+  "methods": {}
+}

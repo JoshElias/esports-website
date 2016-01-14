@@ -1,0 +1,17 @@
+<ul class="tempostorm-tv" ng-if="streams.length">
+    <li ng-repeat="stream in streams | orderBy: '-viewerCount'">
+        <a ng-href="{{stream.channelUrl}}" target="_blank" class="tempostorm-tv-stream">
+            <div class="inner"></div>
+            <div class="tempostorm-tv-wrapper clearfix">
+                <img ng-src="{{stream.screenshotUrl}}" class="pull-left img-responsive hidden-xs">
+                <div class="tempostorm-tv-content pos-rl">
+                    <h1>{{stream.title}}</h1>
+                    <h3>PLAYING: {{stream.gameName}}</h3>
+                    <div class="streamer">{{stream.displayName}}</div>
+                    <div class="viewers"><span class="fa fa-eye m-r-sm"></span>{{getNumber(stream.viewerCount)}}</div>
+                </div>
+            </div>
+        </a>
+    </li>
+</ul>
+<p class="darkbox white p-md" ng-if="!streams.length">There are currently no Tempo Storm streams.</p>

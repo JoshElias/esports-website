@@ -1,0 +1,658 @@
+<div class="bg-override deck-builder {{className.toLowerCase()}}">
+    <div class="sub-nav-wrapper hidden-xs">
+        <div class="container-fluid sub-nav">
+            <div class="sub-nav-links">
+                <ul>
+                    <li><a ui-sref="app.admin.hearthstone.decks.add">CLASS SELECT</a></li><li ng-class="{'db-sub-nav-border-override': deck.basic}"><a href="#" ng-click="step = 1" ng-class="{'active':$state.includes('app.hs.deckBuilder.build') && step == 1}">CARD SELECT</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 2" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 2}">MULLIGANS</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 3" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 3}">DESCRIPTION</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 4" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 4}">MATCH UPS</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 5" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 5}">SUBMIT</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid-max">
+        <div class="db-header clearfix" ng-class="{ 'head-shift' : step == 1 }">
+
+            <span ng-if="step == 1">
+                <h1>CARD SELECT</h1>
+                <h3>CHOOSE CARDS FOR YOUR DECK</h3>
+            </span>
+            <span ng-if="step == 2">
+                <h1>MULLIGANS</h1>
+                <h3>CARDS IN STARTING HAND</h3>
+            </span>
+            <span ng-if="step == 3">
+                <h1>DESCRIPTION</h1>
+            </span>
+            <span ng-if="step == 4">
+                <h1>MATCHUPS </h1>
+                <h3>WIN RATIO AGAINST OTHER DECKS</h3>
+            </span>
+            <span ng-if="step == 5">
+                <h1>SUBMIT</h1>
+            </span>
+        </div>
+    </div>
+    <div class="container-fluid-max" ng-hide="step !== 1">
+        
+        <form class="form-horizontal" name="dbForm" novalidate>
+        <div class="db-builder row clearfix">
+            <!-- db-right -->
+            <div class="col-md-push-9 col-md-3">
+                <div class="db-search">
+                    <form novalidate>
+                        <input type="text" class="input-sm input-dark" 
+                               placeholder="Search..." ng-model="filters.search">
+                        <button ng-click="search()" type="submit" class="search-charm" style="border: 0px;">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="db-mana-curve m-b-md">
+                    <div class="db-mana-curve-title">
+                        MANA CURVE
+                    </div>
+                    <div class="db-mana-curve-content clearfix" >
+                        <ul class="clearfix">
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(0)}}px;"></span></div>
+                                <div class="db-mana-curve-num">0</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(1)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(1)}}px;"></span></div>
+                                <div class="db-mana-curve-num">1</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(2)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(2)}}px;"></span></div>
+                                <div class="db-mana-curve-num">2</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(3)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(3)}}px;"></span></div>
+                                <div class="db-mana-curve-num">3</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(4)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(4)}}px;"></span></div>
+                                <div class="db-mana-curve-num">4</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(5)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(5)}}px;"></span></div>
+                                <div class="db-mana-curve-num">5</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(6)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(6)}}px;"></span></div>
+                                <div class="db-mana-curve-num">6</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(7)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(7)}}px;"></span></div>
+                                <div class="db-mana-curve-num">7<span>+</span></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row db-btn-wrapper">
+                    <div ng-click="deck.toggleGameMode('constructed')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'constructed' }">
+                        Constructed
+                    </div>
+                    <div ng-click="deck.toggleGameMode('arena')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'arena' }">
+                        Arena
+                    </div>
+                    <div ng-click="deck.toggleGameMode('brawl')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'brawl' }">
+                        Brawl
+                    </div>
+                    <div ng-click="deck.basic = false" class="col-md-6" ng-class="{ 'active' : deck.basic == false }">
+                        Advanced
+                    </div>
+                    <div ng-click="deck.basic = true" class="col-md-6" ng-class="{ 'active' : deck.basic == true }">
+                        Basic
+                    </div>
+                </div>
+
+                <div class="deck-info">
+                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{ deck.heroName | lowercase }}">
+                        <div class="db-deck-count">{{deck.getSize()}} / 30</div>
+                    </div>
+                    <span ng-show="deck.basic">
+                        <div class="deck-title">
+                            <input placeholder="DECK NAME..." ng-model="deck.name"/>
+                        </div>
+                        <div class="deck-description">
+                            <textarea placeholder="Put stuff here" resize="none" 
+                                      ng-model="deck.description"></textarea>
+                        </div>
+                    </span>
+                    
+                    <div class="deck-list">
+                        <div class="list-card" 
+                             ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
+                             ng-click="deck.removeCardFromDeck(card.card)" 
+                             tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
+                             data-tooltip-pos="left" hs-card>
+                            <div class="mana-cost">{{card.card.cost}}</div>
+                            {{card.card.name}}
+                            <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
+                            <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
+                        </div>
+                    </div>
+                    
+                    <div class="db-deck-dust db-deck-footer db-deck-{{deck.playerClass | lowercase}} {{deck.heroName | lowercase}}">
+                        {{deck.getDust()}}
+                        <div class="dust-bottle-sm"></div>
+                    </div>
+                </div>
+                <button ng-if="deck.basic" class="basic-submit-btn m-t-md"
+                        ng-click="updateDeck(deck)" ng-disabled="deckSubmitting">
+                    <span ng-if="!deckSubmitting">SUBMIT</span>
+                    <span ng-if="deckSubmitting">SUBMITTING</span>
+                    <span ng-if="deckSubmitting">
+                        <i class="fa fa-spinner fa-pulse"></i>
+                    </span>
+                </button>
+            </div>
+            <!-- / db-right -->
+
+
+                <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
+        
+                    <alert-box theme="admin"></alert-box>
+                    
+                    <div class="db-section-title clearfix">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <h1>CLASS</h1>
+                                <ul class="db-filter-classes clearfix">
+                                <li ng-class="{active: isClassCards()}"><a href="#" class="active {{className.toLowerCase()}}" ng-click="setClassCards(true); cards.current = cards.class" ng-tooltip title="{{className}}">{{className}}</a></li>
+                                <li ng-class="{active: !isClassCards()}"><a href="#" class="active neutral" ng-click="setClassCards(false); cards.current = cards.neutral" ng-tooltip title="Neutral">Neutral</a></li>
+                            </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h1>CARD TYPE</h1>
+                                <div class="db-mechanics">
+                                    <div class="dropdown">
+                                        <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
+                                            <span>Mechanics ({{filters.mechanics.length}})</span>
+                                        </button>
+                                        <ul class="list-group dropdown-menu dropdown-dark">
+                                            <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
+                                                <a href="#" ng-click="toggleMechanic(mechanic); pagination.setPage(1); $event.preventDefault(); $event.stopPropagation()">{{mechanic}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h1>MANA COST</h1>
+                                <div class="mana-crystals">
+<!--
+                                    <div ng-class="{active: filters.mana === 'all'}">
+                                        <a href="#" ng-click="doFilterByMana('all'); pagination.setPage(1)">All</a>
+                                    </div>
+-->
+                                    <div ng-class="{active: filters.mana === 0}">
+                                        <a href="#" ng-click="doFilterByMana(0); pagination.setPage(1)">0</a>
+                                    </div>
+                                    <div ng-class="{active: filters.mana === 1}">
+                                        <a href="#" ng-click="doFilterByMana(1); pagination.setPage(1)">1</a>
+                                    </div>
+                                    <div ng-class="{active: filters.mana === 2}">
+                                        <a href="#" ng-click="doFilterByMana(2); pagination.setPage(1)">2</a>
+                                    </div>
+                                    <div ng-class="{active: filters.mana === 3}">
+                                        <a href="#" ng-click="doFilterByMana(3); pagination.setPage(1)">3</a>
+                                    </div>
+                                    <div ng-class="{active: filters.mana === 4}">
+                                        <a href="#" ng-click="doFilterByMana(4); pagination.setPage(1)">4</a>
+                                    </div>
+                                    <div ng-class="{active: filters.mana === 5}">
+                                        <a href="#" ng-click="doFilterByMana(5); pagination.setPage(1)">5</a>
+                                    </div>
+                                    <div ng-class="{active: filters.mana === 6}">
+                                        <a href="#" ng-click="doFilterByMana(6); pagination.setPage(1)">6</a>
+                                    </div>
+                                    <div ng-class="{active: filters.mana === '7+'}">
+                                        <a href="#" ng-click="doFilterByMana('7+'); pagination.setPage(1)">7+</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="db-filters pull-right clearfix">
+    <!--
+                            <div class="db-mechanics">
+                                <div class="dropdown">
+                                    <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
+                                        <span>Mechanics ({{filters.mechanics.length}})</span>
+                                    </button>
+                                    <ul class="list-group dropdown-menu dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
+                                            <a href="#" ng-click="toggleMechanic(mechanic); pagination.setPage(1); $event.preventDefault(); $event.stopPropagation()">{{mechanic}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+    -->
+    <!--
+                            <div class="db-mana">
+                                <div class="dropdown">
+                                    <button class="btn db-mana-btn input-dark" type="button" data-toggle="dropdown">
+                                        <span>Mana Cost: {{getManaCost()}}</span>
+                                        <b class="caret"></b>
+                                    </button>
+
+
+
+                                    <ul class="list-group dropdown-menu dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: filters.mana === 'all'}">
+                                            <a href="#" ng-click="filters.mana = 'all'; pagination.setPage(1)">All</a>
+                                        </li>
+                                        <li class="list-group-item" ng-class="{active: filters.mana === 0}">
+                                            <a href="#" ng-click="filters.mana = 0; pagination.setPage(1)">0</a>
+                                        </li>
+                                        <li class="list-group-item" ng-class="{active: filters.mana === 1}">
+                                            <a href="#" ng-click="filters.mana = 1; pagination.setPage(1)">1</a>
+                                        </li>
+                                        <li class="list-group-item" ng-class="{active: filters.mana === 2}">
+                                            <a href="#" ng-click="filters.mana = 2; pagination.setPage(1)">2</a>
+                                        </li>
+                                        <li class="list-group-item" ng-class="{active: filters.mana === 3}">
+                                            <a href="#" ng-click="filters.mana = 3; pagination.setPage(1)">3</a>
+                                        </li>
+                                        <li class="list-group-item" ng-class="{active: filters.mana === 4}">
+                                            <a href="#" ng-click="filters.mana = 4; pagination.setPage(1)">4</a>
+                                        </li>
+                                        <li class="list-group-item" ng-class="{active: filters.mana === 5}">
+                                            <a href="#" ng-click="filters.mana = 5; pagination.setPage(1)">5</a>
+                                        </li>
+                                        <li class="list-group-item" ng-class="{active: filters.mana === 6}">
+                                            <a href="#" ng-click="filters.mana = 6; pagination.setPage(1)">6</a>
+                                        </li>
+                                        <li class="list-group-item" ng-class="{active: filters.mana === '7+'}">
+                                            <a href="#" ng-click="filters.mana = '7+'; pagination.setPage(1)">7+</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+    -->
+                        </div><!-- / db-filters -->
+                    </div>
+                    <div class="db-cards">
+                        <!-- Pagination Buttons -->
+                        <div ng-show="isClassCards()" pagination="classPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-left">
+                        </div>
+                        <div ng-show="isClassCards()" pagination="classPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-right">
+                        </div>
+                        <div ng-show="!isClassCards()" pagination="neutralPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-left">
+                        </div>
+                        <div ng-show="!isClassCards()" pagination="neutralPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-right">
+                        </div>
+
+                        <!-- arrows --><!--
+                        <button class="btn db-arrow db-arrow-left" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                        <button class="btn db-arrow db-arrow-right" ng-disabled="pagination.page == pagination.pages()" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>-->
+                        <!-- cards -->
+                            <div class="db-cards-view-wrapper clearfix">
+                                <div class="db-cards-view clearfix" ng-if="!fetching">
+                                    <div class="db-card" ng-class="{'db-card-disabled': !deck.isAddable(card)}" 
+                                         ng-repeat="card in cards.current">
+                                        <a href="#" tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.photoNames.large"
+                                           ng-click="deck.addCard(card)" 
+                                           ng-right-click="deck.removeCardFromDeck(card)" hs-card>
+                                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
+                                        </a>
+                                    </div>
+                                    <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>
+                                </div>
+                            </div>
+                    </div><!-- / db-cards -->
+                </div>
+                </div>
+        </form>
+    </div>
+        <!-- / step 1 -->
+    
+        <!-- step 2 -->
+    <div class="container">
+        <form class="form-horizontal" name="dbForm" novalidate>
+            <div class="db-builder clearfix">
+                <div class="db-section db-mulligans" ng-hide="step !== 2">
+                        <div class="class-select clearfix">
+                            <div ng-class="{'no-select': currentMulligan.className != 'Druid'  }" class="class class-druid {{getName(0, 'Druid').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Druid'))"></button>
+                                <span>DRUID</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Hunter'  }" class="class class-hunter {{getName(0, 'Hunter').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Hunter'))"></button>
+                                <span>HUNTER</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Mage' }" class="class class-mage {{getName(0, 'Mage').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Mage'))"></button>
+                                <span>MAGE</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Paladin'  }" class="class class-paladin {{getName(0, 'Paladin').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Paladin'))"></button>
+                                <span>PALADIN</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Priest'  }" class="class class-priest {{getName(0, 'Priest').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Priest'))"></button>
+                                <span>PRIEST</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Rogue'  }" class="class class-rogue {{getName(0, 'Rogue').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Rogue'))"></button>
+                                <span>ROGUE</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Shaman'  }" class="class class-shaman {{getName(0, 'Shaman').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Shaman'))"></button>
+                                <span>SHAMAN</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Warlock'  }" class="class class-warlock {{getName(0, 'Warlock').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Warlock'))"></button>
+                                <span>WARLOCK</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Warrior'  }" class="class class-warrior {{getName(0, 'Warrior').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Warrior'))"></button>
+                                <span>WARRIOR</span>
+                            </div>
+                        </div>
+
+                    <div class="description-header">
+                        <div class="big-coin">
+                            <img src="../../img/bigcoin.png" />
+                        </div>   
+                        <span class="header-text">
+                            <h2>CARDS TO KEEP AGAINST {{currentMulligan.className | uppercase}}</h2>
+                            <h3>WITH COIN</h3>
+                        </span>
+                    </div>
+                    <div class="db-mulligan-content row m-r-none m-l-none" 
+                         ng-repeat="mulligan in deck.mulligans"
+                         ng-show="currentMulligan == mulligan">
+                        <div class="col-xs-8 left clearfix">
+                            <textarea class="db-mulligan-instructions" 
+                                      placeholder="Type your mulligan instructions here" 
+                                      resize="none" 
+                                      ng-model="mulligan.instructionsWithCoin"></textarea>
+                            <div class="mulliganCardWrapper">
+                                <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};"
+                                     ng-repeat="card in mulligan.mulligansWithCoin | orderBy: 'cost' track by $index" 
+                                     class="mulliganCards">
+<!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
+                                    
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.card.name}}"/>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="col-xs-4 right">
+                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
+                                 tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
+                                 data-tooltip-pos="left" hs-card>
+                                <button ng-class="{'active': isMulliganCard(true, card)}"
+                                        ng-click="deck.toggleMulligan(mulligan, true, card.card)">
+                                    <div class="mana-cost">{{card.card.cost}}</div>
+                                    {{card.card.name}}
+                                    <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
+                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="description-header">
+                        <div class="big-coin">
+                            <img src="../../img/bigcoin.png" />
+                        </div> 
+                        <i class="fa fa-close"></i>
+                        <span class="header-text">
+                            <h2>CARDS TO KEEP AGAINST {{currentMulligan.className | uppercase}}</h2>
+                            <h3>WITHOUT COIN</h3>
+                        </span>
+                    </div>
+                    <div class="db-mulligan-content row m-r-none m-l-none" 
+                         ng-repeat="mulligan in deck.mulligans" 
+                         ng-show="currentMulligan == mulligan">
+                        <div class="col-xs-8 left clearfix">
+                            <textarea class="db-mulligan-instructions" 
+                                      placeholder="Type your mulligan instructions here"
+                                      resize="none" 
+                                      ng-model="mulligan.instructionsWithoutCoin"></textarea>
+                            <div class="mulliganCardWrapper">
+                                <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
+                                     ng-repeat="card in mulligan.mulligansWithoutCoin | orderBy: 'cost' track by $index" 
+                                     class="mulliganCards">
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.card.name}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4 right">
+                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
+                                 tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
+                                 data-tooltip-pos="left" hs-card>
+                                <button ng-class="{'active': isMulliganCard(false, card)}"
+                                        ng-click="deck.toggleMulligan(mulligan, false, card.card)">
+                                    <div class="mana-cost">{{card.card.cost}}</div>
+                                    {{card.card.name}}
+                                    <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
+                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / step 2 -->
+                <!-- step 3 -->
+                <div class="db-descriptions" ng-hide="step !== 3">
+                    <div ng-repeat="chapter in deck.chapters track by $index" class="db-section m-b-md">
+                        <div class="db-section-chapter-title">
+                            <h1><input placeholder="New Chapter Title..." ng-model="chapter.title" /></h1>
+                                <i ng-click="deck.removeChapter($index)" class="fa fa-close pull-right"></i>
+                        </div>
+                        <div class="chapter-carets">
+                            <a href="#" class="move-chapter-down" ng-class="{ 'disabled': $index == (deck.chapters.length - 1) }" ng-show="deck.chapters.length > 1" ng-click="deck.moveChapterDown(chapter)"><i class="fa fa-caret-down"></i></a>
+                            <a href="#" class="move-chapter-up" ng-class="{ 'disabled': $index == 0 }" ng-show="deck.chapters.length > 1" ng-click="deck.moveChapterUp(chapter)"><i class="fa fa-caret-up"></i></a>
+                        </div>
+                        <summernote id="contentEarly" config="options" ng-model="chapter.content"></summernote>
+                    </div>
+                    <div class="chapter-add-btn" ng-click="deck.addChapter()">
+                        <i class="fa fa-plus-circle"></i> Add Chapter
+                    </div>
+                </div>
+                <!-- / step 3 -->
+                <!-- step 4 -->
+                <div class="db-against row" ng-hide="step !== 4">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="match-header col-md-12">
+                                <div class="row">
+                                    <div class="col-md-1 match-title">
+                                        CLASS
+                                    </div>
+                                    <div class="col-md-4 match-title">
+                                        DECK NAME
+                                    </div>
+                                    <div class="col-md-6 match-title">
+                                        CHANCE TO WIN
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="match col-md-12" ng-repeat="match in deck.matchups track by $index">
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <a class="db-sw-class-icon class-icon large {{match.className | lowercase}}"></a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="deck-name" placeholder="Deck Name..." ng-model="match.deckName">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input class="pull-left match-slider" type="range" 
+                                               ng-model="match.forChance" 
+                                               min="0" value="50" max="100" step="5">
+                                        <span class="pull-right match-number">{{match.forChance}} %</span>
+                                    </div>
+                                    <div class="col-md-1 close-wrapper">
+                                        <button class="close-button" ng-click="removeMatch($index)">
+                                            <i class="fa fa-close"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="match-add-wrapper m-t-lg col-md-12">
+                        <button ng-repeat="class in classes" ng-click="newMatch(class.toLowerCase())">
+                            <img class="db-sw-class-icon class-icon large {{class.toLowerCase()}}" />
+                        </button>
+                    </div>
+                </div>
+                <!-- / step 4 -->
+                <!-- step 5 -->
+                <div class="db-section" ng-hide="step !== 5">
+                    
+                    <alert-box theme="admin"></alert-box>
+                    
+                    <div class="db-section-title">
+                        <h1>SAVE YOUR DECK</h1>
+                    </div>
+                    <div class="wrapper-md">
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="name" class="control-label col-sm-2">Deck Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="name" name="name"
+                                           class="form-control input-dark" ng-model="deck.name" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="deckType" class="control-label col-sm-2">Deck Type</label>
+                                <div class="col-sm-10">
+                                    <div class="dropdown">
+                                        <button class="btn input-dark input-dark-block" 
+                                                type="button" data-toggle="dropdown">
+                                            <span>{{deck.deckType}}</span>
+                                            <b class="caret"></b>
+                                        </button>
+                                        <ul class="list-group dropdown-menu dropdown-dark">
+                                            <li class="list-group-item" 
+                                                ng-class="{active: deck.deckType === type}" 
+                                                ng-repeat="type in deckTypes">
+                                                <a href="#" ng-click="deck.deckType = type">{{type}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!--<select id="deckType" name="deckType" class="form-control input-dark" ng-options="type as type for type in deckTypes" ng-model="deck.deckType" required></select>-->
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="description" class="control-label col-sm-2">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea id="description" name="description" class="form-control input-dark" ng-model="deck.description" required></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="video" class="control-label col-sm-2">Video<br><small>(YouTube ID only)</small></label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="video" name="video" class="form-control input-dark" ng-model="deck.youtubeId">
+                                </div>
+                            </div>
+                            <div ng-if="isUserAdmin || isUserContentProvider">
+                                <div class="form-group">
+                                    <label for="premium" class="col-sm-2 control-label">Premium</label>
+                                    <div class="col-sm-10">
+                                        <div class="dropdown">
+                                            <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                                <span>{{isPremium()}}</span>
+                                                <b class="caret"></b>
+                                            </button>
+                                            <ul class="list-group dropdown-menu dropdown-dark">
+                                                <li class="list-group-item" ng-class="{active: deck.premium.isPremium === type.value}" ng-repeat="type in premiumTypes">
+                                                    <a href="#" ng-click="deck.premium.isPremium = type.value">{{type.text}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="deck.premium.isPremium">
+                                    <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
+                                    <div class="col-sm-10">
+                                        <div date-picker data-id="expiryDate" 
+                                             data-name="expiryDate" data-class="input-dark" 
+                                             ng-model="deck.premium.expiryDate" 
+                                             ng-disabled="!deck.premium.isPremium"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-if="isUserAdmin || isUserContentProvider">
+                                <div class="form-group">
+                                    <label for="premium" class="col-sm-2 control-label">Featured</label>
+                                    <div class="col-sm-10">
+                                        <div class="dropdown">
+                                            <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                                <span>{{isFeatured()}}</span>
+                                                <b class="caret"></b>
+                                            </button>
+                                            <ul class="list-group dropdown-menu dropdown-dark">
+                                                <li class="list-group-item" ng-class="{active: deck.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                                    <a href="#" ng-click="deck.isFeatured = type.value">{{type.text}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10 col-sm-offset-2">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="public" 
+                                                   ng-model="deck.isPublic" ng-value="true"> Make this deck public
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="public" 
+                                                   ng-model="deck.isPublic" ng-value="false"> Make this deck private
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group m-b-none">
+                                <div class="col-sm-10 col-sm-offset-2">
+                                    <button type="submit" class="btn btn-blue" 
+                                            ng-click="updateDeck(deck)" ng-disabled="dbForm.$invalid || deckSubmitting">
+                                        <span ng-if="!deckSubmitting">Save Deck</span>
+                                        <span ng-if="deckSubmitting">Submitting 
+                                            <i class="fa fa-spinner fa-pulse"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / step 5 -->
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,396 @@
+@import 'ts-colors.scss';
+@import 'ts-mixins.scss';
+
+// Description: styles for the hots meta snapshot only. WARNING!! Some styles may be affected by deck styles from the hs-deck.scss file.
+
+//*************************************
+
+// 1... Typography
+// 2... background
+// 3... Tiers
+// 4... hero image
+// 5... qualities
+// 6... meta change box
+// 7... filter styles
+
+//*************************************
+
+//*************************************
+// 1... Typography
+//*************************************
+
+.overwatch-snapshot-styles {
+    
+    h1, h2, h3, h4, h5, h6 {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
+    h2 {
+        font-weight: 700;
+    }
+    
+    h1.title { 
+        font-family: 'Open Sans Bold'; 
+        font-size: 36px; 
+        color: white; 
+        letter-spacing: 2px; 
+        text-transform: uppercase;
+        text-shadow: 2px 2px rgba(0,0,0, 0.6);
+        
+        @media screen and (max-width: 680px) {
+                font-size: 25px;
+                width: 70%;
+            }
+    }
+    
+    h3.sub-title { 
+        font-size: 24px; 
+        color: $ow-yellow;
+        font-weight: 700;
+        text-shadow: 2px 2px rgba(0,0,0, 0.6);
+        
+        @media screen and (max-width: 680px) {
+                font-size: 18px;
+                width: 70%;
+        }
+    }
+    
+    h2.section-title {
+        color: $light-grey; 
+        
+        @media screen and (max-width: 575px) {
+              border-bottom: 1px solid $ts-dark-grey;  
+        }
+        
+        &:before {
+            content: "";
+            position: absolute;
+            top: 54px;
+            left: 20px;
+            height: 1px;
+            width: 300px;
+            border-bottom: 1px solid $ts-dark-grey;
+            
+            @media screen and (max-width: 600px) {
+                width: 90%;
+                left: 5%;
+                border: 0px transparent;
+            }
+        }
+    }
+    
+    .box-border {        
+        @include ts-div-styles;
+                
+        p {
+            color: $ts-grey; 
+        }
+    }
+    
+//*************************************
+// 2... background
+//*************************************
+    
+    .bg-override {
+        background-image: url(../img/overwatch/ow-meta-bg.jpg);
+        background-color: #010101;
+        background-repeat: no-repeat;
+        background-size: 100%;
+        background-attachment: fixed;
+        background-position: top;
+    }
+    
+    .hero-img-right {
+        position: fixed;
+        right: -260px;
+        top: 125px;
+        width: 800px;
+        height: auto;
+        
+        @media screen and (max-width: 1600px) {
+                display: none;
+            }
+    }
+        
+    .hero-img-left {
+        position: fixed;
+        left: -385px;
+        top: 125px;
+        width: 800px;
+        height: auto;
+        
+        @media screen and (max-width: 1600px) {
+                display: none;
+            }
+    }
+
+//*************************************
+// 3... Tiers
+//*************************************
+    
+    .tier {        
+        position: relative;
+        border: 1px solid $ts-black;
+        
+        .tier-heading {
+             background: -webkit-linear-gradient(right, $ow-yellow, #f79623);
+            background: -o-linear-gradient(right, $ow-yellow, #f79623);
+            background: -moz-linear-gradient(right, $ow-yellow, #f79623);
+            background: linear-gradient(to right, $ow-yellow, #f79623);
+            border: 1px solid transparent;
+               
+        @media screen and (max-width: 575px) {
+                h2 {
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+    
+    .tier-body {
+        
+        .tier-hero h4 {
+            //padding-right: 200px;
+            //text-indent: 20px;
+            line-height: 48px;
+            font-weight: bold;
+            color: $white;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            position: relative;
+            
+            @media screen and (max-width: 750px) {
+                font-size: 14px;
+                margin-top: 5px;
+                //text-indent: 10px;
+            }
+        }
+            
+        .tier-hero-body {
+
+                h2 {
+                    font-size: 55px !important;
+                    font-weight: bold;
+                    color: $white;
+
+                    @media screen and (max-width: 750px) {
+                        font-size: 30px !important;
+                    }
+                }
+            }
+            
+            h3 {
+                font-size: 20px;
+                font-weight: bold;
+                color: $grey-blue;
+            }
+            
+            h4 {
+                text-indent: 0px;
+            }
+            
+            .hero-content {
+                                    
+                @media screen and (max-width: 750px) {
+                        padding-bottom: 0px;
+                }
+            }
+        }
+
+        .tier-hero-heading {
+            height: 60px !important;
+            background-color: rgba($ts-dark-grey, .7) !important; 
+            border: 1px solid transparent;
+            border-top: 1px solid rgba($ts-black, .7);
+            border-bottom: 1px solid rgba($ts-black, .7);
+            position: relative;
+            width: 100%;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            
+            h4 {
+                margin-left: 20px;
+                color: #d3eefa;
+                
+                @media screen and (max-width: 740px) {
+                    margin-left: 10px;
+                }
+            }
+                        
+            @media screen and (min-width: 750px) {
+                
+                background-repeat: no-repeat !important;
+                background-position: right top !important;
+                padding-top: 4px;
+            }
+        }
+    
+        .tier-hero:nth-child(2n+2)  {
+            
+            .tier-hero-heading {
+                background-color: rgba($ts-dark-grey, .2) !important;
+            }
+        }
+    
+        .hero-button {
+                position: absolute;
+                top: 16px;
+                right: 150px;
+                display: block;
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px $light-grey solid;
+                color: $light-grey;
+                padding: 2px 25px;
+                outline: none;
+                
+                .bottom-hero-button {
+                    position: relative;
+                }
+                 
+                 @media screen and (min-width: 750px) {
+                     &:hover {
+                        background-color: rgba($white, .15 ) ;
+                        border: 2px solid transparent;
+                     }
+                 }
+                 
+                 @media screen and (max-width: 750px) {
+                    right: 10px;
+                    font-size: 12px;    
+                 }
+            }
+    
+            .bottom-hero-button {
+                  
+                display: block;
+                background: rgba($hots-dark-purple, 1);
+                border: 1px $light-grey solid;
+                color: $light-grey;
+                padding: 5px 30px;
+                outline: none;
+                margin: 0 auto 20px;            
+            }
+    
+    
+//*************************************
+// 4... hero image
+//*************************************
+    
+    .hero-image {
+        
+        height: 300px;
+        text-align: center;
+        
+        img {
+            height: 390px;
+            width: auto;
+            margin: 0 auto;
+            position: absolute;
+            top: -50px;
+            left: 0;
+            
+            @media screen and (max-width: 991px) {
+                    left: 170px;    
+                 }
+        }
+
+        .widowmaker {
+        
+        }
+    }
+    
+//*************************************
+// 5... qualities
+//*************************************
+    
+
+    
+//*************************************
+// 6... against box
+//*************************************
+    
+    h3 {
+        
+        &.strong-against {
+            color: $strong-vs !important;
+        }
+        
+        &.weak-against {
+            color: $weak-vs !important;
+        }
+    }
+  
+    .ow-meta-chart {
+        height: 300px;
+        width: 100%;
+        background-color: $ts-dark-grey;
+    }
+    
+    .hero-head a {
+        border-color: aqua;
+        margin-bottom: 16px;
+    }
+    
+
+    
+    
+
+//*************************************
+// 7... filter styles
+//*************************************
+    
+    .tiers-section {
+        
+        position: relative;
+        
+        .ow-class-filters {
+        
+            position: absolute;
+            top: -40px;
+            right: 0;
+            padding-right: 12px;
+            
+            ul {
+                text-decoration: none;
+                list-style-type: none;
+            }
+               
+            .hero-class {
+                float: right;
+                background-repeat: no-repeat;
+                background-size: cover;
+                width: 35px;
+                height: 35px;
+                margin-left: 10px;
+                cursor: pointer;
+            }
+            
+            .offense {
+                background-image: url(../img/overwatch/icons/offense.png);
+            }
+            
+            .tank {
+                background-image: url(../img/overwatch/icons/tank.png);
+            }
+            
+            .support {
+                background-image: url(../img/overwatch/icons/support.png);
+            }
+            
+            .defense {
+                background-image: url(../img/overwatch/icons/defense.png);
+            }
+        }
+    }
+   
+    
+    
+    
+    
+}

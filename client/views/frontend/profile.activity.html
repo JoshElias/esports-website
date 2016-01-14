@@ -1,0 +1,78 @@
+<!-- activities -->
+<div class="profile-col-header"><h2>ACTIVITY</h2></div>
+<div class="activity-filter clearfix">
+    <ul class="pull-right">
+        <li>
+          <button class="profile-filter-btn btn btn-default" 
+                  ng-class="{ 'active' : isFiltered('comments') }" 
+                  ng-click="toggleFilter('comments'); loadActivities(true)">
+            Comments
+          </button>
+      </li>
+        <li>
+          <button class="profile-filter-btn btn btn-default"
+                  ng-class="{ 'active' : isFiltered('articles') }"
+                  ng-click="toggleFilter('articles'); loadActivities(true)">
+            Articles
+          </button>
+      </li>
+        <li><button class="profile-filter-btn btn btn-default"
+                    ng-class="{ 'active' : isFiltered('decks') }" 
+                    ng-click="toggleFilter('decks'); loadActivities(true)">
+          Decks
+          </button>
+      </li>
+        <li><button class="profile-filter-btn btn btn-default" 
+                    ng-class="{ 'active' : isFiltered('guides') }"
+                    ng-click="toggleFilter('guides'); loadActivities(true)">
+          Guides
+          </button>
+      </li>
+        <li>
+          <button class="profile-filter-btn btn btn-default"
+                  ng-class="{ 'active' : isFiltered('forumposts') }"
+                  ng-click="toggleFilter('forumposts'); loadActivities(true)">
+            Forum Posts
+          </button>
+      </li>
+    </ul>
+</div>
+<div class="activity-list">
+    <!-- activity -->
+    <div class="activity {{activity.activityType}} m-b-sm" ng-repeat="activity in activities | inq: queryFilter:'activityType'">
+        <div class="activity-left">
+            <div class="activity-img">
+                <img gravatar-src-once="user.email" class="img-circle">
+            </div>
+            <div class="m-t-sm" ng-if="getIsLogged()">
+                <div ng-if="activity.activityType == 'createDeck' && activity.isActive && activity.deck" class="activity-btn-wrapper m-l-xs">
+                    <a class="activity-btn" ui-sref="app.hs.deckBuilder.edit({ slug: activity.deck.slug })" href="#"><i class="fa fa-pencil"></i></a>
+                    <a class="activity-btn" ng-click="deleteDeck(activity)" href="#"><i class="fa fa-close"></i></a>
+                </div>
+
+                <div ng-if="activity.activityType == 'createGuide' && activity.isActive && activity.guide" class="activity-btn-wrapper m-l-xs">
+                    <a class="activity-btn" ui-sref="app.hots.guideBuilder.edit.hero({ slug: activity.guide.slug })" ng-if="activity.guide.guideType == 'hero'"><i class="fa fa-pencil"></i></a>
+                    <a class="activity-btn" ui-sref="app.hots.guideBuilder.edit.map({ slug: activity.guide.slug })" ng-if="activity.guide.guideType == 'map'"><i class="fa fa-pencil"></i></a>
+                    <a class="activity-btn" ng-click="deleteGuide(activity)" href="#"><i class="fa fa-close"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="activity-right">
+            <span activity-article ng-if="activity.activityType == 'createArticle'"></span>
+            <span activity-signup ng-if="activity.activityType == 'signup'"></span>
+            <span activity-article-comment ng-if="activity.activityType == 'articleComment'"></span>
+            <span activity-deck ng-if="activity.activityType == 'createDeck'"></span>
+            <span activity-deck-comment ng-if="activity.activityType == 'deckComment'"></span>
+            <span activity-forum-post ng-if="activity.activityType == 'forumPost'"></span>
+            <span activity-forum-post-comment ng-if="activity.activityType == 'forumComment'"></span>
+            <span activity-guide ng-if="activity.activityType == 'createGuide'"></span>
+            <span activity-guide-comment ng-if="activity.activityType == 'guideComment'"></span>
+            <span activity-snapshot-comment ng-if="activity.activityType == 'snapshotComment'"></span>
+        </div>
+    </div>
+    <!-- / activity -->
+</div>
+<p class="profile-no-content" ng-show="!activities.length || unfilteredCount === 0">@{{user.username}} has no site activity yet.</p>
+<div ng-if="activities.length != total" class="show-more m-b-md"><a class="show-more-btn" ng-click="loadActivities(false)" href="#">Show More</a></div>
+<!-- / activities -->

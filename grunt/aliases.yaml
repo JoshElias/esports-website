@@ -1,0 +1,28 @@
+default:
+    description: 'Default build'
+    tasks:
+        - 'concurrent:first'
+        - 'concurrent:second'
+        - 'concurrent:third'
+        - 'concurrent:fourth'
+        - 'concurrent:fifth'
+modules:
+    description: 'Modules'
+    tasks:
+        - 'concurrent:modules1'
+        - 'concurrent:modules2'
+        - 'concurrent:modules3'
+        - 'concurrent:modules4'
+deploy-staging:
+    description: 'Deploy - Staging'
+    tasks:
+        - 'aws_s3:staging'
+deploy-production:
+    description: 'Deploy - Production'
+    tasks:
+        - 'concurrent:first'
+        - 'concurrent:second'
+        - 'concurrent:third'
+        - 'concurrent:fourth'
+        - 'concurrent:fifth'
+        - 'aws_s3:production'

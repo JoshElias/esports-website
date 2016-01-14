@@ -1,0 +1,47 @@
+<div class="comment-section-title m-b-md clearfix">
+    <h3 class="pull-left">COMMENTS</h3>
+</div>
+
+<div class="comment-add m-b-sm" ng-class="{ 'active': addAreaFocus }">
+    <div class="row">
+        <div class="col-xs-1 wrapper-none">
+            <div class="avatar"><img gravatar-src="getCurrentEmail()" alt=""></div>
+        </div>
+        <div class="col-xs-11 wrapper-none">
+            <textarea ng-focus="addAreaFocus = true" ng-blur="addAreaFocus = false" maxlength="1000" rows="6" ng-model="comment" ng-trim="false" placeholder="Write your comment here..." class="comment-input"></textarea>
+            <div class="comment-add-bot row">
+                <div class="remaining col-xs-10">
+                    <span class="pull-right">{{comment.length}}/1000</span>
+                </div>
+                
+                <div class="post col-xs-2">
+                    <button ng-click="commentPost()" ng-disabled="!comment.length">POST</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="comments m-b-sm">
+    <div class="comment no-comments" ng-if="!commentable.comments || !commentable.comments.length">
+        <div class="comment-panel">
+            <p>There are currently no comments.</p>
+        </div>
+    </div>
+    <div class="comment m-b-sm" ng-repeat="comment in commentable.comments | orderBy: '-createdDate'">
+        <div class="comment-panel row">
+            <div class="col-xs-1 avatar-wrapper">
+                <div class="avatar"><img gravatar-src="comment.author.email" alt=""></div>
+            </div>
+            <div class="col-xs-10">
+                <div class="panel-heading m-b-md"><span ng-if="!comment.author">[DELETED USER]</span><a ng-if="comment.author" target="_blank" ui-sref="app.profile({ username: comment.author.username })">{{comment.author.username}}</a><span class="comment-ago" am-time-ago="comment.createdDate"></span></div>
+                <div class="comment-body">{{comment.text}}</div>
+            </div>
+            <div class="col-xs-1 wrapper-none">
+                <div class="comment-votes">{{calculateVotes(comment)}}</div>
+                <a href="#" class="btn-vote-up comment-vote" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-caret-up"></i></a>
+                <a href="#" class="btn-vote-down comment-vote" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-caret-down"></i></a>
+            </div>
+        </div>
+    </div>
+</div>

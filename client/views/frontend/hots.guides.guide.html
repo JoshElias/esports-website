@@ -1,0 +1,223 @@
+<div class="guide-page">
+
+    <div class="container container-dark">
+
+        <!-- header -->
+        <div class="padding-none guide-header">
+            <div class="wrapper-lg guide-header-inner clearfix">
+                <div class="pull-left">
+                    <h1>{{guide.name}}</h1>
+                    <p>posted by <a href="./user/{{guide.author.username}}" class="m-r-sm">@{{guide.author.username}}</a><i class="fa fa-clock-o"></i> {{guide.createdDate | date:'mediumDate'}}</p>
+                </div>
+                <div class="pull-right hidden-xs">
+                    <!-- guide-votes -->
+                    <vote-widget service="Guide" votable="guide" theme="multi"></vote-widget>
+                    <!-- / guide-votes -->
+                </div>
+            </div>
+        </div>
+        <!-- / header -->
+
+        <div class="row m-t-md">
+                
+            <!-- guide left -->
+            <div class="col-md-12 col-lg-9">
+
+                <!-- guide heroes -->
+                <div class="guide-heroes clearfix m-t-md m-b-md" ng-if="guide.guideType == 'hero'">
+                    <div class="guide-hero-wrapper guide-heroes-{{guide.guideHeroes.length}}" ng-repeat="hero in justHeroes()">
+                        <div class="guide-hero" ng-class="{ active: hero == getCurrentHero() }">
+                            <a href="#" ng-click="setCurrentHero(hero)" hots-hero>
+                                <div class="guide-hero-title">{{hero.hero.name}}</div>
+                                <div class="guide-hero-image {{hero.hero.className}}"></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- / guide heroes -->
+
+                <!-- guide talents -->
+                <div class="guide-section" ng-if="guide.guideType == 'hero'">
+                    <div class="guide-section-title clearfix">
+                        <a href="#" ng-click="show.talents = !show.talents"><h3 class="pull-left">{{getCurrentHero().name.toUpperCase()}} TALENTS</h3></a>
+                        <div class="m-l-md m-r-md pull-right">
+                            <a href="#" ng-click="show.talents = !show.talents">
+                                <i class="fa" ng-class="{ 'fa-angle-down': !show.talents, 'fa-angle-up': show.talents }"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="guide-section-content" ng-show="show.talents">
+                        <!-- hero talents -->
+                        <div class="guide-talents clearfix" ng-repeat="hero in [getCurrentHero()]">
+                            <div class="guide-talent-wrapper" ng-repeat="talent in currentTalents track by $index">
+                                <div class="guide-talent">
+                                    <div class="guide-talent-level"><span class="hidden-xs hidden-sm">LEVEL </span>{{talent.tier}}</div>
+                                    <div class="guide-talent-icon talents-icon active {{hero.hero.className}} {{talent.talent.className}} {{isLarge}}" talent-icon-md hots-talent hero="hero.hero" talent="talent.talent"></div>
+                                    <div class="guide-talent-dots hidden-xs">
+                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(hero, talent.tier, dot) }" ng-repeat="dot in getTalents(hero, talent.tier)"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- / hero talents -->
+                    </div>
+                </div>
+                <!-- / guide talents -->
+
+                <!-- guide map image -->
+                <div class="m-t-md" ng-if="guide.guideType == 'map'">
+                    <img ng-src="./img/hots/maps/guides/headers/{{guide.maps[0].className}}.jpg" class="guide-map-header img-responsive">
+                </div>
+                <!-- / guide map image -->
+
+                <!-- guide description -->
+                <div class="guide-section">
+                    <div class="guide-section-title clearfix">
+                        <a href="#" ng-click="show.description = !show.description"><h3 class="pull-left">DESCRIPTION</h3></a>
+                        <div class="m-l-md m-r-md pull-right">
+                            <a href="#" ng-click="show.description = !show.description">
+                                <i class="fa" ng-class="{ 'fa-angle-down': !show.description, 'fa-angle-up': show.description }"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="guide-section-content" ng-show="show.description">
+                        <p class="m-b-none">{{guide.description}}</p>
+                    </div>
+                </div>
+                <!-- / guide description -->
+
+                <div class="guide-subscribe" ng-if="isPremium() && !isUser.premium && !isUser.admin && !isUser.contentProvider">
+                    <div premium-page></div>
+                </div>
+
+                <!-- guide -->
+                <div ng-if="!isPremium() || isUser.premium || isUser.contentProvider || isUser.admin">
+
+                    <!-- guide video -->
+                    <div class="guide-section" ng-if="guide.video && guide.video.length">
+                        <div class="guide-section-title clearfix">
+                            <a href="#" ng-click="show.video = !show.video"><h3 class="pull-left">VIDEO</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.video = !show.video">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.video, 'fa-angle-up': show.video }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="guide-section-content unpadded" ng-show="show.video">
+                            <div class="guide-video" ng-bind-html="getVideo()"></div>
+                        </div>
+                    </div>
+                    <!-- / guide video -->
+
+                    <!-- guide matchups -->
+                    <div class="guide-section" ng-show="guide.synergy.length || guide.against.strong.length || guide.against.weak.length">
+                        <div class="guide-section-title clearfix">
+                            <a href="#" ng-click="show.matchups = !show.matchups"><h3 class="pull-left">MATCH-UPS</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.matchups = !show.matchups">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.matchups, 'fa-angle-up': show.matchups }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="guide-section-content unpadded" ng-show="show.matchups">
+                            <div class="guide-matchups row">
+                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                    <div class="guide-synergy">
+                                        <h1>SYNERGY</h1>
+                                        <span>Who plays well with this guide?</span>
+                                    </div>
+                                    <ul class="hero-list" ng-if="guide.synergy.length">
+                                        <li ng-repeat="h in guide.synergy" ng-init="hero = getMatchHero(h)"><a href="#" class="{{hero.className}}" hots-hero>{{hero.name}}</a></li>
+                                    </ul>
+                                    <p class="white wrapper-sm" ng-if="!guide.synergy.length">No heroes were selected for synergy.</p>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                    <div class="guide-strong">
+                                        <h1 ng-if="guide.guideType == 'hero'">STRONG AGAINST</h1>
+                                        <span ng-if="guide.guideType == 'hero'">Who are they strong against?</span>
+                                        <h1 ng-if="guide.guideType == 'map'">STRONG ON MAP</h1>
+                                        <span ng-if="guide.guideType == 'map'">Who is strong on this map?</span>
+                                    </div>
+                                    <ul class="hero-list" ng-if="guide.against.strong.length">
+                                        <li ng-repeat="h in guide.against.strong" ng-init="hero = getMatchHero(h)"><a href="#" class="{{hero.className}}" hots-hero>{{hero.name}}</a></li>
+                                    </ul>
+                                    <p class="white wrapper-sm" ng-if="!guide.against.strong.length">No heroes were selected for strong against.</p>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                    <div class="guide-weak">
+                                        <h1 ng-if="guide.guideType == 'hero'">WEAK AGAINST</h1>
+                                        <span ng-if="guide.guideType == 'hero'">Who are they weak against?</span>
+                                        <h1 ng-if="guide.guideType == 'map'">WEAK ON MAP</h1>
+                                        <span ng-if="guide.guideType == 'map'">Who is weak on this map?</span>
+                                    </div>
+                                    <ul class="hero-list" ng-if="guide.against.weak.length">
+                                        <li ng-repeat="h in guide.against.weak" ng-init="hero = getMatchHero(h)"><a href="#" class="{{hero.className}}" hots-hero hero="h">{{hero.name}}</a></li>
+                                    </ul>
+                                    <p class="white wrapper-sm" ng-if="!guide.against.weak.length">No heroes were selected for weak against.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / guide matchups -->
+
+                    <!-- guide maps -->
+                    <div class="guide-section" ng-show="guide.maps.length" ng-if="guide.guideType == 'hero'">
+                        <div class="guide-section-title clearfix">
+                            <a href="#" ng-click="show.maps = !show.maps"><h3 class="pull-left">MAPS</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.maps = !show.maps">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.maps, 'fa-angle-up': show.maps }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="guide-section-content unpadded" ng-show="show.maps">
+                            <div class="guide-maps clearfix">
+                                <a href="#" class="guide-map {{map.className}}" ng-repeat="map in maps" ng-if="hasMap(map)" hots-map></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / guide maps -->
+
+                    <!-- guide-gameplay -->
+                    <div class="guide-section" ng-repeat="content in guide.content">
+                        <div class="guide-section-title clearfix">
+                            <a href="#" ng-click="show.content[$index] = !show.content[$index]"><h3 class="pull-left guide-content-title">{{content.title}}</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.content[$index] = !show.content[$index]">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.content[$index], 'fa-angle-up': show.content[$index] }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="guide-section-content" ng-show="show.content[$index]">
+                            <p class="m-b-none pos-rl" ng-bind-html="getContent(content.body)"></p>
+                        </div>
+                    </div>
+                    <!-- / guide-gameplay -->
+
+                    <!-- comments -->
+                    <comment-section commentable="guide" service="Guide"></comment-section>
+                    <!-- / commments -->
+                </div>
+                <!-- / guide -->
+            </div>
+            <!-- / guide left -->
+            
+            <!-- guide right -->
+            <div class="col-md-12 col-lg-3 m-t-md">
+                <!-- guide builder -->
+                <div hots-builder></div>
+                <!-- / guide builder -->
+
+                <!-- g2a -->
+                <div class="g2a-square">
+                    <a href="https://www.g2a.com/r/tempo-storm"><img src="{{app.cdn}}img/g2a-tempo.png" class="img-responsive" alt="G2A"></a>
+                </div>
+                <!-- / g2a -->
+
+            </div>
+            <!-- / guide right -->
+            
+            
+        </div>
+    </div>
+</div>
