@@ -19,14 +19,12 @@ var app = angular.module('app', [
     'ui.validate',
     'ui.date',
     'ui.gravatar',
-    'vcRecaptcha',
     'app.controllers',
     'app.services',
     'app.filters',
     'app.directives',
     'app.animations',
     //'app.redbull',
-    'angular-google-adsense'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User',
@@ -124,7 +122,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
+        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 
@@ -208,7 +206,9 @@ var app = angular.module('app', [
                                         skip: (offset * num) - num,
                                         limit: num
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (data) { return _.sortBy(data, "createdDate").reverse(); });
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count().$promise;
@@ -415,7 +415,7 @@ var app = angular.module('app', [
                                 .then(function (articles) {
                                     articles.page = page;
                                     articles.perpage = perpage;
-                                    return articles;
+                                    return _.sortBy(articles, 'createdDate').reverse();
                                 });
 
                             }],
@@ -460,7 +460,7 @@ var app = angular.module('app', [
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
 
-                                return Article.find({
+                                return Article.findOne({
                                     filter: {
                                         fields: {
                                           oldComments: false,
@@ -520,7 +520,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    return data[0];
+                                    return data;
                                 });
                             }]
                         }

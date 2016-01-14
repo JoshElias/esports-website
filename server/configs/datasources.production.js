@@ -1,10 +1,7 @@
 module.exports = {
     "mongodb": {
-        "host": "54.68.67.60",
-        "port": 27017,
-        "database": "perfectMigration",
-        "name": "mongodb",
-        "connector": "mongodb",
+        "url": 'mongodb://52.11.14.8:27017,52.8.169.246:27017,54.174.103.94:27017,52.28.87.90:27017,54.79.121.240:27017/tempostorm',
+        "connector": "loopback-connector-mongodb",
         "server": {
             "auto_reconnect": true,
             "reconnectTries": 100,
@@ -21,9 +18,9 @@ module.exports = {
         "name": "s3",
         "connector": "loopback-component-storage",
         "provider": "amazon",
-        "key": "+5HNYCyZ84OMMNuZfrFuEz2xzyN9MtJQWN65dSB3",
-        "keyId": "AKIAIQZRXBQLHFBKCGSQ",
-        "bucket": "cdn.tempostorm.com",
-		"endpoint": "cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com"
+        "key": "ZwkdEzGJDa5MZDp66bPdZEyRIlpaqtGh5LhPhBnv",
+        "keyId": "AKIAIRC7VKIUNLLUQJPA",
+        "bucket": "staging-cdn.tempostorm.com",
+        "endpoint": "staging-cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com"
     }
 }

@@ -28,7 +28,7 @@ module.exports = {
   "jwtSecret" : "83udfhjdsfh93HJKHel338283ru",
   "sessionSecret" : "kjadhKJHJKhsdjhd82387sjJK",
   "dbUrl": "mongodb://54.68.67.60:27017/tempostorm",
-  "cdnUrl" : "./", //TODO CHANGE CDN
+  "cdnUrl" : "./",
   "cdnUrl2" : "https://staging-cdn-tempostorm.netdna-ssl.com/",
   "appIndex" : "staging-index",
   "stripeKey" : "sk_test_Li9eL2cuhrnTNjp5UJXg7RH6"

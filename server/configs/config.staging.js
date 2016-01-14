@@ -27,7 +27,7 @@ module.exports = {
   "prerenderKey" : "XrpCoT3t8wTNledN5pLU",
   "jwtSecret" : "83udfhjdsfh93HJKHel338283ru",
   "sessionSecret" : "kjadhKJHJKhsdjhd82387sjJK",
-  "dbUrl": "mongodb://54.68.67.60:27017/new-tempostorm",
+  "dbUrl": "mongodb://54.68.67.60:27017/tempostorm",
   "cdnUrl" : "https://staging-cdn-tempostorm.netdna-ssl.com/",
   "cdnUrl2" : "https://staging-cdn-tempostorm.netdna-ssl.com/",
   "appIndex" : "staging-index",
