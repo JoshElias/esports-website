@@ -1542,8 +1542,11 @@ var app = angular.module('app', [
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
                                 filter: {
-                                  order: "name ASC",
-                                  fields: {
+                                    where: {
+                                        isActive: true
+                                    },
+                                    order: "name ASC",
+                                    fields: {
                                     isActive: true,
 //                                    characters: true,
                                     className: true,
@@ -1809,6 +1812,9 @@ var app = angular.module('app', [
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
                                   filter: {
+                                    where: {
+                                        isActive: true
+                                    },
                                     order: "name ASC",
                                     fields: {
                                       isActive: true,
@@ -2022,14 +2028,18 @@ var app = angular.module('app', [
                                 function(waterCB) {
                                   Hero.find({
                                     filter: {
-                                      fields: {
-                                        oldTalents: false,
-                                        oldAbilities: false,
-                                        price: false,
-                                        title: false,
-                                        manaType: false,
-                                        characters: false
-                                      }
+                                        order: "name ASC",
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: {
+                                            oldTalents: false,
+                                            oldAbilities: false,
+                                            price: false,
+                                            title: false,
+                                            manaType: false,
+                                            characters: false
+                                        }
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -2078,10 +2088,22 @@ var app = angular.module('app', [
                                 }
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                                return Hero.find({}).$promise;
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }],
                             dataMaps: ['Map', function (Map) {
-                                return Map.find({}).$promise;
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -2198,14 +2220,17 @@ var app = angular.module('app', [
                                 function(waterCB) {
                                   Hero.find({
                                     filter: {
-                                      fields: {
-                                        oldTalents: false,
-                                        oldAbilities: false,
-                                        price: false,
-                                        title: false,
-                                        manaType: false,
-                                        characters: false
-                                      }
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: {
+                                            oldTalents: false,
+                                            oldAbilities: false,
+                                            price: false,
+                                            title: false,
+                                            manaType: false,
+                                            characters: false
+                                        }
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -2295,6 +2320,9 @@ var app = angular.module('app', [
                               return Hero.find({
                                 filter: {
                                   fields: {
+                                    where: {
+                                        isActive: true
+                                    },
                                     oldTalents: false,
                                     oldAbilities: false,
                                     price: false,
@@ -2306,7 +2334,13 @@ var app = angular.module('app', [
                               }).$promise;
                             }],
                             dataMaps: ['Map', function (Map) {
-                                return Map.find({}).$promise;
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        },
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -2326,6 +2360,9 @@ var app = angular.module('app', [
                                 return Hero.find({
                                     filter: {
                                         order: "name ASC",
+                                        where: {
+                                            isActive: true
+                                        },
                                         fields: {
                                             className: true,
                                             description: true,
@@ -2349,11 +2386,18 @@ var app = angular.module('app', [
                     dataHeroesList: ['Hero', '$q', function (Hero, $q) {
                         return Hero.find({
                             filter: {
+                                where: {
+                                    isActive: true
+                                },
                                 fields: {
                                     className: true
                                 }
                             }
-                        }).$promise;
+                        }).$promise
+                        .then(function (data) {
+                            console.log(data);
+                            return data;
+                        });
                     }],
                     redirect: ['$q', '$state', 'dataHeroesList', function ($q, $state, dataHeroesList) {
                         $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList[0].className });
@@ -2374,7 +2418,8 @@ var app = angular.module('app', [
                             return Hero.findOne({
                               filter: {
                                 where: {
-                                    className: hero
+                                    className: hero,
+                                    isActive: true
                                 },
                                 include: [
                                   {
@@ -2408,7 +2453,7 @@ var app = angular.module('app', [
                               return hero;
                             })
                             .catch(function(err) {
-                              $state.go('app.hots.talentCalculator.redirect')
+                              $state.go('app.404');
                             });
                           }]
                         }
