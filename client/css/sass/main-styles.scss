@@ -246,7 +246,7 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .home-article .home-article-content h1.hs { color: #d07828; }
 .home-article .home-article-content h1.hots { color: #8968ad; }
 .home-article .home-article-content h1.overwatch { color: #fdb813; }
-.home-article .article-icon { background-image: url(../img/article-type-icon.png); height:40px; width:40px; position: absolute; right: 5px; bottom: -20px; z-index: 9001; }
+.home-article .article-icon { background-image: url(../img/article-type-icon.png); height:40px; width:40px; position: absolute; right: 5px; bottom: -20px; z-index: 3; }
 .home-article .article-icon.ts { background-position: 0px 0px; }
 .home-article .article-icon.hs { background-position: -40px 0px; }
 .home-article .article-icon.hots { background-position: -80px 0px; }
