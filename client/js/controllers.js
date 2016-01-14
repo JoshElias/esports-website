@@ -4961,46 +4961,48 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.addSnapshot = function () {
-              $scope.snapshot.deckTiers = [];
-              $scope.snapshot.deckMatchups = [];
-              $scope.snapshot.deckMatchups = $scope.snapshot.matches;
-              
-              _.each($scope.snapshot.tiers, function (tier) {
-                _.each(tier.decks, function (deck) {
-                  deck.tier = tier.tier;
-                  deck.name = deck.name || deck.deck.name;
-                  
-                  $scope.snapshot.deckTiers.push(deck)
-                })
-              });
-              
-              var snapVar = Util.cleanObj($scope.snapshot, [
-                'snapNum',
-                'title',
-                'createdDate',
-                'votes',
-                'content',
-                'slug',
-                'isActive',
-                'voteScore',
-                'photoNames',
-                'deckMatchups',
-                'authors',
-                'comments',
-                'deckTiers'
-              ]);
-              
-              var d = new Date();
-              snapVar.createdDate = d.toISOString();
-              
-              
-              
-              Snapshot.create({}, snapVar)
-              .$promise
-              .then(function (data) {
-//                console.log("data:", data);
-                $state.go('app.admin.hearthstone.snapshots.list');
-              });
+                var snapCopy = angular.copy($scope.snapshot);
+                
+                snapCopy.deckTiers = [];
+                snapCopy.deckMatchups = [];
+                snapCopy.deckMatchups = snapCopy.matches;
+
+                _.each(snapCopy.tiers, function (tier) {
+                    _.each(tier.decks, function (deck) {
+                        deck.tier = tier.tier;
+                        deck.name = deck.name || deck.deck.name;
+
+                        snapCopy.deckTiers.push(deck)
+                    })
+                });
+
+                var snapVar = Util.cleanObj(snapCopy, [
+                    'snapNum',
+                    'title',
+                    'createdDate',
+                    'votes',
+                    'content',
+                    'slug',
+                    'isActive',
+                    'voteScore',
+                    'photoNames',
+                    'deckMatchups',
+                    'authors',
+                    'comments',
+                    'deckTiers'
+                ]);
+
+                var d = new Date();
+                snapVar.createdDate = d.toISOString();
+
+
+
+                Snapshot.create({}, snapVar)
+                  .$promise
+                  .then(function (data) {
+    //                console.log("data:", data);
+                    $state.go('app.admin.hearthstone.snapshots.list');
+                });
 //                async.waterfall([
 //                    function (waterfallCb) {
 //                        var stripped = {};
