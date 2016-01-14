@@ -1,6 +1,6 @@
 module.exports = {
 	"mongodb": {
-        "url": 'mongodb://52.11.14.8:27017,52.8.169.246:27017,54.174.103.94:27017,52.28.87.90:27017,54.79.121.240:27017/tempostorm',
+        "url": 'mongodb://localhost:27017/tempostorm',
 	    "connector": "loopback-connector-mongodb",
 	    "server": {
 	      "auto_reconnect": true,
