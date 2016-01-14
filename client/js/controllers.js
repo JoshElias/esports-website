@@ -9196,8 +9196,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             function saveDeck(deck) {
                 console.log('init deck: ', deck);
-				
-                deck.authorId = User.getCurrentId();
+                
                 deck.votes = [
                     {
                         userID: User.getCurrentId(),
@@ -9243,6 +9242,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 
                 deckSubmitted.cards = newCards;
+                deckSubmitted.bullshit = "fuck my life";
                 console.log('before save deck:', deckSubmitted);
                 
                 Deck.create(deckSubmitted)

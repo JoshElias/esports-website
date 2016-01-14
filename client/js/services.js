@@ -1410,6 +1410,7 @@ angular.module('app.services', [])
         var db = {
             id: data.id || null,
             authorId: data.authorId || User.getCurrentId(),
+            author: data.author || {},
             name: data.name || '',
             dust: data.dust || 0,
             youtubeId: data.youtubeId || '',
@@ -2006,55 +2007,6 @@ angular.module('app.services', [])
         db.init();
 
         return db;
-    };
-
-    deckBuilder.loadCards = function (page, perpage, search, mechanics, mana, playerClass) {
-        var d = $q.defer();
-        $http.post('/deckbuilder', { page: page, perpage: perpage, search: search, mechanics: mechanics, mana: mana, playerClass: playerClass }).success(function (data) {
-            d.resolve(data);
-        });
-        return d.promise;
-    }
-
-    deckBuilder.saveDeck = function (deck) {
-        return $http.post('/api/deck/add', {
-            name: deck.name,
-            deckType: deck.deckType,
-            description: deck.description,
-            chapters: deck.chapters,
-            matches: deck.matches,
-            type: deck.type,
-            basic: deck.basic,
-            cards: deck.cards,
-            heroName: deck.heroName,
-            playerClass: deck.playerClass,
-            mulligans: deck.mulligans,
-            video: deck.video,
-            premium: deck.premium,
-            featured: deck.featured,
-            public: deck.public
-        });
-    };
-
-    deckBuilder.updateDeck = function (deck) {
-        return $http.post('/api/deck/update', {
-            id: deck.id,
-            name: deck.name,
-            deckType: deck.deckType,
-            description: deck.description,
-            chapters: deck.chapters,
-            matches: deck.matches,
-            type: deck.type,
-            basic: deck.basic,
-            cards: deck.cards,
-            heroName: deck.heroName,
-            playerClass: deck.playerClass,
-            mulligans: deck.mulligans,
-            video: deck.video,
-            premium: deck.premium,
-            featured: deck.featured,
-            public: deck.public
-        });
     };
 
     return deckBuilder;
