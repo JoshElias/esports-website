@@ -922,7 +922,7 @@ var app = angular.module('app', [
                                             playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
                                             deckable: true
                                         },
-                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        order: ["cost ASC", "name ASC"],
                                         limit: perpage,
                                     }
                                 })
@@ -936,7 +936,7 @@ var app = angular.module('app', [
                                             playerClass: 'Neutral',
                                             deckable: true
                                         },
-                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        order: ["cost ASC", "name ASC"],
                                         limit: 15
                                     }
                                 })
@@ -1138,7 +1138,7 @@ var app = angular.module('app', [
                                             playerClass: playerClass,
                                             deckable: true
                                         },
-                                        order: ['cost ASC', 'cardType ASC', 'name ASC'],
+                                        order: ['cost ASC', 'name ASC'],
                                         limit: perpage
                                     }
                                 }).$promise;
@@ -1168,7 +1168,7 @@ var app = angular.module('app', [
                                             playerClass: 'Neutral',
                                             deckable: true
                                         },
-                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        order: ["cost ASC", "name ASC"],
                                         limit: 15
                                     }
                                 }).$promise;
@@ -3774,7 +3774,7 @@ var app = angular.module('app', [
                                             playerClass: playerClass,
                                             deckable: true
                                         },
-                                        order: ['cost ASC', 'cardType ASC', 'name ASC'],
+                                        order: ['cost ASC', 'name ASC'],
                                         limit: 15
                                     }
                                 }).$promise
@@ -3810,7 +3810,7 @@ var app = angular.module('app', [
                                             playerClass: 'Neutral',
                                             deckable: true
                                         },
-                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        order: ["cost ASC", "name ASC"],
                                         limit: 15
                                     }
                                 }).$promise;
@@ -3995,7 +3995,7 @@ var app = angular.module('app', [
                                             playerClass: playerClass,
                                             deckable: true
                                         },
-                                        order: ['cost ASC', 'cardType ASC', 'name ASC'],
+                                        order: ['cost ASC', 'name ASC'],
                                         limit: perpage
                                     }
                                 }).$promise;
@@ -4025,7 +4025,7 @@ var app = angular.module('app', [
                                             playerClass: 'Neutral',
                                             deckable: true
                                         },
-                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        order: ["cost ASC", "name ASC"],
                                         limit: 15
                                     }
                                 }).$promise;
