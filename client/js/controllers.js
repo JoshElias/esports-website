@@ -3215,6 +3215,20 @@ angular.module('app.controllers', ['ngCookies'])
                     toss : false,
                     orderNum : 1
                 };
+            
+            var errorList = {
+                emptyDeckTech: "Empty deck tech!"
+            }
+            
+            function setErr(err) {
+                if (_.isUndefined(err)) {
+                    AlertService.reset();
+                    return;
+                }
+                
+                $window.scrollTo(0,0);
+                AlertService.setError({ show: true, msg: "Unable to add Snapshot!", errorList: err.list});
+            }
 
             // photo upload
             $scope.photoUpload = function ($files) {
@@ -3955,19 +3969,38 @@ angular.module('app.controllers', ['ngCookies'])
             /* TIERS METHODS */
 
             $scope.editSnapshot = function () {
-              $scope.snapshot.deckTiers = [];
-              $scope.snapshot.deckMatchups = [];
-              $scope.snapshot.deckMatchups = $scope.snapshot.matches;
+                var err = {};
+                var snapCopy = angular.copy($scope.snapshot);
+                
+                snapCopy.deckTiers = [];
+                snapCopy.deckMatchups = [];
+                snapCopy.deckMatchups = snapCopy.matches;
               
-              _.each($scope.snapshot.tiers, function (tier) {
-                _.each(tier.decks, function (deck) {
-                  deck.tier = tier.tier;
-                  deck.name = deck.name || deck.deck.name;
-                  $scope.snapshot.deckTiers.push(deck);
-                });
-              });
+                  _.each(snapCopy.tiers, function (tier) {
+                    _.each(tier.decks, function (deck) {
+                        deck.tier = tier.tier;
+                        deck.name = deck.name || deck.deck.name;
+
+                        if (_.find(deck.deckTech, function (val) { return _.isEmpty(val.cardTech); })) {
+                            if (_.isUndefined(err.list)) {
+                                err.list = [];
+                            }
+
+                            err.list.push("Tier " + tier.tier + ": " + deck.name + ", " + errorList['emptyDeckTech']);
+                        }
+
+                        snapCopy.deckTiers.push(deck);
+                    });
+                  });
+                
+                if (!_.isEmpty(err)) {
+                    setErr(err);
+                    return;
+                } else {
+                    setErr(undefined);
+                }
               
-              var snapVar = Util.cleanObj($scope.snapshot, [
+              var snapVar = Util.cleanObj(snapCopy, [
                 'id',
                 'snapNum',
                 'title',
@@ -3984,9 +4017,12 @@ angular.module('app.controllers', ['ngCookies'])
                 'deckTiers'
               ]);
               
-//              console.log(snapVar);
-              
-              Snapshot.upsert({}, snapVar)
+              console.log(snapVar);
+              Snapshot.update({
+                  where: {
+                      id: snapVar.id
+                  }
+              }, snapVar)
               .$promise
               .then(function (data) {
 //                console.log("data:", data);
@@ -4189,7 +4225,20 @@ angular.module('app.controllers', ['ngCookies'])
                     toss : false,
                     orderNum : 1
                 };
-
+            
+            var errorList = {
+                emptyDeckTech: "Empty deck tech!"
+            }
+            
+            function setErr(err) {
+                if (_.isEmpty(err)) {
+                    AlertService.reset();
+                }
+                
+                $window.scrollTo(0,0);
+                AlertService.setError({ show: true, msg: "Unable to add Snapshot!", errorList: err.list});
+            }
+            
             $scope.snapshot = angular.copy(defaultSnap);
             $scope.search = "";
             $scope.decks = [];
@@ -4961,6 +5010,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.addSnapshot = function () {
+                var err = {};
                 var snapCopy = angular.copy($scope.snapshot);
                 
                 snapCopy.deckTiers = [];
@@ -4971,10 +5021,23 @@ angular.module('app.controllers', ['ngCookies'])
                     _.each(tier.decks, function (deck) {
                         deck.tier = tier.tier;
                         deck.name = deck.name || deck.deck.name;
+                        
+                        if (_.find(deck.deckTech, function (val) { return _.isEmpty(val.cardTech); })) {
+                            if (_.isUndefined(err.list)) {
+                                err.list = [];
+                            }
+                            
+                            err.list.push("Tier " + tier.tier + ": " + deck.name + ", " + errorList['emptyDeckTech']);
+                        }
 
-                        snapCopy.deckTiers.push(deck)
+                        snapCopy.deckTiers.push(deck);
                     })
                 });
+                
+                if (!_.isEmpty(err)) {
+                    setErr(err);
+                    return;
+                }
 
                 var snapVar = Util.cleanObj(snapCopy, [
                     'snapNum',
@@ -5000,7 +5063,6 @@ angular.module('app.controllers', ['ngCookies'])
                 Snapshot.create({}, snapVar)
                   .$promise
                   .then(function (data) {
-    //                console.log("data:", data);
                     $state.go('app.admin.hearthstone.snapshots.list');
                 });
 //                async.waterfall([
@@ -10758,7 +10820,9 @@ angular.module('app.controllers', ['ngCookies'])
 //        });
 
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-              location.reload();
+              if ($scope.article.premium.isPremium) {
+                    location.reload();  
+                }
                 // Check if user is admin or contentProvider
 //                User.isInRoles({
 //                    uid: User.getCurrentId(),
@@ -11132,7 +11196,13 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                location.reload();
+                
+                if ($scope.deck.premium.isPremium) {
+                    location.reload();
+                }
+                
+                
+                
                 // Check if user is admin or contentProvider
 //                User.isInRoles({
 //                    uid: User.getCurrentId(),
@@ -15171,21 +15241,25 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                if ($scope.guide.premium.isPremium) {
+                    location.reload();  
+                }
+                
                 // Check if user is admin or contentProvider
-                User.isInRoles({
-                    uid: User.getCurrentId(),
-                    roleNames: ['$admin', '$contentProvider']
-                })
-                .$promise
-                .then(function (userRoles) {
-//                    console.log('userRoles: ', userRoles);
-                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
-                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
-                    return userRoles;
-                })
-                .catch(function (roleErr) {
-                    console.log('roleErr: ', roleErr);
-                });
+//                User.isInRoles({
+//                    uid: User.getCurrentId(),
+//                    roleNames: ['$admin', '$contentProvider']
+//                })
+//                .$promise
+//                .then(function (userRoles) {
+////                    console.log('userRoles: ', userRoles);
+//                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+//                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+//                    return userRoles;
+//                })
+//                .catch(function (roleErr) {
+//                    console.log('roleErr: ', roleErr);
+//                });
             });
             
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
@@ -15494,21 +15568,25 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                if ($scope.guide.premium.isPremium) {
+                    location.reload();  
+                }
+                
                 // Check if user is admin or contentProvider
-                User.isInRoles({
-                    uid: User.getCurrentId(),
-                    roleNames: ['$admin', '$contentProvider']
-                })
-                .$promise
-                .then(function (userRoles) {
-//                    console.log('userRoles: ', userRoles);
-                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
-                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
-                    return userRoles;
-                })
-                .catch(function (roleErr) {
-                    console.log('roleErr: ', roleErr);
-                });
+//                User.isInRoles({
+//                    uid: User.getCurrentId(),
+//                    roleNames: ['$admin', '$contentProvider']
+//                })
+//                .$promise
+//                .then(function (userRoles) {
+////                    console.log('userRoles: ', userRoles);
+//                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+//                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+//                    return userRoles;
+//                })
+//                .catch(function (roleErr) {
+//                    console.log('roleErr: ', roleErr);
+//                });
             });
             
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
