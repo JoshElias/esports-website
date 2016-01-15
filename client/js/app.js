@@ -706,7 +706,8 @@ var app = angular.module('app', [
                                 return Deck.find({
                                     filter: {
                                         where: {
-                                            isFeatured: false
+                                            isFeatured: false,
+                                            isPublic: true
                                         },
                                         fields: {
                                             name: true,
@@ -829,6 +830,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
+                                    console.log('resolve deck:', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -1623,6 +1625,9 @@ var app = angular.module('app', [
                                   ],
                                   include: [
                                     {
+                                      relation: 'maps'
+                                    },
+                                    {
                                       relation: "author",
                                       scope: {
                                         fields: ['username']
@@ -1870,7 +1875,6 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             slug: slug,
-                                            isPublic: true
                                         },
                                         fields: {
                                             oldMaps: false,
@@ -2398,7 +2402,6 @@ var app = angular.module('app', [
                             }
                         }).$promise
                         .then(function (data) {
-                            console.log(data);
                             return data;
                         });
                     }],
@@ -3698,6 +3701,9 @@ var app = angular.module('app', [
                                     options: {
                                         filter: {
                                             fields: ["id", "name", "playerClass", "description",]
+                                        },
+                                        where: {
+                                            isPublic: true
                                         }
                                     }
                                 };

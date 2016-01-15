@@ -11049,7 +11049,8 @@ angular.module('app.controllers', ['ngCookies'])
                 var options = {
                     filter: {
                         where: {
-                            isFeatured: featured
+                            isFeatured: featured,
+                            isPublic: true
                         },
                         fields: {
                             name: true,
@@ -15454,7 +15455,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 stripped.voteScore = 1;
                 
-//                console.log('saving stripped:', stripped);
+//                console.log('before save:', stripped);
 //                console.log('$scope.guide:', $scope.guide);
                   Guide.create({}, stripped)
                 .$promise
