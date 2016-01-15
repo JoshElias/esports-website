@@ -55,6 +55,7 @@ module.exports = function(UserIdentity) {
 	      } else {
               if (loopbackContext && loopbackContext.active) {
                   var res = loopbackContext.active.http.res;
+                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first");
                   return res.redirect("https://tempostorm.com");
               }
 
