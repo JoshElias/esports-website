@@ -232,8 +232,6 @@ angular.module('app.directives', ['ui.load'])
             email: email,
             username: username,
             password:password
-          }, {
-            captchaToken: $scope.captchaToken
           }, function (user) {
             $scope.verify.email = email;
             if ($scope.setState) {
