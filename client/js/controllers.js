@@ -10829,7 +10829,60 @@ angular.module('app.controllers', ['ngCookies'])
                     .$promise
                     .then(function (userRoles) {
                         Article.findById({ 
-                            id: $scope.article.id
+                            id: $scope.article.id,
+                            filter: {
+                                fields: {
+                                  oldComments: false,
+                                  oldRelatedArticles: false,
+                                  isActive: false,
+                                },
+                                include: [
+                                    {
+                                        relation: "author",
+                                        scope: {
+                                            fields: [
+                                                "username",
+                                                "about",
+                                                "providerDescription",
+                                                "social",
+                                                "email"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        relation: "comments",
+                                        scope: {
+                                            include: [
+                                                "author"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        relation: "relatedArticles",
+                                        scope: {
+                                            fields: [
+                                                "title",
+                                                "isActive",
+                                                "photoNames",
+                                                "authorId",
+                                                "voteScore",
+                                                "articleType",
+                                                "slug"
+                                            ],
+                                            include: [
+                                                {
+                                                    relation: "author",
+                                                    scope: {
+                                                        fields: [
+                                                            "username"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
                         })
                         .$promise
                         .then(function (data) {
