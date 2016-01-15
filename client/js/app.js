@@ -24,7 +24,7 @@ var app = angular.module('app', [
     'app.filters',
     'app.directives',
     'app.animations',
-    //'app.redbull',
+    'app.redbull',
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User',
