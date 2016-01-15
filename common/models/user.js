@@ -96,7 +96,7 @@ module.exports = function(User) {
                 */
                 // Generate token
                 function (seriesCallback) {
-                    var tokenGenerator = options.generateVerificationToken || generateVerificationToken;
+                    var tokenGenerator = generateVerificationToken;
                     tokenGenerator(user, seriesCallback);
                 },
                 // Save user with new token
