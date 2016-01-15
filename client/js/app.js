@@ -207,8 +207,8 @@ var app = angular.module('app', [
                                         limit: num
                                     }
                                 })
-                                .$promise
-                                .then(function (data) { return _.sortBy(data, "createdDate").reverse(); });
+                                .$promise;
+//                                .then(function (data) { return _.sortBy(data, "createdDate").reverse(); });
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count().$promise;
@@ -396,26 +396,19 @@ var app = angular.module('app', [
                                             isActive: true
                                         },
                                         fields: {
-                                            id: true,
-                                            articleType: true,
-                                            isFeatured: true,
-                                            themeName: true,
-                                            description: true,
-                                            title: true,
-                                            premium: true,
-                                            slug: true,
-                                            photoNames: true
+                                            content: false,
+                                            votes: false
                                         },
                                         order: "createdDate DESC",
-                                        limit: perpage,
-                                        skip: ((perpage*page)-perpage)
+                                        skip: ((page*perpage)-perpage),
+                                        limit: 12
                                     }
                                 })
                                 .$promise
                                 .then(function (articles) {
                                     articles.page = page;
                                     articles.perpage = perpage;
-                                    return _.sortBy(articles, 'createdDate').reverse();
+                                    return articles;
                                 });
 
                             }],
@@ -1388,13 +1381,14 @@ var app = angular.module('app', [
                                 
                               return Article.find({
                                 filter: {
-                                  limit: 6,
-                                  where: {
-                                    articleType: ['hots']
-                                  },
-                                  fields: {
-                                    content: false
-                                  }
+                                    limit: 6,
+                                    where: {
+                                        articleType: ['hots']
+                                    },
+                                    fields: {
+                                        content: false
+                                    },
+                                    order: "createdDate DESC"
                                 }
                               })
                               .$promise

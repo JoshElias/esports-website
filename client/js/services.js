@@ -2565,8 +2565,10 @@ angular.module('app.services', [])
                                     themeName: true,
                                     slug: true,
                                     articleType: true,
-                                    premium: true
-                                }
+                                    premium: true,
+                                    createdDate: true
+                                },
+                                order: "createdDate DESC"
                             }
                         }, function (articles) {
                             return finalCallback(undefined, articles);
