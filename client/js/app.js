@@ -162,7 +162,7 @@ var app = angular.module('app', [
                         }
                     ]
                 },
-                onEnter: ['$cookies', '$state', 'EventService', function($cookies, $state, EventService) {
+                onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', function($cookies, $state, EventService, LoginModalService, AlertService) {
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
                     if(redirectState) {
@@ -216,6 +216,13 @@ var app = angular.module('app', [
                         }
                     }
                 },
+                onEnter: ['$cookies', '$timeout', 'LoginModalService', 'AlertService', function ($cookies, $timeout, LoginModalService, AlertService) {
+                    var thirdPartyError = $cookies.get("thirdPartyError")
+                    if(thirdPartyError) {
+
+                        LoginModalService.showModal('login');
+                    }
+                }],
                 seo: { title: 'Home', description: 'TempoStorm home page.', keywords: '' }
             })
             .state('app.overwatch', {
@@ -822,7 +829,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
-                                    console.log('resolve deck:', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {

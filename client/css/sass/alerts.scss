@@ -35,6 +35,24 @@ alert-box {
     .default.error {
         border: 2px solid red;
     }
+    
+    .login {
+        margin-top: 0px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        font-weight: bold;
+        color: white;
+        background: black;
+        padding: 20px;
+    }
+    
+    .login.success {
+        border: 2px solid green;
+    }
+    
+    .login.error {
+        border: 2px solid red;
+    }
 }
 
 
