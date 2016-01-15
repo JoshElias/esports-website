@@ -1,4 +1,4 @@
-//var loopback = require('loopback');
+var loopback = require('loopback');
 
 module.exports = function(UserIdentity) {
 
@@ -28,12 +28,19 @@ module.exports = function(UserIdentity) {
 	    }
 	    var autoLogin = options.autoLogin || options.autoLogin === undefined;
   		var provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
+        var loopbackContext = loopback.getCurrentContext();
 
 	    UserIdentity.findOne({where: {
 	      provider: provider,
 	      externalId: profile.id
 	    }}, function (err, identity) {
 	      if (err) {
+              if (loopbackContext && loopbackContext.active) {
+                  var res = loopbackContext.active.http.res;
+                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first");
+                  return res.redirect("https://tempostorm.com");
+              }
+
 	        return cb(err);
 	      }
 	      if (identity) {
@@ -52,6 +59,12 @@ module.exports = function(UserIdentity) {
 	          });
 	        });
 	      } else {
+              if (loopbackContext && loopbackContext.active) {
+                  var res = loopbackContext.active.http.res;
+                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first");
+                  return res.redirect("https://tempostorm.com");
+              }
+
 	      	return cb(undefined, new Error("You must link your profile first"));
 	      }
 	  });
