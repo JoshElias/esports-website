@@ -1410,7 +1410,7 @@ angular.module('app.services', [])
         var db = {
             id: data.id || null,
             authorId: data.authorId || User.getCurrentId(),
-            author: data.author || {},
+            author: data.author === 'undefined' ? undefined : data.author,
             name: data.name || '',
             dust: data.dust || 0,
             youtubeId: data.youtubeId || '',
