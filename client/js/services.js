@@ -2586,12 +2586,15 @@ angular.module('app.services', [])
                 //          console.log('limit:', limit);
                 //          console.log('page:', page);
 
-                var order = "voteScore DESC",
-                    heroWhere = {}, 
-                    guideWhere = {
+                var order = "voteScore DESC";
+                var heroWhere = {};
+                var heroGuideWhere = {};
+                
+                if(isFeatured === null) {
+                    var guideWhere = {
                         guideType: "hero"
-                    },
-                    heroGuideWhere = {};
+                    }
+                }
 
                 if (filters.search == "" && (!_.isEmpty(filters.universes) || !_.isEmpty(filters.roles))) {
                     heroWhere.and = [];

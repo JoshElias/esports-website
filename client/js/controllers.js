@@ -10821,23 +10821,32 @@ angular.module('app.controllers', ['ngCookies'])
 
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
               if ($scope.article.premium.isPremium) {
-                    location.reload();  
+                  // Check if user is admin or contentProvider
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        Article.findById({ 
+                            id: $scope.article.id
+                        })
+                        .$promise
+                        .then(function (data) {
+                            $scope.article = data;
+                            
+                            $scope.isUser.admin = userRoles.isInRoles.$admin;
+                            $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
+                            $scope.isUser.premium = userRoles.isInRoles.$premium;
+                        });
+                    })
+                    .catch(function (roleErr) {
+                      console.log('roleErr: ', roleErr);
+                    });
+//                    location.reload();  
+                    
                 }
-                // Check if user is admin or contentProvider
-//                User.isInRoles({
-//                    uid: User.getCurrentId(),
-//                    roleNames: ['$admin', '$contentProvider', '$premium']
-//                })
-//                .$promise
-//                .then(function (userRoles) {
-//                    $scope.isUser.admin = userRoles.isInRoles.$admin;
-//                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
-//                    $scope.isUser.premium = userRoles.isInRoles.$premium;
-//                    
-//                })
-//                .catch(function (roleErr) {
-//                  console.log('roleErr: ', roleErr);
-//                });
+                
             });
             
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
@@ -11196,29 +11205,81 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                
                 if ($scope.deck.premium.isPremium) {
-                    location.reload();
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        Deck.findById({
+                            id: $scope.deck.id,
+                            filter: {
+                                fields: {
+                                    id: true,
+                                    createdDate: true,
+                                    name: true,
+                                    description: true,
+                                    playerClass: true,
+                                    premium: true,
+                                    slug: true,
+                                    dust: true,
+                                    heroName: true,
+                                    authorId: true,
+                                    deckType: true,
+                                    viewCount: true,
+                                    isPublic: true,
+                                    votes: true,
+                                    voteScore: true,
+                                    chapters: true,
+                                    youtubeId: true,
+                                    gameModeType: true,
+                                    isActive: true,
+                                },
+                                include: [
+                                    {
+                                        relation: "cards",
+                                        scope: {
+                                            include: ['card']
+                                        }
+                                    },
+                                    {
+                                        relation: "comments",
+                                        scope: {
+                                            include: ['author']
+                                        }
+                                    },
+                                    {
+                                        relation: "author",
+                                        scope: {
+                                            fields: [
+                                              'id',
+                                              'email',
+                                              'username',
+                                              'social',
+                                              'subscription'
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        relation: "matchups"
+                                    }
+                                ]
+                            }
+                        })
+                        .$promise
+                        .then(function (data) {
+                            $scope.deck = data;
+
+                            $scope.isUser.admin = userRoles.isInRoles.$admin;
+                            $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
+                            $scope.isUser.premium = userRoles.isInRoles.$premium;
+                        });
+                    })
+                    .catch(function (roleErr) {
+                        console.log('roleErr: ', roleErr);
+                    });
                 }
-                
-                
-                
-                // Check if user is admin or contentProvider
-//                User.isInRoles({
-//                    uid: User.getCurrentId(),
-//                    roleNames: ['$admin', '$contentProvider', '$premium']
-//                })
-//                .$promise
-//                .then(function (userRoles) {
-////                    console.log('userRoles: ', userRoles);
-//                    $scope.isUser.admin = userRoles.isInRoles.$admin;
-//                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
-//                    $scope.isUser.premium = userRoles.isInRoles.$premium;
-//                    return userRoles;
-//                })
-//                .catch(function (roleErr) {
-//                    console.log('roleErr: ', roleErr);
-//                });
             });
             
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
@@ -15082,9 +15143,108 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles',
-        function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles) {
+    .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles', 'EventService',
+        function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles, EventService) {
 
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                if ($scope.guide.premium.isPremium) {
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        Guide.findById({
+                            id: $scope.guide.id,
+                            filter: {
+                                fields: {
+                                    oldMaps: false,
+                                    oldComments: false,
+                                    oldHeroes: false
+                                  },
+                                include: [
+                                  {
+                                    relation: 'author'
+                                  },
+                                  {
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          fields: [
+                                            'className',
+                                            'description',
+                                            'heroType',
+                                            'name',
+                                            'role'
+                                          ],
+                                          include: [
+                                            {
+                                              relation: 'talents',
+                                              scope: {
+                                                include: {
+                                                  relation: 'talent',
+                                                  scope: {
+                                                    fields: ['orderNum']
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
+                                },
+                                {
+                                  relation: 'maps'
+                                },
+                                {
+                                    relation: 'comments',
+                                    scope: {
+                                        include: [
+                                            {
+                                                relation: 'author',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        username: true,
+                                                        email: true
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                              ]
+                            }
+                        })
+                        .$promise
+                        .then(function (data) {
+                            $scope.guide = data;
+
+                            $scope.isUser.admin = userRoles.isInRoles.$admin;
+                            $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
+                            $scope.isUser.premium = userRoles.isInRoles.$premium;
+                        });
+                    })
+                    .catch(function (roleErr) {
+                        console.log('roleErr: ', roleErr);
+                    });
+                }
+            });
+            
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
                 contentProvider: userRoles ? userRoles.isInRoles.$contentProvider : false,
