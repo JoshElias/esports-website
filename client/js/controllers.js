@@ -4015,6 +4015,10 @@ angular.module('app.controllers', ['ngCookies'])
                 var cardTechsToDelete = _.map(arrs.cardTech.toDelete, function (val) { return val.id; });
                 //Time to delete the things we need to delete
                 
+                Snapshot.deckMatchups.destroyAll({
+                    id: $scope.snapshot.id
+                });
+                
                 Snapshot.update({
                     where: {
                         id: snapVar.id
