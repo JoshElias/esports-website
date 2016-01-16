@@ -3805,7 +3805,9 @@ angular.module('app.controllers', ['ngCookies'])
                     tierDeck = _.find($scope.snapshot.deckTiers, function (val) { return d.id === val.deckId });
                 }
                 
-                CrudMan.delete(tierDeck, "decks");
+                if (tierDeck.id) {
+                    CrudMan.delete(tierDeck, "decks");
+                }
                 
                 var tierDeckTechCopy = angular.copy(tierDeck.deckTech);
                 _.each(tierDeckTechCopy, function (val) { $scope.removeTech(tierDeck, val); });
@@ -3926,7 +3928,9 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTech = function (deck, t) {
-                CrudMan.delete(t, 'deckTech');
+                if (t.id) {
+                    CrudMan.delete(t, 'deckTech');
+                }
                 
                 var cardTechCopy = angular.copy(t.cardTech);
                 _.each(cardTechCopy, function (val) { $scope.removeTechCard(t, val); });
@@ -3938,7 +3942,9 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTechCard = function (tech, c) {
-                CrudMan.delete(c, 'cardTech');
+                if (c.id) {
+                    CrudMan.delete(c, 'cardTech');
+                }
                 
                 var ct = _.find(tech.cardTech, function (val) { return val.card.id === c.card.id });
                 var idx = tech.cardTech.indexOf(ct);
