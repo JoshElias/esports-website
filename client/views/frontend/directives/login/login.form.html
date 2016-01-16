@@ -7,17 +7,6 @@
         or
     </div>
     <div class="login-form-email col-sm-12 wrapper-none">
-        <div class="panel panel-danger error-modal" ng-show="showError">
-            <div class="panel-heading">
-                <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                <strong>Unable to login</strong>
-            </div>
-            <div class="panel-body">
-                <ul class="error text-danger">
-                    <li>Please verify your login credentials are correct.</li>
-                </ul>
-            </div>
-        </div>
         <form class="form-horizontal form-modal" role="form" name="loginForm">
         <div class="form-group m-b-sm">
             <input type="email" class="form-control input-dark login-email" id="email" name="email" placeholder="Email Address" ng-model="loginInfo.email" required>

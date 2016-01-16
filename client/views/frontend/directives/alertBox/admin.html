@@ -6,8 +6,10 @@
     <div class="panel-body" ng-if="!isSuccess()">
         <ul class="error text-danger">
             <li ng-repeat="error in getMessage('errorList') track by $index">
-				<span ng-if="error !== 'Slug already exists'">{{error}}</span>
-				<span ng-if="error === 'Slug already exists'">Name already exists</span>
+				<span ng-if="error !== 'Slug already exists' 
+                  && error !== 'Invalid model'">{{error}}</span>
+				<span ng-if="error === 'Slug already exists'">Title/Name already exists</span>
+        <span ng-if="error === 'Invalid model'">Title/Name already exists</span>
 			</li>
         </ul>
     </div>
