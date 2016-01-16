@@ -839,61 +839,48 @@ angular.module('app.controllers', ['ngCookies'])
           }
         }
         buildFilter();
-      
-        // ugh this function kinda turned into a mess
-        var activityLimit = 3;
+        
+        $scope.activityLimit = 3;
         $scope.loadActivities = function (isFilter) {
-        $scope.unfilteredCount = $filter('inq')($scope.activities, $scope.queryFilter, 'activityType').length;
-          if (activityLimit >= $scope.total) {
-            return;
-          } else {
             if (!isFilter) {
-              // increment limit variable
-              activityLimit += 3;
+                $scope.activityLimit += 3;
             }
-            if ($scope.unfilteredCount >= 3 && isFilter === true) {
-              return;
+            
+            // all filters toggled off
+            if ($scope.filterActivities.length === 0) {
+                // query everything
+                var options = {
+                    filter: {
+                        order: 'createdDate DESC',
+                        limit: $scope.activityLimit,
+                        where: {
+                            authorId: $scope.user.id,
+                            isActive: true,
+                            activityType: { nin: $scope.queryFilter }
+                        }
+                    }
+                };
             } else {
-              var options = {
-                filter: {
-                  order: "createdDate DESC",
-                  limit: activityLimit,
-                  where: {
-                    authorId: $scope.user.id,
-                    isActive: true
-                  }
-                }
-              }
-              
-              if (isFilter) {
-                options.filter = {
-                  order: "createdDate DESC",
-                  limit: activityLimit,
-                  where: {
-                    authorId: $scope.user.id,
-                    isActive: true,
-                    activityType: { inq : $scope.queryFilter }
-                  }
-                }
-
-                Activity.find(options)
-                .$promise
-                .then(function (data) {
-                  $scope.activities = data;
-                  $scope.unfilteredCount = $filter('inq')($scope.activities, $scope.queryFilter, 'activityType').length;
-                });
-
-              } else {
-                // clicked show more
-                Activity.find(options)
-                .$promise
-                .then(function (data) {
-                  $scope.activities = data;
-                });
-              }
+                var options = {
+                    filter: {
+                        order: 'createdDate DESC',
+                        limit: $scope.activityLimit,
+                        where: {
+                            authorId: $scope.user.id,
+                            isActive: true,
+                            activityType: { inq: $scope.queryFilter }
+                        }
+                    }
+                };
             }
-          }
-        }
+            
+            
+            Activity.find(options)
+            .$promise
+            .then(function (data) {
+                $scope.activities = data;
+            });
+        };
 
         $scope.activities.forEach(function (activity) {
           activity.getActivity = function () {
@@ -947,15 +934,6 @@ angular.module('app.controllers', ['ngCookies'])
                                 .then(function (deckDeleted) {
                                   activity.deck = undefined;
                                 });
-//                                DeckService.deckDelete(activity.deck._id).success(function (data) {
-//                                    if (data.success) {
-//                                        activity.exists = false;
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: 'deck "' + activity.deck.name + '" deleted successfully.'
-//                                        };
-//                                    }
-//                                });
                             }
                         },
                         cancel: {
@@ -6006,27 +5984,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck.id === null && $scope.app.settings.deck.playerClass === $scope.className) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className);
 
             $scope.$watch('deck', function() {
-                $scope.app.settings.deck = {
-                    id: $scope.deck.id,
-                    name: $scope.deck.name,
-                    slug: $scope.deck.slug,
-                    deckType: $scope.deck.deckType,
-                    gameModeType: $scope.deck.gameModeType,
-                    description: $scope.deck.description,
-                    playerClass: $scope.className,
-                    createdDate: $scope.deck.createdDate,
-                    chapters: $scope.deck.chapters,
-                    basic: $scope.deck.basic,
-                    matchups: $scope.deck.matchups,
-                    cards: $scope.deck.cards,
-                    heroName: $scope.deck.heroName,
-                    dust: $scope.deck.dust,
-                    youtubeId: $scope.deck.youtubeId,
-                    premium: $scope.deck.premium,
-                    isFeatured: $scope.deck.isFeatured,
-                    isPublic: $scope.deck.isPublic,
-                    mulligans: $scope.deck.mulligans
-                };
+                $scope.app.settings.deck = $scope.deck;
 //                console.log('deck: ', $scope.deck);
             }, true);
             
@@ -9702,32 +9660,12 @@ angular.module('app.controllers', ['ngCookies'])
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
             
-//            $scope.deck = DeckBuilder.new($scope.className, deck);
-            
+            console.log('deckCardMulligans:', deckCardMulligans);
             $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deckCardMulligans.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deckCardMulligans);
+            console.log('$scope.deck:', $scope.deck);
 
             $scope.$watch('deck', function() {
-                $scope.app.settings.deck = {
-                    id: $scope.deck.id,
-                    name: $scope.deck.name,
-                    slug: $scope.deck.slug,
-                    deckType: $scope.deck.deckType,
-                    gameModeType: $scope.deck.gameModeType,
-                    description: $scope.deck.description,
-                    playerClass: $scope.deck.playerClass,
-                    createdDate: $scope.deck.createdDate,
-                    chapters: $scope.deck.chapters,
-                    basic: $scope.deck.basic,
-                    matchups: $scope.deck.matchups,
-                    cards: $scope.deck.cards,
-                    heroName: $scope.deck.heroName,
-                    dust: $scope.deck.dust,
-                    youtubeId: $scope.deck.youtubeId,
-                    premium: $scope.deck.premium,
-                    isFeatured: $scope.deck.isFeatured,
-                    isPublic: $scope.deck.isPublic,
-                    mulligans: $scope.deck.mulligans
-                };
+                $scope.app.settings.deck = $scope.deck
 //                console.log('deck: ', $scope.deck);
             }, true);
 
@@ -9971,7 +9909,9 @@ angular.module('app.controllers', ['ngCookies'])
               
                 async.series([
                     function (seriesCallback) {
-                        Deck.upsert(deck)
+                        Deck.prototype$updateAttributes({
+                            id: deck.id
+                        }, deck)
                         .$promise
                         .then(function (deckUpdated) {
 //                            console.log('deck upserted: ',deckUpdated);
