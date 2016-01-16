@@ -830,7 +830,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
-                                    console.log('resolve deck:', deck);
+//                                    console.log('resolve deck:', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {

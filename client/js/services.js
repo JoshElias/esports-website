@@ -1406,7 +1406,7 @@ angular.module('app.services', [])
 
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
-
+        
         var db = {
             id: data.id || null,
             authorId: data.authorId || User.getCurrentId(),
@@ -1431,7 +1431,7 @@ angular.module('app.services', [])
             comments: data.comments || [],
             slug: data.slug || '',
             isFeatured: data.isFeatured || false,
-            isPublic: data.isPublic || true,
+            isPublic: data.isPublic !== undefined && data.isPublic === false ? false : true,
             voteScore: data.voteScore || 1,
             votes: data.votes || [],
             mulligans: data.mulligans || [
