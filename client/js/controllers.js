@@ -9660,9 +9660,9 @@ angular.module('app.controllers', ['ngCookies'])
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
             
-            console.log('deckCardMulligans:', deckCardMulligans);
+//            console.log('deckCardMulligans:', deckCardMulligans);
             $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deckCardMulligans.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deckCardMulligans);
-            console.log('$scope.deck:', $scope.deck);
+//            console.log('$scope.deck:', $scope.deck);
 
             $scope.$watch('deck', function() {
                 $scope.app.settings.deck = $scope.deck

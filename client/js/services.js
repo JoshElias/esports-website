@@ -1407,8 +1407,6 @@ angular.module('app.services', [])
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
         
-        console.log('data:', data);
-        
         var db = {
             id: data.id || null,
             authorId: data.authorId || User.getCurrentId(),
