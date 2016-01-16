@@ -1428,6 +1428,9 @@ var app = angular.module('app', [
                                     "createdDate"
                                   ],
                                   include: [
+                                      {
+                                         relation: "maps"
+                                      },
                                     {
                                       relation: "author",
                                       scope: {
