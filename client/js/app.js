@@ -163,11 +163,13 @@ var app = angular.module('app', [
                     }
                     
                     var thirdPartyError = Util.getAuthCookie("thirdPartyError");
-                    if(!redirectState && thirdPartyError) {
-                        console.log('thirdParty');
-                        $cookies.remove("thirdPartyError");
-                        AlertService.setError({ show: true, msg: thirdPartyError });
+                    if(thirdPartyError) {
+                        console.log('thirdParty', thirdPartyError);
+                        if (!redirectState) {
+                            $cookies.remove("thirdPartyError");
+                        }
                         
+                        AlertService.setError({ show: true, msg: thirdPartyError });
                         LoginModalService.showModal('login');
                     }
                 }]
