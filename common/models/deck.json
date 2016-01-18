@@ -206,6 +206,18 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__create__mulligans"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__cards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__matchups"
     }
   ],
   "methods": {}
