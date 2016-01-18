@@ -140,6 +140,12 @@
       "permission": "ALLOW",
       "accessType": "WRITE",
       "property": "create"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__comments"
     }
   ],
   "methods": {}

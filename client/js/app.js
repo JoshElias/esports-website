@@ -562,6 +562,7 @@ var app = angular.module('app', [
                                 return Article.find({
                                   filter: {
                                     limit: 6,
+                                    order: "createdDate DESC",
                                     where: {
                                       articleType: ['hs']
                                     },
@@ -601,6 +602,7 @@ var app = angular.module('app', [
                                     limit: 10,
                                     order: "createdDate DESC",
                                     where: {
+                                      isPublic: true,
                                       isFeatured: false
                                     },
                                     fields: {
@@ -1395,7 +1397,14 @@ var app = angular.module('app', [
                                         articleType: ['hots']
                                     },
                                     fields: {
-                                        content: false
+                                        title: true,
+                                        description: true,
+                                        photoNames: true,
+                                        themeName: true,
+                                        slug: true,
+                                        articleType: true,
+                                        premium: true,
+                                        createdDate: true
                                     },
                                     order: "createdDate DESC"
                                 }
@@ -1432,6 +1441,9 @@ var app = angular.module('app', [
                                       {
                                          relation: "maps"
                                       },
+                                    {
+                                      relation: 'maps'
+                                    },
                                     {
                                       relation: "author",
                                       scope: {

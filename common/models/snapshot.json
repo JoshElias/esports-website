@@ -108,8 +108,13 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__comments"
     }
-
   ],
   "methods": {}
 }
