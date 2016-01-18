@@ -2520,7 +2520,7 @@ angular.module('app.services', [])
     .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
         return {
             getArticles: function (filters, isFeatured, limit, finalCallback) {
-                console.log(filters);
+//                console.log(filters);
                 async.waterfall([
                     function(seriesCallback) {
                         var where = {};
@@ -2544,7 +2544,7 @@ angular.module('app.services', [])
                                     fields: ["name"]
                                 }
                             }, function (heroes) {
-                                console.log(heroes);
+//                                console.log(heroes);
                                 return seriesCallback(undefined, heroes);
                             }, function (err) {
                                 console.log(err);
@@ -2553,7 +2553,6 @@ angular.module('app.services', [])
                         } else if (_.isEmpty(filters.heroes)) {
                             return seriesCallback(undefined, null);
                         }
-
                         
                     },
                     function(heroes, seriesCallback) {

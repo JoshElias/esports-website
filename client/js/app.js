@@ -3278,7 +3278,6 @@ var app = angular.module('app', [
                                     filter: {
                                         order: "createdDate DESC",
                                         where: {
-                                            isPublic: true,
                                             authorId: userProfile.id
                                         },
                                         include: [

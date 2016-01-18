@@ -11607,6 +11607,12 @@ angular.module('app.controllers', ['ngCookies'])
                                         }
                                     },
                                     {
+                                        relation: "mulligans",
+                                        scope: {
+                                            include: ['cardsWithCoin', 'cardsWithoutCoin']
+                                        }
+                                    },
+                                    {
                                         relation: "comments",
                                         scope: {
                                             include: ['author']
@@ -11632,8 +11638,9 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (data) {
-                            $scope.deck = data;
-
+//                            $scope.deck = data;
+                            console.log('data:', data);
+                            $scope.deck = DeckBuilder.new(data.playerClass, data);
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
                             $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
                             $scope.isUser.premium = userRoles.isInRoles.$premium;
@@ -11752,6 +11759,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.anyMulliganSet = function () {
                 var mulligans = $scope.deck.mulligans;
+                console.log('mulligans:', mulligans);
                 for (var i = 0; i < mulligans.length; i++) {
                     if ($scope.isMulliganSet(mulligans[i])) {
                         return true;
