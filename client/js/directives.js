@@ -195,7 +195,7 @@ angular.module('app.directives', ['ui.load'])
                         $cookies.remove("thirdPartyError");
 //                    }
                     
-                    AlertService.setError({ show: true, msg: thirdPartyError });
+                    AlertService.setError({ persist: true, show: true, msg: thirdPartyError });
                 }
             }]
         }
