@@ -9458,6 +9458,8 @@ angular.module('app.controllers', ['ngCookies'])
                         direction: 1
                     }
                 ];
+                                
+                deck.authorId = User.getCurrentId();
 				
                 var deckSubmitted = angular.copy(deck);
 
