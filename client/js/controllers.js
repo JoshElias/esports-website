@@ -1621,11 +1621,12 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminArticleAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'heroes', 'LoopBackAuth', 'Guide', 'Article', 'User', 'Hero', 'Deck', 'ArticleArticle',
         function ($scope, $upload, $state, $window, $compile, bootbox, Hearthstone, Util, AlertService, heroes, LoopBackAuth, Guide, Article, User, Hero, Deck, ArticleArticle) {
             // default article
-            var d = new Date();
+            var d = new Date().toISOString();
             d.setMonth(d.getMonth()+1);
             var defaultArticle = {
                     author: LoopBackAuth.currentUserData,
                     title : '',
+                    createdDate: d,
                     slug: {
                         url: '',
                         linked: true

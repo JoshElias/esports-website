@@ -59,7 +59,7 @@
         
         <div class="home-articles-wrapper" home-articles data-viewable="articles.viewable()" data-offset="articles.offset" data-size="articles.data.length">
             <div class="home-articles-inner">
-                <div class="home-article-wrapper" ng-repeat="article in articles.data track by $index">
+                <div class="home-article-wrapper" ng-repeat="article in articles.data | orderBy: '-createdDate' track by $index">
                     <article-thumb article="article" />
                 </div>
             </div>

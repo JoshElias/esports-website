@@ -210,11 +210,22 @@ var app = angular.module('app', [
                                         limit: num
                                     }
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (articles) {
+                                    console.log('articles:', articles);
+                                    return articles;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
 //                                .then(function (data) { return _.sortBy(data, "createdDate").reverse(); });
                             }],
                             articlesTotal: ['Article', function (Article) {
-                                return Article.count().$promise;
+                                return Article.count({
+                                    where: {
+                                        isActive: true
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -3273,20 +3284,40 @@ var app = angular.module('app', [
                         controller: 'ProfileDecksCtrl',
                         resolve: {
                             decks: ['User', 'userProfile', 'Deck', 'AuthenticationService', function (User, userProfile, Deck, AuthenticationService) {
-                                return Deck.find({
-                                    filter: {
-                                        order: "createdDate DESC",
-                                        where: {
-                                            authorId: userProfile.id
-                                        },
-                                        include: [
-                                            {
-                                                relation: 'author'
-                                            }
-                                        ]
-                                    }
-                                })
-                                .$promise;
+                                console.log('userProfile:', userProfile);
+                                if (User.getCurrentId === userProfile.id) {
+                                    return Deck.find({
+                                        filter: {
+                                            order: "createdDate DESC",
+                                            where: {
+                                                authorId: userProfile.id
+                                            },
+                                            include: [
+                                                {
+                                                    relation: 'author'
+                                                }
+                                            ]
+                                        }
+                                    })
+                                    .$promise;
+                                } else {
+                                    return Deck.find({
+                                        filter: {
+                                            order: "createdDate DESC",
+                                            where: {
+                                                isPublic: true,
+                                                authorId: userProfile.id
+                                            },
+                                            include: [
+                                                {
+                                                    relation: 'author'
+                                                }
+                                            ]
+                                        }
+                                    })
+                                    .$promise;
+                                }
+                                
                             }]
                         }
                     }
