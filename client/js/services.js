@@ -2599,6 +2599,7 @@ angular.module('app.services', [])
                                     premium: true,
                                     createdDate: true
                                 },
+                                include: ['author'],
                                 order: "createdDate DESC",
                                 limit: limit
                             }
