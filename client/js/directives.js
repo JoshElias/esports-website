@@ -359,7 +359,6 @@ angular.module('app.directives', ['ui.load'])
             };
             
             $scope.calculateVotes = function (c) {
-                console.log('comment:', c);
                 var voteScore = 0;
                 _.each(c.votes, function (vote) { voteScore = voteScore + vote.direction });
                 
@@ -418,7 +417,6 @@ angular.module('app.directives', ['ui.load'])
                         }
                     }
                     if(uniqueVote) {
-                        console.log('unique vote');
                         comment.votesCount = comment.votesCount + direction;
                         comment.votes.push(
                             {

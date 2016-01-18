@@ -1912,7 +1912,7 @@ angular.module('app.services', [])
             db.manaCount = function (mana) {
                 var cnt = 0;
                 for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
+                    if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].card.cost >= 7)) {
                         cnt += db.cards[i].cardQuantity;
                     }
                 }

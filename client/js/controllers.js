@@ -11638,9 +11638,7 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (data) {
-//                            $scope.deck = data;
-                            console.log('data:', data);
-                            $scope.deck = DeckBuilder.new(data.playerClass, data);
+                            $scope.deck = data;
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
                             $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
                             $scope.isUser.premium = userRoles.isInRoles.$premium;
@@ -11661,6 +11659,8 @@ angular.module('app.controllers', ['ngCookies'])
             
             // load deck
             $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
+            
+            console.log('$scope.deck:', $scope.deck);
             
 //            console.log('currentMulligan: ', $scope.currentMulligan);
             
@@ -11759,7 +11759,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.anyMulliganSet = function () {
                 var mulligans = $scope.deck.mulligans;
-                console.log('mulligans:', mulligans);
+//                console.log('mulligans:', mulligans);
                 for (var i = 0; i < mulligans.length; i++) {
                     if ($scope.isMulliganSet(mulligans[i])) {
                         return true;
@@ -11833,56 +11833,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMouseOver = function (deck) {
                 return $scope.mouseOver;
             }
-
-//            // mana curve
-//            $scope.deck.manaCurve = function (mana) {
-//                var big = 0,
-//                    cnt;
-//                // figure out largest mana count
-//                for (var i = 0; i <= 7; i++) {
-//                    cnt = $scope.deck.manaCount(i);
-//                    if (cnt > big) big = cnt;
-//                }
-//
-//                if (big === 0) return 0;
-//
-//                return Math.ceil($scope.deck.manaCount(mana) / big * 98);
-//            };
-//
-//            // mana count
-//            $scope.deck.manaCount = function (mana) {
-//                var cnt = 0;
-//                for (var i = 0; i < $scope.deck.cards.length; i++) {
-//                    if ($scope.deck.cards[i].card.cost === mana || (mana === 7 && $scope.deck.cards[i].card.cost >= 7)) {
-//                        cnt += $scope.deck.cardQuantities[$scope.deck.cards[i].id];
-//                    }
-//                }
-//                return cnt;
-//            };
-            
-            $scope.deck.manaCurve = function (mana) {
-                var big = 0,
-                    cnt;
-                // figure out largest mana count
-                for (var i = 0; i <= 7; i++) {
-                    cnt = $scope.deck.manaCount(i);
-                    if (cnt > big) big = cnt;
-                }
-
-                if (big === 0) return 0;
-
-                return Math.ceil($scope.deck.manaCount(mana) / big * 100);
-            };
-
-            $scope.deck.manaCount = function (mana) {
-                var cnt = 0;
-                for (var i = 0; i < $scope.deck.cards.length; i++) {
-                    if ($scope.deck.cards[i].card.cost === mana || (mana === 7 && $scope.deck.cards[i].cost >= 7)) {
-                        cnt += $scope.deck.cards[i].cardQuantity;
-                    }
-                }
-                return cnt;
-            };
 
             // voting
             $scope.voteDown = function (deck) {
