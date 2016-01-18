@@ -211,7 +211,6 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-<<<<<<< HEAD
       "property": "__create__cards"
     },
     {
@@ -219,9 +218,24 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__create__matchups"
-=======
-      "property": "__create__comments"
->>>>>>> cd83bf219bff41956016fe87f43ea8d119d1c0bd
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__edit__mulligans"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__edit__cards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__edit__matchups"
     }
   ],
   "methods": {}
