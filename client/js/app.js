@@ -564,7 +564,8 @@ var app = angular.module('app', [
                                     limit: 6,
                                     order: "createdDate DESC",
                                     where: {
-                                      articleType: ['hs']
+                                        isActive: true,
+                                        articleType: ['hs']
                                     },
                                     fields: {
                                       content: false
@@ -578,7 +579,8 @@ var app = angular.module('app', [
                                     limit: 10,
                                     order: "createdDate DESC",
                                     where: {
-                                      isFeatured: true
+                                        isPublic: true,
+                                        isFeatured: true
                                     },
                                     fields: {
                                       name: true,
@@ -602,8 +604,8 @@ var app = angular.module('app', [
                                     limit: 10,
                                     order: "createdDate DESC",
                                     where: {
-                                      isPublic: true,
-                                      isFeatured: false
+                                        isPublic: true,
+                                        isFeatured: false
                                     },
                                     fields: {
                                       name: true,
@@ -654,6 +656,7 @@ var app = angular.module('app', [
                                 return Deck.find({
                                     filter: {
                                         where: {
+                                            isPublic: true,
                                             isFeatured: true
                                         },
                                         fields: {
@@ -1394,6 +1397,7 @@ var app = angular.module('app', [
                                 filter: {
                                     limit: 6,
                                     where: {
+                                        isActive: true,
                                         articleType: ['hots']
                                     },
                                     fields: {
@@ -3275,6 +3279,7 @@ var app = angular.module('app', [
                                     filter: {
                                         order: "createdDate DESC",
                                         where: {
+                                            isPublic: true,
                                             authorId: userProfile.id
                                         },
                                         include: [

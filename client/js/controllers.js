@@ -290,6 +290,7 @@ angular.module('app.controllers', ['ngCookies'])
                         limit: 10,
                         order: "createdDate DESC",
                         where: {
+                            isPublic: true,
                             isFeatured: true
                         },
                         fields: {
