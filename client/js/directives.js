@@ -127,8 +127,8 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('loginForm', ['$window', '$cookies', '$state', '$location', '$stateParams', 'LoginModalService', 'User', 'LoopBackAuth', 'LoginService', 'AlertService',
-    function ($window, $cookies, $state, $location, $stateParams, LoginModalService, User, LoopBackAuth, LoginService, AlertService) {
+.directive('loginForm', ['$window', '$cookies', '$state', '$location', '$stateParams', 'LoginModalService', 'User', 'LoopBackAuth', 'LoginService', 'AlertService', 'Util',
+    function ($window, $cookies, $state, $location, $stateParams, LoginModalService, User, LoopBackAuth, LoginService, AlertService, Util) {
         return {
             templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
             scope: true,
@@ -185,12 +185,6 @@ angular.module('app.directives', ['ui.load'])
                 $scope.bnetLogin = function() {
                   LoginService.thirdPartyRedirect("login", "bnet");
                 };
-                
-                var thirdPartyError = $cookies.get("thirdPartyError");
-                if (thirdPartyError) {
-                    $cookies.remove("thirdPartyError");
-                    AlertService.setError({ show: true, msg: thirdPartyError });
-                }
             }]
         }
     }
@@ -307,7 +301,6 @@ angular.module('app.directives', ['ui.load'])
             //TODO: FIX COMMENTING
             $scope.commentable;
             $scope.service;
-            
 
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
@@ -347,8 +340,8 @@ angular.module('app.directives', ['ui.load'])
                         $scope.commentable.comments.push(com);
                         $scope.comment = '';
                         updateCommentVotes();
-                    }, function (err) {
-                        console.log("failed!", err);
+                    }, function (err, a) {
+                        console.log("failed!", err, a);
                     });
                 }
             };
@@ -389,14 +382,24 @@ angular.module('app.directives', ['ui.load'])
 
                     for(var i = 0; i < comment.votes.length; i++) {
                         if(comment.votes[i].userId === LoopBackAuth.currentUserId) {
+                            uniqueVote = false;
                             var prevDirection = comment.votes[i].direction;
                             if(direction === prevDirection) {
-                                uniqueVote = false;
-                                break;
+                                // do nothing
+                                return;
+                            } else {
+                                comment.votes[i].direction = direction;
+                                Comment.update({
+                                    where: {
+                                        id: comment.id
+                                    }
+                                }, comment)
+                                .$promise.then(function (data) {
+                                    comment.voted = direction;
+                                    comment.votesCount = data.votesCount;
+                                });
+                                return;
                             }
-                            uniqueVote = true;
-                            comment.votes[i].direction = direction;
-                            break;
                         } else {
                             uniqueVote = true;
                         }
@@ -409,15 +412,10 @@ angular.module('app.directives', ['ui.load'])
                                 userId: LoopBackAuth.currentUserId
                             }
                         );
-                        Comment.update({
-                            where: {
-                                id: comment.id
-                            }
-                        }, comment).$promise.then(function (data) {
-                            if(data.success) {
-                                comment.voted = direction;
-                                comment.votesCount = data.votesCount;
-                            }
+                        Comment.create(comment)
+                        .$promise.then(function (data) {
+                            comment.voted = direction;
+                            comment.votesCount = data.votesCount;
                         });
                     }
                 }

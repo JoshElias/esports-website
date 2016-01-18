@@ -40,7 +40,6 @@
       "model": "cardWithCoin",
       "foreignKey": "mulliganId",
       "isChild": true
-
     },
     "mulligansWithoutCoin": {
       "type": "hasMany",
