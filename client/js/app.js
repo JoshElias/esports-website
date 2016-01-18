@@ -601,6 +601,7 @@ var app = angular.module('app', [
                                     limit: 10,
                                     order: "createdDate DESC",
                                     where: {
+                                      isPublic: true,
                                       isFeatured: false
                                     },
                                     fields: {
