@@ -526,7 +526,8 @@ module.exports = function(User) {
             if(err) return cb(err);
             // again only if ctx
             if(ctx){
-                if(ctx.active) {
+                if(ctx.active.length) {
+                    console.log(ctx.active);
                     ctx.active.http.req.roles[uid] = isInRoles;
                 }
             }
