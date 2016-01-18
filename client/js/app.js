@@ -27,8 +27,8 @@ var app = angular.module('app', [
     //'app.redbull',
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User',
-        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth, AlertService, User) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
+        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth, AlertService, User, Util) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
@@ -84,8 +84,8 @@ var app = angular.module('app', [
 //                $state.go('app.404');
             });
 
-            var accessToken = getAuthCookie("access_token");
-            var userId = getAuthCookie("userId");
+            var accessToken = Util.getAuthCookie("access_token");
+            var userId = Util.getAuthCookie("userId");
             if (accessToken && userId) {
                 $cookies.remove("access_token");
                 $cookies.remove("userId");
@@ -94,18 +94,7 @@ var app = angular.module('app', [
             }
 
             // TODO: extend $cookies with this function
-            function getAuthCookie(key) {
-                var value = $cookies.get(key);
-                if (typeof value == "undefined")
-                    return undefined;
-
-                var valueElements = value.split(":");
-                var cleanCookie = valueElements[1];
-                valueElements = cleanCookie.split(".");
-                valueElements.splice(-1, 1);
-                cleanCookie = valueElements.join(".");
-                return cleanCookie;
-            }
+            
 
         }
     ]
@@ -165,6 +154,7 @@ var app = angular.module('app', [
                 onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', function($cookies, $state, EventService, LoginModalService, AlertService) {
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
+                    console.log("onenter");
                     if(redirectState) {
                         redirectState = JSON.parse(redirectState);
                         $cookies.remove("redirectStateString");

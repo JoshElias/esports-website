@@ -206,7 +206,7 @@ angular.module('app.services', [])
             }
         }
     }])
-    .factory('LoginModalService', ['$rootScope', '$compile', function ($rootScope, $compile) {
+    .factory('LoginModalService', ['$rootScope', '$compile', 'AlertService', function ($rootScope, $compile, AlertService) {
         var box = undefined;
         return {
             showModal: function (state, callback) {
@@ -226,9 +226,13 @@ angular.module('app.services', [])
                     className: 'login-modal',
                     message: $compile('<login-modal callback="LoginModalService.callback()"></login-modal>')($rootScope)
                 });
+                box.on('hide.bs.modal', function () {
+                    AlertService.reset();
+                });
                 box.modal('show');
             },
             hideModal: function () {
+                console.log("this is happening right now");
                 if (box) {
                     box.modal('hide');
                 }
@@ -610,6 +614,7 @@ angular.module('app.services', [])
             //			console.log('error.errorList:', error.errorList);
         },
         reset: function () {
+            console.log('yep');
             success = {};
             error = {};
             alert = false;
@@ -1269,8 +1274,20 @@ angular.module('app.services', [])
 
         return pagination;
     }])
-    .factory('Util', ['$http', function ($http) {
+    .factory('Util', ['$http', '$cookies', function ($http, $cookies) {
         return {
+            getAuthCookie: function (key) {
+                var value = $cookies.get(key);
+                if (typeof value == "undefined")
+                    return undefined;
+
+                var valueElements = value.split(":");
+                var cleanCookie = valueElements[1];
+                valueElements = cleanCookie.split(".");
+                valueElements.splice(-1, 1);
+                cleanCookie = valueElements.join(".");
+                return cleanCookie;
+            },
             toSelect: function (arr) {
                 arr = arr || [];
                 var out = [];
