@@ -261,6 +261,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var options = {
                     filter: {
                         limit: 6,
+                        order: "createdDate DESC",
                         where: {
                             articleType: ['hs']
                         },
@@ -274,16 +275,10 @@ angular.module('app.controllers', ['ngCookies'])
                     options.filter.where.classTags = {
                         inq: $scope.filters.classes
                     }
-                } else {
-                    options.filter.where.classTags = {
-                        inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
-                    }
                 }
-
+                
                 Article.find(options).$promise.then(function (data) {
-                    $timeout(function () {
-                        $scope.articles = data;
-                    });
+                    $scope.articles = data;
                 });
             }
 

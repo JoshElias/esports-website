@@ -2520,6 +2520,7 @@ angular.module('app.services', [])
     .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
         return {
             getArticles: function (filters, isFeatured, limit, finalCallback) {
+                console.log(filters);
                 async.waterfall([
                     function(seriesCallback) {
                         var where = {};
@@ -2536,28 +2537,42 @@ angular.module('app.services', [])
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
                             where.name = { inq: heroNames };
+                            
+                            Hero.find({
+                                filter: {
+                                    where: where,
+                                    fields: ["name"]
+                                }
+                            }, function (heroes) {
+                                console.log(heroes);
+                                return seriesCallback(undefined, heroes);
+                            }, function (err) {
+                                console.log(err);
+                                return finalCallback(err);
+                            });
+                        } else if (_.isEmpty(filters.heroes)) {
+                            return seriesCallback(undefined, null);
                         }
 
-                        Hero.find({
-                            filter: {
-                                where: where,
-                                fields: ["name"]
-                            }
-                        }, function (heroes) {
-                            return seriesCallback(undefined, heroes);
-                        }, function (err) {
-                            console.log(err);
-                            return finalCallback(err);
-                        });
+                        
                     },
                     function(heroes, seriesCallback) {
-                        heroes = _.map(heroes, function(hero) { return hero.name; })
+                        var where = {
+                            articleType: ['hots']
+                        };
+                        
+                        if (!_.isNull(heroes)) {
+                            where = {
+                                articleType: ['hots'],
+                                classTags: {
+                                    inq: _.map(heroes, function(hero) { return hero.name; })
+                                } 
+                            }
+                        }
 
                         Article.find({
                             filter: {
-                                where: {
-                                    classTags: { inq: heroes }
-                                },
+                                where: where,
                                 fields: {
                                     title: true,
                                     description: true,
@@ -2568,7 +2583,8 @@ angular.module('app.services', [])
                                     premium: true,
                                     createdDate: true
                                 },
-                                order: "createdDate DESC"
+                                order: "createdDate DESC",
+                                limit: limit
                             }
                         }, function (articles) {
                             return finalCallback(undefined, articles);

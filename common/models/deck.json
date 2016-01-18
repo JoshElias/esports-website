@@ -206,6 +206,12 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__create__mulligans"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__comments"
     }
   ],
   "methods": {}

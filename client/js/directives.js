@@ -347,8 +347,8 @@ angular.module('app.directives', ['ui.load'])
                         $scope.commentable.comments.push(com);
                         $scope.comment = '';
                         updateCommentVotes();
-                    }, function (err) {
-                        console.log("failed!", err);
+                    }, function (err, a) {
+                        console.log("failed!", err, a);
                     });
                 }
             };

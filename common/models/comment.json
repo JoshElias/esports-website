@@ -77,32 +77,13 @@
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "DENY"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "accessType": "READ"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "WRITE",
-      "property": "create"
+      "property": "*"
     }
   ],
   "methods": {}

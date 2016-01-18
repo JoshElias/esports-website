@@ -562,6 +562,7 @@ var app = angular.module('app', [
                                 return Article.find({
                                   filter: {
                                     limit: 6,
+                                    order: "createdDate DESC",
                                     where: {
                                       articleType: ['hs']
                                     },
@@ -1213,7 +1214,8 @@ var app = angular.module('app', [
                     data: ['Snapshot', function (Snapshot) {
                         return Snapshot.findOne({
                             filter: {
-                                order: "createdDate DESC"
+                                order: "createdDate DESC",
+                                where: { isActive: true }
                             }
                         }).$promise;
                     }],
@@ -1395,7 +1397,14 @@ var app = angular.module('app', [
                                         articleType: ['hots']
                                     },
                                     fields: {
-                                        content: false
+                                        title: true,
+                                        description: true,
+                                        photoNames: true,
+                                        themeName: true,
+                                        slug: true,
+                                        articleType: true,
+                                        premium: true,
+                                        createdDate: true
                                     },
                                     order: "createdDate DESC"
                                 }
