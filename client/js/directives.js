@@ -127,8 +127,8 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('loginForm', ['$window', '$cookies', '$state', '$location', '$stateParams', 'LoginModalService', 'User', 'LoopBackAuth', 'LoginService', 'AlertService',
-    function ($window, $cookies, $state, $location, $stateParams, LoginModalService, User, LoopBackAuth, LoginService, AlertService) {
+.directive('loginForm', ['$window', '$cookies', '$state', '$location', '$stateParams', 'LoginModalService', 'User', 'LoopBackAuth', 'LoginService', 'AlertService', 'Util',
+    function ($window, $cookies, $state, $location, $stateParams, LoginModalService, User, LoopBackAuth, LoginService, AlertService, Util) {
         return {
             templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
             scope: true,
@@ -186,9 +186,14 @@ angular.module('app.directives', ['ui.load'])
                   LoginService.thirdPartyRedirect("login", "bnet");
                 };
                 
-                var thirdPartyError = $cookies.get("thirdPartyError");
+                
+                var thirdPartyError = angular.copy(Util.getAuthCookie("thirdPartyError"));
                 if (thirdPartyError) {
-                    $cookies.remove("thirdPartyError");
+                    var redirectState = angular.copy($cookies.get("redirectStateString"));
+                    if (!redirectState) {
+                        $cookies.remove("thirdPartyError");
+                    }
+                    
                     AlertService.setError({ show: true, msg: thirdPartyError });
                 }
             }]
