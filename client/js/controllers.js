@@ -3433,7 +3433,7 @@ angular.module('app.controllers', ['ngCookies'])
             function getDecks (callback) {
                 var where = {};
                 
-                var pattern = '/.*'+search+'.*/i';
+                var pattern = '/.*'+$scope.search+'.*/i';
 
                 if(!_.isEmpty($scope.search)) {
                     where['name'] = { regexp: pattern }
@@ -3458,7 +3458,7 @@ angular.module('app.controllers', ['ngCookies'])
                     isProvider: true
                 }
                 
-                var pattern = '/.*'+search+'.*/i';
+                var pattern = '/.*'+$scope.search+'.*/i';
 
                 if(!_.isEmpty($scope.search)) {
                     where['username'] = { regexp: pattern }
@@ -9043,7 +9043,7 @@ angular.module('app.controllers', ['ngCookies'])
             function updateCards (page, perpage, search, mechanics, mana, callback) {
                 $scope.fetching = true;
               
-                var pattern = pattern = '/.*'+search+'.*/i';
+                var pattern = '/.*'+search+'.*/i';
               
                 var options = {
                     filter: {
