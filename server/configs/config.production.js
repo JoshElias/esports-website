@@ -4,7 +4,7 @@ module.exports = {
   "port": 8080,
   "remoting": {
     "context": {
-      "enableHttpContsext": true
+      "enableHttpContext": true
     },
     "rest": {
       "normalizeHttpPath": false,
