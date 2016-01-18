@@ -256,7 +256,44 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .home-article img { width: 100%; height: auto; }
 .home-article .home-article-content { position: relative; bottom: 0px; margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); z-index: 2; overflow: hidden; }
-.home-article .home-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; }
+
+.home-article {
+    .home-article-content {
+        h1 { 
+            margin-bottom: 10px; 
+            font-family: 'Open Sans Bold'; 
+            font-size: 16px; 
+            letter-spacing: 2px; 
+            text-transform: uppercase;
+            
+            &.ts { 
+                color: #67a0d6; 
+            }
+            
+            &.hs { 
+                color: #d07828; 
+            }
+            
+            &.hots { 
+                color: #8968ad; 
+            }
+            
+            &.overwatch { 
+                color: #fdb813; 
+            }
+        }
+        
+        h6 {
+            color: $ts-dark-grey;
+            margin-bottom: 20px;
+            
+            &:hover {
+                color: $ts-dark-grey;
+            }
+        }
+    }
+}
+
 .home-article .home-article-content h1.ts { color: #67a0d6; }
 .home-article .home-article-content h1.hs { color: #d07828; }
 .home-article .home-article-content h1.hots { color: #8968ad; }

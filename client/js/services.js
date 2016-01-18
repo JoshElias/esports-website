@@ -614,7 +614,6 @@ angular.module('app.services', [])
             //			console.log('error.errorList:', error.errorList);
         },
         reset: function () {
-            console.log('yep');
             success = {};
             error = {};
             alert = false;

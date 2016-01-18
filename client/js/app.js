@@ -151,27 +151,29 @@ var app = angular.module('app', [
                         }
                     ]
                 },
-                onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', function($cookies, $state, EventService, LoginModalService, AlertService) {
+                onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', 'Util', function($cookies, $state, EventService, LoginModalService, AlertService, Util) {
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
                     console.log("onenter");
                     if(redirectState) {
+                        console.log('redirectState');
                         redirectState = JSON.parse(redirectState);
                         $cookies.remove("redirectStateString");
                         $state.go(redirectState.name, redirectState.params);
+                        return;
+                    } else {
+                        
                     }
                     
-                    var thirdPartyError = $cookies.get("thirdPartyError")
-                    if(!redirectState && thirdPartyError) {
-                        var thirdPartyError = angular.copy(Util.getAuthCookie("thirdPartyError"));
-                        if (thirdPartyError) {
-                            var redirectState = angular.copy($cookies.get("redirectStateString"));
+                    var thirdPartyError = Util.getAuthCookie("thirdPartyError");
+                    if(thirdPartyError) {
+                        console.log('thirdParty', thirdPartyError);
+                        if (!redirectState) {
                             $cookies.remove("thirdPartyError");
-
-                            AlertService.setError({ show: true, msg: thirdPartyError });
+                            LoginModalService.showModal('login');
                         }
                         
-                        LoginModalService.showModal('login');
+                        AlertService.setError({ persist: true, show: true, msg: thirdPartyError });
                     }
                 }]
             })
@@ -205,6 +207,7 @@ var app = angular.module('app', [
                                             content: false,
                                             votes: false
                                         },
+                                        include: ['author'],
                                         order: "createdDate DESC",
                                         skip: (offset * num) - num,
                                         limit: num
@@ -257,6 +260,7 @@ var app = angular.module('app', [
                                             articleType: 'overwatch',
                                             isActive: true
                                         },
+                                        include: ['author'],
                                         fields: {
                                             content: false,
                                             votes: false
@@ -413,6 +417,7 @@ var app = angular.module('app', [
                                             content: false,
                                             votes: false
                                         },
+                                        include: ['author'],
                                         order: "createdDate DESC",
                                         skip: ((page*perpage)-perpage),
                                         limit: 12
@@ -574,6 +579,7 @@ var app = angular.module('app', [
                                       isActive: true,
                                       articleType: ['hs']
                                     },
+                                    include: ['author'],
                                     fields: {
                                       content: false
                                     }
@@ -1410,6 +1416,7 @@ var app = angular.module('app', [
                                         isActive: true,
                                         articleType: ['hots']
                                     },
+                                    include: ['author'],
                                     fields: {
                                         title: true,
                                         description: true,
@@ -1420,6 +1427,7 @@ var app = angular.module('app', [
                                         premium: true,
                                         createdDate: true
                                     },
+                                    include: ['author'],
                                     order: "createdDate DESC"
                                 }
                               })
