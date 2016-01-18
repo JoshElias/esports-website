@@ -1672,7 +1672,7 @@ angular.module('app.controllers', ['ngCookies'])
                         fields: ["name", "id"]
                     }
                 },
-                pattern = '/.*'+search+'.*/i';
+                pattern = '/.*'+$scope.search+'.*/i';
                 
                 if($scope.search) {
                     options.filter.where = {
@@ -8916,27 +8916,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck.id === null && $scope.app.settings.deck.playerClass === $scope.className) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className);
 
             $scope.$watch('deck', function() {
-                $scope.app.settings.deck = {
-                    id: $scope.deck.id,
-                    name: $scope.deck.name,
-                    slug: $scope.deck.slug,
-                    deckType: $scope.deck.deckType,
-                    gameModeType: $scope.deck.gameModeType,
-                    description: $scope.deck.description,
-                    playerClass: $scope.className,
-                    createdDate: $scope.deck.createdDate,
-                    chapters: $scope.deck.chapters,
-                    basic: $scope.deck.basic,
-                    matchups: $scope.deck.matchups,
-                    cards: $scope.deck.cards,
-                    heroName: $scope.deck.heroName,
-                    dust: $scope.deck.dust,
-                    youtubeId: $scope.deck.youtubeId,
-                    premium: $scope.deck.premium,
-                    isFeatured: $scope.deck.isFeatured,
-                    isPublic: $scope.deck.isPublic,
-                    mulligans: $scope.deck.mulligans
-                };
+                $scope.app.settings.deck = $scope.deck;
 //                console.log('deck: ', $scope.deck);
             }, true);
             
@@ -11427,7 +11407,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.filters.search = $scope.deckSearch;
             }
             
-            function getQuery (featured, page, perpage) {
+            function getQuery (featured, isPublic, page, perpage) {
                 var pattern = '/.*'+$scope.filters.search+'.*/i';
               
                 var options = {
@@ -11455,6 +11435,10 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 
+                if (!isPublic) {
+                    delete options.filter.where.isPublic;
+                }
+                
                 if (!_.isEmpty($scope.filters.classes)) {
                     options.filter.where.playerClass = {
                         inq: $scope.filters.classes
@@ -11474,7 +11458,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // pagination
             function updateTempostormDecks (page, perpage, callback) {
-                AjaxPagination.update(Deck, getQuery(true, page, perpage), getQuery(true, page, perpage).filter, function (err, data, count) {
+                AjaxPagination.update(Deck, getQuery(true, false, page, perpage), getQuery(true, false, page, perpage).filter, function (err, data, count) {
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.tempostormPagination.page = page;
@@ -11517,7 +11501,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             //TODO: MAKE CASE-INSENSITIVE QUERY WORK
             function updateCommunityDecks (page, perpage, callback) {
-                AjaxPagination.update(Deck, getQuery(false, page, perpage), getQuery(false, page, perpage).filter, function (err, data, count) {
+                AjaxPagination.update(Deck, getQuery(false, true, page, perpage), getQuery(false, true, page, perpage).filter, function (err, data, count) {
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.communityPagination.page = page;

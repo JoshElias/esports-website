@@ -564,6 +564,7 @@ var app = angular.module('app', [
                                     limit: 6,
                                     order: "createdDate DESC",
                                     where: {
+                                      isActive: true,
                                       articleType: ['hs']
                                     },
                                     fields: {
@@ -578,7 +579,7 @@ var app = angular.module('app', [
                                     limit: 10,
                                     order: "createdDate DESC",
                                     where: {
-                                      isFeatured: true
+                                        isFeatured: true
                                     },
                                     fields: {
                                       name: true,
@@ -737,6 +738,7 @@ var app = angular.module('app', [
                                 return Deck.count({
                                     where: {
                                         isFeatured: false,
+                                        isPublic: true
                                     },
                                     include: ["comments"]
                                 })
@@ -1394,6 +1396,7 @@ var app = angular.module('app', [
                                 filter: {
                                     limit: 6,
                                     where: {
+                                        isActive: true,
                                         articleType: ['hots']
                                     },
                                     fields: {
@@ -1497,8 +1500,7 @@ var app = angular.module('app', [
                                   limit: 10,
                                     order: "createdDate DESC",
                                   where: {
-                                    isFeatured: true,
-                                    isPublic: true
+                                    isFeatured: true
                                   },
                                   fields: [
                                     "name", 
@@ -4510,7 +4512,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.list.html',
                         controller: 'AdminHOTSGuideListCtrl',
                         resolve: {
-							paginationParams: [function() {
+							             paginationParams: [function() {
                                 return {
                                     page: 1,
                                     perpage: 50,
@@ -4526,18 +4528,18 @@ var app = angular.module('app', [
                                 };
                             }],
                             guides: ['Guide', 'paginationParams', function (Guide, paginationParams) {
-                                return Guide.find(
-									paginationParams.options
-								)
-                                .$promise;
+                            return Guide.find(
+                              paginationParams.options
+                            )
+                            .$promise;
                             }],
-							guideCount: ['Guide', function(Guide) {
-								return Guide.count()
-								.$promise
-								.then(function (guideCount) {
-									return guideCount.count;
-								});
-							}]
+                            guideCount: ['Guide', function(Guide) {
+                              return Guide.count()
+                              .$promise
+                              .then(function (guideCount) {
+                                return guideCount.count;
+                              });
+                            }]
                         }
                     }
                 },
