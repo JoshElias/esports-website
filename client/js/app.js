@@ -1429,6 +1429,9 @@ var app = angular.module('app', [
                                   ],
                                   include: [
                                     {
+                                      relation: 'maps'
+                                    },
+                                    {
                                       relation: "author",
                                       scope: {
                                         fields: ['username']
