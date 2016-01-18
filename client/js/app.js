@@ -209,7 +209,17 @@ var app = angular.module('app', [
                 onEnter: ['$cookies', '$timeout', 'LoginModalService', 'AlertService', function ($cookies, $timeout, LoginModalService, AlertService) {
                     var thirdPartyError = $cookies.get("thirdPartyError")
                     if(thirdPartyError) {
+                        console.log('onenter home');
+                        var thirdPartyError = angular.copy(Util.getAuthCookie("thirdPartyError"));
+                        if (thirdPartyError) {
+                            var redirectState = angular.copy($cookies.get("redirectStateString"));
+                            if (!redirectState) {
+                                $cookies.remove("thirdPartyError");
+                            }
 
+                            AlertService.setError({ persist: true, show: true, msg: thirdPartyError });
+                        }
+                        
                         LoginModalService.showModal('login');
                     }
                 }],

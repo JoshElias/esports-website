@@ -185,18 +185,6 @@ angular.module('app.directives', ['ui.load'])
                 $scope.bnetLogin = function() {
                   LoginService.thirdPartyRedirect("login", "bnet");
                 };
-                
-                
-                var thirdPartyError = angular.copy(Util.getAuthCookie("thirdPartyError"));
-                if (thirdPartyError) {
-                    console.log("directive");
-                    var redirectState = angular.copy($cookies.get("redirectStateString"));
-                    if (!redirectState) {
-                        $cookies.remove("thirdPartyError");
-                    }
-                    
-                    AlertService.setError({ show: true, msg: thirdPartyError });
-                }
             }]
         }
     }
