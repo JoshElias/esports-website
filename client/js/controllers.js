@@ -11660,7 +11660,7 @@ angular.module('app.controllers', ['ngCookies'])
             // load deck
             $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
             
-            console.log('$scope.deck:', $scope.deck);
+//            console.log('$scope.deck:', $scope.deck);
             
 //            console.log('currentMulligan: ', $scope.currentMulligan);
             
