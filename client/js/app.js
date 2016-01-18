@@ -160,6 +160,19 @@ var app = angular.module('app', [
                         $cookies.remove("redirectStateString");
                         $state.go(redirectState.name, redirectState.params);
                     }
+                    
+                    var thirdPartyError = $cookies.get("thirdPartyError")
+                    if(!redirectState && thirdPartyError) {
+                        var thirdPartyError = angular.copy(Util.getAuthCookie("thirdPartyError"));
+                        if (thirdPartyError) {
+                            var redirectState = angular.copy($cookies.get("redirectStateString"));
+                            $cookies.remove("thirdPartyError");
+
+                            AlertService.setError({ show: true, msg: thirdPartyError });
+                        }
+                        
+                        LoginModalService.showModal('login');
+                    }
                 }]
             })
             .state('app.404', {
@@ -206,23 +219,6 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                onEnter: ['$cookies', '$timeout', 'LoginModalService', 'AlertService', function ($cookies, $timeout, LoginModalService, AlertService) {
-                    var thirdPartyError = $cookies.get("thirdPartyError")
-                    if(thirdPartyError) {
-                        console.log('onenter home');
-                        var thirdPartyError = angular.copy(Util.getAuthCookie("thirdPartyError"));
-                        if (thirdPartyError) {
-                            var redirectState = angular.copy($cookies.get("redirectStateString"));
-                            if (!redirectState) {
-                                $cookies.remove("thirdPartyError");
-                            }
-
-                            AlertService.setError({ persist: true, show: true, msg: thirdPartyError });
-                        }
-                        
-                        LoginModalService.showModal('login');
-                    }
-                }],
                 seo: { title: 'Home', description: 'TempoStorm home page.', keywords: '' }
             })
             .state('app.overwatch', {
