@@ -2589,12 +2589,7 @@ angular.module('app.services', [])
                 var order = "voteScore DESC";
                 var heroWhere = {};
                 var heroGuideWhere = {};
-                
-                if(isFeatured === null) {
-                    var guideWhere = {
-                        guideType: "hero"
-                    }
-                }
+                var guideWhere = (isFeatured === null) ? { guideType: "hero" } : {};
 
                 if (filters.search == "" && (!_.isEmpty(filters.universes) || !_.isEmpty(filters.roles))) {
                     heroWhere.and = [];
@@ -3435,24 +3430,33 @@ angular.module('app.services', [])
 
                 arr[crud].splice(idx, 1);
             }
+            
+            function addToDelete (item, arrName) {
+                var arr = arrs[arrName];
+                
+                if (find(item, arrName)) {
+                    var idx = arr[w].indexOf(item);
+                    
+                    arr[w].splice(idx, 1);
+                }
+                
+                if (!find(item, arrName)) {
+                    arr[d].push(item);
+                } 
+            }
 
             function addToArr (item, arrName) {
                 var arr = arrs[arrName];
 
-                if (find(item, arrName, crud)) {
-                    var idx = arr[crud].indexOf(item);
+                if (find(item, arrName)) {
+                    var idx = arr[d].indexOf(item);
 
                     arr[d].splice(idx, 1);
                 }
 
-                //        console.log('CrudMan: ADD triggered', arrs);
-                if (!find(item, arrName, w)) {
+                if (!find(item, arrName)) {
                     arr[w].push(item);
-                    //          console.log('CrudMan: item not found. added toWrite');
-                } else {
-                    //          console.log('CrudMan: item found in toWrite. did NOT add');
-                }
-
+                } 
             }
 
             function toggleItem (item, arrName) {
@@ -3474,6 +3478,7 @@ angular.module('app.services', [])
                 setExists: setExists,
                 toggle: toggleItem,
                 add: addToArr,
+                delete: addToDelete,
                 createArr: createArr,
                 getArrs: getArrs
             }

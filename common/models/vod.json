@@ -15,8 +15,9 @@
       "type": "date",
       "defaultFn": "now"
     },
-    "youtubeId": {
-      "type": "string"
+   "youtubeId": {
+      "type": "string",
+      "validators": ["youtubeId"]
     },
     "subtitle": {
       "type": "string"

@@ -37,7 +37,10 @@ module.exports = function(UserIdentity) {
 	      if (err) {
               if (loopbackContext && loopbackContext.active) {
                   var res = loopbackContext.active.http.res;
-                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first");
+                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first", {
+                      signed: true,
+                      maxAge: 1209600
+                  });
                   return res.redirect("https://tempostorm.com");
               }
 
@@ -61,7 +64,10 @@ module.exports = function(UserIdentity) {
 	      } else {
               if (loopbackContext && loopbackContext.active) {
                   var res = loopbackContext.active.http.res;
-                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first");
+                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first", {
+                      signed: true,
+                      maxAge: 1209600
+                  });
                   return res.redirect("https://tempostorm.com");
               }
 
