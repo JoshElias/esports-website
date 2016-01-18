@@ -1416,6 +1416,7 @@ var app = angular.module('app', [
                                         premium: true,
                                         createdDate: true
                                     },
+                                    include: ['author'],
                                     order: "createdDate DESC"
                                 }
                               })
