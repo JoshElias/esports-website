@@ -1239,7 +1239,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.snapshots.snapshot.html',
                         controller: 'HearthstoneSnapshotCtrl',
                         resolve: {
-                            dataSnapshot: ['$stateParams', 'Snapshot', function ($stateParams, Snapshot) {
+                            dataSnapshot: ['$stateParams', '$state', 'Snapshot', function ($stateParams, $state, Snapshot) {
                                 var slug = $stateParams.slug;
                                 return Snapshot.findOne({
                                     filter: {
@@ -1366,6 +1366,9 @@ var app = angular.module('app', [
                                 }).$promise
                                 .then(function (data) {
                                     return data;
+                                })
+                                .catch(function (err) {
+                                    $state.go('app.404');
                                 });
                             }]
                         }
