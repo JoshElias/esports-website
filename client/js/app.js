@@ -202,6 +202,7 @@ var app = angular.module('app', [
                                             content: false,
                                             votes: false
                                         },
+                                        include: ['author'],
                                         order: "createdDate DESC",
                                         skip: (offset * num) - num,
                                         limit: num
@@ -250,6 +251,7 @@ var app = angular.module('app', [
                                             articleType: 'overwatch',
                                             isActive: true
                                         },
+                                        include: ['author'],
                                         fields: {
                                             content: false,
                                             votes: false
@@ -406,6 +408,7 @@ var app = angular.module('app', [
                                             content: false,
                                             votes: false
                                         },
+                                        include: ['author'],
                                         order: "createdDate DESC",
                                         skip: ((page*perpage)-perpage),
                                         limit: 12
@@ -565,6 +568,7 @@ var app = angular.module('app', [
                                     where: {
                                       articleType: ['hs']
                                     },
+                                    include: ['author'],
                                     fields: {
                                       content: false
                                     }
@@ -1393,6 +1397,7 @@ var app = angular.module('app', [
                                     where: {
                                         articleType: ['hots']
                                     },
+                                    include: ['author'],
                                     fields: {
                                         content: false
                                     },

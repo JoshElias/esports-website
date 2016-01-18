@@ -264,6 +264,7 @@ angular.module('app.controllers', ['ngCookies'])
                         where: {
                             articleType: ['hs']
                         },
+                        include: ['author'],
                         fields: {
                             content: false
                         }
@@ -10754,6 +10755,7 @@ angular.module('app.controllers', ['ngCookies'])
                         content: false,
                         votes: false
                     },
+                    include: ['author'],
                     order: "createdDate DESC",
                     skip: ((page*perpage)-perpage),
                     limit: 12

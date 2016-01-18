@@ -1,4 +1,5 @@
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
 
 // Description: Styles for user profiles
 
@@ -30,18 +31,83 @@
 
 .profile-page .profile-info { text-align: center; margin-bottom: 100px; }
 .profile-page .profile-scroll { min-height: 600px; }
-.profile-page .profile-img { width: 115px; height: 115px; border-radius: 50%; background-color: rgba(200,200,200,.4); padding: 5px; margin: auto; }
-.profile-page .profile-img img { width: 100%; }
-.profile-page .profile-info .profile-info-body .profile-social { margin: 30px 0px; }
-.profile-page .profile-info .profile-info-body .profile-social a { margin: 0px 5px; height: 40px; width: 40px; background-color: white; display: inline-block; border-radius: 50%; }
-.profile-page .profile-info .profile-info-body .profile-social a:hover .fa-twitter { color: #55acee; }
-.profile-page .profile-info .profile-info-body .profile-social a:hover .fa-twitch { color: #6441a5; }
-.profile-page .profile-info .profile-info-body .profile-social a:hover .fa-youtube { color: #cd201f; }
-.profile-page .profile-info .profile-info-body .profile-social a:hover .fa-facebook { color: #3b5998; }
-.profile-page .profile-info .profile-info-body .profile-social a:hover .fa-instagram { color: #3f729b; }
-.profile-page .profile-info .profile-info-body .profile-social a i { font-size: 22px; line-height: 1.85; color: rgb(75,75,75); }
-.profile-page .profile-info .profile-info-body .counts h2 { display: inline-block; margin: 30px 5%; }
-.profile-page .profile-info .profile-info-body .description { margin: 30px 0px; }
+
+.profile-page .profile-img { 
+    width: 115px; 
+    height: 115px; 
+    border-radius: 50%; 
+    background-color: rgba(255,255,255,.90); 
+    padding: 2px; 
+    margin: auto;
+    
+    img { 
+        width: 100%; 
+    }
+
+}
+
+
+.profile-page {
+    
+    .profile-info {
+        
+        .profile-info-body {
+            
+            .counts h2 { 
+                display: inline-block; 
+                margin: 20px 3%; 
+            }
+            
+            .description { 
+                margin: 20px auto;
+                max-width: 265px;
+            }
+    
+            .profile-social { 
+                margin: 30px 0px 20px;
+
+                a {
+                    margin: 0px 5px; 
+                    height: 40px; 
+                    width: 40px; 
+                    background-color: white; 
+                    display: inline-block; 
+                    border-radius: 50%;
+
+                    &:hover .fa-twitter { 
+                        color: #55acee; 
+                    }
+
+                    &:hover .fa-twitch { 
+                        color: #6441a5; 
+                    }
+
+                    &:hover .fa-youtube { 
+                        color: #cd201f; 
+                    }
+
+                    &:hover .fa-facebook { 
+                        color: #3b5998; 
+                    }
+
+                    &:hover .fa-instagram { 
+                        color: #3f729b;
+                    }
+
+                    i {
+                        font-size: 22px; 
+                        line-height: 1.85; 
+                        color: rgb(75,75,75);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
 
 
 //.profile-page .activity-filter li { display: inline-block; }
@@ -121,13 +187,55 @@
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a:hover { text-decoration: underline; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-foot { color: rgba(200,200,200,.75); }
 
-.profile-page .activity-list .activity,
-.profile-page .show-more { border: 1px black solid; outline: 1px rgba(255,255,255,.2) solid; outline-offset: -2px; box-shadow: 2px 2px 3px rgba(0,0,0,.75); background: rgba(0,0,0,.85); transition: .2s; -moz-transition: .2s; -webkit-transition: .2s; }
-.profile-page .show-more:hover { background: rgba(255,255,255,.1); }
+.profile-page .activity-list .activity {
+    transition: .2s; 
+    -moz-transition: .2s; 
+    -webkit-transition: .2s; 
+    @include ts-div-styles;
+    margin: 0 auto 10px;
+}
+
+.profile-page .show-more-btn { 
+    transition: .2s; 
+    -moz-transition: .2s; 
+    -webkit-transition: .2s; 
+     @include ts-div-styles;
+    margin: 0 auto;
+    
+    &:hover {
+            outline: 1px solid rgba($ts-blue, 0.7);
+    }
+     
+    &:active {
+            outline: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+     &:focus {
+            outline: 1px solid rgba($ts-blue, 0.7);
+    }
+}
+
+
+//.profile-page .show-more:hover { background: rgba(255,255,255,.1); }
 .profile-page .show-more:hover a { color: rgba(255,255,255,1); }
 .profile-page .show-more { height: 55px; text-align: center; }
-.profile-page .show-more a { color: rgba(255,255,255,.8); font-size: 18px; line-height:3; display: block; height: 100%; width: 100%; transition: .2s; -moz-transition: .2s; -webkit-transition: .2s; }
-.profile-page .show-more a:focus { outline: none; border: none; }
+
+.profile-page .show-more a { 
+    color: rgba(255,255,255,.8); 
+    font-size: 18px; 
+    line-height:3; 
+    display: block; 
+    height: 100%; 
+    width: 150px; 
+    transition: .2s; 
+    -moz-transition: .2s; 
+    -webkit-transition: .2s;
+    
+//    &:focus { 
+//        outline: none; 
+//        border: none; 
+//    }
+}
 
 .profile-page .activity-list .activity .activity-body {
     color: rgba(215,215,215,1);
@@ -214,14 +322,22 @@
 //*************************************
 
 .edit-profile-view {
-    padding: 25px 0px 0px 0px;
+    padding: 35px 0px 0px 0px;
 }
 
 .profile-edit-wrapper {
-    background: rgba(25,25,25,.95);
     padding:35px;
-    border: 2px solid rgba(255,255,255,.2);
     margin-bottom: 50px;
+    @include ts-div-styles;
+    
+    @media screen and (max-width: 1500px) {
+        margin-right: 40px;
+    }
+    
+    @media screen and (max-width: 1200px) {
+        margin-right: 20px;
+        margin-left: 20px;
+    }
 }
 
 .profile-edit-wrapper h2 {
@@ -292,12 +408,15 @@
     border-bottom: 3px #2268AD solid;
 }
 
-.profile-edit-wrapper .gravatar-button {
+.profile-edit-wrapper .gravatar-button h2 {
     border-right: 2px rgba(25,25,25,1) solid;
-    padding:10px;
+    padding: 7px;
     text-align: center;
     line-height: 2.5;
-    background: #2268AD;
+    background: $ts-blue;
+    height: 45px;
+    width: 75%;
+    margin: 0 auto;
 }
 
 .profile-edit-wrapper .basic-form div,
@@ -318,13 +437,14 @@
 
 .profile-edit-wrapper .basic-form textarea {
     width: 98%;
-    margin: 0px 1%;
+    //margin: 0px 1%;
     padding: 15px;
     border-radius: 0px;
     border: 1px solid rgba(255,255,255,.2);
     background: black;
     color: rgba(255,255,255,.7);
     resize: vertical;
+    min-height: 108px;
 }
 
 .profile-edit-wrapper .basic-form input {
@@ -333,16 +453,16 @@
     border-radius: 0px;
     border: 1px solid rgba(255,255,255,.2);
     background: black;
-    margin: auto;
-    width: 95%;
+    //margin: auto;
+    width: 96%;
     color: rgba(255,255,255,.7);
 }
 
 .profile-edit-wrapper .reset-password {
     border: none;
     outline: none;
-    margin: 0px 2.5%;
-    width: 95%;
+    //margin: 0px 2.5%;
+    width: 96%;
     background: #cd201f;
     height: 45px;
   
@@ -545,15 +665,21 @@
 
 .profile-edit-wrapper .update-card-btn,
 .profile-edit-wrapper .update-profile-btn {
-    margin-top: 20px;
+    float: right;
+    margin: 0;
     background: #2268AD;
     border: none;
     border-radius: none;
-    padding: 10px 20px;
+    padding: 0px;
     color: white; 
     font-size: 12px; 
     letter-spacing: 3px;
     font-weight: bold;
+    text-transform: uppercase;
+    width: 35.739%;
+    height: 45px;
+    
+   
 }
 .profile-edit-wrapper .update-card-btn:disabled,
 .profile-edit-wrapper .update-profile-btn:disabled {
@@ -694,7 +820,15 @@
 // 7... profile - no content
 //*************************************
 
-.profile-no-content { margin-top: 20px; color: #FFF; border: 1px solid #000; background: rgba(0,0,0,.6); border-radius: 4px; padding: 20px 30px; }
+.profile-no-content { 
+    margin-top: 20px; 
+    color: #FFF; 
+    //border: 1px solid #000; 
+   // background: rgba(0,0,0,.6); 
+    //border-radius: 4px;
+    @include ts-div-styles;
+    padding: 20px 30px; 
+}
 
 //*************************************
 // 8... subscription
