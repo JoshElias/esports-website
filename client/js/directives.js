@@ -191,9 +191,9 @@ angular.module('app.directives', ['ui.load'])
                 if (thirdPartyError) {
                     console.log("directive");
                     var redirectState = angular.copy($cookies.get("redirectStateString"));
-                    if (!redirectState) {
+//                    if (!redirectState) {
                         $cookies.remove("thirdPartyError");
-                    }
+//                    }
                     
                     AlertService.setError({ show: true, msg: thirdPartyError });
                 }
