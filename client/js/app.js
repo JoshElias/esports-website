@@ -154,6 +154,7 @@ var app = angular.module('app', [
                 onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', function($cookies, $state, EventService, LoginModalService, AlertService) {
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
+                    console.log("onenter");
                     if(redirectState) {
                         redirectState = JSON.parse(redirectState);
                         $cookies.remove("redirectStateString");

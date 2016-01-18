@@ -189,6 +189,7 @@ angular.module('app.directives', ['ui.load'])
                 
                 var thirdPartyError = angular.copy(Util.getAuthCookie("thirdPartyError"));
                 if (thirdPartyError) {
+                    console.log("directive");
                     var redirectState = angular.copy($cookies.get("redirectStateString"));
                     if (!redirectState) {
                         $cookies.remove("thirdPartyError");
