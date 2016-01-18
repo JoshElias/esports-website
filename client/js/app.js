@@ -151,7 +151,7 @@ var app = angular.module('app', [
                         }
                     ]
                 },
-                onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', function($cookies, $state, EventService, LoginModalService, AlertService) {
+                onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', 'Util', function($cookies, $state, EventService, LoginModalService, AlertService, Util) {
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
                     console.log("onenter");
