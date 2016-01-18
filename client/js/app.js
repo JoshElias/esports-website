@@ -170,7 +170,7 @@ var app = angular.module('app', [
                         }
                         
                         AlertService.setError({ show: true, msg: thirdPartyError });
-                        LoginModalService.showModal('login');
+//                        LoginModalService.showModal('login');
                     }
                 }]
             })
