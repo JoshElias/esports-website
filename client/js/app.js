@@ -1212,7 +1212,8 @@ var app = angular.module('app', [
                     data: ['Snapshot', function (Snapshot) {
                         return Snapshot.findOne({
                             filter: {
-                                order: "createdDate DESC"
+                                order: "createdDate DESC",
+                                where: { isActive: true }
                             }
                         }).$promise;
                     }],
