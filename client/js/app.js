@@ -160,15 +160,20 @@ var app = angular.module('app', [
                         redirectState = JSON.parse(redirectState);
                         $cookies.remove("redirectStateString");
                         $state.go(redirectState.name, redirectState.params);
+                        return;
+                    } else {
+                        
                     }
                     
                     var thirdPartyError = Util.getAuthCookie("thirdPartyError");
-                    if(!redirectState && thirdPartyError) {
-                        console.log('thirdParty');
-                        $cookies.remove("thirdPartyError");
-                        AlertService.setError({ show: true, msg: thirdPartyError });
+                    if(thirdPartyError) {
+                        console.log('thirdParty', thirdPartyError);
+                        if (!redirectState) {
+                            $cookies.remove("thirdPartyError");
+                            LoginModalService.showModal('login');
+                        }
                         
-                        LoginModalService.showModal('login');
+                        AlertService.setError({ persist: true, show: true, msg: thirdPartyError });
                     }
                 }]
             })
