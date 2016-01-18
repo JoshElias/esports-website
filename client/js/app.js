@@ -196,7 +196,6 @@ var app = angular.module('app', [
                                 return Article.find({
                                     filter: {
                                         where: {
-                                            isPublic: true,
                                             isActive: true
                                         },
                                         fields: {
