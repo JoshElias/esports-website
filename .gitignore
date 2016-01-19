@@ -35,3 +35,4 @@ server/logs/tempostorm.err
 server/logs/*
 .brackets.json
 .jshint.rc
+server/configs/assets.json
