@@ -3292,8 +3292,7 @@ var app = angular.module('app', [
                         controller: 'ProfileDecksCtrl',
                         resolve: {
                             decks: ['User', 'userProfile', 'Deck', 'AuthenticationService', function (User, userProfile, Deck, AuthenticationService) {
-                                console.log('userProfile:', userProfile);
-                                if (User.getCurrentId === userProfile.id) {
+                                if (User.getCurrentId() === userProfile.id) {
                                     return Deck.find({
                                         filter: {
                                             order: "createdDate DESC",

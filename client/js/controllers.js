@@ -15469,6 +15469,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles', 'EventService',
         function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles, EventService) {
+            console.log('hi');
 
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 if ($scope.guide.premium.isPremium) {
