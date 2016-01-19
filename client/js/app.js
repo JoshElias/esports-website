@@ -111,7 +111,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
+        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 
@@ -457,6 +457,7 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
+                                        console.log("roles", userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -2487,7 +2488,6 @@ var app = angular.module('app', [
                             .then(function (hero) {
                               var sort = _.sortBy(hero.talents, 'orderNum');
                               hero.talents = sort;
-                              
                               return hero;
                             })
                             .catch(function(err) {
@@ -4629,6 +4629,9 @@ var app = angular.module('app', [
                               async.waterfall([
                                 function(waterCB) {
                                   Hero.find({
+                                    where: {
+                                      isActive: true  
+                                    },
                                     filter: {
                                       fields: {
                                         oldTalents: false,
@@ -4812,6 +4815,9 @@ var app = angular.module('app', [
                                 function(waterCB) {
                                   Hero.find({
                                     filter: {
+                                      where: {
+                                        isActive: true
+                                      },
                                       fields: {
                                         oldTalents: false,
                                         oldAbilities: false,

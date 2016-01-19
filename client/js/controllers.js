@@ -462,8 +462,9 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService',
         function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService) {
             
+            var plan = user.subscription.plan || 'tempostorm_quarterly';
+            
             $scope.user = user;
-            $scope.plan = user.subscription.plan || 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
             
@@ -519,10 +520,19 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.subform.isBusy = b;
             }
             
+            $scope.setPlan = function (pl) {
+                plan = pl;
+            }
+            
+            $scope.getPlan = function () {
+                console.log(plan);
+                return plan
+            }
+            
             $scope.subscribe = function (code, result) {
                 $scope.setLoading(true);
-                
-                User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
+                console.log($scope.plan);
+                User.setSubscriptionPlan({}, { plan: $scope.getPlan(), cctoken: result.id })
                 .$promise
                 .then(function (data) {
                     $scope.number = undefined;
@@ -531,7 +541,6 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.error =  '';
                     
                     AlertService.setSuccess({ show: true, msg: 'We have successfully processed your payment. Thank you for subscribing with Tempostorm!' });
-//                    $scope.success.show = true;
                     
                     $scope.user.subscription.isSubscribed = true;
                     $scope.setLoading(false);
@@ -11642,7 +11651,8 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (data) {
-                            $scope.deck = data;
+                            $scope.deck = DeckBuilder.new(data.playerClass, data);
+                            
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
                             $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
                             $scope.isUser.premium = userRoles.isInRoles.$premium;
@@ -11874,12 +11884,6 @@ angular.module('app.controllers', ['ngCookies'])
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
-//                    VoteService.voteDeck(direction, deck).then(function (data) {
-//                        if (data.success) {
-//                            deck.voted = direction;
-//                            deck.votesCount = data.votesCount;
-//                        }
-//                    });
                     
                     // check if user has already voted and edit direction if so
                     var alreadyVoted = false;
@@ -11911,21 +11915,6 @@ angular.module('app.controllers', ['ngCookies'])
                         if(err) console.log('error: ',err);
                     });
                 }
-                
-                //            function updateVotes() {
-//                checkVotes($scope.deck);
-//
-//                function checkVotes (d) {
-//                    console.log(d.votes);
-//                    var vote = d.votes.filter(function (vote) {
-//                        return (LoopBackAuth.currentUserData.id === vote.userID);
-//                    })[0];
-//
-//                    if (vote) {
-//                        d.voted = vote.direction;
-//                    }
-//                }
-//            }
             };
             
             function updateVotes() {
@@ -11937,22 +11926,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.deck.voteScore = updateVotes();
-
-            // get premium
-            //TODO: This is using old stuff
-//            $scope.getPremium = function (plan) {
-//                if ($scope.app.user.isLogged()) {
-//                    if (!$scope.app.user.isSubscribed()) {
-//                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-//                    }
-//                } else {
-//                    LoginModalService.showModal('login', function () {
-//                        if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
-//                            $scope.getPremium(plan);
-//                        }
-//                    });
-//                }
-//            }
         }
     ])
     .controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
@@ -12690,7 +12663,7 @@ angular.module('app.controllers', ['ngCookies'])
                       gold: ''
                   },
                   className: '',
-                  active: true
+                  isActive: true
               },
               defaultAbility = {
                   name: '',

@@ -232,7 +232,6 @@ angular.module('app.services', [])
                 box.modal('show');
             },
             hideModal: function () {
-                console.log("this is happening right now");
                 if (box) {
                     box.modal('hide');
                 }
