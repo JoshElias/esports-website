@@ -8,6 +8,7 @@ module.exports = function(server) {
 
 
     Role.registerResolver('$premium', function(role, ctx, cb) {
+        console.log("we're hitting this");
         function reject() {
             process.nextTick(function() {
                 cb(null, false);
@@ -15,17 +16,21 @@ module.exports = function(server) {
         }
 
         User.getCurrent(function(err, currentUser) {
+            console.log("gotcurrentuser");
            if(err) return cb(err);
            return cb(undefined, isSubscribed(currentUser.toJSON()));
         });
 
         function isSubscribed(user) {
+            console.log("isSubscribed", user);
             if(!user || !user.subscription)
                 return false;
 
             var now = new Date();
-            return (user.subscription.isSubscribed
-                && (user.subscription.expiryDate > now));
+            var dateISO = now.toISOString();
+            
+            return (user.subscription.isSubscribed 
+                    || (user.subscription.expiryDate > dateISO));
         }
     });
 };

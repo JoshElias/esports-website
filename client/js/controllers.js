@@ -462,8 +462,9 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService',
         function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService) {
             
+            var plan = user.subscription.plan || 'tempostorm_quarterly';
+            
             $scope.user = user;
-            $scope.plan = user.subscription.plan || 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
             
@@ -519,10 +520,19 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.subform.isBusy = b;
             }
             
+            $scope.setPlan = function (pl) {
+                plan = pl;
+            }
+            
+            $scope.getPlan = function () {
+                console.log(plan);
+                return plan
+            }
+            
             $scope.subscribe = function (code, result) {
                 $scope.setLoading(true);
-                
-                User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
+                console.log($scope.plan);
+                User.setSubscriptionPlan({}, { plan: $scope.getPlan(), cctoken: result.id })
                 .$promise
                 .then(function (data) {
                     $scope.number = undefined;
@@ -531,7 +541,6 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.error =  '';
                     
                     AlertService.setSuccess({ show: true, msg: 'We have successfully processed your payment. Thank you for subscribing with Tempostorm!' });
-//                    $scope.success.show = true;
                     
                     $scope.user.subscription.isSubscribed = true;
                     $scope.setLoading(false);

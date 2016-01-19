@@ -111,7 +111,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
+        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 
@@ -457,6 +457,7 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
+                                        console.log("roles", userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
