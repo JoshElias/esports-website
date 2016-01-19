@@ -2487,7 +2487,6 @@ var app = angular.module('app', [
                             .then(function (hero) {
                               var sort = _.sortBy(hero.talents, 'orderNum');
                               hero.talents = sort;
-                              
                               return hero;
                             })
                             .catch(function(err) {
@@ -4629,6 +4628,9 @@ var app = angular.module('app', [
                               async.waterfall([
                                 function(waterCB) {
                                   Hero.find({
+                                    where: {
+                                      isActive: true  
+                                    },
                                     filter: {
                                       fields: {
                                         oldTalents: false,
@@ -4812,6 +4814,9 @@ var app = angular.module('app', [
                                 function(waterCB) {
                                   Hero.find({
                                     filter: {
+                                      where: {
+                                        isActive: true
+                                      },
                                       fields: {
                                         oldTalents: false,
                                         oldAbilities: false,

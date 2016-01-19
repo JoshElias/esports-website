@@ -12690,7 +12690,7 @@ angular.module('app.controllers', ['ngCookies'])
                       gold: ''
                   },
                   className: '',
-                  active: true
+                  isActive: true
               },
               defaultAbility = {
                   name: '',
