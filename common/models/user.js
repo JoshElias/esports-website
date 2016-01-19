@@ -729,6 +729,7 @@ module.exports = function(User) {
 
 
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
+        console.log("plan", plan);
         cb = cb || utils.createPromiseCallback();
 
         User.getCurrent(function (err, user) {
@@ -831,7 +832,7 @@ module.exports = function(User) {
     User.remoteMethod(
         'setSubscriptionPlan',
         {
-            description: "derp",
+            description: "Set a subscription plan for a user",
             accepts: [
                 {arg: 'plan', type: 'string', required:true, http: {source: 'form'}},
                 {arg: 'cctoken', type: 'string', required:true, http: {source: 'form'}}
@@ -844,7 +845,7 @@ module.exports = function(User) {
     User.remoteMethod(
         'setSubscriptionCard',
         {
-            description: "derp",
+            description: "Replace a user's subscription card number",
             accepts: {arg: 'cctoken', type: 'string', required:true, http: {source: 'form'}},
             http: {verb: 'post'},
             isStatic: true
@@ -854,7 +855,7 @@ module.exports = function(User) {
     User.remoteMethod(
         'cancelSubscription',
         {
-            description: "derp",
+            description: "Cancel a user's subscription",
             http: {verb: 'post'},
             isStatic: true
         }
