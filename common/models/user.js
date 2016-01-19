@@ -461,7 +461,6 @@ module.exports = function(User) {
 
 
     User.isInRoles = function(uid, roleNames, cb) {
-        
         cb = cb || utils.createPromiseCallback();
 
         var Role = User.app.models.Role;

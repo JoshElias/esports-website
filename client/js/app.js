@@ -154,20 +154,15 @@ var app = angular.module('app', [
                 onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', 'Util', function($cookies, $state, EventService, LoginModalService, AlertService, Util) {
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
-                    console.log("onenter");
                     if(redirectState) {
-                        console.log('redirectState');
                         redirectState = JSON.parse(redirectState);
                         $cookies.remove("redirectStateString");
                         $state.go(redirectState.name, redirectState.params);
                         return;
-                    } else {
-                        
                     }
                     
                     var thirdPartyError = Util.getAuthCookie("thirdPartyError");
                     if(thirdPartyError) {
-                        console.log('thirdParty', thirdPartyError);
                         if (!redirectState) {
                             $cookies.remove("thirdPartyError");
                             LoginModalService.showModal('login');
@@ -1416,7 +1411,6 @@ var app = angular.module('app', [
                                         isActive: true,
                                         articleType: ['hots']
                                     },
-                                    include: ['author'],
                                     fields: {
                                         title: true,
                                         description: true,
@@ -1425,7 +1419,8 @@ var app = angular.module('app', [
                                         slug: true,
                                         articleType: true,
                                         premium: true,
-                                        createdDate: true
+                                        createdDate: true,
+                                        authorId: true
                                     },
                                     include: ['author'],
                                     order: "createdDate DESC"
