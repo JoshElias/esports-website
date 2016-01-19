@@ -188,8 +188,10 @@ angular.module('redbull.directives')
                             scroll: false,
                             revert: true,
                             start: function() {
-                                if (!packDropped) {
-                                    
+                                if (packDropped) {
+                                    return false;
+                                } else {
+
                                     // remove one from packs count
                                     var expansion = $(pack).attr('data-expansion');
                                     scope.$apply(function () {
@@ -355,7 +357,7 @@ angular.module('redbull.directives')
                         stopShakeTimer();
                         
                         // play audio for pack burst
-                        //scope.playAudio('pack_burst');
+                        scope.playAudio('pack_burst');
 
                         // fade out pack
                         $pack.fadeOut(0, function() {
@@ -441,7 +443,7 @@ angular.module('redbull.directives')
                         // remove blur
                         el.removeClass('blurred');
 
-                        $('.cards').fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF), function() {
+                        $('.cards').fadeOut(((!fastForward) ? fadeDuration / 2 : fadeDurationFF), function() {
                             if (!anotherPack) {
                                 scope.expansions.splice(scope.expansions.indexOf(currentExpansion), 1);
                             }

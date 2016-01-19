@@ -197,16 +197,6 @@ angular.module('redbull.services')
                 randomCard = this.getRandomInt(0, pool.length - 1);
                 card = pool[randomCard];
                 
-                if (card === undefined) {
-                    console.log('expansion: ', expansion);
-                    console.log('chances: ', chances);
-                    console.log('expansionCards: ', expansionCards);
-                    console.log('randomCard: ', randomCard);
-                    console.log('pool: ', pool);
-                    console.log('pool[randomCard]: ', pool[randomCard]);
-                    console.log('card: ', card);
-                }
-                
                 return card;
             },
             generatePackFromRolls: function ( expansion, rolls ) {
