@@ -1,219 +1,251 @@
-////*************************************
-//    // 2... guides
-////*************************************
-//
-//.hots-styles .hots-guide-styles-new {
-//    
-//    .guide-header { 
-//        background: transparent; 
-//        border-bottom: 0px solid transparent;
-//        
-//        h1 { 
-//            margin-top: 10px; 
-//            font-family: 'Open Sans Bold'; 
-//            color: #FFF; 
-//            font-size: 26px;
-//        }
-//    }
-//    
-//    h4 {
-//        color: white;
-//        font-size: 16px;
-//        font-weight: 700;
-//    }
-//    
-//    .dark-background {
-//        background: rgba(0, 0, 0, 0.3);
-//        border-top: 1px solid rgba(255, 255, 255, 0.2);
-//        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-//        outline: 1px solid #000;
-//        margin-top: 65px;
-//    }
-//    
-//    .guide-header p,
-//    .guide-header p a { color: #FFF; }
-//
-//    .guide-votes { margin: 15px 0; }
-//
-//    .guide-page {
-//        .guide-right { float: right; width: 300px; }
-//        .guide-left { margin-right: 320px; }
-//        .guide-content { position: relative; }
-//        .guide-content iframe { width: 100% !important; }
-//    }
-//    
-//    .guide-section { 
-//        margin: 0 0 20px;  
-//        background: rgba(0,0,0,0); // can go!!!
-//        border: 0px solid transparent; // can go!!
-//        
-//        &.text-section {
-//            background-color: rgba(0, 0, 0, 0.3);
-//            border: 1px solid rgba(255, 255, 255, 0.2);
-//            outline: 1px solid #000;
-//            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.75);
-//        }
-//    }
-//    
-//    .guide-section-title { 
-//        font-size: 20px; 
-//        line-height: 60px; 
-//        min-height: 60px; 
-//        color: #FFF; 
-//        background: rgba(0,0,0,0); 
-//    } //some of this background stuff needs to go
-//    
-//    .guide-section-title a { color: #FFF; }
-//    .guide-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
-//    
-//    .guide-section-content { 
-//        padding: 20px; 
-//        border-top: 0px solid transparent;
-//        
-//        &.ts-background {
-//            background-color: rgba(0, 0, 0, 0.3);
-//            border: 1px solid rgba(255, 255, 255, 0.2);
-//            outline: 1px solid #000;
-//            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.75);
-//        }
-//        
-//        &.matchup-section {
-//            padding: 9px;
-//        }
-//
-//    }
-//    
-//    .guide-section-content.unpadded { padding: 0px; }
-//    .guide-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
-//    .guide-section-content p { color: #FFF; }
-//
-//    .guide-heroes { margin-right: -20px; }
-//    .guide-hero-wrapper { float: left; padding-right: 20px; }
-//    
-//    //all this will need to come out before this goes live
-//    .guide-hero { 
-//        border: 0px solid transparent;
-//        opacity: 1;
-//    }
-//    .guide-hero:hover { 
-//        opacity: 1; 
-//    }
-//    .guide-hero.active { 
-//        border: 0px solid transparent; 
-//    }
-//
-//    .guide-hero a { 
-//        text-decoration: none; 
-//    }
-//
-//    
-//    
-//    
-//    .guide-hero-image { height: 60px; border: 3px solid transparent; }//remove completely!!
-//
-//    .guide-hero.active .guide-hero-image { border: 3px solid #FFF; } //remove completely!!
-//
-//    .hero-image-section {
-//        position: relative;
-//
-//        .talents-hero-image {
-//            position: absolute;
-//            left: -65px;
-//            top: -65px;
-//        }
-//    }
-//        
-//
-//    .guide-heroes-1 { width: 100%; }
-//    .guide-heroes-2 { width: 50%; }
-//    .guide-heroes-3 { width: 33.33%; }
-//    .guide-heroes-4 { width: 25%; }
-//    .guide-heroes-5 { width: 20%; }
-//
-//    .guide-talents { 
-//        margin-right: -10px; 
-//        z-index: 10;
-//    }
-//    
-//    .guide-talent-wrapper { float: left; width: 14.28%; padding-right: 0px; }
-//    .guide-talent { border: 0px solid transparent; background: transparent; }
-//    .guide-talent-level { padding: 5px 0px; font-family: 'Open Sans Bold'; color: #FFF; text-transform: uppercase; background: transparent; text-align: center; border-bottom: 0px solid transparent; }
-//    .guide-talent-icon { margin: 10px auto; }
-//
-//    .guide-talent-dots { margin: 10px auto; width: 80px; padding: 3px 0; text-align: center; border-radius: 4px; background: rgba(0,0,0,.3); border: 1px solid rgba(0,0,0,.8); }
-//    .guide-talent-dot { margin-right: 3px; display: inline-block; *display: inline; zoom: 1; width: 10px; height: 10px; background: #666; border-radius: 50%; }
-//    .guide-talent-dot:last-child { margin-right: 0px; }
-//    .guide-talent-dot.active { background: #2766ad; }
-//
-//    .guide-map {
-//        margin: 0 5px 5px 0;
-//        width: calc(10% - 5px);
-//        height: auto;
-//        cursor: pointer;
-//        
-//        &:last-of-type {
-//            margin-right: 0px;
-//        }
-//        
-//       @media (max-width: 1199px) {
-//
-//            width: calc(20% - 5px);
-//        }
-//    }
-//    
-//    .guide-maps {
-//        padding: 0px;
-//    }
-//    .guide-map-header { margin-bottom: 20px; width: 100%; height: auto; }
-//    .guide-content-title { text-transform: uppercase; }
-//
-//    .guide-matchups {
-//    
-//        div {
-//            padding-right: 5px;
-//            padding-left: 5px;
-//        }
-//        h4 {
-//            text-align: center;
-//        }
-//    }
-//    
-//    .guide-synergy, 
-//    .guide-strong, 
-//    .guide-weak {
-//            padding: 10px 10px;
-//    }
-//    
-//    
-//    
-//    .active {
-//        .guide-hero-image {
-//             background-color: rgba(39, 102, 173, .8);
-//        
-//        }
-//    
-//    }
-//    
-//    .guide-hero-image {
-//        display: inline-block;
-//        width: 75px;
-//        height: 75px;
-//        overflow: hidden;
-//        background-repeat: no-repeat;
-//        background-image: url("/img/hots/heroes/hots-hero-select.png");
-//        border-radius: 50%;
-//        border: 3px solid #FFF;
-//        text-indent: -99999px;
-//        background-color: rgba(39, 102, 173, 0.2);
-//        outline: none;
-//        opacity: 1;
-//        transition: transform .25s ease-in-out, opacity .25s ease-in-out, background-color .25s ease-in-out;   
-//    }
-//    
-//    .guide-hero-image.valla {
-//        width: 75px;
-//        height: 75px;
-//        background-position: -79px -79px;
-//    }
-//    
-//}
+@import 'ts-colors.scss';
+
+//*************************************
+    // 2... guides
+//*************************************
+
+.hots-styles .hots-guide-styles-new {
+    
+    .guide-header { 
+        background: transparent; 
+        border-bottom: 0px solid transparent;
+        
+        h1 { 
+            margin-top: 10px; 
+            font-family: 'Open Sans Bold'; 
+            color: #FFF; 
+            font-size: 26px;
+        }
+    }
+    
+    h4 {
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+    }
+    
+    .dark-background {
+        background: rgba(0, 0, 0, 0.3);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        outline: 1px solid #000;
+        margin-top: 65px;
+    }
+    
+    .guide-header p,
+    .guide-header p a { color: #FFF; }
+
+    .guide-votes { margin: 15px 0; }
+
+    .guide-page {
+        .guide-right { float: right; width: 300px; }
+        .guide-left { margin-right: 320px; }
+        .guide-content { position: relative; }
+        .guide-content iframe { width: 100% !important; }
+    }
+    
+    .guide-section { 
+        margin: 0 0 20px;  
+        background: rgba(0,0,0,0); // can go!!!
+        border: 0px solid transparent; // can go!!
+        
+        &.text-section {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            outline: 1px solid #000;
+            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.75);
+        }
+        
+        &.related-guide-section {
+        
+           
+        }
+        
+        &.map-section {
+        
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            outline: 1px solid #000;
+            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.75);
+            
+            .guide-section-content {
+            
+                border: none;
+                outline: none;
+                box-shadow: none;
+            }
+        }
+        
+    }
+    
+    .guide-section-title { 
+        font-size: 20px; 
+        line-height: 60px; 
+        min-height: 60px; 
+        color: #FFF; 
+        background: rgba(0,0,0,0); 
+        
+        &.map-section,
+        &.related-guides {
+            background: -webkit-linear-gradient(right, #482662, #472967);
+            background: -o-linear-gradient(right, #482662, #472967);
+            background: -moz-linear-gradient(right, #482662, #472967);
+            background: linear-gradient(to right, #482662, #472967);
+            border: 1px solid transparent;
+        }
+        
+        &.related-guides { 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            outline: 1px solid #000;
+            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.75);
+        }
+    } //some of this background stuff needs to go
+    
+    .guide-section-title a { color: #FFF; }
+    .guide-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
+    
+    .guide-section-content { 
+        padding: 10px 20px 20px; 
+        border-top: 0px solid transparent;
+        
+        &.ts-background {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            outline: 1px solid #000;
+            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.75);
+        }
+        
+        &.matchup-section {
+            padding: 9px;
+        }
+
+    }
+    
+    .guide-section-content.unpadded { padding: 0px; }
+    .guide-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
+    .guide-section-content p { color: #FFF; }
+
+    .guide-heroes { margin-right: -20px; }
+    .guide-hero-wrapper { float: left; padding-right: 20px; }
+    
+    //all this will need to come out before this goes live
+    .guide-hero { 
+        border: 0px solid transparent;
+        opacity: 1;
+    }
+    .guide-hero:hover { 
+        opacity: 1; 
+    }
+    .guide-hero.active { 
+        border: 0px solid transparent; 
+    }
+
+    .guide-hero a { 
+        text-decoration: none; 
+    }
+
+    
+    
+    
+    .guide-hero-image { height: 60px; border: 3px solid transparent; }//remove completely!!
+
+    .guide-hero.active .guide-hero-image { border: 3px solid #FFF; } //remove completely!!
+
+    .hero-image-section {
+        position: relative;
+
+        .talents-hero-image {
+            position: absolute;
+            left: -65px;
+            top: -65px;
+        }
+    }
+        
+
+    .guide-heroes-1 { width: 100%; }
+    .guide-heroes-2 { width: 50%; }
+    .guide-heroes-3 { width: 33.33%; }
+    .guide-heroes-4 { width: 25%; }
+    .guide-heroes-5 { width: 20%; }
+
+    .guide-talents { 
+        margin-right: -10px; 
+        z-index: 10;
+    }
+    
+    .guide-talent-wrapper { float: left; width: 14.28%; padding-right: 0px; }
+    .guide-talent { border: 0px solid transparent; background: transparent; }
+    .guide-talent-level { padding: 5px 0px; font-family: 'Open Sans Bold'; color: #FFF; text-transform: uppercase; background: transparent; text-align: center; border-bottom: 0px solid transparent; }
+    .guide-talent-icon { margin: 10px auto; }
+
+    .guide-talent-dots { margin: 10px auto; width: 80px; padding: 3px 0; text-align: center; border-radius: 4px; background: rgba(0,0,0,.3); border: 1px solid rgba(0,0,0,.8); }
+    .guide-talent-dot { margin-right: 3px; display: inline-block; *display: inline; zoom: 1; width: 10px; height: 10px; background: #666; border-radius: 50%; }
+    .guide-talent-dot:last-child { margin-right: 0px; }
+    .guide-talent-dot.active { background: #2766ad; }
+
+    .guide-map {
+        margin: 0 5px 5px 0;
+        width: calc(10% - 5px);
+        height: auto;
+        cursor: pointer;
+        
+        &:last-of-type {
+            margin-right: 0px;
+        }
+        
+       @media (max-width: 1199px) {
+
+            width: calc(20% - 5px);
+        }
+    }
+    
+    .guide-maps {
+        padding: 0px;
+    }
+    .guide-map-header { margin-bottom: 20px; width: 100%; height: auto; }
+    .guide-content-title { text-transform: uppercase; }
+
+    .guide-matchups {
+    
+        div {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+        h4 {
+            text-align: center;
+        }
+    }
+    
+    .guide-synergy, 
+    .guide-strong, 
+    .guide-weak {
+            padding: 10px 10px;
+    }
+    
+    
+    
+    .active {
+        .guide-hero-image {
+             background-color: rgba(39, 102, 173, .8) !important;
+        
+        }
+    
+    }
+    
+    .guide-hero-image {
+        display: inline-block;
+        width: 75px;
+        height: 75px;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        background-image: url("/img/hots/heroes/hots-hero-select.png") !important;
+        border-radius: 50%;
+        border: 3px solid #FFF;
+        text-indent: -99999px;
+        background-color: rgba(39, 102, 173, 0.2) !important;
+        outline: none;
+        opacity: 1;
+        transition: transform .25s ease-in-out, opacity .25s ease-in-out, background-color .25s ease-in-out;   
+    }
+    
+    
+}

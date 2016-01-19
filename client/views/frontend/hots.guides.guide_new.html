@@ -27,7 +27,7 @@
                     </div>
                     <!-- guide heroes -->
                     <div class="col-md-5 m-t-md guide-heroes clearfix" ng-if="guide.guideType == 'hero'">
-                        <div class="guide-hero-wrapper guide-heroes-{{guide.guideHeroes.length}}" ng-repeat="hero in justHeroes()">
+                        <div class="guide-hero-wrapper " ng-repeat="hero in justHeroes()">
                             <div class="guide-hero" ng-class="{ active: hero == getCurrentHero() }">
                                 <a href="#" ng-click="setCurrentHero(hero)">
                                     
@@ -87,7 +87,7 @@
                 <!-- guide description -->
                 <div class="guide-section text-section">
                     <div class="guide-section-title clearfix">
-                        <h3 class="pull-left">DESCRIPTION</h3>
+                        <h3 class="pull-left">{{guide.name}}</h3>
                         <div class="m-l-md m-r-md pull-right">
                             
                         </div>
@@ -114,12 +114,12 @@
                     <!-- guide-gameplay -->
                     <div class="guide-section text-section" ng-repeat="content in guide.content">
                         <div class="guide-section-title clearfix">
-                            <a href="#" ng-click="show.content[$index] = !show.content[$index]"><h3 class="pull-left guide-content-title">{{content.title}}</h3></a>
+                            <h3 class="pull-left guide-content-title">{{content.title}}</h3>
                             <div class="m-l-md m-r-md pull-right">
                                 
                             </div>
                         </div>
-                        <div class="guide-section-content" ng-show="show.content[$index]">
+                        <div class="guide-section-content">
                             <p class="m-b-none pos-rl" ng-bind-html="getContent(content.body)"></p>
                         </div>
                     </div>
@@ -140,21 +140,21 @@
                                 
                             </div>
                         </div>
-                        <div class="guide-section-content ts-background" ng-show="show.video">
+                        <div class="guide-section-content ts-background">
                             <div class="guide-video" ng-bind-html="getVideo()"></div>
                         </div>
                     </div>
                     <!-- / guide video -->
                
                 <!-- guide maps -->
-                    <div class="guide-section" ng-show="guide.maps.length" ng-if="guide.guideType == 'hero'">
-                        <div class="guide-section-title clearfix">
+                    <div class="guide-section map-section" ng-show="guide.maps.length" ng-if="guide.guideType == 'hero'">
+                        <div class="guide-section-title map-section clearfix">
                             <h3 class="pull-left">MAPS</h3></a>
                             <div class="m-l-md m-r-md pull-right">
                                 
                             </div>
                         </div>
-                        <div class="guide-section-content ts-background" ng-show="show.maps">
+                        <div class="guide-section-content ts-background">
                             <div class="guide-maps clearfix">
                                 <img src="../img/hots/maps/modal/{{map.className}}.jpg" class="guide-map" ng-repeat="map in maps" ng-if="hasMap(map)" hots-map>
                             </div>
@@ -204,6 +204,21 @@
                         </div>
                     </div>
                     <!-- / guide matchups -->
+                    <div class="guide-section related-guides-section">
+                        <div class="guide-section-title related-guides clearfix">
+                            <h3 class="pull-left">Other {{getCurrentHero().hero.className}} Guides</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                
+                            </div>
+                        </div>
+                        <div class="guide-section-content">
+                            <div class="clearfix">
+                                This is a guide
+                            </div>
+                        </div>
+                        
+        
+                    </div>
 
                 
 

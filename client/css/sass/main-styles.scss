@@ -224,7 +224,11 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 }
 
 .home-dark { background-color: #121111; }
-.home-img-back { background: url('../img/worgenbg.jpg') top center no-repeat; }
+
+.home-img-back { 
+    background: url('../img/worgenbg.jpg') top center no-repeat; 
+    background-attachment: fixed;
+}
 
 .home-vod {
     width:100%;
