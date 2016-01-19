@@ -111,7 +111,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
+        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 
