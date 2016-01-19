@@ -37,7 +37,7 @@ module.exports = function(UserIdentity) {
 	      if (err) {
               if (loopbackContext && loopbackContext.active) {
                   var res = loopbackContext.active.http.res;
-                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first", {
+                  res.cookie("thirdPartyError", "Please link your "+provider+" profile to an email account first.", {
                       signed: true,
                       maxAge: 1209600
                   });
@@ -64,7 +64,7 @@ module.exports = function(UserIdentity) {
 	      } else {
               if (loopbackContext && loopbackContext.active) {
                   var res = loopbackContext.active.http.res;
-                  res.cookie("thirdPartyError", "Please link your "+provider+" profile first", {
+                  res.cookie("thirdPartyError", "Please link your "+provider+" profile to an email account first.", {
                       signed: true,
                       maxAge: 1209600
                   });
