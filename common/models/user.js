@@ -729,7 +729,6 @@ module.exports = function(User) {
 
 
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
-        console.log("plan", plan);
         cb = cb || utils.createPromiseCallback();
 
         User.getCurrent(function (err, user) {
