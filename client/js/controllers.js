@@ -216,6 +216,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     content: false,
                                     votes: false
                                 },
+                                include: ["author"],
                                 order: "createdDate DESC",
                                 skip: $scope.articles.data.length,
                                 limit: num
