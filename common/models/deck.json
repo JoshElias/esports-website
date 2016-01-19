@@ -180,7 +180,6 @@
       "permission": "ALLOW",
       "property": "upsert"
     },
-
     {
       "principalType": "ROLE",
       "principalId": "$owner",
@@ -202,24 +201,41 @@
       "property": "premium",
       "accessType": "WRITE"
     },
-
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "__delete__cards"
+      "property": "__create__mulligans"
     },
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "__create__deckCards"
+      "property": "__create__cards"
     },
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "__delete__matchups"
+      "property": "__create__matchups"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__edit__mulligans"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__edit__cards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__edit__matchups"
     }
   ],
   "methods": {}

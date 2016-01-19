@@ -471,14 +471,17 @@ module.exports = function(User) {
 
         // Check for the roles we already have
         var isInRoles = {};
-        if(ctx.active) {
-            if(typeof ctx.active.http.req.roles !== "object") {
-                ctx.active.http.req.roles = {};
-            }
+        // Only run if there's context....
+        if(ctx){
+            if(ctx.active) {
+                if(typeof ctx.active.http.req.roles !== "object") {
+                    ctx.active.http.req.roles = {};
+                }
 
-            var currentRoles = ctx.active.http.req.roles[uid];
-            for(var key in currentRoles) {
-                isInRoles[key] = currentRoles[key];
+                var currentRoles = ctx.active.http.req.roles[uid];
+                for(var key in currentRoles) {
+                    isInRoles[key] = currentRoles[key];
+                }
             }
         }
         
@@ -521,9 +524,12 @@ module.exports = function(User) {
             });
         }, function(err) {
             if(err) return cb(err);
-
-            if(ctx.active) {
-                ctx.active.http.req.roles[uid] = isInRoles;
+            // again only if ctx
+            if(ctx){
+                if(ctx.active.length) {
+                    console.log(ctx.active);
+                    ctx.active.http.req.roles[uid] = isInRoles;
+                }
             }
             cb(err, isInRoles);
         });

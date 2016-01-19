@@ -40,7 +40,6 @@
       "model": "cardWithCoin",
       "foreignKey": "mulliganId",
       "isChild": true
-
     },
     "mulligansWithoutCoin": {
       "type": "hasMany",
@@ -102,7 +101,7 @@
       "permission": "ALLOW",
       "property": "__delete__cardsWithoutCoin"
     },
-	{
+	  {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
@@ -113,6 +112,30 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__delete__mulligansWithoutCoin"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__cardsWithCoin"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__cardsWithoutCoin"
+    },
+	  {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__mulligansWithCoin"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__mulligansWithoutCoin"
     }
   ],
   "methods": {}

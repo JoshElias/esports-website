@@ -27,8 +27,8 @@ var app = angular.module('app', [
     'app.redbull',
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User',
-        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth, AlertService, User) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
+        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth, AlertService, User, Util) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
@@ -84,8 +84,8 @@ var app = angular.module('app', [
 //                $state.go('app.404');
             });
 
-            var accessToken = getAuthCookie("access_token");
-            var userId = getAuthCookie("userId");
+            var accessToken = Util.getAuthCookie("access_token");
+            var userId = Util.getAuthCookie("userId");
             if (accessToken && userId) {
                 $cookies.remove("access_token");
                 $cookies.remove("userId");
@@ -94,18 +94,7 @@ var app = angular.module('app', [
             }
 
             // TODO: extend $cookies with this function
-            function getAuthCookie(key) {
-                var value = $cookies.get(key);
-                if (typeof value == "undefined")
-                    return undefined;
-
-                var valueElements = value.split(":");
-                var cleanCookie = valueElements[1];
-                valueElements = cleanCookie.split(".");
-                valueElements.splice(-1, 1);
-                cleanCookie = valueElements.join(".");
-                return cleanCookie;
-            }
+            
 
         }
     ]
@@ -162,13 +151,26 @@ var app = angular.module('app', [
                         }
                     ]
                 },
-                onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', function($cookies, $state, EventService, LoginModalService, AlertService) {
+                onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', 'Util', function($cookies, $state, EventService, LoginModalService, AlertService, Util) {
                     // look for redirect cookie
                     var redirectState = $cookies.get("redirectStateString");
+                    console.log("onenter");
                     if(redirectState) {
+                        console.log('redirectState');
                         redirectState = JSON.parse(redirectState);
                         $cookies.remove("redirectStateString");
                         $state.go(redirectState.name, redirectState.params);
+                    }
+                    
+                    var thirdPartyError = Util.getAuthCookie("thirdPartyError");
+                    if(thirdPartyError) {
+                        console.log('thirdParty', thirdPartyError);
+                        if (!redirectState) {
+                            $cookies.remove("thirdPartyError");
+                        }
+                        
+                        AlertService.setError({ show: true, msg: thirdPartyError });
+                        LoginModalService.showModal('login');
                     }
                 }]
             })
@@ -216,13 +218,6 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                onEnter: ['$cookies', '$timeout', 'LoginModalService', 'AlertService', function ($cookies, $timeout, LoginModalService, AlertService) {
-                    var thirdPartyError = $cookies.get("thirdPartyError")
-                    if(thirdPartyError) {
-
-                        LoginModalService.showModal('login');
-                    }
-                }],
                 seo: { title: 'Home', description: 'TempoStorm home page.', keywords: '' }
             })
             .state('app.overwatch', {
@@ -562,7 +557,9 @@ var app = angular.module('app', [
                                 return Article.find({
                                   filter: {
                                     limit: 6,
+                                    order: "createdDate DESC",
                                     where: {
+                                      isActive: true,
                                       articleType: ['hs']
                                     },
                                     fields: {
@@ -577,7 +574,7 @@ var app = angular.module('app', [
                                     limit: 10,
                                     order: "createdDate DESC",
                                     where: {
-                                      isFeatured: true
+                                        isFeatured: true
                                     },
                                     fields: {
                                       name: true,
@@ -601,7 +598,8 @@ var app = angular.module('app', [
                                     limit: 10,
                                     order: "createdDate DESC",
                                     where: {
-                                      isFeatured: false
+                                        isPublic: true,
+                                        isFeatured: false
                                     },
                                     fields: {
                                       name: true,
@@ -652,6 +650,7 @@ var app = angular.module('app', [
                                 return Deck.find({
                                     filter: {
                                         where: {
+                                            isPublic: true,
                                             isFeatured: true
                                         },
                                         fields: {
@@ -735,6 +734,7 @@ var app = angular.module('app', [
                                 return Deck.count({
                                     where: {
                                         isFeatured: false,
+                                        isPublic: true
                                     },
                                     include: ["comments"]
                                 })
@@ -830,7 +830,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
-                                    console.log('resolve deck:', deck);
+//                                    console.log('resolve deck:', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -1212,7 +1212,8 @@ var app = angular.module('app', [
                     data: ['Snapshot', function (Snapshot) {
                         return Snapshot.findOne({
                             filter: {
-                                order: "createdDate DESC"
+                                order: "createdDate DESC",
+                                where: { isActive: true }
                             }
                         }).$promise;
                     }],
@@ -1233,7 +1234,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.snapshots.snapshot.html',
                         controller: 'HearthstoneSnapshotCtrl',
                         resolve: {
-                            dataSnapshot: ['$stateParams', 'Snapshot', function ($stateParams, Snapshot) {
+                            dataSnapshot: ['$stateParams', '$state', 'Snapshot', function ($stateParams, $state, Snapshot) {
                                 var slug = $stateParams.slug;
                                 return Snapshot.findOne({
                                     filter: {
@@ -1360,6 +1361,9 @@ var app = angular.module('app', [
                                 }).$promise
                                 .then(function (data) {
                                     return data;
+                                })
+                                .catch(function (err) {
+                                    $state.go('app.404');
                                 });
                             }]
                         }
@@ -1391,10 +1395,18 @@ var app = angular.module('app', [
                                 filter: {
                                     limit: 6,
                                     where: {
+                                        isActive: true,
                                         articleType: ['hots']
                                     },
                                     fields: {
-                                        content: false
+                                        title: true,
+                                        description: true,
+                                        photoNames: true,
+                                        themeName: true,
+                                        slug: true,
+                                        articleType: true,
+                                        premium: true,
+                                        createdDate: true
                                     },
                                     order: "createdDate DESC"
                                 }
@@ -1428,6 +1440,12 @@ var app = angular.module('app', [
                                     "createdDate"
                                   ],
                                   include: [
+                                      {
+                                         relation: "maps"
+                                      },
+                                    {
+                                      relation: 'maps'
+                                    },
                                     {
                                       relation: "author",
                                       scope: {
@@ -1481,8 +1499,7 @@ var app = angular.module('app', [
                                   limit: 10,
                                     order: "createdDate DESC",
                                   where: {
-                                    isFeatured: true,
-                                    isPublic: true
+                                    isFeatured: true
                                   },
                                   fields: [
                                     "name", 
@@ -4494,7 +4511,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.list.html',
                         controller: 'AdminHOTSGuideListCtrl',
                         resolve: {
-							paginationParams: [function() {
+							             paginationParams: [function() {
                                 return {
                                     page: 1,
                                     perpage: 50,
@@ -4510,18 +4527,18 @@ var app = angular.module('app', [
                                 };
                             }],
                             guides: ['Guide', 'paginationParams', function (Guide, paginationParams) {
-                                return Guide.find(
-									paginationParams.options
-								)
-                                .$promise;
+                            return Guide.find(
+                              paginationParams.options
+                            )
+                            .$promise;
                             }],
-							guideCount: ['Guide', function(Guide) {
-								return Guide.count()
-								.$promise
-								.then(function (guideCount) {
-									return guideCount.count;
-								});
-							}]
+                            guideCount: ['Guide', function(Guide) {
+                              return Guide.count()
+                              .$promise
+                              .then(function (guideCount) {
+                                return guideCount.count;
+                              });
+                            }]
                         }
                     }
                 },

@@ -206,7 +206,7 @@ angular.module('app.services', [])
             }
         }
     }])
-    .factory('LoginModalService', ['$rootScope', '$compile', function ($rootScope, $compile) {
+    .factory('LoginModalService', ['$rootScope', '$compile', 'AlertService', function ($rootScope, $compile, AlertService) {
         var box = undefined;
         return {
             showModal: function (state, callback) {
@@ -226,9 +226,13 @@ angular.module('app.services', [])
                     className: 'login-modal',
                     message: $compile('<login-modal callback="LoginModalService.callback()"></login-modal>')($rootScope)
                 });
+                box.on('hide.bs.modal', function () {
+                    AlertService.reset();
+                });
                 box.modal('show');
             },
             hideModal: function () {
+                console.log("this is happening right now");
                 if (box) {
                     box.modal('hide');
                 }
@@ -1269,8 +1273,20 @@ angular.module('app.services', [])
 
         return pagination;
     }])
-    .factory('Util', ['$http', function ($http) {
+    .factory('Util', ['$http', '$cookies', function ($http, $cookies) {
         return {
+            getAuthCookie: function (key) {
+                var value = $cookies.get(key);
+                if (typeof value == "undefined")
+                    return undefined;
+
+                var valueElements = value.split(":");
+                var cleanCookie = valueElements[1];
+                valueElements = cleanCookie.split(".");
+                valueElements.splice(-1, 1);
+                cleanCookie = valueElements.join(".");
+                return cleanCookie;
+            },
             toSelect: function (arr) {
                 arr = arr || [];
                 var out = [];
@@ -1406,7 +1422,7 @@ angular.module('app.services', [])
 
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
-
+        
         var db = {
             id: data.id || null,
             authorId: data.authorId || User.getCurrentId(),
@@ -1431,7 +1447,7 @@ angular.module('app.services', [])
             comments: data.comments || [],
             slug: data.slug || '',
             isFeatured: data.isFeatured || false,
-            isPublic: data.isPublic || true,
+            isPublic: data.isPublic !== undefined && data.isPublic === false ? false : true,
             voteScore: data.voteScore || 1,
             votes: data.votes || [],
             mulligans: data.mulligans || [
@@ -1895,7 +1911,7 @@ angular.module('app.services', [])
             db.manaCount = function (mana) {
                 var cnt = 0;
                 for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
+                    if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].card.cost >= 7)) {
                         cnt += db.cards[i].cardQuantity;
                     }
                 }
@@ -2520,6 +2536,7 @@ angular.module('app.services', [])
     .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
         return {
             getArticles: function (filters, isFeatured, limit, finalCallback) {
+//                console.log(filters);
                 async.waterfall([
                     function(seriesCallback) {
                         var where = {};
@@ -2536,28 +2553,41 @@ angular.module('app.services', [])
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
                             where.name = { inq: heroNames };
+                            
+                            Hero.find({
+                                filter: {
+                                    where: where,
+                                    fields: ["name"]
+                                }
+                            }, function (heroes) {
+//                                console.log(heroes);
+                                return seriesCallback(undefined, heroes);
+                            }, function (err) {
+                                console.log(err);
+                                return finalCallback(err);
+                            });
+                        } else if (_.isEmpty(filters.heroes)) {
+                            return seriesCallback(undefined, null);
                         }
-
-                        Hero.find({
-                            filter: {
-                                where: where,
-                                fields: ["name"]
-                            }
-                        }, function (heroes) {
-                            return seriesCallback(undefined, heroes);
-                        }, function (err) {
-                            console.log(err);
-                            return finalCallback(err);
-                        });
+                        
                     },
                     function(heroes, seriesCallback) {
-                        heroes = _.map(heroes, function(hero) { return hero.name; })
+                        var where = {
+                            articleType: ['hots']
+                        };
+                        
+                        if (!_.isNull(heroes)) {
+                            where = {
+                                articleType: ['hots'],
+                                classTags: {
+                                    inq: _.map(heroes, function(hero) { return hero.name; })
+                                } 
+                            }
+                        }
 
                         Article.find({
                             filter: {
-                                where: {
-                                    classTags: { inq: heroes }
-                                },
+                                where: where,
                                 fields: {
                                     title: true,
                                     description: true,
@@ -2568,7 +2598,9 @@ angular.module('app.services', [])
                                     premium: true,
                                     createdDate: true
                                 },
-                                order: "createdDate DESC"
+                                include: ['author'],
+                                order: "createdDate DESC",
+                                limit: limit
                             }
                         }, function (articles) {
                             return finalCallback(undefined, articles);
@@ -2589,12 +2621,7 @@ angular.module('app.services', [])
                 var order = "voteScore DESC";
                 var heroWhere = {};
                 var heroGuideWhere = {};
-                
-                if(isFeatured === null) {
-                    var guideWhere = {
-                        guideType: "hero"
-                    }
-                }
+                var guideWhere = (isFeatured === null) ? { guideType: "hero" } : {};
 
                 if (filters.search == "" && (!_.isEmpty(filters.universes) || !_.isEmpty(filters.roles))) {
                     heroWhere.and = [];
@@ -3435,24 +3462,33 @@ angular.module('app.services', [])
 
                 arr[crud].splice(idx, 1);
             }
+            
+            function addToDelete (item, arrName) {
+                var arr = arrs[arrName];
+                
+                if (find(item, arrName)) {
+                    var idx = arr[w].indexOf(item);
+                    
+                    arr[w].splice(idx, 1);
+                }
+                
+                if (!find(item, arrName)) {
+                    arr[d].push(item);
+                } 
+            }
 
             function addToArr (item, arrName) {
                 var arr = arrs[arrName];
 
-                if (find(item, arrName, crud)) {
-                    var idx = arr[crud].indexOf(item);
+                if (find(item, arrName)) {
+                    var idx = arr[d].indexOf(item);
 
                     arr[d].splice(idx, 1);
                 }
 
-                //        console.log('CrudMan: ADD triggered', arrs);
-                if (!find(item, arrName, w)) {
+                if (!find(item, arrName)) {
                     arr[w].push(item);
-                    //          console.log('CrudMan: item not found. added toWrite');
-                } else {
-                    //          console.log('CrudMan: item found in toWrite. did NOT add');
-                }
-
+                } 
             }
 
             function toggleItem (item, arrName) {
@@ -3474,6 +3510,7 @@ angular.module('app.services', [])
                 setExists: setExists,
                 toggle: toggleItem,
                 add: addToArr,
+                delete: addToDelete,
                 createArr: createArr,
                 getArrs: getArrs
             }
