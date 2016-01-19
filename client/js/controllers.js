@@ -11651,7 +11651,8 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (data) {
-                            $scope.deck = data;
+                            $scope.deck = DeckBuilder.new(data.playerClass, data);
+                            
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
                             $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
                             $scope.isUser.premium = userRoles.isInRoles.$premium;
@@ -11883,12 +11884,6 @@ angular.module('app.controllers', ['ngCookies'])
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
-//                    VoteService.voteDeck(direction, deck).then(function (data) {
-//                        if (data.success) {
-//                            deck.voted = direction;
-//                            deck.votesCount = data.votesCount;
-//                        }
-//                    });
                     
                     // check if user has already voted and edit direction if so
                     var alreadyVoted = false;
@@ -11920,21 +11915,6 @@ angular.module('app.controllers', ['ngCookies'])
                         if(err) console.log('error: ',err);
                     });
                 }
-                
-                //            function updateVotes() {
-//                checkVotes($scope.deck);
-//
-//                function checkVotes (d) {
-//                    console.log(d.votes);
-//                    var vote = d.votes.filter(function (vote) {
-//                        return (LoopBackAuth.currentUserData.id === vote.userID);
-//                    })[0];
-//
-//                    if (vote) {
-//                        d.voted = vote.direction;
-//                    }
-//                }
-//            }
             };
             
             function updateVotes() {
@@ -11946,22 +11926,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.deck.voteScore = updateVotes();
-
-            // get premium
-            //TODO: This is using old stuff
-//            $scope.getPremium = function (plan) {
-//                if ($scope.app.user.isLogged()) {
-//                    if (!$scope.app.user.isSubscribed()) {
-//                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-//                    }
-//                } else {
-//                    LoginModalService.showModal('login', function () {
-//                        if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
-//                            $scope.getPremium(plan);
-//                        }
-//                    });
-//                }
-//            }
         }
     ])
     .controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
