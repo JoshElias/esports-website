@@ -260,7 +260,7 @@ var app = angular.module('app', [
                                             content: false,
                                             votes: false
                                         },
-                                        sort: 'createdDate DESC',
+                                        order: 'createdDate DESC',
                                         limit: perpage
                                     }
                                 }).$promise;
