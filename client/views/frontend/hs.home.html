@@ -32,7 +32,7 @@
                 <h1 class="title">HEARTHSTONE ARTICLES</h1>
                 <h3 class="sub-title m-b-md">The latest articles on all things Hearthstone</h3>
                 <div class="row no-pad" ng-if="articles.length">
-                    <div class="col-xs-12 col-sm-6 pos-rl" ng-repeat="article in articles">
+                    <div class="col-xs-12 col-sm-6 pos-rl" ng-repeat="article in articles | orderBy: '-createdDate' track by $index">
                         <div class="m-r-sm m-b-sm">
                             <article-thumb article="article" />
                         </div>
@@ -47,7 +47,7 @@
                             <h1 class="title">TEMPOSTORM DECKS</h1>
                             <h3 class="sub-title m-b-md">Decks from Team Tempo Storm</h3>
                             <ul class="hs-decks row no-pad" ng-if="tempostormDecks.length">
-                                <li class="col-xs-12" ng-repeat="deck in tempostormDecks">
+                                <li class="col-xs-12" ng-repeat="deck in tempostormDecks | orderBy: '-createdDate'">
                                     <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck small {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
                                         <div class="inner"></div>
                                         <div class="hs-deck-premium" ng-if="isPremium(deck)"></div>
