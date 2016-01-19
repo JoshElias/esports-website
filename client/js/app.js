@@ -3406,6 +3406,16 @@ var app = angular.module('app', [
                             user: ['userProfile', function (userProfile) {
                                 return userProfile;
                             }],
+                            isPremium: ['User', 'user', function (User, user) {
+                                return User.isInRoles({
+                                    uid: user.id,
+                                    roleNames: ['$premium']
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    return data.isInRoles.$premium;
+                                })
+                            }],
                             isLinked: ['User', function (User) {
                                 var providers = ['twitch','bnet'];
                                 
