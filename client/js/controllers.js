@@ -471,7 +471,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.subform = {
                 isBusy: false,
-                cardPlaceholder: "xxxx xxxx xxxx xxxx"
+                cardPlaceholder: (isPremium) ? "XXXX XXXX XXXX " + user.subscription.last4 : "XXXX XXXX XXXX XXXX"
             };
             
             $scope.testString = function (str) {
@@ -1702,7 +1702,8 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["name", "id"]
+                        fields: ["name", "id"],
+                        where: { isProvider: true }
                     }
                 },
                 pattern = '/.*'+$scope.search+'.*/i';
@@ -2296,8 +2297,8 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 if($scope.search) {
                     options.filter.where = {
-                        and: [
-                            {name: { regexp: pattern }},
+                        or: [
+                            {username: { regexp: pattern }},
                             {email: { regexp: pattern }}
                         ]
                     }
