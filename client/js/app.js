@@ -646,26 +646,77 @@ var app = angular.module('app', [
                 }
             })
             .state('app.hs.decks.list', {
-                url: '?p&s&k&a&o',
+                url: '?tsp&comp&k&s',
                 views: {
                     decks: {
                         templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
-                            tempostormDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var klass = $stateParams.k || false,
-                                    page = $stateParams.p || 1,
-                                    perpage = 4,
-                                    search = $stateParams.s || '',
-                                    age = $stateParams.a || '',
-                                    order = $stateParams.o || '';
-
+                            paginationParams: ['$stateParams', function($stateParams) {
+                                
+                                // if only 1 filter, parse into array
+                                if (angular.isString($stateParams.k)) {
+                                    var tmp = $stateParams.k;
+                                    $stateParams.k = [];
+                                    $stateParams.k.push(tmp);
+                                }
+                                console.log('$stateParams:', $stateParams);
+                                console.log('$stateParams.s:', $stateParams.s);
+                                var pattern = '/.*'+$stateParams.s+'.*/i',
+                                tsWhere = {
+                                    isFeatured: true
+                                },
+                                comWhere = {
+                                    isFeatured: false,
+                                    isPublic: true
+                                };
+                                
+                                if (!_.isEmpty($stateParams.s)) {
+                                    tsWhere.or = [
+                                        { name: { regexp: pattern } },
+                                        { description: { regexp: pattern } },
+                                        { deckType: { regexp: pattern } }
+                                    ];
+                                    
+                                    comWhere.or = [
+                                        { name: { regexp: pattern } },
+                                        { description: { regexp: pattern } },
+                                        { deckType: { regexp: pattern } }
+                                    ];
+                                }
+                                
+                                if (!_.isEmpty($stateParams.k)) {
+                                    tsWhere.playerClass = {
+                                        inq: $stateParams.k
+                                    }
+                                    
+                                    comWhere.playerClass = {
+                                        inq: $stateParams.k
+                                    }
+                                }
+                                
+                                return {
+                                    tsParams: {
+                                        page: parseInt($stateParams.tsp) || 1,
+                                        perpage: 4,
+                                        total: 0,
+                                        where: tsWhere
+                                    },
+                                    comParams: {
+                                        page: parseInt($stateParams.comp) || 1,
+                                        perpage: 12,
+                                        total: 0,
+                                        where: comWhere
+                                    },
+                                    search: $stateParams.s || '',
+                                    klasses: $stateParams.k || []
+                                };
+                            }],
+                            tempostormDecks: ['paginationParams', 'Deck', function (paginationParams, Deck) {
+                                
                                 return Deck.find({
                                     filter: {
-                                        where: {
-                                            isPublic: true,
-                                            isFeatured: true
-                                        },
+                                        where: paginationParams.tsParams.where,
                                         fields: {
                                             name: true,
                                             description: true,
@@ -689,38 +740,29 @@ var app = angular.module('app', [
                                           }
                                         ],
                                         order: "createdDate DESC",
-                                        skip: (page * perpage) - perpage,
-                                        limit: perpage
+                                        skip: (paginationParams.tsParams.page * paginationParams.tsParams.perpage) - paginationParams.tsParams.perpage,
+                                        limit: paginationParams.tsParams.perpage
                                     }
                                 })
                                 .$promise;
 
                             }],
-                            tempostormCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var search = $stateParams.s || '';
-
+                            tempostormCount: ['paginationParams', '$state', 'Deck', function (paginationParams, $state, Deck) {
                                 return Deck.count({
-                                    where: {
-                                        isFeatured: true,
-                                    }
+                                    where: paginationParams.tsParams.where
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (tsCount) {
+                                    paginationParams.tsParams.total = tsCount.count;
+                                    return tsCount.count;
+                                });
 
                             }],
-                            communityDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var klass = $stateParams.k || false,
-                                    page = $stateParams.p || 1,
-                                    perpage = 12,
-                                    search = $stateParams.s || '',
-                                    age = $stateParams.a || '',
-                                    order = $stateParams.o || '';
+                            communityDecks: ['paginationParams', 'Deck', function (paginationParams, Deck) {
 
                                 return Deck.find({
                                     filter: {
-                                        where: {
-                                            isFeatured: false,
-                                            isPublic: true
-                                        },
+                                        where: paginationParams.comParams.where,
                                         fields: {
                                             name: true,
                                             description: true,
@@ -735,23 +777,21 @@ var app = angular.module('app', [
                                         },
                                         include: ["author"],
                                         order: "createdDate DESC",
-                                        skip: (page * perpage) - perpage,
-                                        limit: perpage
+                                        skip: (paginationParams.comParams.page * paginationParams.comParams.perpage) - paginationParams.comParams.perpage,
+                                        limit: paginationParams.comParams.perpage
                                     }
                                 })
                                 .$promise;
                             }],
-                            communityCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var search = $stateParams.s || '';
-
+                            communityCount: ['paginationParams', '$state', 'Deck', function (paginationParams, $state, Deck) {
                                 return Deck.count({
-                                    where: {
-                                        isFeatured: false,
-                                        isPublic: true
-                                    },
-                                    include: ["comments"]
+                                    where: paginationParams.comParams.where,
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (comCount) {
+                                    paginationParams.comParams.total = comCount.count;
+                                    return comCount.count;
+                                });
                             }]
                         }
                     }

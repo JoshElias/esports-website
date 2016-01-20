@@ -1183,12 +1183,13 @@ angular.module('app.services', [])
             });
         };
 
-        pagination.new = function (perpage, total, callback) {
+        pagination.new = function (options, callback) {
             //      console.log('callback:', callback);
+            console.log('options:', options);
             var paginate = {
-                page: 1,
-                perpage: perpage || 10,
-                total: total || 0,
+                page: options.page || 1,
+                perpage: options.perpage || 10,
+                total: options.total || 0,
                 loading: false,
                 callback: function (newTotal) {
                     this.loading = false;
