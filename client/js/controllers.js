@@ -551,10 +551,9 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.subscribe = function (code, result) {
                 $scope.setLoading(true);
-                console.log($scope.plan);
                 User.setSubscriptionPlan({}, { plan: $scope.getPlan(), cctoken: result.id })
                 .$promise
-                .then(function (data) {
+                .then(function () {
                     $scope.number = undefined;
                     $scope.cvc = undefined;
                     $scope.expiry = undefined;
