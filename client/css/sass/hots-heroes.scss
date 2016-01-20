@@ -347,6 +347,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(falstad);
 @include hots-hero(gall);
 @include hots-hero(gazlowe);
+@include hots-hero(greymane);
 @include hots-hero(illidan);
 @include hots-hero(jaina);
 @include hots-hero(johanna);
@@ -643,27 +644,29 @@ This is the template for hots-hero-talents.
     ( class: (hardened-shield), pos: 17 ) // -510
 ) );
 
-//@include hots-hero-talents ( greymane, (
-//    ( class: (), pos: 0 ), // 0
-//    ( class: (), pos: 1 ), // -30
-//    ( class: (), pos: 2 ), // -60
-//    ( class: (), pos: 3 ), // -90
-//    ( class: (), pos: 4 ), // -120
-//    ( class: (), pos: 5 ), // -150
-//    ( class: (), pos: 6 ), // -180
-//    ( class: (), pos: 7 ), // -210
-//    ( class: (), pos: 8 ), // -240
-//    ( class: (), pos: 9 ), // -270
-//    ( class: (), pos: 10 ), // -300
-//    ( class: (), pos: 11 ), // -330
-//    ( class: (), pos: 12 ), // -360
-//    ( class: (), pos: 13 ), // -390
-//    ( class: (), pos: 14 ), // -420
-//    ( class: (), pos: 15 ), // -450
-//    ( class: (), pos: 16 ), // -480
-//    ( class: (), pos: 17 ), // -510
-//    ( class: (), pos: 18 ) // -540
-//) );
+//talents: Greymane
+
+@include hots-hero-talents ( greymane, (
+    ( class: (wolfheart, insatiable, on-the-prowl), pos: 0 ), // 0
+    ( class: (perfect-aim, draught-overflow, incendiary-elixir, concentrated-blast), pos: 1 ), // -30
+    ( class: (scented-tincture), pos: 2 ), // -60
+    ( class: (viciousness), pos: 3 ), // -90
+    ( class: (thick-skin, running-wild), pos: 4 ), // -120
+    ( class: (eyes-in-the-dark), pos: 5 ), // -150
+    ( class: (quicksilver-bullets, relentless-predator, Hunters-blunderbuss), pos: 6 ), // -180
+    ( class: (wizened-duelist, alpha-killer, tooth-and-claw), pos: 7 ), // -210
+    ( class: (go-for-the-throat, unleashed), pos: 8 ), // -240
+    ( class: (marked-for-the-kill, gilnean-roulette), pos: 9 ), // -270
+    ( class: (visceral-attacks), pos: 10 ), // -300
+    ( class: (unfettered-assault), pos: 11 ), // -330
+    ( class: (executioner), pos: 12 ) // -360
+    //( class: (), pos: 13 ), // -390
+    //( class: (), pos: 14 ), // -420
+    //( class: (), pos: 15 ), // -450
+    //( class: (), pos: 16 ), // -480
+    //( class: (), pos: 17 ), // -510
+    //( class: (), pos: 18 ) // -540
+) );
 
 
 //talents: illidan
@@ -1621,7 +1624,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(falstad, -80, -78, -56, 50);
 @include hots-snapshot-hero(gall, -80, -78, -70, 50);
 @include hots-snapshot-hero(gazlowe, -80, -23, -40, 50);
-//@include hots-snapshot-hero(greymane, -80, -23, -40, 50);
+@include hots-snapshot-hero(greymane, -80, -23, -40, 50);
 @include hots-snapshot-hero(illidan, -80, -58, -40, 50);
 @include hots-snapshot-hero(jaina, -54, -8, -34, 98);
 @include hots-snapshot-hero(johanna, -45, -80, -34, 34);
