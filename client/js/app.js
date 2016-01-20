@@ -493,7 +493,7 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            article: ['$stateParams', 'Article', function ($stateParams, Article) {
+                            article: ['$state', '$stateParams', 'Article', function ($state, $stateParams, Article) {
                                 var slug = $stateParams.slug;
 
                                 return Article.findOne({
@@ -557,6 +557,11 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     return data;
+                                })
+                                .catch(function (err) {
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
                                 });
                             }]
                         }
