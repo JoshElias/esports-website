@@ -704,10 +704,16 @@ angular.module('app.directives', ['ui.load'])
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+<<<<<<< 6e035407d76381c0a827a290a3e15f270da900cf
             var loading = false;
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
             var parentId = votable.id;
+=======
+//            console.log('$scope.votable:', $scope.votable);
+            var box,
+                callback;
+>>>>>>> new state param pagination
             
             function getVoteInfo () {
                 setLoading(true);

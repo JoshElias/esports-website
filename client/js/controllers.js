@@ -11523,8 +11523,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount',
-        function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, tempostormCount, communityDecks, communityCount) {
+    .controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'communityDecks', 'paginationParams',
+        function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, communityDecks, paginationParams) {
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
 
 //            console.log('tempostormCount:', tempostormCount);
@@ -11535,22 +11535,22 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deckSearch = '';
             $scope.tempostormDecks = tempostormDecks;
             $scope.tempostormPagination = {
-                total: tempostormCount.count
+                total: paginationParams.tsParams.total
             };
             $scope.communityDecks = communityDecks;
             $scope.communityPagination = {
-                total: communityCount.count
+                total: paginationParams.comParams.total
             };
             // filters
             $scope.filters = {
-                classes: [],
-                search: ''
+                classes: paginationParams.klasses || [],
+                search: paginationParams.search || ''
             };
 
             $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
 
             var initializing = true;
-            $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            $scope.$watch(function(){ return $scope.filters.classes; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
@@ -11567,7 +11567,16 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.newSearch = function () {
 //				        console.log('$scope.filters.search:', $scope.filters.search);
-                $scope.filters.search = $scope.deckSearch;
+                $scope.fetching = true;
+                console.log('$scope.filters.search:', $scope.filters.search);
+//                $state.transitionTo($state.current.name, { s: $scope.filters.search }, {
+//                        location: true,
+//                        inherit: true,
+//                        relative: $state.$current,
+//                        notify: false
+//                    });
+                updateTempostormDecks(1, 4);
+                updateCommunityDecks(1, 12);
             }
 
             function getQuery (featured, isPublic, page, perpage) {
@@ -11618,12 +11627,23 @@ angular.module('app.controllers', ['ngCookies'])
 
                 return options;
             }
-
+            
             // pagination
             function updateTempostormDecks (page, perpage, callback) {
+                
                 AjaxPagination.update(Deck, getQuery(true, false, page, perpage), getQuery(true, false, page, perpage).filter, function (err, data, count) {
+                    console.log('$scope.filters.search:', $scope.filters.search);
+                    console.log('page:', page);
+                    $state.transitionTo($state.current.name, { tsp: page, s: $scope.filters.search, k: $scope.filters.classes }, {
+                        location: true,
+                        inherit: true,
+                        relative: $state.$current,
+                        notify: false
+                    });
+                    
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
+//                    console.log('paginationParams.tsParams.page:', paginationParams.tsParams.page);
                     $scope.tempostormPagination.page = page;
                     $scope.tempostormPagination.perpage = perpage;
                     $scope.tempostormDecks = data;
@@ -11632,25 +11652,10 @@ angular.module('app.controllers', ['ngCookies'])
                         callback(null, count);
                     }
                 });
-//                Deck.find(getQuery(true, page, perpage))
-//                .$promise
-//                .then(function (data) {
-//                    $scope.tempostormPagination.total = data.total;
-//                    $scope.tempostormPagination.page = page;
-//                    $timeout(function () {
-//                        $scope.tempostormDecks = data;
-//
-//                        if (callback) {
-//                            return callback(data);
-//                        }
-//                    });
-//                })
-//                .then(function (err) {
-//                    console.log("There's been an error 1:", err);
-//                });
             }
-
-            $scope.tempostormPagination = AjaxPagination.new(4, $scope.tempostormPagination.total,
+            
+            
+            $scope.tempostormPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -11664,7 +11669,18 @@ angular.module('app.controllers', ['ngCookies'])
 
             //TODO: MAKE CASE-INSENSITIVE QUERY WORK
             function updateCommunityDecks (page, perpage, callback) {
+                
+                
                 AjaxPagination.update(Deck, getQuery(false, true, page, perpage), getQuery(false, true, page, perpage).filter, function (err, data, count) {
+                    
+                    console.log('$scope.filters.search:', $scope.filters.search);
+//                    $state.transitionTo($state.current.name, { comp: page, s: $scope.filters.search, k: $scope.filters.classes }, {
+//                        location: true,
+//                        inherit: true,
+//                        relative: $state.$current,
+//                        notify: false
+//                    });
+                    
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.communityPagination.page = page;
@@ -11691,8 +11707,13 @@ angular.module('app.controllers', ['ngCookies'])
 //                    console.log("There's been an error 2:", err);
 //                });
             }
+<<<<<<< 6e035407d76381c0a827a290a3e15f270da900cf
 
             $scope.communityPagination = AjaxPagination.new(12, $scope.communityPagination.total,
+=======
+          
+            $scope.communityPagination = AjaxPagination.new(paginationParams.comParams,
+>>>>>>> new state param pagination
                 function (page, perpage) {
                     var d = $q.defer();
 
