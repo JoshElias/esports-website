@@ -16,8 +16,9 @@
 //  2.9.. Line Heights
 //  2.10.. Margins
 //  2.11.. Buttons
-//  2.12.. modal 
-//  2.13.. other general styles
+//  2.12.. modal
+//  2.13.. Background Overrides
+//  2.14.. other general styles
 // 3... scrollbars & Navbar
 //  3.1.. main Navbar
 //  3.2.. sub Navbar
@@ -585,8 +586,64 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .modal-header .close:hover,
 .modal-header .close:focus { color: #FFF; }
 
+//2.13.. Background Overrides
 
-// 2.13.. other general styles
+
+.bg-override {
+    background-image: url(../img/backgrounds/meta-bg.jpg);
+    background-color: #000000;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+    background-attachment: fixed;
+}
+.bg-override.profile {
+    background-image: url(../img/hots/hots-bg.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.bg-override.deck-builder {
+    background-image: url(../img/backgrounds/meta-bg.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 800px;
+}
+.bg-override.team-page {
+    background-image: url(../img/backgrounds/meta-bg.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.meta-snapshot {
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.article {
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.polls {
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.sponsors {
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+
+
+// 2.14.. other general styles
 
 /* vertical center*/
 
