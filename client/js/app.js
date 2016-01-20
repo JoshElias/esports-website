@@ -781,6 +781,7 @@ var app = angular.module('app', [
 
                             }],
                             tempostormCount: ['paginationParams', '$state', 'Deck', function (paginationParams, $state, Deck) {
+                                console.log('WAS HERE!!');
                                 return Deck.count({
                                     where: paginationParams.tsParams.where
                                 })
