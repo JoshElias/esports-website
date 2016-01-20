@@ -197,8 +197,6 @@ module.exports = function(User) {
 
     });
 
-
-
     /*!
      * Hash the plain password
      */
