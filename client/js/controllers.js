@@ -11413,12 +11413,6 @@ angular.module('app.controllers', ['ngCookies'])
 //				        console.log('$scope.filters.search:', $scope.filters.search);
                 $scope.fetching = true;
                 console.log('$scope.filters.search:', $scope.filters.search);
-//                $state.transitionTo($state.current.name, { s: $scope.filters.search }, {
-//                        location: true,
-//                        inherit: true,
-//                        relative: $state.$current,
-//                        notify: false
-//                    });
                 updateTempostormDecks(1, 4);
                 updateCommunityDecks(1, 12);
             }
@@ -11511,19 +11505,17 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
             
-            //TODO: MAKE CASE-INSENSITIVE QUERY WORK
             function updateCommunityDecks (page, perpage, callback) {
-                
                 
                 AjaxPagination.update(Deck, getQuery(false, true, page, perpage), getQuery(false, true, page, perpage).filter, function (err, data, count) {
                     
-                    console.log('$scope.filters.search:', $scope.filters.search);
-//                    $state.transitionTo($state.current.name, { comp: page, s: $scope.filters.search, k: $scope.filters.classes }, {
-//                        location: true,
-//                        inherit: true,
-//                        relative: $state.$current,
-//                        notify: false
-//                    });
+//                    console.log('$scope.filters.search:', $scope.filters.search);
+                    $state.transitionTo($state.current.name, { comp: page, s: $scope.filters.search, k: $scope.filters.classes }, {
+                        location: true,
+                        inherit: true,
+                        relative: $state.$current,
+                        notify: false
+                    });
                     
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
@@ -11535,21 +11527,6 @@ angular.module('app.controllers', ['ngCookies'])
                         callback(null, count);
                     }
                 });
-//                Deck.find(getQuery(false, page, perpage))
-//                .$promise
-//                .then(function (data) {
-//                    $scope.communityPagination.total = data.total;
-//                    $scope.communityPagination.page = page;
-//                    $timeout(function () {
-//                        $scope.communityDecks = data;
-//
-//                        if (callback) {
-//                            return callback(data);
-//                        }
-//                    });
-//                }).then(function (err) {
-//                    console.log("There's been an error 2:", err);
-//                });
             }
           
             $scope.communityPagination = AjaxPagination.new(paginationParams.comParams,
