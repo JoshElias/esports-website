@@ -19,15 +19,15 @@
         <div class="row m-t-md">
             <div class="container">
                 <div class="padding-none guide-header">
-                    <div class="col-md-7 guide-header-inner clearfix">
+                    <div class="col-md-12 col-lg-7 guide-header-inner clearfix">
                         <div class="pull-left">
                             <h1>{{guide.name}}</h1>
                             <p>by <a href="./user/{{guide.author.username}}" class="m-r-lg">@{{guide.author.username}}</a>Posted: {{guide.createdDate | date:'mediumDate'}}</p>
                         </div>
                     </div>
                     <!-- guide heroes -->
-                    <div class="col-md-5 m-t-md guide-heroes clearfix" ng-if="guide.guideType == 'hero'">
-                        <div class="guide-hero-wrapper " ng-repeat="hero in justHeroes()">
+                    <div class="col-md-12 col-lg-5 m-t-md guide-heroes clearfix" ng-if="guide.guideType == 'hero'">
+                        <div class="guide-hero-wrapper guide-heroes-static" ng-repeat="hero in justHeroes().reverse()">
                             <div class="guide-hero" ng-class="{ active: hero == getCurrentHero() }">
                                 <a href="#" ng-click="setCurrentHero(hero)">
                                     
@@ -206,7 +206,7 @@
                     <!-- / guide matchups -->
                     <div class="guide-section related-guides-section">
                         <div class="guide-section-title related-guides clearfix">
-                            <h3 class="pull-left">Other {{getCurrentHero().hero.className}} Guides</h3></a>
+                            <h3 class="pull-left">Other {{getCurrentHero().hero.className  | uppercase }} Guides</h3></a>
                             <div class="m-l-md m-r-md pull-right">
                                 
                             </div>

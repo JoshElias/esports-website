@@ -30,6 +30,10 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         outline: 1px solid #000;
         margin-top: 65px;
+        
+        @media screen and (max-width: 1200px) {
+            margin-top: 20px;
+        }
     }
     
     .guide-header p,
@@ -97,6 +101,10 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             outline: 1px solid #000;
             box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.75);
+            
+            h3 {
+                text-transform: uppercase;
+            }
         }
     } //some of this background stuff needs to go
     
@@ -120,12 +128,38 @@
 
     }
     
+//    .guide-heroes div:nth-of-type(5) {
+//        @media screen and (max-width: 500px) {
+//            width: 100%;
+//            float: none;
+//        }
+//    }
+//    
     .guide-section-content.unpadded { padding: 0px; }
     .guide-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
     .guide-section-content p { color: #FFF; }
 
     .guide-heroes { margin-right: -20px; }
-    .guide-hero-wrapper { float: left; padding-right: 20px; }
+    .guide-hero-wrapper { 
+        float: right; 
+        padding-right: 10px; 
+        
+        &.guide-heroes-static {
+            width: 20%;
+            
+            @media screen and (max-width: 1200px) {
+                text-align: center;
+                padding-right: 20px;
+            
+            }
+            
+            @media screen and (max-width: 500px) {
+                padding-right: 98px;
+                float: left;
+            }
+        }
+    }
+    
     
     //all this will need to come out before this goes live
     .guide-hero { 
