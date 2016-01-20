@@ -851,17 +851,19 @@ angular.module('app.directives', ['ui.load'])
       templateUrl: tpl + 'views/admin/hots.heroes.talents.add.form.html',
       controller: ['$scope', 'Talent', function ($scope, Talent) {
         $scope.searchedTalents = [];
-        $scope.searchTalents = function (pattern) {
-          Talent.find({
-            filter: {
-              limit: 4,
-              where: { name: { like: pattern } }
-            }
-          })
-          .$promise
-          .then(function (data) {
-            $scope.searchedTalents = (!_.isEmpty(pattern)) ? data : [];
-          })
+        $scope.searchTalents = function (search) {
+            var pattern = '/.*'+search+'.*/i';
+            
+            Talent.find({
+                filter: {
+                  limit: 4,
+                  where: { name: { regexp: pattern } }
+                }
+              })
+              .$promise
+              .then(function (data) {
+                $scope.searchedTalents = (!_.isEmpty(pattern)) ? data : [];
+              })
         }
         
         $scope.setCurrent = function (talent) {
