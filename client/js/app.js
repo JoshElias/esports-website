@@ -51,6 +51,7 @@ var app = angular.module('app', [
                     
                     $state.go('app.login', { redirect: redirect });
                 }
+                
 //                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
 //                    //event.preventDefault();
 //                    //$state.transitionTo('app.home');
@@ -62,7 +63,7 @@ var app = angular.module('app', [
                 if ($window.ga) {
                     $window.ga('send', 'pageview', $location.path());
                 }
-
+                
                 // seo
                 if (toState.seo) {
                     $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
@@ -125,11 +126,27 @@ var app = angular.module('app', [
             'self',
             tpl + '**'
         ]);
+        
+        var throw404 = function ($state) {
+            var options = {
+                location: true,
+                inherit: true,
+                notify: false,
+                relative: $state.$current
+            }
+            
+            $state.transitionTo('app.404', options);
+        }
 
         // ignore ng-animate on font awesome spin
         //$animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
-
-//        $urlRouterProvider.otherwise('404');
+        
+        $urlRouterProvider.otherwise(function ($injector, $location) {
+            $injector.invoke(['$state', function ($state) {
+                return throw404($state)
+            }]);
+        });
+        
         $stateProvider
             .state('app', {
                 abstract: true,
@@ -180,6 +197,11 @@ var app = angular.module('app', [
                         controller: '404Ctrl',
                     }
                 },
+                params: { url: undefined },
+                onEnter: ['$stateParams', '$location', function ($stateParams, $location) {
+                    $location.url($stateParams.url);
+                    console.log($stateParams.url);
+                }],
                 seo: { title: '404' }
             })
             .state('app.home', {
@@ -374,7 +396,13 @@ var app = angular.module('app', [
                                             }
                                         }
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .catch(function (err) {
+                                    if (err.status === 404) {
+                                        return throw404();
+                                    }
+                                });
                             }]
                         }
                     }
@@ -849,7 +877,9 @@ var app = angular.module('app', [
                                 })
                                 .catch(function (err) {
                                     console.log('Deck.findOne err: ', err);
-                                    $state.transitionTo('app.404');
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
                                 });
 
                             }],
@@ -1099,51 +1129,51 @@ var app = angular.module('app', [
                                 });
                             }],
 							
-							deckCardMulligans: ['deck', 'Card', '$q',  function(deck, Card, $q) {
-								var d = $q.defer();
-								async.each(deck.mulligans, function(mulligan, mulliganCB) {
-									
-									var mulliganIndex = deck.mulligans.indexOf(mulligan);
-									
-									async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
-										Card.findById({
-											id: cardWithoutCoin.cardId
-										}).$promise
-										.then(function (cardFound) {
-											var cardIndex = mulligan.mulligansWithoutCoin.indexOf(cardWithoutCoin);
-											deck.mulligans[mulliganIndex].mulligansWithoutCoin[cardIndex] = cardFound;
-											return cardWithoutCoinCB();
-										})
-										.catch(function (err) {
-											return cardWithoutCoinCB(err);
-										});
-										
-									});
-									
-									async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
-										
-										Card.findById({
-											id: cardWithCoin.cardId
-										}).$promise
-										.then(function (cardFound) {
-											var cardIndex = mulligan.mulligansWithCoin.indexOf(cardWithCoin);
-											deck.mulligans[mulliganIndex].mulligansWithCoin[cardIndex] = cardFound;
-											return cardWithCoinCB();
-										})
-										.catch(function (err) {
-											return cardWithCoinCB(err);
-										});
-										
-									});
-									
-									mulliganCB();
-									
-								}, function(err) {
-									if (err) return d.resolve(err);
-									d.resolve(deck);
-								});
-								return d.promise;
-							}],
+                              deckCardMulligans: ['deck', 'Card', '$q',  function(deck, Card, $q) {
+                                var d = $q.defer();
+                                async.each(deck.mulligans, function(mulligan, mulliganCB) {
+
+                                  var mulliganIndex = deck.mulligans.indexOf(mulligan);
+
+                                  async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+                                    Card.findById({
+                                      id: cardWithoutCoin.cardId
+                                    }).$promise
+                                    .then(function (cardFound) {
+                                      var cardIndex = mulligan.mulligansWithoutCoin.indexOf(cardWithoutCoin);
+                                      deck.mulligans[mulliganIndex].mulligansWithoutCoin[cardIndex] = cardFound;
+                                      return cardWithoutCoinCB();
+                                    })
+                                    .catch(function (err) {
+                                      return cardWithoutCoinCB(err);
+                                    });
+
+                                  });
+
+                                  async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
+
+                                    Card.findById({
+                                      id: cardWithCoin.cardId
+                                    }).$promise
+                                    .then(function (cardFound) {
+                                      var cardIndex = mulligan.mulligansWithCoin.indexOf(cardWithCoin);
+                                      deck.mulligans[mulliganIndex].mulligansWithCoin[cardIndex] = cardFound;
+                                      return cardWithCoinCB();
+                                    })
+                                    .catch(function (err) {
+                                      return cardWithCoinCB(err);
+                                    });
+
+                                  });
+
+                                  mulliganCB();
+
+                                }, function(err) {
+                                  if (err) return d.resolve(err);
+                                  d.resolve(deck);
+                                });
+                                return d.promise;
+                              }],
                                 
                             classCardsList: ['$stateParams', 'deckNoMulligans', 'Card', function($stateParams, deckNoMulligans, Card) {
                                 var perpage = 15,
@@ -1377,7 +1407,9 @@ var app = angular.module('app', [
                                     return data;
                                 })
                                 .catch(function (err) {
-                                    $state.go('app.404');
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
                                 });
                             }]
                         }
@@ -1902,7 +1934,7 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                            guide: ['$state', '$stateParams', 'Guide', function ($state, $stateParams, Guide) {
                                 var slug = $stateParams.slug;
                                 return Guide.findOne({
                                     filter: {
@@ -1985,7 +2017,9 @@ var app = angular.module('app', [
                                     return data;
                                 })
                                 .catch(function (err) {
-                                    console.log('err: ', err);
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
                                 });
                             }],
                             heroes: ['Hero', 'guide', function(Hero, guide) {
@@ -2491,7 +2525,9 @@ var app = angular.module('app', [
                               return hero;
                             })
                             .catch(function(err) {
-                              $state.go('app.404');
+                                if (err.status === 404) {
+                                    return throw404($state);
+                                }
                             });
                           }]
                         }
@@ -2747,7 +2783,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.threads.html',
                         controller: 'ForumThreadCtrl',
                         resolve: {
-                            forumPostCount: ['$q', '$stateParams', 'ForumThread', function($q, $stateParams, ForumThread) {
+                            forumPostCount: ['$q','$stateParams', 'ForumThread', function($q, $stateParams, ForumThread) {
                                 var slug = $stateParams.thread,
                                     d = $q.defer();
                                 
@@ -2776,7 +2812,7 @@ var app = angular.module('app', [
                                 
                                 return d.promise;
                             }],
-                            forumThread: ['$q', '$stateParams', 'ForumThread', 'ForumPost', function($q, $stateParams, ForumThread, ForumPost) {
+                            forumThread: ['$state', '$q', '$stateParams', 'ForumThread', 'ForumPost', function($state, $q, $stateParams, ForumThread, ForumPost) {
                                 var slug = $stateParams.thread,
                                     d = $q.defer();
                                 
@@ -2826,8 +2862,11 @@ var app = angular.module('app', [
                                     });
                                     
                                 })
-                                .catch(function () {
-                                    $q.reject();
+                                .catch(function (err) {
+                                    if (err.status === 404) {
+                                        $q.reject();
+                                        return throw404($state);
+                                    }
                                 });
                                 
                                 return d.promise;
@@ -2871,7 +2910,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.post.html',
                         controller: 'ForumPostCtrl',
                         resolve: {
-                            forumPost: ['$stateParams', 'ForumPost', function($stateParams, ForumPost) {
+                            forumPost: ['$state', '$stateParams', 'ForumPost', function($state, $stateParams, ForumPost) {
                                 var thread = $stateParams.thread,
                                     post = $stateParams.post;
                                 return ForumPost.findOne({
@@ -2910,7 +2949,13 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .catch(function (err) {
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
+                                });
                             }]
                         }
                     }
@@ -3153,7 +3198,7 @@ var app = angular.module('app', [
                 abstract: true,
                 url: 'user/:username',
                 resolve: {
-                    userProfile: ['$stateParams', 'User', function ($stateParams, User) {
+                    userProfile: ['$state', '$stateParams', 'User', function ($state, $stateParams, User) {
                       var username = $stateParams.username;
                       return User.find({
                         filter: {
@@ -3164,7 +3209,16 @@ var app = angular.module('app', [
                       })
                       .$promise
                       .then(function (data) {
+                          if (_.isEmpty(data)) {
+                              return throw404($state);
+                          }
+                          
                           return data[0];
+                      })
+                      .catch(function (err) {
+                          if (err.stats === 404) {
+                              return throw404($state);
+                          }
                       });
                     }]
                 },
@@ -6087,6 +6141,8 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             });
+        
+        
     }]
 );
 
