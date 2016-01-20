@@ -25,59 +25,6 @@
 .snapshot-votes { position: absolute; right: 20px; top: 20px; }
 .snapshot-votes .snapVoteWrap { position: relative; }
 
-
-.bg-override {
-    background-image: url(../img/backgrounds/meta-bg.jpg);
-    background-color: #000000;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: top;
-    background-attachment: fixed;
-}
-.bg-override.profile {
-    background-image: url(../img/hots/hots-bg.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-.bg-override.deck-builder {
-    background-image: url(../img/backgrounds/meta-bg.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    min-height: 800px;
-}
-.bg-override.team-page {
-    background-image: url(../img/backgrounds/meta-bg.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.meta-snapshot {
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.article {
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.polls {
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.sponsors {
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
 .bg-override.druid {
     background-image: url(../img/backgrounds/classes/druid.jpg);
     background-color: #121111;

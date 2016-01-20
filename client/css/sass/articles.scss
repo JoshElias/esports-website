@@ -215,3 +215,29 @@
 
 
 .edit-button-fix { display:block }
+
+.ts-articles-styles {
+    
+    .bg-override {
+        
+        &.article {
+            background-image: url(../img/backgrounds/meta-bg.jpg);
+            background-color: #121111;
+            background-repeat: no-repeat;
+            background-size: 100%;
+            background-attachment: fixed;
+            
+            &.hs {
+                background-image: url(../img/backgrounds/meta-bg.jpg);
+            }
+            
+            &.hots {
+                background-image: url(../img/hots/maps/bgs/base.jpg);
+            }
+            
+            &.overwatch {
+                background-image: url(../img/overwatch/ow-meta-bg.jpg);
+            }
+        }
+    }
+}

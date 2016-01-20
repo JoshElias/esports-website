@@ -9,14 +9,13 @@
     </div>
 </div>
 
-<div class="bg-override article container-fluid">
+<div class="bg-override article {{article.articleType[0]}} container-fluid">
     <div class="article-page container">
         
         <div class="article-photo-banner clearfix" ng-background="https://cdn-tempostorm.netdna-ssl.com/articles/{{article.photoNames.large}}">
             <div class="article-votes pull-right"> 
                 <vote-widget service="ArticleService" votable="article" theme="single"></vote-widget>
             </div>
-
             <div class="title-wrapper pull-left">
                 <h1>{{article.title}}</h1>
     <!--            <h2>{{article.description}}</h2>-->
