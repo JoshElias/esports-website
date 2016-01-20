@@ -459,18 +459,19 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService',
-        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService) {
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService', 'isPremium',
+        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService, isPremium) {
             
             var plan = user.subscription.plan || 'tempostorm_quarterly';
             
             $scope.user = user;
             $scope.email = user.email;
             $scope.isLinked = isLinked;
+            $scope.isPremium = isPremium;
             
             $scope.subform = {
                 isBusy: false,
-                cardPlaceholder: "xxxx xxxx xxxx xxxx"
+                cardPlaceholder: (isPremium) ? "XXXX XXXX XXXX " + user.subscription.last4 : "XXXX XXXX XXXX XXXX"
             };
             
             $scope.testString = function (str) {
@@ -489,7 +490,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.bnetLink = function () {
-                LoginService.thirdPartyRedirect('link', 'bnet')
+                LoginService.thirdPartyRedirect('link', 'bnet');
             };
 
 //
@@ -498,6 +499,25 @@ angular.module('app.controllers', ['ngCookies'])
 //                $scope.success = AlertService.getSuccess();
 //                AlertService.reset();
 //            }
+            
+            $scope.parseDate = function (date) {
+                var d = new Date(date);
+                var months = new Array();
+                months[0] = "January";
+                months[1] = "February";
+                months[2] = "March";
+                months[3] = "April";
+                months[4] = "May";
+                months[5] = "June";
+                months[6] = "July";
+                months[7] = "August";
+                months[8] = "September";
+                months[9] = "October";
+                months[10] = "November";
+                months[11] = "December";
+                
+                return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+            }
             
             $scope.resetPassword = function () {
                 User.resetPassword({
@@ -531,10 +551,9 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.subscribe = function (code, result) {
                 $scope.setLoading(true);
-                console.log($scope.plan);
                 User.setSubscriptionPlan({}, { plan: $scope.getPlan(), cctoken: result.id })
                 .$promise
-                .then(function (data) {
+                .then(function () {
                     $scope.number = undefined;
                     $scope.cvc = undefined;
                     $scope.expiry = undefined;
@@ -1682,7 +1701,8 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["name", "id"]
+                        fields: ["name", "id"],
+                        where: { isProvider: true }
                     }
                 },
                 pattern = '/.*'+$scope.search+'.*/i';
@@ -2276,8 +2296,8 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 if($scope.search) {
                     options.filter.where = {
-                        and: [
-                            {name: { regexp: pattern }},
+                        or: [
+                            {username: { regexp: pattern }},
                             {email: { regexp: pattern }}
                         ]
                     }

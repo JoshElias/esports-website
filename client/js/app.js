@@ -111,7 +111,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
+        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 
@@ -3405,6 +3405,16 @@ var app = angular.module('app', [
                         resolve: {
                             user: ['userProfile', function (userProfile) {
                                 return userProfile;
+                            }],
+                            isPremium: ['User', 'user', function (User, user) {
+                                return User.isInRoles({
+                                    uid: user.id,
+                                    roleNames: ['$premium']
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    return data.isInRoles.$premium;
+                                })
                             }],
                             isLinked: ['User', function (User) {
                                 var providers = ['twitch','bnet'];

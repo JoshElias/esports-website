@@ -4,11 +4,11 @@
         <h3>Obtain early access to all the best Tempo Storm articles.</h3>
     </span>
 
-    <button class="update-card-btn cancel-subscription pull-right" ng-click="cancelSubscription()" ng-disabled="isLoading() || !user.subscription.isSubscribed">Cancel Subscription</button>
+    <button ng-if="!isPremium || user.subscription.isSubscribed" class="update-card-btn cancel-subscription pull-right" ng-click="cancelSubscription()" ng-disabled="isLoading() || !user.subscription.isSubscribed">Cancel Subscription</button>
 </div>
 
 <div class="premium-wrapper row">
-    <div class="premium-btns">
+    <div ng-if="!isPremium || user.subscription.isSubscribed" class="premium-btns">
         <button ng-class="{ 'active' : getPlan() == 'tempostorm_monthly' }" ng-click="setPlan('tempostorm_monthly')" class="prem-btn monthly col-sm-4">
             <h3>MONTHLY</h3>
             <div class="price-wrap">
@@ -33,7 +33,7 @@
     </div>
 <!--    <credit-form></credit-form>-->
     
-    <form ng-if="!user.subscription.isSubscribed" stripe-form="subscribe" role="subscribe" class="form-horizontal">
+    <form ng-if="!isPremium && !user.subscription.isSubscribed" stripe-form="subscribe" role="subscribe" class="form-horizontal">
         <div class="premium-form">
             <input type="text" id="card" name="card" ng-model="number" placeholder="{{subform.cardPlaceholder}}" payments-format="card" payments-validate="card" required>
             <input type="text" id="expiry" name="expiry" ng-model="expiry" placeholder="MM / YYYY" payments-format="expiry" payments-validate="expiry" required>
@@ -49,7 +49,7 @@
 -->
     </form>
     
-    <form ng-if="user.subscription.isSubscribed" stripe-form="updateCard" name="update" role="form" class="form-horizontal">
+    <form ng-if="isPremium && user.subscription.isSubscribed" stripe-form="updateCard" name="update" role="form" class="form-horizontal">
         <div class="premium-form">
             <input type="text" id="card" name="card" ng-model="number" placeholder="{{subform.cardPlaceholder}}" payments-format="card" payments-validate="card" required>
             <input type="text" id="expiry" name="expiry" ng-model="expiry" placeholder="MM / YYYY" payments-format="expiry" payments-validate="expiry" required>
@@ -65,4 +65,8 @@
 -->
         </div>
     </form>
+    
+    <div ng-if="isPremium && !user.subscription.isSubscribed">
+        <h2 style="font-size: 16px;">Looks like your subscription was cancelled but is still active until <span style="text-decoration: underline;" ng-bind="parseDate(user.subscription.expiryDate)"></span>. You must wait until your current subscription expires before you can resubscribe.</h2>
+    </div>
 </div>
