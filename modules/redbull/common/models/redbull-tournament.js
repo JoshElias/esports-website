@@ -14,7 +14,7 @@ module.exports = function(RedbullTournament) {
 
 
         var Card = RedbullTournament.app.models.card;
-        var RedbullExpansion = RedbullTournament.app.models.card;
+        var RedbullExpansion = RedbullTournament.app.models.redbullExpansion;
 
 
         async.waterfall([
@@ -24,7 +24,7 @@ module.exports = function(RedbullTournament) {
             },
             // Organize cards into expansion
             function(cards, seriesCb) {
-
+                console.log("num of cards", cards.length);
                 // Declare vars outside of forloop
                 var cardIndex = cards.length;
                 var sortedCards = {};
@@ -54,26 +54,47 @@ module.exports = function(RedbullTournament) {
             function(sortedCards, seriesCb) {
 
                 RedbullExpansion.find({isActive:true},
-                    {fields:{numOfPacks:true}}, function(err, expansions) {
+                    {fields:{numOfPacks:true}, include:"rarityChances"}, seriesCb); /*function(err, expansions) {
                         if (err) return seriesCb(err);
 
+                        console.log("expansions count:", expansions.length);
                         var numOfPacks = 0;
                         for(var key in expansions) {
                             var expansion = expansions[key];
+                          console.log("expansion:", expansion);
                             if(typeof expansion.numOfPacks !== "number") {
                                 continue;
                             }
                             numOfPacks += expansion.numOfPacks;
                         }
-
                         return seriesCb(undefined, numOfPacks);
+
                     }
-                );
+                );*/
             },
             // Generate Pack Rolls
-            function(numOfPacks, seriesCb) {
-                console.log("numOfPacks:", numOfPacks);
-                return seriesCb();
+            function(expansions, seriesCb) {
+
+                for(var key in expansions) {
+                    var expansion = expansions[key];
+
+                    // Iterate over each expansions numOfPacks
+                    var packIndex = expansion.numOfPacks;
+                    while(--packIndex) {
+
+                        // Get the chance for
+                        var rarityChances = {};
+                        var rarityChanceIndex = expansion.rarityChances.length;
+                        while(--rarityChanceIndex) {
+                            var rarityChance = expansion.rarityChances[rarityChanceIndex];
+                            rarityChances[rarityChance.rarity] = rarityChance.percentage;
+                        }
+                        var rareThreshold = (rarityChances.basic + rarityChances.common);
+
+
+
+                    }
+                }
 /*
                 var packs = [];
 
