@@ -98,30 +98,28 @@
 //HOTS hero image filter sprit sheet Mixin: Used to assign position to a heros image on the sprite sheet for all hots heroes in the filters.
 // ---- This is currently not in use ----
 
-@mixin hots-hero-filters-image ($hero, $column, $row, $smallPos) {
+@mixin hots-hero-filters-image ($hero, $pos) {
 
-    $largeInc: -77;
-    $smallInc: -45;
-    $baseInc: -2;
+    $largeInc: -75;
+    $smallInc: -47;
+    $bigOffsetInc: 75;
+    $smallOffsetInc: 47;
 
 
     .hero-filters li button {
 
         &.#{$hero} { 
 
-            $theCol: $baseInc+($largeInc*($column - 1));
-            $theRow: $baseInc+($largeInc*($row - 1));
-            $smallimg: $baseInc+($smallInc*($smallPos - 1));
+            
+            $thePosition: $bigOffsetInc+($largeInc*($pos));
+            $smallimg: $smallOffsetInc+($smallInc*($pos));
 
-            width: 75px; 
-            height: 75px;
-            background-position: #{$theCol}px #{$theRow}px; 
+            
+            background-position: #{$thePosition}px 0px; 
 
-            @media (max-width: 767px) {
+            @media screen and (max-width: 768px) {
 
-                width: 43px;
-                height: 43px;
-                background-position: #{$smallimg}px -2px;
+                background-position: #{$smallimg}px 0px;
 
 
             }
@@ -174,85 +172,56 @@
 // $smallPos = what numerical position the hero is on in the small image spritesheet
 
 
-// 1st column
 
-//@include hots-hero-filters-image (abathur, 1, 1, 1);
-//@include hots-hero-filters-image (anub-arak, 1, 2, 2);
-//@include hots-hero-filters-image (arthas, 1, 3, 3);
+@include hots-hero-filters-image (abathur, 1);
+@include hots-hero-filters-image (anub-arak, 2);
+@include hots-hero-filters-image (artanis, 3);
+@include hots-hero-filters-image (arthas, 4);
+@include hots-hero-filters-image (azmodan, 5);
+@include hots-hero-filters-image (brightwing, 6);
+@include hots-hero-filters-image (chen, 7);
+@include hots-hero-filters-image (cho, 8);
+@include hots-hero-filters-image (diablo, 9);
+@include hots-hero-filters-image (etc, 10);
+@include hots-hero-filters-image (falstad, 11);
+@include hots-hero-filters-image (gall, 12);
+@include hots-hero-filters-image (gazlowe, 13);
+@include hots-hero-filters-image (greymane, 14);
+@include hots-hero-filters-image (illidan, 15);
+@include hots-hero-filters-image (jaina, 16);
+@include hots-hero-filters-image (johanna, 17);
+@include hots-hero-filters-image (kaelthas, 18);
+@include hots-hero-filters-image (kerrigan, 19);
+@include hots-hero-filters-image (kharazim, 20);
+@include hots-hero-filters-image (leoric, 21);
+@include hots-hero-filters-image (lili, 22);
+@include hots-hero-filters-image (malfurion, 23);
+@include hots-hero-filters-image (lunara, 24);
+@include hots-hero-filters-image (morales, 25);
+@include hots-hero-filters-image (muradin, 26);
+@include hots-hero-filters-image (murky, 27);
+@include hots-hero-filters-image (nazeebo, 28);
+@include hots-hero-filters-image (nova, 29);
+@include hots-hero-filters-image (raynor, 30);
+@include hots-hero-filters-image (rehgar, 31);
+@include hots-hero-filters-image (rexxar, 32);
+@include hots-hero-filters-image (sgthammer, 33);
+@include hots-hero-filters-image (sonya, 34);
+@include hots-hero-filters-image (stitches, 35);
+@include hots-hero-filters-image (sylvanas, 36);
+@include hots-hero-filters-image (tassadar, 37);
+@include hots-hero-filters-image (the-butcher, 38);
+@include hots-hero-filters-image (thelostvikings, 39);
+@include hots-hero-filters-image (thrall, 40);
+@include hots-hero-filters-image (tychus, 41);
+@include hots-hero-filters-image (tyrael, 42);
+@include hots-hero-filters-image (tyrande, 43);
+@include hots-hero-filters-image (uther, 44);
+@include hots-hero-filters-image (valla, 45);
+@include hots-hero-filters-image (zagara, 46);
+@include hots-hero-filters-image (zeratul, 47);
 
-// 2nd column
 
-//@include hots-hero-filters-image (azmodan, 2, 1, 4);
-//@include hots-hero-filters-image (brightwing, 2, 2, 5);
-//@include hots-hero-filters-image (chen, 2, 3, 6);
-
-// 3rd column
-
-//@include hots-hero-filters-image (diablo, 3, 1, 7);
-//@include hots-hero-filters-image (etc, 3, 2, 8);
-//@include hots-hero-filters-image (falstad, 3, 3, 9);
-
-// 4th column
-
-//@include hots-hero-filters-image (gazlowe, 4, 1, 10);
-//@include hots-hero-filters-image (illidan, 4, 2, 11);
-//@include hots-hero-filters-image (jaina, 4, 3, 12);
-
-// 5th column
-
-//@include hots-hero-filters-image (johanna, 5, 1, 13);
-//@include hots-hero-filters-image (kaelthas, 5, 2, 14);
-//@include hots-hero-filters-image (kerrigan, 5, 3, 15);
-
-// 6th column
-
-//@include hots-hero-filters-image (kharazim, 6, 1, 16);
-//@include hots-hero-filters-image (leoric, 6, 2, 17);
-//@include hots-hero-filters-image (lili, 6, 3, 18);
-
-// 7th column
-
-//@include hots-hero-filters-image (malfurion, 7, 1, 19);
-//@include hots-hero-filters-image (muradin, 7, 2, 20);
-//@include hots-hero-filters-image (murky, 7, 3, 21);
-
-// 8th column 
-
-//@include hots-hero-filters-image (nazeebo, 8, 1, 22);
-//@include hots-hero-filters-image (nova, 8, 2, 23);
-//@include hots-hero-filters-image (raynor, 8, 3, 24);
-
-// 9th column
-
-//@include hots-hero-filters-image (rehgar, 9, 1, 25);
-//@include hots-hero-filters-image (rexxar, 9, 2, 26);
-//@include hots-hero-filters-image (sgthammer, 9, 3, 27);
-
-// 10th column
-
-//@include hots-hero-filters-image (sonya, 10, 1, 28);
-//@include hots-hero-filters-image (stitches, 10, 2, 29);
-//@include hots-hero-filters-image (sylvanas, 10, 3, 30);
-
-// 11th column
-
-//@include hots-hero-filters-image (tassadar, 11, 1, 31);
-//@include hots-hero-filters-image (the-butcher, 11, 2, 32);
-//@include hots-hero-filters-image (thelostvikings, 11, 3, 33);
-
-// 12th column
-
-//@include hots-hero-filters-image (thrall, 12, 1, 34);
-//@include hots-hero-filters-image (tychus, 12, 2, 35);
-//@include hots-hero-filters-image (tyrael, 12, 3, 36);
-
-// 13th column
-
-//@include hots-hero-filters-image (tyrande, 13, 1, 37);
-//@include hots-hero-filters-image (uther, 13, 2, 38);
-//@include hots-hero-filters-image (valla, 13, 3, 39);
-
-// 14th column
 
 //@include hots-hero-filters-image (zagara, 14, 1, 40);
 //@include hots-hero-filters-image (zeratul, 14, 2, 41);
