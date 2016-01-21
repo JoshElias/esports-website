@@ -144,6 +144,10 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .container-fluid-max {
     max-width: 1448px;
     margin: 0 auto;
+    
+    &.min400 {
+        min-height: 400px;
+    }
 }
 
 .container-dark { background: rgba(0,0,0,.3); border-left: 1px solid #000; border-right: 1px solid #000; }

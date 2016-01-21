@@ -5,29 +5,29 @@
             <h1 class="section-title pull-left">ARTICLES</h1>
             <div class="section-search pull-right">
                 <form name="search-form">
-                <div class="input-group">
-                    <input type="text" class="form-control input-dark" placeholder="search..." ng-model="search">
-                    <span class="input-group-btn">
-                        <button type="submit" class="btn input-dark" ng-click="getArticles()"><i class="fa fa-search"></i></button>
-                    </span>
-                </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control input-dark" placeholder="search..." ng-model="search">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn input-dark" ng-click="getArticles()"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
     <!-- / section banner -->
-    <div class="container-fluid container-fluid-max">
-        
+    <div class="container-fluid container-fluid-max min400">
+
         <div class="clearfix">
             <div class="article-filters m-t-lg pull-left">
                 <ul>
-                    <li ng-repeat="type in articleTypes">
-						<button ng-click="toggleArticleFilter(type)" 
-								class="{{type}}" 
-								ng-class="{ active: isArticleFilter(type) }">
-							{{type}}
-						</button>
-					</li>
+                    <li ng-repeat="type in articleTypes track by $index">
+                        <button ng-click="toggleArticleFilter(type)" 
+                                style="background-position: -{{$index*40}}px" 
+                                ng-class="{ active: isArticleFilter(type) }">
+                            {{type}}
+                        </button>
+                    </li>
                 </ul>
             </div>
             <div class="pull-right">
@@ -36,7 +36,7 @@
                 <!-- / page flipping -->
             </div>
         </div>
-        
+
         <!-- articles -->
         <div class="articles-list m-t-lg">
             <!-- article -->
