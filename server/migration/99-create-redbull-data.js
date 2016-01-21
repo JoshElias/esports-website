@@ -1,27 +1,47 @@
-
 var async = require("async");
+
 
 module.exports = function(server) {
     var RedbullTournament = server.models.redbullTournament;
-
+    var RedbullExpansion = server.models.redbullExpansion;
+    var RedbullRarityChance = server.models.redbullRarityChance;
 
 
     async.waterfall([
         // Load the tournament settings
         function(seriesCb) {
-            db.collection["redbullTournament"].create(redbullData.tournament, seriesCb);
+            RedbullTournament.create(redbullData.tournament, seriesCb);
         },
         // Iterate over pack data
         function(tournament, seriesCb) {
+
+            // Get info on the expansion
             async.eachSeries(redbullData.packs, function(packData, eachCb) {
-                var newRedbullExpansion = {
+                var redbullExpansionData = {
                     name: packData.expansion,
-                    numOfPacks: packData.
+                    numOfPacks: packData.packs,
+                    isActive: packData.isActive
                 };
-                db.collection["redbullExpansion"].create({})
+                RedbullExpansion.create(redbullExpansionData, function(err, redbullExpansion) {
+                    if(err) return eachCb(err);
+
+                    // Make a rarity for each expansion
+                    async.forEachOfSeries(packData.chances, function(chanceValue, chanceKey, chanceCb) {
+                        var redbullRarityChanceData = {
+                            rarity: chanceKey,
+                            percentage: chanceValue,
+                            redbullExpansionId: redbullExpansion.id
+                        };
+                        RedbullRarityChance.create(redbullRarityChanceData, chanceCb);
+                    }, eachCb);
+                })
             }, seriesCb);
         }
-    ], done);
+    ],
+    function(err) {
+        if(err) console.log("Error creating redbull data:", err);
+        else console.log("Successfully created redbull data");
+    });
 };
 
 var redbullData = {

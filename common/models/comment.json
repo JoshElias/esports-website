@@ -28,7 +28,8 @@
     "deckId": {},
     "snapshotId": {},
     "forumPostId": {},
-    "parentCommentId": {}
+    "parentCommentId": {},
+    "redbullDeckId": {}
   },
   "validations": [],
   "relations": {
@@ -61,6 +62,11 @@
       "type": "belongsTo",
       "model": "forumPost",
       "foreignKey": "forumPostId"
+    },
+    "redbullDeck": {
+      "type": "belongsTo",
+      "model": "redbullDeck",
+      "foreignKey": "redbullDeckId"
     },
     "parentComment": {
       "type": "belongsTo",
