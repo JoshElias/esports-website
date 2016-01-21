@@ -12797,6 +12797,10 @@ angular.module('app.controllers', ['ngCookies'])
               }
           };
 
+            $scope.characterAbilToggle = function () {
+                
+            }
+            
           // talents
           $scope.talentAddWnd = function () {
               $scope.currentTalent = angular.copy(defaultTalent);
@@ -13022,7 +13026,8 @@ angular.module('app.controllers', ['ngCookies'])
                 damage: '',
                 healing: '',
                 className: '',
-                orderNum: 1
+                orderNum: 1,
+                charNames: []
               },
               defaultTalent = {
                 talent: {},
@@ -13120,6 +13125,22 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.hero.abilities[i].orderNum = i + 1;
               }
             };
+            
+            $scope.characterAbilToggle = function (currentAbility, char) {
+                if (_.isUndefined(currentAbility.charNames))
+                    currentAbility.charNames = [];
+                
+                var item = _.find(currentAbility.charNames, function (val) { return val === char.name; });
+                
+                if (!item) {
+                    currentAbility.charNames.push(char.name);
+                } else {
+                    var idx = currentAbility.charNames.indexOf(item);
+                    currentAbility.charNames.splice(idx, 1);
+                }
+                
+                console.log(currentAbility);
+            }
           
             // talents
             $scope.talentTiers = HOTS.tiers;
