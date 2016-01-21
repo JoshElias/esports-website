@@ -179,7 +179,7 @@ angular.module('redbull.controllers')
         'pack_release':             { file: 'pack_release' + ext, volume: .5 },
         'pack_shake':               { file: 'pack_shake' + ext, volume: .5 },
         'pack_aura':                { file: 'pack_aura' + ext, volume: .05 },
-        'pack_burst':               { file: 'pack_burst' + ext, volume: .5 },
+        'pack_burst':               { file: 'pack_burst' + ext, volume: .3 },
     };
 
     // load audio for preloader
