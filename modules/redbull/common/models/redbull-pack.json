@@ -1,5 +1,5 @@
 {
-  "name": "redbullExpansion",
+  "name": "redbullPack",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,25 +7,28 @@
     "validateUpsert": true
   },
   "properties": {
-    "name": {
-      "type": "string"
+    "orderNum": {
+      "type": "number"
     },
-    "numOfPacks": {
-      "type": "string"
-    },
-    "isActive": {
-      "type": "boolean"
-    },
-    "className": {
-      "type": "string"
-    }
+    "redbullExpansionId": {},
+    "authorId": {}
   },
   "validations": [],
   "relations": {
-    "chances": {
+    "cards": {
       "type": "hasMany",
-      "model": "redbullExpansionChance",
+      "model": "redbullPackCard",
+      "foreignKey": "redbullPackId"
+    },
+    "expansion": {
+      "type": "belongsTo",
+      "model": "redbullExpansion",
       "foreignKey": "redbullExpansionId"
+    },
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
     }
   },
   "acls": [{
