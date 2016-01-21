@@ -1138,11 +1138,58 @@ angular.module('app.services', [])
     }
 
     return pagination;
-})
-    .factory('AjaxPagination', [function () {
+  })
+  .factory('StateParamHelper', ['$state', '$timeout', function ($state, $timeout) {
+      var servObj = {};
+      // ui.router hack for updating $stateParams without reloading resolves/controller
+      // and allows History API to work.
+    
+      servObj.updateStateParams = function(stateParams) {
+          $state.current.reloadOnSearch = false;
+          
+          $state.transitionTo($state.current.name, stateParams, {
+              location: true,
+              inherit: true,
+              relative: $state.$current.name,
+              notify: false
+          });
+          
+          $timeout(function () {
+            $state.current.reloadOnSearch = undefined;
+          });
+      };
+      
+      // this method expects: 
+      // page - number
+      // count - number
+      // perpage - number
+      servObj.validatePage = function (page, count, perpage) {
+          // 404 if page entered manually is not valid
+          if (page <= 0) {
+              $state.go('app.404');
+          } else if (page > Math.ceil(count / perpage)) {
+              $state.go('app.404');
+          }
+      };
+      
+      // this method expects:
+      // stateFilters - a stateParam array of values
+      // availFilters - an array of available filters
+      servObj.validateFilters = function (stateFilters, availFilters) {
+          var found = _.difference(stateFilters, availFilters);
+          if (!_.isEmpty(found)) {
+              $state.go('app.404');
+          }
+      };
+      
+      return servObj;
+  }])
+  .factory('AjaxPagination', ['$state', '$timeout', function ($state, $timeout) {
         var pagination = {};
 
         pagination.update = function (serviceName, searchFilter, countFilter, callback) {
+            console.log('searchFilter:', searchFilter);
+            console.log('countFilter:', countFilter);
             async.series([
                 function (seriesCallback) {
                     serviceName.count(countFilter)
