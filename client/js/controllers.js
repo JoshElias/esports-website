@@ -11150,16 +11150,13 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'articlesTotal', 'MetaService', 'AjaxPagination',
-        function ($scope, $state, $q, $timeout, Article, articles, articlesTotal, MetaService, AjaxPagination) {
+    .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'MetaService', 'AjaxPagination', 'paginationParams', 'StateParamHelper',
+        function ($scope, $state, $q, $timeout, Article, articles, MetaService, AjaxPagination, paginationParams, StateParamHelper) {
             //if (!data.success) { return $state.transitionTo('app.articles.list'); }
-
 //            console.log('articles:', articles);
+            
             // articles
             $scope.articles = articles;
-            $scope.total = articlesTotal.count;
-            $scope.page = parseInt(articles.page);
-            $scope.perpage = articles.perpage;
             $scope.search = "";
             $scope.fetching = false;
             $scope.metaservice = MetaService;
@@ -11168,6 +11165,7 @@ angular.module('app.controllers', ['ngCookies'])
             // article filtering
             $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
             $scope.articleFilter = [];
+            
             $scope.toggleArticleFilter = function (type) {
                 if ($scope.isArticleFilter(type)) {
                     var index = $scope.articleFilter.indexOf(type);
@@ -11184,76 +11182,129 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getArticles = function() {
-                updateArticles(1, $scope.perpage, $scope.search);
+                updateArticles(1, paginationParams.artParams.perpage, $scope.search);
             }
 
             // pagination
             function updateArticles (page, perpage, search, callback) {
-                $scope.fetching = true;
-
-                var options = {},
-                    countOptions = {},
-                    pattern = '/.*'+search+'.*/i';//new RegExp('.*'+search+'.*', "i")'';
-
-                countOptions['where'] = {
-                    isActive: true,
-                    articleType: {
-                        inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
+                
+                var pattern = '/.*'+search+'.*/i';
+                
+                var options = {
+                    filter: {
+                        where: paginationParams.artParams.where,
+                        fields: paginationParams.artParams.fields,
+                        include: paginationParams.artParams.include,
+                        order: paginationParams.artParams.order,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage
                     }
+                },
+                countOptions = {
+                    where: paginationParams.artParams.where
                 };
-
-                options.filter = {
-                    where: {
-                        isActive: true,
-                        articleType: {
-                            inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
-                        }
-                    },
-                    fields: {
-                        content: false,
-                        votes: false
-                    },
-                    include: ['author'],
-                    order: "createdDate DESC",
-                    skip: ((page*perpage)-perpage),
-                    limit: 12
-                };
-
-                if ($scope.search.length > 0) {
-                    options.filter.where['or'] = [
-                        { title: { regexp: pattern } },
-                        { description: { regexp: pattern } },
-                        { content: { regexp: pattern } }
-                    ];
-                    countOptions.where.or = [
-                        { title: { regexp: pattern } },
-                        { description: { regexp: pattern } },
-                        { content: { regexp: pattern } }
-                    ];
+                
+                options.filter.where.articleType = {
+                    inq: $scope.articleFilter.length ? $scope.articleFilter : $scope.articleTypes
                 }
 
-                Article.count(countOptions, function (count) {
-                    Article.find(options, function (articles) {
-                        $scope.articlePagination.total = count.count;
-                        $scope.articlePagination.page = page;
-                        $scope.articlePagination.perpage = perpage;
-
-                        $timeout(function () {
-                            $scope.articles = articles;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
+                if (!_.isEmpty($scope.search)) {
+                    options.filter.where.or = [
+                    { title: { regexp: pattern } },
+                    { description: { regexp: pattern } },
+                    { content: { regexp: pattern } }
+                  ]
+                } else {
+                    // have to delete filters that may have been passed from resolve
+                    if (options.filter.where.or) {
+                        delete options.filter.where.or;
+                    }
+                }
+                
+                StateParamHelper.updateStateParams({ 
+                    p: page,
+                    f: $scope.articleFilter, 
+                    s: search
                 });
+                
+                AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
+                    
+                    if (err) return console.log('paginate err: ', err);
+                    $scope.articlePagination.page = page;
+                    $scope.articlePagination.perpage = perpage;
+                    $scope.articles = data;
+                    $scope.articlePagination.total = count.count;
+                    if (callback) {
+                        return callback(count.count)
+                    }
+                });
+                
+                
+                
+//                $scope.fetching = true;
+
+//                var options = {},
+//                    countOptions = {},
+//                    pattern = '/.*'+search+'.*/i';
+//
+//                countOptions['where'] = {
+//                    isActive: true,
+//                    articleType: {
+//                        inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
+//                    }
+//                };
+//
+//                options.filter = {
+//                    where: {
+//                        isActive: true,
+//                        articleType: {
+//                            inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
+//                        }
+//                    },
+//                    fields: {
+//                        content: false,
+//                        votes: false
+//                    },
+//                    include: ['author'],
+//                    order: "createdDate DESC",
+//                    skip: ((page*perpage)-perpage),
+//                    limit: 12
+//                };
+//
+//                if ($scope.search.length > 0) {
+//                    options.filter.where['or'] = [
+//                        { title: { regexp: pattern } },
+//                        { description: { regexp: pattern } },
+//                        { content: { regexp: pattern } }
+//                    ];
+//                    countOptions.where.or = [
+//                        { title: { regexp: pattern } },
+//                        { description: { regexp: pattern } },
+//                        { content: { regexp: pattern } }
+//                    ];
+//                }
+//
+//                Article.count(countOptions, function (count) {
+//                    Article.find(options, function (articles) {
+//                        $scope.articlePagination.total = count.count;
+//                        $scope.articlePagination.page = page;
+//                        $scope.articlePagination.perpage = perpage;
+//
+//                        $timeout(function () {
+//                            $scope.articles = articles;
+//                            $scope.fetching = false;
+//                            if (callback) {
+//                                return callback(count.count);
+//                            }
+//                        });
+//                    });
+//                });
             }
 
             // page flipping
-            $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.articlePagination = AjaxPagination.new(paginationParams.artParams,
                 function (page, perpage) {
                     var d = $q.defer();
-
                     updateArticles(page, perpage, $scope.search, function (data) {
                         d.resolve(data);
                     });
@@ -11523,8 +11574,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'communityDecks', 'paginationParams',
-        function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, communityDecks, paginationParams) {
+    .controller('DecksCtrl', ['$scope', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'communityDecks', 'paginationParams', 'StateParamHelper',
+        function ($scope, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, communityDecks, paginationParams, StateParamHelper) {
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
 
 //            console.log('tempostormCount:', tempostormCount);
@@ -11566,57 +11617,51 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.newSearch = function () {
-//				        console.log('$scope.filters.search:', $scope.filters.search);
                 $scope.fetching = true;
-                console.log('$scope.filters.search:', $scope.filters.search);
                 updateTempostormDecks(1, 4);
                 updateCommunityDecks(1, 12);
             }
 
             function getQuery (featured, isPublic, page, perpage) {
                 var pattern = '/.*'+$scope.filters.search+'.*/i';
-
+                
                 var options = {
                     filter: {
-                        where: {
-                            isFeatured: featured,
-                            isPublic: true
-                        },
-                        fields: {
-                            name: true,
-                            description: true,
-                            slug: true,
-                            heroName: true,
-                            authorId: true,
-                            voteScore: true,
-                            playerClass: true,
-                            dust: true,
-                            createdDate: true,
-                            premium: true
-                        },
-                        include: ["author"],
-                        order: "createdDate DESC",
-                        skip: (page * perpage) - perpage,
-                        limit: perpage
                     }
                 }
-
-                if (!isPublic) {
-                    delete options.filter.where.isPublic;
+                
+                if (featured) {
+                    options.filter.where   =  paginationParams.tsParams.where,
+                    options.filter.fields  =  paginationParams.tsParams.fields,
+                    options.filter.include =  paginationParams.tsParams.include,
+                    options.filter.order   =  paginationParams.tsParams.order,
+                    options.filter.skip    =  (page * perpage) - perpage,
+                    options.filter.limit   =  paginationParams.tsParams.perpage
+                } else {
+                    options.filter.where   =  paginationParams.comParams.where,
+                    options.filter.fields  =  paginationParams.comParams.fields,
+                    options.filter.include =  paginationParams.comParams.include,
+                    options.filter.order   =  paginationParams.comParams.order,
+                    options.filter.skip    =  (page * perpage) - perpage,
+                    options.filter.limit   =  paginationParams.comParams.perpage
+                }
+                
+                
+                options.filter.where.playerClass = {
+                    inq: $scope.filters.classes.length ? $scope.filters.classes : $scope.classes
                 }
 
-                if (!_.isEmpty($scope.filters.classes)) {
-                    options.filter.where.playerClass = {
-                        inq: $scope.filters.classes
-                    }
-                }
-
-                if ($scope.filters.search.length > 0) {
+                if (!_.isEmpty($scope.filters.search)) {
                     options.filter.where.or = [
                     { name: { regexp: pattern } },
                     { description: { regexp: pattern } },
                     { deckType: { regexp: pattern } }
                   ]
+                } else {
+                    // have to delete filters that may have been passed from resolve
+                    if (options.filter.where.or) {
+                        delete options.filter.where.or;
+                    }
                 }
 
                 return options;
@@ -11625,19 +11670,16 @@ angular.module('app.controllers', ['ngCookies'])
             // pagination
             function updateTempostormDecks (page, perpage, callback) {
                 
+                StateParamHelper.updateStateParams({ 
+                    tsp: page,
+                    s: $scope.filters.search, 
+                    k: $scope.filters.classes 
+                });
+                
                 AjaxPagination.update(Deck, getQuery(true, false, page, perpage), getQuery(true, false, page, perpage).filter, function (err, data, count) {
-                    console.log('$scope.filters.search:', $scope.filters.search);
-                    console.log('page:', page);
-                    $state.transitionTo($state.current.name, { tsp: page, s: $scope.filters.search, k: $scope.filters.classes }, {
-                        location: true,
-                        inherit: true,
-                        relative: $state.$current,
-                        notify: false
-                    });
                     
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
-//                    console.log('paginationParams.tsParams.page:', paginationParams.tsParams.page);
                     $scope.tempostormPagination.page = page;
                     $scope.tempostormPagination.perpage = perpage;
                     $scope.tempostormDecks = data;
@@ -11660,23 +11702,16 @@ angular.module('app.controllers', ['ngCookies'])
                     return d.promise;
                 }
             );
-<<<<<<< 30e5830b9c4fe29ff60bbc94b20e4d37198928e2
-
-            //TODO: MAKE CASE-INSENSITIVE QUERY WORK
-=======
             
->>>>>>> pagination fix
             function updateCommunityDecks (page, perpage, callback) {
                 
+                StateParamHelper.updateStateParams({ 
+                    comp: page, 
+                    s: $scope.filters.search,
+                    k: $scope.filters.classes
+                });
+                
                 AjaxPagination.update(Deck, getQuery(false, true, page, perpage), getQuery(false, true, page, perpage).filter, function (err, data, count) {
-                    
-//                    console.log('$scope.filters.search:', $scope.filters.search);
-                    $state.transitionTo($state.current.name, { comp: page, s: $scope.filters.search, k: $scope.filters.classes }, {
-                        location: true,
-                        inherit: true,
-                        relative: $state.$current,
-                        notify: false
-                    });
                     
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
@@ -11689,13 +11724,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
-<<<<<<< 6e035407d76381c0a827a290a3e15f270da900cf
-
-            $scope.communityPagination = AjaxPagination.new(12, $scope.communityPagination.total,
-=======
           
             $scope.communityPagination = AjaxPagination.new(paginationParams.comParams,
->>>>>>> new state param pagination
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -15213,9 +15243,9 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
-        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
-
+    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'paginationParams', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
+        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, paginationParams, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
+            console.log('why hello there');
             $scope.tempostormGuides = dataTempostormGuides;
 //            console.log('dataTempostormGuides:', dataTempostormGuides);
 //            $scope.tempostormGuideTalents = tempostormTalents;
@@ -15533,7 +15563,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            });
 //        }
 //            console.log('tempostormGuideCount:', tempostormGuideCount);
-            $scope.tempostormPagination = AjaxPagination.new(4, tempostormGuideCount.count,
+            $scope.tempostormPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -15572,7 +15602,7 @@ angular.module('app.controllers', ['ngCookies'])
             );
 
 //            console.log('communityGuideCount:', communityGuideCount);
-            $scope.communityPagination = AjaxPagination.new(10, communityGuideCount.count,
+            $scope.communityPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
                     var d = $q.defer();
 

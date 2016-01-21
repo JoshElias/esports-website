@@ -417,49 +417,100 @@ var app = angular.module('app', [
                 }
             })
             .state('app.articles.list', {
-                url: '?s&p&t&f',
+                url: '?p&f&s',
                 views: {
                     articles: {
                         templateUrl: tpl + 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
-                            articles: ['$stateParams', '$q', 'Article', function ($stateParams, $q, Article) {
-                                var articleType = $stateParams.t || 'all',
-                                    filter = $stateParams.f || 'all',
-                                    page = $stateParams.p || 1,
-                                    perpage = 12,
-                                    search = $stateParams.s || '';
-
-                                return Article.find({
-                                    filter: {
-                                        where: {
-                                            isActive: true
-                                        },
+                            paginationParams: ['$stateParams', 'StateParamHelper', function($stateParams,  StateParamHelper) {
+                                var articleFilters = ['ts', 'hs', 'hots', 'overwatch'];
+                                
+                                // if only 1 filter, parse into array
+                                if (angular.isString($stateParams.f)) {
+                                    var tmp = $stateParams.f;
+                                    $stateParams.f = [];
+                                    $stateParams.f.push(tmp);
+                                }
+                                
+                                // validate filters
+                                StateParamHelper.validateFilters($stateParams.f, articleFilters);
+                                
+                                var pattern = '/.*'+$stateParams.s+'.*/i',
+                                artWhere = {
+                                    isActive: true
+                                };
+                                
+                                if (!_.isEmpty($stateParams.s)) {
+                                    artWhere.or = [
+                                        { title: { regexp: pattern } },
+                                        { description: { regexp: pattern } },
+                                        { content: { regexp: pattern } }
+                                    ];
+                                }
+                                
+                                if ($stateParams.f) {
+                                    artWhere.articleType = {
+                                        inq: $stateParams.f
+                                    }
+                                }
+                                
+                                return {
+                                    artParams: {
+                                        page: parseInt($stateParams.p) || 1,
+                                        perpage: 12,
+                                        total: 0,
+                                        where: artWhere,
+                                        order: 'createdDate DESC',
                                         fields: {
                                             content: false,
                                             votes: false
                                         },
-                                        include: ['author'],
-                                        order: "createdDate DESC",
-                                        skip: ((page*perpage)-perpage),
-                                        limit: 12
+                                        include: [
+                                          {
+                                            relation: "author",
+                                            scope: {
+                                              fields: [
+                                                'id',
+                                                'username'
+                                              ]
+                                            }
+                                          }
+                                        ]
+                                    },
+                                    search: $stateParams.s || '',
+                                    filters: $stateParams.f || [],
+                                };
+                            }],
+                            articles: ['paginationParams', 'Article', function (paginationParams, Article) {
+                                
+                                return Article.find({
+                                    filter: {
+                                        where: paginationParams.artParams.where,
+                                        fields: paginationParams.artParams.fields,
+                                        include: paginationParams.artParams.include,
+                                        order: paginationParams.artParams.order,
+                                        skip: ((paginationParams.artParams.page * paginationParams.artParams.perpage) - paginationParams.artParams.perpage),
+                                        limit: paginationParams.artParams.perpage
                                     }
                                 })
                                 .$promise
                                 .then(function (articles) {
-                                    articles.page = page;
-                                    articles.perpage = perpage;
                                     return articles;
                                 });
 
                             }],
-                            articlesTotal: ['Article', function (Article) {
+                            articlesTotal: ['paginationParams', 'StateParamHelper', 'Article', function (paginationParams, StateParamHelper, Article) {
                                 return Article.count({
-                                    where: {
-                                        isActive: true
-                                    }
+                                    where: paginationParams.artParams.where
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (artCount) {
+                                    StateParamHelper.validatePage(paginationParams.artParams.page, artCount.count, paginationParams.artParams.perpage);
+                                    
+                                    paginationParams.artParams.total = artCount.count;
+                                    return artCount.count;
+                                });
                             }]
                         }
                     }
@@ -685,7 +736,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
-                            paginationParams: ['$stateParams', function($stateParams) {
+                            paginationParams: ['$stateParams', 'Hearthstone', 'StateParamHelper', function($stateParams, Hearthstone, StateParamHelper) {
+                                var classFilters = angular.copy(Hearthstone.classes).splice(1, 9);
                                 
                                 // if only 1 filter, parse into array
                                 if (angular.isString($stateParams.k)) {
@@ -693,8 +745,10 @@ var app = angular.module('app', [
                                     $stateParams.k = [];
                                     $stateParams.k.push(tmp);
                                 }
-                                console.log('$stateParams:', $stateParams);
-                                console.log('$stateParams.s:', $stateParams.s);
+                                
+                                // validate filters
+                                StateParamHelper.validateFilters($stateParams.k, classFilters);
+                                
                                 var pattern = '/.*'+$stateParams.s+'.*/i',
                                 tsWhere = {
                                     isFeatured: true
@@ -718,7 +772,7 @@ var app = angular.module('app', [
                                     ];
                                 }
                                 
-                                if (!_.isEmpty($stateParams.k)) {
+                                if ($stateParams.k) {
                                     tsWhere.playerClass = {
                                         inq: $stateParams.k
                                     }
@@ -733,23 +787,8 @@ var app = angular.module('app', [
                                         page: parseInt($stateParams.tsp) || 1,
                                         perpage: 4,
                                         total: 0,
-                                        where: tsWhere
-                                    },
-                                    comParams: {
-                                        page: parseInt($stateParams.comp) || 1,
-                                        perpage: 12,
-                                        total: 0,
-                                        where: comWhere
-                                    },
-                                    search: $stateParams.s || '',
-                                    klasses: $stateParams.k || []
-                                };
-                            }],
-                            tempostormDecks: ['paginationParams', 'Deck', function (paginationParams, Deck) {
-                                
-                                return Deck.find({
-                                    filter: {
-                                        where: paginationParams.tsParams.where,
+                                        where: tsWhere,
+                                        order: 'createdDate DESC',
                                         fields: {
                                             name: true,
                                             description: true,
@@ -771,32 +810,14 @@ var app = angular.module('app', [
                                               ]
                                             }
                                           }
-                                        ],
-                                        order: "createdDate DESC",
-                                        skip: (paginationParams.tsParams.page * paginationParams.tsParams.perpage) - paginationParams.tsParams.perpage,
-                                        limit: paginationParams.tsParams.perpage
-                                    }
-                                })
-                                .$promise;
-
-                            }],
-                            tempostormCount: ['paginationParams', '$state', 'Deck', function (paginationParams, $state, Deck) {
-                                console.log('WAS HERE!!');
-                                return Deck.count({
-                                    where: paginationParams.tsParams.where
-                                })
-                                .$promise
-                                .then(function (tsCount) {
-                                    paginationParams.tsParams.total = tsCount.count;
-                                    return tsCount.count;
-                                });
-
-                            }],
-                            communityDecks: ['paginationParams', 'Deck', function (paginationParams, Deck) {
-
-                                return Deck.find({
-                                    filter: {
-                                        where: paginationParams.comParams.where,
+                                        ]
+                                    },
+                                    comParams: {
+                                        page: parseInt($stateParams.comp) || 1,
+                                        perpage: 12,
+                                        total: 0,
+                                        where: comWhere,
+                                        order: 'createdDate DESC',
                                         fields: {
                                             name: true,
                                             description: true,
@@ -809,20 +830,73 @@ var app = angular.module('app', [
                                             createdDate: true,
                                             premium: true
                                         },
-                                        include: ["author"],
-                                        order: "createdDate DESC",
+                                        include: [
+                                          {
+                                            relation: "author",
+                                            scope: {
+                                              fields: [
+                                                'id',
+                                                'username'
+                                              ]
+                                            }
+                                          }
+                                        ]
+                                    },
+                                    search: $stateParams.s || '',
+                                    klasses: $stateParams.k || [],
+                                };
+                            }],
+                            tempostormDecks: ['paginationParams', 'Deck', function (paginationParams, Deck) {
+                                return Deck.find({
+                                    filter: {
+                                        where: paginationParams.tsParams.where,
+                                        fields: paginationParams.tsParams.fields,
+                                        include: paginationParams.tsParams.include,
+                                        order: paginationParams.tsParams.order,
+                                        skip: (paginationParams.tsParams.page * paginationParams.tsParams.perpage) - paginationParams.tsParams.perpage,
+                                        limit: paginationParams.tsParams.perpage
+                                    }
+                                })
+                                .$promise;
+
+                            }],
+                            tempostormCount: ['paginationParams', '$state', 'StateParamHelper', 'Deck', function (paginationParams, $state, StateParamHelper,  Deck) {
+                                return Deck.count({
+                                    where: paginationParams.tsParams.where
+                                })
+                                .$promise
+                                .then(function (tsCount) {
+                                    
+                                    StateParamHelper.validatePage(paginationParams.tsParams.page, tsCount.count, paginationParams.tsParams.perpage);
+                                    
+                                    paginationParams.tsParams.total = tsCount.count;
+                                    
+                                    return tsCount.count;
+                                });
+
+                            }],
+                            communityDecks: ['paginationParams', 'Deck', function (paginationParams, Deck) {
+                                return Deck.find({
+                                    filter: {
+                                        where: paginationParams.comParams.where,
+                                        fields: paginationParams.comParams.fields,
+                                        include: paginationParams.comParams.include,
+                                        order: paginationParams.comParams.order,
                                         skip: (paginationParams.comParams.page * paginationParams.comParams.perpage) - paginationParams.comParams.perpage,
                                         limit: paginationParams.comParams.perpage
                                     }
                                 })
                                 .$promise;
                             }],
-                            communityCount: ['paginationParams', '$state', 'Deck', function (paginationParams, $state, Deck) {
+                            communityCount: ['paginationParams', 'StateParamHelper', 'Deck', function (paginationParams, StateParamHelper, Deck) {
                                 return Deck.count({
                                     where: paginationParams.comParams.where,
                                 })
                                 .$promise
                                 .then(function (comCount) {
+                                    
+                                    StateParamHelper.validatePage(paginationParams.comParams.page, comCount.count, paginationParams.comParams.perpage)
+                                    
                                     paginationParams.comParams.total = comCount.count;
                                     return comCount.count;
                                 });
@@ -1712,76 +1786,148 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            dataCommunityGuides: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                              return Guide.find({
-                                filter: {
-                                  limit: 10,
-                                  order: 'createdDate DESC',
-                                  where: {
+                            paginationParams: ['$stateParams', function($stateParams) {
+                                var pattern = '/.*'+$stateParams.s+'.*/i';
+                                
+                                var tsWhere = {
+                                    isFeatured: true
+                                },
+                                comWhere = {
                                     isFeatured: false,
                                     isPublic: true
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: 'maps'
-                                    },
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
+                                };
+                                
+                                return {
+                                    tsParams: {
+                                        page: parseInt($stateParams.tsp) || 1,
+                                        perpage: 4,
+                                        total: 0,
+                                        where: tsWhere,
+                                        order: 'createdDate DESC',
+                                        fields: [
+                                            "name", 
+                                            "authorId", 
+                                            "slug", 
+                                            "voteScore", 
+                                            "guideType", 
+                                            "premium", 
+                                            "id", 
+                                            "talentTiers",
+                                            "createdDate"
+                                        ],
                                         include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
+                                        {
+                                          relation: "author",
                                           scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
+                                            fields: ['username']
                                           }
                                         },
-                                      }
+                                        {
+                                          relation: 'guideHeroes',
+                                          scope: {
+                                            include: [
+                                              {
+                                                relation: 'talents'
+                                              },
+                                              {
+                                                relation: 'hero',
+                                                scope: {
+                                                  fields: ['name', 'className']
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          relation: 'guideTalents',
+                                          scope: {
+                                            include: {
+                                              relation: 'talent',
+                                              scope: {
+                                                fields: {
+                                                  name: true,
+                                                  className: true
+                                                }
+                                              }
+                                            },
+                                          }
+                                        },
+                                      ]
                                     },
-                                  ]
+                                    comParams: {
+                                        page: parseInt($stateParams.comp) || 1,
+                                        perpage: 10,
+                                        order: 'createdDate DESC',
+                                        fields: [
+                                            "name", 
+                                            "authorId", 
+                                            "slug", 
+                                            "voteScore", 
+                                            "guideType", 
+                                            "premium", 
+                                            "id", 
+                                            "talentTiers",
+                                            "createdDate"
+                                        ],
+                                        include: [
+                                        {
+                                          relation: 'maps'
+                                        },
+                                        {
+                                          relation: "author",
+                                          scope: {
+                                            fields: ['username']
+                                          }
+                                        },
+                                        {
+                                          relation: 'guideHeroes',
+                                          scope: {
+                                            include: [
+                                              {
+                                                relation: 'talents'
+                                              },
+                                              {
+                                                relation: 'hero',
+                                                scope: {
+                                                  fields: ['name', 'className']
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          relation: 'guideTalents',
+                                          scope: {
+                                            include: {
+                                              relation: 'talent',
+                                              scope: {
+                                                fields: {
+                                                  name: true,
+                                                  className: true
+                                                }
+                                              }
+                                            },
+                                          }
+                                        },
+                                      ]
+                                    }
+                                };
+                            }],
+                            dataCommunityGuides: ['paginationParams', 'Guide', function (paginationParams, Guide) {
+                              return Guide.find({
+                                filter: {
+                                  fields: paginationParams.comParams.fields,
+                                  where: paginationParams.comParams.where,
+                                  order: paginationParams.comParams.order,
+                                  include: paginationParams.comParams.include,
+                                  skip: (paginationParams.comParams.page * paginationParams.comParams.perpage) - paginationParams.comParams.perpage,
+                                  limit: paginationParams.comParams.perpage,
                                 }
                               }).$promise;
                             }],
-                            communityGuideCount: ['Guide', function(Guide) {
+                            communityGuideCount: ['paginationParams', 'Guide', function(paginationParams, Guide) {
                                 return Guide.count({
-                                    where: {
-                                        isFeatured: false,
-                                        isPublic: true
-                                    }
+                                    where: paginationParams.comParams.where
                                 }).$promise;
                             }],
                             dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
@@ -1857,72 +2003,22 @@ var app = angular.module('app', [
                                   console.log("error", err);
                               });
                             }],
-                            dataTempostormGuides: ['Guide', function (Guide) {
+                            dataTempostormGuides: ['paginationParams', 'Guide', function (paginationParams, Guide) {
                               return Guide.find({
                                 filter: {
-                                  order: 'createdDate DESC',
-                                  limit: 4,
-                                  where: {
-                                    isFeatured: true
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        },
-                                      }
-                                    },
-                                  ]
+                                  order: paginationParams.tsParams.order,
+                                  limit: paginationParams.tsParams.perpage,
+                                  where: paginationParams.tsParams.where,
+                                  fields: paginationParams.tsParams.fields,
+                                  include: paginationParams.tsParams.include,
+                                  skip: (paginationParams.tsParams.page * paginationParams.tsParams.perpage) - paginationParams.tsParams.perpage
                                 }
                               })
                               .$promise;
                             }],
-                            tempostormGuideCount: ['Guide', function(Guide) {
+                            tempostormGuideCount: ['paginationParams', 'Guide', function(paginationParams, Guide) {
                                 return Guide.count({
-                                    where: {
-                                        isFeatured: true
-                                    }
+                                    where: paginationParams.tsParams.where
                                 }).$promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
