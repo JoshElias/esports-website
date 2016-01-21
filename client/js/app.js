@@ -4490,7 +4490,8 @@ var app = angular.module('app', [
                         filter: {
                           where: {
                             id: talentId
-                          }
+                          },
+                            include: ['heroes']
                         }
                       })
                       .$promise
