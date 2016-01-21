@@ -232,7 +232,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
-                                    console.log('articles:', articles);
                                     return articles;
                                 })
                                 .catch(function (err) {
