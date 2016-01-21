@@ -1,9 +1,9 @@
 {
-  "angular.min.js": "angular.min.5bcabd93.js",
-  "app.min.js": "app.min.2dd43035.js",
-  "vendor.min.js": "vendor.min.c3bb62de.js",
+  "angular.min.js": "angular.min.472975ae.js",
+  "app.min.js": "app.min.080354f8.js",
+  "vendor.min.js": "vendor.min.c906488d.js",
   "modules.min.js": "modules.min.2d12637c.js",
-  "style.min.css": "style.min.51e5f62e.css",
-  "vendor.min.css": "vendor.min.ae26999c.css",
+  "style.min.css": "style.min.040791c0.css",
+  "vendor.min.css": "vendor.min.60b209a2.css",
   "modules.min.css": "modules.min.15f16015.css"
 }
