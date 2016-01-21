@@ -15,15 +15,16 @@
   },
   "validations": [],
   "relations": {
-    "cards": {
+    "packCards": {
       "type": "hasMany",
       "model": "redbullPackCard",
       "foreignKey": "redbullPackId"
     },
-    "expansion": {
-      "type": "belongsTo",
-      "model": "redbullExpansion",
-      "foreignKey": "redbullExpansionId"
+    "cards": {
+      "type": "hasMany",
+      "model": "card",
+      "foreignKey": "redbullPackId",
+      "through": "redbullPackCard"
     },
     "author": {
       "type": "belongsTo",

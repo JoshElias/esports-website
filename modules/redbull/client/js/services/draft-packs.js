@@ -23,7 +23,7 @@ angular.module('redbull.services')
             // PUBLIC METHODS.
             // ---
             load: function () {
-                console.log("faagggot");
+
                 // sort cards
                 this.sortCards();
 
@@ -64,7 +64,7 @@ angular.module('redbull.services')
                     rareThreshold = this.getRareThreshold(expansion),
                     hasRare = this.getExpansionChances(expansion).rare,
                     rarePlus = false;
-                console.log("HAS RARE:", hasRare);
+
                 for (var i = 0; i < 5; i++) {
                     rolls[i] = this.getRandomInt(1, 100);
                     if (rolls[i] > rareThreshold) {
@@ -76,7 +76,6 @@ angular.module('redbull.services')
                     }
                 }
 
-                console.log("pack rolls:", rolls);
                 return this.shufflePack(rolls);
             },
             calculateNumberOfPacks: function () {
@@ -88,7 +87,7 @@ angular.module('redbull.services')
                         numberPacks += this.tournament.packs[i].packs;
                     }
                 }
-                console.log("numOfPacks:", numberPacks);
+
                 this.numberPacks = numberPacks;
             },
             generatePacksRolls: function () {
@@ -98,9 +97,7 @@ angular.module('redbull.services')
                     packs.push(this.generatePackRolls(i));
                 }
 
-                console.log("packs with roles:", packs);
                 this.packsWithRolls = packs;
-
             },
             sortCards: function () {
                 var expansions = ['Soulbound'].concat(Hearthstone.expansions),
@@ -132,7 +129,6 @@ angular.module('redbull.services')
                     }
                 }
 
-                console.log("cards sorted:", sorted);
                 this.cardsSorted = sorted;
             },
             generatePacksWithExpansions: function () {
@@ -148,7 +144,6 @@ angular.module('redbull.services')
                 }
 
                 this.packsWithExpansions = packs;
-                console.log("packsWithExpansions:", packs)
             },
             getExpansionChances: function ( expansion ) {
                 for (var i = 0; i < this.tournament.packs.length; i++) {
