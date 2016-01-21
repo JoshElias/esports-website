@@ -1,5 +1,5 @@
 {
-  "name": "redbullPack",
+  "name": "redbullExpansion",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,19 +7,40 @@
     "validateUpsert": true
   },
   "properties": {
-    "redbullExpansionId": {},
-    "ownerId": {}
+    "name": {
+      "type": "string"
+    },
+    "numOfPacks": {
+      "type": "string"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "className": {
+      "type": "string"
+    }
   },
   "validations": [],
   "relations": {
+    "packs": {
+      "type": "hasMany",
+      "model": "redbullPack",
+      "foreignKey": "redbullExpansionId"
+    },
     "cards": {
       "type": "hasMany",
-      "model": "deckCard",
-      "foreignKey": "redbullPackId"
+      "model": "card",
+      "foreignKey": "redbullExpansionId",
+      "through": "redbullPackCard"
     },
-    "expansion": {
-      "type": "belongsTo",
-      "model": "redbullExpansion",
+    "rarityChances": {
+      "type": "hasMany",
+      "model": "redbullRarityChance",
+      "foreignKey": "redbullExpansionId"
+    },
+    "packCards": {
+      "type": "hasMany",
+      "model": "redbullPackCard",
       "foreignKey": "redbullExpansionId"
     }
   },

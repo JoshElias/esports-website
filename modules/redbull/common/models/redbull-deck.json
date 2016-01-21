@@ -1,0 +1,87 @@
+{
+  "name": "redbullDeck",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "isPublic": {
+      "type": "boolean",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "validators": ["unique"]
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "votes": [
+      "object"
+    ],
+    "voteScore": {
+      "type": "number"
+    },
+    "authorId": {}
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "cards": {
+      "type": "hasMany",
+      "model": "deckCard",
+      "foreignKey": "deckId",
+      "isChild": true
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "redbullDeckId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__edit__cards"
+    }
+  ],
+  "methods": {}
+}

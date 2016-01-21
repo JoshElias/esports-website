@@ -23,6 +23,7 @@ angular.module('redbull.services')
             // PUBLIC METHODS.
             // ---
             load: function () {
+                console.log("faagggot");
                 // sort cards
                 this.sortCards();
                 
@@ -75,6 +76,7 @@ angular.module('redbull.services')
                     }
                 }
 
+                console.log("pack rolls:", rolls);
                 return this.shufflePack(rolls);
             },
             calculateNumberOfPacks: function () {
@@ -86,7 +88,7 @@ angular.module('redbull.services')
                         numberPacks += this.tournament.packs[i].packs;
                     }
                 }
-                
+                console.log("numOfPacks:", numberPacks);
                 this.numberPacks = numberPacks;
             },
             generatePacksRolls: function () {
@@ -95,7 +97,8 @@ angular.module('redbull.services')
                 for (var i = 0; i < this.numberPacks; i++) {
                     packs.push(this.generatePackRolls(i));
                 }
-                
+
+                console.log("packs with roles:", packs);
                 this.packsWithRolls = packs;
             },
             sortCards: function () {
@@ -129,6 +132,7 @@ angular.module('redbull.services')
                 }
                 
                 this.cardsSorted = sorted;
+                console.log("cards sorted:", sorted);
             },
             generatePacksWithExpansions: function () {
                 var packs = [];
@@ -143,6 +147,7 @@ angular.module('redbull.services')
                 }
                 
                 this.packsWithExpansions = packs;
+                console.log("packsWithExpansions:", packs)
             },
             getExpansionChances: function ( expansion ) {
                 for (var i = 0; i < this.tournament.packs.length; i++) {

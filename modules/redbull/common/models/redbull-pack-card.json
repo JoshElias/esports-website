@@ -1,5 +1,5 @@
 {
-  "name": "redbullTournament",
+  "name": "redbullPackCard",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,12 +7,31 @@
     "validateUpsert": true
   },
   "properties": {
-    "maxNumOfDecks": {
+    "orderNum": {
       "type": "number"
-    }
+    },
+    "cardId": {},
+    "redbullPackId": {},
+    "redbullExpansionId": {}
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "card": {
+      "type": "belongsTo",
+      "model": "card",
+      "foreignKey": "cardId"
+    },
+    "pack": {
+      "type": "belongsTo",
+      "model": "redbullPack",
+      "foreignKey": "redbullPackId"
+    },
+    "expansion": {
+      "type": "belongsTo",
+      "model": "redbullExpansion",
+      "foreignKey": "redbullExpansionId"
+    }
+  },
   "acls": [{
     "principalType": "ROLE",
     "principalId": "$everyone",
