@@ -291,7 +291,6 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-
     User.resetEmail = function (email, cb) {
         cb = cb || utils.createPromiseCallback();
         var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
