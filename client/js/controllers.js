@@ -1989,7 +1989,9 @@ angular.module('app.controllers', ['ngCookies'])
                 { name: 'Tempo Storm', value: 'ts' },
                 { name: 'Hearthstone', value: 'hs' },
                 { name: 'Heroes of the Storm', value: 'hots' },
-                { name: 'Overwatch', value: 'overwatch' }
+                { name: 'Overwatch', value: 'overwatch' },
+                { name: 'Smash Bros.', value: 'sb' },
+                { name: 'World Of Warcraft', value: 'wow' }
             ];
 
             // select options
@@ -2568,10 +2570,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             // article types
             $scope.articleTypes = [
-              { name: 'Tempo Storm', value: 'ts' },
-              { name: 'Hearthstone', value: 'hs' },
-              { name: 'Heroes of the Storm', value: 'hots' },
-              { name: 'Overwatch', value: 'overwatch' }
+                { name: 'Tempo Storm', value: 'ts' },
+                { name: 'Hearthstone', value: 'hs' },
+                { name: 'Heroes of the Storm', value: 'hots' },
+                { name: 'Overwatch', value: 'overwatch' },
+                { name: 'Smash Bros.', value: 'sb' },
+                { name: 'World Of Warcraft', value: 'wow' }
             ];
 			
 			$scope.activeType = function() {
@@ -16887,7 +16891,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.setCurrentCharacter = function (character) {
                 var charAbils = _.filter(hero.abilities, function (abil) { return !!_.find(abil.charNames, function (charName) { return charName === character.name }) });
-                var h = hero;
+                var h = angular.copy(hero);
                 
                 h.abilities = charAbils;
                 $scope.setCurrentHero(h);
