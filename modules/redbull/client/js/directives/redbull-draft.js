@@ -26,6 +26,7 @@ angular.module('redbull.directives')
                     doneDurationFF = 500,
                     currentExpansion = null;
                 
+                scope.mobileCardpool = false;
                 scope.draftComplete = false;
                 scope.cardPool = [];
                 scope.expansions = [];
