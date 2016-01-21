@@ -696,6 +696,9 @@
         
         @media screen and (max-width:1330px) {
             display: none;
+            z-index: 300;
+            left: 0;
+            width: auto !important;
         }
 
         .card-pool-title,
@@ -958,6 +961,26 @@
         }/* .card-pool-cards */
         
     }/* .card-pool */
+    
+    .cardpool-mobile-toggle-btn {
+        display: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        text-transform: uppercase;
+        font-weight: 700;
+        z-index: 400;
+        border-radius: 0;
+
+        @media screen and (max-width:1330px) {
+            display: block;
+        }
+    }
+    
+    .mobile-show {
+        display: block;
+    }
+    
     
 }/* .redbull-draft */
 
