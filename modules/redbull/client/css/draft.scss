@@ -90,6 +90,18 @@
             top: 50%;
             width: 1366px;
             height: 768px;
+            
+            @media screen and (max-width:1330px) {
+                margin-left: -55%;
+            }
+            
+            @media screen and (max-width:925px) {
+                margin-left: -65%;
+            }
+            
+            @media screen and (max-width:800px) {
+                margin-left: -78%;
+            }
 
             .bg,
             .bg-glow {
@@ -141,6 +153,10 @@
                 border-right: 1px solid #000;
                 z-index: 99;
                 
+               @media screen and (max-width:1330px) {
+                    width: 200px;
+                }
+                
                 .iscroll-wrapper {
                     overflow: inherit;
                 }
@@ -181,6 +197,11 @@
                     border-top: 1px solid #000;
                     background: rgba(46,43,41,1);
                     
+                    @media screen and (max-width:1330px) {
+                        height: 30px;
+                        left: -41px;
+                    }
+                    
                     .volume-tooltip {
                         display: block;
                         position: absolute;
@@ -206,6 +227,13 @@
                         width: 282px;
                         height: 38px;
                         background: url("../img/modules/redbull/client/img/volume-slider.png") center top no-repeat;
+                        
+                         @media screen and (max-width:1330px) {
+                            -ms-transform: scale(.7); /* IE 9 */
+                            -webkit-transform: scale(.7); /* Safari */
+                            transform: scale(.7);
+                            margin: -3px auto;
+                        }
                     }
                     
                     .volume-slider {
@@ -392,36 +420,67 @@
                     height: 350px;
                     transition: transform 300ms;
                     -webkit-transition: -webkit-transform 300ms;
+                    
+                    @media screen and (max-width:1330px) {
+                        -ms-transform: scale(.7); /* IE 9 */
+                        -webkit-transform: scale(.7); /* Safari */
+                        transform: scale(.7);
+                    }
 
                     &:nth-child(1) {
                         //margin-left: -94px;
                         //margin-top: -332px;
                         margin-left: -129px;
                         margin-top: -414px;
+                        
+                        @media screen and (max-width:1330px) {
+                            margin-top: -345px;
+                        }
+                        
                     }
                     &:nth-child(2) {
                         //margin-left: -296px;
                         //margin-top: -261px;
                         margin-left: -374px;
                         margin-top: -288px;
+                        
+                        @media screen and (max-width:1330px) {
+                            margin-left: -301px;
+                            margin-top: -256px;
+                        }
                     }
                     &:nth-child(3) {
                         //margin-left: 121px;
                         //margin-top: -254px;
                         margin-left: 121px;
                         margin-top: -288px;
+                                                
+                        @media screen and (max-width:1330px) {
+                            margin-left: 50px;
+                            margin-top: -256px;
+                        }
                     }
                     &:nth-child(4) {
                         //margin-left: -210px;
                         //margin-top: 26px;
                         margin-left: -278px;
                         margin-top: 49px;
+                        
+                        @media screen and (max-width:1330px) {
+                            margin-left: -220px;
+                            margin-top: -21px;
+                        }
                     }
                     &:nth-child(5) {
                         //margin-left: 25px;
                         //margin-top: 26px;
                         margin-left: 25px;
                         margin-top: 49px;
+                        
+                        @media screen and (max-width:1330px) {
+                            margin-left: -33px;
+                            margin-top: -21px;
+                        }
                     }
 
                     .card-glow {
@@ -478,6 +537,12 @@
                     &:not(.flipped-left):not(.flipped-right):hover {
                         transform: scale(1.15) rotate(0.0001deg);
                         -webkit-transform: scale(1.15) rotate(0.0001deg);
+                        
+                             @media screen and (max-width:1330px) {
+                                    -ms-transform: scale(.7); /* IE 9 */
+                                    -webkit-transform: scale(.7); /* Safari */
+                                    transform: scale(.7);
+                             }
 
                         .card-glow {
                             &.rare {
@@ -531,8 +596,7 @@
                         
                         &.soulbound {
                             background: url("../img/modules/redbull/client/img/back-soulbound.png") no-repeat;
-                        }
-                        
+                        }    
                     }
 
                     .card-front {
@@ -547,6 +611,7 @@
                         -webkit-transform: perspective(1000px) rotateY(180deg);
                         transition: transform 800ms ease-in-out 300ms;
                         -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
+                        
 
                         img {
                             width: 251px;
@@ -627,6 +692,10 @@
         background: rgba(0,0,0,.4);
         border-left: 1px solid #000;
         z-index: 99;
+        
+        @media screen and (max-width:1330px) {
+            display: none;
+        }
 
         .card-pool-title,
         .card-pool-button {
