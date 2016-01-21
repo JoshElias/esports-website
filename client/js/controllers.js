@@ -16860,7 +16860,8 @@ angular.module('app.controllers', ['ngCookies'])
 //            console.log(hero);
 
             $scope.setCurrentHero(hero);
-            $scope.currentCharacter = $scope.currentHero.characters[0];
+//            $scope.currentCharacter = $scope.currentHero.characters[0];
+            
             $scope.currentAbility = false;
             $scope.level = 1;
 
@@ -16885,9 +16886,14 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.setCurrentCharacter = function (character) {
+                var charAbils = _.filter(hero.abilities, function (abil) { return !!_.find(abil.charNames, function (charName) { return charName === character.name }) });
+                var h = hero;
+                
+                h.abilities = charAbils;
+                $scope.setCurrentHero(h);
                 $scope.currentCharacter = character;
             };
-
+            $scope.setCurrentCharacter($scope.currentHero.characters[0]);
             $scope.getAbilities = function () {
                 var abilities = $scope.getCurrentHero().abilities,
                     out = [];
