@@ -54,7 +54,7 @@
                 <input 
                     type="checkbox"
                     value="char"
-                    ng-checked="currentAbility.indexOf(char) > -1"
+                    ng-checked="currentAbility.charNames.indexOf(char.name) > -1"
                     ng-click="characterAbilToggle(currentAbility, char)"
                 > {{char.name}}
             </label>

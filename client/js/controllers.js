@@ -12801,8 +12801,18 @@ angular.module('app.controllers', ['ngCookies'])
               }
           };
 
-            $scope.characterAbilToggle = function () {
+             $scope.characterAbilToggle = function (currentAbility, char) {
+                if (_.isUndefined(currentAbility.charNames))
+                    currentAbility.charNames = [];
                 
+                var item = _.find(currentAbility.charNames, function (val) { return val === char.name; });
+                
+                if (!item) {
+                    currentAbility.charNames.push(char.name);
+                } else {
+                    var idx = currentAbility.charNames.indexOf(item);
+                    currentAbility.charNames.splice(idx, 1);
+                }
             }
             
           // talents
@@ -13142,8 +13152,6 @@ angular.module('app.controllers', ['ngCookies'])
                     var idx = currentAbility.charNames.indexOf(item);
                     currentAbility.charNames.splice(idx, 1);
                 }
-                
-                console.log(currentAbility);
             }
           
             // talents
