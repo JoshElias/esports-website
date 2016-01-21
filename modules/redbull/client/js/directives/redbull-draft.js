@@ -227,7 +227,7 @@ angular.module('redbull.directives')
                                     scope.playAudio('pack_release');
 
                                     // move pack wrapper to bottom
-                                    $(pack).closest('.pack-wrapper').css('z-index', '100');
+                                    $(pack).closest('.expansion-wrapper').css('z-index', '100');
 
                                     // fade out glowing background
                                     if ($('.pack.ui-draggable-dragging').length === 1) {
@@ -258,7 +258,7 @@ angular.module('redbull.directives')
                             scope.playAudio('pack_grab');
 
                             // move pack wrapper to top
-                            $(pack).closest('.pack-wrapper').css('z-index', '103');
+                            $(pack).closest('.expansion-wrapper').css('z-index', '103');
 
                             // stop shaking the pack
                             $(pack).trigger('stopRumble');
