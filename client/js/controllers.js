@@ -11044,7 +11044,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.metaservice.setOg('https://tempostorm.com/articles');
 
             // article filtering
-            $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch'];
+            $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
             $scope.articleFilter = [];
             $scope.toggleArticleFilter = function (type) {
                 if ($scope.isArticleFilter(type)) {
@@ -15030,8 +15030,9 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.getTierTalent = function (hero, guide, tier, isFeatured) {
               var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
-              
-              return (t) ? t.talent : { className: 'missing', name: "Missing Talent" };
+              var out = (t.talent.className !== '__missing') ? t.talent : { className: '__missing', name: "Missing Talent" };
+                
+              return out;
 //              return ($scope.topGuidesTalents[guide.talentTiers[hero.id][tier]] === undefined) ? { className: 'missing', name: "Missing Talent" } : $scope.topGuidesTalents[guide.talentTiers[hero.id][tier]];
             }
 
@@ -15318,7 +15319,7 @@ angular.module('app.controllers', ['ngCookies'])
 //              console.log(hero);
               var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
               var out = (t.talent.className !== '__missing') ? t.talent : { className: '__missing', name: "Missing Talent" };
-              
+                
               return out;
 //              return ($scope.topGuidesTalents[guide.talentTiers[hero.id][tier]] === undefined) ? { className: 'missing', name: "Missing Talent" } : $scope.topGuidesTalents[guide.talentTiers[hero.id][tier]];
             }
@@ -15496,8 +15497,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles', 'EventService',
         function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles, EventService) {
-            console.log('hi');
-
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 if ($scope.guide.premium.isPremium) {
                     User.isInRoles({
@@ -15663,7 +15662,16 @@ angular.module('app.controllers', ['ngCookies'])
               var out = [];
               var missing = { className: "missing" };
               var hero = $scope.getCurrentHero();
-              var heroTals = _.filter($scope.guide.guideTalents, function (val) { return (val.guideHeroId === hero.id); });
+              var heroTals = _.filter($scope.guide.guideTalents, function (val) {
+                  if (val.talent.className === '__missing') {
+                      val.talent.name = "Missing Talent"
+                      val.talent.description = "Seems like this talent has been removed."
+                  }; 
+                  console.log(val);
+                  return (val.guideHeroId === hero.id); 
+              });
+                
+                console.log(heroTals);
               
               out = heroTals;
               
