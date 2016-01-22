@@ -51,6 +51,7 @@
     <script src="./vendor/async/dist/async.min.js"></script>
     <script src="./vendor/jrumble/jquery.jrumble.min.js"></script>
     <script src="./js/vendor/iscroll.js"></script>
+    <script src="./vendor/jqueryui-touch-punch/jquery.ui.touch-punch.min.js"></script>
 
     <!-- angular -->
     <script src="./vendor/angular/angular.js"></script>

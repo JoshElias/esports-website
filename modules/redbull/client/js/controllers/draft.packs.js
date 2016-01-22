@@ -97,6 +97,11 @@ angular.module('redbull.controllers')
     $scope.isLoading = true;
     $scope.isSuccessful = false;
     $scope.percentLoaded = 0;
+    
+    $scope.getIsLoading = function () {
+        return $scope.isLoading;
+    };
+    
     // packs
     $scope.currentPack = {};
     $scope.packs = DraftPacks.getPacks(cards, $scope.tournament);

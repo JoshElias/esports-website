@@ -94,6 +94,7 @@ angular.module('redbull.directives')
                 
                 // play audio clip
                 scope.playAudio = function ( audioName ) {
+                    if (scope.volume <= 3) { return false; }
                     var audio = new Audio();
                     audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
                     audio.load();
@@ -439,7 +440,7 @@ angular.module('redbull.directives')
                         scope.playAudio('done_fade');
                         
                         // fade out done button
-                        $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF));
+                        $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration / 2 : fadeDurationFF));
                         
                         // remove blur
                         el.removeClass('blurred');
