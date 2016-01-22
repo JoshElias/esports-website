@@ -23,7 +23,6 @@ angular.module('redbull.services')
             // PUBLIC METHODS.
             // ---
             load: function () {
-
                 // sort cards
                 this.sortCards();
 
