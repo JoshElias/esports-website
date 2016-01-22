@@ -1587,7 +1587,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.cardPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.cardPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateCards(page, perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, count) {
@@ -2903,7 +2903,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.articlePagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateArticles(page, perpage, $scope.search, function (err, count) {
@@ -3057,7 +3057,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.snapshotPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.snapshotPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -5715,7 +5715,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.vodPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.vodPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateVods(page, perpage, $scope.search, function (err, count) {
@@ -5918,7 +5918,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.deckPagination = AjaxPagination.new($scope.perpage, $scope.total, function(page, perpage) {
+            $scope.deckPagination = AjaxPagination.new(paginationParams, function(page, perpage) {
                 var d = $q.defer();
                 updateDecks(page, perpage, $scope.search, function (err, count) {
                     if (err) return console.log('err: ', err);
@@ -7889,7 +7889,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.userPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.userPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateUsers(page, perpage, $scope.search, function (err, count) {
@@ -8242,7 +8242,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.pollPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.pollPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updatePolls(page, perpage, $scope.search, function (err, count) {
@@ -11238,67 +11238,6 @@ angular.module('app.controllers', ['ngCookies'])
                         return callback(count.count)
                     }
                 });
-                
-                
-                
-//                $scope.fetching = true;
-
-//                var options = {},
-//                    countOptions = {},
-//                    pattern = '/.*'+search+'.*/i';
-//
-//                countOptions['where'] = {
-//                    isActive: true,
-//                    articleType: {
-//                        inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
-//                    }
-//                };
-//
-//                options.filter = {
-//                    where: {
-//                        isActive: true,
-//                        articleType: {
-//                            inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
-//                        }
-//                    },
-//                    fields: {
-//                        content: false,
-//                        votes: false
-//                    },
-//                    include: ['author'],
-//                    order: "createdDate DESC",
-//                    skip: ((page*perpage)-perpage),
-//                    limit: 12
-//                };
-//
-//                if ($scope.search.length > 0) {
-//                    options.filter.where['or'] = [
-//                        { title: { regexp: pattern } },
-//                        { description: { regexp: pattern } },
-//                        { content: { regexp: pattern } }
-//                    ];
-//                    countOptions.where.or = [
-//                        { title: { regexp: pattern } },
-//                        { description: { regexp: pattern } },
-//                        { content: { regexp: pattern } }
-//                    ];
-//                }
-//
-//                Article.count(countOptions, function (count) {
-//                    Article.find(options, function (articles) {
-//                        $scope.articlePagination.total = count.count;
-//                        $scope.articlePagination.page = page;
-//                        $scope.articlePagination.perpage = perpage;
-//
-//                        $timeout(function () {
-//                            $scope.articles = articles;
-//                            $scope.fetching = false;
-//                            if (callback) {
-//                                return callback(count.count);
-//                            }
-//                        });
-//                    });
-//                });
             }
 
             // page flipping
@@ -12775,7 +12714,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.heroPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.heroPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateHeroes(page, perpage, $scope.search, function (err, count) {
@@ -13665,7 +13604,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.talentPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.talentPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateTalents(page, perpage, $scope.search, function (err, count) {
@@ -13827,7 +13766,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.mapPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.mapPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateMaps(page, perpage, $scope.search, function (err, count) {
@@ -14008,7 +13947,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.guidePagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.guidePagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateGuides(page, perpage, $scope.search, function (err, count) {
@@ -15015,7 +14954,8 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService',
         function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService) {
-
+            
+            
             // data
             $scope.heroes = dataHeroes;
             $scope.maps = dataMaps;
@@ -15243,9 +15183,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'paginationParams', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
-        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, paginationParams, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
-            console.log('why hello there');
+    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'paginationParams', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS', 'StateParamHelper',
+        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, paginationParams, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS, StateParamHelper) {
+            console.log('dataGuidesCommunity:', dataCommunityGuides);
+            console.log('communityGuideCount:', communityGuideCount);
+            console.log('dataGuidesFeatured:', dataTempostormGuides);
+            console.log('tempostormGuideCount:', tempostormGuideCount);
+            
             $scope.tempostormGuides = dataTempostormGuides;
 //            console.log('dataTempostormGuides:', dataTempostormGuides);
 //            $scope.tempostormGuideTalents = tempostormTalents;
@@ -15273,6 +15217,19 @@ angular.module('app.controllers', ['ngCookies'])
 
             function doQuery (fnCallback) {
               initializing = true;
+              
+              StateParamHelper.updateStateParams({ 
+                  tsp: 1,
+                  comp: 1,
+                  r: $scope.filters.roles,
+                  u: $scope.filters.universes,
+                  h: !_.isEmpty($scope.filters.heroes) ? $scope.filters.heroes[0].name : [],
+                  m: $scope.filters.map ? $scope.filters.map.name : '',
+                  s: $scope.filters.search
+              });
+                
+                console.log('$scope.filters:', $scope.filters);
+                
               // generate filters
               var guideFilters = [];
               for (var i = 0; i < $scope.filters.heroes.length; i++) {
@@ -15563,10 +15520,18 @@ angular.module('app.controllers', ['ngCookies'])
 //            });
 //        }
 //            console.log('tempostormGuideCount:', tempostormGuideCount);
+            console.log('paginationParams.tsParams:', paginationParams.tsParams);
             $scope.tempostormPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
+                console.log('page:', page);
+                
+                    StateParamHelper.updateStateParams({ 
+                        tsp: $scope.tempostormPagination.page,
+                        s: $scope.filters.search
+                    });
+                
                     var d = $q.defer();
-
+                
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                       doGetHeroMapGuides(page, perpage, $scope.search, $scope.filters, true, function(err, guides, count) {
                         if (err) return d.resolve(err);
@@ -15602,8 +15567,14 @@ angular.module('app.controllers', ['ngCookies'])
             );
 
 //            console.log('communityGuideCount:', communityGuideCount);
-            $scope.communityPagination = AjaxPagination.new(paginationParams.tsParams,
+//            console.log('paginationParams.comParams:', paginationParams.comParams);
+            $scope.communityPagination = AjaxPagination.new(paginationParams.comParams,
                 function (page, perpage) {
+                
+                    StateParamHelper.updateStateParams({ 
+                        comp: $scope.communityPagination.page,
+                        s: $scope.filters.search
+                    });
                     var d = $q.defer();
 
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
@@ -15655,6 +15626,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles', 'EventService',
         function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles, EventService) {
+            
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 if ($scope.guide.premium.isPremium) {
                     User.isInRoles({

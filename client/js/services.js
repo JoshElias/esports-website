@@ -3067,23 +3067,32 @@ angular.module('app.services', [])
                 });
             },
             getHeroMapGuides: function (filters, isFeatured, limit, page, finalCallback) {
+                console.log('query serv filters:', filters);
+                console.log('isFeatured:', isFeatured);
+                console.log('limit:', limit);
+                console.log('page:', page);
                 var selectedHeroes = filters.heroes;
-
+                console.log('selectedHeroes:', selectedHeroes);
                 if (_.isEmpty(selectedHeroes)) {
                     return;
                 }
-
+                
+                console.log('here1');
+                
                 var where = {}
 
                 if (isFeatured !== null) {
+                    console.log('here2');
                     where.isFeatured = isFeatured
                 }
-
+                
                 async.waterfall([
                     //get selected heroes
                     function (seriesCallback) {
+                        
                         var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
-
+                        console.log('selectedHeroIds:', selectedHeroIds);
+                        console.log('here3');
                         Hero.find({
                             filter: {
                                 fields: ["id"],
@@ -3120,6 +3129,8 @@ angular.module('app.services', [])
                     },
                     //filter heroes
                     function (heroes, seriesCallback) {
+                        console.log('heroes:', heroes);
+                        console.log('here4');
                         //filter out guides by map className
                         try {
                             var selectedGuides = [];
@@ -3142,6 +3153,7 @@ angular.module('app.services', [])
                     },
                     //populate heroes, talents
                     function (selectedGuideIds, seriesCallback) {
+                        console.log('here5');
                         async.waterfall([
                             function (waterCallback) {
                                 Guide.find({
@@ -3210,6 +3222,8 @@ angular.module('app.services', [])
                                 })
                             },
                             function (guides, waterCallback) {
+                                console.log('guides:', guides);
+                                console.log('here6');
                                 Guide.count({
                                     where: {
                                         id: { inq: selectedGuideIds },
