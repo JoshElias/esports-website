@@ -8,7 +8,6 @@ var app = angular.module('app', [
     'angular-iscroll',
     'angularMoment',
     'angularPayments',
-    'angular-google-adsense',
     'youtube-embed',
     'dndLists',
     'ngCookies',
