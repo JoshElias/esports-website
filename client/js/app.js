@@ -1745,14 +1745,78 @@ var app = angular.module('app', [
                 }
             })
             .state('app.hots.guides.list', {
-                url: '?p&s&t&h&m&a&o',
+                url: '?tsp&comp&r&h&u&m&s',
                 views: {
                     guides: {
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            paginationParams: ['$stateParams', function($stateParams) {
-                                var pattern = '/.*'+$stateParams.s+'.*/i';
+                            paginationFilters: ['$stateParams', '$q', 'Hero', 'Map', function($stateParams, $q, Hero, Map) {
+                                var filters = {
+                                    roles: $stateParams.r ? new Array($stateParams.r) : [],
+                                    universes: $stateParams.u ? new Array($stateParams.u) : [],
+                                    search: $stateParams.s ? $stateParams.s : '',
+                                    heroes: $stateParams.h ? new Array($stateParams.h) : [],
+                                    map: $stateParams.m || undefined
+                                };
+                                
+                                var d = $q.defer();
+                                
+                                async.waterfall([
+                                    function (waterCB) {
+                                        if (!_.isEmpty(filters.heroes)) {
+                                            Hero.find({
+                                                filter: {
+                                                    where: {
+                                                        name: {
+                                                            inq: filters.heroes
+                                                        }
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (heroes) {
+                                                var heroArr = new Array(heroes[0]);
+                                                console.log('heroArr:', heroArr);
+                                                filters.heroes = heroArr;
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (filters.map) {
+                                            Map.findOne({
+                                                filter: {
+                                                    where: {
+                                                        name: filters.map
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (map) {
+                                                console.log('map:', map);
+                                                filters.map = map;
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                ], function(err) {
+                                    if (err) return console.log('pagination query err: ', err);
+                                    d.resolve(filters);
+                                });
+                                
+                                return d.promise;
+                            }],
+                            paginationParams: ['$stateParams', 'paginationFilters', 'Map', function($stateParams, paginationFilters, Map) {
+                                console.log('paginationFilters:', paginationFilters);
                                 
                                 var tsWhere = {
                                     isFeatured: true
@@ -1763,6 +1827,7 @@ var app = angular.module('app', [
                                 };
                                 
                                 return {
+                                    guideFilters: paginationFilters,
                                     tsParams: {
                                         page: parseInt($stateParams.tsp) || 1,
                                         perpage: 4,
@@ -1878,22 +1943,70 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            dataCommunityGuides: ['paginationParams', 'Guide', function (paginationParams, Guide) {
-                              return Guide.find({
-                                filter: {
-                                  fields: paginationParams.comParams.fields,
-                                  where: paginationParams.comParams.where,
-                                  order: paginationParams.comParams.order,
-                                  include: paginationParams.comParams.include,
-                                  skip: (paginationParams.comParams.page * paginationParams.comParams.perpage) - paginationParams.comParams.perpage,
-                                  limit: paginationParams.comParams.perpage,
-                                }
-                              }).$promise;
+                            dataCommunityGuides: ['paginationParams', 'HOTSGuideQueryService', '$q', 'Guide', function (paginationParams, HOTSGuideQueryService, $q, Guide) {
+                                
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        d.resolve(data);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        d.resolve(data);
+                                      });
+                                      
+                                  } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      
+                                      HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
+                                          d.resolve(data);
+                                      });
+//                                    
+                                  } else {
+                                      
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                          d.resolve(data);
+                                      });
+                                  }
+                                
+                                return d.promise;
                             }],
-                            communityGuideCount: ['paginationParams', 'Guide', function(paginationParams, Guide) {
-                                return Guide.count({
-                                    where: paginationParams.comParams.where
-                                }).$promise;
+                            communityGuideCount: ['paginationParams', 'HOTSGuideQueryService', '$q', 'StateParamHelper', 'Guide', function(paginationParams, HOTSGuideQueryService, $q, StateParamHelper, Guide) {
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        paginationParams.comParams.total = count.count;
+                                        d.resolve(count);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        paginationParams.comParams.total = count.count;
+                                        d.resolve(count);
+                                      });
+                                      
+                                  } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      
+                                      HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
+                                          paginationParams.comParams.total = count.count;
+                                          d.resolve(count);
+                                      });
+//                                    
+                                  } else {
+                                      
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false,  paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                          paginationParams.comParams.total = count.count;
+                                          d.resolve(count);
+                                      });
+                                  }
+                                
+                                return d.promise;
                             }],
                             dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                               var guideType = $stateParams.t || 'all',
@@ -1968,23 +2081,72 @@ var app = angular.module('app', [
                                   console.log("error", err);
                               });
                             }],
-                            dataTempostormGuides: ['paginationParams', 'Guide', function (paginationParams, Guide) {
-                              return Guide.find({
-                                filter: {
-                                  order: paginationParams.tsParams.order,
-                                  limit: paginationParams.tsParams.perpage,
-                                  where: paginationParams.tsParams.where,
-                                  fields: paginationParams.tsParams.fields,
-                                  include: paginationParams.tsParams.include,
-                                  skip: (paginationParams.tsParams.page * paginationParams.tsParams.perpage) - paginationParams.tsParams.perpage
-                                }
-                              })
-                              .$promise;
+                            dataTempostormGuides: ['paginationParams', '$q', 'HOTSGuideQueryService', 'Guide', function (paginationParams, $q, HOTSGuideQueryService, Guide) {
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        d.resolve(data);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        d.resolve(data);
+                                      });
+                                      
+                                  } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      console.log('else if 2');
+                                      
+                                      HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function (err, data, count) {
+                                          d.resolve(data);
+                                      });
+//                                    
+                                  } else {
+                                      console.log('else');
+                                      
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                          d.resolve(data);
+                                      });
+                                  }
+                                
+                                return d.promise;
                             }],
-                            tempostormGuideCount: ['paginationParams', 'Guide', function(paginationParams, Guide) {
-                                return Guide.count({
-                                    where: paginationParams.tsParams.where
-                                }).$promise;
+                            tempostormGuideCount: ['paginationParams', '$q', 'HOTSGuideQueryService', 'StateParamHelper', 'Guide', function(paginationParams, $q, HOTSGuideQueryService, StateParamHelper, Guide) {
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        paginationParams.tsParams.total = count.count;
+                                        d.resolve(count);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        paginationParams.tsParams.total = count.count;
+                                        d.resolve(count);
+                                      });
+                                      
+                                  } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      
+                                      HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        paginationParams.tsParams.total = count.count;
+                                        d.resolve(count);
+                                      });
+                                      
+                                  } else {
+                                      
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        paginationParams.tsParams.total = count.count;
+                                        d.resolve(count);
+                                      });
+                                      
+                                  }
+                                
+                                return d.promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
@@ -3696,6 +3858,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: ['id', 'title', 'createdDate'],
@@ -3705,17 +3868,25 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            articlesCount: ['Article', function (Article) {
-                                return Article.count({}).$promise;
+                            articlesCount: ['Article', 'StateParamHelper', 'paginationParams', function (Article, StateParamHelper, paginationParams) {
+                                return Article.count({})
+                                .$promise
+                                .then(function (artCount) {
+                                    StateParamHelper.validatePage(paginationParams.page, artCount.count, paginationParams.perpage);
+                                    
+                                    paginationParams.total = artCount.count;
+                                    
+                                    return artCount.count;
+                                });
                             }],
                             articles: ['Article', 'paginationParams', function (Article, paginationParams) {
                                 var options = {
-                                        filter: {
-                                            limit: paginationParams.perpage,
-                                            order: "createdDate DESC",
-                                            fields: paginationParams.options.filter.fields
-                                        }
-                                    };
+                                    filter: {
+                                        limit: paginationParams.perpage,
+                                        order: paginationParams.options.filter.order,
+                                        fields: paginationParams.options.filter.fields
+                                    }
+                                };
 
                                 return Article.find(options)
                                 .$promise
@@ -3723,7 +3894,7 @@ var app = angular.module('app', [
                                     return data;
                                 });
                             }],
-                            authors: ['User', function(User){
+                            authors: ['User', function(User) {
                                 var options = {
                                     filter: {
                                         limit: 10,
@@ -3734,7 +3905,6 @@ var app = angular.module('app', [
                                         }
                                     }
                                 }
-                                
                                 
                                 return User.find(options)
                                 .$promise
@@ -3886,19 +4056,26 @@ var app = angular.module('app', [
                                     page: 1,
                                     perpage: 50,
                                     search: '',
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: ["id", "name", "playerClass", "description",]
                                         },
                                         where: {
                                             isPublic: true
-                                        }
+                                        },
+                                        order: "createdDate DESC",
                                     }
                                 };
                             }],
 
-                            decksCount: ['Deck', function(Deck) {
-                                return Deck.count({}).$promise;
+                            decksCount: ['Deck', 'paginationParams', function(Deck, paginationParams) {
+                                return Deck.count({}).$promise
+                                .then(function (deckCount) {
+                                    paginationParams.total = deckCount.count;
+                                    
+                                    return deckCount.count;
+                                });
                             }],
 
                             decks: ['Deck', 'paginationParams', function (Deck, paginationParams) {
@@ -4261,6 +4438,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -4275,12 +4453,11 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            cardsCount: ['Card', function(Card) {
+                            cardsCount: ['Card', 'paginationParams', function(Card, paginationParams) {
                                 return Card.count({})
                                 .$promise
                                 .then(function (cardCount) {
-                                    0-
-                                      ('cardCount: ', cardCount);
+                                    paginationParams.total = cardCount.count;
                                     return cardCount;
                                 })
                                 .catch(function (err) {
@@ -4379,6 +4556,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -4391,10 +4569,11 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            heroesCount: ['Hero', function (Hero) {
+                            heroesCount: ['Hero', 'paginationParams', function (Hero, paginationParams) {
                                 return Hero.count({})
                                 .$promise
                                 .then(function (data) {
+                                    paginationParams.total = data.count;
                                     return data.count;
                                 })
                             }],
@@ -4522,10 +4701,11 @@ var app = angular.module('app', [
                                     return data;
                                 });
                             }],
-                            talentCount: ['Talent', function(Talent) {
+                            talentCount: ['Talent', 'paginationParams', function(Talent, paginationParams) {
                                 return Talent.count()
                                 .$promise
                                 .then(function (talentCount) {
+                                    paginationParams.total = talentCount.count;
                                     return talentCount.count;
                                 });
                             }]
@@ -4594,6 +4774,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -4615,10 +4796,11 @@ var app = angular.module('app', [
                                     return data;
                                 });
                             }],
-                            mapCount: ['Map', function(Map) {
+                            mapCount: ['Map', 'paginationParams', function(Map, paginationParams) {
                                 return Map.count()
                                 .$promise
                                 .then(function (mapCount) {
+                                    paginationParams.total = mapCount.count;
                                     return mapCount.count;
                                 });
                             }]
@@ -4686,6 +4868,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -4703,10 +4886,11 @@ var app = angular.module('app', [
                             )
                             .$promise;
                             }],
-                            guideCount: ['Guide', function(Guide) {
+                            guideCount: ['Guide', 'paginationParams', function(Guide, paginationParams) {
                               return Guide.count()
                               .$promise
                               .then(function (guideCount) {
+                                paginationParams.total = guideCount.count;
                                 return guideCount.count;
                               });
                             }]
@@ -5271,6 +5455,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    tota: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -5285,11 +5470,12 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            usersCount: ['User', function (User) {
+                            usersCount: ['User', 'paginationParams', function (User, paginationParams) {
                                 return User.count({})
                                 .$promise
                                 .then(function (usersCount) {
 //                                    console.log('usersCount: ', usersCount);
+                                    paginationParams.total = usersCount.count;
                                     return usersCount;
                                 })
                                 .catch(function (err) {
@@ -5462,10 +5648,11 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            pollsCount: ['Poll', function (Poll) {
+                            pollsCount: ['Poll', 'paginationParams', function (Poll, paginationParams) {
                                 return Poll.count({})
                                 .$promise
                                 .then(function (pollCount) {
+                                    paginationParams.total = pollCount.count;
                                     return pollCount;
                                 })
                                 .catch(function (err) {
@@ -5551,6 +5738,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             limit: 50,
@@ -5560,8 +5748,15 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            snapshotsCount: ['Snapshot', function (Snapshot) {
-                                return Snapshot.count({}).$promise;
+                            snapshotsCount: ['Snapshot', 'paginationParams', 'StateParamHelper', function (Snapshot, paginationParams, StateParamHelper) {
+                                return Snapshot.count({}).$promise
+                                .then(function (hsSnapshotCount) {
+                                    StateParamHelper.validatePage(paginationParams.page, hsSnapshotCount.count, paginationParams.perpage);
+                                    
+                                    paginationParams.total = hsSnapshotCount.count;
+                                    
+                                    return hsSnapshotCount.count;
+                                });
                             }],
                             snapshots: ['Snapshot', 'paginationParams', function (Snapshot, paginationParams) {
                                 return Snapshot.find(
@@ -6053,6 +6248,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: perpage,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             limit: perpage,
@@ -6062,8 +6258,12 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            vodsCount: ['Vod', function (Vod) {
-                                return Vod.count({}).$promise;
+                            vodsCount: ['Vod', 'paginationParams', function (Vod, paginationParams) {
+                                return Vod.count({}).$promise
+                                .then(function (vodCount) {
+                                    paginationParams.total = vodCount.count;
+                                    return vodCount;
+                                });
                             }],
                             vods: ['Vod', 'paginationParams', function(Vod, paginationParams) {
                                 var options = {
