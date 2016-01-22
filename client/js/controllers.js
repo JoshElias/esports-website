@@ -2901,7 +2901,9 @@ angular.module('app.controllers', ['ngCookies'])
 				{ name: 'Tempo Storm', value: 'ts' },
 				{ name: 'Hearthstone', value: 'hs' },
 				{ name: 'Heroes of the Storm', value: 'hots' },
-				{ name: 'Overwatch', value: 'overwatch' }
+				{ name: 'Overwatch', value: 'overwatch' },
+				{ name: 'World of Warcraft', value: 'wow' },
+				{ name: 'Smash Bros', value: 'sb' }
 			];
 			
 			$scope.articleAuthors = [
