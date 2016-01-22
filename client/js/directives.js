@@ -1687,4 +1687,35 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/overwatch.heroes.ability.edit.html'
     };
 })
+.directive('tsAd', function () {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope : {
+            adClient : '@',
+            adSlot : '@',
+            inlineStyle : '@',
+            region: '@'
+        },
+        templateUrl: tpl + 'views/frontend/directives/ads/ad.responsive.html',
+        controller: ['$scope', '$state', '$timeout', function ($scope, $state, $timeout) {
+            var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+            var isAlreadyLoaded = false;
+            
+            if (!isAlreadyLoaded) {
+                var s = document.createElement('script');
+                s.type = 'text/javascript';
+                s.src = url;
+                s.async = true;
+                document.body.appendChild(s);
+
+                isAlreadyLoaded = true;
+            }
+            
+            $timeout(function(){
+                 (window.adsbygoogle = window.adsbygoogle || []).push({});
+            });
+        }]
+    }
+})
 ;
