@@ -83,25 +83,9 @@
         }
 
         .draft-wrapper {
-            margin-left: -683px;
-            margin-top: -384px;
             position: absolute;
             left: 50%;
-            top: 50%;
-            width: 1366px;
-            height: 768px;
-            
-            @media screen and (max-width:1330px) {
-                margin-left: -55%;
-            }
-            
-            @media screen and (max-width:925px) {
-                margin-left: -65%;
-            }
-            
-            @media screen and (max-width:800px) {
-                margin-left: -78%;
-            }
+            top: 47%;
 
             .bg,
             .bg-glow {
@@ -422,67 +406,109 @@
                     transition: transform 300ms;
                     -webkit-transition: -webkit-transform 300ms;
                     
-                    @media screen and (max-width:1330px) {
-                        -ms-transform: scale(.7); /* IE 9 */
-                        -webkit-transform: scale(.7); /* Safari */
-                        transform: scale(.7);
-                    }
-
                     &:nth-child(1) {
                         //margin-left: -94px;
                         //margin-top: -332px;
                         margin-left: -129px;
-                        margin-top: -414px;
-                        
-                        @media screen and (max-width:1330px) {
-                            margin-top: -345px;
-                        }
-                        
+                        margin-top: -414px;            
                     }
                     &:nth-child(2) {
                         //margin-left: -296px;
                         //margin-top: -261px;
                         margin-left: -374px;
                         margin-top: -288px;
-                        
-                        @media screen and (max-width:1330px) {
-                            margin-left: -301px;
-                            margin-top: -256px;
-                        }
                     }
                     &:nth-child(3) {
                         //margin-left: 121px;
                         //margin-top: -254px;
                         margin-left: 121px;
                         margin-top: -288px;
-                                                
-                        @media screen and (max-width:1330px) {
-                            margin-left: 50px;
-                            margin-top: -256px;
-                        }
                     }
                     &:nth-child(4) {
                         //margin-left: -210px;
                         //margin-top: 26px;
                         margin-left: -278px;
                         margin-top: 49px;
-                        
-                        @media screen and (max-width:1330px) {
-                            margin-left: -220px;
-                            margin-top: -21px;
-                        }
                     }
                     &:nth-child(5) {
                         //margin-left: 25px;
                         //margin-top: 26px;
                         margin-left: 25px;
                         margin-top: 49px;
+                    }
+                    
+                    
+                    @media screen and (max-width:1330px) {
+                        -ms-transform: scale(.7); /* IE 9 */
+                        -webkit-transform: scale(.7); /* Safari */
+                        transform: scale(.7);
                         
-                        @media screen and (max-width:1330px) {
+                        &:nth-child(1) {
+                            margin-top: -345px;
+                        }
+                        
+                    
+                        &:nth-child(2) {
+                            margin-left: -301px;
+                            margin-top: -256px;
+                        }
+                    
+                        &:nth-child(3) {
+                            margin-left: 45px;
+                            margin-top: -256px;
+                        }
+                    
+                        &:nth-child(4) {
+                            margin-left: -228px;
+                            margin-top: -21px;
+                        }
+                    
+                        &:nth-child(5) {
                             margin-left: -33px;
                             margin-top: -21px;
                         }
+                        
+                        @media screen and (max-height:656px) {
+                            
+                        -ms-transform: scale(.65); /* IE 9 */
+                        -webkit-transform: scale(.65); /* Safari */
+                        transform: scale(.65);
+                            
+                            &:nth-child(1) {
+                                margin-top: -190px;
+                            }
+
+
+                            &:nth-child(2) {
+                                margin-top: -190px;
+                                margin-left: -413px;
+
+                            }
+
+                            &:nth-child(3) {
+                                margin-top: -190px;
+                                margin-left: 159px;   
+                            }
+
+                            &:nth-child(4) {
+                                margin-top: -190px;
+                                margin-left: -270px;
+
+                            }
+
+                            &:nth-child(5) {
+                                margin-top: -190px;
+                                margin-left: 16px;
+
+                            }
+                            
+                            
+                        }
                     }
+                    
+                    
+
+                    
 
                     .card-glow {
                         position: absolute;
@@ -543,8 +569,14 @@
                                     -ms-transform: scale(.7); /* IE 9 */
                                     -webkit-transform: scale(.7); /* Safari */
                                     transform: scale(.7);
+                                 
+                                 @media screen and (max-height:656px) {
+                                    -ms-transform: scale(.65); /* IE 9 */
+                                    -webkit-transform: scale(.65); /* Safari */
+                                    transform: scale(.65);
+                                 }
                              }
-
+                        
                         .card-glow {
                             &.rare {
                                 box-shadow: 0 0 75px #0066ff;
@@ -694,7 +726,7 @@
         border-left: 1px solid #000;
         z-index: 99;
         
-        @media screen and (max-width:1330px) {
+        @media screen and (max-width:1200px) {
             display: none;
             z-index: 300;
             left: 0;
@@ -773,86 +805,106 @@
                 border-bottom: 1px solid #000;
                 -webkit-transition: opacity .3s linear;
                 transition: opacity .3s linear;
-                background: #262626;
+                background: rgba(38, 38, 38, .5);
                 
                 &.druid {
                     background: rgba(255, 125, 10, .5);
                     
-                    &:hover {
-                        background: rgba(255, 125, 10, .8);
+                    @media screen and (min-width: 1200px) {
+                        &:hover {
+                            background: rgba(255, 125, 10, .8);
+                        }
                     }
                 }
                 
                 &.hunter {
                     background: rgba(171, 212, 115, .5);
 
-                    &:hover {
-                        background: rgba(171, 212, 115, .8);
-                    }
+                     @media screen and (min-width: 1200px) {
+                        &:hover {
+                            background: rgba(171, 212, 115, .8);
+                        }
+                     }
                 }
                 
                 &.mage {
                     background: rgba(105, 204, 240, .5);
-
-                    &:hover {
-                        background: rgba(105, 204, 240, .8);
+                    
+                    @media screen and (min-width: 1200px) {
+                        &:hover {
+                            background: rgba(105, 204, 240, .8);
+                        }
                     }
                 }
                 
                 &.paladin {
                     background: rgba(245, 140, 186, .5);
 
-                    &:hover {
-                        background: rgba(245, 140, 186, .8);
-                    }
+                     @media screen and (min-width: 1200px) {
+                         &:hover {
+                            background: rgba(245, 140, 186, .8);
+                        }
+                     }
                 }
                 
                 &.priest {
                     background: rgba(255, 255, 255, .5);
 
-                    &:hover {
-                        background: rgba(255, 255, 255, .8);
+                    @media screen and (min-width: 1200px) {
+                        &:hover {
+                            background: rgba(255, 255, 255, .8);
+                        }
                     }
                 }
                 
                 &.rogue {
                     background: rgba(255, 245, 105, .5);
 
-                    &:hover {
-                        background: rgba(255, 245, 105, .8);
+                    @media screen and (min-width: 1200px) {
+                        &:hover {
+                            background: rgba(255, 245, 105, .8);
+                        }
                     }
                 }
                 
                 &.shaman {
                     background: rgba(0, 112, 222, .5);
-
-                    &:hover {
-                        background: rgba(0, 112, 222, .8);
+                    
+                    @media screen and (min-width: 1200px) {
+                        &:hover {
+                            background: rgba(0, 112, 222, .8);
+                        }
                     }
                 }
                 
                 &.warlock {
                     background: rgba(148, 130, 201, .5);
 
-                    &:hover {
-                        background: rgba(148, 130, 201, .8);
+                    @media screen and (min-width: 1200px) {
+                        &:hover {
+                            background: rgba(148, 130, 201, .8);
+                        }
                     }
                 }
                 
                 &.warrior {
                     background: rgba(199, 156, 110, .5);
-
-                    &:hover {
-                        background: rgba(199, 156, 110, .8);
+                    
+                    @media screen and (min-width: 1200px) {
+                        &:hover {
+                            background: rgba(199, 156, 110, .8);
+                        }
                     }
                 }
                 
-                &:hover {
-                    background: rgba(61,60,60,1);
-                    
-                    .card-pool-card-qty,
-                    .card-pool-card-legendary {
+                 @media screen and (min-width: 1200px) {
+                    &:hover {
                         background: rgba(61,60,60,1);
+
+                        .card-pool-card-qty,
+                        .card-pool-card-legendary {
+                            background: rgba(61,60,60,1);
+                        }
                     }
                 }
 
@@ -972,7 +1024,7 @@
         z-index: 400;
         border-radius: 0;
 
-        @media screen and (max-width:1330px) {
+        @media screen and (max-width:1200px) {
             display: block;
         }
     }
@@ -980,8 +1032,41 @@
     .mobile-show {
         display: block;
     }
-    
-    
+
+    .mobile-override {
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: auto;
+        height: auto;
+        z-index: 500;
+        background-color: rgba(38,38,38,1);
+        
+        @media screen and (max-width:750px) {
+
+            display: block;
+                    
+            .override-msg {
+                width: 300px;
+                padding: 20px;
+                margin: 100px auto;
+                
+                color: white;
+
+                h2 {
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+
+                p {
+
+                }
+            }  
+        }
+    }
 }/* .redbull-draft */
 
 .alert-wrapper {
