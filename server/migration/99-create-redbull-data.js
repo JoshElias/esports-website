@@ -1,5 +1,5 @@
 var async = require("async");
-
+var utils = require("./../../lib/utils");
 
 module.exports = function(server) {
     var RedbullTournament = server.models.redbullTournament;
@@ -20,7 +20,8 @@ module.exports = function(server) {
                 var redbullExpansionData = {
                     name: packData.expansion,
                     numOfPacks: packData.packs,
-                    isActive: packData.isActive
+                    isActive: packData.isActive,
+                    className: utils.slugify(packData.expansion)
                 };
                 RedbullExpansion.create(redbullExpansionData, function(err, redbullExpansion) {
                     if(err) return eachCb(err);
