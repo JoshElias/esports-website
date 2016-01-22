@@ -350,7 +350,6 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-
     User.changeEmail = function (uid, token, email, cb) {
         cb = cb || utils.createPromiseCallback();
 
