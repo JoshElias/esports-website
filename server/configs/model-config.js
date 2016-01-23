@@ -230,7 +230,11 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
-    "redbullTournament": {
+    "redbullDraft": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "redbullDraftSettings": {
         "dataSource": "mongodb",
         "public": true
     },

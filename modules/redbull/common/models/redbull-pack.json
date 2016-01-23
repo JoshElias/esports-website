@@ -10,11 +10,17 @@
     "orderNum": {
       "type": "number"
     },
+    "redbullDraft": {},
     "redbullExpansionId": {},
     "ownerId": {}
   },
   "validations": [],
   "relations": {
+    "draft": {
+      "type": "belongsTo",
+      "model": "redbullDraft",
+      "foreignKey": "redbullDraftId"
+    },
     "packCards": {
       "type": "hasMany",
       "model": "redbullPackCard",

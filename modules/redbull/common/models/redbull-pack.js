@@ -1,10 +1,14 @@
+var async = require("async");
+
+
 module.exports = function(RedbullPack) {
 
 
-    RedbullPack.seedPacks = function(uid, finalCb) {
+    RedbullPack.seedPacks = function(draft, draftSettings, finalCb) {
 
-        var Card = RedbullTournament.app.models.card;
-        var RedbullExpansion = RedbullTournament.app.models.redbullExpansion;
+        var Card = RedbullPack.app.models.card;
+        var RedbullExpansion = RedbullPack.app.models.redbullExpansion;
+
 
         async.waterfall([
             // Get all cards that can be put into a deck
@@ -42,7 +46,7 @@ module.exports = function(RedbullPack) {
             // Get all the expansions
             function (sortedCards, seriesCb) {
                 RedbullExpansion.find({
-                        where: {isActive: true}, /*fields:{numOfPacks:true},*/
+                        where: {isActive: true},
                         include: ["rarityChances"]
                     }, function (err, expansions) {
                         return seriesCb(err, sortedCards, expansions);
@@ -55,104 +59,107 @@ module.exports = function(RedbullPack) {
             }
         ], finalCb);
 
+
+        function generatePacks(sortedPacks, expansions, finalCb) {
+            var clientResult = {};
+
+            // Generate packs for each expansion
+            async.eachSeries(expansions, function (expansion, expansionCb) {
+                var expansionJSON = expansion.toJSON();
+                clientResult[expansionJSON.name] = expansionJSON;
+                clientResult[expansionJSON.name].packs = [];
+                async.timesSeries(expansionJSON.numOfPacks, function (packNum, packNumCb) {
+                    var expansionCards = sortedPacks[expansionJSON.name];
+                    generatePack(expansionCards, expansionJSON, packNum, function (err, newPack) {
+                        if (err) return packNumCb(err);
+                        clientResult[expansion.name].packs.push(newPack);
+                        return packNumCb();
+                    });
+                }, expansionCb);
+            }, function (err) {
+                return finalCb(err, clientResult);
+            });
+        }
+
+
+        function generatePack(cards, expansion, packNum, finalCb) {
+
+            // General Pack data
+            var packData = {
+                orderNum: packNum,
+                redbullExpansionId: expansion.id
+            };
+
+            // Do we have a signed in user
+            if(typeof draft.authorId === "string" && draft.authorId.length > 0) {
+                packData.ownerId = draft.authorId;
+            }
+
+            // Get the rarity chances for this packs
+            var rarityChances = {};
+            var rarityChanceIndex = expansion.rarityChances.length;
+            while (rarityChanceIndex--) {
+                var rarityChance = expansion.rarityChances[rarityChanceIndex];
+                rarityChances[rarityChance.rarity] = rarityChance.percentage;
+            }
+            var rareThreshold = (rarityChances.basic + rarityChances.common);
+            var rareChance = rarityChanceIndex.rare;
+
+            // Generate the Rolls for the pack and shuffle
+            var packRolls = generatePackRolls(rareThreshold, rareChance);
+            packRolls = shufflePack(packRolls);
+
+            // Start Creating the Pack
+            RedbullPack.create(packData, function (err, newPack) {
+                if (err) return finalCb(err);
+
+                var newPackJSON = newPack.toJSON();
+                newPackJSON.cards = [];
+                newPackJSON.className = expansion.className;
+                newPackJSON.expansionName = expansion.name;
+
+                // Each roll should correspond to a card
+                async.forEachOfSeries(packRolls, function (packRollVal, packRollKey, packRollCb) {
+                    var rolledCard = getCardFromRoll(packRollVal, rarityChances, cards);
+
+                    newPack.packCards.create({
+                        orderNum: packRollKey,
+                        cardId: rolledCard.id,
+                        redbullExpansionId: expansion.id
+                    }, function (err, newPackCard) {
+                        if (err) return packRollCb(err);
+
+                        // Add order number just in case the client needs to re-order
+                        rolledCard.orderNum = newPackCard.orderNum;
+                        newPackJSON.cards.push(rolledCard);
+                        return packRollCb();
+                    });
+                }, function (err) {
+                    return finalCb(err, newPackJSON);
+                });
+            });
+        }
+
+        function generatePackRolls(rareThreshold, rareChance) {
+            var addRare = false;
+
+            var packRolls = [];
+            var cardIndex = draftSettings.cardsPerPack;
+            while (cardIndex--) {
+                packRolls[cardIndex] = getRandomInt(1, 100);
+                if (packRolls[cardIndex] > rareThreshold) {
+                    addRare = true;
+                }
+
+                if (cardIndex === 4 && !addRare && rareChance) {
+                    packRolls[cardIndex] += 100;
+                }
+            }
+            return packRolls;
+        }
+
         return finalCb.promise;
     };
-
-
-    function generatePacks(sortedPacks, expansions, finalCb) {
-        var clientResult = {};
-
-        // Generate packs for each expansion
-        async.eachSeries(expansions, function (expansion, expansionCb) {
-            var expansionJSON = expansion.toJSON();
-            clientResult[expansionJSON.name] = expansionJSON;
-            clientResult[expansionJSON.name].packs = [];
-            async.timesSeries(expansionJSON.numOfPacks, function (packNum, packNumCb) {
-                var expansionCards = sortedPacks[expansionJSON.name];
-                generatePack(expansionCards, expansionJSON, packNum, function (err, newPack) {
-                    if (err) return packNumCb(err);
-                    clientResult[expansion.name].packs.push(newPack);
-                    return packNumCb();
-                });
-            }, expansionCb);
-        }, function (err) {
-            return finalCb(err, clientResult);
-        });
-    }
-
-
-    function generatePack(cards, expansion, packNum, finalCb) {
-        var RedbullPack = RedbullTournament.app.models.redbullPack;
-
-        // General Pack data
-        var packData = {
-            orderNum: packNum,
-            redbullExpansionId: expansion.id,
-            ownerId: uid
-        };
-
-        // Get the rarity chances for this packs
-        var rarityChances = {};
-        var rarityChanceIndex = expansion.rarityChances.length;
-        while (rarityChanceIndex--) {
-            var rarityChance = expansion.rarityChances[rarityChanceIndex];
-            rarityChances[rarityChance.rarity] = rarityChance.percentage;
-        }
-        var rareThreshold = (rarityChances.basic + rarityChances.common);
-        var rareChance = rarityChanceIndex.rare;
-
-        // Generate the Rolls for the pack and shuffle
-        var packRolls = generatePackRolls(rareThreshold, rareChance);
-        packRolls = shufflePack(packRolls);
-
-        // Start Creating the Pack
-        RedbullPack.create(packData, function (err, newPack) {
-            if (err) return finalCb(err);
-
-            var newPackJSON = newPack.toJSON();
-            newPackJSON.cards = [];
-            newPackJSON.className = expansion.className;
-            newPackJSON.expansionName = expansion.name;
-
-            // Each roll should correspond to a card
-            async.forEachOfSeries(packRolls, function (packRollVal, packRollKey, packRollCb) {
-                var rolledCard = getCardFromRoll(packRollVal, rarityChances, cards);
-
-                newPack.packCards.create({
-                    orderNum: packRollKey,
-                    cardId: rolledCard.id,
-                    redbullExpansionId: expansion.id
-                }, function (err, newPackCard) {
-                    if (err) return packRollCb(err);
-
-                    // Add order number just in case the client needs to re-order
-                    rolledCard.orderNum = newPackCard.orderNum;
-                    newPackJSON.cards.push(rolledCard);
-                    return packRollCb();
-                });
-            }, function (err) {
-                return finalCb(err, newPackJSON);
-            });
-        });
-    }
-
-    function generatePackRolls(rareThreshold, rareChance) {
-        var addRare = false;
-
-        var packRolls = [];
-        var cardIndex = NUM_CARD_PER_PACK;
-        while (cardIndex--) {
-            packRolls[cardIndex] = getRandomInt(1, 100);
-            if (packRolls[cardIndex] > rareThreshold) {
-                addRare = true;
-            }
-
-            if (cardIndex === 4 && !addRare && rareChance) {
-                packRolls[cardIndex] += 100;
-            }
-        }
-        return packRolls;
-    }
 
     function shufflePack(packRolls) {
         for (var j, x, i = packRolls.length; i; j = parseInt(Math.random() * i), x = packRolls[--i], packRolls[i] = packRolls[j], packRolls[j] = x);

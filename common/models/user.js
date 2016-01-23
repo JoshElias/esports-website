@@ -548,25 +548,28 @@ module.exports = function(User) {
             async.waterfall([
                 // check if user is already that role
                 function (seriesCb) {
+                    console.log("checking:", roleName);
                     User.isInRoles(uid, [roleName], function (err, isInRoles) {
                         if (err) return seriesCb(err);
-
+                        console.log("inInRole:", isInRoles);
                         if (isInRoles[roleName]) return seriesCb("ok");
                         else return seriesCb(undefined)
                     });
                 },
                 // Get the new role
                 function (seriesCb) {
+                    console.log("finding roleName")
                     Role.findOne({where: {name: roleName}}, function (err, role) {
                         if (err) return seriesCb(err);
 
                         if (!role) {
+                            console.log("not found");
                             var roleErr = new Error('no role found');
                             roleErr.statusCode = 400;
                             roleErr.code = 'ROLE_NOT_FOUND';
                             return seriesCb(roleErr);
                         }
-
+console.log("urg")
                         return seriesCb(undefined, role);
                     });
                 },
@@ -706,7 +709,7 @@ module.exports = function(User) {
         err.code = 'USER_NOT_FOUND';
         
         var ctx = loopback.getCurrentContext();
-        if (!ctx || !ctx.active) return finalCb(err);
+        if (!ctx || !ctx.active) return finalCb();
         var res = ctx.active.http.res;
         var req = ctx.active.http.req;
 
@@ -714,7 +717,7 @@ module.exports = function(User) {
             return finalCb(undefined, req.currentUser);
         
         if(!req.accessToken || typeof req.accessToken.userId !== "object")
-            return finalCb(err);
+            return finalCb();
 
         
         User.app.models.user.findById(req.accessToken.userId, function (err, user) {

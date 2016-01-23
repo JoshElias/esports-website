@@ -2,63 +2,70 @@ var async = require("async");
 var utils = require("./../../lib/utils");
 
 module.exports = function(server) {
-    var RedbullTournament = server.models.redbullTournament;
+    var RedbullDraftSettings = server.models.redbullDraftSettings;
     var RedbullExpansion = server.models.redbullExpansion;
     var RedbullRarityChance = server.models.redbullRarityChance;
     var Role = server.models.Role;
 
-    async.waterfall([
-        // Load the tournament settings
-        function(seriesCb) {
-            RedbullTournament.create(redbullData.tournament, seriesCb);
-        },
-        // Iterate over pack data
-        function(tournament, seriesCb) {
 
-            // Get info on the expansion
-            async.eachSeries(redbullData.packs, function(packData, eachCb) {
-                var redbullExpansionData = {
-                    name: packData.expansion,
-                    numOfPacks: packData.packs,
-                    isActive: packData.isActive,
-                    className: utils.slugify(packData.expansion)
-                };
-                RedbullExpansion.create(redbullExpansionData, function(err, redbullExpansion) {
-                    if(err) return eachCb(err);
-
-                    // Make a rarity for each expansion
-                    async.forEachOfSeries(packData.chances, function(chanceValue, chanceKey, chanceCb) {
-                        var redbullRarityChanceData = {
-                            rarity: chanceKey,
-                            percentage: chanceValue,
-                            redbullExpansionId: redbullExpansion.id
-                        };
-                        RedbullRarityChance.create(redbullRarityChanceData, chanceCb);
-                    }, eachCb);
-                })
-            }, seriesCb);
-        },
-        // Add role for $redbullUser and $redbullAdmin
-        function(seriesCb) {
-            Role.create({name:"$redbullUser"}, function(err) {
-                if(err) return seriesCb(err);
-                Role.create({name:"$redbullAdmin"}, function(err) {
-                    return seriesCb(err);
-                });
-            });
+    RedbullDraftSettings.find({}, function(err, settings) {
+        if(err || settings.length > 0) {
+            return;
         }
-    ],
-    function(err) {
-        if(err) console.log("Error creating redbull data:", err);
-        else console.log("Successfully created redbull data");
+        console.log("adding redbull data");
+
+        async.waterfall([
+            // Load the tournament settings
+            function(seriesCb) {
+                RedbullDraftSettings.create(redbullData.draftSettings, seriesCb);
+            },
+            // Iterate over pack data
+            function(tournament, seriesCb) {
+
+                // Get info on the expansion
+                async.eachSeries(redbullData.packs, function(packData, eachCb) {
+                    var redbullExpansionData = {
+                        name: packData.expansion,
+                        numOfPacks: packData.packs,
+                        isActive: packData.isActive,
+                        className: utils.slugify(packData.expansion)
+                    };
+                    RedbullExpansion.create(redbullExpansionData, function(err, redbullExpansion) {
+                        if(err) return eachCb(err);
+
+                        // Make a rarity for each expansion
+                        async.forEachOfSeries(packData.chances, function(chanceValue, chanceKey, chanceCb) {
+                            var redbullRarityChanceData = {
+                                rarity: chanceKey,
+                                percentage: chanceValue,
+                                redbullExpansionId: redbullExpansion.id
+                            };
+                            RedbullRarityChance.create(redbullRarityChanceData, chanceCb);
+                        }, eachCb);
+                    })
+                }, seriesCb);
+            },
+            // Add role for $redbullUser and $redbullAdmin
+            function(seriesCb) {
+                Role.create({name:"$redbullPlayer"}, function(err) {
+                    if(err) return seriesCb(err);
+                    Role.create({name:"$redbullAdmin"}, function(err) {
+                        return seriesCb(err);
+                    });
+                });
+            }
+        ],
+        function(err) {
+            if(err) console.log("Error creating redbull data:", err);
+            else console.log("Successfully created redbull data");
+        });
     });
 };
 
 var redbullData = {
-    "tournament": {
+    "draftSettings": {
         "name": "master",
         "allowDuplicateClasses": false,
-        "deckLimit": 3
     },
     "packs": [
         {

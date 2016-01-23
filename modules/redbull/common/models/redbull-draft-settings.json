@@ -1,5 +1,5 @@
 {
-  "name": "redbullTournament",
+  "name": "redbullDraftSettings",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -10,8 +10,21 @@
     "name": {
       "type": "string"
     },
-    "deckLimit": {
-      "type": "number"
+    "cardsPerPack": {
+      "type": "number",
+      "default": 5
+    },
+    "deckBuildTimeLimit": {
+      "type": "number",
+      "default": 25
+    },
+    "deckBuildGracePeriod": {
+      "type": "number",
+      "default": 1
+    },
+    "numOfDecks": {
+      "type": "number",
+      "default": 3
     },
     "allowDuplicateClasses" : {
       "type": "boolean"

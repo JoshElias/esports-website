@@ -1,5 +1,5 @@
 {
-  "name": "redbullDeck",
+  "name": "redbullDraft",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,50 +7,42 @@
     "validateUpsert": true
   },
   "properties": {
-    "name": {
-      "type": "string"
+    "draftStartTime": {
+      "type": "number"
     },
-    "isPublic": {
+    "draftEndTime": {
+      "type": "number"
+    },
+    "hasOpenedPacks": {
       "type": "boolean",
-      "required": true
+      "default": false
     },
-    "slug": {
-      "type": "string",
-      "validators": ["unique"]
+    "hasDecksConstructed": {
+      "type": "boolean",
+      "default": false
     },
-    "viewCount": {
+    "deckBuildStartTime": {
       "type": "number"
     },
-    "votes": [
-      "object"
-    ],
-    "voteScore": {
+    "deckBuildStopTime": {
       "type": "number"
     },
-    "redbullDraftId": {},
+    "clientPackage": {
+      "type": "object"
+    },
     "authorId": {}
   },
+  "hidden": ["clientPackage"],
   "validations": [],
   "relations": {
-    "author": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "authorId"
-    },
-    "cards": {
+    "packs": {
       "type": "hasMany",
-      "model": "deckCard",
-      "foreignKey": "deckId",
-      "isChild": true
+      "model": "redbullPack",
+      "foreignKey": "redbullDraftId"
     },
-    "comments": {
+    "decks": {
       "type": "hasMany",
-      "model": "comment",
-      "foreignKey": "redbullDeckId"
-    },
-    "draft": {
-      "type": "belongsTo",
-      "model": "redbullDraft",
+      "model": "redbullDeck",
       "foreignKey": "redbullDraftId"
     }
   },
@@ -78,15 +70,9 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW",
-      "property": "create"
-    },
-    {
-      "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "__edit__cards"
+      "property": "create"
     }
   ],
   "methods": {}
