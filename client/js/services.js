@@ -1158,16 +1158,23 @@ angular.module('app.services', [])
           });
       };
       
+      servObj.replaceHistoryWith404 = function() {
+          $state.transitionTo('app.404', {}, {
+              location: "replace"
+          });
+      };
       // this method expects: 
       // page - number
       // count - number
       // perpage - number
       servObj.validatePage = function (page, count, perpage) {
           // 404 if page entered manually is not valid
-          if (page <= 0) {
-              $state.go('app.404');
-          } else if (page > Math.ceil(count / perpage)) {
-              $state.go('app.404');
+          if (page !== 1) {
+              if (page <= 0) {
+                  this.replaceHistoryWith404();
+              } else if (page > Math.ceil(count / perpage)) {
+                  this.replaceHistoryWith404();
+              }
           }
       };
       
@@ -1175,9 +1182,13 @@ angular.module('app.services', [])
       // stateFilters - a stateParam array of values
       // availFilters - an array of available filters
       servObj.validateFilters = function (stateFilters, availFilters) {
+          console.log('stateFilters:', stateFilters);
+          console.log('availFilters:', availFilters);
           var found = _.difference(stateFilters, availFilters);
+          console.log('found:', found);
           if (!_.isEmpty(found)) {
-              $state.go('app.404');
+              console.log('should not be here');
+              this.replaceHistoryWith404();
           }
       };
       
@@ -1187,8 +1198,6 @@ angular.module('app.services', [])
         var pagination = {};
 
         pagination.update = function (serviceName, searchFilter, countFilter, callback) {
-            console.log('searchFilter:', searchFilter);
-            console.log('countFilter:', countFilter);
             async.series([
                 function (seriesCallback) {
                     serviceName.count(countFilter)
@@ -1231,7 +1240,6 @@ angular.module('app.services', [])
 
         pagination.new = function (options, callback) {
             //      console.log('callback:', callback);
-            console.log('options:', options);
             var paginate = {
                 page: options.page || 1,
                 perpage: options.perpage || 10,
@@ -3067,22 +3075,14 @@ angular.module('app.services', [])
                 });
             },
             getHeroMapGuides: function (filters, isFeatured, limit, page, finalCallback) {
-                console.log('query serv filters:', filters);
-                console.log('isFeatured:', isFeatured);
-                console.log('limit:', limit);
-                console.log('page:', page);
                 var selectedHeroes = filters.heroes;
-                console.log('selectedHeroes:', selectedHeroes);
                 if (_.isEmpty(selectedHeroes)) {
                     return;
                 }
                 
-                console.log('here1');
-                
                 var where = {}
 
                 if (isFeatured !== null) {
-                    console.log('here2');
                     where.isFeatured = isFeatured
                 }
                 
@@ -3091,8 +3091,7 @@ angular.module('app.services', [])
                     function (seriesCallback) {
                         
                         var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
-                        console.log('selectedHeroIds:', selectedHeroIds);
-                        console.log('here3');
+                        
                         Hero.find({
                             filter: {
                                 fields: ["id"],
@@ -3129,8 +3128,6 @@ angular.module('app.services', [])
                     },
                     //filter heroes
                     function (heroes, seriesCallback) {
-                        console.log('heroes:', heroes);
-                        console.log('here4');
                         //filter out guides by map className
                         try {
                             var selectedGuides = [];
@@ -3153,7 +3150,6 @@ angular.module('app.services', [])
                     },
                     //populate heroes, talents
                     function (selectedGuideIds, seriesCallback) {
-                        console.log('here5');
                         async.waterfall([
                             function (waterCallback) {
                                 Guide.find({
@@ -3222,8 +3218,6 @@ angular.module('app.services', [])
                                 })
                             },
                             function (guides, waterCallback) {
-                                console.log('guides:', guides);
-                                console.log('here6');
                                 Guide.count({
                                     where: {
                                         id: { inq: selectedGuideIds },
