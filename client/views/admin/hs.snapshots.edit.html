@@ -33,7 +33,7 @@
             <div class="col-sm-10 wrapper-none">
                 <ul class="list-group m-b-md" ng-if="snapshot.authors.length!=0">
                     <li ng-repeat="a in snapshot.authors" class="list-group-item">
-                        {{a.user.username}}<span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#{{a.user.id}}" aria-expanded="false" aria-controls="{{a.user.id}}"><i class="fa fa-edit"></i></button><button ng-click="removeAuthor(a.user)"><i class="fa fa-close"></i></button></span>
+                        {{a.user.username}}<span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#{{a.user.id}}" aria-expanded="false" aria-controls="{{a.user.id}}"><i class="fa fa-edit"></i></button><button ng-click="removeUserPrompt(a.user)"><i class="fa fa-close"></i></button></span>
                         <div class="collapse clearfix" id="{{a.user.id}}">
                             <div class="form-group m-t-md">
                                 <label for="authorDescription_{{a.user.username}}" class="col-sm-1 control-label">Description</label>
@@ -125,7 +125,7 @@
                                         <div class="clearfix m-b-md">
                                             <label for="deck.name" class="control-label col-sm-1">Deck Name</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="dname" ng-model="d.name"></input>
+                                                <input type="text" class="form-control" name="dname" ng-model="d.name" />
                                             </div>
                                         </div>
                                         
@@ -256,7 +256,7 @@
         
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="editSnapshot()">Edit Meta Snapshot</button>
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || saving" ng-click="editSnapshot()">Edit Meta Snapshot <i ng-if="saving" style="font-size: 22px;" class="fa fa-pulse fa-spinner"></i></button>
         </div>
     </div>
     </form>
