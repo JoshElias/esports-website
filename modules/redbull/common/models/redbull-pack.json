@@ -11,7 +11,7 @@
       "type": "number"
     },
     "redbullExpansionId": {},
-    "authorId": {}
+    "ownerId": {}
   },
   "validations": [],
   "relations": {
@@ -26,10 +26,10 @@
       "foreignKey": "redbullPackId",
       "through": "redbullPackCard"
     },
-    "author": {
+    "owner": {
       "type": "belongsTo",
       "model": "user",
-      "foreignKey": "authorId"
+      "foreignKey": "ownerId"
     }
   },
   "acls": [{

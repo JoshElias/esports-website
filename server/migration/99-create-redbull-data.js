@@ -5,7 +5,7 @@ module.exports = function(server) {
     var RedbullTournament = server.models.redbullTournament;
     var RedbullExpansion = server.models.redbullExpansion;
     var RedbullRarityChance = server.models.redbullRarityChance;
-
+    var Role = server.models.Role;
 
     async.waterfall([
         // Load the tournament settings
@@ -37,6 +37,15 @@ module.exports = function(server) {
                     }, eachCb);
                 })
             }, seriesCb);
+        },
+        // Add role for $redbullUser and $redbullAdmin
+        function(seriesCb) {
+            Role.create({name:"$redbullUser"}, function(err) {
+                if(err) return seriesCb(err);
+                Role.create({name:"$redbullAdmin"}, function(err) {
+                    return seriesCb(err);
+                });
+            });
         }
     ],
     function(err) {
