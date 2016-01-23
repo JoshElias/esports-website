@@ -6,13 +6,12 @@
 <div class="mobile-override">
     <div class="override-msg">
         <h2>Feature Unavailable</h2>
-        <p>This feature is unavaialble on devices or browsers with this resolution.</p>
-        <p>Please use a device with a larger img resolution.</p>
+        <p>This feature is unavailable on devices and browsers with this resolution.</p>
+        <p>Please use a device with a larger resolution.</p>
 
     </div>
 </div>
 <!-- end Mobile override div -->
-
 
 <!-- draft wrapper -->
 <div class="draft-wrapper">
@@ -79,8 +78,17 @@
 <!-- / draft wrapper -->
 
 <!-- mobile cardpool button -->
-<button class="cardpool-mobile-toggle-btn btn btn-blue" ng-click="mobileCardpool = !mobileCardpool">Toggle Card Pool</button>
-<!-- / mobile cardpool button -->
+<button class="cardpool-mobile-toggle-btn btn btn-blue" ng-click="mobileCardpool = !mobileCardpool">Card Pool</button>
+
+<div class="card-pool-button mobile-card-pool-buttons">
+        <button class="btn btn-blue btn-block" ng-click="fastForwardToggle()" ng-if="!draftComplete">
+            <span ng-if="!isFastForward()">Open All Packs</span>
+            <span ng-if="isFastForward()">Stop Opening Packs</span>
+            <i class="fa fa-refresh fa-spin" ng-if="isFastForward()"></i>
+        </button>
+        <button class="btn btn-blue btn-block" ng-show="draftComplete" ng-click="$parent.goToBuild()">Build Decks</button>
+</div>
+<!-- / mobile cardpool and pack opening button -->
 
 <!-- card pool -->
 <div class="card-pool" ng-class="{ 'mobile-show': mobileCardpool }">

@@ -110,7 +110,7 @@
                 margin-top: -300px; //-384px;
                 width: 649px; //width: 741px;
                 height: 600px; //height: 684px;
-                background: url("../img/modules/redbull/client/img/bg-glow.jpg") no-repeat center center;
+                background: url("../img/modules/redbull/client/img/bg-glow.png") no-repeat center center;
                 z-index: 3;
                 
                 &.glow-pulse {
@@ -476,39 +476,40 @@
                             
                             &:nth-child(1) {
                                 margin-top: -190px;
+                                margin-left: -413px;
                             }
 
 
                             &:nth-child(2) {
                                 margin-top: -190px;
-                                margin-left: -413px;
+                                //margin-left: -413px;
+                                margin-left: -270px;
 
                             }
 
                             &:nth-child(3) {
                                 margin-top: -190px;
-                                margin-left: 159px;   
+                                //margin-left: 159px;
+                                margin-left: -129px;
                             }
 
                             &:nth-child(4) {
                                 margin-top: -190px;
-                                margin-left: -270px;
+                                //margin-left: -270px;
+                                margin-left: 16px;
 
                             }
 
                             &:nth-child(5) {
                                 margin-top: -190px;
-                                margin-left: 16px;
+                                //margin-left: 16px;
+                                margin-left: 159px; 
 
                             }
                             
                             
                         }
                     }
-                    
-                    
-
-                    
 
                     .card-glow {
                         position: absolute;
@@ -758,6 +759,10 @@
             left: 0px;
             right: 0px;
             border-top: 1px solid #000;
+            
+            @media screen and (max-width:1200px) {
+                display: none;
+            }
             
             button {
                 position: relative;
@@ -1018,14 +1023,36 @@
         display: none;
         position: absolute;
         top: 10px;
-        right: 10px;
-        text-transform: uppercase;
-        font-weight: 700;
+        right: 210px;
+        //text-transform: uppercase;
+        //font-weight: 700;
         z-index: 400;
-        border-radius: 0;
+        border-radius: 2px;
 
         @media screen and (max-width:1200px) {
             display: block;
+        }
+    }
+    
+    .card-pool-button {
+        
+        &.mobile-card-pool-buttons {
+        
+            .btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                //text-transform: uppercase;
+                //font-weight: 700;
+                z-index: 400;
+                border-radius: 2px;
+                width: 190px;
+                display: none;
+                
+                @media screen and (max-width:1200px) {
+                    display: block;
+                }
+            }
         }
     }
     
@@ -1062,11 +1089,12 @@
                 }
 
                 p {
+                    text-align: center;
 
                 }
             }  
         }
-    }
+    }// mobile drafter front page override div
 }/* .redbull-draft */
 
 .alert-wrapper {

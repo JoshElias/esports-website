@@ -13,6 +13,17 @@
             background: rgba(0,0,0,.4);
             border-right: 1px solid #000;
             
+            @media screen and (max-width: 1650px) {
+                display: none;
+                margin-top: 45px;
+            
+                &.mobile-show {
+                    display: block;
+                    z-index: 350;
+                    background-color: black;
+                }
+            }
+            
             h3 {
                 height: 35px;
                 line-height: 35px;
@@ -152,16 +163,13 @@
                                 outline: none;
                                 border: none;
                             }
-                            
                         }
                     }
                     
                     div:last-child {
                         margin-right: 0px;
                     }
-                    
                 }
-                
             } /* .mana-cost */
             
             .card-rarity {
@@ -245,6 +253,10 @@
             width: 300px;
             background: rgba(0,0,0,.4);
             border-left: 1px solid #000;
+            
+            @media screen and (max-width: 1650px) {
+                margin-top: 45px;
+            }
             
             .deck-add-button {
                 height: 50px;
@@ -627,6 +639,30 @@
         
         .draft-build-cards {
             
+            .container {
+                
+                &.container-override {
+                
+                    @media screen and (max-width: 1650px) {
+                        margin-left: 0;
+                        width: 75%;
+                        margin-top: 45px;
+                    }
+                    
+                     @media screen and (max-width: 1200px) {
+                        width: 70%;            
+                    }
+                    
+                    @media screen and (max-width: 992px) {
+                        width: 65%;            
+                    }
+                    
+                    @media screen and (max-width: 768px) {
+                        width: 60%;            
+                    }
+                }
+            }
+            
             .card-filter-classes {
                 margin: 20px auto;
                 padding: 0;
@@ -723,6 +759,14 @@
                         font-size: 48px;
                         color: rgba(255,255,255,1);
                     } /* i */
+                    
+                    @media screen and (max-width: 992px) {
+                        top: 25%;
+                    } //media 992px
+                    
+                    @media screen and (max-width: 768px) {
+                        top: 15%;
+                    } //media 768px
 
                 } /* button */
 
@@ -774,6 +818,21 @@
                             opacity: .5;
                         } /* .card-qty */
                         
+                        @media screen and (max-width: 1200px) {
+                            width: 25%;
+                            
+                        } // media styles
+                        
+                        @media screen and (max-width: 992px) {
+                            width: 33%;
+                            
+                        } // media styles
+                        
+                        @media screen and (max-width: 768px) {
+                            width: 50%;
+                            
+                        } // media styles
+                        
                     } /* .draft-build-card */
                     
                 } /* .draft-build-cards-view-wrapper */
@@ -790,6 +849,31 @@
         } /* .draft-build-cards */
         
     } /* .draft-build */
+    
+    .filter-button-bar {
+        position: fixed;
+        display: none;
+        z-index: 500;
+        height: 45px;
+        width: 100%;
+        background-color: #2766ad;
+        padding: 5px 20px;
+        top: 52px;
+        
+        
+        @media screen and (max-width:1650px) {
+                display: block;
+        }
+        
+        button.filtering-mobile-toggle-btn {
+            //display: none;
+            //position: absolute;
+            //top: 65px;
+            //left: 25px;
+            border-radius: 2px; 
+            text-transform: uppercase !important;
+        } // Mobile filtering button
+    } // mobile filtering bar
     
 } /* .redbull-draft */
 
