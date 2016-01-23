@@ -13,6 +13,12 @@
     "draftEndTime": {
       "type": "number"
     },
+    "packOpeningStartTime": {
+      "type": "number"
+    },
+    "packOpeningEndTime": {
+      "type": "number"
+    },
     "hasOpenedPacks": {
       "type": "boolean",
       "default": false
@@ -27,12 +33,20 @@
     "deckBuildStopTime": {
       "type": "number"
     },
-    "clientPackage": {
-      "type": "object"
+    "deckSubmitCurfew": {
+      "type": "number"
     },
-    "authorId": {}
+    "packOpenerString": {
+      "type": "string"
+    },
+    "isOfficial": {
+      "type": "boolean",
+      "default": false
+    },
+    "authorId": {},
+    "redbullDraftSettingsId": {}
   },
-  "hidden": ["clientPackage"],
+  "hidden": ["packOpenerString"],
   "validations": [],
   "relations": {
     "packs": {
@@ -44,6 +58,16 @@
       "type": "hasMany",
       "model": "redbullDeck",
       "foreignKey": "redbullDraftId"
+    },
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "settings": {
+      "type": "belongsTo",
+      "model": "redbullDraftSettings",
+      "foreignKey": "redbullDraftSettingsId"
     }
   },
   "acls": [
@@ -61,11 +85,6 @@
     {
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$owner",
       "permission": "ALLOW"
     },
     {

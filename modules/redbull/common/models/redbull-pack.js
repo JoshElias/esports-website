@@ -4,13 +4,23 @@ var async = require("async");
 module.exports = function(RedbullPack) {
 
 
-    RedbullPack.seedPacks = function(draft, draftSettings, finalCb) {
+    RedbullPack.rollPacks = function(draft, finalCb) {
 
         var Card = RedbullPack.app.models.card;
         var RedbullExpansion = RedbullPack.app.models.redbullExpansion;
+        var RedbullDraftSettings = RedbullPack.app.models.redbullDraftSettings;
 
-
+        var draftSettings;
         async.waterfall([
+            // Get the one and only settings option
+            function (seriesCb) {
+              RedbullDraftSettings.findById(draft.redbullDraftSettingsId, function(err, _draftSettings) {
+                  if(err) seriesCb(err);
+
+                  draftSettings = _draftSettings;
+                  return seriesCb();
+              });
+            },
             // Get all cards that can be put into a deck
             function (seriesCb) {
                 Card.find({deckable: true, isActive: true}, seriesCb);
@@ -92,7 +102,7 @@ module.exports = function(RedbullPack) {
 
             // Do we have a signed in user
             if(typeof draft.authorId === "string" && draft.authorId.length > 0) {
-                packData.ownerId = draft.authorId;
+                packData.ownerId = draft.authorId.toString();
             }
 
             // Get the rarity chances for this packs
