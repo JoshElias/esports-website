@@ -3649,6 +3649,16 @@ angular.module('app.controllers', ['ngCookies'])
                 dauthor.user = a;
                 $scope.snapshot.authors.push(dauthor);
             }
+            
+            $scope.removeUserPrompt = function (a) {
+                var alertBox = bootbox.confirm("Are you sure you want to remove " + a.username + " from the author's list?", function (result) {
+                    if (result) {
+                        $scope.$apply(function () {
+                            $scope.removeAuthor(a);
+                        });
+                    }
+                });
+            }
 
             $scope.removeAuthor = function (a) {
                 async.each($scope.snapshot.authors, function(author, eachCb) {
@@ -4002,6 +4012,7 @@ angular.module('app.controllers', ['ngCookies'])
             /* TIERS METHODS */
 
             $scope.editSnapshot = function () {
+                $scope.saving = true;
                 var err = {};
                 var arrs = CrudMan.getArrs();
                 var snapCopy = angular.copy($scope.snapshot);
@@ -4020,7 +4031,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 err.list = [];
                             }
 
-                            err.list.push("Tier " + tier.tier + ": " + deck.name + ", " + errorList['emptyDeckTech']);
+                            err.list.push("Tier " + tier.tier + ": deck.rank" + deck.name + ", " + errorList['emptyDeckTech']);
                         }
 
                         snapCopy.deckTiers.push(deck);
@@ -4034,6 +4045,25 @@ angular.module('app.controllers', ['ngCookies'])
                     setErr(undefined);
                 }
               
+                var decksToDelete     = _.map(arrs.decks.toDelete, function (val) { return val.id; });
+                var deckTechsToDelete = _.map(arrs.deckTech.toDelete, function (val) { return val.id; });
+                var cardTechsToDelete = _.map(arrs.cardTech.toDelete, function (val) { return val.id; });
+                //Time to delete the things we need to delete
+                
+                var cleanDeckMatchups = [];
+                _.each(snapCopy.deckMatchups, function (val) {
+                    cleanDeckMatchups.push(
+                        Util.cleanObj(val, [
+                            'againstChance',
+                            'againstDeck',
+                            'againstDeckId',
+                            'forChance',
+                            'forDeck',
+                            'forDeckId'
+                        ])
+                    );
+                });
+                
                 var snapVar = Util.cleanObj(snapCopy, [
                     'id',
                     'snapNum',
@@ -4045,66 +4075,90 @@ angular.module('app.controllers', ['ngCookies'])
                     'isActive',
                     'voteScore',
                     'photoNames',
-                    'deckMatchups',
                     'authors',
                     'comments',
                     'deckTiers'
                 ]);
                 
-                var decksToDelete     = _.map(arrs.decks.toDelete, function (val) { return val.id; });
-                var deckTechsToDelete = _.map(arrs.deckTech.toDelete, function (val) { return val.id; });
-                var cardTechsToDelete = _.map(arrs.cardTech.toDelete, function (val) { return val.id; });
-                //Time to delete the things we need to delete
-                
-                Snapshot.deckMatchups.destroyAll({
-                    id: $scope.snapshot.id
-                });
-                
-                Snapshot.update({
-                    where: {
-                        id: snapVar.id
+                var newId = { id: snapVar.id };
+                async.series([
+                    function (seriesCb) {
+                        async.each(snapCopy.deckMatchups, function (m) {
+                            if(!_.isUndefined(m.id)) {
+                                DeckMatchup.destroyById({
+                                    id: m.id
+                                });
+                            }
+                        });
+                        
+                        return seriesCb();
+                    },
+                    function (seriesCb) {
+                        Snapshot.deckMatchups.createMany({
+                            id: $scope.snapshot.id
+                        }, cleanDeckMatchups)
+                        .$promise
+                        .then(function () {
+                            return seriesCb();
+                        })
+                        .catch(seriesCb);
                     }
-                }, snapVar)
-                .$promise
-                .then(function (data) {
-                    async.parallel([
-                        function (parallelCb) {
-                            async.each(decksToDelete, function (item, eachCb) {
-                                DeckTier.destroyById({
-                                    id: item
-                                })
-                                .$promise
-                                .then(function () {
-                                    return eachCb();
-                                }); 
-                            }, parallelCb);
-                        },
-                        function (parallelCb) {
-                            async.each(deckTechsToDelete, function (item, eachCb) {
-                                DeckTech.destroyById({
-                                    id: item
-                                })
-                                .$promise
-                                .then(function () {
-                                    return eachCb();
-                                });
-                            }, parallelCb);
-                        },
-                        function (parallelCb) {
-                            async.each(cardTechsToDelete, function (item, eachCb) {
-                                CardTech.destroyById({
-                                    id: item
-                                })
-                                .$promise
-                                .then(function () {
-                                    return eachCb();
-                                });
-                            }, parallelCb);
-                        },
-                    ], function () {
-                        $state.go('app.admin.hearthstone.snapshots.list');
+                ], function (err) {
+                    if (err) {
+                        console.log("err:", err);
+                        $scope.saving = false;
+                        return;
+                    }
+                    
+                    Snapshot.update({
+                        where: {
+                            id: snapVar.id
+                        }
+                    }, snapVar)
+                    .$promise
+                    .then(function (data) {
+                        async.parallel([
+                            function (parallelCb) {
+                                async.each(decksToDelete, function (item, eachCb) {
+                                    DeckTier.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    }); 
+                                }, parallelCb);
+                            },
+                            function (parallelCb) {
+                                async.each(deckTechsToDelete, function (item, eachCb) {
+                                    DeckTech.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    });
+                                }, parallelCb);
+                            },
+                            function (parallelCb) {
+                                async.each(cardTechsToDelete, function (item, eachCb) {
+                                    CardTech.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    });
+                                }, parallelCb);
+                            },
+                        ], function () {
+                            $state.go('app.admin.hearthstone.snapshots.list');
+                        });
                     });
-              });
+                });
+
+                
+                
 
 //                async.waterfall([
 //                    function (seriesCallback) {
