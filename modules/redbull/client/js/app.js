@@ -174,11 +174,36 @@ var redbull = angular.module('app.redbull', [
             access: { auth: true, admin: true }
         })
         .state('app.admin.redbull.settings', {
-            url: '',
+            url: '/settings',
             views: {
                 redbull: {
                     templateUrl: moduleTpl + 'admin/admin.redbull.settings.html',
-                    controller: 'AdminRedbullCtrl',
+                    controller: 'AdminRedbullSettingsCtrl',
+                }
+            },
+            access: { auth: true, admin: true }
+        })
+        .state('app.admin.redbull.whitelist', {
+            url: '/whitelist',
+            views: {
+                redbull: {
+                    templateUrl: moduleTpl + 'admin/admin.redbull.whitelist.html',
+                    controller: 'AdminRedbullWhitelistCtrl',
+                }
+            },
+            resolve: {
+                whitelistUsers: [function () {
+                    return [];
+                }]  
+            },
+            access: { auth: true, admin: true }
+        })
+        .state('app.admin.redbull.decks', {
+            url: '/decks',
+            views: {
+                redbull: {
+                    templateUrl: moduleTpl + 'admin/admin.redbull.decks.html',
+                    controller: 'AdminRedbullDecksCtrl',
                 }
             },
             access: { auth: true, admin: true }
