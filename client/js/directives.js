@@ -1244,7 +1244,7 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/hots.filtering.html',
         link: function (scope, element, attrs) {
             var initializing = true,
-                randHeroIndex = false;
+                randHeroIndex = randomIntFromInterval (0,scope.heroes.length - 1);
 
             function randomIntFromInterval (min,max) {
                 return Math.floor(Math.random()*(max-min+1)+min);
@@ -1263,6 +1263,9 @@ angular.module('app.directives', ['ui.load'])
 
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
+                
+                console.log('scope:', scope);
+                scope.$parent.searchGuides();
             }
 
             scope.hasFilterRole = function (role) {
@@ -1284,8 +1287,10 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.toggleFilterHero = function (hero) {
-                var index = scope.filters.heroes.indexOf(hero);
-                if (index === -1) {
+//                var index = scope.filters.heroes.indexOf(hero);
+                var index = _.find(scope.filters.heroes, function (heroFilter) { return heroFilter.id === hero.id });
+                
+                if (!index) {
                     if (scope.filters.roles.length && scope.filters.roles.indexOf(hero.role) == -1) {
                         scope.filters.roles.push(hero.role);
                     }
@@ -1324,7 +1329,10 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.hasFilterHero = function (hero) {
-                return (scope.filters.heroes.indexOf(hero) !== -1);
+                var hasHero = _.find(scope.filters.heroes, function(heroFilter) {
+                    return heroFilter.id === hero.id
+                });
+                return hasHero;
             };
 
             scope.hasFilterSearch = function (hero) {
@@ -1344,7 +1352,12 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.hasFilterMap = function (map) {
-                return (scope.filters.map === map);
+                if (scope.filters.map !== undefined) {
+                    return (scope.filters.map.id === map.id);
+                } else {
+                    return false;
+                }
+                
             };
 
             scope.hasAnyFilterMap = function () {
@@ -1352,7 +1365,12 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.toggleFilterMap = function (map) {
-                scope.filters.map = (scope.filters.map == map) ? undefined : map;
+                if (scope.filters.map !== undefined) {
+                    scope.filters.map = (scope.filters.map.id === map.id) ? undefined : map;
+                } else {
+                    scope.filters.map = map;
+                }
+                
             };
 
             scope.currentMapBack = function () {
@@ -1458,6 +1476,8 @@ angular.module('app.directives', ['ui.load'])
             }, true);
 
             scope.toggleFilterUniverse = function (universe) {
+                console.log('universe:', universe);
+                console.log('scope.filters.universes:', scope.filters.universes);
                 var index = scope.filters.universes.indexOf(universe);
                 if (index === -1) {
                     scope.filters.universes.push(universe);
@@ -1561,7 +1581,7 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
-.directive('hsFilterClassLarge', ['$filter', '$timeout', function ($filter, $timeout) {
+.directive('hsFilterClassLarge', ['$filter', '$timeout', 'StateParamHelper', function ($filter, $timeout, StateParamHelper) {
     return {
         restrict: 'A',
         scope: {
@@ -1590,6 +1610,10 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     scope.filters.classes.splice(index, 1);
                 }
+                
+                StateParamHelper.updateStateParams({
+                    k: scope.filters.classes
+                });
             };
 
             scope.hasFilterClass = function (klass) {

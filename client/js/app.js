@@ -608,79 +608,119 @@ var app = angular.module('app', [
                 redirectTo: 'app.hs.deckBuilder.class'
             })
             .state('app.hs.home', {
-                url: '',
+                url: '?k',
                 views: {
                     hs: {
                         templateUrl: tpl + 'views/frontend/hs.home.html',
                         controller: 'HearthstoneHomeCtrl',
                         resolve: {
-                            dataArticles: ['Article', function (Article) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 6;
-                                return Article.find({
-                                  filter: {
-                                    limit: 6,
-                                    order: "createdDate DESC",
-                                    where: {
-                                      isActive: true,
-                                      articleType: ['hs']
+                            filterParams: ['$stateParams', 'StateParamHelper', 'Hearthstone', function($stateParams, StateParamHelper, Hearthstone) {
+                                var classFilters = angular.copy(Hearthstone.classes).splice(1, 9);
+                                
+                                // if only 1 filter, parse into array
+                                if (angular.isString($stateParams.k) && $stateParams.k.length) {
+                                    var tmp = $stateParams.k;
+                                    $stateParams.k = [];
+                                    $stateParams.k.push(tmp);
+                                } 
+                                
+                                var artWhere = {
+                                  isActive: true,
+                                  articleType: ['hs']
+                                },
+                                tsDeckWhere = {
+                                    isFeatured: true
+                                },
+                                comDeckWhere = {
+                                  isPublic: true,
+                                  isFeatured: false
+                                };
+                                
+                                // validate filters
+                                StateParamHelper.validateFilters($stateParams.k, classFilters);
+                                
+                                if (!_.isEmpty($stateParams.k)) {
+                                    
+                                    artWhere.classTags = {
+                                        inq: $stateParams.k
+                                    };
+                                    
+                                    tsDeckWhere.playerClass = {
+                                        inq: $stateParams.k
+                                    };
+                                    
+                                    comDeckWhere.playerClass = {
+                                        inq: $stateParams.k
+                                    };
+                                }
+                                return {
+                                    articleParams: {
+                                        options: {
+                                            filter: {
+                                            limit: 6,
+                                            order: "createdDate DESC",
+                                            where: artWhere,
+                                            include: ['author'],
+                                            fields: {
+                                              content: false
+                                            }
+                                          }
+                                        }
                                     },
-                                    include: ['author'],
-                                    fields: {
-                                      content: false
+                                    tsDeckParams: {
+                                        options: {
+                                            filter: {
+                                              limit: 10,
+                                              order: "createdDate DESC",
+                                              where: tsDeckWhere,
+                                              fields: {
+                                                name: true,
+                                                description: true,
+                                                deckType: true,
+                                                playerClass: true,
+                                                heroName: true,
+                                                premium: true,
+                                                voteScore: true,
+                                                authorId: true,
+                                                slug: true,
+                                                createdDate: true
+                                              },
+                                              include: ['author']
+                                            }
+                                        }
+                                    },
+                                    comDeckParams: {
+                                        options: {
+                                            filter: {
+                                              limit: 10,
+                                              order: "createdDate DESC",
+                                              where: comDeckWhere,
+                                              fields: {
+                                                name: true,
+                                                description: true,
+                                                deckType: true,
+                                                playerClass: true,
+                                                heroName: true,
+                                                premium: true,
+                                                voteScore: true,
+                                                authorId: true,
+                                                slug: true,
+                                                createdDate: true
+                                              },
+                                              include: ['author']
+                                            }
+                                        }
                                     }
-                                  }
-                                }).$promise;
+                                };
                             }],
-                            dataDecksTempostorm: ['Deck', function (Deck) {
-                                return Deck.find({
-                                  filter: {
-                                    limit: 10,
-                                    order: "createdDate DESC",
-                                    where: {
-                                        isFeatured: true
-                                    },
-                                    fields: {
-                                      name: true,
-                                      description: true,
-                                      deckType: true,
-                                      playerClass: true,
-                                      heroName: true,
-                                      premium: true,
-                                      voteScore: true,
-                                      authorId: true,
-                                      slug: true,
-                                      createdDate: true
-                                    },
-                                    include: ['author']
-                                  }
-                                }).$promise;
+                            dataArticles: ['Article', 'filterParams', function (Article, filterParams) {
+                                return Article.find(filterParams.articleParams.options).$promise;
                             }],
-                            dataDecksCommunity: ['Deck', function (Deck) {
-                                return Deck.find({
-                                  filter: {
-                                    limit: 10,
-                                    order: "createdDate DESC",
-                                    where: {
-                                        isPublic: true,
-                                        isFeatured: false
-                                    },
-                                    fields: {
-                                      name: true,
-                                      description: true,
-                                      deckType: true,
-                                      playerClass: true,
-                                      heroName: true,
-                                      premium: true,
-                                      voteScore: true,
-                                      authorId: true,
-                                      slug: true,
-                                      createdDate: true
-                                    },
-                                    include: ['author']
-                                  }
-                                }).$promise;
+                            dataDecksTempostorm: ['Deck', 'filterParams', function (Deck, filterParams) {
+                                return Deck.find(filterParams.tsDeckParams.options).$promise;
+                            }],
+                            dataDecksCommunity: ['Deck', 'filterParams', function (Deck, filterParams) {
+                                return Deck.find(filterParams.comDeckParams.options).$promise;
                             }]
                         }
                     }
@@ -1509,12 +1549,120 @@ var app = angular.module('app', [
                 }
             })
             .state('app.hots.home', {
-                url: '',
+                url: '?r&u&h&m&s',
                 views: {
                     hots: {
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
+                            filterParams: ['$stateParams', function($stateParams) {
+//                                if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+//                                    async.parallel([
+//                                        function () {
+//                                            HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, 1, function(err, guides) {
+//                                                $scope.guidesFeatured = guides;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//                                        },
+//                                        function () {
+//                                            HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, 1, function(err, guides) {
+//                                                $scope.guidesCommunity = guides;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//                                        }
+//                                    ]);
+//                                } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
+//                                    async.parallel([
+//                                        function () {
+//                                            HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
+//                                                $scope.articles = articles;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//                                        },
+//                                        function () {
+//                                            HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, 1, function (err, guides) {
+//                                                $scope.guidesFeatured = guides;
+//                                                initializing = false;
+//                                            });
+//                                        },
+//                                        function () {
+//                                            HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, 1, function (err, guides) {
+//                                                $scope.guidesCommunity = guides;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//
+//                                        }
+//                                    ])
+//                                } else if ($scope.filters.search != '') {
+//            //                        console.log("search");
+//                                    async.parallel([
+//                                        function () {
+//                                            HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+//                                                $scope.guidesFeatured = guides;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//                                        },
+//                                        function () {
+//                                            HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+//                                                $scope.guidesCommunity = guides;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//                                        }
+//                                    ]);
+//                                } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
+//                                    async.parallel([
+//                                        function () {
+//                                            HOTSGuideQueryService.getMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+//                                                $scope.guidesFeatured = guides;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//                                        },
+//                                        function () {
+//                                            HOTSGuideQueryService.getMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+//                                                $scope.guidesCommunity = guides;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//                                        }
+//                                    ]);
+//                                } else {
+//                                    async.parallel([
+//                                        function () {
+//                                           HOTSGuideQueryService.getArticles($scope.filters, true, 6, function (err, articles) {
+//                                               $scope.articles = articles;
+//                                               initializing = false;
+//                                               $scope.initializing = false;
+//                                           });
+//                                        },
+//                                        function () {
+//                                            HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+//                                                $scope.guidesFeatured = guides;
+//                                                initializing = false;
+//                                                $scope.initializing = false;
+//                                            });
+//                                        },
+//                                        function () {
+//                                           HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+//                                                $scope.guidesCommunity = guides;
+//                                                initializing = false;
+//                                               $scope.initializing = false;
+//                                            });
+//                                        }
+//                                    ]);
+//                                }
+                                return {
+                                    articleParams: {},
+                                    tsGuideParams: {},
+                                    comGuideParams: {}
+                                };
+                            }],
                             dataArticles: ['Article', function (Article) {
                               var filters = 'all',
                                   offset = 0,
@@ -1751,18 +1899,60 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            paginationFilters: ['$stateParams', '$q', 'Hero', 'Map', function($stateParams, $q, Hero, Map) {
+                            paginationFilters: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', function($stateParams, StateParamHelper, $q, Hero, Map) {
+                                
+                                if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
+                                    $stateParams.r = new Array($stateParams.r);
+                                }
+                                
+                                if (angular.isString($stateParams.u) && !_.isEmpty($stateParams.u)) {
+                                    $stateParams.u = new Array($stateParams.u)
+                                }
+                                
+                                if (angular.isString($stateParams.h) && !_.isEmpty($stateParams.h)) {
+                                    $stateParams.h = new Array($stateParams.h)
+                                }
+                                
                                 var filters = {
-                                    roles: $stateParams.r ? new Array($stateParams.r) : [],
-                                    universes: $stateParams.u ? new Array($stateParams.u) : [],
+                                    roles: $stateParams.r ? $stateParams.r : [],
+                                    universes: $stateParams.u ? $stateParams.u : [],
                                     search: $stateParams.s ? $stateParams.s : '',
-                                    heroes: $stateParams.h ? new Array($stateParams.h) : [],
+                                    heroes: $stateParams.h ? $stateParams.h : [],
                                     map: $stateParams.m || undefined
                                 };
+                                
+                                var possibleRoles = ['Warrior', 'Assassin', 'Support', 'Specialist'];
+                                var possibleUniverses = ['Warcraft', 'Starcraft', 'Diablo', 'Blizzard'];
+                                var possibleHeroes;
+                                
+                                StateParamHelper.validateFilters(filters.roles, possibleRoles);
+                                StateParamHelper.validateFilters(filters.universes, possibleUniverses);
+                                
+                                StateParamHelper.validatePage($stateParams.tsp); StateParamHelper.validatePage($stateParams.comp);
                                 
                                 var d = $q.defer();
                                 
                                 async.waterfall([
+                                    function (waterCB) {
+                                        Hero.find({
+                                            filter: {
+                                                fields: {
+                                                    name: true
+                                                },
+                                                where: {
+                                                    isActive: true
+                                                }
+                                            }
+                                        }).$promise
+                                        .then(function (heros) {
+                                            
+                                            possibleHeroes = _.map(heros, function (hero) {
+                                                return hero.name;
+                                            });
+                                            StateParamHelper.validateFilters(filters.heroes, possibleHeroes);
+                                            return waterCB();
+                                        });
+                                    },
                                     function (waterCB) {
                                         if (!_.isEmpty(filters.heroes)) {
                                             Hero.find({
@@ -1776,7 +1966,6 @@ var app = angular.module('app', [
                                             }).$promise
                                             .then(function (heroes) {
                                                 var heroArr = new Array(heroes[0]);
-                                                console.log('heroArr:', heroArr);
                                                 filters.heroes = heroArr;
                                                 return waterCB();
                                             })
@@ -1797,7 +1986,6 @@ var app = angular.module('app', [
                                                 }
                                             }).$promise
                                             .then(function (map) {
-                                                console.log('map:', map);
                                                 filters.map = map;
                                                 return waterCB();
                                             })
@@ -1816,7 +2004,6 @@ var app = angular.module('app', [
                                 return d.promise;
                             }],
                             paginationParams: ['$stateParams', 'paginationFilters', 'Map', function($stateParams, paginationFilters, Map) {
-                                console.log('paginationFilters:', paginationFilters);
                                 
                                 var tsWhere = {
                                     isFeatured: true
@@ -1948,26 +2135,37 @@ var app = angular.module('app', [
                                 var d = $q.defer();
                                 
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
-                                    
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
                                         d.resolve(data);
                                     });
                                     
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
                                       
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        if (err) {
+                                           return d.resolve(err);
+                                        }
                                         d.resolve(data);
                                       });
                                       
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
                                       
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
+                                          if (err) {
+                                             return d.resolve(err);
+                                          }
                                           d.resolve(data);
                                       });
 //                                    
                                   } else {
                                       
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                          if (err) {
+                                             return d.resolve(err);
+                                          }
                                           d.resolve(data);
                                       });
                                   }
@@ -1975,138 +2173,127 @@ var app = angular.module('app', [
                                 return d.promise;
                             }],
                             communityGuideCount: ['paginationParams', 'HOTSGuideQueryService', '$q', 'StateParamHelper', 'Guide', function(paginationParams, HOTSGuideQueryService, $q, StateParamHelper, Guide) {
+                                
                                 var d = $q.defer();
                                 
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
                                         paginationParams.comParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
+                                        
                                         d.resolve(count);
                                     });
                                     
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
                                       
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
                                         paginationParams.comParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
+                                          
                                         d.resolve(count);
                                       });
                                       
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
                                       
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
+                                          if (err) {
+                                              return d.resolve(err);
+                                          }
+                                          
                                           paginationParams.comParams.total = count.count;
+                                          StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
+                                          
                                           d.resolve(count);
                                       });
 //                                    
                                   } else {
                                       
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false,  paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                          if (err) {
+                                              return d.resolve(err);
+                                          }
                                           paginationParams.comParams.total = count.count;
+                                          StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
+                                          
                                           d.resolve(count);
                                       });
                                   }
                                 
                                 return d.promise;
                             }],
-                            dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                              var guideType = $stateParams.t || 'all',
-                                    filters = $stateParams.h || false,
-                                    order = $stateParams.o || 'high';
+                            dataTopGuide: ['$stateParams', '$q', 'HOTSGuideQueryService', 'paginationParams', function ($stateParams, $q, HOTSGuideQueryService, paginationParams) {
 
-                              return Guide.find({
-                                filter: {
-                                  order: 'voteScore DESC',
-                                  limit: 1,
-                                  where: {
-                                      guideType: "hero",
-                                  },
-                                  fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              include: ['talents'],
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
+                              var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
                                         }
-                                      }
-                                    },
-                                    {
-                                      relation: 'maps'
-                                    }
-                                  ]
-                                }
-                              }).$promise
-                              .then(function (guides) {
-                                  return guides;
-                              }).catch(function(err) {
-                                  console.log("error", err);
-                              });
+                                        d.resolve(data);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
+                                        d.resolve(data);
+                                      });
+                                      
+                                  } else {
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, null, paginationParams.guideFilters.search, 1, 1, function(err, data, count) {
+                                          if (err) {
+                                              return d.resolve(err);
+                                          }
+                                          d.resolve(data);
+                                      });
+                                  }
+                                
+                                return d.promise;
                             }],
                             dataTempostormGuides: ['paginationParams', '$q', 'HOTSGuideQueryService', 'Guide', function (paginationParams, $q, HOTSGuideQueryService, Guide) {
+                                
                                 var d = $q.defer();
                                 
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
-                                    
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
                                         d.resolve(data);
                                     });
                                     
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
                                       
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
                                         d.resolve(data);
                                       });
                                       
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
-                                      console.log('else if 2');
                                       
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function (err, data, count) {
+                                          if (err) {
+                                              return d.resolve(err);
+                                          }
                                           d.resolve(data);
                                       });
 //                                    
                                   } else {
-                                      console.log('else');
-                                      
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                          if (err) {
+                                              return d.resolve(err);
+                                          }
                                           d.resolve(data);
                                       });
                                   }
@@ -2114,33 +2301,54 @@ var app = angular.module('app', [
                                 return d.promise;
                             }],
                             tempostormGuideCount: ['paginationParams', '$q', 'HOTSGuideQueryService', 'StateParamHelper', 'Guide', function(paginationParams, $q, HOTSGuideQueryService, StateParamHelper, Guide) {
+                                
                                 var d = $q.defer();
                                 
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
-                                    
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
                                         paginationParams.tsParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
+                                        
                                         d.resolve(count);
                                     });
                                     
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
-                                      
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
                                         paginationParams.tsParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
+                                          
                                         d.resolve(count);
                                       });
                                       
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
                                       
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
                                         paginationParams.tsParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
+                                          
                                         d.resolve(count);
                                       });
                                       
                                   } else {
                                       
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.resolve(err);
+                                        }
+                                          
                                         paginationParams.tsParams.total = count.count;
+                                          
+                                        StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
+                                          
                                         d.resolve(count);
                                       });
                                       

@@ -231,8 +231,9 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone',
-        function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone) {
+    .controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone', '$stateParams',
+        function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone, $stateParams) {
+            
             // data
             $scope.articles = dataArticles;
             $scope.tempostormDecks = dataDecksTempostorm;
@@ -241,7 +242,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filters
             $scope.filters = {
-                classes: [],
+                classes: $stateParams.k ? angular.copy($stateParams.k) : [],
                 search: ''
             };
 
@@ -264,6 +265,7 @@ angular.module('app.controllers', ['ngCookies'])
                         limit: 6,
                         order: "createdDate DESC",
                         where: {
+                            isActive: true,
                             articleType: ['hs']
                         },
                         include: ['author'],
@@ -14802,9 +14804,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService',
-        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService) {
-            
+    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService', 'StateParamHelper',
+        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService, StateParamHelper) {
             
             // data
             $scope.heroes = dataHeroes;
@@ -14857,14 +14858,37 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             };
+            
+            $scope.searchGuides = function(string) {
+                doQuery();
+            };
 
             var initializing = true;
-            $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            $scope.$watch(function(){ 
+                var watchObj = {
+                    roles: $scope.filters.roles,
+                    universes: $scope.filters.universes,
+                    heroes: $scope.filters.heroes
+                };
+                return watchObj;
+            }, function (value) {
+                doQuery();
+            }, true);
+            
+            function doQuery() {
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
                     });
                 } else {
+                    $scope.initializing = true;
+                    StateParamHelper.updateStateParams({ 
+                        r: $scope.filters.roles,
+                        u: $scope.filters.universes,
+                        h: !_.isEmpty($scope.filters.heroes) ? $scope.filters.heroes[0].name : [],
+                        m: $scope.filters.map ? $scope.filters.map.name : '',
+                        s: $scope.filters.search
+                    });
 //                    initializing = true;
                     // article filters
                     var articleFilters = [];
@@ -14877,15 +14901,17 @@ angular.module('app.controllers', ['ngCookies'])
                      if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                         async.parallel([
                             function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, 1, function(err, guides) {
                                     $scope.guidesFeatured = guides;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                             },
                             function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, 1, function(err, guides) {
                                     $scope.guidesCommunity = guides;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                             }
                         ]);
@@ -14895,6 +14921,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
                                     $scope.articles = articles;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                             },
                             function () {
@@ -14907,6 +14934,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, 1, function (err, guides) {
                                     $scope.guidesCommunity = guides;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                               
                             }
@@ -14918,12 +14946,14 @@ angular.module('app.controllers', ['ngCookies'])
                                 HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
                                     $scope.guidesFeatured = guides;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                             },
                             function () {
                                 HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
                                     $scope.guidesCommunity = guides;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                             }
                         ]);
@@ -14933,12 +14963,14 @@ angular.module('app.controllers', ['ngCookies'])
                                 HOTSGuideQueryService.getMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
                                     $scope.guidesFeatured = guides;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                             },
                             function () {
                                 HOTSGuideQueryService.getMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
                                     $scope.guidesCommunity = guides;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                             }
                         ]);
@@ -14948,25 +14980,28 @@ angular.module('app.controllers', ['ngCookies'])
                                HOTSGuideQueryService.getArticles($scope.filters, true, 6, function (err, articles) {
                                    $scope.articles = articles;
                                    initializing = false;
+                                   $scope.initializing = false;
                                });
                             },
                             function () {
                                 HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
                                     $scope.guidesFeatured = guides;
                                     initializing = false;
+                                    $scope.initializing = false;
                                 });
                             },
                             function () {
                                HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
                                     $scope.guidesCommunity = guides;
                                     initializing = false;
+                                   $scope.initializing = false;
                                 });
                             }
                         ]);
                     }
                 }
-            }, true);
-
+            }
+            
             // guides
             $scope.getGuideCurrentHero = function (guide) {
                 return (guide.currentHero) ? guide.currentHero : guide.guideHeroes[0];
@@ -15034,10 +15069,10 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'paginationParams', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS', 'StateParamHelper',
         function ($q, $scope, $state, $timeout, $filter, AjaxPagination, paginationParams, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS, StateParamHelper) {
-            console.log('dataGuidesCommunity:', dataCommunityGuides);
-            console.log('communityGuideCount:', communityGuideCount);
-            console.log('dataGuidesFeatured:', dataTempostormGuides);
-            console.log('tempostormGuideCount:', tempostormGuideCount);
+//            console.log('dataGuidesCommunity:', dataCommunityGuides);
+//            console.log('communityGuideCount:', communityGuideCount);
+//            console.log('dataGuidesFeatured:', dataTempostormGuides);
+//            console.log('tempostormGuideCount:', tempostormGuideCount);
             
             $scope.tempostormGuides = dataTempostormGuides;
 //            console.log('dataTempostormGuides:', dataTempostormGuides);
@@ -15054,18 +15089,19 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.heroes = dataHeroes;
             $scope.maps = dataMaps;
             $scope.hotsTiers = HOTS.tiers;
-
+            
             $scope.filters = {
-                roles: [],
-                universes: [],
-                search: '',
-                heroes: [],
-                map: undefined
+                roles: angular.copy(paginationParams.guideFilters.roles) || [],
+                universes: angular.copy(paginationParams.guideFilters.universes) || [],
+                search: angular.copy(paginationParams.guideFilters.search) || '',
+                heroes: angular.copy(paginationParams.guideFilters.heroes) || [],
+                map: angular.copy(paginationParams.guideFilters.map) || undefined
             };
+            
             var initializing = true;
-          
             function doQuery (fnCallback) {
               initializing = true;
+              $scope.initializing = true;
               
               StateParamHelper.updateStateParams({ 
                   tsp: 1,
@@ -15076,8 +15112,6 @@ angular.module('app.controllers', ['ngCookies'])
                   m: $scope.filters.map ? $scope.filters.map.name : '',
                   s: $scope.filters.search
               });
-                
-                console.log('$scope.filters:', $scope.filters);
                 
               // generate filters
               var guideFilters = [];
@@ -15245,13 +15279,40 @@ angular.module('app.controllers', ['ngCookies'])
                 initializing = false;
                 return callback(err, guides, count);
               });
-            }
+            };
+            
+            $scope.searchGuides = function(string) {
+                if (angular.isString(string)) {
+                    $scope.filters.search = string;
+                }
+                if (initializing) {
+                  $timeout(function () { 
+                      initializing = false 
+                  });
+                } else {
+                  doQuery(function() {
+                      $scope.initializing = false;
+                  });
+                }
+            };
 
-            $scope.$watch(function() { return $scope.filters; }, function (value) {
+            $scope.$watch(function() { 
+                var watchObj = {
+                    roles: $scope.filters.roles,
+                    universes: $scope.filters.universes,
+                    heroes: $scope.filters.heroes,
+                    map: $scope.filters.map
+                };
+                return watchObj; 
+            }, function (value) {
               if (initializing) {
-                $timeout(function () { initializing = false });
+                $timeout(function () { 
+                    initializing = false;
+                });
               } else {
-                doQuery();
+                doQuery(function() {
+                    $scope.initializing = false;
+                });
               }
             }, true);
 
@@ -15369,7 +15430,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            });
 //        }
 //            console.log('tempostormGuideCount:', tempostormGuideCount);
-            console.log('paginationParams.tsParams:', paginationParams.tsParams);
+//            console.log('paginationParams.tsParams:', paginationParams.tsParams);
             $scope.tempostormPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
                 console.log('page:', page);
@@ -17555,33 +17616,33 @@ angular.module('app.controllers', ['ngCookies'])
 
                     OverwatchHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
                     .then(function (abilityValue) {
-						$scope.fetching = false;
-                        AlertService.setSuccess({ 
-							persist: true,
-							show: false, 
-							msg: $scope.hero.heroName + ' has been added successfully.' 
-						});
-						$window.scrollTo(0, 0);
+                        $scope.fetching = false;
+                                    AlertService.setSuccess({ 
+                          persist: true,
+                          show: false, 
+                          msg: $scope.hero.heroName + ' has been added successfully.' 
+                        });
+                        $window.scrollTo(0, 0);
                         $state.go('app.admin.overwatch.heroes.list');
 						
                     })
                     .catch(function (err) {
-						$scope.fetching = false;
+					               	$scope.fetching = false;
                         AlertService.setError({
-							show: true,
-							msg: 'Unable to create Hero',
-							lbErr: err
-						});
+                          show: true,
+                          msg: 'Unable to create Hero',
+                          lbErr: err
+                        });
                         $window.scrollTo(0,0);
                     });
                 })
                 .catch(function (err) {
-					$scope.fetching = false;
-					AlertService.setError({
-						show: true,
-						msg: 'Unable to create Hero',
-						lbErr: err
-					});
+                      $scope.fetching = false;
+                      AlertService.setError({
+                        show: true,
+                        msg: 'Unable to create Hero',
+                        lbErr: err
+                      });
                     $window.scrollTo(0,0);
                 });
             };
@@ -17658,19 +17719,19 @@ angular.module('app.controllers', ['ngCookies'])
 
                                 OverwatchHero.overwatchAbilities.destroyById({ id: ability.heroId, fk: ability.id }).$promise
                                 .then(function() {
-									AlertService.setSuccess({
-										show: false,
-										persist: true,
-										msg: ability.name + ' deleted successfully.'
-									});
-									$window.scrollTo(0, 0);
-								})
+                                  AlertService.setSuccess({
+                                    show: false,
+                                    persist: true,
+                                    msg: ability.name + ' deleted successfully.'
+                                  });
+                                  $window.scrollTo(0, 0);
+                                })
                                 .catch(function (err) {
                                     AlertService.setError({
-										show: true,
-										msg: 'An error occured while deleting ' + ability.name,
-										lbErr: err
-									});
+                                        show: true,
+                                        msg: 'An error occured while deleting ' + ability.name,
+                                        lbErr: err
+                                      });
                                     $window.scrollTo(0,0);
                                 });
                             }
@@ -17718,21 +17779,21 @@ angular.module('app.controllers', ['ngCookies'])
                             return eachCallback(httpResponse);
                         });
                     }, function (err) {
-						$scope.fetching = false;
+						            $scope.fetching = false;
                         if (err) {
                             $window.scrollTo(0,0);
                             return AlertService.setError({
-								show: true,
-								msg: 'Could not update ' + $scope.hero.heroName,
-								lbErr: err
-							});
+                                show: true,
+                                msg: 'Could not update ' + $scope.hero.heroName,
+                                lbErr: err
+                              });
                         }
-						$window.scrollTo(0, 0);
+						            $window.scrollTo(0, 0);
                         AlertService.setSuccess({ 
-							persist: true,
-							show: false,
-							msg: $scope.hero.heroName + ' has been updated successfully.' 
-						});
+                          persist: true,
+                          show: false,
+                          msg: $scope.hero.heroName + ' has been updated successfully.' 
+                        });
                         return $state.go('app.admin.overwatch.heroes.list');
                     });
 
