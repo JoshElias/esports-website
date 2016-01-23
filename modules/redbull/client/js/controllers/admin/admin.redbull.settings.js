@@ -1,5 +1,5 @@
 angular.module('redbull.controllers')
-.controller('AdminRedbullCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone){
+.controller('AdminRedbullSettingsCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone){
     var expansions = ['Soulbound'].concat(Hearthstone.expansions);
     var rarities = Hearthstone.rarities;
     
@@ -11,7 +11,7 @@ angular.module('redbull.controllers')
             return percentage;
         });
 
-        this.__defineSetter__("percentage", function (val) {        
+        this.__defineSetter__("percentage", function (val) {
             val = parseInt(val);
             percentage = val;
         });

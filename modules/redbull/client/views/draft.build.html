@@ -1,5 +1,11 @@
 <div class="draft-build">
-    <div class="draft-build-filtering">
+    <!-- mobile cardpool button -->
+    <div class="filter-button-bar">
+        <button class="filtering-mobile-toggle-btn btn btn-blue" ng-click="mobileCardFilters = !mobileCardFilters">Filtering</button>
+    <!-- mobile cardpool button -->
+    </div>
+    
+    <div class="draft-build-filtering" ng-class="{ 'mobile-show': mobileCardFilters }">
     
         <div class="mana-curve">
             <h3>Mana Curve</h3>
@@ -145,7 +151,7 @@
     </div>
     
     <div class="draft-build-cards">
-        <div class="container">
+        <div class="container container-override">
             <ul class="card-filter-classes clearfix" ng-class="{ filtered: currentDeck }">
                 <li ng-repeat="klass in klasses">
                     <button class="{{klass.toLowerCase()}}" ng-class="{ active: hasFilterClass(klass) }" ng-click="setFilterClass(klass)" ng-tooltip data-original-title="{{klass}}" ng-if="currentDeck.playerClass === klass || !currentDeck">{{klass}}</button>

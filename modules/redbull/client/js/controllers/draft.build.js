@@ -25,6 +25,7 @@ angular.module('redbull.controllers')
             { name: 'Legendary', value: 'Legendary' },
         ];
         
+        $scope.mobileCardFilters = false;
         $scope.currentDeck = null;
         $scope.cards = {
             sorted: {},
