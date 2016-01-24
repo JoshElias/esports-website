@@ -3241,6 +3241,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             function setErr(err) {
+                $scope.saving = false;
                 if (_.isUndefined(err)) {
                     AlertService.reset();
                     return;
@@ -3756,6 +3757,56 @@ angular.module('app.controllers', ['ngCookies'])
                 }
 
                 return callback();
+            }
+            
+            function doGenerateFreshMatches () {
+                var snapshot = angular.copy($scope.snapshot);
+                var toDelete = _.map($scope.snapshot.matches, function (val) { if (!_.isUndefined(val.id)) { return val.id } })
+                var decks = _.flatten(
+                                _.map(
+                                    _.filter(snapshot.tiers, function (tier) {
+                                        return tier.tier < 3;
+                                    }),
+                                    function (val) {
+                                        return val.decks;
+                                    }
+                                )
+                            );
+                
+                _.each(toDelete, function (val) {
+                    console.log(val);
+                    DeckMatchup.destroyById({
+                        id: val
+                    })
+                    .$promise
+                    .then(function () {
+                        eachCb();
+                    })
+                });
+                
+                $scope.snapshot.matches = [];
+                for (var i = 0; i < decks.length; i++) {
+                    for (var n = i; n < decks.length; n++) {
+                        $scope.snapshot.matches.push({
+                            'snapshotId': $scope.snapshot.id,
+                            'forDeck': decks[i].deck,
+                            'forDeckId': decks[i].deck.id,
+                            'againstDeck': decks[n].deck,
+                            'againstDeckId': decks[n].deck.id,
+                            'forChance': (decks[i].deck.id === decks[n].deck.id) ? 50 : 0,
+                            'againstChance': (decks[i].deck.id === decks[n].deck.id) ? 50 : 0
+                        });
+                    }
+                }
+            }
+            
+            $scope.generateFreshMatches = function () {
+                var alertBox = bootbox.confirm("You are about to regenerate all of the match up data, doing so will delete all of your current deck matchups. Are you sure you want to do this?", function (result) {
+                    if (result) {
+                        $scope.$apply(doGenerateFreshMatches());
+                    }
+                });
+                 
             }
 
             $scope.getMatches = function (deckID) {
