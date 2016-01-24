@@ -127,15 +127,24 @@ var redbull = angular.module('app.redbull', [
                     templateUrl: moduleTpl + 'draft.packs.html',
                     controller: 'DraftPacksCtrl',
                     resolve: {
-                        cards: ['Card', function (Card) {
-                            return Card.find({
-                                filter: {
-                                    where: {
-                                        deckable: true,
-                                        isActive: true
+                        draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
+                            RedbullDraftSettings.findOne().$promise.then(function (data) {
+                                console.log('Setting: ', data);
+                                return data;
+                            });
+                        }],
+                        draft: ['$localStorage', 'RedbullDraft', function ($localStorage, RedbullDraft) {
+                            if ($localStorage.draftId) {
+                                return RedbullDraft.findOne({
+                                    filter: {
+                                        where: {
+                                            id: $localStorage.draftId
+                                        }
                                     }
-                                }
-                            }).$promise;
+                                }).$promise;
+                            } else {
+                                return RedbullDraft.create().$promise;
+                            }
                         }]
                     }
                 }

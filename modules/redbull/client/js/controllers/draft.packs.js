@@ -1,97 +1,10 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'cards', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, cards){
-    // temp tournament settings
-    $localStorage.draftDecks = [];
-    var defaultTournament = {
-            packs: [
-                {
-                    expansion: 'Soulbound',
-                    packs: 15,
-                    chances: {
-                        basic: 100,
-                        common: 0,
-                        rare: 0,
-                        epic: 0,
-                        legendary: 0
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'Basic',
-                    packs: 10,
-                    chances: {
-                        basic: 0,
-                        common: 72,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 3
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'Naxxramas',
-                    packs: 5,
-                    chances: {
-                        basic: 0,
-                        common: 74,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 1
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'Goblins Vs. Gnomes',
-                    packs: 10,
-                    chances: {
-                        basic: 0,
-                        common: 72,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 3
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'Blackrock Mountain',
-                    packs: 5,
-                    chances: {
-                        basic: 0,
-                        common: 74,
-                        rare: 25,
-                        epic: 0,
-                        legendary: 1
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'The Grand Tournament',
-                    packs: 10,
-                    chances: {
-                        basic: 0,
-                        common: 72,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 3
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'League of Explorers',
-                    packs: 8,
-                    chances: {
-                        basic: 0,
-                        common: 74,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 1
-                    },
-                    isActive: true
-                },
-            ]
-        };
+.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'draft', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, draft){
+    console.log('Draft: ', draft);
     
-    $scope.tournament = ($localStorage.tournament) ? angular.copy($localStorage.tournament) : defaultTournament;
+    if (!$localStorage.draftId) {
+        $localStorage.draftId = draft.id;
+    }
     
     // variables
     $scope.isLoading = true;
@@ -104,7 +17,7 @@ angular.module('redbull.controllers')
     
     // packs
     $scope.currentPack = {};
-    $scope.packs = DraftPacks.getPacks(cards, $scope.tournament);
+    $scope.packs = draft.packOpenerData;
     
     // file variables
     var fileLocations = [];
@@ -127,7 +40,8 @@ angular.module('redbull.controllers')
     }
     for (var i = 0; i < cardImages.length; i++) {
         // TODO: make https
-        fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
+        //console.log('http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i]);
+        //fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
     }
     
     
