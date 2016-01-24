@@ -13,64 +13,64 @@ module.exports = function(RedbullDraft) {
 
 
     function handleNewDraftRequest(ctx, next) {
-      if (!ctx.isNewInstance) {
-        return next();
-      }
-
-      var RedbullDraftSettings = RedbullDraft.app.models.redbullDraftSettings;
-
-      // Initialize custom default values
-      clientData = ctx.data || ctx.instance;
-
-      clientData.draftStartTime = Date.now();
-
-      // Is the user logged in?
-      var loopbackContext = loopback.getCurrentContext();
-      if (!loopbackContext || !loopbackContext.active) {
-        return next(contextErr);
-      }
-      var req = loopbackContext.active.http.req;
-
-      // Get the default Draft Settings
-      return RedbullDraftSettings.findOne({}, {fields: {id: true}}, function (err, draftSettings) {
-        if (err) next(err);
-
-        clientData.redbullDraftSettingsId = draftSettings.id;
-
-        if (req.accessToken && req.accessToken.userId) {
-          var userId = req.accessToken.userId.toString();
-          clientData.authorId = userId;
-          return checkForOfficialDraft(userId, clientData, next)
+        if (!ctx.isNewInstance) {
+            return next();
         }
 
-        return next();
-      });
+        var RedbullDraftSettings = RedbullDraft.app.models.redbullDraftSettings;
+
+        // Initialize custom default values
+        clientData = ctx.data || ctx.instance;
+
+        clientData.draftStartTime = Date.now();
+
+        // Is the user logged in?
+        var loopbackContext = loopback.getCurrentContext();
+        if (!loopbackContext || !loopbackContext.active) {
+            return next(contextErr);
+        }
+        var req = loopbackContext.active.http.req;
+
+        // Get the default Draft Settings
+        return RedbullDraftSettings.findOne({}, {fields: {id: true}}, function (err, draftSettings) {
+            if (err) next(err);
+
+            clientData.redbullDraftSettingsId = draftSettings.id;
+
+            if (req.accessToken && req.accessToken.userId) {
+                var userId = req.accessToken.userId.toString();
+                clientData.authorId = userId;
+                return checkForOfficialDraft(userId, clientData, next)
+            }
+
+            return next();
+        });
     }
 
-  function checkForOfficialDraft(userId, clientData, finalCb) {
-    var User = RedbullDraft.app.models.user;
+    function checkForOfficialDraft(userId, clientData, finalCb) {
+        var User = RedbullDraft.app.models.user;
 
-    // Check if this is an official draft or not
-    return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
-      if (err) return finalCb(err);
+        // Check if this is an official draft or not
+        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
+            if (err) return finalCb(err);
 
-      // Is this an official draft?
-      clientData.isOfficial = !isInRoles.none;
+            // Is this an official draft?
+            clientData.isOfficial = !isInRoles.none;
 
-      // Check if the user is registered to be an active player
-      if (isInRoles.none) {
-        return finalCb();
-      }
+            // Check if the user is registered to be an active player
+            if (isInRoles.none) {
+                return finalCb();
+            }
 
-      // Check if the active player has already done a draft
-      return RedbullDraft.findOne({where: {authorId: userId}}, function (err, draft) {
-        if (err) return finalCb(err);
-        else if (!draft) return finalCb();
+            // Check if the active player has already done a draft
+            return RedbullDraft.findOne({where: {authorId: userId}}, function (err, draft) {
+                if (err) return finalCb(err);
+                else if (!draft) return finalCb();
 
-        return handleRegisteredPlayerError(draft, finalCb);
-      });
-    });
-  }
+                return handleRegisteredPlayerError(draft, finalCb);
+            });
+        });
+    }
 
     function handleRegisteredPlayerError(draft, finalCb) {
 
@@ -79,7 +79,7 @@ module.exports = function(RedbullDraft) {
         alreadyDraftedErr.code = 'ALREADY_DRAFTED';
 
         // Check if user as already drafted packs
-        if(!draft.hasOpenedPacks) {
+        if (!draft.hasOpenedPacks) {
             var decodedPackOpenerData = JSON.parse(draft.packOpenerString);
             alreadyDraftedErr.packOpenerData = decodedPackOpenerData;
             return finalCb(alreadyDraftedErr);
@@ -87,18 +87,17 @@ module.exports = function(RedbullDraft) {
 
         // Make another query for the cards
         return RedbullDraft.findById(draft.id, {
-          fields: {
-            packOpenerString: false
-          },
-          include: ["cards"]
-        }, function(err, deckbuilderData) {
-          if (err) finalCb(err);
+            fields: {
+                packOpenerString: false
+            },
+            include: ["cards"]
+        }, function (err, deckbuilderData) {
+            if (err) finalCb(err);
 
-          alreadyDraftedErr.deckBuilderData = deckbuilderData;
-          return finalCb(alreadyDraftedErr);
+            alreadyDraftedErr.deckBuilderData = deckbuilderData;
+            return finalCb(alreadyDraftedErr);
         });
     }
-
 
 
     // If the before save completed without err, attach the package
@@ -107,81 +106,80 @@ module.exports = function(RedbullDraft) {
 
     function addPackage(ctx, redbullDraft, next) {
 
-      var draftErr = new Error('Unable to create draft');
-      draftErr.statusCode = 500;
-      draftErr.code = 'COULD_NOT_CREATE_DRAFT';
+        var draftErr = new Error('Unable to create draft');
+        draftErr.statusCode = 500;
+        draftErr.code = 'COULD_NOT_CREATE_DRAFT';
 
-      var RedbullPack = RedbullDraft.app.models.redbullPack;
+        var RedbullPack = RedbullDraft.app.models.redbullPack;
 
-      return RedbullPack.rollPacks(redbullDraft, function (err, packOpenerData) {
-        if (err) return next(err);
-        //console.log("pack opener data:", packOpenerData)
-        // Update the draft with the compressed packOpenerData and packOpeningStartTime
-        var draftUpdates = {
-          packOpenerString : JSON.stringify(packOpenerData),
-          packOpeningStartTime : Date.now()
-        };
+        return RedbullPack.rollPacks(redbullDraft, function (err, packOpenerData) {
+            if (err) return next(err);
+            //console.log("pack opener data:", packOpenerData)
+            // Update the draft with the compressed packOpenerData and packOpeningStartTime
+            var draftUpdates = {
+                packOpenerString: JSON.stringify(packOpenerData),
+                packOpeningStartTime: Date.now()
+            };
 
-        // Update the draft with the compressed package and packOpeningStartTime
-        return redbullDraft.updateAttributes(draftUpdates, function (err, newRedbullDraft) {
-          if (err) return next(err);
+            // Update the draft with the compressed package and packOpeningStartTime
+            return redbullDraft.updateAttributes(draftUpdates, function (err, newRedbullDraft) {
+                if (err) return next(err);
 
-          redbullDraft.packOpenerData = packOpenerData;
-          return next();
+                redbullDraft.packOpenerData = packOpenerData;
+                return next();
+            });
         });
-      });
     }
 
-    RedbullDraft.startDraftBuild = function(draftId, options, finalCb) {
-      if (finalCb === undefined && typeof options === 'function') {
-        finalCb = options;
-        options = undefined;
-      }
-      finalCb = finalCb || utils.createPromiseCallback();
-
-      RedbullDraft.findById(draftId, {
-        fields: {
-          packOpenerString: false
-        },
-        include: ["cards", "settings"]
-      }, function (err, draft) {
-        if (err) return finalCb(err);
-        else if(!draft) {
-          var noDraftErr = new Error("No draft found for id", draftId);
-          noDraftErr.statusCode = 404;
-          noDraftErr.code = 'DRAFT_NOT_FOUND';
-          return finalCb(noDraftErr);
+    RedbullDraft.startDraftBuild = function (draftId, options, finalCb) {
+        if (finalCb === undefined && typeof options === 'function') {
+            finalCb = options;
+            options = undefined;
         }
+        finalCb = finalCb || utils.createPromiseCallback();
 
-        // Have we already updated the draft state?
-        if(draft.hasOpenedPacks) {
-            return finalCb(undefined, draft);
-        }
+        RedbullDraft.findById(draftId, {
+            fields: {
+                packOpenerString: false
+            },
+            include: ["cards", "settings"]
+        }, function (err, draft) {
+            if (err) return finalCb(err);
+            else if (!draft) {
+                var noDraftErr = new Error("No draft found for id", draftId);
+                noDraftErr.statusCode = 404;
+                noDraftErr.code = 'DRAFT_NOT_FOUND';
+                return finalCb(noDraftErr);
+            }
 
-        // Update the draft state
-        var draftJSON = draft.toJSON();
-        var draftUpdates = newDraftState(draftJSON.settings);
-        return draft.updateAttributes(draftUpdates, finalCb);
-      });
+            // Have we already updated the draft state?
+            if (draft.hasOpenedPacks) {
+                return finalCb(undefined, draft);
+            }
+
+            // Update the draft state
+            var draftJSON = draft.toJSON();
+            var draftUpdates = newDraftState(draftJSON.settings);
+            return draft.updateAttributes(draftUpdates, finalCb);
+        });
     };
 
 
     function newDraftState(draftSettings) {
-      var currentTime = Date.now();
-      var draftUpdates = {};
+        var currentTime = Date.now();
+        var draftUpdates = {};
 
-      draftUpdates.packOpeningEndTime = currentTime;
-      draftUpdates.deckBuildStartTime = currentTime;
-      var buildTimeLimitMillis = draftSettings.deckBuildTimeLimit * 60 * 1000;
-      var gracePeriodMillis = draftSettings.deckBuildGracePeriod * 60 * 1000;
-      draftUpdates.deckSubmitCurfew = currentTime + buildTimeLimitMillis + gracePeriodMillis;
-      draftUpdates.hasOpenedPacks = true;
-      return draftUpdates;
+        draftUpdates.packOpeningEndTime = currentTime;
+        draftUpdates.deckBuildStartTime = currentTime;
+        var buildTimeLimitMillis = draftSettings.deckBuildTimeLimit * 60 * 1000;
+        var gracePeriodMillis = draftSettings.deckBuildGracePeriod * 60 * 1000;
+        draftUpdates.deckSubmitCurfew = currentTime + buildTimeLimitMillis + gracePeriodMillis;
+        draftUpdates.hasOpenedPacks = true;
+        return draftUpdates;
     }
 
 
-
-    RedbullDraft.addDraftPlayer = function(uid, options, finalCb) {
+    RedbullDraft.addDraftPlayer = function (uid, options, finalCb) {
         if (finalCb === undefined && typeof options === 'function') {
             // createAccessToken(ttl, cb)
             finalCb = options;
@@ -195,62 +193,60 @@ module.exports = function(RedbullDraft) {
     };
 
 
-    RedbullDraft.submitDecks = function(draftId, clientDecks, options, finalCb) {
-      if (finalCb === undefined && typeof options === 'function') {
-        // createAccessToken(ttl, cb)
-        finalCb = options;
-        options = undefined;
-      }
-      finalCb = finalCb || utils.createPromiseCallback();
-
-      var RedbullDeck = RedbullDraft.app.models.redbullDeck;
-
-      // Does the given draft exist and have official set?
-      return RedbullDraft.findById(draftId, {
-        fields: {
-          packOpenerString: false
-        },
-        include: [
-          {
-            relation: "cards",
-            scope: {
-              fields: {
-                className: true
-              }
-            }
-          },
-          {
-            relation: "settings"
-          }
-        ]
-      }, function (err, draft) {
-        if (err) return finalCb(err);
-        else if (!draft) {
-          var noDraftErr = new Error("No draft found for id", draftId);
-          noDraftErr.statusCode = 404;
-          noDraftErr.code = 'DRAFT_NOT_FOUND';
-          return finalCb(noDraftErr);
+    RedbullDraft.submitDecks = function (draftId, clientDecks, options, finalCb) {
+        if (finalCb === undefined && typeof options === 'function') {
+            // createAccessToken(ttl, cb)
+            finalCb = options;
+            options = undefined;
         }
+        finalCb = finalCb || utils.createPromiseCallback();
 
-        return RedbullDeck.saveDraftDecks(draft, clientDecks, finalCb);
-      });
+        var RedbullDeck = RedbullDraft.app.models.redbullDeck;
+
+        // Does the given draft exist and have official set?
+        return RedbullDraft.findById(draftId, {
+            fields: {
+                packOpenerString: false
+            },
+            include: [
+                {
+                    relation: "cards",
+                    scope: {
+                        fields: {
+                            className: true
+                        }
+                    }
+                },
+                {
+                    relation: "settings"
+                }
+            ]
+        }, function (err, draft) {
+            if (err) return finalCb(err);
+            else if (!draft) {
+                var noDraftErr = new Error("No draft found for id", draftId);
+                noDraftErr.statusCode = 404;
+                noDraftErr.code = 'DRAFT_NOT_FOUND';
+                return finalCb(noDraftErr);
+            }
+
+            return RedbullDeck.saveDraftDecks(draft, clientDecks, finalCb);
+        });
     };
 
 
-
-
     RedbullDraft.remoteMethod(
-      'startDraftBuild',
-      {
-        description: "Starts the deck building stage of the Redbull Tournament",
-        accepts: [
-          {arg: 'draftId', type: 'string', required:true, http: {source: 'form'}},
-          {arg: 'options', type: 'object', required:false, http: {source: 'form'}}
-        ],
-        returns: {arg: 'deckBuilderData', type: 'object'},
-        http: {verb: 'post'},
-        isStatic: true
-      }
+        'startDraftBuild',
+        {
+            description: "Starts the deck building stage of the Redbull Tournament",
+            accepts: [
+                {arg: 'draftId', type: 'string', required: true, http: {source: 'form'}},
+                {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
+            ],
+            returns: {arg: 'deckBuilderData', type: 'object'},
+            http: {verb: 'post'},
+            isStatic: true
+        }
     );
 
 
@@ -259,8 +255,8 @@ module.exports = function(RedbullDraft) {
         {
             description: "Adds the redbull role to a user",
             accepts: [
-                {arg: 'uid', type: 'string', required:true, http: {source: 'form'}},
-                {arg: 'options', type: 'object', required:false, http: {source: 'form'}}
+                {arg: 'uid', type: 'string', required: true, http: {source: 'form'}},
+                {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
             ],
             http: {verb: 'put'},
             isStatic: true

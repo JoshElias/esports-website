@@ -23,12 +23,11 @@ module.exports = function(RedbullPack) {
             },
             // Get all cards that can be put into a deck
             function (seriesCb) {
-                Card.find({deckable: true, isActive: true}, seriesCb);
+                Card.find({where:{deckable: true, isActive: true}}, seriesCb);
             },
             // Organize cards into expansion
             function (cards, seriesCb) {
-                console.log("All Cards:", cards);
-
+                
                 // Declare vars outside of for loop
                 var cardIndex = cards.length;
                 var sortedCards = {};
