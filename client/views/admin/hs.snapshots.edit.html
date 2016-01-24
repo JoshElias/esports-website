@@ -102,6 +102,9 @@
             </div>
         </div>
         <div class="form-group">
+            <div class="col-sm-12 m-b-md wrapper-none">
+                <button class="btn btn-danger btn-sm btn-rounded pull-right" ng-click="generateFreshMatches()">Generate new matches</button>
+            </div>
             <label for="intro" class="col-sm-2 control-label">Tiers</label>
             <div class="col-sm-10 wrapper-none">
                 <div class="panel panel-default wrapper-none" ng-repeat="t in snapshot.tiers track by t.tier" ng-if="snapshot.tiers.length != 0">
