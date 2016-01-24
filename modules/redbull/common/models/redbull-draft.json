@@ -46,9 +46,19 @@
     "authorId": {},
     "redbullDraftSettingsId": {}
   },
-  "hidden": ["packOpenerString"],
   "validations": [],
   "relations": {
+    "cards": {
+      "type": "hasMany",
+      "model": "card",
+      "foreignKey": "redbullDraftId",
+      "through": "redbullPackCard"
+    },
+    "packCards": {
+      "type": "hasMany",
+      "model": "redbullPackCard",
+      "foreignKey": "redbullDraftId"
+    },
     "packs": {
       "type": "hasMany",
       "model": "redbullPack",

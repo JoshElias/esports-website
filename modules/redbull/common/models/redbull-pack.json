@@ -10,7 +10,7 @@
     "orderNum": {
       "type": "number"
     },
-    "redbullDraft": {},
+    "redbullDraftId": {},
     "redbullExpansionId": {},
     "ownerId": {}
   },
