@@ -3774,13 +3774,8 @@ angular.module('app.controllers', ['ngCookies'])
                             );
                 
                 _.each(toDelete, function (val) {
-                    console.log(val);
                     DeckMatchup.destroyById({
                         id: val
-                    })
-                    .$promise
-                    .then(function () {
-                        eachCb();
                     })
                 });
                 
@@ -3806,7 +3801,6 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.$apply(doGenerateFreshMatches());
                     }
                 });
-                 
             }
 
             $scope.getMatches = function (deckID) {
@@ -10981,7 +10975,7 @@ angular.module('app.controllers', ['ngCookies'])
 
 
                 /******************************************* BUILD TIER MATCHES *******************************************/
-                for (var j = 0; j < maxTierLength; j++) {
+                for (var j = 0; j < tierLength; j++) {
                     for (var k = 0; k < $scope.deckTiers[j].decks.length; k++) {
                         var matches = [];
                         for (var i = 0; i < $scope.snapshot.deckMatchups.length; i++) {

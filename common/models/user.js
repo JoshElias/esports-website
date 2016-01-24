@@ -51,6 +51,7 @@ module.exports = function(User) {
         });
     });
 
+    
     // Override the base User's verify method
     User.on('attached', function (obj) {
 
