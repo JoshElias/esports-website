@@ -37,7 +37,7 @@ module.exports = function(RedbullDraft) {
 
         clientData.redbullDraftSettingsId = draftSettings.id;
 
-        if (req.accessToken && typeof req.accessToken.userId) {
+        if (req.accessToken && req.accessToken.userId) {
           var userId = req.accessToken.userId.toString();
           clientData.authorId = userId;
           return checkForOfficialDraft(userId, clientData, next)
@@ -85,18 +85,12 @@ module.exports = function(RedbullDraft) {
             return finalCb(alreadyDraftedErr);
         }
 
+        // Make another query for the cards
         return RedbullDraft.findById(draft.id, {
-          include: {
-            relation: "decks",
-            scope: {
-              include: {
-                relation: "deckCards",
-                scope: {
-                  include: ["card"]
-                }
-              }
-            }
-          }
+          fields: {
+            packOpenerString: false
+          },
+          include: ["cards"]
         }, function(err, deckbuilderData) {
           if (err) finalCb(err);
 
@@ -139,35 +133,25 @@ module.exports = function(RedbullDraft) {
     }
 
     RedbullDraft.startDraftBuild = function(draftId, options, finalCb) {
-      console.log("draft build", draftId)
       if (finalCb === undefined && typeof options === 'function') {
-        // createAccessToken(ttl, cb)
         finalCb = options;
         options = undefined;
       }
       finalCb = finalCb || utils.createPromiseCallback();
 
-
       RedbullDraft.findById(draftId, {
-        fields: {clientPackage: false},
-        include: [
-          {
-            relation: "decks",
-            scope: {
-              include: {
-                relation: "deckCards",
-                scope: {
-                  include: ["card"]
-                }
-              }
-            }
-          },
-          {
-            relation: "settings"
-          }
-        ]
+        fields: {
+          packOpenerString: false
+        },
+        include: ["cards", "settings"]
       }, function (err, draft) {
         if (err) return finalCb(err);
+        else if(!draft) {
+          var noDraftErr = new Error("No draft found for id", draftId);
+          noDraftErr.statusCode = 404;
+          noDraftErr.code = 'DRAFT_NOT_FOUND';
+          return finalCb(noDraftErr);
+        }
 
         // Have we already updated the draft state?
         if(draft.hasOpenedPacks) {
@@ -175,7 +159,8 @@ module.exports = function(RedbullDraft) {
         }
 
         // Update the draft state
-        var draftUpdates = newDraftState(draft.settings);
+        var draftJSON = draft.toJSON();
+        var draftUpdates = newDraftState(draftJSON.settings);
         return draft.updateAttributes(draftUpdates, finalCb);
       });
     };
@@ -208,6 +193,49 @@ module.exports = function(RedbullDraft) {
         var User = RedbullDraft.app.models.user;
         User.assignRoles(uid, ["$redbullPlayer"], finalCb);
     };
+
+
+    RedbullDraft.submitDecks = function(draftId, clientDecks, options, finalCb) {
+      if (finalCb === undefined && typeof options === 'function') {
+        // createAccessToken(ttl, cb)
+        finalCb = options;
+        options = undefined;
+      }
+      finalCb = finalCb || utils.createPromiseCallback();
+
+      var RedbullDeck = RedbullDraft.app.models.redbullDeck;
+
+      // Does the given draft exist and have official set?
+      return RedbullDraft.findById(draftId, {
+        fields: {
+          packOpenerString: false
+        },
+        include: [
+          {
+            relation: "cards",
+            scope: {
+              fields: {
+                className: true
+              }
+            }
+          },
+          {
+            relation: "settings"
+          }
+        ]
+      }, function (err, draft) {
+        if (err) return finalCb(err);
+        else if (!draft) {
+          var noDraftErr = new Error("No draft found for id", draftId);
+          noDraftErr.statusCode = 404;
+          noDraftErr.code = 'DRAFT_NOT_FOUND';
+          return finalCb(noDraftErr);
+        }
+
+        return RedbullDeck.saveDraftDecks(draft, clientDecks, finalCb);
+      });
+    };
+
 
 
 

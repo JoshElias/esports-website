@@ -1,5 +1,5 @@
 var async = require("async");
-
+var utils = require("./../../../../lib/utils");
 
 module.exports = function(RedbullPack) {
 
@@ -27,6 +27,7 @@ module.exports = function(RedbullPack) {
             },
             // Organize cards into expansion
             function (cards, seriesCb) {
+                console.log("All Cards:", cards);
 
                 // Declare vars outside of for loop
                 var cardIndex = cards.length;
@@ -97,7 +98,8 @@ module.exports = function(RedbullPack) {
             // General Pack data
             var packData = {
                 orderNum: packNum,
-                redbullExpansionId: expansion.id
+                redbullExpansionId: expansion.id,
+                redbullDraftId: draft.id
             };
 
             // Do we have a signed in user
@@ -135,7 +137,8 @@ module.exports = function(RedbullPack) {
                     newPack.packCards.create({
                         orderNum: packRollKey,
                         cardId: rolledCard.id,
-                        redbullExpansionId: expansion.id
+                        redbullExpansionId: expansion.id,
+                        redbullDraftId: draft.id
                     }, function (err, newPackCard) {
                         if (err) return packRollCb(err);
 
@@ -156,7 +159,7 @@ module.exports = function(RedbullPack) {
             var packRolls = [];
             var cardIndex = draftSettings.cardsPerPack;
             while (cardIndex--) {
-                packRolls[cardIndex] = getRandomInt(1, 100);
+                packRolls[cardIndex] = utils.getRandomInt(1, 100);
                 if (packRolls[cardIndex] > rareThreshold) {
                     addRare = true;
                 }
@@ -174,10 +177,6 @@ module.exports = function(RedbullPack) {
     function shufflePack(packRolls) {
         for (var j, x, i = packRolls.length; i; j = parseInt(Math.random() * i), x = packRolls[--i], packRolls[i] = packRolls[j], packRolls[j] = x);
         return packRolls;
-    }
-
-    function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     function getCardFromRoll(roll, chances, cards) {
@@ -220,7 +219,7 @@ module.exports = function(RedbullPack) {
         }
 
         // assign random card from pool
-        randomCard = getRandomInt(0, cardPool.length - 1);
+        randomCard = utils.getRandomInt(0, cardPool.length - 1);
         rolledCard = cardPool[randomCard];
 
         return rolledCard;

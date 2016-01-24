@@ -7,25 +7,24 @@
     "validateUpsert": true
   },
   "properties": {
-    "name": {
-      "type": "string"
-    },
-    "isPublic": {
-      "type": "boolean",
+    "playerClass": {
+      "type": "string",
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "validators": ["unique"]
-    },
     "viewCount": {
-      "type": "number"
+      "type": "number",
+      "default": 0
     },
     "votes": [
       "object"
     ],
     "voteScore": {
-      "type": "number"
+      "type": "number",
+      "default": 0
+    },
+    "isOfficial": {
+      "type": "boolean",
+      "default": false
     },
     "redbullDraftId": {},
     "authorId": {}
@@ -37,11 +36,17 @@
       "model": "user",
       "foreignKey": "authorId"
     },
-    "cards": {
+    "deckCards": {
       "type": "hasMany",
       "model": "deckCard",
-      "foreignKey": "deckId",
+      "foreignKey": "redbullDeckId",
       "isChild": true
+    },
+    "cards": {
+      "type": "hasMany",
+      "model": "card",
+      "foreignKey": "redbullDeckId",
+      "through": "deckCard"
     },
     "comments": {
       "type": "hasMany",
