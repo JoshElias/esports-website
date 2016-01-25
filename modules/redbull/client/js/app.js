@@ -128,10 +128,7 @@ var redbull = angular.module('app.redbull', [
                     controller: 'DraftPacksCtrl',
                     resolve: {
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
-                            RedbullDraftSettings.findOne().$promise.then(function (data) {
-                                console.log('Setting: ', data);
-                                return data;
-                            });
+                            RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', 'RedbullDraft', function ($localStorage, RedbullDraft) {
                             if ($localStorage.draftId) {
@@ -160,10 +157,7 @@ var redbull = angular.module('app.redbull', [
                     controller: 'DraftBuildCtrl',
                     resolve: {
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
-                            RedbullDraftSettings.findOne().$promise.then(function (data) {
-                                console.log('Setting: ', data);
-                                return data;
-                            });
+                            return RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
                             if ($localStorage.draftId) {
@@ -171,7 +165,16 @@ var redbull = angular.module('app.redbull', [
                                     filter: {
                                         where: {
                                             id: $localStorage.draftId
-                                        }
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'cards',
+                                                scope: {
+                                                    fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
+                                                    order: ['cost ASC', 'name ASC']
+                                                }
+                                            }
+                                        ]
                                     }
                                 }).$promise.then(function (data) {
                                     if (!data.hasOpenedPacks) {
@@ -207,6 +210,15 @@ var redbull = angular.module('app.redbull', [
                 redbull: {
                     templateUrl: moduleTpl + 'admin/admin.redbull.settings.html',
                     controller: 'AdminRedbullSettingsCtrl',
+                    resolve: {
+                        expansions: ['RedbullExpansion', function (RedbullExpansion) {
+                            return RedbullExpansion.find({
+                                filter: {
+                                    include: 'rarityChances'
+                                }
+                            }).$promise;
+                        }],
+                    }
                 }
             },
             access: { auth: true, admin: true }

@@ -1,14 +1,17 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'DraftCards', 
-    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, DraftCards) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'DraftCards', 'draftSettings', 'draft', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, DraftCards, draftSettings, draft) {
+        // set cards
+        DraftCards.setCards(draft.cards);
         var allCards = DraftCards.getCards();
         if (!allCards.length) {
-            return $state.go('app.redbull.draft.packs');
+            return $state.go('^.packs');
         }
         
+        // tournament settings
         $scope.tournament = {
-            allowDuplicateClasses: false,
-            decksLimit: 3
+            allowDuplicateClasses: draftSettings.allowDuplicateClasses,
+            decksLimit: draftSettings.numOfDecks
         };
         
         // classes
@@ -32,7 +35,7 @@ angular.module('redbull.controllers')
             current: [],
         };
         $scope.decks = [];
-        $scope.decksLimit = 3;
+        //$scope.decksLimit = 3;
 
         $scope.search = '';
         $scope.manaCosts = [0,1,2,3,4,5,6,7];

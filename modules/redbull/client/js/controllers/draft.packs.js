@@ -189,7 +189,7 @@ angular.module('redbull.controllers')
     $scope.goToBuild = function () {
         $scope.goingToBuild = true;
         
-        RedbullDraft.startDraftBuild({ where: { id: $localStorage.draftId } },{}).$promise.then(function () {
+        RedbullDraft.startDraftBuild({ draftId: $localStorage.draftId }).$promise.then(function () {
             return $state.go('^.build');
         }).catch(function () {
             console.error('Unable to update draft');
