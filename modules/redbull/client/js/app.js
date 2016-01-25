@@ -159,18 +159,37 @@ var redbull = angular.module('app.redbull', [
                     templateUrl: moduleTpl + 'draft.build.html',
                     controller: 'DraftBuildCtrl',
                     resolve: {
-                        cards: ['$state', 'DraftCards', function ($state, DraftCards) {
-                            var cards = DraftCards.getCards();
-                            if (!cards.length) {
-                                return $state.go('app.redbull.draft.packs');
+                        draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
+                            RedbullDraftSettings.findOne().$promise.then(function (data) {
+                                console.log('Setting: ', data);
+                                return data;
+                            });
+                        }],
+                        draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
+                            if ($localStorage.draftId) {
+                                return RedbullDraft.findOne({
+                                    filter: {
+                                        where: {
+                                            id: $localStorage.draftId
+                                        }
+                                    }
+                                }).$promise.then(function (data) {
+                                    if (!data.hasOpenedPacks) {
+                                        $state.go('app.redbull.draft.packs');
+                                        return $q.reject();
+                                    } else {
+                                        return data;
+                                    }
+                                });
+                            } else {
+                                $state.go('app.redbull.draft.packs');
+                                return $q.reject();
                             }
-                            return cards;
                         }]
                     }
                 }
             },
-            seo: { title: 'Redbull' },
-            //access: { auth: true }
+            seo: { title: 'Redbull' }
         })
         .state('app.admin.redbull', {
             abstract: true,

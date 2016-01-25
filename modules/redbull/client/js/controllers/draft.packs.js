@@ -1,5 +1,7 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'draft', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, draft){
+.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draft', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draft){
+    if (draft.hasOpenedPacks) { return $state.go('^.build'); }
+    
     console.log('Draft: ', draft);
     
     if (!$localStorage.draftId) {
@@ -10,14 +12,13 @@ angular.module('redbull.controllers')
     $scope.isLoading = true;
     $scope.isSuccessful = false;
     $scope.percentLoaded = 0;
-    
-    $scope.getIsLoading = function () {
-        return $scope.isLoading;
-    };
+    $scope.goingToBuild = false;
     
     // packs
     $scope.currentPack = {};
-    $scope.packs = draft.packOpenerData;
+    $scope.packs = JSON.parse(draft.packOpenerString);
+    
+    console.log('Packs: ', $scope.packs);
     
     // file variables
     var fileLocations = [];
@@ -40,10 +41,8 @@ angular.module('redbull.controllers')
     }
     for (var i = 0; i < cardImages.length; i++) {
         // TODO: make https
-        //console.log('http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i]);
-        //fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
+        fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
     }
-    
     
     // image files
     var imageFiles = [
@@ -122,7 +121,8 @@ angular.module('redbull.controllers')
         }
     );
 
-    // temp settings window
+// temp settings window
+/*
     $scope.$watch(function () { return $scope.tournament; }, function (newValue) {
         $scope.tournament = newValue;
     }, true);
@@ -184,13 +184,21 @@ angular.module('redbull.controllers')
         });
         box.modal('show');
     };
-    
+*/
+
     $scope.goToBuild = function () {
-        return $state.go('app.redbull.draft.build');
+        $scope.goingToBuild = true;
         
-        /*var box = bootbox.dialog({
+        RedbullDraft.startDraftBuild({ where: { id: $localStorage.draftId } },{}).$promise.then(function () {
+            return $state.go('^.build');
+        }).catch(function () {
+            console.error('Unable to update draft');
+        });
+        
+/*
+        var box = bootbox.dialog({
             title: 'Build Decks',
-            message: 'This feature has not been completed yet.',
+            message: 'You will have ',
             buttons: {
                 cancel: {
                     label: 'OK',
@@ -202,7 +210,7 @@ angular.module('redbull.controllers')
             }
         });
         box.modal('show');
-        */
+*/
     };
     
 }]);

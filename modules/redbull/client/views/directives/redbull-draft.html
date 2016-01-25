@@ -1,5 +1,5 @@
 <!-- preloader -->
-<div class="preloader" ng-if="getIsLoading()"><i class="fa fa-refresh fa-spin"></i></div>
+<div class="preloader" ng-if="isLoading"><i class="fa fa-refresh fa-spin"></i></div>
 <!-- / preloader -->
 
 <!-- Mobile override div -->
@@ -26,25 +26,26 @@
         <div class="packs-scroller">
             <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, fadeScrollbars: true, interactiveScrollbars: true}">
                 <div class="iscroll-scroller">
-                    <div class="expansion-wrapper {{packs[expansion].expansionClass}}" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
+                    <div class="expansion-wrapper {{packs[expansion].className}}" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
                         <div class="pack-wrapper">
-                            <div class="pack-tab {{packs[expansion].expansionClass}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
-                            <div class="pack-next {{packs[expansion].expansionClass}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
-                            <div class="pack {{packs[expansion].expansionClass}}" data-expansion="{{expansion}}"></div>
+                            <div class="pack-tab {{packs[expansion].className}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
+                            <div class="pack-next {{packs[expansion].className}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
+                            <div class="pack {{packs[expansion].className}}" data-expansion="{{expansion}}"></div>
                         </div>
                         <div class="pack-label">
-                            <span class="{{packs[expansion].expansionClass}}" ng-if="expansion !== 'Basic'">{{expansion}}</span>
-                            <span class="{{packs[expansion].expansionClass}}" ng-if="expansion === 'Basic'">Classic</span>
+                            <span class="{{packs[expansion].className}}">{{expansion}}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+<!--
         <div class="pack-settings-button">
             <button class="btn btn-blue btn-block" ng-click="$parent.settingsWnd()">
                 Pack Settings
             </button>
         </div>
+-->
         <div class="volume-control">
             <draft-volume></draft-volume>
         </div>
