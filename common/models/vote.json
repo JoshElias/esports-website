@@ -13,16 +13,20 @@
     "createdDate": {
       "type": "date"
     },
-    "parentName": {
-      "type": "string"
-    }
+    "authorId": {},
+    "articleId": {},
+    "guideId": {},
+    "deckId": {},
+    "snapshotId": {},
+    "forumPostId": {},
+    "parentCommentId": {}
   },
   "validations": [],
   "relations": {
-    "ownerId": {
+    "author": {
       "type": "belongsTo",
       "model": "user",
-      "foreignKey": ""
+      "foreignKey": "authorId"
     }
   },
   "acls": [
@@ -48,6 +52,13 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "accessType": "WRITE"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getScore"
     }
   ],
   "methods": {}
