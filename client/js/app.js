@@ -887,7 +887,20 @@ var app = angular.module('app', [
                                 });
 
                             }],
-                            
+                            deckVoteScore: ['Vote', 'deck', function (Vote, deck) {
+                                console.log(deck.id);
+                                var score;
+                                Vote.getScore({
+                                    parentId: deck.id
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                });
+                            }],
                             deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
                                 var deckID = deck.id;
                                 
