@@ -250,6 +250,7 @@ module.exports = function(User) {
         });
     });
 
+
     
     User.changePassword = function (email, password, token, cb) {
         cb = cb || utils.createPromiseCallback();
