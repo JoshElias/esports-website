@@ -113,11 +113,9 @@ module.exports = function(RedbullPack) {
                 var rarityChance = expansion.rarityChances[rarityChanceIndex];
                 rarityChances[rarityChance.rarity] = rarityChance.percentage;
             }
-            var rareThreshold = (rarityChances.basic + rarityChances.common);
-            var rareChance = rarityChanceIndex.rare;
 
             // Generate the Rolls for the pack and shuffle
-            var packRolls = generatePackRolls(rareThreshold, rareChance);
+            var packRolls = generatePackRolls(rarityChances);
             packRolls = shufflePack(packRolls);
 
             // Start Creating the Pack
@@ -152,7 +150,10 @@ module.exports = function(RedbullPack) {
             });
         }
 
-        function generatePackRolls(rareThreshold, rareChance) {
+        function generatePackRolls(rarityChances) {
+
+            var rareThreshold = (rarityChances.basic + rarityChances.common);
+            var rareChance = rarityChances.rare;
             var addRare = false;
 
             var packRolls = [];
