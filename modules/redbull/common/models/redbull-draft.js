@@ -1,4 +1,5 @@
 var loopback = require("loopback");
+var async = require("async");
 var utils = require("./../../../../lib/utils");
 
 
@@ -162,6 +163,8 @@ module.exports = function(RedbullDraft) {
             var draftUpdates = newDraftState(draftJSON.settings);
             return draft.updateAttributes(draftUpdates, finalCb);
         });
+
+        return finalCb.promise;
     };
 
 
@@ -190,6 +193,49 @@ module.exports = function(RedbullDraft) {
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;
         User.assignRoles(uid, ["$redbullPlayer"], finalCb);
+    };
+
+    RedbullDraft.getDraftPlayers = function (finalCb) {
+        finalCb = finalCb || utils.createPromiseCallback();
+
+        // Add the redbull role to this user
+        var User = RedbullDraft.app.models.user;
+        var Role = RedbullDraft.app.models.Role;
+        var RoleMapping = RedbullDraft.app.models.RoleMapping;
+
+        async.waterfall([
+            // Get the redbullPlayer role
+            function(seriesCb) {
+                return Role.findOne({where:{name: "$redbullPlayer"}}, function(err, role) {
+                    if(err) return seriesCb(err);
+                    else if(!role) {
+                        var noRoleErr = new Error("Could not find redbullPlayer role");
+                        noRoleErr.statusCode = 404;
+                        noRoleErr.code = 'ROLE_NOT_FOUND';
+                        return seriesCb(noRoleErr);
+                    }
+                    return seriesCb(undefined, role);
+                });
+            },
+            // Get all role mappings
+            function(role, seriesCb) {
+                return RoleMapping.find({where:{roleId:role.id}}, seriesCb);
+            },
+            // Get all users of this role
+            function(roleMappings, seriesCb) {
+                return async.map(roleMappings, function(roleMapping, mappingCb) {
+                    User.findById(roleMapping.principalId, {
+                        fields: {
+                            id: true,
+                            username: true,
+                            email: true
+                        }
+                    }, mappingCb);
+                }, seriesCb);
+            }
+        ], finalCb);
+
+        return finalCb.promise;
     };
 
 
@@ -232,6 +278,8 @@ module.exports = function(RedbullDraft) {
 
             return RedbullDeck.saveDraftDecks(draft, clientDecks, finalCb);
         });
+
+        return finalCb.promise;
     };
 
 
@@ -259,6 +307,32 @@ module.exports = function(RedbullDraft) {
                 {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
             ],
             http: {verb: 'put'},
+            isStatic: true
+        }
+    );
+
+    RedbullDraft.remoteMethod(
+        'getDraftPlayers',
+        {
+            description: "Gets all the redbull users",
+            http: {verb: 'get'},
+            returns: {arg: 'players', type: 'array'},
+            isStatic: true
+        }
+    );
+
+
+    RedbullDraft.remoteMethod(
+        'submitDecks',
+        {
+            description: "Starts the deck building stage of the Redbull Tournament",
+            accepts: [
+                {arg: 'draftId', type: 'string', required: true, http: {source: 'form'}},
+                {arg: 'clientDecks', type: 'object', required: false, http: {source: 'form'}},
+                {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
+            ],
+            returns: {arg: 'decks', type: 'array'},
+            http: {verb: 'post'},
             isStatic: true
         }
     );

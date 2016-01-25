@@ -8,6 +8,7 @@ module.exports = function(RedbullDeck) {
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, finalCb) {
 
+        console.log("saving draft decks");
         var currentTime = Date.now();
         var draftJSON = draft.toJSON();
         var draftSettings = draftJSON.settings;
@@ -19,10 +20,15 @@ module.exports = function(RedbullDeck) {
         noDeckValidationErr.code = 'DRAFT_VALIDATION_ERROR';
 
         // See if the curfew was breached
+        console.log("currentTIme", currentTime);
+        console.log("deckSubmitCurfew", deckSubmitCurfew);
         if (currentTime > deckSubmitCurfew) {
             var randomDecks = createRandomDecks(numOfDecks);
             return saveDecks(draft, randomDecks, finalCb);
         }
+
+        clientDecks = createRandomDecks(numOfDecks);
+        console.log("random decks:", clientDecks);
 
         // Validate the client deck's cards'
         noDeckValidationErr.cardErrors = validateCards(draftJSON, clientDecks);
@@ -38,15 +44,19 @@ module.exports = function(RedbullDeck) {
     };
 
     function saveDecks(draft, decks, finalCb) {
+        var savedDecks = [];
         return async.eachSeries(decks, function (deck, deckCb) {
             deck.isOfficial = draft.isOfficial;
             return RedbullDeck.create(deck, function (err, newDeck) {
                 if (err) return deckCb(err);
+                savedDecks.push(newDeck);
                 return async.eachSeries(deck.deckCards, function (deckCard, deckCardCb) {
                     return newDeck.deckCard.create(deckCard, deckCardCb);
                 }, deckCb);
             });
-        }, finalCb);
+        }, function(err) {
+            return finalCb(err, savedDecks);
+        });
     }
 
 
