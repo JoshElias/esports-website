@@ -3462,6 +3462,13 @@ var app = angular.module('app', [
                         controller: 'ProfileEditCtrl',
                         resolve: {
                             user: ['userProfile', function (userProfile) {
+                                if (_.isUndefined(userProfile.subscription)) {
+                                    userProfile.subscription = {
+                                        isSubscribed: false,
+                                        expiryDate: null
+                                    }
+                                }
+                                
                                 return userProfile;
                             }],
                             isPremium: ['User', 'user', function (User, user) {
