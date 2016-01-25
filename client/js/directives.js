@@ -229,9 +229,9 @@ angular.module('app.directives', ['ui.load'])
       $scope.signup = function(email, username, password) {
         if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined ) {
           User.create({
-            email: email,
-            username: username,
-            password:password
+              email: email,
+              username: username,
+              password:password
           }, function (user) {
             $scope.verify.email = email;
             if ($scope.setState) {
