@@ -14,8 +14,6 @@ angular.module('redbull.directives')
             var endTime = (scope.startTime + (scope.timeLimit * 60 * 1000)),
                 currentTime, timeLeft, draftTimer;
             
-            console.log(scope.timeLimit);
-            
             init();
             
             function init() {
@@ -59,7 +57,6 @@ angular.module('redbull.directives')
                     }
                 }
             }
-            
             
             scope.$on('destroy', function () {
                 $interval.cancel(draftTimer);

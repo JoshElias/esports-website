@@ -23,8 +23,13 @@ angular.module('redbull.controllers')
     // file variables
     var fileLocations = [];
     var imagePath = (tpl !== './') ? 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
-    var ext = '.mp3';
+    var ext = getAudioExt();
     var audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/';
+    
+    function getAudioExt () {
+        var audioTest = new Audio();
+        return (audioTest.canPlayType('audio/ogg')) ? '.ogg' : '.mp3';
+    }
     
     // load cards for preloader
     var cardImages = [];
