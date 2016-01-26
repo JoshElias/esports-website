@@ -23,15 +23,15 @@
       "type": "boolean",
       "default": false
     },
-    "hasDecksConstructed": {
-      "type": "boolean",
-      "default": false
-    },
     "deckBuildStartTime": {
       "type": "number"
     },
     "deckBuildStopTime": {
       "type": "number"
+    },
+    "hasDecksConstructed": {
+      "type": "boolean",
+      "default": false
     },
     "deckSubmitCurfew": {
       "type": "number"

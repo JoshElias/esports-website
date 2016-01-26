@@ -10,6 +10,9 @@ module.exports = function(RedbullDraft) {
     contextErr.code = 'NO_CONTEXT';
 
 
+
+    // START DRAFT
+
     RedbullDraft.observe("before save", handleNewDraftRequest);
 
 
@@ -21,8 +24,7 @@ module.exports = function(RedbullDraft) {
         var RedbullDraftSettings = RedbullDraft.app.models.redbullDraftSettings;
 
         // Initialize custom default values
-        clientData = ctx.data || ctx.instance;
-
+        var clientData = ctx.data || ctx.instance;
         clientData.draftStartTime = Date.now();
 
         // Is the user logged in?
@@ -132,6 +134,39 @@ module.exports = function(RedbullDraft) {
         });
     }
 
+
+
+    // OPENING PACKS
+
+    RedbullDraft.finishedOpeningPacks = function(draftId, options, finalCb) {
+        if (finalCb === undefined && typeof options === 'function') {
+            finalCb = options;
+            options = undefined;
+        }
+        finalCb = finalCb || utils.createPromiseCallback();
+
+        //var User = RedbullDraft.app.models.user;
+        var currentTime = Date.now();
+
+        return RedbullDraft.findById(draftId, {fields:{id:true}}, function(err, draft) {
+            if(err) return finalCb(err);
+
+            return draft.updateAttributes({
+                hasOpenedPacks: true,
+                packOpeningEndTime: currentTime
+            }, function(err) {
+                return finalCb(err);
+            });
+        });
+
+        return finalCb.promise;
+    }
+
+
+
+    // BUILDING
+
+
     RedbullDraft.startDraftBuild = function (draftId, options, finalCb) {
         if (finalCb === undefined && typeof options === 'function') {
             finalCb = options;
@@ -172,15 +207,60 @@ module.exports = function(RedbullDraft) {
         var currentTime = Date.now();
         var draftUpdates = {};
 
-        draftUpdates.packOpeningEndTime = currentTime;
         draftUpdates.deckBuildStartTime = currentTime;
         var buildTimeLimitMillis = draftSettings.deckBuildTimeLimit * 60 * 1000;
         var gracePeriodMillis = draftSettings.deckBuildGracePeriod * 60 * 1000;
         draftUpdates.deckSubmitCurfew = currentTime + buildTimeLimitMillis + gracePeriodMillis;
-        draftUpdates.hasOpenedPacks = true;
         return draftUpdates;
     }
 
+
+    RedbullDraft.submitDecks = function (draftId, clientDecks, options, finalCb) {
+        if (finalCb === undefined && typeof options === 'function') {
+            // createAccessToken(ttl, cb)
+            finalCb = options;
+            options = undefined;
+        }
+        finalCb = finalCb || utils.createPromiseCallback();
+
+        var RedbullDeck = RedbullDraft.app.models.redbullDeck;
+
+        // Does the given draft exist and have official set?
+        return RedbullDraft.findById(draftId, {
+            fields: {
+                packOpenerString: false
+            },
+            include: [
+                {
+                    relation: "cards",
+                    scope: {
+                        fields: {
+                            className: true
+                        }
+                    }
+                },
+                {
+                    relation: "settings"
+                }
+            ]
+        }, function (err, draft) {
+            if (err) return finalCb(err);
+            else if (!draft) {
+                var noDraftErr = new Error("No draft found for id", draftId);
+                noDraftErr.statusCode = 404;
+                noDraftErr.code = 'DRAFT_NOT_FOUND';
+                return finalCb(noDraftErr);
+            }
+
+            return RedbullDeck.saveDraftDecks(draft, clientDecks, finalCb);
+        });
+
+        return finalCb.promise;
+    };
+
+
+
+    // DRAFT PLAYER MANAGEMENT
 
     RedbullDraft.addDraftPlayer = function (uid, options, finalCb) {
         if (finalCb === undefined && typeof options === 'function') {
@@ -254,49 +334,6 @@ module.exports = function(RedbullDraft) {
 
 
 
-    RedbullDraft.submitDecks = function (draftId, clientDecks, options, finalCb) {
-        if (finalCb === undefined && typeof options === 'function') {
-            // createAccessToken(ttl, cb)
-            finalCb = options;
-            options = undefined;
-        }
-        finalCb = finalCb || utils.createPromiseCallback();
-
-        var RedbullDeck = RedbullDraft.app.models.redbullDeck;
-
-        // Does the given draft exist and have official set?
-        return RedbullDraft.findById(draftId, {
-            fields: {
-                packOpenerString: false
-            },
-            include: [
-                {
-                    relation: "cards",
-                    scope: {
-                        fields: {
-                            className: true
-                        }
-                    }
-                },
-                {
-                    relation: "settings"
-                }
-            ]
-        }, function (err, draft) {
-            if (err) return finalCb(err);
-            else if (!draft) {
-                var noDraftErr = new Error("No draft found for id", draftId);
-                noDraftErr.statusCode = 404;
-                noDraftErr.code = 'DRAFT_NOT_FOUND';
-                return finalCb(noDraftErr);
-            }
-
-            return RedbullDeck.saveDraftDecks(draft, clientDecks, finalCb);
-        });
-
-        return finalCb.promise;
-    };
-
 
     RedbullDraft.remoteMethod(
         'startDraftBuild',
@@ -312,6 +349,18 @@ module.exports = function(RedbullDraft) {
         }
     );
 
+    RedbullDraft.remoteMethod(
+        'finishedOpeningPacks',
+        {
+            description: "Tells the server that you've finished creating packs",
+            accepts: [
+                {arg: 'draftId', type: 'string', required: true, http: {source: 'form'}},
+                {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
+            ],
+            http: {verb: 'post'},
+            isStatic: true
+        }
+    );
 
     RedbullDraft.remoteMethod(
         'addDraftPlayer',
