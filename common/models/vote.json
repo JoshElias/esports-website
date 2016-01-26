@@ -81,7 +81,7 @@
       "principalType": "ROLE",
       "principalId": "$authenticated",
       "permission": "ALLOW",
-      "accessType": "CREATE"
+      "property": "create"
     },
     {
       "accessType": "EXECUTE",

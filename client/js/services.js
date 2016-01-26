@@ -3420,106 +3420,100 @@ angular.module('app.services', [])
         }
     }])
     .factory('CrudMan', [
-    function () {
-        //    var arrs = {};
-        var crud = {
-            exists  : [],
-            toDelete: [],
-            toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
+        function () {
+            //    var arrs = {};
+            var crud = {
+                exists  : [],
+                toDelete: [],
+                toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
+            }
+            var e = 'exists';
+            var d = 'toDelete';
+            var w = 'toWrite';
+
+            var CrudMan = function () {
+                var arrs = {};
+
+                function getArrs () {
+                    return arrs;
+                }
+
+                function find (item, arrName, crud) {
+                    return _.find(arrs[arrName][crud], function (val) { return val == item });
+                }
+
+                function createArr (arrName) {
+                    arrs[arrName] = angular.copy(crud);
+                }
+
+                function setExists (inArr, arrName) {
+                    if (!arrs[arrName]) {
+                        this.createArr(arrName);
+                    }
+
+                    _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
+                }
+
+                function removeFromArr (item, arrName, crud) {
+                    var arr = arrs[arrName];
+                    var idx = arr[crud].indexOf(item);
+
+                    arr[crud].splice(idx, 1);
+                }
+
+                function addToDelete (item, arrName) {
+                    var arr = arrs[arrName];
+
+                    if (find(item, arrName)) {
+                        var idx = arr[w].indexOf(item);
+
+                        arr[w].splice(idx, 1);
+                    }
+
+                    if (!find(item, arrName)) {
+                        arr[d].push(item);
+                    } 
+                }
+
+                function addToArr (item, arrName) {
+                    var arr = arrs[arrName];
+
+                    if (find(item, arrName)) {
+                        var idx = arr[d].indexOf(item);
+
+                        arr[d].splice(idx, 1);
+                    }
+
+                    if (!find(item, arrName)) {
+                        arr[w].push(item);
+                    } 
+                }
+
+                function toggleItem (item, arrName) {
+                    if (find(item, arrName, e)) {
+                        arrs[arrName][d].push(item);
+                    } else if (find(item, arrName, w)) {
+                        removeFromArr(item, arrName, w);
+                    } else {
+                        addToArr(item, arrName, w);
+                    }
+                }
+
+                return {
+                    setExists: setExists,
+                    toggle: toggleItem,
+                    add: addToArr,
+                    delete: addToDelete,
+                    createArr: createArr,
+                    getArrs: getArrs
+                }
+            }
+
+
+
+            return CrudMan;
         }
-        var e = 'exists';
-        var d = 'toDelete';
-        var w = 'toWrite';
-
-        var CrudMan = function () {
-            var arrs = {};
-
-            function getArrs () {
-                return arrs;
-            }
-
-            function find (item, arrName, crud) {
-                return _.find(arrs[arrName][crud], function (val) { return val == item });
-            }
-
-            function createArr (arrName) {
-                arrs[arrName] = angular.copy(crud);
-            }
-
-            function setExists (inArr, arrName) {
-                //        console.log('SET EXISTS WAS CALLED:', inArr, arrName);
-                if (!arrs[arrName]) {
-                    this.createArr(arrName);
-                }
-
-                _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
-            }
-
-            function removeFromArr (item, arrName, crud) {
-                var arr = arrs[arrName];
-                var idx = arr[crud].indexOf(item);
-
-                arr[crud].splice(idx, 1);
-            }
-            
-            function addToDelete (item, arrName) {
-                var arr = arrs[arrName];
-                
-                if (find(item, arrName)) {
-                    var idx = arr[w].indexOf(item);
-                    
-                    arr[w].splice(idx, 1);
-                }
-                
-                if (!find(item, arrName)) {
-                    arr[d].push(item);
-                } 
-            }
-
-            function addToArr (item, arrName) {
-                var arr = arrs[arrName];
-
-                if (find(item, arrName)) {
-                    var idx = arr[d].indexOf(item);
-
-                    arr[d].splice(idx, 1);
-                }
-
-                if (!find(item, arrName)) {
-                    arr[w].push(item);
-                } 
-            }
-
-            function toggleItem (item, arrName) {
-                if (find(item, arrName, e)) {
-                    //          console.log('is in exists');
-                    arrs[arrName][d].push(item);
-                } else if (find(item, arrName, w)) {
-                    //          console.log('is in create');
-                    removeFromArr(item, arrName, w);
-                } else {
-                    //          console.log('added to create');
-                    addToArr(item, arrName, w);
-                }
-
-                //        console.log('CrudMan TOGGLE triggered', arrs);
-            }
-
-            return {
-                setExists: setExists,
-                toggle: toggleItem,
-                add: addToArr,
-                delete: addToDelete,
-                createArr: createArr,
-                getArrs: getArrs
-            }
-        }
-
-
-
-        return CrudMan;
-    }
-])
+    ])
     .factory('markitupSettings', [
     function() {
         var factory, markset;

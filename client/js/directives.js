@@ -412,7 +412,7 @@ angular.module('app.directives', ['ui.load'])
                                 userId: LoopBackAuth.currentUserId
                             }
                         );
-                        Comment.create(comment)
+                        Comment.update({ where: { id: comment.id } }, comment)
                         .$promise.then(function (data) {
                             comment.voted = direction;
                             comment.votesCount = data.votesCount;
@@ -719,8 +719,8 @@ angular.module('app.directives', ['ui.load'])
                 setLoading(true);
                 
                 if (_.isNull(LoopBackAuth.currentUserId)) {
+                    setLoading(false);
                     LoginModalService.showModal('login', function () {
-                        setLoading(false);
                         $scope.vote(direction);
                     });
                 } else {
