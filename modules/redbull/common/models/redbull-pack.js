@@ -4,6 +4,7 @@ var utils = require("./../../../../lib/utils");
 module.exports = function(RedbullPack) {
 
 
+
     RedbullPack.rollPacks = function(draft, finalCb) {
 
         var Card = RedbullPack.app.models.card;
@@ -68,6 +69,7 @@ module.exports = function(RedbullPack) {
                 generatePacks(sortedCards, expansions, seriesCb);
             }
         ], finalCb);
+
 
 
         function generatePacks(sortedPacks, expansions, finalCb) {
