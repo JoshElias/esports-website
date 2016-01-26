@@ -505,7 +505,9 @@ module.exports = function(User) {
                 return eachCb();
             }
 
-            Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, function(err, isRole) {
+            return Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, function(err, isRole) {
+                if(err) return eachCb(err);
+
                 if(!isRole && isInRoles.all) {
                     isInRoles.all = false;
                 } else if(isRole && isInRoles.none) {
@@ -513,7 +515,7 @@ module.exports = function(User) {
                 }
 
                 isInRoles[roleName] = isRole;
-                eachCb(err)
+                return eachCb();
             });
         }, function(err) {
             if(err) return cb(err);
