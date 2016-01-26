@@ -10,6 +10,10 @@ $grey: #454545;
 .footer-redbull-div {
     position: relative;
     
+    -moz-transition: 1s ease-in-out;
+    -webkit-transition: 1s ease-in-out;
+    transition: 1s ease-in-out;
+    
     .footer-toggle {
         position: fixed;
         bottom: 200px;
@@ -19,16 +23,31 @@ $grey: #454545;
         font-size: 30px;
         cursor: pointer;
         
-        &:hover {
-            color: rgba($grey, 0.7);
+        @media screen and (min-width: 768px) {
+            &:hover {
+                color: rgba($grey, 0.7);
+            }
         }
-        
-        .fa {
-
-        }
-        
+            
         @media screen and (max-width: 1200px) {
             bottom: 160px;
+        }
+        
+        @media screen and (max-width: 650px) {
+            right: 20px;
+            bottom: 70px;
+        }
+        
+        &.small {
+            bottom: 100px;
+            -ms-transform: rotate(45deg); /* IE 9 */
+            -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+            transform: rotate(45deg);
+            
+            @media screen and (max-width: 650px) {
+                right: 20px;
+                bottom: 70px;
+            }
         }
     }
     
@@ -46,7 +65,7 @@ $grey: #454545;
         height: 115px;
         position: fixed;
         bottom: 0;
-        left: 0px;
+        right: 0px;
         outline: 1px solid rgba(255,255,255,.2);
         outline-offset: -2px;
         border: 1px solid rgba(0,0,0,1);
@@ -54,8 +73,34 @@ $grey: #454545;
         color: $rb-white;
        // box-shadow: 3px 4px 5px rgba(0,0,0,.75);
         
-        &.small {
+        .rb-logo-mini {
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+            width: 100px;
             display: none;
+        }
+        
+        &.small {
+                outline: none;
+                border: none;
+                background: none;
+                width: 1px;
+
+                .footer-toggle {
+
+                }
+            
+                .rb-logo-mini {
+                    display: block;
+                }
+                .rb-footer-img {
+                    width: 242px;
+                }
+            
+            .content {
+                display: none;
+            }
         }
         
         .rb-logo {
@@ -67,6 +112,20 @@ $grey: #454545;
                 width: 150px;
             
             }
+            
+            @media screen and (max-width: 650px) {
+                left: 10px;
+                bottom: 10px;
+                width: 110px;
+            }
+            
+            &.mini {
+                //display: none;
+                right: 10px;
+                width: 100px;
+            }
+            
+            
         }
         
         .hs-card {
@@ -81,6 +140,7 @@ $grey: #454545;
             
             @media screen and (max-width: 1120px) {
                 right: 45%;
+                display: none;
             }
 //            @media screen and (max-width: 992px) {
 //                right: 25%;
@@ -158,11 +218,14 @@ $grey: #454545;
             color: $rb-white;
             //cursor: pointer;
             
-            &:hover {
-                background-color: rgba($highlight, 0.5);
-                border: 1px solid rgba($rb-white, 0.6);
-                
+            @media screen and (min-width: 768px) {
+                &:hover {
+                    background-color: rgba($highlight, 0.5);
+                    border: 1px solid rgba($rb-white, 0.6);    
+                }
             }
+            
+            
             @media screen and (max-width: 1590px) {
                 right: 33%;
             }
@@ -171,9 +234,11 @@ $grey: #454545;
                 right: 45%;
             }
             
-            // @media screen and (max-width: 720px) {
-            //    right: 25%;
-            //}
+            @media screen and (max-width: 650px) {
+                right: 55px;
+                top: 42px;
+                padding: 5px 20px;
+            }
         }
         
         .rb-footer-img {
@@ -184,6 +249,10 @@ $grey: #454545;
             
             @media screen and (max-width: 1200px) {
                 width: 350px;
+            }
+            
+            @media screen and (max-width: 650px) {
+                display: none;
             }
         }
     } // footer-ad end
