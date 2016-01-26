@@ -753,6 +753,19 @@
 
                     &.right {
                         right: 0px;
+                        
+                        @media screen and (max-width: 1200px) {
+                            right: 30%;
+                        } //media 1200px
+                        
+                         @media screen and (max-width: 992px) {
+                            right: 40%;
+                        } //media 992px
+                        
+                        @media screen and (max-width: 768px) {
+                            right: 320px;
+                        } //media 1200px
+                        
                     } /* .right */
 
                     i {
@@ -760,12 +773,17 @@
                         color: rgba(255,255,255,1);
                     } /* i */
                     
+                    @media screen and (max-width: 1200px) {
+                        position: fixed;
+                        top: 50%;
+                    } //media 1200px
+                    
                     @media screen and (max-width: 992px) {
-                        top: 25%;
+                        //top: 50%;
                     } //media 992px
                     
                     @media screen and (max-width: 768px) {
-                        top: 15%;
+                       // top: 15%;
                     } //media 768px
 
                 } /* button */
@@ -774,6 +792,11 @@
                     position: relative;
                     padding: 30px;
                     min-height: 810px;
+                    
+                    @media screen and (max-width: 992px){
+                        padding-left: 0px;
+                        padding-right: 55px;
+                    }
                     
                     .draft-build-card {
                         float: left;
@@ -816,6 +839,11 @@
                             line-height: 18px;
                             text-align: center;
                             opacity: .5;
+                            
+                            @media screen and (max-width: 768px) {
+                                margin: -10px 16px 0px auto;
+                            }
+                            
                         } /* .card-qty */
                         
                         @media screen and (max-width: 1200px) {
@@ -829,8 +857,10 @@
                         } // media styles
                         
                         @media screen and (max-width: 768px) {
-                            width: 50%;
-                            
+                            //width: 33%;
+                            -ms-transform: scale(.85); /* IE 9 */
+                            -webkit-transform: scale(.85); /* Safari */
+                            transform: scale(.85);
                         } // media styles
                         
                     } /* .draft-build-card */
@@ -847,7 +877,7 @@
             }
             
         } /* .draft-build-cards */
-        
+    
     } /* .draft-build */
     
     .filter-button-bar {
@@ -874,6 +904,42 @@
             text-transform: uppercase !important;
         } // Mobile filtering button
     } // mobile filtering bar
+    
+    .mobile-override {
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: auto;
+        height: auto;
+        z-index: 500;
+        background-color: rgba(38,38,38,1);
+        
+        @media screen and (max-width:750px) {
+
+            display: block;
+                    
+            .override-msg {
+                width: 300px;
+                padding: 20px;
+                margin: 100px auto;
+                
+                color: white;
+
+                h2 {
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+
+                p {
+                    text-align: center;
+
+                }
+            }  
+        }
+    }// mobile drafter front page override div
     
 } /* .redbull-draft */
 
