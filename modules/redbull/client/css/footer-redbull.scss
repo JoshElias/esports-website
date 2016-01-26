@@ -17,7 +17,7 @@ $grey: #454545;
     .footer-toggle {
         position: fixed;
         bottom: 200px;
-        right: 35px;
+        right: 20px;
         z-index: 800;
         color: $rb-white;
         font-size: 30px;
@@ -39,14 +39,14 @@ $grey: #454545;
         }
         
         &.small {
-            bottom: 100px;
+            bottom: 80px;
             -ms-transform: rotate(45deg); /* IE 9 */
             -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
             transform: rotate(45deg);
             
             @media screen and (max-width: 650px) {
                 right: 20px;
-                bottom: 70px;
+                bottom: 80px;
             }
         }
     }
@@ -95,7 +95,7 @@ $grey: #454545;
                     display: block;
                 }
                 .rb-footer-img {
-                    width: 242px;
+                    display: none;
                 }
             
             .content {
