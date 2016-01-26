@@ -146,8 +146,8 @@
         
     </div>
     
-    <div class="draft-build-timer">
-        
+    <div class="draft-build-timer" ng-if="!tournament.hasDecksConstructed">
+        <draft-timer start-time="tournament.deckBuildStartTime" time-limit="tournament.deckBuildTimeLimit" on-time-up="timesUp"></draft-timer>
     </div>
     
     <div class="draft-build-cards">

@@ -1,6 +1,6 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util', 'DraftCards', 
-    function ($q, $timeout, $interval, $rootScope, Util, DraftCards){
+.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util', 
+    function ($q, $timeout, $interval, $rootScope, Util){
         return {
             restrict: 'A',
             templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/redbull-draft.html',
@@ -94,7 +94,7 @@ angular.module('redbull.directives')
                 
                 // play audio clip
                 scope.playAudio = function ( audioName ) {
-                    if (scope.volume <= 3) { return false; }
+                    if (scope.volume === 0) { return false; }
                     var audio = new Audio();
                     audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
                     audio.load();
@@ -508,8 +508,6 @@ angular.module('redbull.directives')
                             card: card
                         });
                     }
-                    // TODO: remove this for production
-                    DraftCards.setCards(scope.cardPool);
                 }
 
                 // sorted card pool

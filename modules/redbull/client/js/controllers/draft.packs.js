@@ -77,8 +77,14 @@ angular.module('redbull.controllers')
         fileLocations.push( $scope.app.cdn + imagePath + imageFiles[i] );
     }
 
+    // volume
+    $scope.volume = ($localStorage.draftVolume !== undefined) ? $localStorage.draftVolume : 35;
+    
+    $scope.$watch('volume', function (newValue) {
+        $localStorage.draftVolume = $scope.volume;
+    });
+    
     // audio files
-    $scope.volume = 35;
     $scope.audioFiles = {
         'announcer_epic':           { file: 'announcer_epic' + ext, volume: .3 },
         'announcer_legendary':      { file: 'announcer_legendary' + ext, volume: .3 },
