@@ -395,10 +395,12 @@ angular.module('redbull.controllers')
         };
         
         $scope.timesUp = function () {
-            console.log('times up!');
+            $scope.saveDecks(true);
         };
         
-        $scope.saveDecks = function () {
+        $scope.saveDecks = function (timesUp) {
+            timesUp = timesUp || false;
+            
             var box = bootbox.dialog({
                 title: 'Save Decks',
                 message: 'This feature has not been completed yet.',

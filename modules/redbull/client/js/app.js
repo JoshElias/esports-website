@@ -188,6 +188,9 @@ var redbull = angular.module('app.redbull', [
                                 $state.go('app.redbull.draft.packs');
                                 return $q.reject();
                             }
+                        }],
+                        draftBuildStart: ['$localStorage', 'RedbullDraft', 'draft', function ($localStorage, RedbullDraft, draft) {
+                            return RedbullDraft.startDraftBuild({ draftId: draft.id }).$promise;
                         }]
                     }
                 }

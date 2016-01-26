@@ -5,8 +5,23 @@
     .draft-build {
         
         .draft-build-timer {
+            margin: 0 300px;
+            background: rgba(0,0,0,.4);
+            border-bottom: 1px solid rgba(255,255,255,.4);
             text-align: center;
             color: #FFF;
+            font-family: 'Open Sans Bold';
+            
+            h1 {
+                margin: 0;
+                padding: 10px 0px;
+                font-size: 12px;
+                color: #ddb03f;
+            }
+            
+            .time {
+                font-size: 30px;
+            }
         }
         
         .draft-build-filtering {
@@ -669,7 +684,7 @@
             }
             
             .card-filter-classes {
-                margin: 20px auto;
+                margin: 20px auto 0px auto;
                 padding: 0;
                 width: 401px;
                 
