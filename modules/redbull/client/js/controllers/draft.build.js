@@ -1,14 +1,37 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'DraftCards', 'draftSettings', 'draft', 
-    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, DraftCards, draftSettings, draft) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'draftSettings', 'draft', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, draftSettings, draft) {
         console.log(draft);
         console.log(draftSettings);
         
         // set cards
-        DraftCards.setCards(draft.cards);
-        var allCards = DraftCards.getCards();
-        
-        console.log(draft.cards);
+        var allCards = getCards(draft.cards);
+
+        function cardIndex (card, cards) {
+            for (var i = 0; i < cards.length; i++) {
+                if (cards[i].card.id === card.id) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    
+        function getCards (cards) {
+            var out = [];
+            if (!cards.length) { return out; }
+            for (var i = 0; i < cards.length; i++) {
+                var index = cardIndex(cards[i], out);
+                if (index !== -1) {
+                    out[index].qty++;
+                } else {
+                    out.push({
+                        qty: 1,
+                        card: cards[i]
+                    });
+                }
+            }
+            return out;
+        }
         
         // tournament settings
         $scope.tournament = {
@@ -57,11 +80,7 @@ angular.module('redbull.controllers')
                 $scope.cards.sorted[Hearthstone.classes[i]] = [];
             }
             
-            console.log('allCards: ', allCards);
-            
             for (var i = 0; i < allCards.length; i++) {
-                console.log('card: ', allCards[i].card);
-                console.log('playerClass: ', allCards[i].card.playerClass);
                 $scope.cards.sorted[allCards[i].card.playerClass].push(allCards[i]);
             }
             $scope.cards.current = $scope.cards.sorted[$scope.klasses[0]];
