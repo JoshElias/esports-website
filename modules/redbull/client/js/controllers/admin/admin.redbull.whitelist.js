@@ -1,26 +1,33 @@
 angular.module('redbull.controllers')
-.controller('AdminRedbullWhitelistCtrl', ['$scope', '$compile', 'Hearthstone', 'bootbox', 'User', 'whitelistUsers', function ($scope, $compile, Hearthstone, bootbox, User, whitelistUsers){
+.controller('AdminRedbullWhitelistCtrl', ['$scope', '$compile', 'Hearthstone', 'bootbox', 'User', 'draftPlayers', function ($scope, $compile, Hearthstone, bootbox, User, draftPlayers){
     var box;
-    $scope.whitelistUsers = whitelistUsers;
+    $scope.draftPlayers = draftPlayers.players;
+    $scope.users = [];
     $scope.search = '';
     
     $scope.isUser = function (user) {
-        var index = $scope.users.indexOf(user);
-        return ( index !== -1 );
+        for (var i = 0; i < $scope.draftPlayers.length; i++) {
+            if (user.id === $scope.draftPlayers[i].id) {
+                return true;
+            }
+        }
+        return false;
     }
     
     $scope.addUser = function (user) {
         if ($scope.isUser(user)) {
             $scope.removeUser(user);
         } else {
-            $scope.users.push(user);
+            $scope.draftPlayers.push(user);
         }
     };
 
     $scope.removeUser = function (user) {
-        var index = $scope.users.indexOf(user);
-        if (index !== -1) {
-            $scope.users.splice(index, 1);
+        for (var i = 0; i < $scope.draftPlayers.length; i++) {
+            if (user.id === $scope.draftPlayers[i].id) {
+                $scope.draftPlayers.splice(i, 1);
+                return;
+            }
         }
     };
 
@@ -39,6 +46,7 @@ angular.module('redbull.controllers')
         if($scope.search) {
             var pattern = '/.*'+$scope.search+'.*/i';
             options.filter.where = {
+                isActive: true,
                 or: [
                     {username: { regexp: pattern }},
                     {email: { regexp: pattern }}

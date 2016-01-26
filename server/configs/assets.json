@@ -1,9 +1,3 @@
 {
-  "angular.min.js": "angular.min.5bcabd93.js",
-  "app.min.js": "app.min.17da993c.js",
-  "vendor.min.js": "vendor.min.4682e0de.js",
-  "modules.min.js": "modules.min.642ec943.js",
-  "style.min.css": "style.min.e13ccbf2.css",
-  "vendor.min.css": "vendor.min.ae26999c.css",
-  "modules.min.css": "modules.min.d9dbd3e2.css"
+
 }

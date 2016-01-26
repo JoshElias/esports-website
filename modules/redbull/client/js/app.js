@@ -229,12 +229,12 @@ var redbull = angular.module('app.redbull', [
                 redbull: {
                     templateUrl: moduleTpl + 'admin/admin.redbull.whitelist.html',
                     controller: 'AdminRedbullWhitelistCtrl',
+                    resolve: {
+                        draftPlayers: ['RedbullDraft', function (RedbullDraft) {
+                            return RedbullDraft.getDraftPlayers().$promise;
+                        }]
+                    }
                 }
-            },
-            resolve: {
-                whitelistUsers: [function () {
-                    return [];
-                }]  
             },
             access: { auth: true, admin: true }
         })

@@ -51,7 +51,7 @@ module.exports = function(User) {
         });
     });
 
-
+    
     // Override the base User's verify method
     User.on('attached', function (obj) {
 
@@ -138,7 +138,6 @@ module.exports = function(User) {
             finalCallback);
         }
 
-
         /**
          * Confirm the user's identity.
          *
@@ -197,8 +196,6 @@ module.exports = function(User) {
 
     });
 
-
-
     /*!
      * Hash the plain password
      */
@@ -254,6 +251,7 @@ module.exports = function(User) {
     });
 
 
+    
     User.changePassword = function (email, password, token, cb) {
         cb = cb || utils.createPromiseCallback();
 
@@ -292,7 +290,6 @@ module.exports = function(User) {
 
         return cb.promise;
     };
-
 
     User.resetEmail = function (email, cb) {
         cb = cb || utils.createPromiseCallback();
@@ -353,7 +350,7 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-
+    
     User.changeEmail = function (uid, token, email, cb) {
         cb = cb || utils.createPromiseCallback();
 
@@ -825,7 +822,7 @@ module.exports = function(User) {
     User.remoteMethod(
         'setSubscriptionPlan',
         {
-            description: "derp",
+            description: "Set a subscription plan for a user",
             accepts: [
                 {arg: 'plan', type: 'string', required:true, http: {source: 'form'}},
                 {arg: 'cctoken', type: 'string', required:true, http: {source: 'form'}}
@@ -838,7 +835,7 @@ module.exports = function(User) {
     User.remoteMethod(
         'setSubscriptionCard',
         {
-            description: "derp",
+            description: "Replace a user's subscription card number",
             accepts: {arg: 'cctoken', type: 'string', required:true, http: {source: 'form'}},
             http: {verb: 'post'},
             isStatic: true
@@ -848,7 +845,7 @@ module.exports = function(User) {
     User.remoteMethod(
         'cancelSubscription',
         {
-            description: "derp",
+            description: "Cancel a user's subscription",
             http: {verb: 'post'},
             isStatic: true
         }

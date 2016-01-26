@@ -169,6 +169,20 @@
       "principalType": "ROLE",
       "principalId": "$authenticated",
       "permission": "ALLOW",
+      "property": "setPlan"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "subscribe"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
       "property": "setSubscriptionCard"
     },
     {
@@ -177,6 +191,12 @@
       "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "cancelSubscription"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "updateAttributes"
     }
   ],
   "methods": {}

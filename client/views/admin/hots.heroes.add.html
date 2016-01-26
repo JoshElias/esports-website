@@ -13,7 +13,6 @@
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">
         Add a Hero
-      {{hero}}
     </div>
     <div class="panel-body">
         <div class="row form-group">
@@ -66,6 +65,26 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading clearfix">
+                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="charAddWnd()">
+                    <i class="fa fa-plus-circle m-r-xs"></i>Add
+                </a>
+                <strong class="lh-lg">Characters</strong>
+            </div>
+            <ul class="list-group" ng-show="hero.characters.length">
+                <li class="list-group-item admin-list-item lh-lg clearfix" ng-repeat="character in hero.characters | orderBy: 'name'">
+                    {{character.name}}
+                    <div class="pull-right">
+                        <button class="btn btn-sm btn-default" ng-click="charEditWnd(character)">Edit</button>
+                        <button class="btn btn-sm btn-danger" ng-click="deleteChar(character)">Delete</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="panel-body" ng-show="!hero.characters.length">
+                <p class="m-b-none">There are no characters added for this hero yet.</p>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
                 <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="abilityAddWnd()">
                     <i class="fa fa-plus-circle m-r-xs"></i>Add
                 </a>
@@ -114,26 +133,6 @@
             </ul>
             <div class="panel-body" ng-show="!hero.talents.length">
                 <p class="m-b-none">There are no talents added for this hero yet.</p>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading clearfix">
-                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="charAddWnd()">
-                    <i class="fa fa-plus-circle m-r-xs"></i>Add
-                </a>
-                <strong class="lh-lg">Characters</strong>
-            </div>
-            <ul class="list-group" ng-show="hero.characters.length">
-                <li class="list-group-item admin-list-item lh-lg clearfix" ng-repeat="character in hero.characters | orderBy: 'name'">
-                    {{character.name}}
-                    <div class="pull-right">
-                        <button class="btn btn-sm btn-default" ng-click="charEditWnd(character)">Edit</button>
-                        <button class="btn btn-sm btn-danger" ng-click="deleteChar(character)">Delete</button>
-                    </div>
-                </li>
-            </ul>
-            <div class="panel-body" ng-show="!hero.characters.length">
-                <p class="m-b-none">There are no characters added for this hero yet.</p>
             </div>
         </div>
         <!--
@@ -200,7 +199,7 @@
         <div class="row form-group">
             <label for="active" class="col-sm-2 control-label">Active</label>
             <div class="col-sm-10">
-                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in heroActive" ng-model="hero.active" required></select>
+                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in heroActive" ng-model="hero.isActive" required></select>
             </div>
         </div>
     </div>

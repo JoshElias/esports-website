@@ -87,10 +87,10 @@
     }
   },
   "acls": [{
-    "principalType": "ROLE",
-    "principalId": "$everyone",
-    "permission": "DENY"
-  },
+        "principalType": "ROLE",
+        "principalId": "$everyone",
+        "permission": "DENY"
+    },
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
@@ -114,6 +114,18 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__create__comments"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "__create__deckTiers"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__get__deckMatchups"
     }
   ],
   "methods": {}

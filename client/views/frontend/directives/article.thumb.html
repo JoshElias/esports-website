@@ -8,6 +8,9 @@
     </div>
     <div class="home-article-content">
         <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
+        <!-- warning Andrews code here -->
+        <h6>by {{article.author.username || '[Deleted User]'}} - <span am-time-ago="article.createdDate"></span></h6>
+        <!-- Andrews bad code ends here -->
         <p>{{getDescription(article.description)}}</p>
     </div>
 </a>
