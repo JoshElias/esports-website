@@ -37,7 +37,7 @@
             <h1 class="title">HEROES OF THE STORM ARTICLES</h1>
             <h3 class="sub-title m-b-md">The latest articles on all things Heroes of the Storm</h3>
             <div class="row no-pad" ng-if="articles.length">
-                <div class="col-xs-12 col-sm-6 pos-rl" ng-repeat="article in articles">
+                <div class="col-xs-12 col-sm-6 pos-rl" ng-repeat="article in articles | orderBy: '-createdDate'">
                     <div class="m-r-sm m-b-sm">
                         <article-thumb article="article" />
                     </div>
@@ -52,7 +52,7 @@
                         <h1 class="title">TEMPOSTORM GUIDES</h1>
                         <h3 class="sub-title m-b-md">Guides from Team Tempo Storm</h3>
                         <ul class="hots-guides" ng-if="guidesFeatured.length">
-                            <li ng-repeat="guide in guidesFeatured">
+                            <li ng-repeat="guide in guidesFeatured | orderBy: '-createdDate'">
                                 <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide small {{getGuideClass(guide)}}">
                                     <div class="inner"></div>
                                     <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>

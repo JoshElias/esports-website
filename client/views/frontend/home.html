@@ -59,26 +59,25 @@
         
         <div class="home-articles-wrapper" home-articles data-viewable="articles.viewable()" data-offset="articles.offset" data-size="articles.data.length">
             <div class="home-articles-inner">
-                <div class="home-article-wrapper" ng-repeat="article in articles.data track by $index">
+                <div class="home-article-wrapper" ng-repeat="article in articles.data | orderBy: '-createdDate' track by $index">
                     <article-thumb article="article" />
                 </div>
             </div>
         </div>
     </div>
     <!-- / articles -->
-    <adsense ad-client="ca-pub-6273013980199815" ad-slot="1374847086"></adsense>
+<!--    <adsense ad-client="ca-pub-6273013980199815" ad-slot="9426053882"></adsense>-->
   
 <!--
-  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-6273013980199815"
-       data-ad-test="on"
-       data-ad-slot="1374847086"
-       data-ad-format="auto"></ins>
-  <script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6273013980199815"
+     data-ad-slot="9426053882"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
 -->
   
     <div class="home-content">

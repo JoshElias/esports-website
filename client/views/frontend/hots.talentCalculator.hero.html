@@ -4,7 +4,7 @@
     </div>
     <div class="tc-characters wrapper-md clearfix" ng-if="getCurrentHero().characters.length > 1">
         <div class="pull-right">
-            <a href="#" class="tc-character pull-left" ng-class="{ active: getCurrentCharacter() == character }" ng-repeat="character in getCurrentHero().characters" ng-click="setCurrentCharacter(character)">
+            <a href="#" class="tc-character pull-left" ng-class="{ active: getCurrentCharacter().name == character.name }" ng-repeat="character in getCurrentHero().characters" ng-click="setCurrentCharacter(character)">
                 {{character.name}}
             </a>
         </div>

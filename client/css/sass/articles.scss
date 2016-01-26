@@ -60,21 +60,29 @@
                     opacity: 1; 
                 }
                 
-                &.ts { 
-                    background-position: 0px 0px; 
-                }
-                
-                &.hs { 
-                    background-position: -40px 0px; 
-                }
-                
-                &.hots { 
-                    background-position: -80px 0px; 
-                }
-                
-                &.overwatch { 
-                    background-position: -120px 0px; 
-                }
+//                &.ts { 
+//                    background-position: 0px 0px; 
+//                }
+//                
+//                &.hs { 
+//                    background-position: -40px 0px; 
+//                }
+//                
+//                &.hots { 
+//                    background-position: -80px 0px; 
+//                }
+//                
+//                &.overwatch { 
+//                    background-position: -120px 0px; 
+//                }
+//                
+//                &.sb { 
+//                    background-position: -160px 0px; 
+//                }
+//                
+//                &.wow { 
+//                    background-position: -200px 0px; 
+//                }
             }
         }
     }
@@ -215,3 +223,29 @@
 
 
 .edit-button-fix { display:block }
+
+.ts-articles-styles {
+    
+    .bg-override {
+        
+        &.article {
+            background-image: url(../img/backgrounds/meta-bg.jpg);
+            background-color: #121111;
+            background-repeat: no-repeat;
+            background-size: 100%;
+            background-attachment: fixed;
+            
+            &.hs {
+                background-image: url(../img/backgrounds/meta-bg.jpg);
+            }
+            
+            &.hots {
+                background-image: url(../img/hots/maps/bgs/base.jpg);
+            }
+            
+            &.overwatch {
+                background-image: url(../img/overwatch/ow-meta-bg.jpg);
+            }
+        }
+    }
+}
