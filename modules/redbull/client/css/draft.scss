@@ -272,6 +272,19 @@
                     background: url("../img/modules/redbull/client/img/pack-frame.png") center top no-repeat;
                     z-index: 100;
                     
+                    &.league-of-explorers,
+                    &.blackrock-mountain,
+                    &.naxxramas {
+                        background: url("../img/modules/redbull/client/img/book-frame.png") center top no-repeat;
+                        height: 227px;
+                        padding-top: 19px;
+                        padding-left: 8px;
+                        
+                        .pack-wrapper {
+                            height: 144px !important;
+                        }
+                    }
+                    
                     &.goblins-vs-gnomes,
                     &.the-grand-tournament {
                         padding-top: 12px;
@@ -314,17 +327,24 @@
                             height: 212px;
                             background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
                             z-index: 101;
-
+                            
+                            &.league-of-explorers,
+                            &.blackrock-mountain,
+                            &.naxxramas {
+                                width: 142px;
+                                height: 144px;
+                            }
+                            
                             &.league-of-explorers {
-                                background: url("../img/modules/redbull/client/img/pack-loe.png") no-repeat;
+                                background: url("../img/modules/redbull/client/img/book-loe.png") no-repeat;
                             }
 
                             &.blackrock-mountain {
-                                background: url("../img/modules/redbull/client/img/pack-brm.png") no-repeat;
+                                background: url("../img/modules/redbull/client/img/book-brm.png") no-repeat;
                             }
 
                             &.naxxramas {
-                                background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
+                                background: url("../img/modules/redbull/client/img/book-naxx.png") no-repeat;
                             }
 
                             &.goblins-vs-gnomes {
@@ -378,12 +398,16 @@
                             width: 141px;
                             transform: rotate(-3deg);
                             text-transform: uppercase;
-
+                            
+                            &.naxxramas,
                             &.goblins-vs-gnomes,
-                            &.blackrock-mountain,
-                            &.the-grand-tournament,
-                            &.league-of-explorers {
+                            &.the-grand-tournament {
                                 top: 8px;
+                            }
+                            
+                            &.blackrock-mountain,
+                            &.league-of-explorers {
+                                top: 2px;
                             }
 
                         } /* span */
