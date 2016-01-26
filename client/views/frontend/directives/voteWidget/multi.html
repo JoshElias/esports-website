@@ -1,10 +1,10 @@
 <div class="guide-votes clearfix">
     <div class="vote-count vote-large m-l-sm pull-right">
-        <span ng-if="!voting"><em ng-show="votable.voteScore > 0">+</em>{{votable.voteScore}}</span>
-        <i ng-if="voting" class="fa fa-spinner fa-pulse"></i>
+        <span ng-if="!isLoading()"><em ng-show="voteInfo.score > 0">+</em>{{voteInfo.score}}</span>
+        <i ng-if="isLoading()" class="fa fa-spinner fa-pulse"></i>
     </div>
     <div class="vote-count-btns vote-large pull-left">
-        <button href="#" class="btn btn-vote-up vote-large" ng-class="{active: votable.voted === 1}" ng-click="vote(votable, 1)" ng-disabled="votable.voted === 1"><i class="fa fa-plus-square"></i></button>
-        <button href="#" class="btn btn-vote-down vote-large" ng-class="{'active': votable.voted === -1}" ng-click="vote(votable, -1)" ng-disabled="votable.voted === -1"><i class="fa fa-minus-square"></i></button>
+        <button href="#" class="btn btn-vote-up vote-large" ng-class="{active: hasVoted(1)}" ng-click="vote(1)" ng-disabled="hasVoted(1)"><i class="fa fa-plus-square"></i></button>
+        <button href="#" class="btn btn-vote-down vote-large" ng-class="{'active': hasVoted(-1)}" ng-click="vote(-1)" ng-disabled="hasVoted(-1)"><i class="fa fa-minus-square"></i></button>
     </div>
 </div>

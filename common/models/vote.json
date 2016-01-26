@@ -18,8 +18,7 @@
     "guideId": {},
     "deckId": {},
     "snapshotId": {},
-    "forumPostId": {},
-    "parentCommentId": {}
+    "commentId": {}
   },
   "validations": [],
   "relations": {
@@ -27,6 +26,31 @@
       "type": "belongsTo",
       "model": "user",
       "foreignKey": "authorId"
+    },
+    "article": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "articleId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
+    },
+    "comment": {
+      "type": "belongsTo",
+      "model": "comment",
+      "foreignKey": "commentId"
     }
   },
   "acls": [
@@ -54,11 +78,24 @@
       "accessType": "WRITE"
     },
     {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "accessType": "CREATE"
+    },
+    {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "getScore"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "hasVoted"
     }
   ],
   "methods": {}
