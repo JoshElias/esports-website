@@ -103,11 +103,23 @@ $grey: #454545;
             }
         }
         
+        .bar-backing {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 450;
+            opacity: 0.6;
+            
+            @media screen and (max-width: 1590px) {
+                left: -50px;
+            }
+        }
+        
         .rb-logo {
             position: absolute;
             left: 5px;
             bottom: 5px;
-            
+            z-index: 800;
             @media screen and (max-width: 992px) {
                 width: 150px;
             
@@ -132,6 +144,7 @@ $grey: #454545;
             position: absolute;
             top: -55px;
             right: 45%;
+            z-index: 750;
             
             @media screen and (max-width: 1590px) {
                 right: 33%;
@@ -149,12 +162,13 @@ $grey: #454545;
         }
         
         ul {
-            
+            position: relative;
             margin-left: 11%;
             margin-top: 25px;
             text-transform: uppercase;
             width: 38%;
             font-size: 24px;
+            //z-index: 800;
             
                                 
                 @media screen and (max-width: 1780px) {
@@ -176,9 +190,10 @@ $grey: #454545;
                 float: left;
                 list-style-type: none;
                 margin-right: 20px;
-
+                position: relative;
                 font-weight: 100;
                 color: $rb-white;
+                z-index: 760;
                 
                 @media screen and (max-width: 1590px) {
                     font-size: 20px;
@@ -216,6 +231,7 @@ $grey: #454545;
             right: 32%;
             top: 30px;
             color: $rb-white;
+            z-index: 800;
             //cursor: pointer;
             
             @media screen and (min-width: 768px) {
@@ -246,7 +262,7 @@ $grey: #454545;
             right: 0;
             bottom: 0;
             width: 29.85%;
-            
+            z-index: 800;
             @media screen and (max-width: 1200px) {
                 width: 350px;
             }
