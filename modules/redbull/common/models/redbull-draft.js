@@ -239,6 +239,21 @@ module.exports = function(RedbullDraft) {
     };
 
 
+    RedbullDraft.removeDraftPlayer = function (uid, options, finalCb) {
+        if (finalCb === undefined && typeof options === 'function') {
+            // createAccessToken(ttl, cb)
+            finalCb = options;
+            options = undefined;
+        }
+        finalCb = finalCb || utils.createPromiseCallback();
+
+        // Add the redbull role to this user
+        var User = RedbullDraft.app.models.user;
+        User.revokeRoles(uid, ["$redbullPlayer"], finalCb);
+    };
+
+
+
     RedbullDraft.submitDecks = function (draftId, clientDecks, options, finalCb) {
         if (finalCb === undefined && typeof options === 'function') {
             // createAccessToken(ttl, cb)
@@ -306,7 +321,7 @@ module.exports = function(RedbullDraft) {
                 {arg: 'uid', type: 'string', required: true, http: {source: 'form'}},
                 {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
             ],
-            http: {verb: 'put'},
+            http: {verb: 'post'},
             isStatic: true
         }
     );
@@ -317,6 +332,19 @@ module.exports = function(RedbullDraft) {
             description: "Gets all the redbull users",
             http: {verb: 'get'},
             returns: {arg: 'players', type: 'array'},
+            isStatic: true
+        }
+    );
+
+    RedbullDraft.remoteMethod(
+        'removeDraftPlayer',
+        {
+            description: "Removes the player role from a user",
+            accepts: [
+                {arg: 'uid', type: 'string', required: true, http: {source: 'form'}},
+                {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
+            ],
+            http: {verb: 'post'},
             isStatic: true
         }
     );
