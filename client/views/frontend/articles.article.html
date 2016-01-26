@@ -14,7 +14,7 @@
         
         <div class="article-photo-banner clearfix" ng-background="https://cdn-tempostorm.netdna-ssl.com/articles/{{article.photoNames.large}}">
             <div class="article-votes pull-right"> 
-                <vote-widget service="ArticleService" votable="article" theme="single"></vote-widget>
+                <vote-widget votable="votableArticle" theme="single"></vote-widget>
             </div>
             <div class="title-wrapper pull-left">
                 <h1>{{article.title}}</h1>

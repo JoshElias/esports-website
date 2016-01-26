@@ -10662,8 +10662,10 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.snapshot = dataSnapshot;
             // New decktiers array from snapshot.deckTiers
             $scope.deckTiers = getAllDecksByTier();
-
             $scope.SnapshotService = Snapshot;
+            $scope.votableSnapshot = {
+                snapshot: $scope.snapshot
+            };
 
 //            console.log('new deckTiers: ', $scope.deckTiers);
 
@@ -11251,6 +11253,7 @@ angular.module('app.controllers', ['ngCookies'])
 //			console.log('article:', article);
             $scope.ArticleService = Article;
             $scope.article = article;
+            $scope.votableArticle = { article: $scope.article }
             $scope.authorEmail = article.author ? article.author.email : null;
 //        $scope.ArticleService = ArticleService;
 //        $scope.$watch('app.user.isLogged()', function() {
@@ -11798,13 +11801,15 @@ angular.module('app.controllers', ['ngCookies'])
             
             // load deck
             $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
+            $scope.DeckService = Deck;
+            $scope.votableDeck = {
+                deck: $scope.deck
+            }
             
 //            console.log('$scope.deck:', $scope.deck);
             
 //            console.log('currentMulligan: ', $scope.currentMulligan);
             
-            $scope.deckService = Deck;
-
             $scope.premiumTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
@@ -15704,6 +15709,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
           
             $scope.guide = guide;
+            $scope.votableGuide = { guide: $scope.guide }
             $scope.Guide = Guide;
             $scope.currentHero = ($scope.guide.guideHeroes.length) ? $scope.guide.guideHeroes[0].hero : false;
             $scope.heroes = heroes;
