@@ -760,7 +760,6 @@ module.exports = function(User) {
     };
 
 
-
     User.remoteMethod(
         'isInRoles',
         {
