@@ -1,8 +1,9 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'draftSettings', 'draft', 
-    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, draftSettings, draft) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'draftSettings', 'draft', 'draftBuildStart', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, draftSettings, draft, draftBuildStart) {
         console.log(draft);
         console.log(draftSettings);
+        console.log(draftBuildStart);
         
         // set cards
         var allCards = getCards(draft.cards);
