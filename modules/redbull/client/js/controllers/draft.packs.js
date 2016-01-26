@@ -50,9 +50,9 @@ angular.module('redbull.controllers')
         'bg-glow.jpg',
         'done.png',
         'pack.png',
-        'pack-loe.png',
-        'pack-naxx.png',
-        'pack-brm.png',
+        'book-loe.png',
+        'book-naxx.png',
+        'book-brm.png',
         'pack-gvg.png',
         'pack-tgt.png',
         'pack-soulbound.png',
@@ -65,6 +65,7 @@ angular.module('redbull.controllers')
         'back-soulbound.png',
         'back-tgt.png',
         'pack-frame.png',
+        'book-frame.png',
         'pack-tab.png',
         'volume-nob.png',
         'volume-slider.png',
@@ -77,8 +78,19 @@ angular.module('redbull.controllers')
         fileLocations.push( $scope.app.cdn + imagePath + imageFiles[i] );
     }
 
+    // volume
+    $scope.volume = ($localStorage.draftVolume !== undefined) ? $localStorage.draftVolume : 35;
+    $scope.muted = ($localStorage.draftMuted !== undefined) ? $localStorage.draftMuted : false;
+    
+    $scope.$watch('volume', function (newValue) {
+        $localStorage.draftVolume = $scope.volume;
+    });
+    
+    $scope.$watch('muted', function (newValue) {
+        $localStorage.draftMuted = $scope.muted;
+    });
+    
     // audio files
-    $scope.volume = 35;
     $scope.audioFiles = {
         'announcer_epic':           { file: 'announcer_epic' + ext, volume: .3 },
         'announcer_legendary':      { file: 'announcer_legendary' + ext, volume: .3 },

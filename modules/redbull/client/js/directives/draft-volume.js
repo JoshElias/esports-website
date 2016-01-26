@@ -11,7 +11,12 @@ angular.module('redbull.directives')
                 tooltip = $('.volume-tooltip');
 
             tooltip.hide();
-
+            
+            scope.toggleMuted = function () {
+                if (scope.volume === 0) { return false; }
+                scope.muted = !scope.muted;
+            }
+            
             slider.slider({
                 range: "min",
                 min: 0,
@@ -19,19 +24,37 @@ angular.module('redbull.directives')
                 value: scope.volume,
 
                 start: function(event,ui) {
-                    tooltip.fadeIn('fast');
-                },
-
-                slide: function(event, ui) {
-
                     var value = slider.slider('value');
                     tooltip.css('left', value + '%').text(ui.value);
                     scope.volume = value;
 
+                    tooltip.fadeIn('fast');
+                },
+
+                slide: function(event, ui) {
+                    var value = slider.slider('value');
+                    tooltip.css('left', value + '%').text(ui.value);
+                    scope.volume = value;
+                    
+                    if (value === 0) {
+                        scope.muted = true;
+                    } else {
+                        scope.muted = false;
+                    }
                 },
 
                 stop: function(event,ui) {
+                    var value = slider.slider('value');
+                    tooltip.css('left', value + '%').text(ui.value);
+                    scope.volume = value;
+
                     tooltip.fadeOut('fast');
+                    
+                    if (value === 0) {
+                        scope.muted = true;
+                    } else {
+                        scope.muted = false;
+                    }
                 },
             });
             

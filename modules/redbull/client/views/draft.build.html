@@ -1,3 +1,14 @@
+<!-- Mobile override div -->
+<div class="mobile-override">
+    <div class="override-msg">
+        <h2>Feature Unavailable</h2>
+        <p>This feature is unavailable on devices and browsers with this resolution.</p>
+        <p>Please use a device with a larger resolution.</p>
+
+    </div>
+</div>
+<!-- end Mobile override div -->
+
 <div class="draft-build">
     <!-- mobile cardpool button -->
     <div class="filter-button-bar">
@@ -146,8 +157,8 @@
         
     </div>
     
-    <div class="draft-build-timer">
-        
+    <div class="draft-build-timer" ng-if="!tournament.hasDecksConstructed">
+        <draft-timer start-time="tournament.deckBuildStartTime" time-limit="tournament.deckBuildTimeLimit" on-time-up="timesUp"></draft-timer>
     </div>
     
     <div class="draft-build-cards">

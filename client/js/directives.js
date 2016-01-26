@@ -229,9 +229,9 @@ angular.module('app.directives', ['ui.load'])
       $scope.signup = function(email, username, password) {
         if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined ) {
           User.create({
-            email: email,
-            username: username,
-            password:password
+              email: email,
+              username: username,
+              password:password
           }, function (user) {
             $scope.verify.email = email;
             if ($scope.setState) {
@@ -663,6 +663,7 @@ angular.module('app.directives', ['ui.load'])
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+            console.log('$scope.votable:', $scope.votable);
             var box,
                 callback;
             
@@ -850,17 +851,19 @@ angular.module('app.directives', ['ui.load'])
       templateUrl: tpl + 'views/admin/hots.heroes.talents.add.form.html',
       controller: ['$scope', 'Talent', function ($scope, Talent) {
         $scope.searchedTalents = [];
-        $scope.searchTalents = function (pattern) {
-          Talent.find({
-            filter: {
-              limit: 4,
-              where: { name: { like: pattern } }
-            }
-          })
-          .$promise
-          .then(function (data) {
-            $scope.searchedTalents = (!_.isEmpty(pattern)) ? data : [];
-          })
+        $scope.searchTalents = function (search) {
+            var pattern = '/.*'+search+'.*/i';
+            
+            Talent.find({
+                filter: {
+                  limit: 4,
+                  where: { name: { regexp: pattern } }
+                }
+              })
+              .$promise
+              .then(function (data) {
+                $scope.searchedTalents = (!_.isEmpty(pattern)) ? data : [];
+              })
         }
         
         $scope.setCurrent = function (talent) {

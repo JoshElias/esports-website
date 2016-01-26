@@ -24,8 +24,10 @@ module.exports = function(server) {
                 return false;
 
             var now = new Date();
-            return (user.subscription.isSubscribed
-                && (user.subscription.expiryDate > now));
+            var dateISO = now.toISOString();
+            
+            return (user.subscription.isSubscribed 
+                    || (user.subscription.expiryDate > dateISO));
         }
     });
 };

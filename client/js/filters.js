@@ -36,7 +36,11 @@ angular.module('app.filters', [])
         return results;
     };
 }])
-
+.filter('capitalize', function() {
+    return function(input) {
+      return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+    }
+})
 .filter('inq', [function() {
     // filter dataArr with an array of Values by using a keyIdentifier
     // usage: ng-repeat="activity in activities | inq: queryFilter:'activityType'"

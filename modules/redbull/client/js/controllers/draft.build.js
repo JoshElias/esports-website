@@ -1,17 +1,22 @@
 angular.module('redbull.controllers')
 .controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'DraftCards', 'draftSettings', 'draft', 
     function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, DraftCards, draftSettings, draft) {
+        console.log(draft);
+        console.log(draftSettings);
+        
         // set cards
         DraftCards.setCards(draft.cards);
         var allCards = DraftCards.getCards();
-        if (!allCards.length) {
-            return $state.go('^.packs');
-        }
+        
+        console.log(draft.cards);
         
         // tournament settings
         $scope.tournament = {
             allowDuplicateClasses: draftSettings.allowDuplicateClasses,
-            decksLimit: draftSettings.numOfDecks
+            decksLimit: draftSettings.numOfDecks,
+            deckBuildStartTime: draft.deckBuildStartTime,
+            deckBuildTimeLimit: draftSettings.deckBuildTimeLimit,
+            hasDecksConstructed: draft.hasDecksConstructed
         };
         
         // classes
@@ -35,8 +40,7 @@ angular.module('redbull.controllers')
             current: [],
         };
         $scope.decks = [];
-        //$scope.decksLimit = 3;
-
+        
         $scope.search = '';
         $scope.manaCosts = [0,1,2,3,4,5,6,7];
         $scope.cardMechanics = Hearthstone.mechanics;
@@ -53,7 +57,11 @@ angular.module('redbull.controllers')
                 $scope.cards.sorted[Hearthstone.classes[i]] = [];
             }
             
+            console.log('allCards: ', allCards);
+            
             for (var i = 0; i < allCards.length; i++) {
+                console.log('card: ', allCards[i].card);
+                console.log('playerClass: ', allCards[i].card.playerClass);
                 $scope.cards.sorted[allCards[i].card.playerClass].push(allCards[i]);
             }
             $scope.cards.current = $scope.cards.sorted[$scope.klasses[0]];
@@ -358,13 +366,17 @@ angular.module('redbull.controllers')
         
         $scope.decksComplete = function () {
             var decks = $scope.decks;
-            if (!decks || !decks.length || decks.length !== 3) { return false; }
+            if (!decks || !decks.length || decks.length !== $scope.tournament.decksLimit) { return false; }
             for (var i = 0; i < decks.length; i++) {
                 if (decks[i].getSize() !== 30) {
                     return false;
                 }
             }
             return true;
+        };
+        
+        $scope.timesUp = function () {
+            console.log('times up!');
         };
         
         $scope.saveDecks = function () {

@@ -3,5 +3,8 @@
         <div id="volume-slider" class="volume-slider">
             <span class="volume-tooltip"></span>
         </div>
+        <button class="volume-slider-mute" ng-click="toggleMuted()" ng-class="{ 'muted': muted }">
+            <i class="fa" ng-class="{ 'fa-volume-off': muted || !volume, 'fa-volume-down': !muted && volume > 0 && volume < 50, 'fa-volume-up': !muted && volume >= 50 }"></i>
+        </button>
     </div>
 </div>

@@ -216,6 +216,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     content: false,
                                     votes: false
                                 },
+                                include: ["author"],
                                 order: "createdDate DESC",
                                 skip: $scope.articles.data.length,
                                 limit: num
@@ -265,6 +266,7 @@ angular.module('app.controllers', ['ngCookies'])
                         where: {
                             articleType: ['hs']
                         },
+                        include: ['author'],
                         fields: {
                             content: false
                         }
@@ -457,17 +459,19 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService',
-        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService) {
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService', 'isPremium',
+        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService, isPremium) {
+            
+            var plan = user.subscription.plan || 'tempostorm_quarterly';
             
             $scope.user = user;
-            $scope.plan = user.subscription.plan || 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
+            $scope.isPremium = isPremium;
             
             $scope.subform = {
                 isBusy: false,
-                cardPlaceholder: "xxxx xxxx xxxx xxxx"
+                cardPlaceholder: (isPremium) ? "XXXX XXXX XXXX " + user.subscription.last4 : "XXXX XXXX XXXX XXXX"
             };
             
             $scope.testString = function (str) {
@@ -486,7 +490,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.bnetLink = function () {
-                LoginService.thirdPartyRedirect('link', 'bnet')
+                LoginService.thirdPartyRedirect('link', 'bnet');
             };
 
 //
@@ -495,6 +499,25 @@ angular.module('app.controllers', ['ngCookies'])
 //                $scope.success = AlertService.getSuccess();
 //                AlertService.reset();
 //            }
+            
+            $scope.parseDate = function (date) {
+                var d = new Date(date);
+                var months = new Array();
+                months[0] = "January";
+                months[1] = "February";
+                months[2] = "March";
+                months[3] = "April";
+                months[4] = "May";
+                months[5] = "June";
+                months[6] = "July";
+                months[7] = "August";
+                months[8] = "September";
+                months[9] = "October";
+                months[10] = "November";
+                months[11] = "December";
+                
+                return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+            }
             
             $scope.resetPassword = function () {
                 User.resetPassword({
@@ -517,19 +540,26 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.subform.isBusy = b;
             }
             
+            $scope.setPlan = function (pl) {
+                plan = pl;
+            }
+            
+            $scope.getPlan = function () {
+                console.log(plan);
+                return plan
+            }
+            
             $scope.subscribe = function (code, result) {
                 $scope.setLoading(true);
-                
-                User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
+                User.setSubscriptionPlan({}, { plan: $scope.getPlan(), cctoken: result.id })
                 .$promise
-                .then(function (data) {
+                .then(function () {
                     $scope.number = undefined;
                     $scope.cvc = undefined;
                     $scope.expiry = undefined;
                     $scope.error =  '';
                     
                     AlertService.setSuccess({ show: true, msg: 'We have successfully processed your payment. Thank you for subscribing with Tempostorm!' });
-//                    $scope.success.show = true;
                     
                     $scope.user.subscription.isSubscribed = true;
                     $scope.setLoading(false);
@@ -1626,6 +1656,7 @@ angular.module('app.controllers', ['ngCookies'])
             var defaultArticle = {
                     author: LoopBackAuth.currentUserData,
                     title : '',
+                    createdDate: d,
                     slug: {
                         url: '',
                         linked: true
@@ -1670,7 +1701,8 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["name", "id"]
+                        fields: ["name", "id"],
+                        where: { isProvider: true }
                     }
                 },
                 pattern = '/.*'+$scope.search+'.*/i';
@@ -1957,7 +1989,9 @@ angular.module('app.controllers', ['ngCookies'])
                 { name: 'Tempo Storm', value: 'ts' },
                 { name: 'Hearthstone', value: 'hs' },
                 { name: 'Heroes of the Storm', value: 'hots' },
-                { name: 'Overwatch', value: 'overwatch' }
+                { name: 'Overwatch', value: 'overwatch' },
+                { name: 'Smash Bros.', value: 'sb' },
+                { name: 'World Of Warcraft', value: 'wow' }
             ];
 
             // select options
@@ -2264,8 +2298,8 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 if($scope.search) {
                     options.filter.where = {
-                        and: [
-                            {name: { regexp: pattern }},
+                        or: [
+                            {username: { regexp: pattern }},
                             {email: { regexp: pattern }}
                         ]
                     }
@@ -2536,10 +2570,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             // article types
             $scope.articleTypes = [
-              { name: 'Tempo Storm', value: 'ts' },
-              { name: 'Hearthstone', value: 'hs' },
-              { name: 'Heroes of the Storm', value: 'hots' },
-              { name: 'Overwatch', value: 'overwatch' }
+                { name: 'Tempo Storm', value: 'ts' },
+                { name: 'Hearthstone', value: 'hs' },
+                { name: 'Heroes of the Storm', value: 'hots' },
+                { name: 'Overwatch', value: 'overwatch' },
+                { name: 'Smash Bros.', value: 'sb' },
+                { name: 'World Of Warcraft', value: 'wow' }
             ];
 			
 			$scope.activeType = function() {
@@ -2865,7 +2901,9 @@ angular.module('app.controllers', ['ngCookies'])
 				{ name: 'Tempo Storm', value: 'ts' },
 				{ name: 'Hearthstone', value: 'hs' },
 				{ name: 'Heroes of the Storm', value: 'hots' },
-				{ name: 'Overwatch', value: 'overwatch' }
+				{ name: 'Overwatch', value: 'overwatch' },
+				{ name: 'World of Warcraft', value: 'wow' },
+				{ name: 'Smash Bros', value: 'sb' }
 			];
 			
 			$scope.articleAuthors = [
@@ -3203,6 +3241,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             function setErr(err) {
+                $scope.saving = false;
                 if (_.isUndefined(err)) {
                     AlertService.reset();
                     return;
@@ -3611,6 +3650,16 @@ angular.module('app.controllers', ['ngCookies'])
                 dauthor.user = a;
                 $scope.snapshot.authors.push(dauthor);
             }
+            
+            $scope.removeUserPrompt = function (a) {
+                var alertBox = bootbox.confirm("Are you sure you want to remove " + a.username + " from the author's list?", function (result) {
+                    if (result) {
+                        $scope.$apply(function () {
+                            $scope.removeAuthor(a);
+                        });
+                    }
+                });
+            }
 
             $scope.removeAuthor = function (a) {
                 async.each($scope.snapshot.authors, function(author, eachCb) {
@@ -3708,6 +3757,50 @@ angular.module('app.controllers', ['ngCookies'])
                 }
 
                 return callback();
+            }
+            
+            function doGenerateFreshMatches () {
+                var snapshot = angular.copy($scope.snapshot);
+                var toDelete = _.map($scope.snapshot.matches, function (val) { if (!_.isUndefined(val.id)) { return val.id } })
+                var decks = _.flatten(
+                                _.map(
+                                    _.filter(snapshot.tiers, function (tier) {
+                                        return tier.tier < 3;
+                                    }),
+                                    function (val) {
+                                        return val.decks;
+                                    }
+                                )
+                            );
+                
+                _.each(toDelete, function (val) {
+                    DeckMatchup.destroyById({
+                        id: val
+                    })
+                });
+                
+                $scope.snapshot.matches = [];
+                for (var i = 0; i < decks.length; i++) {
+                    for (var n = i; n < decks.length; n++) {
+                        $scope.snapshot.matches.push({
+                            'snapshotId': $scope.snapshot.id,
+                            'forDeck': decks[i].deck,
+                            'forDeckId': decks[i].deck.id,
+                            'againstDeck': decks[n].deck,
+                            'againstDeckId': decks[n].deck.id,
+                            'forChance': (decks[i].deck.id === decks[n].deck.id) ? 50 : 0,
+                            'againstChance': (decks[i].deck.id === decks[n].deck.id) ? 50 : 0
+                        });
+                    }
+                }
+            }
+            
+            $scope.generateFreshMatches = function () {
+                var alertBox = bootbox.confirm("You are about to regenerate all of the match up data, doing so will delete all of your current deck matchups. Are you sure you want to do this?", function (result) {
+                    if (result) {
+                        $scope.$apply(doGenerateFreshMatches());
+                    }
+                });
             }
 
             $scope.getMatches = function (deckID) {
@@ -3964,6 +4057,7 @@ angular.module('app.controllers', ['ngCookies'])
             /* TIERS METHODS */
 
             $scope.editSnapshot = function () {
+                $scope.saving = true;
                 var err = {};
                 var arrs = CrudMan.getArrs();
                 var snapCopy = angular.copy($scope.snapshot);
@@ -3982,7 +4076,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 err.list = [];
                             }
 
-                            err.list.push("Tier " + tier.tier + ": " + deck.name + ", " + errorList['emptyDeckTech']);
+                            err.list.push("Tier " + tier.tier + ": deck.rank" + deck.name + ", " + errorList['emptyDeckTech']);
                         }
 
                         snapCopy.deckTiers.push(deck);
@@ -3996,6 +4090,25 @@ angular.module('app.controllers', ['ngCookies'])
                     setErr(undefined);
                 }
               
+                var decksToDelete     = _.map(arrs.decks.toDelete, function (val) { return val.id; });
+                var deckTechsToDelete = _.map(arrs.deckTech.toDelete, function (val) { return val.id; });
+                var cardTechsToDelete = _.map(arrs.cardTech.toDelete, function (val) { return val.id; });
+                //Time to delete the things we need to delete
+                
+                var cleanDeckMatchups = [];
+                _.each(snapCopy.deckMatchups, function (val) {
+                    cleanDeckMatchups.push(
+                        Util.cleanObj(val, [
+                            'againstChance',
+                            'againstDeck',
+                            'againstDeckId',
+                            'forChance',
+                            'forDeck',
+                            'forDeckId'
+                        ])
+                    );
+                });
+                
                 var snapVar = Util.cleanObj(snapCopy, [
                     'id',
                     'snapNum',
@@ -4007,66 +4120,90 @@ angular.module('app.controllers', ['ngCookies'])
                     'isActive',
                     'voteScore',
                     'photoNames',
-                    'deckMatchups',
                     'authors',
                     'comments',
                     'deckTiers'
                 ]);
                 
-                var decksToDelete     = _.map(arrs.decks.toDelete, function (val) { return val.id; });
-                var deckTechsToDelete = _.map(arrs.deckTech.toDelete, function (val) { return val.id; });
-                var cardTechsToDelete = _.map(arrs.cardTech.toDelete, function (val) { return val.id; });
-                //Time to delete the things we need to delete
-                
-                Snapshot.deckMatchups.destroyAll({
-                    id: $scope.snapshot.id
-                });
-                
-                Snapshot.update({
-                    where: {
-                        id: snapVar.id
+                var newId = { id: snapVar.id };
+                async.series([
+                    function (seriesCb) {
+                        async.each(snapCopy.deckMatchups, function (m) {
+                            if(!_.isUndefined(m.id)) {
+                                DeckMatchup.destroyById({
+                                    id: m.id
+                                });
+                            }
+                        });
+                        
+                        return seriesCb();
+                    },
+                    function (seriesCb) {
+                        Snapshot.deckMatchups.createMany({
+                            id: $scope.snapshot.id
+                        }, cleanDeckMatchups)
+                        .$promise
+                        .then(function () {
+                            return seriesCb();
+                        })
+                        .catch(seriesCb);
                     }
-                }, snapVar)
-                .$promise
-                .then(function (data) {
-                    async.parallel([
-                        function (parallelCb) {
-                            async.each(decksToDelete, function (item, eachCb) {
-                                DeckTier.destroyById({
-                                    id: item
-                                })
-                                .$promise
-                                .then(function () {
-                                    return eachCb();
-                                }); 
-                            }, parallelCb);
-                        },
-                        function (parallelCb) {
-                            async.each(deckTechsToDelete, function (item, eachCb) {
-                                DeckTech.destroyById({
-                                    id: item
-                                })
-                                .$promise
-                                .then(function () {
-                                    return eachCb();
-                                });
-                            }, parallelCb);
-                        },
-                        function (parallelCb) {
-                            async.each(cardTechsToDelete, function (item, eachCb) {
-                                CardTech.destroyById({
-                                    id: item
-                                })
-                                .$promise
-                                .then(function () {
-                                    return eachCb();
-                                });
-                            }, parallelCb);
-                        },
-                    ], function () {
-                        $state.go('app.admin.hearthstone.snapshots.list');
+                ], function (err) {
+                    if (err) {
+                        console.log("err:", err);
+                        $scope.saving = false;
+                        return;
+                    }
+                    
+                    Snapshot.update({
+                        where: {
+                            id: snapVar.id
+                        }
+                    }, snapVar)
+                    .$promise
+                    .then(function (data) {
+                        async.parallel([
+                            function (parallelCb) {
+                                async.each(decksToDelete, function (item, eachCb) {
+                                    DeckTier.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    }); 
+                                }, parallelCb);
+                            },
+                            function (parallelCb) {
+                                async.each(deckTechsToDelete, function (item, eachCb) {
+                                    DeckTech.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    });
+                                }, parallelCb);
+                            },
+                            function (parallelCb) {
+                                async.each(cardTechsToDelete, function (item, eachCb) {
+                                    CardTech.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    });
+                                }, parallelCb);
+                            },
+                        ], function () {
+                            $state.go('app.admin.hearthstone.snapshots.list');
+                        });
                     });
-              });
+                });
+
+                
+                
 
 //                async.waterfall([
 //                    function (seriesCallback) {
@@ -10838,7 +10975,7 @@ angular.module('app.controllers', ['ngCookies'])
 
 
                 /******************************************* BUILD TIER MATCHES *******************************************/
-                for (var j = 0; j < maxTierLength; j++) {
+                for (var j = 0; j < tierLength; j++) {
                     for (var k = 0; k < $scope.deckTiers[j].decks.length; k++) {
                         var matches = [];
                         for (var i = 0; i < $scope.snapshot.deckMatchups.length; i++) {
@@ -11008,7 +11145,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.metaservice.setOg('https://tempostorm.com/articles');
 
             // article filtering
-            $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch'];
+            $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
             $scope.articleFilter = [];
             $scope.toggleArticleFilter = function (type) {
                 if ($scope.isArticleFilter(type)) {
@@ -11055,6 +11192,7 @@ angular.module('app.controllers', ['ngCookies'])
                         content: false,
                         votes: false
                     },
+                    include: ['author'],
                     order: "createdDate DESC",
                     skip: ((page*perpage)-perpage),
                     limit: 12
@@ -11638,7 +11776,8 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (data) {
-                            $scope.deck = data;
+                            $scope.deck = DeckBuilder.new(data.playerClass, data);
+                            
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
                             $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
                             $scope.isUser.premium = userRoles.isInRoles.$premium;
@@ -11870,12 +12009,6 @@ angular.module('app.controllers', ['ngCookies'])
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
-//                    VoteService.voteDeck(direction, deck).then(function (data) {
-//                        if (data.success) {
-//                            deck.voted = direction;
-//                            deck.votesCount = data.votesCount;
-//                        }
-//                    });
                     
                     // check if user has already voted and edit direction if so
                     var alreadyVoted = false;
@@ -11907,21 +12040,6 @@ angular.module('app.controllers', ['ngCookies'])
                         if(err) console.log('error: ',err);
                     });
                 }
-                
-                //            function updateVotes() {
-//                checkVotes($scope.deck);
-//
-//                function checkVotes (d) {
-//                    console.log(d.votes);
-//                    var vote = d.votes.filter(function (vote) {
-//                        return (LoopBackAuth.currentUserData.id === vote.userID);
-//                    })[0];
-//
-//                    if (vote) {
-//                        d.voted = vote.direction;
-//                    }
-//                }
-//            }
             };
             
             function updateVotes() {
@@ -11933,22 +12051,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.deck.voteScore = updateVotes();
-
-            // get premium
-            //TODO: This is using old stuff
-//            $scope.getPremium = function (plan) {
-//                if ($scope.app.user.isLogged()) {
-//                    if (!$scope.app.user.isSubscribed()) {
-//                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-//                    }
-//                } else {
-//                    LoginModalService.showModal('login', function () {
-//                        if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
-//                            $scope.getPremium(plan);
-//                        }
-//                    });
-//                }
-//            }
         }
     ])
     .controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
@@ -12686,7 +12788,7 @@ angular.module('app.controllers', ['ngCookies'])
                       gold: ''
                   },
                   className: '',
-                  active: true
+                  isActive: true
               },
               defaultAbility = {
                   name: '',
@@ -12800,6 +12902,20 @@ angular.module('app.controllers', ['ngCookies'])
               }
           };
 
+             $scope.characterAbilToggle = function (currentAbility, char) {
+                if (_.isUndefined(currentAbility.charNames))
+                    currentAbility.charNames = [];
+                
+                var item = _.find(currentAbility.charNames, function (val) { return val === char.name; });
+                
+                if (!item) {
+                    currentAbility.charNames.push(char.name);
+                } else {
+                    var idx = currentAbility.charNames.indexOf(item);
+                    currentAbility.charNames.splice(idx, 1);
+                }
+            }
+            
           // talents
           $scope.talentAddWnd = function () {
               $scope.currentTalent = angular.copy(defaultTalent);
@@ -13025,7 +13141,8 @@ angular.module('app.controllers', ['ngCookies'])
                 damage: '',
                 healing: '',
                 className: '',
-                orderNum: 1
+                orderNum: 1,
+                charNames: []
               },
               defaultTalent = {
                 talent: {},
@@ -13123,6 +13240,20 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.hero.abilities[i].orderNum = i + 1;
               }
             };
+            
+            $scope.characterAbilToggle = function (currentAbility, char) {
+                if (_.isUndefined(currentAbility.charNames))
+                    currentAbility.charNames = [];
+                
+                var item = _.find(currentAbility.charNames, function (val) { return val === char.name; });
+                
+                if (!item) {
+                    currentAbility.charNames.push(char.name);
+                } else {
+                    var idx = currentAbility.charNames.indexOf(item);
+                    currentAbility.charNames.splice(idx, 1);
+                }
+            }
           
             // talents
             $scope.talentTiers = HOTS.tiers;
@@ -15000,8 +15131,9 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.getTierTalent = function (hero, guide, tier, isFeatured) {
               var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
-              
-              return (t) ? t.talent : { className: 'missing', name: "Missing Talent" };
+              var out = (t.talent.className !== '__missing') ? t.talent : { className: '__missing', name: "Missing Talent" };
+                
+              return out;
 //              return ($scope.topGuidesTalents[guide.talentTiers[hero.id][tier]] === undefined) ? { className: 'missing', name: "Missing Talent" } : $scope.topGuidesTalents[guide.talentTiers[hero.id][tier]];
             }
 
@@ -15288,7 +15420,7 @@ angular.module('app.controllers', ['ngCookies'])
 //              console.log(hero);
               var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
               var out = (t.talent.className !== '__missing') ? t.talent : { className: '__missing', name: "Missing Talent" };
-              
+                
               return out;
 //              return ($scope.topGuidesTalents[guide.talentTiers[hero.id][tier]] === undefined) ? { className: 'missing', name: "Missing Talent" } : $scope.topGuidesTalents[guide.talentTiers[hero.id][tier]];
             }
@@ -15466,7 +15598,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles', 'EventService',
         function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles, EventService) {
-
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 if ($scope.guide.premium.isPremium) {
                     User.isInRoles({
@@ -15632,7 +15763,16 @@ angular.module('app.controllers', ['ngCookies'])
               var out = [];
               var missing = { className: "missing" };
               var hero = $scope.getCurrentHero();
-              var heroTals = _.filter($scope.guide.guideTalents, function (val) { return (val.guideHeroId === hero.id); });
+              var heroTals = _.filter($scope.guide.guideTalents, function (val) {
+                  if (val.talent.className === '__missing') {
+                      val.talent.name = "Missing Talent"
+                      val.talent.description = "Seems like this talent has been removed."
+                  }; 
+                  console.log(val);
+                  return (val.guideHeroId === hero.id); 
+              });
+                
+                console.log(heroTals);
               
               out = heroTals;
               
@@ -16841,7 +16981,8 @@ angular.module('app.controllers', ['ngCookies'])
 //            console.log(hero);
 
             $scope.setCurrentHero(hero);
-            $scope.currentCharacter = $scope.currentHero.characters[0];
+//            $scope.currentCharacter = $scope.currentHero.characters[0];
+            
             $scope.currentAbility = false;
             $scope.level = 1;
 
@@ -16866,9 +17007,14 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.setCurrentCharacter = function (character) {
+                var charAbils = _.filter(hero.abilities, function (abil) { return !!_.find(abil.charNames, function (charName) { return charName === character.name }) });
+                var h = angular.copy(hero);
+                
+                h.abilities = charAbils;
+                $scope.setCurrentHero(h);
                 $scope.currentCharacter = character;
             };
-
+            $scope.setCurrentCharacter($scope.currentHero.characters[0]);
             $scope.getAbilities = function () {
                 var abilities = $scope.getCurrentHero().abilities,
                     out = [];

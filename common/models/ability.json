@@ -35,7 +35,8 @@
     "mana": {
       "type": "number"
     },
-    "heroId": {}
+    "heroId": {},
+    "charNames": []
   },
   "validations": [],
   "relations": {
