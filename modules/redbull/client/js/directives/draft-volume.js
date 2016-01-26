@@ -11,7 +11,12 @@ angular.module('redbull.directives')
                 tooltip = $('.volume-tooltip');
 
             tooltip.hide();
-
+            
+            scope.toggleMuted = function () {
+                if (scope.volume === 0) { return false; }
+                scope.muted = !scope.muted;
+            }
+            
             slider.slider({
                 range: "min",
                 min: 0,

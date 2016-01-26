@@ -80,9 +80,14 @@ angular.module('redbull.controllers')
 
     // volume
     $scope.volume = ($localStorage.draftVolume !== undefined) ? $localStorage.draftVolume : 35;
+    $scope.muted = ($localStorage.draftMuted !== undefined) ? $localStorage.draftMuted : false;
     
     $scope.$watch('volume', function (newValue) {
         $localStorage.draftVolume = $scope.volume;
+    });
+    
+    $scope.$watch('muted', function (newValue) {
+        $localStorage.draftMuted = $scope.muted;
     });
     
     // audio files

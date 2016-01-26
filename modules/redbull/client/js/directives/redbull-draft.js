@@ -10,6 +10,7 @@ angular.module('redbull.directives')
                 currentPack: '=',
                 audioFiles: '=',
                 volume: '=',
+                muted: '=',
             },
             link: function (scope, el, attrs) {
                 var startShake = null,
@@ -94,7 +95,7 @@ angular.module('redbull.directives')
                 
                 // play audio clip
                 scope.playAudio = function ( audioName ) {
-                    if (scope.volume === 0) { return false; }
+                    if (scope.volume === 0 || scope.muted) { return false; }
                     var audio = new Audio();
                     audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
                     audio.load();
