@@ -3,6 +3,9 @@ angular.module('redbull.controllers')
     function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, draftSettings, draftCards, draftBuildStart) {
         var draft = draftBuildStart.draft;
         
+        $scope.draftId = draft.id;
+        $scope.decksSaving = false;
+        
         console.log(draft);
         console.log(draftSettings);
         console.log(draftBuildStart);
@@ -175,8 +178,13 @@ angular.module('redbull.controllers')
             // return page of results
             return cards.slice(start, start + $scope.perpage);
         }
-
+        
+        $scope.canEdit = function () {
+            return !$scope.tournament.hasDecksConstructed;
+        };
+        
         $scope.addCardToDeck = function (card) {
+            if (!$scope.canEdit()) { return false; }
             var deck = $scope.currentDeck;
             var cardQty = card.qty;
             var cardUsed = $scope.qtyUsed(card);
@@ -189,8 +197,8 @@ angular.module('redbull.controllers')
         };
 
         $scope.removeCardFromDeck = function (card) {
-            if (!$scope.currentDeck) { return false; }
-            $scope.currentDeck.removeCard(card);
+            if (!$scope.currentDeck || !$scope.canEdit()) { return false; }
+            $scope.currentDeck.removeCardFromDeck(card.card);
         };
         
         $scope.qtyUsed = function (card) {
@@ -288,6 +296,7 @@ angular.module('redbull.controllers')
         };
 
         $scope.deleteDeck = function ($event, deck) {
+            if (!$scope.canEdit()) { return false; }
             // stop prop
             $event.stopPropagation();
 
@@ -336,6 +345,7 @@ angular.module('redbull.controllers')
 
         // add deck modal
         $scope.addDeckWnd = function () {
+            if (!$scope.canEdit()) { return false; }
             if ($scope.decks.length >= 9) {
                 var box = bootbox.dialog({
                     title: 'Add Deck',
@@ -410,15 +420,14 @@ angular.module('redbull.controllers')
             $scope.saveDecks(true);
         };
         
-        $scope.saveDecks = function (timesUp) {
-            timesUp = timesUp || false;
-            
+        // share modal
+        $scope.shareDecks = function () {
             var box = bootbox.dialog({
-                title: 'Save Decks',
-                message: 'This feature has not been completed yet.',
+                title: 'Share Your Decks',
+                message: $compile('<draft-deck-share></draft-deck-share>')($scope),
                 buttons: {
                     cancel: {
-                        label: 'OK',
+                        label: 'DONE',
                         className: 'btn-blue',
                         callback: function () {
                             box.modal('hide');
@@ -427,7 +436,40 @@ angular.module('redbull.controllers')
                 }
             });
             box.modal('show');
-
+        };
+        
+        $scope.saveDecks = function (timesUp) {
+            if (!$scope.canEdit()) { return false; }
+            
+            timesUp = timesUp || false;
+            
+            if (!timesUp && !$scope.decksComplete()) {
+                // error modal
+                var decks = draftSettings.numOfDecks;
+                var box = bootbox.dialog({
+                    title: 'Error Saving Decks',
+                    message: '<strong>Error:</strong> You must have <strong>' + decks + ' decks all with <strong>30 cards</strong> to save.',
+                    buttons: {
+                        cancel: {
+                            label: 'OK',
+                            className: 'btn-blue',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    }
+                });
+                box.modal('show');
+                return false;
+            } else {
+                // save decks
+                $scope.decksSaving = true;
+                
+                // share modal
+                $scope.decksSaving = false;
+                $scope.tournament.hasDecksConstructed = true;
+                $scope.shareDecks();
+            }
         };
 
     }

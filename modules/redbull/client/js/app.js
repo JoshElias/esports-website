@@ -128,7 +128,7 @@ var redbull = angular.module('app.redbull', [
                     controller: 'DraftPacksCtrl',
                     resolve: {
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
-                            RedbullDraftSettings.findOne().$promise;
+                            return RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', 'RedbullDraft', function ($localStorage, RedbullDraft) {
                             if ($localStorage.draftId) {

@@ -98,7 +98,7 @@
     <div class="draft-build-decks">
         
         <div class="deck-add-button">
-            <button ng-click="addDeckWnd()">
+            <button ng-click="addDeckWnd()" ng-disabled="!canEdit()">
                 <i class="fa fa-plus-circle"></i>
                 Add Deck
             </button>
@@ -110,7 +110,7 @@
                 
                 <div class="deck-title-bar" ng-click="toggleCurrentDeck(deck)">
                     <div class="deck-title-bar-inner">
-                        <button class="deck-delete" ng-click="deleteDeck($event, deck)"><i class="fa fa-times"></i></button>
+                        <button class="deck-delete" ng-click="deleteDeck($event, deck)" ng-if="canEdit()"><i class="fa fa-times"></i></button>
                         <div class="deck-title">{{deck.name}}</div>
                     </div>
                 </div>
@@ -150,8 +150,12 @@
         </div>
         
         <div class="deck-save-button">
-            <button class="btn btn-block btn-blue" ng-click="saveDecks()" ng-disabled="!decksComplete()">
+            <button class="btn btn-block btn-blue" ng-click="saveDecks()" ng-disabled="decksSaving" ng-if="!tournament.hasDecksConstructed">
                 SAVE DECKS
+                <i class="fa fa-refresh fa-spin" ng-if="decksSaving"></i>
+            </button>
+            <button class="btn btn-block btn-blue" ng-click="shareDecks()" ng-if="tournament.hasDecksConstructed">
+                SHARE DECKS
             </button>
         </div>
         
@@ -177,7 +181,7 @@
                 <div class="draft-build-cards-view-wrapper clearfix">
                     <div class="draft-build-cards-view clearfix">
                         <div class="draft-build-card" ng-class="{ disabled: (currentDeck && !currentDeck.isAddable(card.card)) || (qtyUsed(card) === card.qty) }" ng-repeat="card in getCardsCurrent()">
-                            <a href="#" data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" ng-click="addCardToDeck(card)" ng-right-click="currentDeck.removeCardFromDeck(card.card)" hs-card>
+                            <a href="#" data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" ng-click="addCardToDeck(card)" ng-right-click="removeCardFromDeck(card)" hs-card>
                                 <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.medium}}" alt="{{card.card.name}}">
                             </a>
                             <div class="card-qty">{{card.qty - qtyUsed(card)}}/{{card.qty}}</div>
