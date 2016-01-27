@@ -128,7 +128,7 @@ var redbull = angular.module('app.redbull', [
                     controller: 'DraftPacksCtrl',
                     resolve: {
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
-                            RedbullDraftSettings.findOne().$promise;
+                            return RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', 'RedbullDraft', function ($localStorage, RedbullDraft) {
                             if ($localStorage.draftId) {
@@ -166,6 +166,7 @@ var redbull = angular.module('app.redbull', [
                                         where: {
                                             id: $localStorage.draftId
                                         },
+                                        fields: ['id', 'hasOpenedPacks'],
                                         include: [
                                             {
                                                 relation: 'cards',
@@ -188,6 +189,23 @@ var redbull = angular.module('app.redbull', [
                                 $state.go('app.redbull.draft.packs');
                                 return $q.reject();
                             }
+                        }],
+/*                        draftCards: ['RedbullPackCard', 'draft', function (RedbullPackCard, draft) {
+                            return RedbullPackCard.find({
+                                filter: {
+                                    where: {
+                                        redbullDraftId: draft.id,
+                                    },
+                                    fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
+                                    order: ['cost ASC', 'name ASC']
+                                }
+                            }).$promise;
+                        }],*/
+                        draftCards: ['draft', function (draft) {
+                            return draft.cards;
+                        }],
+                        draftBuildStart: ['$localStorage', 'RedbullDraft', 'draft', function ($localStorage, RedbullDraft, draft) {
+                            return RedbullDraft.startDraftBuild({ draftId: draft.id }).$promise;
                         }]
                     }
                 }

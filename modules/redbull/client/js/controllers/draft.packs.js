@@ -1,8 +1,6 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draft', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draft){
+.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draftSettings, draft){
     if (draft.hasOpenedPacks) { return $state.go('^.build'); }
-    
-    console.log('Draft: ', draft);
     
     if (!$localStorage.draftId) {
         $localStorage.draftId = draft.id;
@@ -17,8 +15,6 @@ angular.module('redbull.controllers')
     // packs
     $scope.currentPack = {};
     $scope.packs = JSON.parse(draft.packOpenerString);
-    
-    console.log('Packs: ', $scope.packs);
     
     // file variables
     var fileLocations = [];
@@ -39,6 +35,7 @@ angular.module('redbull.controllers')
             for (var y = 0; y < $scope.packs[key].packs[x].cards.length; y++) {
                 if (cardImages.indexOf($scope.packs[key].packs[x].cards[y].photoNames.small) === -1) {
                     cardImages.push($scope.packs[key].packs[x].cards[y].photoNames.small);
+                    cardImages.push($scope.packs[key].packs[x].cards[y].photoNames.medium);
                     cardImages.push($scope.packs[key].packs[x].cards[y].photoNames.large);
                 }
             }
@@ -204,22 +201,28 @@ angular.module('redbull.controllers')
 */
 
     $scope.goToBuild = function () {
-        $scope.goingToBuild = true;
-        
-        RedbullDraft.startDraftBuild({ draftId: $localStorage.draftId }).$promise.then(function () {
-            return $state.go('^.build');
-        }).catch(function () {
-            console.error('Unable to update draft');
-        });
-        
-/*
+        var mins = draftSettings.deckBuildTimeLimit;
+        var decks = draftSettings.numOfDecks;
         var box = bootbox.dialog({
             title: 'Build Decks',
-            message: 'You will have ',
+            message: 'You will have <strong>' + mins + ' minutes</strong> to build <strong>' + decks + ' decks</strong>. If you do not complete in the alloted time, your decks will be automatically submitted, and completed with random classes / cards that are left. The timer begins once you click the continue button.',
             buttons: {
-                cancel: {
-                    label: 'OK',
+                continue: {
+                    label: 'Continue',
                     className: 'btn-blue',
+                    callback: function () {
+                        box.modal('hide');
+                        $scope.goingToBuild = true;
+                        RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
+                            return $state.go('^.build');
+                        }).catch(function () {
+                            console.error('Unable to update draft');
+                        });
+                    }
+                },
+                cancel: {
+                    label: 'Cancel',
+                    className: 'btn-default pull-left',
                     callback: function () {
                         box.modal('hide');
                     }
@@ -227,7 +230,6 @@ angular.module('redbull.controllers')
             }
         });
         box.modal('show');
-*/
     };
     
 }]);
