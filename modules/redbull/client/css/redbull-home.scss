@@ -159,17 +159,89 @@ $font-grey: #c7c9c8;
         .bran-box {
             img {
                 position: absolute;
-                right: -93px;
+                right: -603px;
                 bottom: -58px;
                 display: block;
+                opacity: 0;
+                
+                -moz-animation-name: branLoad;
+                -moz-animation-iteration-count: 1;
+                //-moz-animation-timing-function: ease-in;
+                -moz-animation-duration: 0.9s;
+                 -moz-animation-delay: 1.3s;
+                //-moz-transform: translateX(-93px);
+                -moz-animation-fill-mode: forwards;
+                
+                -webkit-animation-name: branLoad;
+                -webkit-animation-iteration-count: 1;
+                //-webkit-animation-timing-function: ease-in;
+                -webkit-animation-duration: 0.9s;
+                -webkit-animation-delay: 1.3s;
+                //-webkit-transform: translateX(-93px);
+                -webkit-animation-fill-mode: forwards;
+                
+                
+                animation-name: branLoad;
+                animation-iteration-count: 1;
+                //animation-timing-function: ease-in;
+                animation-duration: 0.9s;
+                animation-delay: 1.3s;
+                //transform: translateX(-93px);
+                animation-fill-mode: forwards;
+                
+                @-moz-keyframes branLoad {
+                    0% {
+                        right: -600px;
+                        opacity: 0.0;
+                    }
+                    60% {
+                        opacity: 0.3;
+                    }
+                    100% {
+                        right: -93px;
+                        opacity: 1;
+                    }
+                }
+                @-webkit-keyframes branLoad {
+                    0% {
+                        right: -600px;
+                        opacity: 0.0;
+                    }
+                    60% {
+                        opacity: 0.3;
+                    }
+                    100% {
+                        right: -93px;
+                        opacity: 1;
+                    }
+                }
+                @keyframes branLoad {
+                    0% {
+                        right: -600px;
+                        opacity: 0.0;
+                    }
+                    60% {
+                        opacity: 0.3;
+                    }
+                    100% {
+                        right: -93px;
+                        opacity: 1;
+                    }
+                }
+                
             }
-        }
+        } // bran img
     
     } // top-section ends
 
     .mid-section {
         min-height: 605px;
-        @include ts-div-styles;
+        border-top: 1px solid rgba(255,255,255,.3);
+        border-bottom: 1px solid rgba(255,255,255,.3);
+        outline: 1px solid rgba(black,.8);
+    
+        background-color: $opac-div; 
+        
         box-shadow: 0px 0px 25px rgba(0,0,0,.90), -5px -5px 25px rgba(0,0,0,.90) ;
         background-image: url(/modules/redbull/client/img/home/bg-circle.jpg);
         background-color: #000000;
@@ -249,3 +321,4 @@ $font-grey: #c7c9c8;
         }
     } // bottom-section ends
 } //tourney page ends
+
