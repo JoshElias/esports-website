@@ -3527,10 +3527,11 @@ var app = angular.module('app', [
                 access: { auth: true },
             })
             .state('app.profile.edit.premium', {
-                url: '/premium',
+                url: '/premium?plan',
                 views: {
                     editProfile: {
-                        templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
+                        templateUrl: tpl + 'views/frontend/profile.edit.premium.html',
+                        controller: 'ProfileSubscriptionCtrl'
                     }
                 },
                 access: { auth: true },
@@ -3568,23 +3569,22 @@ var app = angular.module('app', [
                 },
                 access: { auth: true }
             })
-            .state('app.profile.subscription', {
-                url: '/subscription?plan',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
-                        controller: 'ProfileSubscriptionCtrl',
-                        resolve: {
-                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getUserProfile(username);
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true },
-                seo: { title: 'My Subscription', description: '', keywords: '' }
-            })
+//            .state('app.profile.subscription', {
+//                url: '/subscription?plan',
+//                views: {
+//                    profile: {
+//                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
+//                        controller: 'ProfileSubscriptionCtrl',
+//                        resolve: {
+//                            user: ['userProfile', function (userProfile) {
+//                                return userProfile;
+//                            }]
+//                        }
+//                    }
+//                },
+//                access: { auth: true },
+//                seo: { title: 'My Subscription', description: '', keywords: '' }
+//            })
             .state('app.admin', {
                 abstract: true,
                 url: 'admin',

@@ -462,9 +462,8 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService', 'isPremium',
         function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService, isPremium) {
             
-            var plan = user.subscription.plan || 'tempostorm_quarterly';
-            
             $scope.user = user;
+            $scope.plan = user.subscription && user.subscription.plan ? user.subscription.plan : 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
             $scope.isPremium = isPremium;
@@ -476,9 +475,13 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.testString = function (str) {
                 var pattern = /^[\w\._-]*$/,
-                    word = $scope.user.social[str];
+                    word = $scope.user.social && $scope.user.social[str] ? $scope.user.social[str] : false;
                 
-                return pattern.test(word);
+                if (word) {
+                    return pattern.test(word);
+                } else {
+                    return false;
+                }
             }
             
             function getServerIp () {
@@ -672,146 +675,166 @@ angular.module('app.controllers', ['ngCookies'])
             return $state.transitionTo('app.profile.edit', { username: $stateParams.username });
         }
     ])
-    .controller('ProfileSubscriptionCtrl', ['$scope', '$stateParams', 'SubscriptionService',
-        function ($scope, $stateParams, SubscriptionService) {
-            $scope.loading = false;
-            $scope.profile = user;
-            $scope.error = '';
-            $scope.success = '';
-
-            if ($scope.profile.subscription.isSubscribed) {
-                $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
-            } else {
-                var plan;
-                switch ($stateParams.plan) {
-                    case 'monthly':
-                        plan = 'tempostorm_monthly';
-                        break;
-                    case 'quarterly':
-                        plan = 'tempostorm_quarterly';
-                        break;
-                    case 'semi':
-                    default:
-                        plan = 'tempostorm_semi';
-                        break;
-                }
-                $scope.plan = plan;
-            }
-
-            $scope.isLoading = function () {
-                return $scope.loading;
-            }
-
-            $scope.setLoading = function (bool) {
-                $scope.loading = bool;
-            }
-
-            $scope.setSuccess = function (s) {
-                $scope.error = '';
-                $scope.success = s;
-            }
-
-            $scope.setError = function (s) {
-                $scope.success = '';
-                $scope.error = s;
-            }
-
-            $scope.setErrorCode = function (c) {
-                $scope.error = 'An error has occured. Code: ' + c + ': ' + $scope.getError(c);
-            }
-
-            $scope.getError = function (c) {
-                switch (c) {
-                    case 400 : return 'Missing a required parameter.'; break;
-                    case 401 : return 'No valid API key provided.'; break;
-                    case 402 : return 'Parameters were valid but request failed. Check your information and please try again.'; break;
-                    case 404 : return 'The requested item doesn\'t exist!'; break;
-                    case 500 || 502 || 503 || 504 : return 'Something went wrong on Stripe\'s end.'; break;
-
-                }
-            }
-
-            $scope.getExpiryDate = function () {
-                var expiryISO = $scope.profile.subscription.expiryDate;
-                if (!expiryISO) { return false; }
-
-                var now = new Date().getTime(),
-                    expiryTS = new Date(expiryISO).getTime();
-
-                return (expiryTS > now) ? expiryTS : false;
-            };
-
-            $scope.isSubscribed = function () {
-                return $scope.profile.subscription.isSubscribed;
-            }
-
-        $scope.subscribe = function (code, result) {
-            $scope.setLoading(true);
-            if (result.error) {
-                $scope.setErrorCode(code);
-                $scope.setLoading(false);
-            } else {
-                SubscriptionService.setPlan($scope.plan, result.id).success(function (data) {
-                    if (data.success) {
-                        SubscriptionService.setSubscribed(true);
-                        SubscriptionService.setTsPlan(data.plan);
-
-                        $scope.profile.subscription.isSubscribed = true;
-                        $scope.profile.subscription.plan = data.plan;
-
-                        $scope.number = '';
-                        $scope.cvc = '';
-                        $scope.expiry = '';
-                        $scope.error =  '';
-                        $scope.setSuccess('We have successfully processed your payment. Thank you for subscribing with TempoStorm.com!');
-                    } else {
-                        $scope.setError( 'An unknown error has occured.' );
-                        $scope.setLoading(false);
-                    }
-                });
-            }
+    .controller('ProfileSubscriptionCtrl', ['$scope', '$stateParams', '$timeout', '$state', function($scope, $stateParams, $timeout, $state) {
+        $scope.plan = $stateParams.plan ? $stateParams.plan : 'tempostorm_quarterly';
+        
+        $scope.selectPlan = function(plan) {
+            $state.current.reloadOnSearch = false;
+            // update state param without refreshing page
+            $state.transitionTo($state.current.name, {plan: plan}, {
+                location: true,
+                inherit: true,
+                relative: $state.$current.name,
+                notify: false
+            });
+            
+            $scope.plan = plan;
+            
+            $timeout(function () {
+              $state.current.reloadOnSearch = undefined;
+            });
         };
-
-        $scope.updateCard = function (code, result) {
-            if (result.error) {
-            } else {
-                SubscriptionService.setCard(result.id).success(function (data) {
-                    if (!data.success) {
-                        console.log('error');
-                    } else {
-                        $scope.profile.subscription.last4 = data.subscription.last4;
-                        $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
-                        $scope.number = '';
-                        $scope.cvc = '';
-                        $scope.expiry = '';
-                    }
-                });
-            }
-        }
-
-        $scope.updatePlan = function () {
-            SubscriptionService.setPlan($scope.plan).success(function (data) {
-                if (data.success) {
-                    SubscriptionService.setTsPlan(data.plan);
-                    $scope.profile.subscription.plan = data.plan;
-                    $scope.plan = data.plan;
-                }
-            });
-        }
-
-        $scope.cancel = function () {
-            SubscriptionService.cancel()
-            .success(function (data) {
-                if (data.success) {
-                    SubscriptionService.setSubscribed(false);
-                    SubscriptionService.setExpiry(data.subscription.expiryDate);
-                    $scope.profile.subscription.isSubscribed = false;
-                    $scope.profile.subscription.expiryDate = data.subscription.expiryDate;
-                }
-            });
-        }
-    }
-])
+    }])
+//    .controller('ProfileSubscriptionCtrl', ['$scope', 'user', '$stateParams', 'SubscriptionService',
+//        function ($scope, user, $stateParams, SubscriptionService) {
+//            $scope.loading = false;
+//            $scope.profile = user;
+//            $scope.error = '';
+//            $scope.success = '';
+//
+//            if ($scope.profile.subscription && $scope.profile.subscription.isSubscribed) {
+//                $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
+//            } else {
+//                var plan;
+//                switch ($stateParams.plan) {
+//                    case 'monthly':
+//                        plan = 'tempostorm_monthly';
+//                        break;
+//                    case 'quarterly':
+//                        plan = 'tempostorm_quarterly';
+//                        break;
+//                    case 'semi':
+//                    default:
+//                        plan = 'tempostorm_semi';
+//                        break;
+//                }
+//                $scope.plan = plan;
+//            }
+//
+//            $scope.isLoading = function () {
+//                return $scope.loading;
+//            }
+//
+//            $scope.setLoading = function (bool) {
+//                $scope.loading = bool;
+//            }
+//
+//            $scope.setSuccess = function (s) {
+//                $scope.error = '';
+//                $scope.success = s;
+//            }
+//
+//            $scope.setError = function (s) {
+//                $scope.success = '';
+//                $scope.error = s;
+//            }
+//
+//            $scope.setErrorCode = function (c) {
+//                $scope.error = 'An error has occured. Code: ' + c + ': ' + $scope.getError(c);
+//            }
+//
+//            $scope.getError = function (c) {
+//                switch (c) {
+//                    case 400 : return 'Missing a required parameter.'; break;
+//                    case 401 : return 'No valid API key provided.'; break;
+//                    case 402 : return 'Parameters were valid but request failed. Check your information and please try again.'; break;
+//                    case 404 : return 'The requested item doesn\'t exist!'; break;
+//                    case 500 || 502 || 503 || 504 : return 'Something went wrong on Stripe\'s end.'; break;
+//
+//                }
+//            }
+//
+//            $scope.getExpiryDate = function () {
+//                var expiryISO = $scope.profile.subscription && $scope.profile.subscription.expiryDate ? $scope.profile.subscription.expiryDate : false;
+//                if (!expiryISO) { return false; }
+//
+//                var now = new Date().getTime(),
+//                    expiryTS = new Date(expiryISO).getTime();
+//
+//                return (expiryTS > now) ? expiryTS : false;
+//            };
+//
+//            $scope.isSubscribed = function () {
+//                return $scope.profile.subscription ? $scope.profile.subscription.isSubscribed : false;
+//            }
+//
+//        $scope.subscribe = function (code, result) {
+//            $scope.setLoading(true);
+//            if (result.error) {
+//                $scope.setErrorCode(code);
+//                $scope.setLoading(false);
+//            } else {
+//                SubscriptionService.setPlan($scope.plan, result.id).success(function (data) {
+//                    if (data.success) {
+//                        SubscriptionService.setSubscribed(true);
+//                        SubscriptionService.setTsPlan(data.plan);
+//
+//                        $scope.profile.subscription.isSubscribed = true;
+//                        $scope.profile.subscription.plan = data.plan;
+//
+//                        $scope.number = '';
+//                        $scope.cvc = '';
+//                        $scope.expiry = '';
+//                        $scope.error =  '';
+//                        $scope.setSuccess('We have successfully processed your payment. Thank you for subscribing with TempoStorm.com!');
+//                    } else {
+//                        $scope.setError( 'An unknown error has occured.' );
+//                        $scope.setLoading(false);
+//                    }
+//                });
+//            }
+//        };
+//
+//        $scope.updateCard = function (code, result) {
+//            if (result.error) {
+//            } else {
+//                SubscriptionService.setCard(result.id).success(function (data) {
+//                    if (!data.success) {
+//                        console.log('error');
+//                    } else {
+//                        $scope.profile.subscription.last4 = data.subscription.last4;
+//                        $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
+//                        $scope.number = '';
+//                        $scope.cvc = '';
+//                        $scope.expiry = '';
+//                    }
+//                });
+//            }
+//        }
+//
+//        $scope.updatePlan = function () {
+//            SubscriptionService.setPlan($scope.plan).success(function (data) {
+//                if (data.success) {
+//                    SubscriptionService.setTsPlan(data.plan);
+//                    $scope.profile.subscription.plan = data.plan;
+//                    $scope.plan = data.plan;
+//                }
+//            });
+//        }
+//
+//        $scope.cancel = function () {
+//            SubscriptionService.cancel()
+//            .success(function (data) {
+//                if (data.success) {
+//                    SubscriptionService.setSubscribed(false);
+//                    SubscriptionService.setExpiry(data.subscription.expiryDate);
+//                    $scope.profile.subscription.isSubscribed = false;
+//                    $scope.profile.subscription.expiryDate = data.subscription.expiryDate;
+//                }
+//            });
+//        }
+//    }
+//])
 .controller('ProfileActivityCtrl', ['$scope', '$sce', '$filter', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth', 'Deck', 'Guide',
     function ($scope, $sce, $filter, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth, Deck, Guide) {
 
@@ -11613,22 +11636,6 @@ angular.module('app.controllers', ['ngCookies'])
                         callback(null, count);
                     }
                 });
-//                Deck.find(getQuery(true, page, perpage))
-//                .$promise
-//                .then(function (data) {
-//                    $scope.tempostormPagination.total = data.total;
-//                    $scope.tempostormPagination.page = page;
-//                    $timeout(function () {
-//                        $scope.tempostormDecks = data;
-//
-//                        if (callback) {
-//                            return callback(data);
-//                        }
-//                    });
-//                })
-//                .then(function (err) {
-//                    console.log("There's been an error 1:", err);
-//                });
             }
 
             $scope.tempostormPagination = AjaxPagination.new(4, $scope.tempostormPagination.total,
@@ -11643,7 +11650,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
             
-            //TODO: MAKE CASE-INSENSITIVE QUERY WORK
             function updateCommunityDecks (page, perpage, callback) {
                 AjaxPagination.update(Deck, getQuery(false, true, page, perpage), getQuery(false, true, page, perpage).filter, function (err, data, count) {
                     $scope.fetching = false;
@@ -11656,21 +11662,6 @@ angular.module('app.controllers', ['ngCookies'])
                         callback(null, count);
                     }
                 });
-//                Deck.find(getQuery(false, page, perpage))
-//                .$promise
-//                .then(function (data) {
-//                    $scope.communityPagination.total = data.total;
-//                    $scope.communityPagination.page = page;
-//                    $timeout(function () {
-//                        $scope.communityDecks = data;
-//
-//                        if (callback) {
-//                            return callback(data);
-//                        }
-//                    });
-//                }).then(function (err) {
-//                    console.log("There's been an error 2:", err);
-//                });
             }
           
             $scope.communityPagination = AjaxPagination.new(12, $scope.communityPagination.total,
@@ -11716,6 +11707,7 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (userRoles) {
+                        console.log('userRoles1:', userRoles);
                         Deck.findById({
                             id: $scope.deck.id,
                             filter: {
@@ -12056,6 +12048,42 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.deck.voteScore = updateVotes();
+
+            // get premium
+            $scope.getPremium = function (plan) {
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', { 
+                                    username: currentUser.username, 
+                                    plan: plan 
+                                });
+                            });
+
+                        }
+                    });
+                    
+                } else {
+                    LoginModalService.showModal('login', function () {
+                        $scope.getPremium(plan);
+                    });
+                }
+            }
         }
     ])
     .controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
