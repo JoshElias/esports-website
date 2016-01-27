@@ -16,7 +16,7 @@ module.exports = function(RedbullDeck) {
         var numOfDecks = draftSettings.numOfDecks;
         var deckSubmitCurfew = draftJSON.deckSubmitCurfew;
 
-        var noDeckValidationErr = new Error("No draft found for id", draftId);
+        var noDeckValidationErr = new Error("No draft found for id", draft.id);
         noDeckValidationErr.statusCode = 422;
         noDeckValidationErr.code = 'DRAFT_VALIDATION_ERROR';
 
@@ -88,8 +88,11 @@ module.exports = function(RedbullDeck) {
 
     function getRandomClasses(numOfClasses, remainingClasses, randomClasses) {
         remainingClasses = remainingClasses || HS_CLASSES;
+        console.log("remaining classes:", remainingClasses)
         randomClasses = randomClasses || [];
+        console.log("random classes:", randomClasses)
         var randomIndex = utils.getRandomInt(0, remainingClasses.length - 1);
+        console.log("remaining index", randomIndex);
         randomClasses.push(remainingClasses.splice(randomIndex, 1));
         if (randomClasses.length === numOfClasses) {
             return randomClasses;
