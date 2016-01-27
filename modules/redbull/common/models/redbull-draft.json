@@ -23,7 +23,7 @@
       "type": "boolean",
       "default": false
     },
-    "hasDecksConstructed": {
+    "hasStartedBuildingDeck": {
       "type": "boolean",
       "default": false
     },
@@ -32,6 +32,10 @@
     },
     "deckBuildStopTime": {
       "type": "number"
+    },
+    "hasDecksConstructed": {
+      "type": "boolean",
+      "default": false
     },
     "deckSubmitCurfew": {
       "type": "number"
@@ -102,6 +106,13 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "create"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "finishedOpeningPacks"
     },
     {
       "accessType": "EXECUTE",
