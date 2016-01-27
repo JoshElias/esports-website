@@ -7,11 +7,11 @@ angular.module('redbull.controllers')
     // fix slider string error
     function Chances (id, redbullExpansionId, rarity, percentage) {
         var percentage = percentage;
-        
+
         this.id = id;
         this.redbullExpansionId = redbullExpansionId;
         this.rarity = rarity;
-        
+
         this.__defineGetter__("percentage", function () {
             return percentage;
         });
@@ -28,7 +28,7 @@ angular.module('redbull.controllers')
             $scope.expansions[i].rarityChances[j] = new Chances(chance.id, chance.redbullExpansionId, chance.rarity, chance.percentage);
         }
     }
-    
+
     // hide rarities for specific expansions
     $scope.hasRarity = function (expansion, rarity) {
         switch (expansion.name) {
@@ -40,7 +40,7 @@ angular.module('redbull.controllers')
                 return (rarity !== 'basic');
         }
     };
-    
+
     // settings error check
     function settingsError () {
         var error = {
@@ -49,15 +49,15 @@ angular.module('redbull.controllers')
         };
         for (var i = 0; i < $scope.expansions.length; i++) {
             if ($scope.expansions[i].isActive) {
-                
+
                 // test packs
                 if (isNaN(parseInt($scope.expansions[i].numOfPacks)) || parseInt($scope.expansions[i].numOfPacks) < 1) {
                     error.errors.push('Expansion ' + $scope.expansions[i].name + ': Can not have zero packs.');
                 }
-                
+
                 // test percentage
                 var count = 0;
-            
+
                 for (var j = 0; j < $scope.expansions[i].rarityChances.length; j++) {
                     count += $scope.expansions[i].rarityChances[j].percentage;
                 }
@@ -67,9 +67,10 @@ angular.module('redbull.controllers')
                 }
             }
         }
+      
         return (error.errors.length) ? error : false;
     }
-    
+
     // save settings
     $scope.updateSettings = function () {
         var error = settingsError();
@@ -79,15 +80,14 @@ angular.module('redbull.controllers')
             return false;
         } else {
             $scope.saving = true;
-            
+
             async.forEach($scope.expansions, function (expansion, expansionEachCallback) {
-                
+
                 RedbullExpansion.prototype$updateAttributes(expansion).$promise
                 .then(function (expansionValue) {
-                    
+
                     async.forEach(expansion.rarityChances, function (chance, chanceEachCallback) {
-                        console.log('chance: ', chance);
-                        
+
                         RedbullRarityChance.prototype$updateAttributes(chance).$promise
                         .then(function (chanceValue) {
                             return chanceEachCallback();
@@ -98,12 +98,12 @@ angular.module('redbull.controllers')
                     }, function (err) {
                         return expansionEachCallback(err);
                     });
-                    
+
                 })
                 .catch(function (err) {
                     return expansionEachCallback(err);
                 });
-                
+
             }, function (err) {
                 $scope.saving = false;
                 $window.scrollTo(0,0);
@@ -114,7 +114,7 @@ angular.module('redbull.controllers')
                         lbErr: err
                     });
                 } else {
-                    return AlertService.setSuccess({ 
+                    return AlertService.setSuccess({
                         show: true,
                         msg: 'Settings have been updated successfully.'
                     });
@@ -147,10 +147,10 @@ angular.module('redbull.controllers')
 							});
                         }
 						$window.scrollTo(0, 0);
-                        AlertService.setSuccess({ 
+                        AlertService.setSuccess({
 							persist: true,
 							show: false,
-							msg: $scope.hero.heroName + ' has been updated successfully.' 
+							msg: $scope.hero.heroName + ' has been updated successfully.'
 						});
                         return $state.go('app.admin.overwatch.heroes.list');
                     });

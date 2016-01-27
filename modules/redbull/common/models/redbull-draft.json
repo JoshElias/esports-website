@@ -103,6 +103,11 @@
     },
     {
       "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "create"

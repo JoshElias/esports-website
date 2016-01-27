@@ -42,12 +42,12 @@ angular.module('app.directives', ['ui.load'])
                 scope.tooltipImg = newValue;
                 setTooltip();
             });
-            
+
 			var createUUID = function() {
 			  return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
 			}
 			var tmpUuid = createUUID();
-			
+
             function setTooltip () {
                 var content = $compile('<img ng-src="'+scope.tooltipImg+'" alt="">')(scope);
 				var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
@@ -60,7 +60,7 @@ angular.module('app.directives', ['ui.load'])
 					className: 'hs-card-tooltip-' + tmpUuid
 				});
             }
-            
+
             scope.$on('$destroy', function () {
                 $('.hs-card-tooltip-'+tmpUuid).remove();
             });
@@ -157,22 +157,23 @@ angular.module('app.directives', ['ui.load'])
                         LoginService.login(email, password, $scope.remember, function(err, data) {
                             if (err) {
                                 AlertService.setError({ show: true, msg: "Error logging in" });
-                              
+
                                 $scope.showError = true;
                                 $scope.setLoggingIn(0);
                             } else {
-                                LoginModalService.hideModal();
-                                $scope.setLoggingIn(2);
-                                if ($scope.callback) {
-                                    $scope.callback(LoopBackAuth);
-                                } else if (!$scope.state) {
-                                  var goto = $stateParams.redirect || 'app.home';
-                                  
-                                  $state.go(goto);
-                                }
+
+                              LoginModalService.hideModal();
+                              $scope.setLoggingIn(2);
+
+                              if ($scope.callback) {
+                                $scope.callback(LoopBackAuth);
+                              } else if (!$scope.state) {
+                                var goto = $stateParams.redirect || 'app.home';
+                                $state.go(goto);
+                              }
                             }
                         });
-                        
+
                     } else {
                       AlertService.setError({ show: true, msg: "Missing username and/or password" });
                     }
@@ -200,14 +201,14 @@ angular.module('app.directives', ['ui.load'])
       $scope.captchaToken = null;
 //      $scope.widgetId = null;
 //      $scope.captchaFailed = false;
-//        
+//
 //      $scope.setToken = function (token) {
 //          $scope.captchaToken = token;
 //      }
 //
 //      $scope.setWidgetId = function (widgetId) {
 ////        console.log('Created widget ID: %s', widgetId);
-//        
+//
 //        $scope.widgetId = widgetId;
 //      }
 //
@@ -283,7 +284,7 @@ angular.module('app.directives', ['ui.load'])
 //                })
 //                .$promise
 //                .then(function (data) {
-//                    
+//
 //                });
 //            };
         }
@@ -313,7 +314,7 @@ angular.module('app.directives', ['ui.load'])
                 var userEmail = (LoopBackAuth.currentUserData) ? LoopBackAuth.currentUserData.email : undefined;
                 return userEmail;
             }
-            
+
             $scope.commentPost = function () {
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
@@ -345,11 +346,11 @@ angular.module('app.directives', ['ui.load'])
                     });
                 }
             };
-            
+
             $scope.calculateVotes = function (c) {
                 var voteScore = 0;
                 _.each(c.votes, function (vote) { voteScore = voteScore + vote.direction });
-                
+
                 return voteScore;
             }
 
@@ -438,19 +439,19 @@ angular.module('app.directives', ['ui.load'])
         },
         controller: ['$scope', function ($scope) {
             var as = AlertService;
-            
+
             $scope.show = function () {
                 return as.getShow();
             }
-            
+
             $scope.reset = function() {
                 return as.reset();
             }
-            
+
             $scope.getMessage = function (key) {
                 var s = as.getSuccess();
                 var e = as.getError();
-                
+
                 if (!_.isEmpty(s)) {
                     return s[key];
                 } else if (!_.isEmpty(e)) {
@@ -458,7 +459,7 @@ angular.module('app.directives', ['ui.load'])
                     return e[key];
                 }
             }
-            
+
             $scope.isSuccess = function () {
                 if (!_.isEmpty(as.getSuccess())) {
                     return true;
@@ -666,7 +667,7 @@ angular.module('app.directives', ['ui.load'])
                     $('.sub-nav-packs').trigger('stopRumble');
                 }, 750);
             }
-            
+
             function startShakeTimer () {
                 shakeLoop = $interval(shakePack, shakeInterval);
             }
@@ -676,17 +677,17 @@ angular.module('app.directives', ['ui.load'])
                 $timeout.cancel(startShake);
                 $interval.cancel(shakeLoop);
             }
-            
+
             // init pack shaking timers
             startShake = $timeout(function() {
                 shakePack();
                 shakeLoop = $interval(shakePack, shakeInterval);
             }, shakeInterval);
-            
+
             scope.$on('$destroy', function () {
                 stopShakeTimer();
             });
-            
+
             $('.sub-nav-packs').jrumble();
         }
     };
@@ -707,10 +708,10 @@ angular.module('app.directives', ['ui.load'])
             console.log('$scope.votable:', $scope.votable);
             var box,
                 callback;
-            
+
             function voteCount(votes) {
                 var out = 0;
-                
+
                 if ($attrs.theme === 'multi') {
                     _.each(votes, function(vote) {
                         out += vote.direction;
@@ -718,10 +719,10 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     return $scope.votable.votes.length;
                 }
-                
+
                 return out;
             }
-            
+
             function checkVotes (votable) {
                 var direction = undefined;
 
@@ -747,11 +748,11 @@ angular.module('app.directives', ['ui.load'])
 
             function updateVotes(direction) {
                 checkVotes($scope.votable);
-                
+
                 $scope.votable.voteScore = voteCount($scope.votable.votes);
             }
             updateVotes();
-            
+
             $scope.vote = function (obj, direction) {
                 if (!User.isAuthenticated()) {
                     LoginModalService.showModal('login', function () {
@@ -763,7 +764,7 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     vote(obj, direction);
                 }
-                
+
             }
 
             function vote(obj, direction) {
@@ -804,7 +805,7 @@ angular.module('app.directives', ['ui.load'])
                             } else {
                                 $scope.votable.votes = newVoteData.votes
                             }
-                            
+
                             $scope.service.upsert({
                                 where: {
                                     id: obj.id
@@ -825,9 +826,9 @@ angular.module('app.directives', ['ui.load'])
                         updateVotes(direction);
                     });
                 });
-                
+
             };
-            
+
         }]
     }
 }])
@@ -894,7 +895,7 @@ angular.module('app.directives', ['ui.load'])
         $scope.searchedTalents = [];
         $scope.searchTalents = function (search) {
             var pattern = '/.*'+search+'.*/i';
-            
+
             Talent.find({
                 filter: {
                   limit: 4,
@@ -906,7 +907,7 @@ angular.module('app.directives', ['ui.load'])
                 $scope.searchedTalents = (!_.isEmpty(pattern)) ? data : [];
               })
         }
-        
+
         $scope.setCurrent = function (talent) {
           $scope.currentTalent.talent = talent;
         }
@@ -1212,9 +1213,9 @@ angular.module('app.directives', ['ui.load'])
             deck: "=deck"
         },
         controller: ['$scope', function ($scope) {
-            
+
             $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
-            
+
             $scope.getQty = function (id) {
                 for(var i = 0; i < $scope.deck.cards.length; i++) {
                     if($scope.deck.cards[i].id == id) {
@@ -1682,17 +1683,17 @@ angular.module('app.directives', ['ui.load'])
             scope.getNumber = function (x) {
                 return Util.numberWithCommas(x);
             }
-            
+
             Twitchfeeds.find({})
             .$promise
             .then(function(data) {
                 data = data[0].feed;
-              
+
                 for (var i = 0; i < data.length; i++) {
                     var log = data[i].screenshotUrl;
                     var sub = log.substr(4);
                     var im = "https" + sub;
-                  
+
                     data[i].screenshotUrl = im;
                     data[i].viewerCount = +data[i].viewerCount;
                 }
@@ -1716,7 +1717,7 @@ angular.module('app.directives', ['ui.load'])
             .then(function(tweets) {
 //                console.log(tweets);
                 tweets = tweets[0].feed;
-              
+
                 scope.twitWheel = true;
                 scope.tweets = tweets;
             });
