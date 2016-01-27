@@ -44,6 +44,7 @@ $grey: #454545;
             -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
             transform: rotate(45deg);
             
+            
             @media screen and (max-width: 650px) {
                 right: 20px;
                 bottom: 80px;
@@ -100,6 +101,10 @@ $grey: #454545;
             
             .content {
                 display: none;
+                bottom: -300px;
+                -moz-transition: 2s ease-in-out;
+                -webkit-transition: 2s ease-in-out;
+                transition: 2s ease-in-out;
             }
         }
         
@@ -109,6 +114,7 @@ $grey: #454545;
             top: 0;
             z-index: 450;
             opacity: 0.6;
+
             
             @media screen and (max-width: 1590px) {
                 left: -50px;
