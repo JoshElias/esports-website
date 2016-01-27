@@ -650,6 +650,47 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
+
+.directive('subnavRedbull', ['$timeout', '$interval', function ($timeout, $interval) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/subnav.redbull.html',
+        link: function (scope, el, attrs) {
+            var startShake = null,
+                shakeLoop = null,
+                shakeInterval = 5000;
+            // start shaking pack timer
+            // shake pack
+            function shakePack () {
+                $('.sub-nav-packs').trigger('startRumble');
+                $timeout(function() {
+                    $('.sub-nav-packs').trigger('stopRumble');
+                }, 750);
+            }
+            
+            function startShakeTimer () {
+                shakeLoop = $interval(shakePack, shakeInterval);
+            }
+
+            // stop shaking pack timer
+            function stopShakeTimer () {
+                $timeout.cancel(startShake);
+                $interval.cancel(shakeLoop);
+            }
+            
+            // init pack shaking timers
+            startShake = $timeout(function() {
+                shakePack();
+                shakeLoop = $interval(shakePack, shakeInterval);
+            }, shakeInterval);
+            
+            scope.$on('$destroy', function () {
+                stopShakeTimer();
+            });
+            
+            $('.sub-nav-packs').jrumble();
+        }
+    };
+}])
 .directive('voteWidget', ['LoopBackAuth', 'User', 'LoginModalService', function (LoopBackAuth, User, LoginModalService) {
     return {
         restrict: 'E',
@@ -1716,5 +1757,5 @@ angular.module('app.directives', ['ui.load'])
     return {
         templateUrl: tpl + 'views/admin/overwatch.heroes.ability.edit.html'
     };
-})
+});
 ;
