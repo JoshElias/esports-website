@@ -67,7 +67,7 @@ angular.module('redbull.controllers')
                 }
             }
         }
-      
+
         return (error.errors.length) ? error : false;
     }
 

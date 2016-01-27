@@ -662,9 +662,9 @@ angular.module('app.directives', ['ui.load'])
             // start shaking pack timer
             // shake pack
             function shakePack () {
-                $('.sub-nav-packs').trigger('startRumble');
+                $('.sub-nav-pack').trigger('startRumble');
                 $timeout(function() {
-                    $('.sub-nav-packs').trigger('stopRumble');
+                    $('.sub-nav-pack').trigger('stopRumble');
                 }, 750);
             }
 
@@ -688,7 +688,8 @@ angular.module('app.directives', ['ui.load'])
                 stopShakeTimer();
             });
 
-            $('.sub-nav-packs').jrumble();
+            $('.sub-nav-pack').jrumble();
+
         }
     };
 }])

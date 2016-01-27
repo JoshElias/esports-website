@@ -485,7 +485,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background: #083f7d;
     color: #FFF;
     font-weight: bold;
-}
+} 
 
 .btn-blue:disabled {
     background: #2766ad;
@@ -965,14 +965,27 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .sub-nav.sticky { position: fixed; top: 52px; z-index: 1000; width: 100%; box-shadow: none; }
 .sub-nav.sticky .sub-nav-links ul { margin: 10px 0; }
 
-.sub-nav-packs { 
-    padding-left: 150px !important; 
+.sub-nav-packs {
+    margin-left: 3% !important;
     position: absolute !important; 
-    bottom: -50px !important; 
-    left: 70% !important; 
-    top: -50px !important; 
-    right: 0px !important; 
+    left: 72% !important; 
+    top: -50px !important;
     z-index: 1 !important; 
+}
+
+.sub-nav-small-packs {
+    margin-left: 5% !important;
+    position: absolute !important; 
+    margin-top: -90px !important;
+    z-index: 1 !important;
+    height: 51px;
+}
+
+.redbull-pack-btn { 
+    width: 0px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sub-nav-btn {
@@ -984,7 +997,52 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     font-weight: normal !important; 
     background: rgba(0, 0, 0, 0.7); 
     z-index: 2;
-    right: 75px;
+}
+
+.sub-nav-btn-small {
+    position: relative;
+    bottom: 95px;
+    left: 0px;
+    @media only screen and (min-width: 1500px) {
+        left: 175px;
+    }
+}
+
+.sticky .sub-nav-small-packs {
+    margin-left: 3% !important;
+    position: absolute !important; 
+    top: -50px !important;
+    height: 51px;
+}
+
+.sticky .sub-nav-btn {
+    bottom: 10px;
+    right: 355px;
+}
+
+.sticky .sub-nav-btn-small {
+    position: relative;
+    margin-top: -170px;
+    left: 25px;
+    @media only screen and (min-width: 1500px) {
+        left: 185px;
+    }
+}
+
+.sticky .pack-img-lg {
+    width: 80px;
+    margin-top: 44px;
+}
+
+.sticky .pack-img {
+    width: 40%;
+    margin-top: 134px;
+    margin-left: 20px;
+}
+
+.sticky .sub-nav-btn-small {
+    margin-top: -93px;
+    margin-left: -139px
 }
 
 //*************************************

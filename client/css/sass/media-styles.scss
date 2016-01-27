@@ -16,6 +16,8 @@
 
 @media (min-width: 1199px) {
     .col-lg-20p { width: 20%; } //overwatch specific style, abilities col fix
+    .col-lg-20p-push { left: 20%; } //move column 1 to the right
+    .col-lg-20p-pull { right: 20%; } //move column 1 to the left
 }
 
 //*************************************

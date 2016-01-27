@@ -278,11 +278,15 @@
                         background: url("../img/modules/redbull/client/img/book-frame.png") center top no-repeat;
                         height: 227px;
                         padding-top: 19px;
-                        padding-left: 8px;
+                        padding-left: 10px;
                         
                         .pack-wrapper {
                             height: 144px !important;
                         }
+                    }
+                    &.naxxramas {
+                        padding-top: 24px;
+                        padding-left: 12px;
                     }
                     
                     &.goblins-vs-gnomes,
@@ -332,7 +336,14 @@
                             &.blackrock-mountain,
                             &.naxxramas {
                                 width: 142px;
-                                height: 144px;
+                                height: 129px;
+                            }
+                            
+                            &.league-of-explorers {
+                                height: 143px;
+                            }
+                            &.blackrock-mountain {
+                                height: 141px;
                             }
                             
                             &.league-of-explorers {
@@ -1108,7 +1119,7 @@
         left: 0;
         width: auto;
         height: auto;
-        z-index: 500;
+        z-index: 501;
         background-color: rgba(38,38,38,1);
         
         @media screen and (max-width:750px) {
