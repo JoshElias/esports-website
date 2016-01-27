@@ -166,7 +166,6 @@ module.exports = function(RedbullDraft) {
 
     // BUILDING
 
-
     RedbullDraft.startDraftBuild = function (draftId, options, finalCb) {
         if (finalCb === undefined && typeof options === 'function') {
             finalCb = options;
@@ -178,7 +177,7 @@ module.exports = function(RedbullDraft) {
             fields: {
                 packOpenerString: false
             },
-            include: ["cards", "settings"]
+            include: ["settings"]
         }, function (err, draft) {
             if (err) return finalCb(err);
             else if (!draft) {
@@ -189,14 +188,16 @@ module.exports = function(RedbullDraft) {
             }
 
             // Have we already updated the draft state?
-            if (draft.hasOpenedPacks) {
-                return finalCb(undefined, draft);
+            if (draft.hasStartedBuildingDeck) {
+                return finalCb();
             }
 
             // Update the draft state
             var draftJSON = draft.toJSON();
             var draftUpdates = newDraftState(draftJSON.settings);
-            return draft.updateAttributes(draftUpdates, finalCb);
+            return draft.updateAttributes(draftUpdates, function(err) {
+                return finalCb(err);
+            });
         });
 
         return finalCb.promise;
@@ -207,6 +208,7 @@ module.exports = function(RedbullDraft) {
         var currentTime = Date.now();
         var draftUpdates = {};
 
+        draftUpdates.hasStartedBuildingDeck = true;
         draftUpdates.deckBuildStartTime = currentTime;
         var buildTimeLimitMillis = draftSettings.deckBuildTimeLimit * 60 * 1000;
         var gracePeriodMillis = draftSettings.deckBuildGracePeriod * 60 * 1000;
