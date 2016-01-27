@@ -73,20 +73,30 @@ $grey: #454545;
         z-index: 700;
         color: $rb-white;
        // box-shadow: 3px 4px 5px rgba(0,0,0,.75);
+        transition: 1.3s ease-out;
+        -moz-transition: 1.3s ease-out;
+        -webkit-transition: 1.3s ease-out;
         
         .rb-logo-mini {
-            position: absolute;
-            right: 5px;
+            position: fixed;
+            right: -105px;
             bottom: 5px;
             width: 100px;
-            display: none;
+           // display: none;
+            transition: 1.30s ease-in-out;
+            -moz-transition: 1.30s ease-in-out;
+            -webkit-transition: 1.30s ease-in-out;
+  
         }
         
         &.small {
-                outline: none;
-                border: none;
-                background: none;
-                width: 1px;
+               // outline: none;
+               // border: none;
+                //background: none;
+                bottom: -300px;
+                transition: 1.30s ease-in-out;
+                -moz-transition: 1.30s ease-in-out;
+                -webkit-transition: 1.30s ease-in-out;
 
                 .footer-toggle {
 
@@ -94,14 +104,24 @@ $grey: #454545;
             
                 .rb-logo-mini {
                     display: block;
+                    transition: 1.30s ease-in-out;
+                    -moz-transition: 1.30s ease-in-out;
+                    -webkit-transition: 1.30s ease-in-out;
+                    right: 5px;
+                    
                 }
                 .rb-footer-img {
-                    display: none;
+                    bottom: -300px;
+                    transition: 1.30s ease-in-out;
+                    -moz-transition: 1.30s ease-in-out;
+                    -webkit-transition: 1.30s ease-in-out;
                 }
             
             .content {
-                display: none;
-                bottom: -300px;
+                //display: block;
+                //display: none;
+                //position: absolute;
+                bottom: -200px;
                 -moz-transition: 2s ease-in-out;
                 -webkit-transition: 2s ease-in-out;
                 transition: 2s ease-in-out;
@@ -126,6 +146,8 @@ $grey: #454545;
             left: 5px;
             bottom: 5px;
             z-index: 800;
+            
+            
             @media screen and (max-width: 992px) {
                 width: 150px;
             
@@ -269,6 +291,10 @@ $grey: #454545;
             bottom: 0;
             width: 29.85%;
             z-index: 800;
+            transition: 1.40s ease-in-out;
+            -moz-transition: 1.40s ease-in-out;
+            -webkit-transition: 1.40s ease-in-out;
+            
             @media screen and (max-width: 1200px) {
                 width: 350px;
             }
