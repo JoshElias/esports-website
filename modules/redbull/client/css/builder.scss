@@ -4,6 +4,10 @@
     
     .draft-build {
         
+        @media screen and (max-width: 1650px) {
+            padding-top: 45px;
+        }
+        
         .draft-build-timer {
             margin: 0 300px;
             background: rgba(0,0,0,.4);
@@ -21,6 +25,14 @@
             
             .time {
                 font-size: 30px;
+                
+                @media screen and (max-width: 1650px) {
+                    font-size: 25px;
+                }
+            }
+            
+            @media screen and (max-width: 1650px) {
+                margin-left: 0px;        
             }
         }
         
@@ -44,6 +56,31 @@
                 }
             }
             
+             &.mana-closed {
+                    
+                    .mana-curve {
+                        ul {
+                            display: none;
+                        }
+                    }
+                    
+                    .card-search {
+                        top: 36px !important;
+                    }
+                    
+                    .mana-cost {
+                        top: 121px !important;
+                    }
+                    
+                    .card-rarity {
+                        top: 200px !important;
+                    }
+                    
+                    .card-mechanics {
+                       top: 287px !important;
+                    }
+                }
+            
             h3 {
                 height: 35px;
                 line-height: 35px;
@@ -61,6 +98,21 @@
                 top: 0px;
                 left: 0px;
                 width: 299px;
+                
+                h3 {
+                    
+                    cursor: pointer;
+                    
+                    &:after {
+                        font-size: 20px;
+                        font-weight: bold;
+                        position: relative;
+                        right: -180px;
+                        top: 3px;
+                        font-family: FontAwesome;
+                        content: "\f107";
+                    }
+                }
                 
                 ul {
                     display: block;
@@ -666,7 +718,7 @@
                     @media screen and (max-width: 1650px) {
                         margin-left: 0;
                         width: 75%;
-                        margin-top: 45px;
+                       // margin-top: 45px;
                     }
                     
                      @media screen and (max-width: 1200px) {
@@ -894,6 +946,14 @@
                 color: #FFF;
                 text-align: center;
                 line-height: 750px;
+                
+                @media screen and (max-width: 1200px) {
+                    line-height: 400px;
+                }
+                
+                @media screen and (max-width: 992px) {
+                    line-height: 200px;
+                }
             }
             
         } /* .draft-build-cards */
@@ -934,7 +994,7 @@
         left: 0;
         width: auto;
         height: auto;
-        z-index: 500;
+        z-index: 501;
         background-color: rgba(38,38,38,1);
         
         @media screen and (max-width:750px) {
