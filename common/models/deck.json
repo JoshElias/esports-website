@@ -236,6 +236,12 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__edit__matchups"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__comments"
     }
   ],
   "methods": {}
