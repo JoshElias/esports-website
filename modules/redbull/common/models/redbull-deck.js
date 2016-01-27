@@ -26,9 +26,6 @@ module.exports = function(RedbullDeck) {
             return finalCb(err);
         }
 
-
-
-
         // See if the curfew was breached
         /*
         console.log("currentTIme", currentTime);
@@ -40,25 +37,35 @@ module.exports = function(RedbullDeck) {
          }
          */
 
-        validateDecks(draftJSON, clientDecks, finalCb());
+        return async.waterfall(
+            [
+                function(seriesCb) {
+                    validateDecks(draftJSON, clientDecks, seriesCb);
+                },
+                function(seriesCb) {
+                    saveDecks(draft, clientDecks, seriesCb);
+                },
+                // Refresh draft state
+                function(createDecks, seriesCb) {
 
-        return saveDecks(draft, clientDecks, function (err, createdDecks) {
+                    // Refresh draft state
+                    currentTime = Date.now();
+                    return draft.updateAttributes({
+                        deckBuildStopTime: currentTime,
+                        hasDecksContructed: true
+                    }, function (err) {
+                        if (err) return finalCb(err);
 
-            // Refresh draft state
-            currentTime = Date.now();
-            draft.updateAttributes({
-                deckBuildStopTime: currentTime,
-                hasDecksContructed: true
-            }, function (err) {
-                if (err) return finalCb(err);
-
-                // return only the created decks Ids
-                var createdDeckIds = _.map(createdDecks, function (createdDeck) {
-                    return createdDeck.id;
-                });
-                return finalCb(undefined, createdDeckIds);
-            });
-        });
+                        // return only the created decks Ids
+                        var createdDeckIds = _.map(createdDecks, function (createdDeck) {
+                            return createdDeck.id;
+                        });
+                        return seriesCb(undefined, createdDeckIds);
+                    });
+                }
+            ],
+            finalCb
+        );
     };
 
     function saveDecks(draft, decks, finalCb) {
