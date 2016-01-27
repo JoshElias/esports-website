@@ -1,0 +1,14 @@
+.redbull-userlist-fix{
+  div.input-group{
+    width:189px; // somehow a large width is getting set, can't find it.
+    span.input-group-btn{
+      button.btn-blue{
+        // overwrite paddings to center icon
+        padding-top:0;
+        padding-bottom:0;
+      }
+    }
+  }
+}
+
+
