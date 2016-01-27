@@ -1023,9 +1023,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .sticky .sub-nav-btn-small {
     position: relative;
     margin-top: -170px;
-    left: 0px;
+    left: 25px;
     @media only screen and (min-width: 1500px) {
-        left: 175px;
+        left: 185px;
     }
 }
 
@@ -1035,18 +1035,14 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 .sticky .pack-img {
-    //margin-top: 85px;
-    
-        width: 50%;
-        margin-top: 128px;
-    
+    width: 40%;
+    margin-top: 134px;
+    margin-left: 20px;
 }
 
 .sticky .sub-nav-btn-small {
-    
-        margin-top: -99px;
-        margin-left: -92px
-    
+    margin-top: -93px;
+    margin-left: -139px
 }
 
 //*************************************
