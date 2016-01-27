@@ -389,11 +389,7 @@ angular.module('app.directives', ['ui.load'])
                                 return;
                             } else {
                                 comment.votes[i].direction = direction;
-                                Comment.update({
-                                    where: {
-                                        id: comment.id
-                                    }
-                                }, comment)
+                                Comment.upsert(comment)
                                 .$promise.then(function (data) {
                                     comment.voted = direction;
                                     comment.votesCount = data.votesCount;
@@ -404,15 +400,15 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
+                    
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
-                        comment.votes.push(
-                            {
-                                direction: direction,
-                                userId: LoopBackAuth.currentUserId
-                            }
-                        );
-                        Comment.create(comment)
+                        comment.votes.push({
+                            direction: direction,
+                            userId: LoopBackAuth.currentUserId
+                        });
+                        
+                        Comment.upsert(comment)
                         .$promise.then(function (data) {
                             comment.voted = direction;
                             comment.votesCount = data.votesCount;
@@ -663,7 +659,7 @@ angular.module('app.directives', ['ui.load'])
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-            console.log('$scope.votable:', $scope.votable);
+//            console.log('$scope.votable:', $scope.votable);
             var box,
                 callback;
             
