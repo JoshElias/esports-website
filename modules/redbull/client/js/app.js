@@ -28,16 +28,16 @@ var redbull = angular.module('app.redbull', [
 
         
         $stateProvider
-        .state('app.redbull', {
+        .state('app.hs.redbull', {
             abstract: true,
-            url: 'redbull',
+            url: '/redbull',
             views: {
-                content: {
+                hs: {
                     templateUrl: moduleTpl + 'index.html'
                 }
             }
         })
-        .state('app.redbull.home', {
+        .state('app.hs.redbull.home', {
             url: '',
             views: {
                 redbull: {
@@ -46,33 +46,23 @@ var redbull = angular.module('app.redbull', [
                 }
             }
         })
-        .state('app.redbull.tournament', {
+        .state('app.hs.redbull.draft', {
             abstract: true,
             url: '/tournament',
             views: {
                 redbull: {
-                    templateUrl: moduleTpl + 'tournament.html'
-                }
-            },
-            access: { auth: true }
-        })
-        .state('app.redbull.tournament.draft', {
-            abstract: true,
-            url: '/draft',
-            views: {
-                tournament: {
                     templateUrl: moduleTpl + 'draft.html',
                     controller: 'DraftCtrl'
                 }
             },
             access: { auth: true }
         })
-        .state('app.redbull.tournament.draft.packs', {
+        .state('app.hs.redbull.draft.packs', {
             url: '',
             views: {
                 'redbull-draft': {
                     templateUrl: moduleTpl + 'draft.packs.html',
-                    controller: 'DraftPacksCtrl',
+                    /*controller: 'DraftPacksCtrl',
                     resolve: {
                         cards: ['Card', function (Card) {
                             return Card.find({
@@ -84,13 +74,13 @@ var redbull = angular.module('app.redbull', [
                                 }
                             }).$promise;
                         }]
-                    }
+                    }*/
                 }
             },
             seo: { title: 'Redbull' },
             access: { auth: true }
         })
-        .state('app.redbull.tournament.draft.build', {
+        .state('app.hs.redbull.draft.build', {
             url: '/build',
             views: {
                 'redbull-draft': {
@@ -110,17 +100,17 @@ var redbull = angular.module('app.redbull', [
             seo: { title: 'Redbull' },
             access: { auth: true }
         })
-        .state('app.redbull.draft', {
+        .state('app.hs.draft', {
             abstract: true,
-            url: '/draft',
+            url: '/sealed',
             views: {
-                redbull: {
+                hs: {
                     templateUrl: moduleTpl + 'draft.html',
                     controller: 'DraftCtrl'
                 }
             }
         })
-        .state('app.redbull.draft.packs', {
+        .state('app.hs.draft.packs', {
             url: '',
             views: {
                 'redbull-draft': {
@@ -149,7 +139,7 @@ var redbull = angular.module('app.redbull', [
             seo: { title: 'Redbull' },
             //access: { auth: true }
         })
-        .state('app.redbull.draft.build', {
+        .state('app.hs.draft.build', {
             url: '/build',
             views: {
                 'redbull-draft': {
@@ -190,17 +180,6 @@ var redbull = angular.module('app.redbull', [
                                 return $q.reject();
                             }
                         }],
-/*                        draftCards: ['RedbullPackCard', 'draft', function (RedbullPackCard, draft) {
-                            return RedbullPackCard.find({
-                                filter: {
-                                    where: {
-                                        redbullDraftId: draft.id,
-                                    },
-                                    fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
-                                    order: ['cost ASC', 'name ASC']
-                                }
-                            }).$promise;
-                        }],*/
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
                         }],

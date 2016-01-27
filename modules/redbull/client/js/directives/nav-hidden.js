@@ -5,7 +5,7 @@ angular.module('redbull.directives')
             restrict: 'E',
             link: function (scope, el, attrs) {
                 $rootScope.$on("$stateChangeSuccess", function (event, toState, toParams, fromState, fromParams) {
-                    if ($state.includes('app.redbull.draft') || $state.includes('app.redbull.tournament')) {
+                    if ($state.includes('app.hs.draft') || $state.includes('app.hs.redbull.draft')) {
                         el.addClass('draft');
                     } else {
                         el.removeClass('draft');

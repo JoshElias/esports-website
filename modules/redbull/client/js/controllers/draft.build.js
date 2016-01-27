@@ -180,7 +180,7 @@ angular.module('redbull.controllers')
         }
         
         $scope.canEdit = function () {
-            return !$scope.tournament.hasDecksConstructed;
+            return (!$scope.tournament.hasDecksConstructed && !$scope.decksSaving);
         };
         
         $scope.addCardToDeck = function (card) {
