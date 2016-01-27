@@ -668,7 +668,7 @@ var app = angular.module('app', [
                                   isFeatured: false
                                 };
                                 
-                                // validate filters
+                                // validate klass filters
                                 StateParamHelper.validateFilters($stateParams.k, classFilters);
                                 
                                 if (!_.isEmpty($stateParams.k)) {
@@ -1590,291 +1590,397 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
-                            filterParams: ['$stateParams', function($stateParams) {
-//                                if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
-//                                    async.parallel([
-//                                        function () {
-//                                            HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, 1, function(err, guides) {
-//                                                $scope.guidesFeatured = guides;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//                                        },
-//                                        function () {
-//                                            HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, 1, function(err, guides) {
-//                                                $scope.guidesCommunity = guides;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//                                        }
-//                                    ]);
-//                                } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-//                                    async.parallel([
-//                                        function () {
-//                                            HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
-//                                                $scope.articles = articles;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//                                        },
-//                                        function () {
-//                                            HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, 1, function (err, guides) {
-//                                                $scope.guidesFeatured = guides;
-//                                                initializing = false;
-//                                            });
-//                                        },
-//                                        function () {
-//                                            HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, 1, function (err, guides) {
-//                                                $scope.guidesCommunity = guides;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//
-//                                        }
-//                                    ])
-//                                } else if ($scope.filters.search != '') {
-//            //                        console.log("search");
-//                                    async.parallel([
-//                                        function () {
-//                                            HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-//                                                $scope.guidesFeatured = guides;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//                                        },
-//                                        function () {
-//                                            HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-//                                                $scope.guidesCommunity = guides;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//                                        }
-//                                    ]);
-//                                } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
-//                                    async.parallel([
-//                                        function () {
-//                                            HOTSGuideQueryService.getMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-//                                                $scope.guidesFeatured = guides;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//                                        },
-//                                        function () {
-//                                            HOTSGuideQueryService.getMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-//                                                $scope.guidesCommunity = guides;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//                                        }
-//                                    ]);
-//                                } else {
-//                                    async.parallel([
-//                                        function () {
-//                                           HOTSGuideQueryService.getArticles($scope.filters, true, 6, function (err, articles) {
-//                                               $scope.articles = articles;
-//                                               initializing = false;
-//                                               $scope.initializing = false;
-//                                           });
-//                                        },
-//                                        function () {
-//                                            HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-//                                                $scope.guidesFeatured = guides;
-//                                                initializing = false;
-//                                                $scope.initializing = false;
-//                                            });
-//                                        },
-//                                        function () {
-//                                           HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-//                                                $scope.guidesCommunity = guides;
-//                                                initializing = false;
-//                                               $scope.initializing = false;
-//                                            });
-//                                        }
-//                                    ]);
-//                                }
-                                return {
-                                    articleParams: {},
-                                    tsGuideParams: {},
-                                    comGuideParams: {}
+                            filterParams: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', function($stateParams, StateParamHelper, $q, Hero, Map) {
+                                console.log('$stateParams:', $stateParams);
+                                console.log('first');
+                                if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
+                                    $stateParams.r = new Array($stateParams.r);
+                                }
+                                
+                                if (angular.isString($stateParams.u) && !_.isEmpty($stateParams.u)) {
+                                    $stateParams.u = new Array($stateParams.u);
+                                }
+                                
+                                if (angular.isString($stateParams.h) && !_.isEmpty($stateParams.h)) {
+                                    $stateParams.h = new Array($stateParams.h);
+                                }
+                                
+                                if (angular.isString($stateParams.m) && !_.isEmpty($stateParams.m)) {
+                                    $stateParams.m = new Array($stateParams.m);
+                                }
+                                
+                                var filters = {
+                                    roles: $stateParams.r ? $stateParams.r : [],
+                                    universes: $stateParams.u ? $stateParams.u : [],
+                                    search: $stateParams.s ? $stateParams.s : '',
+                                    heroes: $stateParams.h ? $stateParams.h : [],
+                                    map: $stateParams.m || undefined
                                 };
-                            }],
-                            dataArticles: ['Article', function (Article) {
-                              var filters = 'all',
-                                  offset = 0,
-                                  perpage = 6;
-
-                              return Article.find({
-                                filter: {
-                                    limit: 6,
-                                    where: {
-                                        isActive: true,
-                                        articleType: ['hots']
-                                    },
-                                    fields: {
-                                        title: true,
-                                        description: true,
-                                        photoNames: true,
-                                        themeName: true,
-                                        slug: true,
-                                        articleType: true,
-                                        premium: true,
-                                        createdDate: true,
-                                        authorId: true
-                                    },
-                                    include: ['author'],
-                                    order: "createdDate DESC"
+                                
+                                console.log('filters:', filters);
+                                var possibleRoles = ['Warrior', 'Assassin', 'Support', 'Specialist'];
+                                var possibleUniverses = ['Warcraft', 'Starcraft', 'Diablo', 'Blizzard'];
+                                var possibleHeroes;
+                                var possibleMaps;
+                                
+                                if (!_.isEmpty(filters.roles)) {
+                                    StateParamHelper.validateFilters(filters.roles, possibleRoles);
                                 }
-                              })
-                              .$promise
-                              .then(function (data) {
-                                  return data;
-                              })
-                              .catch(function (err) {
-                                  console.log(err);
-                              });
-                            }],
-                            dataGuidesCommunity: ['Guide', function (Guide) {
-                              return Guide.find({
-                                filter: {
-                                  limit: 10,
-                                    order: "createdDate DESC",
-                                  where: {
-                                    isFeatured: false,
-                                    isPublic: true
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                      {
-                                         relation: "maps"
-                                      },
-                                    {
-                                      relation: 'maps'
-                                    },
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        },
-                                      }
-                                    },
-                                  ]
+                                if (!_.isEmpty(filters.universes)) {
+                                    StateParamHelper.validateFilters(filters.universes, possibleUniverses);
                                 }
-                              })
-                              .$promise
-                              .then(function (data) {
-                                  return data;
-                              })
-                              .catch(function (err) {
-                                  console.log(err);
-                              });
+                                
+                                var d = $q.defer();
+                                
+                                async.waterfall([
+                                    function (waterCB) {
+                                        Hero.find({
+                                            filter: {
+                                                fields: {
+                                                    name: true
+                                                },
+                                                where: {
+                                                    isActive: true
+                                                }
+                                            }
+                                        }).$promise
+                                        .then(function (heros) {
+                                            possibleHeroes = _.map(heros, function (hero) {
+                                                return hero.name;
+                                            });
+                                            
+                                            StateParamHelper.validateFilters(filters.heroes, possibleHeroes);
+                                            return waterCB();
+                                        });
+                                    },
+                                    function (waterCB) {
+                                        if (!_.isEmpty(filters.heroes)) {
+                                            Hero.find({
+                                                filter: {
+                                                    where: {
+                                                        name: {
+                                                            inq: filters.heroes
+                                                        }
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (heroes) {
+                                                var heroArr = new Array(heroes[0]);
+                                                filters.heroes = heroArr;
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (filters.map) {
+                                            Map.find({
+                                                filter: {
+                                                    fields: {
+                                                        name: true
+                                                    }
+                                                }
+                                            })
+                                            .$promise
+                                            .then(function (maps) {
+                                                
+                                                possibleMaps = _.map(maps, function(currentMap) {
+                                                    return currentMap.name;
+                                                });
+                                                
+                                                StateParamHelper.validateFilters(filters.map, possibleMaps);
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (filters.map) {
+                                            Map.findOne({
+                                                where: {
+                                                    name: filters.map
+                                                }
+                                            }).$promise
+                                            .then(function (map) {
+                                                filters.map = map;
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                ], function(err) {
+                                    if (err) return console.log('pagination query err: ', err);
+                                    d.resolve(filters);
+                                });
+                                
+                                return d.promise;
+                                
                             }],
-                            dataGuidesFeatured: ['Guide', function (Guide) {
-                              return Guide.find({
-                                filter: {
-                                  limit: 10,
-                                    order: "createdDate DESC",
-                                  where: {
-                                    isFeatured: true
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        },
-                                      }
-                                    },
-                                  ]
+                            dataArticles: ['Article', 'filterParams', '$q', 'HOTSGuideQueryService', function (Article, filterParams, $q, HOTSGuideQueryService) {
+                                console.log('second');
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        d.resolve(articles);
+                                    });
+                                } else {
+                                   HOTSGuideQueryService.getArticles(filterParams, true, 6, function (err, articles) {
+                                       d.resolve(articles);
+                                   });
                                 }
-                              })
-                              .$promise
-                              .then(function (data) {
-                                  return data;
-                              })
-                              .catch(function (err) {
-                                  console.log(err);
-                              });
+                                
+                                return d.promise;
+                                
+//                              return Article.find({
+//                                filter: {
+//                                    limit: 6,
+//                                    where: {
+//                                        isActive: true,
+//                                        articleType: ['hots']
+//                                    },
+//                                    fields: {
+//                                        title: true,
+//                                        description: true,
+//                                        photoNames: true,
+//                                        themeName: true,
+//                                        slug: true,
+//                                        articleType: true,
+//                                        premium: true,
+//                                        createdDate: true,
+//                                        authorId: true
+//                                    },
+//                                    include: ['author'],
+//                                    order: "createdDate DESC"
+//                                }
+//                              })
+//                              .$promise
+//                              .then(function (data) {
+//                                  return data;
+//                              })
+//                              .catch(function (err) {
+//                                  console.log(err);
+//                              });
+                                
+                            }],
+                            dataGuidesCommunity: ['Guide', 'filterParams', '$q', 'HOTSGuideQueryService', function (Guide, filterParams, $q, HOTSGuideQueryService) {
+                                console.log('third');
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(filterParams, false, 10, 1, function(err, guides) {
+                                        if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
+                                    HOTSGuideQueryService.getHeroGuides(filterParams, false, 10, 1, function (err, guides) {
+                                        if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (filterParams.search != '') {
+                                    HOTSGuideQueryService.getGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
+                                        if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (_.isEmpty(filterParams.hero) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getMapGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
+                                        if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                } else {
+                                   HOTSGuideQueryService.getGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
+                                       if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                }
+                                
+                                return d.promise;
+                                
+//                              return Guide.find({
+//                                filter: {
+//                                  limit: 10,
+//                                    order: "createdDate DESC",
+//                                  where: {
+//                                    isFeatured: false,
+//                                    isPublic: true
+//                                  },
+//                                  fields: [
+//                                    "name", 
+//                                    "authorId", 
+//                                    "slug", 
+//                                    "voteScore", 
+//                                    "guideType", 
+//                                    "premium", 
+//                                    "id", 
+//                                    "talentTiers",
+//                                    "createdDate"
+//                                  ],
+//                                  include: [
+//                                      {
+//                                         relation: "maps"
+//                                      },
+//                                    {
+//                                      relation: 'maps'
+//                                    },
+//                                    {
+//                                      relation: "author",
+//                                      scope: {
+//                                        fields: ['username']
+//                                      }
+//                                    },
+//                                    {
+//                                      relation: 'guideHeroes',
+//                                      scope: {
+//                                        include: [
+//                                          {
+//                                            relation: 'talents'
+//                                          },
+//                                          {
+//                                            relation: 'hero',
+//                                            scope: {
+//                                              fields: ['name', 'className']
+//                                            }
+//                                          }
+//                                        ]
+//                                      }
+//                                    },
+//                                    {
+//                                      relation: 'guideTalents',
+//                                      scope: {
+//                                        include: {
+//                                          relation: 'talent',
+//                                          scope: {
+//                                            fields: {
+//                                              name: true,
+//                                              className: true
+//                                            }
+//                                          }
+//                                        },
+//                                      }
+//                                    },
+//                                  ]
+//                                }
+//                              })
+//                              .$promise
+//                              .then(function (data) {
+//                                  return data;
+//                              })
+//                              .catch(function (err) {
+//                                  console.log(err);
+//                              });
+                            }],
+                            dataGuidesFeatured: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
+                                console.log('filterParams:', filterParams);
+                                console.log('fourth');
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(filterParams, true, 10, 1, function(err, guides) {
+//                                        if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (filterParams.search != '') {
+                                    HOTSGuideQueryService.getGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
+//                                        if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (_.isEmpty(filterParams.hero) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getMapGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
+//                                        if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                } else {
+                                    console.log('im here');
+                                    HOTSGuideQueryService.getGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
+                                        console.log('err:', err);
+                                        console.log('guides:', guides);
+//                                        if (err) return d.resolve(err);
+                                        d.resolve(guides);
+                                    });
+                                }
+                                
+                                return d.promise;
+                                
+//                              return Guide.find({
+//                                filter: {
+//                                  limit: 10,
+//                                    order: "createdDate DESC",
+//                                  where: {
+//                                    isFeatured: true
+//                                  },
+//                                  fields: [
+//                                    "name", 
+//                                    "authorId", 
+//                                    "slug", 
+//                                    "voteScore", 
+//                                    "guideType", 
+//                                    "premium", 
+//                                    "id", 
+//                                    "talentTiers",
+//                                    "createdDate"
+//                                  ],
+//                                  include: [
+//                                    {
+//                                      relation: "author",
+//                                      scope: {
+//                                        fields: ['username']
+//                                      }
+//                                    },
+//                                    {
+//                                      relation: 'guideHeroes',
+//                                      scope: {
+//                                        include: [
+//                                          {
+//                                            relation: 'talents'
+//                                          },
+//                                          {
+//                                            relation: 'hero',
+//                                            scope: {
+//                                              fields: ['name', 'className']
+//                                            }
+//                                          }
+//                                        ]
+//                                      }
+//                                    },
+//                                    {
+//                                      relation: 'guideTalents',
+//                                      scope: {
+//                                        include: {
+//                                          relation: 'talent',
+//                                          scope: {
+//                                            fields: {
+//                                              name: true,
+//                                              className: true
+//                                            }
+//                                          }
+//                                        },
+//                                      }
+//                                    },
+//                                  ]
+//                                }
+//                              })
+//                              .$promise
+//                              .then(function (data) {
+//                                  return data;
+//                              })
+//                              .catch(function (err) {
+//                                  console.log(err);
+//                              });
                             }],
                             dataHeroes: ['Hero', function (Hero) {
+                                console.log('five');
                               return Hero.find({
                                 filter: {
                                     where: {
@@ -1904,6 +2010,7 @@ var app = angular.module('app', [
                             }],
 
                             dataMaps: ['Map', function (Map) {
+                                console.log('six');
                               return Map.find({})
                               .$promise
                               .then(function (data) {
@@ -2264,69 +2371,13 @@ var app = angular.module('app', [
                                 return d.promise;
                             }],
                             dataTopGuide: ['$stateParams', '$q', 'HOTSGuideQueryService', 'paginationParams', function ($stateParams, $q, HOTSGuideQueryService, paginationParams) {
-
-<<<<<<< a744a84f0fb56d8c777fa05b89fff84908443e26
-                              return Guide.find({
-                                filter: {
-                                  order: 'voteScore DESC',
-                                  limit: 1,
-                                  where: {
-                                      guideType: "hero",
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              include: ['talents'],
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-=======
+                                
                               var d = $q.defer();
                                 
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
                                         if (err) {
                                             return d.resolve(err);
->>>>>>> stateParam filters for HS Home, Hots Home
                                         }
                                         d.resolve(data);
                                     });
