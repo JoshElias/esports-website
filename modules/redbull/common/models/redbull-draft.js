@@ -27,31 +27,40 @@ module.exports = function(RedbullDraft) {
         var clientData = ctx.data || ctx.instance;
         clientData.draftStartTime = Date.now();
 
-        // Is the user logged in?
-        var loopbackContext = loopback.getCurrentContext();
-        if (!loopbackContext || !loopbackContext.active) {
-            return next(contextErr);
-        }
-        var req = loopbackContext.active.http.req;
-
         // Get the default Draft Settings
         return RedbullDraftSettings.findOne({}, {fields: {id: true}}, function (err, draftSettings) {
             if (err) next(err);
 
             clientData.redbullDraftSettingsId = draftSettings.id;
 
-            if (req.accessToken && req.accessToken.userId) {
-                var userId = req.accessToken.userId.toString();
-                clientData.authorId = userId;
-                return checkForOfficialDraft(userId, clientData, next)
-            }
 
-            return next();
+            return checkForOfficialDraft(clientData, next)
         });
     }
 
-    function checkForOfficialDraft(userId, clientData, finalCb) {
+    function checkForOfficialDraft(clientData, finalCb) {
         var User = RedbullDraft.app.models.user;
+
+
+        // Does the user want to create an official deck?
+        if(!clientData.isOfficial){
+            return finalCb();
+        }
+
+        // Is the user logged in?
+        var loopbackContext = loopback.getCurrentContext();
+        if(!loopbackContext || !loopbackContext.active) {
+                return finalCb();
+        }
+        var req = loopbackContext.active.http.req;
+
+        // Do we have a user Id
+        if (!req.accessToken || !req.accessToken.userId) {
+            return finalCb()
+        }
+        var userId = req.accessToken.userId.toString();
+        clientData.authorId = userId;
+
 
         // Check if this is an official draft or not
         return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
@@ -245,9 +254,7 @@ module.exports = function(RedbullDraft) {
                 {
                     relation: "cards",
                     scope: {
-                        fields: {
-                            className: true
-                        }
+                        fields: ["playerClass"]
                     }
                 },
                 {
@@ -419,7 +426,7 @@ module.exports = function(RedbullDraft) {
                 {arg: 'clientDecks', type: 'object', required: false, http: {source: 'form'}},
                 {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
             ],
-            returns: {arg: 'decks', type: 'array'},
+            returns: {arg: 'createdDeckIds', type: 'array'},
             http: {verb: 'post'},
             isStatic: true
         }
