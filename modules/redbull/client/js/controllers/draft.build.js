@@ -1,12 +1,23 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'draftSettings', 'draft', 'draftBuildStart', 
-    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, draftSettings, draft, draftBuildStart) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'draftSettings', 'draftCards', 'draftBuildStart', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, draftSettings, draftCards, draftBuildStart) {
+        var draft = draftBuildStart.draft;
+        
         console.log(draft);
         console.log(draftSettings);
         console.log(draftBuildStart);
+        console.log('draftCards: ', draftCards);
         
+/*        var cleanCards = [];
+        
+        for (var i = 0; i < draftCards.length; i++) {
+            cleanCards.push(draftCards[i].toJSON());
+        }
+        
+        console.log('cleanCards: ', cleanCards);
+*/        
         // set cards
-        var allCards = getCards(draft.cards);
+        var allCards = getCards(draftCards);
 
         function cardIndex (card, cards) {
             for (var i = 0; i < cards.length; i++) {

@@ -75,6 +75,7 @@ module.exports = function(RedbullDeck) {
         };
 
         var randomClasses = getRandomClasses(numOfDecks);
+        console.log("random classes:", randomClasses);
         var deckIndex = numOfDecks;
         var className;
         var deckCards;
@@ -88,13 +89,16 @@ module.exports = function(RedbullDeck) {
 
     function getRandomClasses(numOfClasses, remainingClasses, randomClasses) {
         remainingClasses = remainingClasses || HS_CLASSES;
-        console.log("remaining classes:", remainingClasses)
+        //console.log("remaining classes:", remainingClasses)
         randomClasses = randomClasses || [];
-        console.log("random classes:", randomClasses)
+        //console.log("random classes:", randomClasses)
         var randomIndex = utils.getRandomInt(0, remainingClasses.length - 1);
-        console.log("remaining index", randomIndex);
+        //console.log("remaining index", randomIndex);
         randomClasses.push(remainingClasses.splice(randomIndex, 1));
+        //console.log("random classes after push:", randomClasses);
+        //console.log("remaining classes after push:", remainingClasses)
         if (randomClasses.length === numOfClasses) {
+            console.log("fuck")
             return randomClasses;
         }
         getRandomClasses(numOfClasses, remainingClasses, randomClasses);

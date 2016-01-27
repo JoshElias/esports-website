@@ -175,7 +175,8 @@ module.exports = function(RedbullDraft) {
 
         RedbullDraft.findById(draftId, {
             fields: {
-                packOpenerString: false
+                packOpenerString: false,
+                isOfficial : false
             },
             include: ["settings"]
         }, function (err, draft) {
@@ -187,16 +188,25 @@ module.exports = function(RedbullDraft) {
                 return finalCb(noDraftErr);
             }
 
+            // Get data from instance
+            var draftJSON = draft.toJSON();
+            var draftSettings = draftJSON.settings;
+            delete draftJSON.settings;
+
             // Have we already updated the draft state?
             if (draft.hasStartedBuildingDeck) {
-                return finalCb();
+                return finalCb(undefined, draftJSON);
             }
 
             // Update the draft state
-            var draftJSON = draft.toJSON();
-            var draftUpdates = newDraftState(draftJSON.settings);
-            return draft.updateAttributes(draftUpdates, function(err) {
-                return finalCb(err);
+            var draftUpdates = newDraftState(draftSettings);
+            return draft.updateAttributes(draftUpdates, function(err, newDraft) {
+                if(err) return finalCb(err);
+
+                draftJSON = newDraft.toJSON();
+                delete draftJSON.packOpenerString;
+                delete draftJSON.isOfficial;
+                return finalCb(undefined, draftJSON);
             });
         });
 
@@ -344,7 +354,7 @@ module.exports = function(RedbullDraft) {
                 {arg: 'draftId', type: 'string', required: true, http: {source: 'form'}},
                 {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
             ],
-            returns: {arg: 'deckBuilderData', type: 'object'},
+            returns: {arg: 'draft', type: 'object'},
             http: {verb: 'post'},
             isStatic: true
         }
