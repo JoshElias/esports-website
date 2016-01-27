@@ -219,7 +219,6 @@ module.exports = function(RedbullDraft) {
 
     RedbullDraft.submitDecks = function (draftId, clientDecks, options, finalCb) {
         if (finalCb === undefined && typeof options === 'function') {
-            // createAccessToken(ttl, cb)
             finalCb = options;
             options = undefined;
         }
