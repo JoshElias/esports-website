@@ -10,6 +10,7 @@ module.exports = {
             'client/dist/js/angular.min.js': ['client/dist/js/angular.js'],
             'client/dist/js/app.min.js': ['client/dist/js/app.js'],
             'client/dist/js/modules.min.js': ['client/dist/js/modules.js'],
+
         }
     },
     modules_: {
