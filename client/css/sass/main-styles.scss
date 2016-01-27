@@ -965,16 +965,39 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .sub-nav.sticky { position: fixed; top: 52px; z-index: 1000; width: 100%; box-shadow: none; }
 .sub-nav.sticky .sub-nav-links ul { margin: 10px 0; }
 
-.sub-nav-packs { 
-    padding-left: 150px !important; 
+.sub-nav-redbull-large {
+    @media only screen and (max-width: 1600px) {
+        display: none !important;
+    }
+}
+
+.sub-nav-redbull-small {
+    @media only screen and (min-width: 1600px) {
+        display: none !important;
+    }
+}
+
+.sub-nav-packs {
+    margin-left: 3% !important;
     position: absolute !important; 
-    left: 70% !important; 
+    left: 72% !important; 
     top: -50px !important;
     z-index: 1 !important; 
 }
 
-.sub-nav-pack { 
-    
+.sub-nav-small-packs {
+    margin-left: 5% !important;
+    position: absolute !important; 
+    margin-top: -90px !important;
+    z-index: 1 !important;
+    height: 51px;
+}
+
+.redbull-pack-btn { 
+    width: 0px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sub-nav-btn {
@@ -987,6 +1010,48 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background: rgba(0, 0, 0, 0.7); 
     z-index: 2;
     right: 75px;
+}
+
+.sub-nav-btn-small {
+    position: relative;
+    bottom: 95px;
+    left: 0px;
+}
+
+.sticky .sub-nav-small-packs {
+    margin-left: 3% !important;
+    position: absolute !important; 
+    top: -50px !important;
+    height: 51px;
+}
+
+.sticky .sub-nav-btn {
+    bottom: 10px;
+}
+
+.sticky .sub-nav-btn-small {
+    position: relative;
+    margin-top: -170px;
+    left: 0px;
+    @media only screen and (max-width: 1400px) {
+        //bottom: 110px !important;
+        //left: -30px;
+    }
+}
+
+.sticky .pack-img {
+    margin-top: 85px;
+    @media only screen and (max-width: 1400px) {
+        width: 50%;
+        margin-top: 128px;
+    }
+}
+
+.sticky .sub-nav-btn-small {
+    @media only screen and (max-width: 1400px) {
+        margin-top: -99px;
+        margin-left: -92px
+    }
 }
 
 //*************************************
