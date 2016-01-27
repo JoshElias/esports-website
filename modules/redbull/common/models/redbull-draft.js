@@ -428,7 +428,7 @@ module.exports = function(RedbullDraft) {
             description: "Starts the deck building stage of the Redbull Tournament",
             accepts: [
                 {arg: 'draftId', type: 'string', required: true, http: {source: 'form'}},
-                {arg: 'clientDecks', type: 'object', required: false, http: {source: 'form'}},
+                {arg: 'decks', type: 'object', required: false, http: {source: 'form'}},
                 {arg: 'options', type: 'object', required: false, http: {source: 'form'}}
             ],
             returns: {arg: 'createdDeckIds', type: 'array'},

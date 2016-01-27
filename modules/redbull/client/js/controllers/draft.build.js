@@ -11,14 +11,6 @@ angular.module('redbull.controllers')
         console.log(draftBuildStart);
         console.log('draftCards: ', draftCards);
         
-/*        var cleanCards = [];
-        
-        for (var i = 0; i < draftCards.length; i++) {
-            cleanCards.push(draftCards[i].toJSON());
-        }
-        
-        console.log('cleanCards: ', cleanCards);
-*/        
         // set cards
         var allCards = getCards(draftCards);
 
@@ -439,6 +431,40 @@ angular.module('redbull.controllers')
             box.modal('show');
         };
         
+        function cleanDeck (deck) {
+            delete deck.author;
+            delete deck.basic;
+            delete deck.chapters;
+            delete deck.comments;
+            delete deck.deckType;
+            delete deck.description;
+            delete deck.dust;
+            delete deck.gameModeType;
+            delete deck.heroName;
+            delete deck.isFeatured;
+            delete deck.isPublic;
+            delete deck.matchups;
+            delete deck.mulligans;
+            delete deck.premium;
+            delete deck.slug;
+            delete deck.voteScore;
+            delete deck.votes;
+            delete deck.youtubeId;
+            
+            _.each(deck.cards, function (card) {
+                delete card.deckId;
+                delete card.card.cardType;
+                delete card.card.cost;
+                delete card.card.expansion;
+                delete card.card.mechanics;
+                delete card.card.name;
+                delete card.card.photoNames;
+                delete card.card.race;
+                delete card.card.rarity;
+                delete card.card.text;
+            });
+        }
+        
         $scope.saveDecks = function (timesUp) {
             if (!$scope.canEdit()) { return false; }
             
@@ -466,10 +492,17 @@ angular.module('redbull.controllers')
                 // save decks
                 $scope.decksSaving = true;
                 
-                // share modal
-                $scope.decksSaving = false;
-                $scope.tournament.hasDecksConstructed = true;
-                $scope.shareDecks();
+                var cleanDecks = angular.copy($scope.decks);
+                _.each(cleanDecks, function (deck) {
+                    cleanDeck(deck);
+                });
+                
+                RedbullDraft.submitDecks({ draftId: draftId, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise.then(function () {
+                    // share modal
+                    $scope.decksSaving = false;
+                    $scope.tournament.hasDecksConstructed = true;
+                    $scope.shareDecks();
+                });
             }
         };
 
