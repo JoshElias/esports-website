@@ -650,7 +650,7 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
-.directive('voteWidget', ['LoopBackAuth', 'User', 'LoginModalService', 'Vote', 'EventService', '$q', function (LoopBackAuth, User, LoginModalService, Vote, EventService, $q) {
+.directive('voteWidget', ['LoopBackAuth', 'User', 'LoginModalService', 'Vote', 'EventService', function (LoopBackAuth, User, LoginModalService, Vote, EventService) {
     return {
         restrict: 'E',
         replace: true,
