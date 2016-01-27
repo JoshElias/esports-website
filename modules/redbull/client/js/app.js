@@ -90,7 +90,7 @@ var redbull = angular.module('app.redbull', [
                         cards: ['$state', 'DraftCards', function ($state, DraftCards) {
                             var cards = DraftCards.getCards();
                             if (!cards.length) {
-                                return $state.go('app.redbull.draft.packs');
+                                return $state.go('app.hs.redbull.draft.packs');
                             }
                             return cards;
                         }]
@@ -169,14 +169,14 @@ var redbull = angular.module('app.redbull', [
                                     }
                                 }).$promise.then(function (data) {
                                     if (!data.hasOpenedPacks) {
-                                        $state.go('app.redbull.draft.packs');
+                                        $state.go('app.hs.draft.packs');
                                         return $q.reject();
                                     } else {
                                         return data;
                                     }
                                 });
                             } else {
-                                $state.go('app.redbull.draft.packs');
+                                $state.go('app.hs.draft.packs');
                                 return $q.reject();
                             }
                         }],
