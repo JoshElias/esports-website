@@ -50,6 +50,10 @@ angular.module('redbull.directives')
                 scope.$watch('isLoading', function (newValue) {
                     scope.isLoading = newValue;
                 });
+                
+                scope.getIsLoading = function () {
+                    return scope.isLoading;
+                };
 
                 // check if any expansion still has packs to open
                 function hasMorePacks () {
