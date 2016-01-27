@@ -14868,7 +14868,8 @@ angular.module('app.controllers', ['ngCookies'])
                 var watchObj = {
                     roles: $scope.filters.roles,
                     universes: $scope.filters.universes,
-                    heroes: $scope.filters.heroes
+                    heroes: $scope.filters.heroes,
+                    map: $scope.filters.map
                 };
                 return watchObj;
             }, function (value) {
@@ -14882,6 +14883,7 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 } else {
                     $scope.initializing = true;
+                    
                     StateParamHelper.updateStateParams({ 
                         r: $scope.filters.roles,
                         u: $scope.filters.universes,
@@ -14889,6 +14891,7 @@ angular.module('app.controllers', ['ngCookies'])
                         m: $scope.filters.map ? $scope.filters.map.name : '',
                         s: $scope.filters.search
                     });
+                    
 //                    initializing = true;
                     // article filters
                     var articleFilters = [];

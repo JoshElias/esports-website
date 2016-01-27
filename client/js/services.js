@@ -1183,10 +1183,7 @@ angular.module('app.services', [])
       // stateFilters - a stateParam array of values
       // availFilters - an array of available filters
       servObj.validateFilters = function (stateFilters, availFilters) {
-          console.log('stateFilters:', stateFilters);
-          console.log('availFilters:', availFilters);
           var found = _.difference(stateFilters, availFilters);
-          console.log('found:', found);
           if (!_.isEmpty(found)) {
               console.log('should not be here');
               this.replaceHistoryWith404();
@@ -2058,8 +2055,6 @@ angular.module('app.services', [])
             db.removeChapter = function (index) {
                 db.chapters.splice(index,1);
             }
-        
-            
 
             db.newMatch = function (klass) {
                 //            console.log('vhat class?: ', klass);
