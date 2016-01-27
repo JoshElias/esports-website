@@ -72,6 +72,7 @@ angular.module('redbull.controllers')
         ];
         
         $scope.mobileCardFilters = false;
+        $scope.manaCurveFilter = false;
         $scope.currentDeck = null;
         $scope.cards = {
             sorted: {},

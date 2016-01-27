@@ -16,10 +16,10 @@
     <!-- mobile cardpool button -->
     </div>
     
-    <div class="draft-build-filtering" ng-class="{ 'mobile-show': mobileCardFilters }">
+    <div class="draft-build-filtering" ng-class="{ 'mobile-show': mobileCardFilters, 'mana-closed': manaCurveFilter }">
     
         <div class="mana-curve">
-            <h3>Mana Curve</h3>
+            <h3 ng-click="manaCurveFilter = !manaCurveFilter">Mana Curve</h3>
             
             <ul class="clearfix">
                 <li ng-repeat="cost in manaCosts">
