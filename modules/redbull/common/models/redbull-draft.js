@@ -59,7 +59,6 @@ module.exports = function(RedbullDraft) {
             return finalCb()
         }
         var userId = req.accessToken.userId.toString();
-        clientData.authorId = userId;
 
 
         // Check if this is an official draft or not
@@ -73,6 +72,9 @@ module.exports = function(RedbullDraft) {
             if (isInRoles.none) {
                 return finalCb();
             }
+
+            // This deck is official so attach a userId to is
+            clientData.authorId = userId;
 
             // Check if the active player has already done a draft
             return RedbullDraft.findOne({where: {authorId: userId}}, function (err, draft) {
@@ -246,32 +248,35 @@ module.exports = function(RedbullDraft) {
         var RedbullDeck = RedbullDraft.app.models.redbullDeck;
 
         // Does the given draft exist and have official set?
-        return RedbullDraft.findById(draftId, {
-            fields: {
-                packOpenerString: false
-            },
-            include: [
-                {
-                    relation: "cards",
-                    scope: {
-                        fields: ["playerClass"]
-                    }
+        return RedbullDraft.findById(draftId,
+            {
+                fields: {
+                    packOpenerString: false
                 },
-                {
-                    relation: "settings"
+                include: [
+                    {
+                        relation: "cards",
+                        scope: {
+                            fields: ["playerClass"]
+                        }
+                    },
+                    {
+                        relation: "settings"
+                    }
+                ]
+            },
+            function (err, draft) {
+                if (err) return finalCb(err);
+                else if (!draft) {
+                    var noDraftErr = new Error("No draft found for id", draftId);
+                    noDraftErr.statusCode = 404;
+                    noDraftErr.code = 'DRAFT_NOT_FOUND';
+                    return finalCb(noDraftErr);
                 }
-            ]
-        }, function (err, draft) {
-            if (err) return finalCb(err);
-            else if (!draft) {
-                var noDraftErr = new Error("No draft found for id", draftId);
-                noDraftErr.statusCode = 404;
-                noDraftErr.code = 'DRAFT_NOT_FOUND';
-                return finalCb(noDraftErr);
-            }
 
-            return RedbullDeck.saveDraftDecks(draft, clientDecks, finalCb);
-        });
+                return RedbullDeck.saveDraftDecks(draft, clientDecks, finalCb);
+            }
+        );
 
         return finalCb.promise;
     };
