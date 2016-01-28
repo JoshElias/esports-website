@@ -487,8 +487,9 @@ angular.module('redbull.controllers')
                     /*
                     delete $localStorage.draftDecks;
                     delete $localStorage.draftId;
+                    
+                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
                     */
-                    //return $state.go('app.hs.draft.decks', { draftId: draft.id });
                 }).catch(function (data) {
                     console.log(data);
                 });

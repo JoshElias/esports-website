@@ -52,7 +52,7 @@ console.log("clinet decks", clientDecks);
                     currentTime = Date.now();
                     return draft.updateAttributes({
                         deckBuildStopTime: currentTime,
-                        hasDecksContructed: true
+                        hasDecksConstructed: true
                     }, function (err) {
                         if (err) return finalCb(err);
 
@@ -71,6 +71,7 @@ console.log("clinet decks", clientDecks);
     function saveDecks(draft, decks, finalCb) {
         var savedDecks = [];
         return async.eachSeries(decks, function (deck, deckCb) {
+            deck.redbullDraftId = draft.id;
             deck.isOfficial = draft.isOfficial;
             return RedbullDeck.create(deck, function (err, newDeck) {
                 if (err) return deckCb(err);

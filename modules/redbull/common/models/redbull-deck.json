@@ -97,6 +97,12 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__edit__cards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__draft"
     }
   ],
   "methods": {}

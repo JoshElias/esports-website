@@ -215,6 +215,13 @@ var redbull = angular.module('app.redbull', [
                                         },
                                         {
                                             relation: 'decks',
+                                            include: [{
+                                                relation: 'deckCards',
+                                                include: [{
+                                                    relation: 'cards',
+                                                    fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text']
+                                                }]
+                                            }]
                                         }
                                     ]
                                 }
@@ -233,9 +240,29 @@ var redbull = angular.module('app.redbull', [
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
                         }],
-                        draftDecks: ['draft', function (draft) {
-                            console.log(draft);
-                            return draft.decks;
+                        draftDecks: ['draft', 'RedbullDeck', function (draft, RedbullDeck) {
+                            var deckIds = [];
+                        
+                            for (var i = 0; i < draft.decks.length; i++) {
+                                deckIds.push(draft.decks[i].id);
+                            }
+                            
+                            return RedbullDeck.find({
+                                filter: {
+                                    where: {
+                                        id: { inq: deckIds }
+                                    },
+                                    include: {
+                                        relation: 'deckCards',
+                                        scope: {
+                                            include: {
+                                                relation: 'card',
+                                                fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text']
+                                            }
+                                        }
+                                    }
+                                }
+                            }).$promise;
                         }]
                     }
                 }
