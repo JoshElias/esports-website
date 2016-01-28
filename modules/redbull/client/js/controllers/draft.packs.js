@@ -56,7 +56,7 @@ angular.module('redbull.controllers')
     }
     for (var i = 0; i < cardImages.length; i++) {
         // TODO: make https
-        fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
+        fileLocations.push( 'https://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
     }
     
     // image files
