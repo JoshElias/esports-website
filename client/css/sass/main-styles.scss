@@ -1052,6 +1052,11 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     width: 40%;
     margin-top: 134px;
     margin-left: 20px;
+    -webkit-transition: width 0.5s ease;
+    -webkit-transition: top 0s ease;
+    -webkit-transition: bottom 0s ease;
+    -webkit-transition: left 0s ease;
+    -webkit-transition: right 0s ease;
 }
 
 .sticky .sub-nav-btn-small {
