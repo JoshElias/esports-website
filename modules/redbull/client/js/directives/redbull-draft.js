@@ -11,6 +11,7 @@ angular.module('redbull.directives')
                 audioFiles: '=',
                 volume: '=',
                 muted: '=',
+                percentLoaded: '='
             },
             link: function (scope, el, attrs) {
                 var startShake = null,
@@ -44,8 +45,8 @@ angular.module('redbull.directives')
                 // watch current pack
                 scope.$watch('currentPack', function (newValue) {
                     scope.currentPack = newValue;
-                });
-                
+                }); 
+                 
                 // watch loading
                 scope.$watch('isLoading', function (newValue) {
                     scope.isLoading = newValue;
