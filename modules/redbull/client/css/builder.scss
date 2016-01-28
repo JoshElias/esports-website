@@ -59,6 +59,21 @@
              &.mana-closed {
                     
                     .mana-curve {
+                        
+                         h3 {
+                    
+                            &:after {
+//                                font-size: 20px;
+//                                font-weight: bold;
+//                                position: relative;
+//                                right: -180px;
+//                                top: 3px;
+//                                font-family: FontAwesome;
+                                content: "\f107";
+                            }
+                        }
+                        
+                        
                         ul {
                             display: none;
                         }
@@ -106,11 +121,11 @@
                     &:after {
                         font-size: 20px;
                         font-weight: bold;
-                        position: relative;
-                        right: -180px;
-                        top: 3px;
+                        position: absolute;
+                        right: 24px;
+                        
                         font-family: FontAwesome;
-                        content: "\f107";
+                        content: "\f106";
                     }
                 }
                 
@@ -945,19 +960,27 @@
                 font-size: 30px;
                 color: #FFF;
                 text-align: center;
-                line-height: 750px;
+                line-height: 200px;
                 
-                @media screen and (max-width: 1200px) {
-                    line-height: 400px;
-                }
-                
-                @media screen and (max-width: 992px) {
-                    line-height: 200px;
-                }
+//                @media screen and (max-width: 1200px) {
+//                    line-height: 400px;
+//                }
+//                
+//                @media screen and (max-width: 992px) {
+//                    line-height: 200px;
+//                }
             }
             
         } /* .draft-build-cards */
-    
+        
+        &.completed {
+            .draft-build-decks {
+                .deck-add-button {
+                    display: none;
+                }
+            }
+        }
+        
     } /* .draft-build */
     
     .filter-button-bar {
