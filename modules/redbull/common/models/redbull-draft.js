@@ -41,9 +41,8 @@ module.exports = function(RedbullDraft) {
     function checkForOfficialDraft(clientData, finalCb) {
         var User = RedbullDraft.app.models.user;
 
-
         // Does the user want to create an official deck?
-        if(!clientData.isOfficial){
+        if(!clientData.isOfficial) {
             return finalCb();
         }
 
@@ -60,24 +59,21 @@ module.exports = function(RedbullDraft) {
         }
         var userId = req.accessToken.userId.toString();
 
+        // attach the user id to the draft
+        clientData.authorId = userId;
 
         // Check if this is an official draft or not
         return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
             if (err) return finalCb(err);
 
-            // Is this an official draft?
-            clientData.isOfficial = !isInRoles.none;
-
             // Check if the user is registered to be an active player
-            if (isInRoles.none) {
+            if (clientData.isOfficial) {
+                clientData.isOfficial = !isInRoles.none;
                 return finalCb();
             }
 
-            // This deck is official so attach a userId to is
-            clientData.authorId = userId;
-
             // Check if the active player has already done a draft
-            return RedbullDraft.findOne({where: {authorId: userId}}, function (err, draft) {
+            return RedbullDraft.findOne({where: {authorId: userId, isOfficial:true}}, function (err, draft) {
                 if (err) return finalCb(err);
                 else if (!draft) return finalCb();
 
@@ -128,7 +124,7 @@ module.exports = function(RedbullDraft) {
 
         return RedbullPack.rollPacks(redbullDraft, function (err, packOpenerData) {
             if (err) return next(err);
-            //console.log("pack opener data:", packOpenerData)
+
             // Update the draft with the compressed packOpenerData and packOpeningStartTime
             var draftUpdates = {
                 packOpenerString: JSON.stringify(packOpenerData),
