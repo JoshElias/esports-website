@@ -9,7 +9,7 @@
 </div>
 <!-- end Mobile override div -->
 
-<div class="draft-build">
+<div class="draft-build" ng-class="{ completed: tournament.hasDecksConstructed }">
     <!-- mobile cardpool button -->
     <div class="filter-button-bar">
         <button class="filtering-mobile-toggle-btn btn btn-blue" ng-click="mobileCardFilters = !mobileCardFilters">Filtering</button>
