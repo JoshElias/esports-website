@@ -7,6 +7,9 @@
     "validateUpsert": true
   },
   "properties": {
+    "name": {
+      "type": "string"
+    },
     "playerClass": {
       "type": "string",
       "required": true
