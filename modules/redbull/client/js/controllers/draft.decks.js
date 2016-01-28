@@ -88,8 +88,6 @@ angular.module('redbull.controllers')
         }
         sortCards();
         
-        console.log(draftDecks);
-        
         function cleanDeck (deck) {
             var newDeck = angular.copy(deck);
 

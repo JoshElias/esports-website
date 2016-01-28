@@ -6,11 +6,6 @@ angular.module('redbull.controllers')
         $scope.draftId = draft.id;
         $scope.decksSaving = false;
         
-        console.log(draft);
-        console.log(draftSettings);
-        console.log(draftBuildStart);
-        console.log('draftCards: ', draftCards);
-        
         // set cards
         var allCards = getCards(draftCards);
 
@@ -483,15 +478,12 @@ angular.module('redbull.controllers')
                 });
                 
                 RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise.then(function (data) {
-                    console.log(data);
-                    /*
                     delete $localStorage.draftDecks;
                     delete $localStorage.draftId;
                     
                     return $state.go('app.hs.draft.decks', { draftId: draft.id });
-                    */
                 }).catch(function (data) {
-                    console.log(data);
+                    console.error(data);
                 });
             }
         };
