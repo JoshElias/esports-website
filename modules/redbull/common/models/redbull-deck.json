@@ -7,20 +7,12 @@
     "validateUpsert": true
   },
   "properties": {
+    "name": {
+       "type": "string"
+    },
     "playerClass": {
       "type": "string",
       "required": true
-    },
-    "viewCount": {
-      "type": "number",
-      "default": 0
-    },
-    "votes": [
-      "object"
-    ],
-    "voteScore": {
-      "type": "number",
-      "default": 0
     },
     "isOfficial": {
       "type": "boolean",
