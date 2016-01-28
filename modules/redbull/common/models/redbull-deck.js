@@ -10,7 +10,7 @@ var HS_CLASSES = ["Mage", "Paladin", "Rogue", "Druid", "Shaman",
 module.exports = function(RedbullDeck) {
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, finalCb) {
-
+console.log("clinet decks", clientDecks);
         var currentTime = Date.now();
         var draftJSON = draft.toJSON();
         var draftSettings = draftJSON.settings;
@@ -211,7 +211,7 @@ module.exports = function(RedbullDeck) {
                 }
 
                 // Update validation state
-                if(deckErrors.length > 0) {
+                if(cardErrors.length > 0) {
                     validationReport.errors = validationReport.errors.concat(cardErrors);
                     validationReport.passed = false;
                 }

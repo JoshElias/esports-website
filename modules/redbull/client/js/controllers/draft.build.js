@@ -432,8 +432,11 @@ angular.module('redbull.controllers')
         };
         
         function cleanDeck (deck) {
+            deck.deckCards = deck.cards;
+            
             delete deck.author;
             delete deck.basic;
+            delete deck.cards;
             delete deck.chapters;
             delete deck.comments;
             delete deck.deckType;
@@ -451,7 +454,7 @@ angular.module('redbull.controllers')
             delete deck.votes;
             delete deck.youtubeId;
             
-            _.each(deck.cards, function (card) {
+            _.each(deck.deckCards, function (card) {
                 delete card.deckId;
                 delete card.card.cardType;
                 delete card.card.cost;
