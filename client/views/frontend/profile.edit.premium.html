@@ -8,22 +8,24 @@
 </div>
 
 <div class="premium-wrapper row">
-    <div ng-if="!isPremium || user.subscription.isSubscribed" class="premium-btns">
-        <button ng-class="{ 'active' : getPlan() == 'tempostorm_monthly' }" ng-click="setPlan('tempostorm_monthly')" class="prem-btn monthly col-sm-4">
+<!--            ng-if="!isPremium || user.subscription.isSubscribed"-->
+    <div class="premium-btns">
+        <button ng-class="{ 'active' : plan == 'tempostorm_monthly' }" ng-click="selectPlan('tempostorm_monthly')" class="prem-btn monthly col-sm-4">
             <h3>MONTHLY</h3>
             <div class="price-wrap">
                 <h2>USD $7.99</h2>
                 <h3>per month</h3>
             </div>
         </button>
-        <button ng-class="{ 'active' : getPlan() == 'tempostorm_quarterly' }" ng-click="setPlan('tempostorm_quarterly')" class="prem-btn tri-monthly col-sm-4">
+        <button ng-class="{ 'active' : plan == 'tempostorm_quarterly' }" 
+                ng-click="selectPlan('tempostorm_quarterly')" class="prem-btn tri-monthly col-sm-4">
             <h3>THREE MONTHS</h3>
             <div class="price-wrap">
                 <h2>USD $20.97</h2>
                 <h3>$6.99 per month</h3>
             </div>
         </button>
-        <button ng-class="{ 'active' : getPlan() == 'tempostorm_semi' }" ng-click="setPlan('tempostorm_semi')" class="prem-btn six-month col-sm-4">
+        <button ng-class="{ 'active' : plan == 'tempostorm_semi' }" ng-click="selectPlan('tempostorm_semi')" class="prem-btn six-month col-sm-4">
             <h3>SIX MONTHS</h3>
             <div class="price-wrap">
                 <h2>USD $35.94</h2>
