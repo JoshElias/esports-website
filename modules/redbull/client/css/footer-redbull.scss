@@ -22,6 +22,9 @@ $grey: #454545;
         color: $rb-white;
         font-size: 30px;
         cursor: pointer;
+        -moz-transition: 1s ease-in-out;
+        -webkit-transition: 1s ease-in-out;
+        transition: 1s ease-in-out;
         
         @media screen and (min-width: 768px) {
             &:hover {
@@ -36,13 +39,16 @@ $grey: #454545;
         @media screen and (max-width: 650px) {
             right: 20px;
             bottom: 70px;
+            -moz-transition: 1s ease-in-out;
+            -webkit-transition: 1s ease-in-out;
+            transition: 1s ease-in-out;
         }
         
         &.small {
             bottom: 80px;
             -ms-transform: rotate(45deg); /* IE 9 */
             -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
-            transform: rotate(45deg);
+            transform: rotate(135deg);
             
             
             @media screen and (max-width: 650px) {
@@ -67,9 +73,10 @@ $grey: #454545;
         position: fixed;
         bottom: 0;
         right: 0px;
-        outline: 1px solid rgba(255,255,255,.2);
-        outline-offset: -2px;
-        border: 1px solid rgba(0,0,0,1);
+        //outline: 1px solid rgba(255,255,255,.2);
+        //outline-offset: -2px;
+        border: 1px solid rgba(255,255,255,.2);
+        border-bottom: none;
         z-index: 700;
         color: $rb-white;
        // box-shadow: 3px 4px 5px rgba(0,0,0,.75);
