@@ -191,6 +191,57 @@ var redbull = angular.module('app.redbull', [
             },
             seo: { title: 'Redbull' }
         })
+        .state('app.hs.draft.decks', {
+            url: '/decks/:draftId',
+            views: {
+                'redbull-draft': {
+                    templateUrl: moduleTpl + 'draft.build.html',
+                    controller: 'DraftDecksCtrl',
+                    resolve: {
+                        draft: ['$stateParams', '$state', '$q', 'RedbullDraft', function ($stateParams, $state, $q, RedbullDraft) {
+                            return RedbullDraft.findOne({
+                                filter: {
+                                    where: {
+                                        id: $stateParams.draftId
+                                    },
+                                    fields: ['id', 'hasDecksConstructed'],
+                                    include: [
+                                        {
+                                            relation: 'cards',
+                                            scope: {
+                                                fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
+                                                order: ['cost ASC', 'name ASC']
+                                            }
+                                        },
+                                        {
+                                            relation: 'decks',
+                                        }
+                                    ]
+                                }
+                            }).$promise.then(function (data) {
+                                if (!data.hasDecksConstructed) {
+                                    $state.go('app.404');
+                                    return $q.reject();
+                                } else {
+                                    return data;
+                                }
+                            }).catch(function () {
+                                $state.go('app.404');
+                                return $q.reject();
+                            });
+                        }],
+                        draftCards: ['draft', function (draft) {
+                            return draft.cards;
+                        }],
+                        draftDecks: ['draft', function (draft) {
+                            console.log(draft);
+                            return draft.decks;
+                        }]
+                    }
+                }
+            },
+            seo: { title: 'Redbull' }
+        })
         .state('app.admin.redbull', {
             abstract: true,
             url: '/redbull',
