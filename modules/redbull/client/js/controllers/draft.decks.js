@@ -88,11 +88,20 @@ angular.module('redbull.controllers')
         }
         sortCards();
         
+        function cleanDeck (deck) {
+            var newDeck = angular.copy(deck);
+
+            newDeck.cards = newDeck.deckCards;
+            delete newDeck.deckCards;
+            
+            return newDeck;
+        }
+        
         function initDecks () {
             var decks = draftDecks;
             if (decks && decks.length) {
                 for (var i = 0; i < decks.length; i++) {
-                    $scope.decks.push(DeckBuilder.new(decks[i].playerClass, decks[i]));
+                    $scope.decks.push(DeckBuilder.new(decks[i].playerClass, cleanDeck(decks[i])));
                 }
             }
         }
