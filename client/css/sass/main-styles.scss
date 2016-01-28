@@ -886,6 +886,14 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .navbar-tempo .dropdown-menu li a:focus,
 .navbar-tempo .dropdown-menu li a:hover { background: none; color: white!important; }
 
+.navbar { 
+    .navbar-nav {
+        @media screen and (max-width: 767px) {
+            margin-top: -1px;
+        }
+    }
+}
+
 .navbar-nav .dropdown-menu li { min-width: 200px; }
 
 .navbar-nav .dropdown-menu li,
@@ -897,6 +905,11 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .navbar-nav .dropdown-menu li.active a,
 .navbar-nav .dropdown-menu li a.active { background: #2766ad; color: #FFF !important; }
 
+.navbar-default {
+    .navbar-collapse {
+        border-color: $ts-blue;
+    }
+}
 .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
 .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover { color: #FFF !important; }
 
