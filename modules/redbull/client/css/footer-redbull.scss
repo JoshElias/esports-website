@@ -80,9 +80,9 @@ $grey: #454545;
         z-index: 700;
         color: $rb-white;
        // box-shadow: 3px 4px 5px rgba(0,0,0,.75);
-        transition: 1.3s ease-out;
-        -moz-transition: 1.3s ease-out;
-        -webkit-transition: 1.3s ease-out;
+        transition: 1.0s ease-out;
+        -moz-transition: 1.0s ease-out;
+        -webkit-transition: 1.0s ease-out;
         
         .rb-logo-mini {
             position: fixed;
@@ -101,9 +101,9 @@ $grey: #454545;
                // border: none;
                 //background: none;
                 bottom: -300px;
-                transition: 1.30s ease-in-out;
-                -moz-transition: 1.30s ease-in-out;
-                -webkit-transition: 1.30s ease-in-out;
+                transition: 2.30s ease-in-out;
+                -moz-transition: 2.30s ease-in-out;
+                -webkit-transition: 2.30s ease-in-out;
 
                 .footer-toggle {
 
@@ -119,19 +119,34 @@ $grey: #454545;
                 }
                 .rb-footer-img {
                     bottom: -300px;
-                    transition: 1.30s ease-in-out;
-                    -moz-transition: 1.30s ease-in-out;
-                    -webkit-transition: 1.30s ease-in-out;
+                    transition: 1.30s bottom ease-in-out;
+                    -moz-transition: 1.30s bottom ease-in-out;
+                    -webkit-transition: 1.30s bottom ease-in-out;
                 }
             
             .content {
                 //display: block;
                 //display: none;
                 //position: absolute;
-                bottom: -200px;
-                -moz-transition: 2s ease-in-out;
-                -webkit-transition: 2s ease-in-out;
-                transition: 2s ease-in-out;
+                bottom: 200px;
+               // -moz-transition: 31.5s ease-in-out;
+                //-webkit-transition: 31.5s ease-in-out;
+               // transition: 31.5s ease-in-out;
+                
+                .hs-card {
+                    top: 300px;
+                    transition: 1.30s top ease-in-out;
+                    -moz-transition: 1.30s top ease-in-out;
+                    -webkit-transition: 1.30s top ease-in-out;
+                }
+                
+                .rb-logo {
+                    bottom: -300px;
+                    transition: 1.30s bottom ease-in-out;
+                    -moz-transition: 1.30s bottom ease-in-out;
+                    -webkit-transition: 1.30s bottom ease-in-out;
+                }
+                
             }
         }
         
@@ -153,6 +168,9 @@ $grey: #454545;
             left: 5px;
             bottom: 5px;
             z-index: 800;
+            transition: 1.30s bottom ease-in-out;
+            -moz-transition: 1.30s bottom ease-in-out;
+            -webkit-transition: 1.30s bottom ease-in-out;
             
             
             @media screen and (max-width: 992px) {
@@ -180,6 +198,9 @@ $grey: #454545;
             top: -55px;
             right: 45%;
             z-index: 750;
+            transition: 1.30s top ease-in-out;
+            -moz-transition: 1.30s top ease-in-out;
+            -webkit-transition: 1.30s top ease-in-out;
             
             @media screen and (max-width: 1590px) {
                 right: 33%;
@@ -298,9 +319,9 @@ $grey: #454545;
             bottom: 0;
             width: 29.85%;
             z-index: 800;
-            transition: 1.40s ease-in-out;
-            -moz-transition: 1.40s ease-in-out;
-            -webkit-transition: 1.40s ease-in-out;
+            transition: 1.40s bottom ease-in-out;
+            -moz-transition: 1.40s bottom ease-in-out;
+            -webkit-transition: 1.40s bottom ease-in-out;
             
             @media screen and (max-width: 1200px) {
                 width: 350px;
