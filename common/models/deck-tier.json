@@ -19,8 +19,12 @@
     "tier": {
       "type": "number"
     },
-    "deckId": {},
-    "snapshotId": {},
+    "deckId": {
+      "type": {}
+    },
+    "snapshotId": {
+      "type": {}
+    },
     "ranks": {
       "type": [
         "number"
@@ -53,22 +57,22 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",

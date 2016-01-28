@@ -24,13 +24,15 @@
       "type": "number"
     },
     "viewType": {
-        "type": "string"
+      "type": "string"
     },
     "createdDate": {
-        "type": "date"
+      "type": "date"
     },
     "oldItems": {
-        "type": ["object"]
+      "type": [
+        "object"
+      ]
     }
   },
   "validations": [],
@@ -39,7 +41,7 @@
       "type": "hasMany",
       "model": "pollItem",
       "foreignKey": "pollId",
-	  "isChild": "true"
+      "isChild": "true"
     }
   },
   "acls": [
@@ -49,22 +51,22 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     }
   ],
   "methods": {}

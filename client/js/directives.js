@@ -709,8 +709,8 @@ angular.module('app.directives', ['ui.load'])
             }
             
             $scope.vote = function (direction) {
-                if(loading)
-                    return;
+                console.log('votable:', votable);
+                if (loading) return;
                 
                 setLoading(true);
                 
@@ -719,7 +719,12 @@ angular.module('app.directives', ['ui.load'])
                     LoginModalService.showModal('login', function () {
                         $scope.vote(direction);
                     });
+                } else if (votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
+                    setLoading(false);
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
                 } else {
+                    
                     if ($scope.voteInfo.hasVoted !== 0 && $attrs.theme !== 'single') {
                         var where = {}
                             where[objType + "Id"] = votable.id;
@@ -735,7 +740,7 @@ angular.module('app.directives', ['ui.load'])
                             Vote.prototype$updateAttributes({
                                 id: vote.id
                             }, {
-                                direction: vote.direction*-1
+                                direction: direction
                             })
                             .$promise
                             .then(getVoteInfo);

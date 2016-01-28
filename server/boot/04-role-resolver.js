@@ -25,7 +25,6 @@ module.exports = function(server) {
 
             var now = new Date();
             var dateISO = now.toISOString();
-            
             return (user.subscription.isSubscribed 
                     || (user.subscription.expiryDate > dateISO));
         }

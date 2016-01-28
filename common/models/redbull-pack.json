@@ -7,8 +7,12 @@
     "validateUpsert": true
   },
   "properties": {
-    "redbullExpansionId": {},
-    "ownerId": {}
+    "redbullExpansionId": {
+      "type": {}
+    },
+    "ownerId": {
+      "type": {}
+    }
   },
   "validations": [],
   "relations": {
@@ -23,28 +27,30 @@
       "foreignKey": "redbullExpansionId"
     }
   },
-  "acls": [{
-    "principalType": "ROLE",
-    "principalId": "$everyone",
-    "permission": "DENY"
-  },
-  {
-    "principalType": "ROLE",
-    "principalId": "$everyone",
-    "permission": "ALLOW",
-    "accessType": "READ"
-  },
-  {
-    "principalType": "ROLE",
-    "principalId": "$admin",
-    "permission": "ALLOW",
-    "accessType": "WRITE"
-  },
-  {
-    "principalType": "ROLE",
-    "principalId": "$owner",
-    "permission": "ALLOW",
-    "accessType": "WRITE"
-  }],
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
   "methods": {}
 }
