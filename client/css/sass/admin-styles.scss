@@ -27,16 +27,16 @@
 }
 
 .photo-input {
-    
+
     .upload-drop {
-        border-radius: 4px; 
-        border: 1px dashed #ccc; 
-        text-align: center; 
-        color: #666; 
-    
-        &.active { 
-            border: 1px dashed #66afe9; 
-            color: #357ebd; 
+        border-radius: 4px;
+        border: 1px dashed #ccc;
+        text-align: center;
+        color: #666;
+
+        &.active {
+            border: 1px dashed #66afe9;
+            color: #357ebd;
             background: #e6f7ff;
         }
     }
@@ -158,8 +158,11 @@ label p {
     border-right: 1px solid rgba(0,0,0,.15);
 }
 
-.admin-side-nav > ul.nav > li > a {
+.admin-side-nav > ul.nav li > a {
     color: #7ca1ae;
+    position: relative;
+    display: block;
+    padding: 10px 15px;
 }
 
 .admin-side-nav ul.nav li a:hover {
@@ -167,7 +170,7 @@ label p {
     background: #16232d;
 }
 
-.admin-side-nav > ul.nav > li.active > a {
+.admin-side-nav > ul.nav li.active > a {
     color: #FFF;
     background: #131e26;
 }
@@ -242,7 +245,7 @@ label p {
 .admin-list-item:nth-child(odd) { background: #FDFDFD; }
 .list-group-item.admin-list-item:hover { background: #e6f7ff; }
 
-.nav > li > a:hover, .nav > li > a:focus { background: inherit; }
+.nav li > a:hover, .nav  li > a:focus { background: inherit; }
 
 
 
@@ -329,7 +332,7 @@ ul[dnd-list] .dndPlaceholder {
     background-color: $ts-blue;
     color: $white;
     padding: 10px 0 0;
-    
+
     h4 {
         font-weight: 700;
     }

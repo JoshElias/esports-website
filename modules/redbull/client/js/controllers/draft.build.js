@@ -1,6 +1,6 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'draftSettings', 'draftCards', 'draftBuildStart', 
-    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, draftSettings, draftCards, draftBuildStart) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'RedbullDraft', 'draftSettings', 'draftCards', 'draftBuildStart', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, RedbullDraft, draftSettings, draftCards, draftBuildStart) {
         var draft = draftBuildStart.draft;
         
         $scope.draftId = draft.id;
@@ -497,7 +497,7 @@ angular.module('redbull.controllers')
                     cleanDeck(deck);
                 });
                 
-                RedbullDraft.submitDecks({ draftId: draftId, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise.then(function () {
+                RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise.then(function () {
                     // share modal
                     $scope.decksSaving = false;
                     $scope.tournament.hasDecksConstructed = true;

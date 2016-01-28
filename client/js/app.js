@@ -48,10 +48,10 @@ var app = angular.module('app', [
                 if (toState.access && toState.access.auth && !User.isAuthenticated()) {
                     var redirect = toState.name;
                     event.preventDefault();
-                    
+
                     $state.go('app.login', { redirect: redirect });
                 }
-                
+
 //                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
 //                    //event.preventDefault();
 //                    //$state.transitionTo('app.home');
@@ -63,7 +63,7 @@ var app = angular.module('app', [
                 if ($window.ga) {
                     $window.ga('send', 'pageview', $location.path());
                 }
-                
+
                 // seo
                 if (toState.seo) {
                     $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
@@ -71,7 +71,7 @@ var app = angular.module('app', [
                 if (!toState.og) {
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
                 }
-              
+
                 //we're resetting the alertService if unless persist is set to true, then we reset persist and the alertservice will reset on the NEXT state change
                 if (!AlertService.getPersist()) {
                   AlertService.reset();
@@ -79,7 +79,7 @@ var app = angular.module('app', [
 				          AlertService.setShow(true);
                   AlertService.setPersist(false);
                 }
-                
+
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
 //                $state.go('app.404');
@@ -95,7 +95,7 @@ var app = angular.module('app', [
             }
 
             // TODO: extend $cookies with this function
-            
+
 
         }
     ]
@@ -103,7 +103,7 @@ var app = angular.module('app', [
 .config(
     ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider',
     function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
-      
+
         app.controller = $controllerProvider.register;
         app.directive  = $compileProvider.directive;
         app.filter     = $filterProvider.register;
@@ -111,9 +111,9 @@ var app = angular.module('app', [
         app.service    = $provide.service;
         app.constant   = $provide.constant;
         app.value      = $provide.value;
-        
+
         Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
-        
+
         $bootboxProvider.setDefaults({ locale: "en" });
 
         $locationProvider.html5Mode(true);
@@ -126,7 +126,7 @@ var app = angular.module('app', [
             'self',
             tpl + '**'
         ]);
-        
+
         var throw404 = function ($state) {
             var options = {
                 location: true,
@@ -134,19 +134,19 @@ var app = angular.module('app', [
                 notify: false,
                 relative: $state.$current
             }
-            
+
             $state.transitionTo('app.404', options);
         }
 
         // ignore ng-animate on font awesome spin
         //$animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
-        
+
         $urlRouterProvider.otherwise(function ($injector, $location) {
             $injector.invoke(['$state', function ($state) {
                 return throw404($state)
             }]);
         });
-        
+
         $stateProvider
             .state('app', {
                 abstract: true,
@@ -177,14 +177,14 @@ var app = angular.module('app', [
                         $state.go(redirectState.name, redirectState.params);
                         return;
                     }
-                    
+
                     var thirdPartyError = Util.getAuthCookie("thirdPartyError");
                     if(thirdPartyError) {
                         if (!redirectState) {
                             $cookies.remove("thirdPartyError");
                             LoginModalService.showModal('login');
                         }
-                        
+
                         AlertService.setError({ persist: true, show: true, msg: thirdPartyError });
                     }
                 }]
@@ -323,7 +323,7 @@ var app = angular.module('app', [
                     }
                 }
             })
-            
+
             .state('app.overwatch.heroes', {
                 abstract: true,
                 url: '/heroes',
@@ -887,10 +887,10 @@ var app = angular.module('app', [
                                 });
 
                             }],
-                            
+
                             deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
                                 var deckID = deck.id;
-                                
+
                                 return Mulligan.find({
                                     filter: {
                                         where: {
@@ -1047,7 +1047,7 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            
+
                             deckNoMulligans: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var stateSlug = $stateParams.slug;
                                 return Deck.findOne({
@@ -1104,10 +1104,10 @@ var app = angular.module('app', [
                                 });
 
                             }],
-                            
+
                             deck: ['Mulligan', 'deckNoMulligans', function(Mulligan, deckNoMulligans) {
                                 var deckID = deckNoMulligans.id;
-                                
+
                                 return Mulligan.find({
                                     filter: {
                                         where: {
@@ -1132,7 +1132,7 @@ var app = angular.module('app', [
                                     if (err) console.log('err: ', err);
                                 });
                             }],
-							
+
                               deckCardMulligans: ['deck', 'Card', '$q',  function(deck, Card, $q) {
                                 var d = $q.defer();
                                 async.each(deck.mulligans, function(mulligan, mulliganCB) {
@@ -1178,7 +1178,7 @@ var app = angular.module('app', [
                                 });
                                 return d.promise;
                               }],
-                                
+
                             classCardsList: ['$stateParams', 'deckNoMulligans', 'Card', function($stateParams, deckNoMulligans, Card) {
                                 var perpage = 15,
                                     playerClass = deckNoMulligans.playerClass;
@@ -1440,7 +1440,7 @@ var app = angular.module('app', [
                               var filters = 'all',
                                   offset = 0,
                                   perpage = 6;
-                                
+
                               return Article.find({
                                 filter: {
                                     limit: 6,
@@ -1481,13 +1481,13 @@ var app = angular.module('app', [
                                     isPublic: true
                                   },
                                   fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                   ],
@@ -1554,13 +1554,13 @@ var app = angular.module('app', [
                                     isFeatured: true
                                   },
                                   fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                   ],
@@ -1682,13 +1682,13 @@ var app = angular.module('app', [
                                     isPublic: true
                                   },
                                   fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                   ],
@@ -1757,13 +1757,13 @@ var app = angular.module('app', [
                                       guideType: "hero",
                                   },
                                   fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                   ],
@@ -1826,13 +1826,13 @@ var app = angular.module('app', [
                                     isFeatured: true
                                   },
                                   fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                   ],
@@ -2130,7 +2130,7 @@ var app = angular.module('app', [
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
-                              
+
                               return d.promise;
                             }],
                             dataMaps: ['Map', function (Map) {
@@ -2343,7 +2343,7 @@ var app = angular.module('app', [
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
-                              
+
                               return d.promise;
                             }],
                             dataMaps: ['Map', function (Map) {
@@ -2578,7 +2578,7 @@ var app = angular.module('app', [
                                 var d = $q.defer();
                                 async.waterfall([
                                     function(waterCB) {
-                                        
+
                                         ForumCategory.find({
                                             filter: {
                                                 where: {
@@ -2597,12 +2597,12 @@ var app = angular.module('app', [
                                         .catch(function (err) {
                                             return waterCB(err);
                                         });
-                                        
+
                                     },
                                     function(forumCategories, waterCB) {
-                                        
+
                                         async.each(forumCategories, function (category, categoryCB) {
-                                            
+
                                             ForumCategory.forumThreads({
                                                 id: category.id,
                                                 filter: {
@@ -2616,9 +2616,9 @@ var app = angular.module('app', [
                                             }).$promise
                                             .then(function (threads) {
                                                 category.forumThreads = threads;
-                                                
+
                                                 async.each(category.forumThreads, function (thread, threadCB) {
-                                                
+
                                                    async.parallel([
                                                        function (paraCB) {
 
@@ -2679,19 +2679,19 @@ var app = angular.module('app', [
                                                     }
                                                     return categoryCB();
                                                 });
-                                                
+
                                             })
                                             .catch(function (err) {
                                                 return categoryCB(err);
                                             });
-                                            
+
                                         }, function(err) {
                                             if (err) {
                                                 return waterCB(err);
                                             }
                                             return waterCB(null, forumCategories);
                                         });
-                                        
+
                                     }
                                 ], function(err, results) {
                                     if (err) {
@@ -2700,7 +2700,7 @@ var app = angular.module('app', [
                                     return d.resolve(results);
                                 });
                                 return d.promise;
-								
+
 								// Martin's Resolve
 //								var startTime = new Date().getMilliseconds();
 //								var d = $q.defer();
@@ -2790,7 +2790,7 @@ var app = angular.module('app', [
                             forumPostCount: ['$q','$stateParams', 'ForumThread', function($q, $stateParams, ForumThread) {
                                 var slug = $stateParams.thread,
                                     d = $q.defer();
-                                
+
                                 ForumThread.findOne({
                                     filter: {
                                         where: {
@@ -2813,13 +2813,13 @@ var app = angular.module('app', [
                                 .catch(function () {
                                     $q.reject();
                                 });
-                                
+
                                 return d.promise;
                             }],
                             forumThread: ['$state', '$q', '$stateParams', 'ForumThread', 'ForumPost', function($state, $q, $stateParams, ForumThread, ForumPost) {
                                 var slug = $stateParams.thread,
                                     d = $q.defer();
-                                
+
                                 ForumThread.findOne({
                                     filter: {
                                         where: {
@@ -2849,7 +2849,7 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (thread) {
-                                    
+
                                     async.each(thread.forumPosts, function (post, eachCallback) {
                                         ForumPost.comments.count({
                                             id: post.id
@@ -2864,7 +2864,7 @@ var app = angular.module('app', [
                                     }, function () {
                                         return d.resolve(thread);
                                     });
-                                    
+
                                 })
                                 .catch(function (err) {
                                     if (err.status === 404) {
@@ -2872,7 +2872,7 @@ var app = angular.module('app', [
                                         return throw404($state);
                                     }
                                 });
-                                
+
                                 return d.promise;
                             }]
                         }
@@ -2980,8 +2980,8 @@ var app = angular.module('app', [
                                     async.each(t, function (tm, eachCb) {
                                         if (typeof tm.isActive === 'string') {
                                             tm.isActive = true;
-                                            
-                                            TeamMember.update({ 
+
+                                            TeamMember.update({
                                                 where: {
                                                     id: tm.id
                                                 }
@@ -3216,7 +3216,7 @@ var app = angular.module('app', [
                           if (_.isEmpty(data)) {
                               return throw404($state);
                           }
-                          
+
                           return data[0];
                       })
                       .catch(function (err) {
@@ -3377,7 +3377,7 @@ var app = angular.module('app', [
                                     })
                                     .$promise;
                                 }
-                                
+
                             }]
                         }
                     }
@@ -3468,7 +3468,7 @@ var app = angular.module('app', [
                                         expiryDate: null
                                     }
                                 }
-                                
+
                                 return userProfile;
                             }],
                             isPremium: ['User', 'user', function (User, user) {
@@ -3483,7 +3483,7 @@ var app = angular.module('app', [
                             }],
                             isLinked: ['User', function (User) {
                                 var providers = ['twitch','bnet'];
-                                
+
                                 return User.isLinked({
                                     providers: providers
                                 })
@@ -3593,6 +3593,16 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/admin/index.html',
                         resolve: {
+                            app: ['User', 'currentUser', '$state', function(User, currentUser, $state){
+                                var roles = {};
+                                User.isInRoles({uid:currentUser.id, roleNames:['$admin', '$redbullAdmin']}).$promise
+                                    .then(function(val){
+                                        roles = val.isInRoles;
+                                        if (!!roles.none){
+                                            $state.go('app.404');
+                                        }
+                                    });
+                            }],
                             admin: ['User', function (User) {
                                 return true;
                             }]
@@ -3672,8 +3682,8 @@ var app = angular.module('app', [
                                         }
                                     }
                                 }
-                                
-                                
+
+
                                 return User.find(options)
                                 .$promise
                                 .then(function (data) {
@@ -3950,7 +3960,7 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-							
+
 							toStep: ['$stateParams', function ($stateParams) {
                                 if ($stateParams.goTo) {
                                     return $stateParams.goTo;
@@ -4025,10 +4035,10 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            
+
                             mulligans: ['Mulligan', '$stateParams', function(Mulligan, $stateParams) {
                                 var deckID = $stateParams.deckID;
-                                
+
                                 return Mulligan.find({
                                     filter: {
                                         where: {
@@ -4044,7 +4054,7 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'mulligansWithoutCoin',
 												scope: {
-													
+
 												}
                                             }
                                         ]
@@ -4057,7 +4067,7 @@ var app = angular.module('app', [
                                     if (err) console.log('err: ', err);
                                 });
                             }],
-            
+
                             deck: ['$stateParams', 'mulligans', 'resolveParams', 'Deck', function ($stateParams, mulligans, resolveParams, Deck) {
                                 var deckID = $stateParams.deckID;
                                 return Deck.findById({
@@ -4073,13 +4083,13 @@ var app = angular.module('app', [
                                     console.log('err: ', err);
                                 });
                             }],
-							
+
 							deckCardMulligans: ['deck', 'Card', '$q',  function(deck, Card, $q) {
 								var d = $q.defer();
 								async.each(deck.mulligans, function(mulligan, mulliganCB) {
-									
+
 									var mulliganIndex = deck.mulligans.indexOf(mulligan);
-									
+
 									async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
 										Card.findById({
 											id: cardWithoutCoin.cardId
@@ -4092,11 +4102,11 @@ var app = angular.module('app', [
 										.catch(function (err) {
 											return cardWithoutCoinCB(err);
 										});
-										
+
 									});
-									
+
 									async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
-										
+
                         Card.findById({
                           id: cardWithCoin.cardId
                         }).$promise
@@ -4119,7 +4129,7 @@ var app = angular.module('app', [
                     });
                     return d.promise;
                   }],
-                                
+
                           classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
                                 var perpage = 15,
                                     playerClass = deck.playerClass;
@@ -4205,7 +4215,7 @@ var app = angular.module('app', [
                                                 id: true,
                                                 name: true,
                                                 rarity: true,
-                                                                                              
+
                                             },
                                             limit: 50,
                                             order: 'name ASC'
@@ -4403,10 +4413,10 @@ var app = angular.module('app', [
                                 .then(function (data) {
                                   var tals = _.sortBy(data.talents, 'orderNum');
                                   var abils = _.sortBy(data.abilities, 'orderNum');
-                                  
+
                                   data.talents = tals;
                                   data.abilities = abils;
-                                  
+
                                   _.each(data.talents, function (tal) { if (tal.ability !== undefined) { var temp = tal.ability.name; tal.ability = temp; } })
                                   return data;
                                 });
@@ -4491,7 +4501,7 @@ var app = angular.module('app', [
                   resolve: {
                     talent: ['$stateParams', 'Talent', function ($stateParams, Talent) {
                       var talentId = $stateParams.talentId;
-                      
+
                       return Talent.findOne({
                         filter: {
                           where: {
@@ -4587,7 +4597,7 @@ var app = angular.module('app', [
                         resolve: {
                             map: ['$stateParams', 'Map', function ($stateParams, Map) {
                                 var mapID = $stateParams.mapID;
-                                
+
                                 return Map.findOne({
                                     filter: {
                                         where: {
@@ -4706,7 +4716,7 @@ var app = angular.module('app', [
                                 function(waterCB) {
                                   Hero.find({
                                     where: {
-                                      isActive: true  
+                                      isActive: true
                                     },
                                     filter: {
                                       fields: {
@@ -4753,7 +4763,7 @@ var app = angular.module('app', [
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
-                              
+
                               return d.promise;
                             }],
                             dataMaps: ['Map', function (Map) {
@@ -4936,7 +4946,7 @@ var app = angular.module('app', [
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
-                              
+
                               return d.promise;
                             }],
                             dataMaps: ['Map', function (Map) {
@@ -4957,7 +4967,7 @@ var app = angular.module('app', [
                         resolve: {
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                
+
                                 return Guide.find({
                                     filter: {
                                         where: {
@@ -5028,7 +5038,7 @@ var app = angular.module('app', [
                                             }
                                         }).$promise.then(function (threads) {
                                             category.forumThreads = threads;
-                                            
+
                                             async.forEach(threads, function (thread, eachThreadCallback) {
                                                 ForumThread.forumPosts({
                                                     id: thread.id,
@@ -5051,7 +5061,7 @@ var app = angular.module('app', [
                                 });
                                 return d.promise;
                             }]
-                            
+
                         }
                     }
                 },
@@ -5088,7 +5098,7 @@ var app = angular.module('app', [
                                 .catch(function (err) {
 //                                    console.log('category: ', err);
                                 });
-                                
+
                             }]
                         }
                     }
@@ -5119,7 +5129,7 @@ var app = angular.module('app', [
                                 .catch(function (err) {
                                     console.log('allCategories: ', err);
                                 });
-                                
+
                             }]
 //                            data: ['AdminForumService', function (AdminForumService) {
 //                                return AdminForumService.getCategories();
@@ -5139,11 +5149,11 @@ var app = angular.module('app', [
                         resolve: {
                             thread: ['ForumThread', 'ForumCategory', '$stateParams', function(ForumThread, ForumCategory, $stateParams) {
                                 var threadID = $stateParams.threadID;
-                                
+
                                 return ForumThread.findById({
                                     id: threadID,
                                     filter: {
-                                        
+
                                     }
                                 })
                                 .$promise
@@ -5154,7 +5164,7 @@ var app = angular.module('app', [
                                     console.log('err: ', err);
                                 });
                             }],
-                            
+
                             categories: ['ForumCategory', function(ForumCategory) {
                                 return ForumCategory.find({
                                     filter: {
@@ -5170,7 +5180,7 @@ var app = angular.module('app', [
                                 .catch(function (err) {
                                     console.log('ForumCategory.find: ', err);
                                 });
-                                
+
                             }]
                         }
                     }
@@ -5290,7 +5300,7 @@ var app = angular.module('app', [
                                     return false;
                                 });
                             }],
-                            
+
                             userRoles: ['User', '$stateParams', function(User, $stateParams) {
                                 return User.isInRoles({
                                     uid: $stateParams.userID,
@@ -5305,7 +5315,7 @@ var app = angular.module('app', [
 //                                        console.log('User.isInRoles err: ', err);
                                 });
                             }]
-                            
+
                         }
                     }
                 },
@@ -5448,20 +5458,20 @@ var app = angular.module('app', [
                         resolve: {
                             poll: ['$stateParams', 'Poll', function($stateParams, Poll){
                                 var pollID = $stateParams.pollID;
-                                return Poll.findOne({ 
+                                return Poll.findOne({
                                     filter: {
-                                        where: { 
+                                        where: {
                                             id: pollID
                                         },
 										include: 'items'
                                     }
-                                }) 
+                                })
                                 .$promise
                                 .then(function (data) {
                                     return data;
                                 })
                             }]
-                            
+
                         }
                     }
                 },
@@ -5597,13 +5607,13 @@ var app = angular.module('app', [
                                     snapshot.tiers = [];
                                     _.each(snapshot.deckTiers, function (deck) {
                                         if (snapshot.tiers[deck.tier-1] === undefined) {
-                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier }; 
+                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
                                         }
-                                        
+
                                         snapshot.tiers[deck.tier-1].decks.push(deck);
                                     });
                                     snapshot.tiers = _.filter(snapshot.tiers, function (tier) { return tier; });
-                                    
+
                                     var deckNum = 0;
                                     _.each(snapshot.tiers, function (tier, tIndex) {
                                         tier.tier = tIndex+1
@@ -5712,20 +5722,20 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (snapshot) {
-                                    
+
                                     snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
-                                    
+
                                     //BUILD TIERS//
                                     snapshot.tiers = [];
                                     _.each(snapshot.deckTiers, function (deck) {
                                         if (snapshot.tiers[deck.tier-1] === undefined) {
-                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier }; 
+                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
                                         }
 
                                         snapshot.tiers[deck.tier-1].decks.push(deck);
                                     });
                                     snapshot.tiers = _.filter(snapshot.tiers, function (tier) { return tier; });
-                                    
+
                                     var deckNum = 0;
                                     _.each(snapshot.tiers, function (tier, tIndex) {
                                         tier.tier = tIndex+1
@@ -5765,41 +5775,41 @@ var app = angular.module('app', [
                         controller: 'AdminTeamListCtrl',
                         resolve: {
                             teamMembers: ['TeamMember', function (TeamMember) {
-                                
+
                                 var gameTypes = ['hs', 'hots', 'fifa', 'wow', 'cs', 'fgc' ]
                                 var gameTypeFilter = _.map(gameTypes, function (gameType) {
                                     return {game: gameType}
-                                }) 
-                                                               
+                                })
+
                                 return TeamMember.find({
                                     filter: {
                                         where: {
                                             or: gameTypeFilter
-                                        } 
+                                        }
                                     }
                                 })
                                 .$promise
                                 .then(function (teamMembers) {
-                                    
+
                                     var teamMemberObj = {};
                                     for (var key in teamMembers) {
                                         var teamMember = teamMembers[key];
-                                        
+
                                         if(typeof teamMemberObj[teamMember.game] === "undefined") {
                                             teamMemberObj[teamMember.game] = [];
-                                        }  
-                                      
+                                        }
+
                                         teamMemberObj[teamMember.game].push(teamMember);
                                     }
-                                    
+
                                     return teamMemberObj;
-                                    
+
                                   /* async.each(t, function (tm, eachCb) {
                                         if (typeof tm.isActive === 'string') {
                                             console.log('IT\'S A STRING');
                                             tm.isActive = true;
-                                            
-                                            TeamMember.update({ 
+
+                                            TeamMember.update({
                                                 where: {
                                                     id: tm.id
                                                 }
@@ -5815,8 +5825,8 @@ var app = angular.module('app', [
                                     });*/
                                })
                             }],
-    
-    
+
+
 //                            teams: ['TeamMember', function (TeamMember) {
 //                                TeamMember.find({})
 //                                .$promise
@@ -5825,8 +5835,8 @@ var app = angular.module('app', [
 //                                        if (typeof tm.isActive === 'string') {
 //                                            console.log('IT\'S A STRING');
 //                                            tm.isActive = true;
-//                                            
-//                                            TeamMember.update({ 
+//
+//                                            TeamMember.update({
 //                                                where: {
 //                                                    id: tm.id
 //                                                }
@@ -6153,8 +6163,8 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             });
-        
-        
+
+
     }]
 );
 

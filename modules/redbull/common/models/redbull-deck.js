@@ -37,25 +37,35 @@ module.exports = function(RedbullDeck) {
          }
          */
 
-        validateDecks(draftJSON, clientDecks);
+        return async.waterfall(
+            [
+                function(seriesCb) {
+                    validateDecks(draftJSON, clientDecks, seriesCb);
+                },
+                function(seriesCb) {
+                    saveDecks(draft, clientDecks, seriesCb);
+                },
+                // Refresh draft state
+                function(createDecks, seriesCb) {
 
-        return saveDecks(draft, clientDecks, function (err, createdDecks) {
+                    // Refresh draft state
+                    currentTime = Date.now();
+                    return draft.updateAttributes({
+                        deckBuildStopTime: currentTime,
+                        hasDecksContructed: true
+                    }, function (err) {
+                        if (err) return finalCb(err);
 
-            // Refresh draft state
-            currentTime = Date.now();
-            draft.updateAttributes({
-                deckBuildStopTime: currentTime,
-                hasDecksContructed: true
-            }, function (err) {
-                if (err) return finalCb(err);
-
-                // return only the created decks Ids
-                var createdDeckIds = _.map(createdDecks, function (createdDeck) {
-                    return createdDeck.id;
-                });
-                return finalCb(undefined, createdDeckIds);
-            });
-        });
+                        // return only the created decks Ids
+                        var createdDeckIds = _.map(createdDecks, function (createdDeck) {
+                            return createdDeck.id;
+                        });
+                        return seriesCb(undefined, createdDeckIds);
+                    });
+                }
+            ],
+            finalCb
+        );
     };
 
     function saveDecks(draft, decks, finalCb) {
@@ -77,121 +87,194 @@ module.exports = function(RedbullDeck) {
 
     // DECK VALIDATION
 
-    function validateDecks(draftJSON, clientDecks) {
+    function validateDecks(draftJSON, clientDecks, finalCb) {
 
-        var noDeckValidationErr = new Error("No draft found for id", draftJSON.id);
-        noDeckValidationErr.statusCode = 422;
-        noDeckValidationErr.code = 'DRAFT_VALIDATION_ERROR';
+        var invalidDeckErr = new Error("Invalid structure was submitted as draft deck");
+        invalidDeckErr.statusCode = 422;
+        invalidDeckErr.code = 'DRAFT_DECK_VALIDATION_ERROR';
 
-        // Validate the client deck's cards'
-        noDeckValidationErr.cardErrors = validateCardAmounts(draftJSON, clientDecks);
+        var validationReport = {
+            passed: true,
+            errors: []
+        };
 
-        // Validate Decks Structure
-        noDeckValidationErr.deckErrors = validateDeckStructure(clientDecks);
+        return async.series([
+            validateOfficial(draftJSON, validationReport),
+            validateCardAmounts(draftJSON, clientDecks, validationReport),
+            validateDeckStructure(clientDecks, validationReport)
+        ], function(err) {
+            if(err) return finalCb(err);
 
-        if (noDeckValidationErr.cardErrors || noDeckValidationErr.deckErrors) {
-            return noDeckValidationErr;
-        }
+            // Check if validation passed
+            if(!validationReport.passed) {
+                invalidDeckErr.report = validationReport;
+                return finalCb(invalidDeckErr);
+            }
 
-        return true;
+            return finalCb();
+        });
     }
 
-    function validateCardAmounts(draftJSON, clientDecks) {
 
 
-        // Get all the cards available in this draft
-        var availableCards = {};
-        var currentCard;
-        var cardId;
-        var i = draftJSON.cards.length;
-        while (i--) {
-            currentCard = draftJSON.cards[i];
-            cardId = currentCard.id.toString();
-            if (!availableCards[cardId]) {
-                availableCards[cardId] = 1;
-            } else {
-                availableCards[cardId]++;
+    function validateOfficial(draftJSON, validationReport) {
+        return function(finalCb) {
+            // Do we even need to worry about official?
+            if(!draftJSON.isOfficial) {
+                return finalCb();
             }
-        }
 
-        // Get a count of all the client's used cards
-        var clientCards = {};
-        i = clientDecks.length;
-        var deck;
-        var j;
-        var currentDeckCard;
-        while (i--) {
-            deck = clientDecks[i];
-            var j = deck.deckCards.length;
-            while (j--) {
-                currentDeckCard = deck.deckCards[j];
-                cardId = currentDeckCard.cardId.toString();
-                if (!clientCards[cardId]) {
-                    clientCards[cardId] = currentDeckCard.cardQuantity;
-                } else {
-                    clientCards[cardId] += currentDeckCard.cardQuantity;
+            function reportValidationErr(err) {
+                validationReport.errors.push(err);
+                validationReport.passed = false;
+                return finalCb()
+            }
+
+            // Get loopback context for request obj
+            var loopbackContext = loopback.getCurrentContext();
+            if(!loopbackContext || !loopbackContext.active) {
+                return finalCb();
+            }
+            var req = loopbackContext.active.http.req;
+
+            // Do we have a user Id
+            if (!req.accessToken || !req.accessToken.userId) {
+                return finalCb()
+            }
+            var userId = req.accessToken.userId.toString();
+
+            // Do the userID and authorId match
+            if(userId.toString() !== draftJSON.authorId.toString()) {
+                return reportValidationErr(new Error("The user does not own the draft they are submitting too"));
+            }
+
+            // Do they have the right role
+            return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
+                if (err) return finalCb(err);
+                else if(!isInRoles.none) return finalCb();
+                else return reportValidationErr(new Error("User must be a registered redbull user to submit to an official draft"));
+            });
+        }
+    }
+
+    function validateCardAmounts(draftJSON, clientDecks, validationReport) {
+        return function(finalCb) {
+            try {
+                // Get all the cards available in this draft
+                var availableCards = {};
+                var currentCard;
+                var cardId;
+                var i = draftJSON.cards.length;
+                while (i--) {
+                    currentCard = draftJSON.cards[i];
+                    cardId = currentCard.id.toString();
+                    if (!availableCards[cardId]) {
+                        availableCards[cardId] = 1;
+                    } else {
+                        availableCards[cardId]++;
+                    }
                 }
-            }
-        }
 
-        // Look for excess cards in client data
-
-        var cardErrors;
-        var cardDifference;
-        var clientCardQuantity;
-        var availableCardQuantity;
-        for (var cardId in clientCards) {
-            clientCardQuantity = clientCards[cardId];
-            availableCardQuantity = availableCards[cardId];
-            cardDifference = availableCardQuantity - clientCardQuantity;
-            if (cardDifference < 0) {
-                if (!cardErrors) cardErrors = [];
-                cardErrors.push("Too many instances found of card", cardId);
-            }
-        }
-
-        return cardErrors;
-    }
-
-    function validateDeckStructure(clientDecks) {
-
-        var deckErrors;
-
-        // Iterate over decks
-        var i = clientDecks.length;
-        var deck;
-        var playerClass;
-        var j;
-        var deckCard;
-        var cardCount;
-        while (i--) {
-            deck = clientDecks[i];
-            cardCount = 0;
-            playerClass = deck.playerClass;
-
-            // Iterate over decKCards
-            j = deck.deckCards.length;
-            while (j--) {
-                deckCard = deck.deckCards[j];
-                if (deckCard.playerClass !== playerClass && deckCard.playerClass !== "Neutral") {
-                    if (!deckErrors) deckErrors = [];
-                    deckErrors.push("card " + deckCard.cardId + " is of invalid player class");
+                // Get a count of all the client's used cards
+                var clientCards = {};
+                i = clientDecks.length;
+                var deck;
+                var j;
+                var currentDeckCard;
+                while (i--) {
+                    deck = clientDecks[i];
+                    var j = deck.deckCards.length;
+                    while (j--) {
+                        currentDeckCard = deck.deckCards[j];
+                        cardId = currentDeckCard.cardId.toString();
+                        if (!clientCards[cardId]) {
+                            clientCards[cardId] = currentDeckCard.cardQuantity;
+                        } else {
+                            clientCards[cardId] += currentDeckCard.cardQuantity;
+                        }
+                    }
                 }
-                cardCount += deckCard.cardQuantity;
-            }
 
-            // Check for 30 cards
-            if (cardCount !== 30) {
-                if (!deckErrors) deckErrors = [];
-                deckErrors.push("deck " + deck.id + " doesn't have 30 cards");
+                // Look for excess cards in client data
+                var cardErrors;
+                var cardDifference;
+                var clientCardQuantity;
+                var availableCardQuantity;
+                for (var cardId in clientCards) {
+                    clientCardQuantity = clientCards[cardId];
+                    availableCardQuantity = availableCards[cardId];
+                    cardDifference = availableCardQuantity - clientCardQuantity;
+                    if (cardDifference < 0) {
+                        if (!cardErrors) cardErrors = [];
+                        cardErrors.push("Too many instances found of card", cardId);
+                    }
+                }
+
+                // Update validation state
+                if(deckErrors.length > 0) {
+                    validationReport.errors = validationReport.errors.concat(cardErrors);
+                    validationReport.passed = false;
+                }
+
+                return finalCb();
+
+            } catch(err) {
+                return finalCb(err);
             }
         }
+    }
 
-        return deckErrors;
+    function validateDeckStructure(clientDecks, validationReport) {
+        return function(finalCb) {
+            try {
+                var deckErrors;
+
+                // Iterate over decks
+                var i = clientDecks.length;
+                var deck;
+                var playerClass;
+                var j;
+                var deckCard;
+                var cardCount;
+                while (i--) {
+                    deck = clientDecks[i];
+                    cardCount = 0;
+                    playerClass = deck.playerClass;
+
+                    // Iterate over decKCards
+                    j = deck.deckCards.length;
+                    while (j--) {
+                        deckCard = deck.deckCards[j];
+                        if (deckCard.playerClass !== playerClass && deckCard.playerClass !== "Neutral") {
+                            if (!deckErrors) deckErrors = [];
+                            deckErrors.push("card " + deckCard.cardId + " is of invalid player class");
+                        }
+                        cardCount += deckCard.cardQuantity;
+                    }
+
+                    // Check for 30 cards
+                    if (cardCount !== 30) {
+                        if (!deckErrors) deckErrors = [];
+                        deckErrors.push("deck " + deck.id + " doesn't have 30 cards");
+                    }
+                }
+
+                // Update validation state
+                if(deckErrors.length > 0) {
+                    validationReport.errors = validationReport.errors.concat(deckErrors);
+                    validationReport.passed = false;
+                }
+
+                return finalCb();
+
+            } catch(err) {
+                return finalCb(err);
+            }
+        }
     }
 
 
-// DECK GENERATION
+    // DECK GENERATION
 
     function createRandomDecks(numOfDecks, draftJSON) {
 
@@ -200,7 +283,6 @@ module.exports = function(RedbullDeck) {
         function createDeckData(playerClass, deckCards) {
             return {
                 redbullDraftId: draftJSON.id,
-                authorId: draftJSON.authorId,
                 playerClass: playerClass,
                 deckCards: deckCards
             }
