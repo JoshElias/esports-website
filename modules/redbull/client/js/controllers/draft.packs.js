@@ -6,6 +6,19 @@ angular.module('redbull.controllers')
         $localStorage.draftId = draft.id;
     }
     
+    // TODO: REMOVE THIS BEFORE LAUNCH
+    document.addEventListener("keydown", skipPacks, false);
+    function skipPacks (e) {
+        if (e.which === 13) {
+            $scope.goingToBuild = true;
+            RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
+                return $state.go('^.build');
+            }).catch(function () {
+                console.error('Unable to update draft');
+            });
+        }
+    }
+    
     // variables
     $scope.isLoading = true;
     $scope.isSuccessful = false;

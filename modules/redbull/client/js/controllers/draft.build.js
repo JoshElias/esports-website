@@ -412,25 +412,7 @@ angular.module('redbull.controllers')
         $scope.timesUp = function () {
             $scope.saveDecks(true);
         };
-        
-        // share modal
-        $scope.shareDecks = function () {
-            var box = bootbox.dialog({
-                title: 'Share Your Decks',
-                message: $compile('<draft-deck-share></draft-deck-share>')($scope),
-                buttons: {
-                    cancel: {
-                        label: 'DONE',
-                        className: 'btn-blue',
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                }
-            });
-            box.modal('show');
-        };
-        
+                
         function cleanDeck (deck) {
             deck.deckCards = deck.cards;
 
@@ -500,11 +482,15 @@ angular.module('redbull.controllers')
                     cleanDeck(deck);
                 });
                 
-                RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise.then(function () {
-                    // share modal
-                    $scope.decksSaving = false;
-                    $scope.tournament.hasDecksConstructed = true;
-                    $scope.shareDecks();
+                RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise.then(function (data) {
+                    console.log(data);
+                    /*
+                    delete $localStorage.draftDecks;
+                    delete $localStorage.draftId;
+                    */
+                    //return $state.go('app.hs.draft.decks', { draftId: draft.id });
+                }).catch(function (data) {
+                    console.log(data);
                 });
             }
         };
