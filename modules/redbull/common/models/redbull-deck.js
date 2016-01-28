@@ -46,7 +46,7 @@ console.log("clinet decks", clientDecks);
                     saveDecks(draft, clientDecks, seriesCb);
                 },
                 // Refresh draft state
-                function(createDecks, seriesCb) {
+                function(createdDecks, seriesCb) {
 
                     // Refresh draft state
                     currentTime = Date.now();
@@ -160,6 +160,7 @@ console.log("clinet decks", clientDecks);
     function validateCardAmounts(draftJSON, clientDecks, validationReport) {
         return function(finalCb) {
             try {
+
                 // Get all the cards available in this draft
                 var availableCards = {};
                 var currentCard;
@@ -211,7 +212,7 @@ console.log("clinet decks", clientDecks);
                 }
 
                 // Update validation state
-                if(cardErrors.length > 0) {
+                if(cardErrors && cardErrors.length > 0) {
                     validationReport.errors = validationReport.errors.concat(cardErrors);
                     validationReport.passed = false;
                 }
@@ -245,7 +246,7 @@ console.log("clinet decks", clientDecks);
                     j = deck.deckCards.length;
                     while (j--) {
                         deckCard = deck.deckCards[j];
-                        if (deckCard.playerClass !== playerClass && deckCard.playerClass !== "Neutral") {
+                        if (deckCard.card.playerClass !== playerClass && deckCard.card.playerClass !== "Neutral") {
                             if (!deckErrors) deckErrors = [];
                             deckErrors.push("card " + deckCard.cardId + " is of invalid player class");
                         }
@@ -260,7 +261,7 @@ console.log("clinet decks", clientDecks);
                 }
 
                 // Update validation state
-                if(deckErrors.length > 0) {
+                if(deckErrors && deckErrors.length > 0) {
                     validationReport.errors = validationReport.errors.concat(deckErrors);
                     validationReport.passed = false;
                 }

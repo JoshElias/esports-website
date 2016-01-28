@@ -80,6 +80,19 @@
                 font-size: 50px;
                 color: #FFF;
             }
+            
+            .loadingBar {
+                width: 300px;
+                height: 20px; 
+                position: absolute; 
+                top: 50%; 
+                left: 50%; 
+                margin-left: -150px; 
+                margin-top: 55px; 
+                border: 1px solid rgba(39, 102, 173, 0.60); 
+                padding-left: 0px; 
+                padding-right: 0px    
+            }
         }
 
         .draft-wrapper {

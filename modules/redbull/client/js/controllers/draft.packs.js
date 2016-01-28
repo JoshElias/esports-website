@@ -131,7 +131,7 @@ angular.module('redbull.controllers')
             console.error( "File Failed", fileLocation );
         },
         function handleNotify( event ) {
-            $scope.percentLoaded = event.percent;
+            $scope.percentLoaded = event.percent+"%";
         }
     );
 

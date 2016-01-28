@@ -433,7 +433,7 @@ angular.module('redbull.controllers')
         
         function cleanDeck (deck) {
             deck.deckCards = deck.cards;
-            
+
             delete deck.author;
             delete deck.basic;
             delete deck.cards;
