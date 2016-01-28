@@ -14,11 +14,17 @@
       "type": "string"
     },
     "slug": {
-      "url": {
-        "type": "string",
-        "validators": ["unique"]
-      },
-      "linked": {"type": "boolean"}
+      "type": {
+        "url": {
+          "type": "string",
+          "validators": [
+            "unique"
+          ]
+        },
+        "linked": {
+          "type": "boolean"
+        }
+      }
     },
     "content": {
       "type": "object"
@@ -84,30 +90,36 @@
       "model": "deckTier",
       "foreignKey": "snapshotId",
       "isChild": true
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "snapshotId"
     }
   },
-  "acls": [{
-        "principalType": "ROLE",
-        "principalId": "$everyone",
-        "permission": "DENY"
-    },
+  "acls": [
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "DENY"
     },
     {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",
@@ -126,6 +138,18 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__get__deckMatchups"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__edit__votes"
     }
   ],
   "methods": {}

@@ -112,7 +112,7 @@ var app = angular.module('app', [
         app.constant   = $provide.constant;
         app.value      = $provide.value;
         
-        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
+        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
         
         $bootboxProvider.setDefaults({ locale: "en" });
 
@@ -527,6 +527,16 @@ var app = angular.module('app', [
                                                 }
                                             },
                                             {
+                                                relation: 'votes', 
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true,
+                                                        authorId: true
+                                                    }
+                                                }
+                                            },
+                                            {
                                                 relation: "relatedArticles",
                                                 scope: {
                                                     fields: [
@@ -870,6 +880,9 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: "matchups"
+                                            },
+                                            {
+                                                relation: "votes"
                                             }
                                         ]
                                     }
@@ -897,10 +910,16 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'cardsWithCoin',
+                                                relation: 'mulligansWithCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin',
+                                                relation: 'mulligansWithoutCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
                                             }
                                         ]
                                     }
@@ -3527,7 +3546,7 @@ var app = angular.module('app', [
                 access: { auth: true },
             })
             .state('app.profile.edit.premium', {
-                url: '/premium',
+                url: '/premium?plan',
                 views: {
                     editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
@@ -3568,23 +3587,22 @@ var app = angular.module('app', [
                 },
                 access: { auth: true }
             })
-            .state('app.profile.subscription', {
-                url: '/subscription?plan',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
-                        controller: 'ProfileSubscriptionCtrl',
-                        resolve: {
-                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getUserProfile(username);
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true },
-                seo: { title: 'My Subscription', description: '', keywords: '' }
-            })
+//            .state('app.profile.subscription', {
+//                url: '/subscription?plan',
+//                views: {
+//                    profile: {
+//                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
+//                        controller: 'ProfileSubscriptionCtrl',
+//                        resolve: {
+//                            user: ['userProfile', function (userProfile) {
+//                                return userProfile;
+//                            }]
+//                        }
+//                    }
+//                },
+//                access: { auth: true },
+//                seo: { title: 'My Subscription', description: '', keywords: '' }
+//            })
             .state('app.admin', {
                 abstract: true,
                 url: 'admin',
@@ -4769,15 +4787,42 @@ var app = angular.module('app', [
                 views: {
                     add: {
                         templateUrl: tpl + 'views/admin/hots.guides.add.map.html',
-                        controller: 'AdminHOTSGuideAddMapCtrl',
+                        controller: 'HOTSGuideBuilderMapCtrl',
                         resolve: {
-                            heroes: ['Hero', function (Hero) {
-                                return Hero.find({})
-                                .$promise;
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
                             }],
-                            maps: ['Map', function (Map) {
-                                return Map.find({})
-                                .$promise;
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
+                            }],
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }

@@ -389,11 +389,7 @@ angular.module('app.directives', ['ui.load'])
                                 return;
                             } else {
                                 comment.votes[i].direction = direction;
-                                Comment.update({
-                                    where: {
-                                        id: comment.id
-                                    }
-                                }, comment)
+                                Comment.upsert(comment)
                                 .$promise.then(function (data) {
                                     comment.voted = direction;
                                     comment.votesCount = data.votesCount;
@@ -404,15 +400,15 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
+                    
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
-                        comment.votes.push(
-                            {
-                                direction: direction,
-                                userId: LoopBackAuth.currentUserId
-                            }
-                        );
-                        Comment.create(comment)
+                        comment.votes.push({
+                            direction: direction,
+                            userId: LoopBackAuth.currentUserId
+                        });
+                        
+                        Comment.upsert(comment)
                         .$promise.then(function (data) {
                             comment.voted = direction;
                             comment.votesCount = data.votesCount;
@@ -650,7 +646,7 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
-.directive('voteWidget', ['LoopBackAuth', 'User', 'LoginModalService', 'Vote', 'EventService', '$q', function (LoopBackAuth, User, LoginModalService, Vote, EventService, $q) {
+.directive('voteWidget', ['LoopBackAuth', 'User', 'LoginModalService', 'Vote', 'EventService', function (LoopBackAuth, User, LoginModalService, Vote, EventService) {
     return {
         restrict: 'E',
         replace: true,
@@ -713,16 +709,20 @@ angular.module('app.directives', ['ui.load'])
             }
             
             $scope.vote = function (direction) {
-                if(loading)
-                    return;
+                console.log('votable:', votable);
+                if (loading) return;
                 
                 setLoading(true);
                 
                 if (_.isNull(LoopBackAuth.currentUserId)) {
+                    setLoading(false);
                     LoginModalService.showModal('login', function () {
-                        setLoading(false);
                         $scope.vote(direction);
                     });
+                } else if (votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
+                    setLoading(false);
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
                 } else {
                     if ($scope.voteInfo.hasVoted !== 0 && $attrs.theme !== 'single') {
                         var where = {}

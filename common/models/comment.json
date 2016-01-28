@@ -9,12 +9,18 @@
   "properties": {
     "text": {
       "type": "string",
-      "validators": ["spam"]
+      "validators": [
+        "spam"
+      ]
     },
-    "votes": [
-      "object"
-    ],
-    "oldReplies": {},
+    "votes": {
+      "type": [
+        "object"
+      ]
+    },
+    "oldReplies": {
+      "type": {}
+    },
     "createdDate": {
       "type": "date",
       "required": true
@@ -22,13 +28,27 @@
     "voteScore": {
       "type": "number"
     },
-    "authorId": {},
-    "articleId": {},
-    "guideId": {},
-    "deckId": {},
-    "snapshotId": {},
-    "forumPostId": {},
-    "parentCommentId": {}
+    "authorId": {
+      "type": {}
+    },
+    "articleId": {
+      "type": {}
+    },
+    "guideId": {
+      "type": {}
+    },
+    "deckId": {
+      "type": {}
+    },
+    "snapshotId": {
+      "type": {}
+    },
+    "forumPostId": {
+      "type": {}
+    },
+    "parentCommentId": {
+      "type": {}
+    }
   },
   "validations": [],
   "relations": {

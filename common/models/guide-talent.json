@@ -7,9 +7,15 @@
     "validateUpsert": true
   },
   "properties": {
-    "guideId": {},
-    "heroId": {},
-    "talentId": {},
+    "guideId": {
+      "type": {}
+    },
+    "heroId": {
+      "type": {}
+    },
+    "talentId": {
+      "type": {}
+    },
     "tier": {
       "type": "number"
     }
@@ -26,7 +32,7 @@
       "model": "hero",
       "foreignKey": "heroId"
     },
-    "talent" : {
+    "talent": {
       "type": "belongsTo",
       "model": "talent",
       "foreignKey": "talentId"
