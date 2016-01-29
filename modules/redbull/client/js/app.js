@@ -46,60 +46,6 @@ var redbull = angular.module('app.redbull', [
                 }
             }
         })
-        .state('app.hs.redbull.draft', {
-            abstract: true,
-            url: '/tournament',
-            views: {
-                redbull: {
-                    templateUrl: moduleTpl + 'draft.html',
-                    controller: 'DraftCtrl'
-                }
-            },
-            access: { auth: true }
-        })
-        .state('app.hs.redbull.draft.packs', {
-            url: '',
-            views: {
-                'redbull-draft': {
-                    templateUrl: moduleTpl + 'draft.packs.html',
-                    /*controller: 'DraftPacksCtrl',
-                    resolve: {
-                        cards: ['Card', function (Card) {
-                            return Card.find({
-                                filter: {
-                                    where: {
-                                        deckable: true,
-                                        isActive: true
-                                    }
-                                }
-                            }).$promise;
-                        }]
-                    }*/
-                }
-            },
-            seo: { title: 'Redbull' },
-            access: { auth: true }
-        })
-        .state('app.hs.redbull.draft.build', {
-            url: '/build',
-            views: {
-                'redbull-draft': {
-                    templateUrl: moduleTpl + 'draft.build.html',
-                    controller: 'DraftBuildCtrl',
-                    resolve: {
-                        cards: ['$state', 'DraftCards', function ($state, DraftCards) {
-                            var cards = DraftCards.getCards();
-                            if (!cards.length) {
-                                return $state.go('app.hs.redbull.draft.packs');
-                            }
-                            return cards;
-                        }]
-                    }
-                }
-            },
-            seo: { title: 'Redbull' },
-            access: { auth: true }
-        })
         .state('app.hs.draft', {
             abstract: true,
             url: '/sealed',
@@ -326,6 +272,50 @@ var redbull = angular.module('app.redbull', [
         ;
     }
 ]);
+
+/*
+        .state('app.hs.redbull.draft', {
+            abstract: true,
+            url: '/tournament',
+            views: {
+                redbull: {
+                    templateUrl: moduleTpl + 'draft.html',
+                    controller: 'DraftCtrl'
+                }
+            },
+            access: { auth: true }
+        })
+        .state('app.hs.redbull.draft.packs', {
+            url: '',
+            views: {
+                'redbull-draft': {
+                    templateUrl: moduleTpl + 'draft.packs.html',
+                }
+            },
+            seo: { title: 'Redbull' },
+            access: { auth: true }
+        })
+        .state('app.hs.redbull.draft.build', {
+            url: '/build',
+            views: {
+                'redbull-draft': {
+                    templateUrl: moduleTpl + 'draft.build.html',
+                    controller: 'DraftBuildCtrl',
+                    resolve: {
+                        cards: ['$state', 'DraftCards', function ($state, DraftCards) {
+                            var cards = DraftCards.getCards();
+                            if (!cards.length) {
+                                return $state.go('app.hs.redbull.draft.packs');
+                            }
+                            return cards;
+                        }]
+                    }
+                }
+            },
+            seo: { title: 'Redbull' },
+            access: { auth: true }
+        })
+*/
 
 angular.module('redbull.controllers', []);
 angular.module('redbull.services', []);

@@ -392,8 +392,8 @@
             } /* .deck-add-button */
             
             .decks {
-                min-height: calc(100% - 50px);
-				height: calc(100% - 50px);
+                min-height: calc(100% - 100px);
+				height: calc(100% - 100px);
 				display: -webkit-flex;
 				display: -moz-flex;
 				display: -ms-flex;
@@ -977,6 +977,10 @@
             .draft-build-decks {
                 .deck-add-button {
                     display: none;
+                }
+                .decks {
+                    min-height: calc(100% - 50px);
+				    height: calc(100% - 50px);
                 }
             }
         }
