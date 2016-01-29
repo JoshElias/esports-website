@@ -75,7 +75,14 @@ var redbull = angular.module('app.redbull', [
                                             id: $localStorage.draftId
                                         }
                                     }
-                                }).$promise;
+                                }).$promise.then(function (data) {
+                                    return data;
+                                }).catch(function (response) {
+                                    if (response.statusCode === 404) {
+                                        delete $localStorage.draftId;
+                                        return RedbullDraft.create().$promise;
+                                    }
+                                });
                             } else {
                                 return RedbullDraft.create().$promise;
                             }
