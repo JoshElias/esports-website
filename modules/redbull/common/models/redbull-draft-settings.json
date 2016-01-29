@@ -16,7 +16,7 @@
     },
     "deckBuildTimeLimit": {
       "type": "number",
-      "default": 25
+      "default": 30
     },
     "deckBuildGracePeriod": {
       "type": "number",
