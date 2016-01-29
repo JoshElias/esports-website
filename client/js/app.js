@@ -695,49 +695,155 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
-                            tempostormDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
+                            tempostormDecks: ['$stateParams', '$q', 'Deck', 'Vote', function ($stateParams, $q, Deck, Vote) {
                                 var klass = $stateParams.k || false,
                                     page = $stateParams.p || 1,
                                     perpage = 4,
                                     search = $stateParams.s || '',
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
-
-                                return Deck.find({
-                                    filter: {
-                                        where: {
-                                            isPublic: true,
-                                            isFeatured: true
-                                        },
-                                        fields: {
-                                            name: true,
-                                            description: true,
-                                            slug: true,
-                                            heroName: true,
-                                            authorId: true,
-                                            voteScore: true,
-                                            playerClass: true,
-                                            createdDate: true,
-                                            premium: true,
-                                        },
-                                        include: [
-                                          {
-                                            relation: "author",
-                                            scope: {
-                                              fields: [
-                                                'id',
-                                                'username'
-                                              ]
+                                
+                                var d = $q.defer();
+                                
+                                async.waterfall([
+                                    function (waterCB) {
+                                        Deck.find({
+                                            filter: {
+                                                where: {
+                                                    isPublic: true,
+                                                    isFeatured: true
+                                                },
+                                                fields: {
+                                                    chapters: false,
+                                                },  
+                                                include: [
+                                                  {
+                                                    relation: "author",
+                                                    scope: {
+                                                      fields: [
+                                                        'id',
+                                                        'username'
+                                                      ]
+                                                    }
+                                                  },
+                                                  {
+                                                      relation: "votes"
+                                                  }
+                                                ],
+                                                order: "createdDate DESC",
+                                                skip: (page * perpage) - perpage,
+                                                limit: perpage
                                             }
-                                          }
-                                        ],
-                                        order: "createdDate DESC",
-                                        skip: (page * perpage) - perpage,
-                                        limit: perpage
+                                        })
+                                        .$promise
+                                        .then(function (tempoDecks) {
+                                            return waterCB(null, tempoDecks);
+                                        })
+                                        .catch(function (err) {
+                                            return waterCB(err);
+                                        });
+                                    },
+                                    function (tempoDecks, waterCB) {
+                                        async.each(tempoDecks, function(tempoDeck, tempoDeckCB) {
+                                            
+                                            console.log('tempoDeck:', tempoDeck);
+                                            Vote.getScore({
+                                                parentId: tempoDeck.id
+                                            })
+                                            .$promise
+                                            .then(function (deckScore) {
+                                                console.log('deckScore:', deckScore);
+                                                tempoDeck.deckScore = deckScore;
+                                                return tempoDeckCB();
+                                            })
+                                            .catch(function (err) {
+                                                console.log('Vote err:', err);
+                                                return tempoDeckCB(err);
+                                            });
+                                            
+                                        }, function(err) {
+                                            console.log('made it here');
+                                            if (err) {
+                                                return waterCB(err);
+                                            } else {
+                                                console.log('resolving');
+                                                console.log('tempoDecks:', tempoDecks);
+                                                return waterCB(null, tempoDecks);
+                                            }
+                                        });
                                     }
-                                })
-                                .$promise;
-
+                                ], function(err, tempoDecks) {
+                                    console.log('tempoDecks2:', tempoDecks);
+                                    if (err) {
+                                        console.log('Deck err:', err);
+                                        d.resolve(err);
+                                    } else {
+                                        console.log('GOT HERE');
+                                        d.resolve(tempoDecks)
+                                    }
+                                });
+                                
+                                return d.promise;
+                                
+//                                Deck.find({
+//                                    filter: {
+//                                        where: {
+//                                            isPublic: true,
+//                                            isFeatured: true
+//                                        },
+//                                        fields: {
+//                                            chapters: false,
+//                                            voteScore: false
+//                                        },  
+//                                        include: [
+//                                          {
+//                                            relation: "author",
+//                                            scope: {
+//                                              fields: [
+//                                                'id',
+//                                                'username'
+//                                              ]
+//                                            }
+//                                          },
+//                                          {
+//                                              relation: "votes"
+//                                          }
+//                                        ],
+//                                        order: "createdDate DESC",
+//                                        skip: (page * perpage) - perpage,
+//                                        limit: perpage
+//                                    }
+//                                })
+//                                .$promise
+//                                .then(function (tempoDecks) {
+//                                    console.log('tempoDecks:', tempoDecks);
+//                                    async.each(tempoDecks, function(tempoDeck) {
+//                                        console.log('tempoDeck:', tempoDeck);
+//                                        Vote.getScore({
+//                                            parentId: tempoDeck.id
+//                                        })
+//                                        .$promise
+//                                        .then(function (deckScore) {
+//                                            console.log('deckScore:', deckScore);
+//                                            tempoDeck.deckScore = deckScore;
+//                                        });
+//                                    }, function(err) {
+//                                        console.log('made it here');
+//                                        if (err) {
+//                                            console.log('tempo deck vote score err: ', err);
+//                                            d.resolve(err);
+//                                        } else {
+//                                            console.log('resolving');
+//                                            d.resolve(tempoDecks);
+//                                        }
+//                                    });
+//                                })
+//                                .catch(function (err) {
+//                                    console.log('tempo deck err:', err);
+//                                    d.resolve(err);
+//                                });
+//                                
+//                                return d.promise;
                             }],
                             tempostormCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var search = $stateParams.s || '';

@@ -2150,24 +2150,6 @@ angular.module('app.controllers', ['ngCookies'])
 							return wateryCB(err);
 						});
 					},
-          function (articleCreated, waterCB) {
-              var freeVote = {
-                  direction: 1,
-                  createdDate: new Date().toISOString(),
-                  authorId: User.getCurrentId()
-              };
-              
-              Article.votes.create({
-                  id: articleCreated.id
-              }, freeVote)
-              .$promise
-              .then(function (voteCreated) {
-                  return waterCB(null, articleCreated);
-              })
-              .catch(function (err) {
-                  return waterCB(err);
-              });
-          },
 					function (articleCreated, wateryCB) {
 						// add parentId from created article
 						angular.forEach(cleanArticle.related, function(articleArticle) {
@@ -11572,6 +11554,8 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount',
         function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, tempostormCount, communityDecks, communityCount) {
+            
+            console.log('tempostormDecks:', tempostormDecks);
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
             
 //            console.log('tempostormCount:', tempostormCount);
