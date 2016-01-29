@@ -53,7 +53,7 @@ module.exports = function(RedbullDeck) {
                 }
 =======
                 validateDecks(draftJSON, clientDecks, clientDecks, currentTime),
-                //fillDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
+                //normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
                 saveDecks(draft, clientDecks),
                 refreshDraftState(draft, currentTime)
 >>>>>>> working on deck fill
@@ -90,16 +90,16 @@ module.exports = function(RedbullDeck) {
     function validateDecks(draftJSON, clientDecks, clientOptions, currentTime) {
         return function(finalCb) {
 
+            var validationErr = new Error("Redbull Decks submitted were invalid");
+            validationErr.statusCode = 422;
+            validationErr.code = "INVALID_REDBULL_DECKS";
+
             // Did they break the curfew
             if (currentTime > draftJSON.deckSubmitCurfew) {
                 // If so they they all random decks
                 var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
                 return finalCb(undefined, randomDecks);
             }
-
-            var invalidDeckErr = new Error("Invalid structure was submitted as draft deck");
-            invalidDeckErr.statusCode = 422;
-            invalidDeckErr.code = 'DRAFT_DECK_VALIDATION_ERROR';
 
             var validationReport = {
                 deckErrors: [],
@@ -113,8 +113,14 @@ module.exports = function(RedbullDeck) {
                 validateCardAmounts(draftJSON, clientDecks, clientOptions, validationReport),
                 validateDeckStructure(clientDecks, validationReport)
             ], function (err) {
-                if(err === true) return finalCb(undefined, validationReport)
-                return finalCb(err, validationReport);
+                if(err && err !== true) return finalCb(err);
+
+                if(!clientOptions || !clientOptions.hasTimedOut) {
+                    validationErr.report = validationReport;
+                    return finalCb(validationErr);
+                }
+
+                return finalCb(undefined, validationReport);
             });
         }
     }
@@ -289,7 +295,7 @@ module.exports = function(RedbullDeck) {
 
     // DECK FILLING
 
-    function fillDecks(draft, draftJSON, clientDecks, clientOptions, currentTime) {
+    function normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime) {
         return function(validationReport, finalCb) {
 
             var validationReport = {
@@ -299,7 +305,14 @@ module.exports = function(RedbullDeck) {
                 deckErrors: []
             };
 
+            // Check if the submission had invalid cards
+            if(validationReport.hasInvalidCards) {
+                var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
+                return finalCb(undefined, randomDecks);
+            }
 
+            // If we have invalid cards, remove them from the decks
+            
 
             var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
             return finalCb(undefined, randomDecks);
@@ -408,7 +421,7 @@ module.exports = function(RedbullDeck) {
         }
     }
 
-    function completePartialDecks(draftJSON, clientDecks, clientOptions) {
+    function normalizeDecks(draftJSON, clientDecks, clientOptions) {
 
         // Keep Track of total card pool
         var availableDeckCards = {};
@@ -454,6 +467,11 @@ module.exports = function(RedbullDeck) {
 
     }
 
+    // Will either add more cards from our pool or return the excess ones it removed
+    function normalizeDeck(currentDeck, availableDeckCards) {
+
+    }
+
     function subtractUsedCards(availableDeckCards, clientDecks) {
 
         // Iterate over all the clients decks
@@ -485,10 +503,9 @@ module.exports = function(RedbullDeck) {
         }
     }
 
-    // Will either add more cards from our pool or return the excess ones it removed
-    function normalizeDeck(currentDeck, availableDeckCards) {
+    function subtractUsedCards(availableDeckCards, clientDecks) {
 
-    }
+
 
 
 
@@ -521,7 +538,7 @@ module.exports = function(RedbullDeck) {
 
             return draft.updateAttributes({
                 deckBuildStopTime: currentTime,
-                hasDecksContructed: true
+                hasDecksConstructed: true
             }, function (err) {
                 if (err) return finalCb(err);
 
