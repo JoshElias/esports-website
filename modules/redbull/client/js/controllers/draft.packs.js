@@ -31,9 +31,9 @@ angular.module('redbull.controllers')
     
     // file variables
     var fileLocations = [];
-    var imagePath = (tpl !== './') ? 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
+    var imagePath = (tpl !== './') ? tpl + 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
     var ext = getAudioExt();
-    var audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/';
+    var audioPath = (tpl !== './') ? tpl + 'audio/' : 'dist/audio/';
     
     function getAudioExt () {
         var audioTest = new Audio();
@@ -56,7 +56,7 @@ angular.module('redbull.controllers')
     }
     for (var i = 0; i < cardImages.length; i++) {
         // TODO: make https
-        fileLocations.push( 'https://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
+        fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
     }
     
     // image files
