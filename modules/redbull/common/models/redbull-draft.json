@@ -40,9 +40,6 @@
     "deckSubmitCurfew": {
       "type": "number"
     },
-    "packOpenerString": {
-      "type": "string"
-    },
     "isOfficial": {
       "type": "boolean",
       "default": false
