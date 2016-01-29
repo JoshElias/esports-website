@@ -67,9 +67,10 @@ var redbull = angular.module('app.redbull', [
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
                             return RedbullDraftSettings.findOne().$promise;
                         }],
-                        draft: ['$localStorage', 'RedbullDraft', function ($localStorage, RedbullDraft) {
+                        draft: ['$localStorage', 'RedbullDraft', '$q', function ($localStorage, RedbullDraft, $q) {
+                            var d = $q.defer();
                             if ($localStorage.draftId) {
-                                return RedbullDraft.findOne({
+                                RedbullDraft.findOne({
                                     filter: {
                                         where: {
                                             id: $localStorage.draftId
@@ -96,16 +97,26 @@ var redbull = angular.module('app.redbull', [
                                         }
                                     }
                                 }).$promise.then(function (data) {
-                                    return data;
+                                    return d.resolve(data);
                                 }).catch(function (response) {
-                                    if (response.statusCode === 404) {
-                                        delete $localStorage.draftId;
-                                        return RedbullDraft.create().$promise;
+                                    console.error(response);
+                                    if (response.status === 404) {
+                                        RedbullDraft.create().$promise
+                                        .then(function (data) {
+                                            $localStorage.draftId = data.id;
+                                            d.resolve(data);
+                                        }).catch(function (response) {
+                                            console.error(response);
+                                        });
                                     }
                                 });
                             } else {
-                                return RedbullDraft.create().$promise;
+                                RedbullDraft.create().$promise
+                                .then(function (data) {
+                                    d.resolve(data);
+                                });
                             }
+                            return d.promise;
                         }]
                     }
                 }
