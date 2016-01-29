@@ -90,16 +90,13 @@ module.exports = function(RedbullDraft) {
 
         // Check if user as already drafted packs
         if (!draft.hasOpenedPacks) {
-            var decodedPackOpenerData = JSON.parse(draft.packOpenerString);
-            alreadyDraftedErr.packOpenerData = decodedPackOpenerData;
+            //var decodedPackOpenerData = JSON.parse(draft.packOpenerString);
+            //alreadyDraftedErr.packOpenerData = decodedPackOpenerData;
             return finalCb(alreadyDraftedErr);
         }
 
         // Make another query for the cards
         return RedbullDraft.findById(draft.id, {
-            fields: {
-                packOpenerString: false
-            },
             include: ["cards"]
         }, function (err, deckbuilderData) {
             if (err) finalCb(err);
@@ -127,7 +124,7 @@ module.exports = function(RedbullDraft) {
 
             // Update the draft with the compressed packOpenerData and packOpeningStartTime
             var draftUpdates = {
-                packOpenerString: JSON.stringify(packOpenerData),
+                //packOpenerString: JSON.stringify(packOpenerData),
                 packOpeningStartTime: Date.now()
             };
 
@@ -181,10 +178,6 @@ module.exports = function(RedbullDraft) {
         finalCb = finalCb || utils.createPromiseCallback();
 
         RedbullDraft.findById(draftId, {
-            fields: {
-                packOpenerString: false,
-                isOfficial : false
-            },
             include: ["settings"]
         }, function (err, draft) {
             if (err) return finalCb(err);
@@ -211,8 +204,6 @@ module.exports = function(RedbullDraft) {
                 if(err) return finalCb(err);
 
                 draftJSON = newDraft.toJSON();
-                delete draftJSON.packOpenerString;
-                delete draftJSON.isOfficial;
                 return finalCb(undefined, draftJSON);
             });
         });
@@ -246,9 +237,6 @@ module.exports = function(RedbullDraft) {
         // Does the given draft exist and have official set?
         return RedbullDraft.findById(draftId,
             {
-                fields: {
-                    packOpenerString: false
-                },
                 include: [
                     {
                         relation: "cards",
