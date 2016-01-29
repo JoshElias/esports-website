@@ -31,9 +31,9 @@ angular.module('redbull.controllers')
     
     // file variables
     var fileLocations = [];
-    var imagePath = (tpl !== './') ? tpl + 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
+    var imagePath = (tpl !== './') ? 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
     var ext = getAudioExt();
-    var audioPath = (tpl !== './') ? tpl + 'audio/' : 'dist/audio/';
+    var audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/';
     
     function getAudioExt () {
         var audioTest = new Audio();
