@@ -37,7 +37,8 @@
                             <div class="pack {{packs[expansion].className}}" data-expansion="{{expansion}}"></div>
                         </div>
                         <div class="pack-label">
-                            <span class="{{packs[expansion].className}}">{{expansion}}</span>
+                            <span class="{{packs[expansion].className}}" ng-if="expansion !== 'Basic'">{{expansion}}</span>
+                            <span class="{{packs[expansion].className}}" ng-if="expansion === 'Basic'">Classic</span>
                         </div>
                     </div>
                 </div>
