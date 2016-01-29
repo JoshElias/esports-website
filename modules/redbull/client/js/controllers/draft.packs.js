@@ -7,7 +7,7 @@ angular.module('redbull.controllers')
     }
     
     // TODO: REMOVE THIS BEFORE LAUNCH
-    document.addEventListener("keydown", skipPacks, false);
+    /*document.addEventListener("keydown", skipPacks, false);
     function skipPacks (e) {
         if (e.which === 13) {
             $scope.goingToBuild = true;
@@ -17,7 +17,7 @@ angular.module('redbull.controllers')
                 console.error('Unable to update draft');
             });
         }
-    }
+    }*/
     
     // variables
     $scope.isLoading = true;
