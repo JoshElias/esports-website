@@ -1,5 +1,7 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draftSettings, draft){
+.controller('DraftPacksCtrl', [
+    '$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft', 
+    function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draftSettings, draft){
     if (draft.hasOpenedPacks) { return $state.go('^.build'); }
     
     if (!$localStorage.draftId && !draft.isOfficial) {
@@ -19,6 +21,39 @@ angular.module('redbull.controllers')
         }
     }*/
     
+    function dirtyPacks (packs) {
+        var newPacks = {};
+        
+        _.each(packs, function (pack) {
+            var expansion;
+            var cards = [];
+            
+            _.each(pack.packCards, function (packCard) {
+                // expansion
+                expansion = packCard.expansion; // name, className, numOfPacks
+
+                // cards for pack
+                cards.push(packCard.card);
+            });
+            
+            if (!newPacks[expansion.name]) {
+                newPacks[expansion.name] = {
+                    name: expansion.name,
+                    className: expansion.className,
+                    numOfPacks: expansion.numOfPacks,
+                    packs: []
+                };
+            }
+            newPacks[expansion.name].packs.push({
+                cards: cards,
+                className: expansion.className,
+                expansionName: expansion.name
+            });
+        });
+        
+        return newPacks;
+    }
+    
     // variables
     $scope.isLoading = true;
     $scope.isSuccessful = false;
@@ -27,7 +62,12 @@ angular.module('redbull.controllers')
     
     // packs
     $scope.currentPack = {};
-    $scope.packs = JSON.parse(draft.packOpenerString);
+    
+    if (draft.packOpenerData) {
+        $scope.packs = draft.packOpenerData;
+    } else {
+        $scope.packs = dirtyPacks(draft.packs);
+    }
     
     // file variables
     var fileLocations = [];

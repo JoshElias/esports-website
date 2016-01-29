@@ -73,6 +73,26 @@ var redbull = angular.module('app.redbull', [
                                     filter: {
                                         where: {
                                             id: $localStorage.draftId
+                                        },
+                                        include: {
+                                            relation: 'packs',
+                                            scope: {
+                                                include: [{
+                                                    relation: 'packCards',
+                                                    scope: {
+                                                        include: [{
+                                                            relation: 'card',
+                                                            scope: {
+                                                                fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text']
+                                                            }
+                                                        },{
+                                                            relation: 'expansion'
+                                                        }],
+                                                        order: 'orderNum ASC'
+                                                    }
+                                                }],
+                                                order: 'orderNum ASC'
+                                            }
                                         }
                                     }
                                 }).$promise;
