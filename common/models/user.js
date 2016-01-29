@@ -754,8 +754,8 @@ module.exports = function(User) {
             subscription.cancel(user, cb);
         });
     };
-
-
+    
+    
 
     User.remoteMethod(
         'isInRoles',

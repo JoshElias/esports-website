@@ -8,7 +8,7 @@ module.exports = {
         }
     },
     js: {
-        src: ['client/dist/js/angular.min.js', 'client/dist/js/app.min.js', 'client/dist/js/vendor.min.js', 'client/dist/js/modules.min.js'],
+        src: ['client/dist/js/angular.min.js', 'client/dist/js/app.min.js', 'client/dist/js/vendor.min.js', 'client/dist/js/modules.min.js', 'client/dist/js/lb-services.min.js'],
         dest: 'client/dist/js/'
     },
     css: {

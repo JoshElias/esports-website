@@ -13,16 +13,44 @@
     "createdDate": {
       "type": "date"
     },
-    "parentName": {
-      "type": "string"
-    }
+    "authorId": {},
+    "articleId": {},
+    "guideId": {},
+    "deckId": {},
+    "snapshotId": {},
+    "commentId": {}
   },
   "validations": [],
   "relations": {
-    "ownerId": {
+    "author": {
       "type": "belongsTo",
       "model": "user",
-      "foreignKey": ""
+      "foreignKey": "authorId"
+    },
+    "article": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "articleId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
+    },
+    "comment": {
+      "type": "belongsTo",
+      "model": "comment",
+      "foreignKey": "commentId"
     }
   },
   "acls": [
@@ -48,6 +76,26 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getScore"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "hasVoted"
     }
   ],
   "methods": {}

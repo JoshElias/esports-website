@@ -887,7 +887,6 @@ var app = angular.module('app', [
                                 });
 
                             }],
-
                             deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
                                 var deckID = deck.id;
 

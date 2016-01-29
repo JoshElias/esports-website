@@ -37,7 +37,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <!-- lbServices -->
-    <script src="{cdnUrl}js/services/lb-services.js"></script>
+    <script src="{cdnUrl}js/{assets.lb-services_min_js}"></script>
 
     <!-- modules -->
     <script src="{cdnUrl}js/{assets.modules_min_js}"></script>
