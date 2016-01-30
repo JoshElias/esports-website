@@ -1312,6 +1312,15 @@ angular.module('app.services', [])
                 });
 
                 return out;
+            },
+            tallyVotes: function (obj) {
+                var tempScore = 0;
+                _.each(obj.votes, function(objVote) {
+
+                    tempScore += objVote.direction;
+
+                });
+                return tempScore;
             }
         };
     }])
@@ -2532,7 +2541,7 @@ angular.module('app.services', [])
             }
         };
     }])
-    .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
+    .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', 'Util', function (Hero, Map, Guide, Article, Util) {
         return {
             getArticles: function (filters, isFeatured, limit, finalCallback) {
 //                console.log(filters);
@@ -2736,9 +2745,23 @@ angular.module('app.services', [])
                                             },
                                         }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                 ]
                             }
                         }).$promise.then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tallyVotes(guide);
+                            });
+                            
                             return seriesCallback(undefined, guides, guideWhere);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -2883,9 +2906,23 @@ angular.module('app.services', [])
                                             },
                                         }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                 ]
                             }
                         }).$promise.then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tallyVotes(guide);
+                            });
+                            
                             return seriesCallback(undefined, guides, guideIds);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -2988,12 +3025,20 @@ angular.module('app.services', [])
                                     },
                                     {
                                         relation: "maps"
+                                    },
+                                    {
+                                        relation: 'votes'
                                     }
                                 ]
                             }
                         })
                             .$promise
                             .then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tallyVotes(guide);
+                            });
+                            
                             return seriesCallback(undefined, guides, guideIds);
                         })
                             .catch(function (err) {
@@ -3153,9 +3198,23 @@ angular.module('app.services', [])
                                                     },
                                                 }
                                             },
+                                            {
+                                                relation: 'votes',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true
+                                                    }
+                                                }
+                                            }
                                         ]
                                     }
                                 }).$promise.then(function (guides) {
+                                    
+                                    _.each(guides, function(guide) {
+                                        guide.voteScore = Util.tallyVotes(guide);
+                                    });
+                                    
                                     return waterCallback(undefined, guides);
                                 }).catch(function (err) {
                                     return waterCallback(err);

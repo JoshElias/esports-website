@@ -624,7 +624,7 @@ var app = angular.module('app', [
                                   }
                                 }).$promise;
                             }],
-                            dataDecksTempostorm: ['Deck', function (Deck) {
+                            dataDecksTempostorm: ['Deck', 'Util', function (Deck, Util) {
                                 return Deck.find({
                                   filter: {
                                     limit: 10,
@@ -633,6 +633,7 @@ var app = angular.module('app', [
                                         isFeatured: true
                                     },
                                     fields: {
+                                      id: true,
                                       name: true,
                                       description: true,
                                       deckType: true,
@@ -644,11 +645,29 @@ var app = angular.module('app', [
                                       slug: true,
                                       createdDate: true
                                     },
-                                    include: ['author']
+                                    include: [
+                                        {
+                                            relation: 'author'
+                                        },
+                                        {
+                                            relation: 'votes'
+                                        }
+                                    ]
                                   }
-                                }).$promise;
+                                }).$promise
+                                .then(function (tempoDecks) {
+                                    
+                                    _.each(tempoDecks, function(tempoDeck) {
+                                        tempoDeck.voteScore = Util.tallyVotes(tempoDeck);
+                                    });
+                                    
+                                    return tempoDecks;
+                                })
+                                .catch(function (err) {
+                                    console.log('deck.find err:', err);
+                                });
                             }],
-                            dataDecksCommunity: ['Deck', function (Deck) {
+                            dataDecksCommunity: ['Deck', 'Util', function (Deck, Util) {
                                 return Deck.find({
                                   filter: {
                                     limit: 10,
@@ -658,6 +677,7 @@ var app = angular.module('app', [
                                         isFeatured: false
                                     },
                                     fields: {
+                                      id: true,
                                       name: true,
                                       description: true,
                                       deckType: true,
@@ -669,9 +689,33 @@ var app = angular.module('app', [
                                       slug: true,
                                       createdDate: true
                                     },
-                                    include: ['author']
+                                    include: [
+                                        {
+                                            relation: 'author'
+                                        },
+                                        {
+                                            relation: 'votes',
+                                            scope: {
+                                                fields: {
+                                                    id: true,
+                                                    direction: true
+                                                }
+                                            }
+                                        }
+                                    ]
                                   }
-                                }).$promise;
+                                }).$promise
+                                .then(function (comDecks) {
+                                    
+                                    _.each(comDecks, function(comDeck) {
+                                        comDeck.voteScore = Util.tallyVotes(comDeck);
+                                    });
+                                    
+                                    return comDecks;
+                                })
+                                .catch(function (err) {
+                                    console.log('com decks err:', err);
+                                });
                             }]
                         }
                     }
@@ -743,107 +787,25 @@ var app = angular.module('app', [
                                             return waterCB(err);
                                         });
                                     },
-                                    function (tempoDecks, waterCB) {
-                                        async.each(tempoDecks, function(tempoDeck, tempoDeckCB) {
-                                            
-                                            console.log('tempoDeck:', tempoDeck);
-                                            Vote.getScore({
-                                                parentId: tempoDeck.id
-                                            })
-                                            .$promise
-                                            .then(function (deckScore) {
-                                                console.log('deckScore:', deckScore);
-                                                tempoDeck.deckScore = deckScore;
-                                                return tempoDeckCB();
-                                            })
-                                            .catch(function (err) {
-                                                console.log('Vote err:', err);
-                                                return tempoDeckCB(err);
-                                            });
-                                            
-                                        }, function(err) {
-                                            console.log('made it here');
-                                            if (err) {
-                                                return waterCB(err);
-                                            } else {
-                                                console.log('resolving');
-                                                console.log('tempoDecks:', tempoDecks);
-                                                return waterCB(null, tempoDecks);
-                                            }
-                                        });
-                                    }
                                 ], function(err, tempoDecks) {
-                                    console.log('tempoDecks2:', tempoDecks);
                                     if (err) {
                                         console.log('Deck err:', err);
                                         d.resolve(err);
                                     } else {
-                                        console.log('GOT HERE');
+                                        _.each(tempoDecks, function(tempoDeck) {
+                                            var tempScore = 0;
+                                            _.each(tempoDeck.votes, function(vote) {
+                                                
+                                                tempScore += vote.direction
+                                                
+                                            });
+                                            tempoDeck.voteScore = tempScore;
+                                        });
                                         d.resolve(tempoDecks)
                                     }
                                 });
                                 
                                 return d.promise;
-                                
-//                                Deck.find({
-//                                    filter: {
-//                                        where: {
-//                                            isPublic: true,
-//                                            isFeatured: true
-//                                        },
-//                                        fields: {
-//                                            chapters: false,
-//                                            voteScore: false
-//                                        },  
-//                                        include: [
-//                                          {
-//                                            relation: "author",
-//                                            scope: {
-//                                              fields: [
-//                                                'id',
-//                                                'username'
-//                                              ]
-//                                            }
-//                                          },
-//                                          {
-//                                              relation: "votes"
-//                                          }
-//                                        ],
-//                                        order: "createdDate DESC",
-//                                        skip: (page * perpage) - perpage,
-//                                        limit: perpage
-//                                    }
-//                                })
-//                                .$promise
-//                                .then(function (tempoDecks) {
-//                                    console.log('tempoDecks:', tempoDecks);
-//                                    async.each(tempoDecks, function(tempoDeck) {
-//                                        console.log('tempoDeck:', tempoDeck);
-//                                        Vote.getScore({
-//                                            parentId: tempoDeck.id
-//                                        })
-//                                        .$promise
-//                                        .then(function (deckScore) {
-//                                            console.log('deckScore:', deckScore);
-//                                            tempoDeck.deckScore = deckScore;
-//                                        });
-//                                    }, function(err) {
-//                                        console.log('made it here');
-//                                        if (err) {
-//                                            console.log('tempo deck vote score err: ', err);
-//                                            d.resolve(err);
-//                                        } else {
-//                                            console.log('resolving');
-//                                            d.resolve(tempoDecks);
-//                                        }
-//                                    });
-//                                })
-//                                .catch(function (err) {
-//                                    console.log('tempo deck err:', err);
-//                                    d.resolve(err);
-//                                });
-//                                
-//                                return d.promise;
                             }],
                             tempostormCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var search = $stateParams.s || '';
@@ -856,7 +818,7 @@ var app = angular.module('app', [
                                 .$promise;
 
                             }],
-                            communityDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
+                            communityDecks: ['$stateParams', '$q', 'Deck', function ($stateParams, $q, Deck) {
                                 var klass = $stateParams.k || false,
                                     page = $stateParams.p || 1,
                                     perpage = 12,
@@ -864,31 +826,76 @@ var app = angular.module('app', [
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
 
-                                return Deck.find({
-                                    filter: {
-                                        where: {
-                                            isFeatured: false,
-                                            isPublic: true
-                                        },
-                                        fields: {
-                                            name: true,
-                                            description: true,
-                                            slug: true,
-                                            heroName: true,
-                                            authorId: true,
-                                            voteScore: true,
-                                            playerClass: true,
-                                            dust: true,
-                                            createdDate: true,
-                                            premium: true
-                                        },
-                                        include: ["author"],
-                                        order: "createdDate DESC",
-                                        skip: (page * perpage) - perpage,
-                                        limit: perpage
+                                var d = $q.defer();
+                                
+                                async.waterfall([
+                                    function (waterCB) {
+                                        Deck.find({
+                                            filter: {
+                                                where: {
+                                                    isFeatured: false,
+                                                    isPublic: true
+                                                },
+                                                fields: {
+                                                    id: true,
+                                                    name: true,
+                                                    description: true,
+                                                    slug: true,
+                                                    heroName: true,
+                                                    authorId: true,
+                                                    voteScore: true,
+                                                    playerClass: true,
+                                                    dust: true,
+                                                    createdDate: true,
+                                                    premium: true
+                                                },
+                                                include: [
+                                                  {
+                                                    relation: "author",
+                                                    scope: {
+                                                      fields: [
+                                                        'id',
+                                                        'username'
+                                                      ]
+                                                    }
+                                                  },
+                                                  {
+                                                      relation: "votes"
+                                                  }
+                                                ],
+                                                order: "createdDate DESC",
+                                                skip: (page * perpage) - perpage,
+                                                limit: perpage
+                                            }
+                                        })
+                                        .$promise
+                                        .then(function (comDecks) {
+//                                            console.log('comDecks:', comDecks);
+                                            return waterCB(null, comDecks);
+                                        })
+                                        .catch(function (err) {
+                                            return waterCB(err);
+                                        });
+                                    },
+                                ], function(err, comDecks) {
+                                    if (err) {
+                                        console.log('Deck err:', err);
+                                        d.resolve(err);
+                                    } else {
+                                        _.each(comDecks, function(comDeck) {
+                                            var tempScore = 0;
+                                            _.each(comDeck.votes, function(vote) {
+                                                
+                                                tempScore += vote.direction
+                                                
+                                            });
+                                            comDeck.voteScore = tempScore;
+                                        });
+                                        d.resolve(comDecks)
                                     }
-                                })
-                                .$promise;
+                                });
+                                
+                                return d.promise;
                             }],
                             communityCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var search = $stateParams.s || '';
@@ -933,6 +940,7 @@ var app = angular.module('app', [
                             }],
                             deck: ['$stateParams', '$state', 'Deck', function ($stateParams, $state, Deck) {
                                 var stateSlug = $stateParams.slug;
+//                                console.log('stateSlug:', stateSlug);
                                 return Deck.findOne({
                                     filter: {
                                         where: {
@@ -1595,7 +1603,7 @@ var app = angular.module('app', [
                                   console.log(err);
                               });
                             }],
-                            dataGuidesCommunity: ['Guide', function (Guide) {
+                            dataGuidesCommunity: ['Guide', 'Util', function (Guide, Util) {
                               return Guide.find({
                                 filter: {
                                   limit: 10,
@@ -1658,18 +1666,32 @@ var app = angular.module('app', [
                                         },
                                       }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                   ]
                                 }
                               })
                               .$promise
-                              .then(function (data) {
-                                  return data;
+                              .then(function (comGuides) {
+                                  
+                                  _.each(comGuides, function(comGuide) {
+                                      comGuide.voteScore = Util.tallyVotes(comGuide);
+                                  });
+                                  
+                                  return comGuides;
                               })
                               .catch(function (err) {
                                   console.log(err);
                               });
                             }],
-                            dataGuidesFeatured: ['Guide', function (Guide) {
+                            dataGuidesFeatured: ['Guide', 'Util', function (Guide, Util) {
                               return Guide.find({
                                 filter: {
                                   limit: 10,
@@ -1725,12 +1747,26 @@ var app = angular.module('app', [
                                         },
                                       }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                   ]
                                 }
                               })
                               .$promise
-                              .then(function (data) {
-                                  return data;
+                              .then(function (tempoGuides) {
+                                  
+                                  _.each(tempoGuides, function(tempoGuide) {
+                                      tempoGuide.voteScore = Util.tallyVotes(tempoGuide);
+                                  });
+                                  
+                                  return tempoGuides;
                               })
                               .catch(function (err) {
                                   console.log(err);
@@ -1796,7 +1832,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            dataCommunityGuides: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                            dataCommunityGuides: ['$stateParams', 'Guide', 'Util', function ($stateParams, Guide, Util) {
                               return Guide.find({
                                 filter: {
                                   limit: 10,
@@ -1856,9 +1892,28 @@ var app = angular.module('app', [
                                         },
                                       }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                   ]
                                 }
-                              }).$promise;
+                              }).$promise
+                              .then(function (comGuides) {
+                                  _.each(comGuides, function(comGuide) {
+                                      comGuide.voteScore = Util.tallyVotes(comGuide);
+                                  });
+                                  
+                                  return comGuides;
+                              })
+                              .catch(function (err) {
+                                  console.log('err:', err);
+                              });
                             }],
                             communityGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
@@ -1868,7 +1923,7 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                            dataTopGuide: ['$stateParams', 'Guide', 'Util', function ($stateParams, Guide, Util) {
                               var guideType = $stateParams.t || 'all',
                                     filters = $stateParams.h || false,
                                     order = $stateParams.o || 'high';
@@ -1931,17 +1986,31 @@ var app = angular.module('app', [
                                     },
                                     {
                                       relation: 'maps'
+                                    },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
                                     }
                                   ]
                                 }
                               }).$promise
                               .then(function (guides) {
+                                  
+                                  _.each(guides, function(guide) {
+                                      guide.voteScore = Util.tallyVotes(guide);
+                                  });
+                                  
                                   return guides;
                               }).catch(function(err) {
                                   console.log("error", err);
                               });
                             }],
-                            dataTempostormGuides: ['Guide', function (Guide) {
+                            dataTempostormGuides: ['Guide', 'Util', function (Guide, Util) {
                               return Guide.find({
                                 filter: {
                                   order: 'createdDate DESC',
@@ -1997,10 +2066,28 @@ var app = angular.module('app', [
                                         },
                                       }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                   ]
                                 }
                               })
-                              .$promise;
+                              .$promise
+                              .then(function (guides) {
+                                  _.each(guides, function(guide) {
+                                      guide.voteScore = Util.tallyVotes(guide);
+                                  });
+                                  return guides;
+                              })
+                              .catch(function (err) {
+                                  console.log('err:', err);
+                              });
                             }],
                             tempostormGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
@@ -2062,7 +2149,7 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            guide: ['$state', '$stateParams', 'Guide', function ($state, $stateParams, Guide) {
+                            guide: ['$state', '$stateParams', 'Guide', 'Util', function ($state, $stateParams, Guide, Util) {
                                 var slug = $stateParams.slug;
                                 return Guide.findOne({
                                     filter: {
@@ -2138,10 +2225,21 @@ var app = angular.module('app', [
                                                     }
                                                 ]
                                             }
+                                        },
+                                        {
+                                            relation: 'votes',
+                                            scope: {
+                                                fields: {
+                                                    id: true,
+                                                    direction: true
+                                                }
+                                            }
                                         }
                                       ]
                                     }
                                 }).$promise.then(function (data) {
+                                    console.log('testing');
+                                    data.voteScore = Util.tallyVotes(data);
                                     return data;
                                 })
                                 .catch(function (err) {
