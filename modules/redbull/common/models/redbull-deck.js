@@ -26,43 +26,16 @@ module.exports = function(RedbullDeck) {
 
         return async.waterfall(
             [
-<<<<<<< aff3c83aca9d75f93826db296ad3622bba4e5a6f
-                function(seriesCb) {
-                    validateDecks(draftJSON, clientDecks, seriesCb);
-                },
-                function(seriesCb) {
-                    saveDecks(draft, clientDecks, seriesCb);
-                },
-                // Refresh draft state
-                function(createdDecks, seriesCb) {
-
-                    // Refresh draft state
-                    currentTime = Date.now();
-                    return draft.updateAttributes({
-                        deckBuildStopTime: currentTime,
-                        hasDecksConstructed: true
-                    }, function (err) {
-                        if (err) return finalCb(err);
-
-                        // return only the created decks Ids
-                        var createdDeckIds = _.map(createdDecks, function (createdDeck) {
-                            return createdDeck.id;
-                        });
-                        return seriesCb(undefined, createdDeckIds);
-                    });
-                }
-=======
                 validateDecks(draftJSON, clientDecks, clientDecks, currentTime),
                 //normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
                 saveDecks(draft, clientDecks),
                 refreshDraftState(draft, currentTime)
->>>>>>> working on deck fill
             ],
             finalCb
         );
     };
 
-<<<<<<< aff3c83aca9d75f93826db296ad3622bba4e5a6f
+
     function saveDecks(draft, decks, finalCb) {
         var savedDecks = [];
         return async.eachSeries(decks, function (deck, deckCb) {
@@ -79,11 +52,6 @@ module.exports = function(RedbullDeck) {
             return finalCb(err, savedDecks);
         });
     }
-
-=======
->>>>>>> working on deck fill
-
-
 
     // DECK VALIDATION
 
