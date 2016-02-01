@@ -11,7 +11,17 @@
                 <h3 class="m-b-xl">Sealed Deck Generator</h3>
                 <p class="m-b-xl"><strong>Tempo Storm</strong> has partnered with <strong>Red Bull</strong> and <strong>Honda</strong> to bring you a first of its kind tool; the Tempo Storm Sealed Deck Generator. This new tool provides you with the ability to open packs and craft unique decks in a way never before possible!</p>
                 
-                <a ui-sref="app.hs.draft.packs" class="m-t-xl hidden-xs pack-button tourney-button btn-blue ">Open packs now!</a>
+                <button class="m-t-xl hidden-xs pack-button tourney-button btn-blue" ng-click="draftLoadingToggle()" ng-disabled="isDraftLoading()">
+                    
+                    <span ng-if="!isDraftLoading()">Open packs now!</span>
+                    <span ng-if="isDraftLoading()">Loading </span>
+                    <i class="fa fa-refresh fa-spin" ng-if="isDraftLoading()"></i>
+                
+                </button>
+                
+                
+                
+                
                 <div class="m-t-xl hidden-sm hidden-md hidden-lg hidden-xl pack-button tourney-button override ">Not Available on Mobile</div>
 <!--
                 <div class="m-t-xl pack-button tourney-button override ">Coming Soon</div>

@@ -5,6 +5,11 @@ angular.module('redbull.controllers')
         return $state.transitionTo('app.redbull.tournament.draft.packs');
     }
     
+    function goToPacks () {
+        return $state.transitionTo('app.hs.draft.packs');
+    }
+    
+    
     $scope.playerLogin = function () {
         if(!User.isAuthenticated()) {
             LoginModalService.showModal('login', function () {
@@ -13,6 +18,26 @@ angular.module('redbull.controllers')
         } else {
             return goToDrafts();
         }
+    };
+    
+    var draftLoading = false;
+    // return if fast forwarding
+    $scope.isDraftLoading = function () {
+        return draftLoading;
+    };
+
+    // start fast forwarding
+    $scope.draftLoadingToggle = function () {
+        if (!draftLoading) {
+            draftLoading = true;
+            //el.addClass('fast-forward');
+           // nextEvent();
+        } else {
+            draftLoading = false;
+            //el.removeClass('fast-forward');
+        }
+        
+        goToPacks();
     };
     
 }]);
