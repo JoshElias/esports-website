@@ -73,7 +73,7 @@ module.exports = function(RedbullDraft) {
             }
 
             // Check if the active player has already done a draft
-            return RedbullDraft.findOne({where: {authorId: userId, isOfficial:true}}, function (err, draft) {
+            return RedbullDraft.findOne({where: {authorId: userId, isOfficial:true, isActive:true}}, function (err, draft) {
                 if (err) return finalCb(err);
                 else if (!draft) return finalCb();
 
