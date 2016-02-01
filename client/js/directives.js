@@ -155,6 +155,7 @@ angular.module('app.directives', ['ui.load'])
                     $scope.setLoggingIn(1);
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
                         LoginService.login(email, password, $scope.remember, function(err, data) {
+                          console.log("loginForm data: ", data);
                             if (err) {
                                 AlertService.setError({ show: true, msg: "Error logging in" });
 
@@ -708,10 +709,10 @@ angular.module('app.directives', ['ui.load'])
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
             var parentId = votable.id;
-            
+
             function getVoteInfo () {
                 setLoading(true);
-                
+
                 return Vote.getScore({
                     parentId: parentId
                 })
@@ -727,7 +728,7 @@ angular.module('app.directives', ['ui.load'])
                             score: score.score,
                             hasVoted: hasVoted.hasVoted
                         }
-                        
+
                         setLoading(false);
                         return;
                     });
@@ -735,31 +736,31 @@ angular.module('app.directives', ['ui.load'])
             }
             //initial load
             getVoteInfo();
-            
+
             function setLoading (bool) {
                 loading = bool;
             }
-            
+
             $scope.voteInfo = {}
-            
+
             $scope.isLoading = function () {
                 if (_.isEmpty($scope.voteInfo) || loading) {
                     return true;
                 }
-                
+
                 return false;
             }
-            
+
             $scope.hasVoted = function (direction) {
                 return $scope.voteInfo.hasVoted == direction;
             }
-            
+
             $scope.vote = function (direction) {
                 if(loading)
                     return;
-                
+
                 setLoading(true);
-                
+
                 if (_.isNull(LoopBackAuth.currentUserId)) {
                     setLoading(false);
                     LoginModalService.showModal('login', function () {
@@ -770,11 +771,11 @@ angular.module('app.directives', ['ui.load'])
                         var where = {}
                             where[objType + "Id"] = votable.id;
                             where["authorId"] = LoopBackAuth.currentUserId;
-                        
-                        Vote.findOne({ 
-                            filter: { 
+
+                        Vote.findOne({
+                            filter: {
                                 where: where
-                            } 
+                            }
                         })
                         .$promise
                         .then(function (vote) {
@@ -796,7 +797,7 @@ angular.module('app.directives', ['ui.load'])
                     }
                 }
             }
-            
+
             EventService.registerListener(EventService.EVENT_LOGIN, getVoteInfo);
             EventService.registerListener(EventService.EVENT_LOGOUT, getVoteInfo);
         }]
