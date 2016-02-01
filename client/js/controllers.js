@@ -231,8 +231,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone',
-        function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone) {
+    .controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone', 'Util',
+        function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone, Util) {
             // data
             $scope.articles = dataArticles;
             $scope.tempostormDecks = dataDecksTempostorm;
@@ -292,10 +292,10 @@ angular.module('app.controllers', ['ngCookies'])
                         limit: 10,
                         order: "createdDate DESC",
                         where: {
-                            isPublic: true,
                             isFeatured: true
                         },
                         fields: {
+                            id: true,
                             name: true,
                             authorId: true,
                             description: true,
@@ -303,9 +303,23 @@ angular.module('app.controllers', ['ngCookies'])
                             premium: true,
                             voteScore: true,
                             heroName: true,
-                            createdDate: true
+                            createdDate: true,
+                            slug: true
                         },
-                        include: ['author']
+                        include: [
+                            {
+                                relation: 'author'
+                            },
+                            {
+                                relation: 'votes',
+                                scope: {
+                                    fields: {
+                                        id: true,
+                                        direction: true
+                                    }
+                                }
+                            }
+                        ]
                     }
                 };
 
@@ -319,10 +333,14 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
 
-                Deck.find(options).$promise.then(function (data) {
-                    $timeout(function () {
-                        $scope.tempostormDecks = data;
+                Deck.find(options)
+                .$promise
+                .then(function (tempoDecks) {
+                    _.each(tempoDecks, function(tempoDeck) {
+                        tempoDeck.voteScore = Util.tallyVotes(tempoDeck);
                     });
+                    
+                    $scope.tempostormDecks = tempoDecks;
                 });
             }
 
@@ -336,6 +354,7 @@ angular.module('app.controllers', ['ngCookies'])
                             isFeatured: false
                         },
                         fields: {
+                            id: true,
                             name: true,
                             authorId: true,
                             description: true,
@@ -343,9 +362,23 @@ angular.module('app.controllers', ['ngCookies'])
                             premium: true,
                             voteScore: true,
                             heroName: true,
-                            createdDate: true
+                            createdDate: true,
+                            slug: true
                         },
-                        include: ['author']
+                        include: [
+                            {
+                                relation: 'author'
+                            },
+                            {
+                                relation: 'votes',
+                                scope: {
+                                    fields: {
+                                        id: true,
+                                        direction: true
+                                    }
+                                }
+                            }
+                        ]
                     }
                 };
 
@@ -359,10 +392,14 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
 
-                Deck.find(options).$promise.then(function (data) {
-                    $timeout(function () {
-                        $scope.communityDecks = data;
+                Deck.find(options)
+                .$promise
+                .then(function (comDecks) {
+                    _.each(comDecks, function(comDeck) {
+                        comDeck.voteScore = Util.tallyVotes(comDeck);
                     });
+                    
+                    $scope.communityDecks = comDecks;
                 });
             }
 
@@ -11554,7 +11591,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount',
         function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, tempostormCount, communityDecks, communityCount) {
-            
             console.log('tempostormDecks:', tempostormDecks);
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
             
@@ -11611,6 +11647,7 @@ angular.module('app.controllers', ['ngCookies'])
                             isPublic: true
                         },
                         fields: {
+                            id: true,
                             name: true,
                             description: true,
                             slug: true,
@@ -11657,6 +11694,9 @@ angular.module('app.controllers', ['ngCookies'])
                     if (err) return console.log('got err:', err);
                     $scope.tempostormPagination.page = page;
                     $scope.tempostormPagination.perpage = perpage;
+                    _.each(data, function(deck) {
+                        deck.voteScore = Util.tallyVotes(deck);
+                    });
                     $scope.tempostormDecks = data;
                     $scope.tempostormPagination.total = count.count;
                     if (callback) {
@@ -11683,6 +11723,9 @@ angular.module('app.controllers', ['ngCookies'])
                     if (err) return console.log('got err:', err);
                     $scope.communityPagination.page = page;
                     $scope.communityPagination.perpage = perpage;
+                    _.each(data, function(deck) {
+                        deck.voteScore = Util.tallyVotes(deck);
+                    });
                     $scope.communityDecks = data;
                     $scope.communityPagination.total = count.count;
                     if (callback) {
@@ -11719,7 +11762,7 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User', 'DeckBuilder',
         function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User, DeckBuilder) {
             
-            console.log('deckWithMulligans:', deckWithMulligans);
+//            console.log('deckWithMulligans:', deckWithMulligans);
             
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
@@ -11736,7 +11779,6 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (userRoles) {
-                        console.log('userRoles1:', userRoles);
                         Deck.findById({
                             id: $scope.deck.id,
                             filter: {
@@ -15123,13 +15165,15 @@ angular.module('app.controllers', ['ngCookies'])
                      if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                         async.parallel([
                             function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, 1, function(err, guides) {
+//                                    console.log('guides:', guides);
                                     $scope.guidesFeatured = guides;
                                     initializing = false;
                                 });
                             },
                             function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, 1, function(err, guides) {
+//                                    console.log('guides:', guides);
                                     $scope.guidesCommunity = guides;
                                     initializing = false;
                                 });
@@ -15321,14 +15365,14 @@ angular.module('app.controllers', ['ngCookies'])
                if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetHeroMapGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides) {
+                    doGetHeroMapGuides(1, 1, $scope.filters, null, function(err, guides) {
                       if (err) return seriesCallback(err);
                       $scope.topGuides = guides;
                       initializing = false;
                       return seriesCallback();
                     });
                   }, function (seriesCallback) {
-                    doGetHeroMapGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
+                    doGetHeroMapGuides(1, 4, $scope.filters, true, function(err, guides, count) {
 
                       if (err) return seriesCallback(err);
                       $scope.tempostormGuides = guides;
@@ -15338,7 +15382,7 @@ angular.module('app.controllers', ['ngCookies'])
                       return seriesCallback();
                     });
                   }, function (seriesCallback) {
-                    doGetHeroMapGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
+                    doGetHeroMapGuides(1, 10, $scope.filters, false, function(err, guides, count) {
 
                       if (err) return seriesCallback(err);
                       $scope.communityGuides = guides;
@@ -15445,7 +15489,7 @@ angular.module('app.controllers', ['ngCookies'])
               }
             }
           
-            function doGetHeroMapGuides (page, perpage, search, filters, isFeatured, callback) {
+            function doGetHeroMapGuides (page, perpage, filters, isFeatured, callback) {
               HOTSGuideQueryService.getHeroMapGuides(filters, isFeatured, perpage, page, function (err, guides, count) {
                     
                   initializing = false;
@@ -15691,6 +15735,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles', 'EventService',
         function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles, EventService) {
+            console.log('guide:', guide);
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 if ($scope.guide.premium.isPremium) {
                     User.isInRoles({
@@ -15862,7 +15907,6 @@ angular.module('app.controllers', ['ngCookies'])
                       val.talent.name = "Missing Talent"
                       val.talent.description = "Seems like this talent has been removed."
                   }; 
-                  console.log(val);
                   return (val.guideHeroId === hero.id); 
               });
                 
@@ -16168,8 +16212,7 @@ angular.module('app.controllers', ['ngCookies'])
                 ];
                 
                 stripped.voteScore = 1;
-                
-//                console.log('before save:', stripped);
+                console.log('before save:', stripped);
 //                console.log('$scope.guide:', $scope.guide);
                   Guide.create({}, stripped)
                 .$promise
