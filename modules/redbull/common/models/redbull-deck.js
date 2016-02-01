@@ -373,7 +373,7 @@ module.exports = function(RedbullDeck) {
 >>>>>>> merged for end of day
 
             // If we have invalid cards, remove them from the decks
-            
+
 
             var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
             return finalCb(undefined, randomDecks);
