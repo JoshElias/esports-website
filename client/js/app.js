@@ -161,9 +161,7 @@ var app = angular.module('app', [
                   // Load the current user data if we don't have it
                     currentUser: ['User', 'LoopBackAuth',
                         function(User, LoopBackAuth) {
-                          console.log("app LoopBackAuth", LoopBackAuth);
                             if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
-                              console.log("getCurrent fired: ", User.getCurrent().$promise);
                               return User.getCurrent().$promise;
                             }
                             return LoopBackAuth.currentUserData;
@@ -3590,16 +3588,12 @@ var app = angular.module('app', [
             .state('app.admin', {
                 abstract: true,
                 url: 'admin',
-              onEnter: ['LoopBackAuth', function(LoopBackAuth){
-                console.log("onEnterAdmin: ", LoopBackAuth.currentUserData);
-              }],
                 views: {
                     content: {
                         templateUrl: tpl + 'views/admin/index.html',
                         resolve: {
                           admin: ['User', 'LoopBackAuth', '$state', function(User, LoopBackAuth, $state){
                             var currentUser = LoopBackAuth.currentUserData;
-                            console.log(currentUser);
                                 var roles = {};
                                 User.isInRoles({uid:currentUser.id, roleNames:['$admin', '$redbullAdmin']}).$promise
                                     .then(function(val){
