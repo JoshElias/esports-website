@@ -1869,77 +1869,86 @@ var app = angular.module('app', [
                                 }).$promise;
                             }],
                             dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                              var guideType = $stateParams.t || 'all',
-                                    filters = $stateParams.h || false,
-                                    order = $stateParams.o || 'high';
-
-                              return Guide.find({
-                                filter: {
-                                  order: 'voteScore DESC',
-                                  limit: 1,
-                                  where: {
-                                      guideType: "hero",
-                                  },
-                                  fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              include: ['talents'],
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                    {
-                                      relation: 'maps'
-                                    }
-                                  ]
-                                }
-                              }).$promise
-                              .then(function (guides) {
-                                  return guides;
-                              }).catch(function(err) {
-                                  console.log("error", err);
-                              });
+                                Guide.topGuide({})
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                });
+                                
+//                              var guideType = $stateParams.t || 'all',
+//                                    filters = $stateParams.h || false,
+//                                    order = $stateParams.o || 'high';
+//
+//                              return Guide.find({
+//                                filter: {
+//                                  order: 'voteScore DESC',
+//                                  limit: 1,
+//                                  where: {
+//                                      guideType: "hero",
+//                                  },
+//                                  fields: [
+//                                    "name", 
+//                                    "authorId", 
+//                                    "slug", 
+//                                    "voteScore", 
+//                                    "guideType", 
+//                                    "premium", 
+//                                    "id", 
+//                                    "talentTiers",
+//                                    "createdDate"
+//                                  ],
+//                                  include: [
+//                                    {
+//                                      relation: "author",
+//                                      scope: {
+//                                        fields: ['username']
+//                                      }
+//                                    },
+//                                    {
+//                                      relation: 'guideHeroes',
+//                                      scope: {
+//                                        include: [
+//                                          {
+//                                            relation: 'talents'
+//                                          },
+//                                          {
+//                                            relation: 'hero',
+//                                            scope: {
+//                                              include: ['talents'],
+//                                              fields: ['name', 'className']
+//                                            }
+//                                          }
+//                                        ]
+//                                      }
+//                                    },
+//                                    {
+//                                      relation: 'guideTalents',
+//                                      scope: {
+//                                        include: {
+//                                          relation: 'talent',
+//                                          scope: {
+//                                            fields: {
+//                                              name: true,
+//                                              className: true
+//                                            }
+//                                          }
+//                                        }
+//                                      }
+//                                    },
+//                                    {
+//                                      relation: 'maps'
+//                                    }
+//                                  ]
+//                                }
+//                              }).$promise
+//                              .then(function (guides) {
+//                                  return guides;
+//                              }).catch(function(err) {
+//                                  console.log("error", err);
+//                              });
                             }],
                             dataTempostormGuides: ['Guide', function (Guide) {
                               return Guide.find({

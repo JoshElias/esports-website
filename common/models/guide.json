@@ -153,6 +153,13 @@
       "property": "create"
     },
     {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "topGuide"
+    },
+    {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
