@@ -85,7 +85,7 @@ var redbull = angular.module('app.redbull', [
                                                         include: [{
                                                             relation: 'card',
                                                             scope: {
-                                                                fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text']
+                                                                fields: ['cardType', 'cost', 'expansion', 'name', 'photoNames', 'playerClass', 'rarity']
                                                             }
                                                         },{
                                                             relation: 'expansion'
@@ -257,6 +257,141 @@ var redbull = angular.module('app.redbull', [
             },
             seo: { title: 'Sealed Deck Generator', description: '', keywords: '' }
         })
+        .state('app.hs.redbull.draft', {
+            abstract: true,
+            url: '/tournament',
+            views: {
+                redbull: {
+                    templateUrl: moduleTpl + 'draft.html',
+                    controller: 'DraftCtrl'
+                }
+            },
+            access: { auth: true }
+        })
+        .state('app.hs.redbull.draft.packs', {
+            url: '',
+            views: {
+                'redbull-draft': {
+                    templateUrl: moduleTpl + 'draft.packs.html',
+                    controller: 'DraftPacksCtrl',
+                    resolve: {
+                        draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
+                            return RedbullDraftSettings.findOne().$promise;
+                        }],
+                        draft: ['$localStorage', 'RedbullDraft', '$q', function ($localStorage, RedbullDraft, $q) {
+                            var d = $q.defer();
+                            if ($localStorage.draftId) {
+                                RedbullDraft.findOne({
+                                    filter: {
+                                        where: {
+                                            id: $localStorage.draftId,
+                                            isOfficial: true,
+                                            isActive: true
+                                        },
+                                        include: {
+                                            relation: 'packs',
+                                            scope: {
+                                                include: [{
+                                                    relation: 'packCards',
+                                                    scope: {
+                                                        include: [{
+                                                            relation: 'card',
+                                                            scope: {
+                                                                fields: ['cardType', 'cost', 'expansion', 'name', 'photoNames', 'playerClass', 'rarity']
+                                                            }
+                                                        },{
+                                                            relation: 'expansion'
+                                                        }],
+                                                        order: 'orderNum ASC'
+                                                    }
+                                                }],
+                                                order: 'orderNum ASC'
+                                            }
+                                        }
+                                    }
+                                }).$promise.then(function (data) {
+                                    return d.resolve(data);
+                                }).catch(function (response) {
+                                    console.error(response);
+                                    if (response.status === 404) {
+                                        RedbullDraft.create({ isOfficial: true }).$promise
+                                        .then(function (data) {
+                                            $localStorage.draftId = data.id;
+                                            d.resolve(data);
+                                        }).catch(function (response) {
+                                            console.error(response);
+                                        });
+                                    }
+                                });
+                            } else {
+                                RedbullDraft.create({ isOfficial: true }).$promise
+                                .then(function (data) {
+                                    d.resolve(data);
+                                });
+                            }
+                            return d.promise;
+                        }]
+                    }
+                }
+            },
+            seo: { title: 'Sealed Deck Generator', description: '', keywords: '' },
+            access: { auth: true }
+        })
+        .state('app.hs.redbull.draft.build', {
+            url: '/build',
+            views: {
+                'redbull-draft': {
+                    templateUrl: moduleTpl + 'draft.build.html',
+                    controller: 'DraftBuildCtrl',
+                    resolve: {
+                        draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
+                            return RedbullDraftSettings.findOne().$promise;
+                        }],
+                        draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
+                            if ($localStorage.draftId) {
+                                return RedbullDraft.findOne({
+                                    filter: {
+                                        where: {
+                                            id: $localStorage.draftId,
+                                            isOfficial: true,
+                                            isActive: true
+                                        },
+                                        fields: ['id', 'hasOpenedPacks'],
+                                        include: [
+                                            {
+                                                relation: 'cards',
+                                                scope: {
+                                                    fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
+                                                    order: ['cost ASC', 'name ASC']
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }).$promise.then(function (data) {
+                                    if (!data.hasOpenedPacks) {
+                                        $state.go('app.hs.draft.packs');
+                                        return $q.reject();
+                                    } else {
+                                        return data;
+                                    }
+                                });
+                            } else {
+                                $state.go('app.hs.draft.packs');
+                                return $q.reject();
+                            }
+                        }],
+                        draftCards: ['draft', function (draft) {
+                            return draft.cards;
+                        }],
+                        draftBuildStart: ['$localStorage', 'RedbullDraft', 'draft', function ($localStorage, RedbullDraft, draft) {
+                            return RedbullDraft.startDraftBuild({ draftId: draft.id }).$promise;
+                        }]
+                    }
+                }
+            },
+            seo: { title: 'Sealed Deck Generator', description: '', keywords: '' },
+            access: { auth: true }
+        })
         .state('app.admin.redbull', {
             abstract: true,
             url: '/redbull',
@@ -314,50 +449,6 @@ var redbull = angular.module('app.redbull', [
         ;
     }
 ]);
-
-/*
-        .state('app.hs.redbull.draft', {
-            abstract: true,
-            url: '/tournament',
-            views: {
-                redbull: {
-                    templateUrl: moduleTpl + 'draft.html',
-                    controller: 'DraftCtrl'
-                }
-            },
-            access: { auth: true }
-        })
-        .state('app.hs.redbull.draft.packs', {
-            url: '',
-            views: {
-                'redbull-draft': {
-                    templateUrl: moduleTpl + 'draft.packs.html',
-                }
-            },
-            seo: { title: 'Redbull' },
-            access: { auth: true }
-        })
-        .state('app.hs.redbull.draft.build', {
-            url: '/build',
-            views: {
-                'redbull-draft': {
-                    templateUrl: moduleTpl + 'draft.build.html',
-                    controller: 'DraftBuildCtrl',
-                    resolve: {
-                        cards: ['$state', 'DraftCards', function ($state, DraftCards) {
-                            var cards = DraftCards.getCards();
-                            if (!cards.length) {
-                                return $state.go('app.hs.redbull.draft.packs');
-                            }
-                            return cards;
-                        }]
-                    }
-                }
-            },
-            seo: { title: 'Redbull' },
-            access: { auth: true }
-        })
-*/
 
 angular.module('redbull.controllers', []);
 angular.module('redbull.services', []);

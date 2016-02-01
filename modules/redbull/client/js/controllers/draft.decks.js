@@ -1,8 +1,13 @@
 angular.module('redbull.controllers')
-.controller('DraftDecksCtrl', ['$scope', '$compile', '$filter', 'Hearthstone', 'DeckBuilder', 'bootbox', 'Pagination', 'draft', 'draftCards', 'draftDecks',
-    function ($scope, $compile, $filter, Hearthstone, DeckBuilder, bootbox, Pagination, draft, draftCards, draftDecks) {
+.controller('DraftDecksCtrl', ['$scope', '$compile', '$filter', 'Hearthstone', 'DeckBuilder', 'bootbox', 'Pagination', 'MetaService', 'draft', 'draftCards', 'draftDecks',
+    function ($scope, $compile, $filter, Hearthstone, DeckBuilder, bootbox, Pagination, MetaService, draft, draftCards, draftDecks) {
         $scope.draftId = draft.id;
 
+        // meta
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set('Sealed Deck Generator', '');
+        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/sealed/decks/' + $scope.draftId, 'Sealed Deck Generator', '', 'article', '');        
+        
         // tournament settings
         $scope.tournament = {
             allowDuplicateClasses: false,
