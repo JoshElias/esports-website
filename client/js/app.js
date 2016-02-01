@@ -3592,7 +3592,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/admin/index.html',
                         resolve: {
-                            app: ['User', 'currentUser', '$state', function(User, currentUser, $state){
+                          admin: ['User', 'LoopBackAuth', '$state', function(User, LoopBackAuth, $state){
+                            var currentUser = LoopBackAuth.currentUserData;
                                 var roles = {};
                                 User.isInRoles({uid:currentUser.id, roleNames:['$admin', '$redbullAdmin']}).$promise
                                     .then(function(val){
@@ -3600,10 +3601,8 @@ var app = angular.module('app', [
                                         if (!!roles.none){
                                             $state.go('app.404');
                                         }
+                                      return true;
                                     });
-                            }],
-                            admin: ['User', function (User) {
-                                return true;
                             }]
                         }
                     }
