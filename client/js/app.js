@@ -1832,15 +1832,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            dataCommunityGuides: ['$stateParams', 'Guide', 'Util', function ($stateParams, Guide, Util) {
-                              return Guide.find({
-                                filter: {
-                                  limit: 10,
-                                  order: 'createdDate DESC',
-                                  where: {
-                                    isFeatured: false,
-                                    isPublic: true
-                                  },
+                            guideQueryParams: function () {
+                              return { 
                                   fields: [
                                     "name", 
                                     "authorId", 
@@ -1854,9 +1847,6 @@ var app = angular.module('app', [
                                   ],
                                   include: [
                                     {
-                                      relation: 'maps'
-                                    },
-                                    {
                                       relation: "author",
                                       scope: {
                                         fields: ['username']
@@ -1866,9 +1856,6 @@ var app = angular.module('app', [
                                       relation: 'guideHeroes',
                                       scope: {
                                         include: [
-                                          {
-                                            relation: 'talents'
-                                          },
                                           {
                                             relation: 'hero',
                                             scope: {
@@ -1902,6 +1889,19 @@ var app = angular.module('app', [
                                         }
                                     }
                                   ]
+                              }
+                            },
+                            dataCommunityGuides: ['$stateParams', 'Guide', 'Util', 'guideQueryParams', function ($stateParams, Guide, Util, guideQueryParams) {
+                              return Guide.find({
+                                filter: {
+                                    limit: 10,
+                                    order: 'createdDate DESC',
+                                    where: {
+                                        isFeatured: false,
+                                        isPublic: true
+                                    },
+                                    fields: guideQueryParams.fields,
+                                    include: guideQueryParams.include
                                 }
                               }).$promise
                               .then(function (comGuides) {
@@ -1923,94 +1923,98 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            dataTopGuide: ['$stateParams', 'Guide', 'Util', function ($stateParams, Guide, Util) {
-                              var guideType = $stateParams.t || 'all',
-                                    filters = $stateParams.h || false,
-                                    order = $stateParams.o || 'high';
-
-                              return Guide.find({
-                                filter: {
-                                  order: 'voteScore DESC',
-                                  limit: 1,
-                                  where: {
-                                      guideType: "hero",
-                                  },
-                                  fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
+                            dataTopGuide: ['$stateParams', 'Guide', 'Util', 'guideQueryParams', '$q', function ($stateParams, Guide, Util, guideQueryParams, $q) {
+                                var d = $q.defer();
+                                async.waterfall([
+                                    function (seriesCb) {
+                                        Guide.topGuide({})
+                                        .$promise
+                                        .then(function (data) {
+                                            console.log(data);
+                                            return seriesCb(undefined, data);
+                                        })
+                                        .catch(function (err) {
+                                            console.log(err);
+                                        })
                                     },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              include: ['talents'],
-                                              fields: ['name', 'className']
+                                    function (guideId, seriesCb) {
+                                        Guide.find({
+                                            filter: {
+                                                where: {
+                                                    id: guideId.id
+                                                },
+                                                fields: guideQueryParams.fiends,
+                                                include: [
+                                                    {
+                                                      relation: "author",
+                                                      scope: {
+                                                        fields: ['username']
+                                                      }
+                                                    },
+                                                    {
+                                                      relation: 'guideHeroes',
+                                                      scope: {
+                                                        include: [
+                                                          {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                              fields: ['name', 'className'],
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents'
+                                                                    }
+                                                                ]
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    },
+                                                    {
+                                                      relation: 'guideTalents',
+                                                      scope: {
+                                                        include: {
+                                                          relation: 'talent',
+                                                          scope: {
+                                                            fields: {
+                                                              name: true,
+                                                              className: true
+                                                            }
+                                                          }
+                                                        },
+                                                      }
+                                                    },
+                                                    {
+                                                        relation: 'votes',
+                                                        scope: {
+                                                            fields: {
+                                                                id: true,
+                                                                direction: true
+                                                            }
+                                                        }
+                                                    }
+                                                  ]
                                             }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                    {
-                                      relation: 'maps'
-                                    },
-                                    {
-                                        relation: 'votes',
-                                        scope: {
-                                            fields: {
-                                                id: true,
-                                                direction: true
-                                            }
-                                        }
+                                        })
+                                        .$promise
+                                        .then(function (data) {
+                                            console.log(data);
+                                            return seriesCb(undefined, data);
+                                        })
+                                        .catch(function (err) {
+                                            return seriesCb(err);
+                                        })
                                     }
-                                  ]
-                                }
-                              }).$promise
-                              .then(function (guides) {
-                                  
-                                  _.each(guides, function(guide) {
-                                      guide.voteScore = Util.tallyVotes(guide);
-                                  });
-                                  
-                                  return guides;
-                              }).catch(function(err) {
-                                  console.log("error", err);
-                              });
+                                ], function (err, guide) {
+                                    if (err) 
+                                        return console.log(err);
+                                    
+                                    d.resolve(guide);
+                                });
+                                
+                                return d.promise;
+                                
                             }],
-                            dataTempostormGuides: ['Guide', 'Util', function (Guide, Util) {
+                            dataTempostormGuides: ['Guide', 'Util', 'guideQueryParams', function (Guide, Util, guideQueryParams) {
                               return Guide.find({
                                 filter: {
                                   order: 'createdDate DESC',
@@ -2018,64 +2022,8 @@ var app = angular.module('app', [
                                   where: {
                                     isFeatured: true
                                   },
-                                  fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        },
-                                      }
-                                    },
-                                    {
-                                        relation: 'votes',
-                                        scope: {
-                                            fields: {
-                                                id: true,
-                                                direction: true
-                                            }
-                                        }
-                                    }
-                                  ]
+                                  fields: guideQueryParams.fields,
+                                  include: guideQueryParams.include
                                 }
                               })
                               .$promise
