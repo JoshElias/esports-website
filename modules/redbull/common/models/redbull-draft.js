@@ -38,6 +38,7 @@ module.exports = function(RedbullDraft) {
         });
     }
 
+    // TODO: kick an unauthorized user
     function checkForOfficialDraft(clientData, finalCb) {
         var User = RedbullDraft.app.models.user;
 
