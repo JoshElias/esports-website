@@ -27,7 +27,7 @@ module.exports = function(RedbullDeck) {
         return async.waterfall(
             [
                 validateDecks(draftJSON, clientDecks, clientDecks, currentTime),
-                //normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
+                normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
                 saveDecks(draft, clientDecks),
                 refreshDraftState(draft, currentTime)
             ],
@@ -70,7 +70,7 @@ module.exports = function(RedbullDeck) {
             }
 
             var validationReport = {
-                deckErrors: [],
+                deckErrors: {},
                 hasInvalidCards: false,
                 unauthorized: false,
                 passed: true
@@ -225,14 +225,14 @@ module.exports = function(RedbullDeck) {
                         if (deckCard.card.playerClass !== playerClass && deckCard.card.playerClass !== "Neutral") {
 
                             // Update report with error
-                            if(!validationReport[clientDecks.name]) {
-                                validationReport[clientDecks.name] = {};
+                            if(!validationReport.deckErrors[clientDecks.name]) {
+                                validationReport.deckErrors[clientDecks.name] = {};
                             }
-                            if(!validationReport[clientDecks.name].invalidCards) {
-                                validationReport[clientDecks.name].invalidCards = [];
+                            if(!validationReport.deckErrors[clientDecks.name].invalidCards) {
+                                validationReport.deckErrors[clientDecks.name].invalidCards = [];
                             }
 
-                            validationReport[clientDecks.name].invalidCards.push(deckCard.cardId);
+                            validationReport.deckErrors[clientDecks.name].invalidCards.push(deckCard.cardId);
                             validationReport.passed = false
                         }
                         cardCount += deckCard.cardQuantity;
@@ -244,7 +244,7 @@ module.exports = function(RedbullDeck) {
                         if(!validationReport[clientDecks.name]) {
                             validationReport[clientDecks.name] = {};
                         }
-                        validationReport[clientDecks.name].invalidQuantity = cardCount - 30;
+                        validationReport[clientDecks.name].invalidQuantity = cardCount;
                         validationReport.passed = false
                     }
                 }
@@ -261,7 +261,7 @@ module.exports = function(RedbullDeck) {
 
 
 
-    // DECK FILLING
+    // DECK NORMALIZING
 
     function normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime) {
         return function(validationReport, finalCb) {
@@ -280,24 +280,195 @@ module.exports = function(RedbullDeck) {
             }
 
             // If we have invalid cards, remove them from the decks
+            clientDecks = removeInvalidCards(clientDecks, validationReport);
+            clientDecks = removeExtraCards(clientDecks, validationReport);
+            var availableDeckComponents = getAvailableDeckComponents(draftJSON, clientDecks);
 
-
-            var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
-            return finalCb(undefined, randomDecks);
-
-            var deckSubmitCurfew = draftJSON.settings.deckSubmitCurfew;
-            var numOfDecks = draftJSON.settings.numOfDecks;
-
-            validationReport
-
-
+            // Fill incomplete decks with the remaining cards
+            clientDecks = completeDecks(clientDecks, availableDeckComponents, draftJSON);
 
             // If none of those other things then the decks should pass validation
             return finalCb(undefined, clientDecks);
         }
     }
 
-    function createRandomDecks(numOfDecks, draftJSON) {
+
+
+    function removeInvalidCards(clientDecks, validationReport) {
+
+        // Iterate over all the clients decks
+        var deckIndex = clientDecks.length;
+        var currDeck;
+        var deckErrors;
+        var invalidCardIndex;
+        var currInvalidCardId;
+
+        var deckCardIndex;
+        var currDeckCard;
+
+        while(deckIndex--) {
+            currDeck = clientDecks[deckIndex];
+
+            // Does this deck have any invalid cards
+            deckErrors = validationReport.deckErrors[currDeck.name];
+            if(deckErrors && Array.isArray(deckErrors.invalidCards) && deckErrors.invalidCards.length > 0) {
+
+                // Iterate over deck's invalid cards
+                invalidCardIndex = deckErrors.invalidCards.length;
+                while(invalidCardIndex--) {
+                    currInvalidCardId = deckErrors.invalidCards[invalidCardIndex];
+
+                    // Remove this card from the client deck
+
+                    // Iterate through the current deck's deckCards to remove it
+                    deckCardIndex = currDeck.deckCards.length;
+                    while(deckCardIndex--) {
+                        currDeckCard = currDeck.deckCards[deckCardIndex];
+
+                        // We found the card
+                        if(currInvalidCardId === currDeckCard.cardId) {
+
+                            // Subtract this card from our available card
+                            clientDecks[deckIndex].deckCards[deckCardIndex].cardQuantity--; currDeckCard.cardQuantity--;
+
+                            // If this deckCard has a zero quantity, remove it
+                            if(clientDecks[deckIndex].deckCards[deckCardIndex].cardQuantity < 1) {
+                                clientDecks[deckIndex].deckCards.splice(deckCardIndex, 1);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return clientDecks;
+    }
+
+
+    function removeExtraCards(availableDeckCards, clientDecks) {
+
+        // Iterate over total number of decks
+        var deckIndex = clientDecks.length;
+        var currDeck;
+        var cardCount;
+
+        var deckCardIndex;
+        var currDeckCard;
+        var overflowAmount;
+        while(deckIndex--) {
+            currDeck = clientDecks[deckIndex];
+            cardCount = 0;
+
+            // Iterate over the deckCards for this deck
+            deckCardIndex = currDeck.deckCards.length;
+            while(deckCardIndex--) {
+                currDeckCard = currDeck.deckCards[deckCardIndex];
+
+                // This deck is already full of cards. Anything else is extra
+                if(cardCount >= 30) {
+                    currDeck.deckCards.splice(deckCardIndex, 1);
+                    continue;
+                }
+
+                // Check if this card is pushing the card amount over limit
+                overflowAmount = cardCount + currDeckCard.cardQuantity - 30;
+                if(overflowAmount > 0) {
+
+                    // Since the deck is not full yet, it must still need one card
+                    clientDecks[deckIndex].deckCards[deckCardIndex].cardQuantity = 1;
+                    cardCount++;
+                }
+
+                // Add to the card count
+                cardCount += clientDecks[deckIndex].deckCards[deckCardIndex].cardQuantity;
+            }
+        }
+
+        return clientDecks;
+    }
+
+
+    function getAvailableDeckComponents(draftJSON, clientDecks) {
+
+        var availableDeckComponents = {
+            deckCards: {},
+            classes: HS_CLASSES
+        };
+
+        // Get all of the deck cards available in this draft and index by cardId
+        var cardIndex = draftJSON.cards.length;
+        var currentCard;
+        var cardId;
+        while (cardIndex--) {
+            currentCard = draftJSON.cards[i];
+            cardId = currentCard.id.toString();
+            if (!availableDeckComponents.deckCards[cardId]) {
+                availableDeckComponents.deckCards[cardId] = {
+                    playerClass: currentCard.playerClass,
+                    cardQuantity: 1,
+                    cardId: cardId
+                };
+            } else {
+                availableDeckComponents.deckCards[cardId].cardQuantity++;
+            }
+        }
+
+        // Subtract the cards used in the client decks
+        var deckIndex = clientDecks.length;
+        var currDeck;
+
+        var deckCardIndex;
+        var currDeckCard;
+        var playerClassIndex;
+        while(deckIndex--) {
+            currDeck = clientDecks[deckIndex];
+
+            // Remove deck's playerClass from the available classes
+            playerClassIndex = availableDeckComponents.classes.index(currDeck.playerClass);
+            if(playerClassIndex != -1) {
+                availableDeckComponents.classes.splice(playerClassIndex, i);
+            }
+
+            // Iterate over the deckCards
+            deckCardIndex = currDeck.deckCards.length;
+            while(deckCardIndex--) {
+                currDeckCard = currDeck.deckCards[deckCardIndex];
+
+                cardId = currDeckCard.cardId;
+                // Should not need to check if the cardId exists
+                availableDeckComponents.deckCards[cardId].cardQuantity -= currDeckCard.cardQuantity;
+                if(availableDeckComponents.deckCards[cardId].cardQuantity < 1) {
+                    delete availableDeckComponents.deckCards[cardId];
+                }
+            }
+        }
+
+        return availableDeckComponents;
+    }
+
+
+    function completeDecks(clientDecks, availableDeckComponents, draftJSON) {
+        var draftSettings = draftJSON.settings;
+
+        // Iterate over amount of decks for this draft
+        var deckIndex = draftSettings.numOfDecks;
+        var clientDeck;
+        while(deckIndex--) {
+
+            // Grab the client's deck
+            clientDeck = clientDecks[deckIndex];
+
+            // Did the client provide this deck
+
+                // Is it complete with 30 cards
+
+        }
+
+    }
+
+
+    function createRandomDecks(numOfDecks, draftJSON, availableDeckComponents) {
 
         var randomDecks = [];
 
@@ -388,92 +559,6 @@ module.exports = function(RedbullDeck) {
             }
         }
     }
-
-    function normalizeDecks(draftJSON, clientDecks, clientOptions) {
-
-        // Keep Track of total card pool
-        var availableDeckCards = {};
-        var currentCard;
-        var cardId;
-        var i = draftJSON.cards.length;
-        while (i--) {
-            currentCard = draftJSON.cards[i];
-            cardId = currentCard.id.toString();
-            if (!availableDeckCards[cardId]) {
-                availableDeckCards[cardId] = {
-                    playerClass: currentCard.playerClass,
-                    cardQuantity: 1,
-                    cardId: cardId
-                };
-            } else {
-                availableDeckCards[cardId].cardQuantity++;
-            }
-        }
-
-        subtractUsedCards(availableDeckCards, clientDecks);
-
-
-        // Iterate over total number of decks
-        var deckIndex = draftJSON.settings.numOfDecks;
-        var currentDeck;
-        var excessCards;
-        while(deckIndex--) {
-
-            // Check if the client has made a deck for this index
-            currentDeck = clientDecks[deckIndex];
-            if(typeof currentDeck === "object") {
-                excessCards = normalizeDeck(currentDeck, availableDeckCards);
-                if(Array.isArray(excessCards) && excessCards.length > 0) {
-
-                }
-            }
-
-
-        }
-
-        // Trim off excess cards and return result
-
-    }
-
-    // Will either add more cards from our pool or return the excess ones it removed
-    function normalizeDeck(currentDeck, availableDeckCards) {
-
-    }
-
-    function subtractUsedCards(availableDeckCards, clientDecks) {
-
-        // Iterate over all the clients decks
-        var deckIndex = clientDecks.length;
-        var currDeck;
-        var deckCardIndex;
-        var currDeckCard;
-        var cardId;
-        while(deckIndex--) {
-            currDeck = clientDecks[deckIndex];
-
-            // Iterate over deck's deckCards
-            deckCardIndex = currDeck.deckCards.length;
-            while(deckCardIndex--) {
-                currDeckCard = currDeck.deckCards[deckCardIndex];
-                cardId = currDeckCard.cardId;
-
-
-                if(availableDeckCards[cardId]) {
-
-                    // Subtract this deck card from our available card
-                    availableDeckCards[cardId].cardQuantity -= currDeckCard.cardQuantity;
-                    // If this deckCard has a zero quantity, remove it
-                    if(availableDeckCards[cardId].cardQuantity < 1) {
-                        delete availableDeckCards[cardId];
-                    }
-                }
-            }
-        }
-    }
-
-    function subtractUsedCards(availableDeckCards, clientDecks) {
-
-
 
 
 
