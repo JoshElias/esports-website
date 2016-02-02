@@ -1,0 +1,94 @@
+@import 'ts-colors.scss';
+
+// Description: 
+
+//*************************************
+
+// 1... mixins
+// 2... section specific styles
+
+
+//*************************************
+
+
+//*************************************
+// 1... mixins
+//*************************************
+
+@mixin hs-snapshot-background {
+    background: linear-gradient(to top, rgba(31, 38, 80, 0.9), rgba(32, 54, 95, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+//*************************************
+// 2... section specific styles
+//*************************************
+
+.hs-plg {
+    @include hs-snapshot-background;
+}
+
+.ow-plg {
+
+}
+
+.hots-plg {
+
+}
+
+.ts-plug {
+
+}
+
+//*************************************
+// 3... Types of plgs
+//*************************************
+
+
+.plg-sidebar {
+    padding-top: 35px;
+    padding-bottom: 35px;
+}
+
+.plg-long {
+ 
+    padding-top: 15px;
+    padding-bottom: 15px;
+    
+}
+
+.fullwidth-plg-div {
+    margin: 15px 0px;
+    width: 100%;
+}
+
+.plg-div {
+    width: 100%;
+}
+
+
+
+//*************************************
+// ---- plg standin divs ----
+//*************************************
+
+.plg-md-rt {
+    width: 300px;
+    height: 250px;
+    background-color: $hots-purple;
+    margin: auto;
+}
+
+.plg-lg-rt {
+    width: 300px;
+    height: 280px;
+    background-color: $hots-purple;
+    margin: auto;
+}
+
+.plg-leader {
+    width: 728px;
+    height: 90px;
+    background-color: $hots-purple;
+    margin: auto;
+}
