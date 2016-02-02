@@ -4,19 +4,17 @@ var _ = require("underscore");
 var utils = require("./../../../../lib/utils");
 
 var HS_CLASSES = ["Mage", "Paladin", "Rogue", "Druid", "Shaman",
-  "Warlock", "Hunter", "Priest", "Warrior"];
+    "Warlock", "Hunter", "Priest", "Warrior"];
 
 
 module.exports = function(RedbullDeck) {
 
-    RedbullDeck.saveDraftDecks = function (draft, clientDecks, finalCb) {
-console.log("clinet decks", clientDecks);
+
+    RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {
+
+        // Gather variables needed to save decks
         var currentTime = Date.now();
         var draftJSON = draft.toJSON();
-        var draftSettings = draftJSON.settings;
-        var numOfDecks = draftSettings.numOfDecks;
-        var deckSubmitCurfew = draftJSON.deckSubmitCurfew;
-
 
         // If this draft is official and the user has already
         if (draftJSON.hasDecksConstructed && draftJSON.isOfficial) {
@@ -26,19 +24,9 @@ console.log("clinet decks", clientDecks);
             return finalCb(err);
         }
 
-        // See if the curfew was breached
-        /*
-        console.log("currentTIme", currentTime);
-        console.log("deckSubmitCurfew", deckSubmitCurfew);
-
-         if (currentTime > deckSubmitCurfew) {
-         var randomDecks = createRandomDecks(numOfDecks, draftJSON);
-         return saveDecks(draft, randomDecks, finalCb);
-         }
-         */
-
         return async.waterfall(
             [
+<<<<<<< aff3c83aca9d75f93826db296ad3622bba4e5a6f
                 function(seriesCb) {
                     validateDecks(draftJSON, clientDecks, seriesCb);
                 },
@@ -63,11 +51,18 @@ console.log("clinet decks", clientDecks);
                         return seriesCb(undefined, createdDeckIds);
                     });
                 }
+=======
+                validateDecks(draftJSON, clientDecks, clientDecks, currentTime),
+                //fillDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
+                saveDecks(draft, clientDecks),
+                refreshDraftState(draft, currentTime)
+>>>>>>> working on deck fill
             ],
             finalCb
         );
     };
 
+<<<<<<< aff3c83aca9d75f93826db296ad3622bba4e5a6f
     function saveDecks(draft, decks, finalCb) {
         var savedDecks = [];
         return async.eachSeries(decks, function (deck, deckCb) {
@@ -85,35 +80,43 @@ console.log("clinet decks", clientDecks);
         });
     }
 
+=======
+>>>>>>> working on deck fill
+
+
 
     // DECK VALIDATION
 
-    function validateDecks(draftJSON, clientDecks, finalCb) {
+    function validateDecks(draftJSON, clientDecks, clientOptions, currentTime) {
+        return function(finalCb) {
 
-        var invalidDeckErr = new Error("Invalid structure was submitted as draft deck");
-        invalidDeckErr.statusCode = 422;
-        invalidDeckErr.code = 'DRAFT_DECK_VALIDATION_ERROR';
-
-        var validationReport = {
-            passed: true,
-            errors: []
-        };
-
-        return async.series([
-            validateOfficial(draftJSON, validationReport),
-            validateCardAmounts(draftJSON, clientDecks, validationReport),
-            validateDeckStructure(clientDecks, validationReport)
-        ], function(err) {
-            if(err) return finalCb(err);
-
-            // Check if validation passed
-            if(!validationReport.passed) {
-                invalidDeckErr.report = validationReport;
-                return finalCb(invalidDeckErr);
+            // Did they break the curfew
+            if (currentTime > draftJSON.deckSubmitCurfew) {
+                // If so they they all random decks
+                var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
+                return finalCb(undefined, randomDecks);
             }
 
-            return finalCb();
-        });
+            var invalidDeckErr = new Error("Invalid structure was submitted as draft deck");
+            invalidDeckErr.statusCode = 422;
+            invalidDeckErr.code = 'DRAFT_DECK_VALIDATION_ERROR';
+
+            var validationReport = {
+                deckErrors: [],
+                hasInvalidCards: false,
+                unauthorized: false,
+                passed: true
+            };
+
+            return async.series([
+                validateOfficial(draftJSON, validationReport),
+                validateCardAmounts(draftJSON, clientDecks, clientOptions, validationReport),
+                validateDeckStructure(clientDecks, validationReport)
+            ], function (err) {
+                if(err === true) return finalCb(undefined, validationReport)
+                return finalCb(err, validationReport);
+            });
+        }
     }
 
 
@@ -125,8 +128,8 @@ console.log("clinet decks", clientDecks);
                 return finalCb();
             }
 
-            function reportValidationErr(err) {
-                validationReport.errors.push(err);
+            function reportValidationErr() {
+                validationReport.unathorized = true;
                 validationReport.passed = false;
                 return finalCb()
             }
@@ -146,19 +149,19 @@ console.log("clinet decks", clientDecks);
 
             // Do the userID and authorId match
             if(userId.toString() !== draftJSON.authorId.toString()) {
-                return reportValidationErr(new Error("The user does not own the draft they are submitting too"));
+                return reportValidationErr();
             }
 
             // Do they have the right role
             return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
                 if (err) return finalCb(err);
                 else if(!isInRoles.none) return finalCb();
-                else return reportValidationErr(new Error("User must be a registered redbull user to submit to an official draft"));
+                else return reportValidationErr();
             });
         }
     }
 
-    function validateCardAmounts(draftJSON, clientDecks, validationReport) {
+    function validateCardAmounts(draftJSON, clientDecks, clientOptions, validationReport) {
         return function(finalCb) {
             try {
 
@@ -198,7 +201,6 @@ console.log("clinet decks", clientDecks);
                 }
 
                 // Look for excess cards in client data
-                var cardErrors;
                 var cardDifference;
                 var clientCardQuantity;
                 var availableCardQuantity;
@@ -207,17 +209,17 @@ console.log("clinet decks", clientDecks);
                     availableCardQuantity = availableCards[cardId];
                     cardDifference = availableCardQuantity - clientCardQuantity;
                     if (cardDifference < 0) {
-                        if (!cardErrors) cardErrors = [];
-                        cardErrors.push("Too many instances found of card", cardId);
+
+                        // Update validation state with invalid cards found
+                        validationReport.hasInvalidCards = true;
+                        validationReport.passed = false;
+
+                        // If this failed then there's no point in validating further
+                        return finalCb(true)
                     }
                 }
 
-                // Update validation state
-                if(cardErrors && cardErrors.length > 0) {
-                    validationReport.errors = validationReport.errors.concat(cardErrors);
-                    validationReport.passed = false;
-                }
-
+                // Return successfully
                 return finalCb();
 
             } catch(err) {
@@ -229,7 +231,6 @@ console.log("clinet decks", clientDecks);
     function validateDeckStructure(clientDecks, validationReport) {
         return function(finalCb) {
             try {
-                var deckErrors;
 
                 // Iterate over decks
                 var i = clientDecks.length;
@@ -248,23 +249,30 @@ console.log("clinet decks", clientDecks);
                     while (j--) {
                         deckCard = deck.deckCards[j];
                         if (deckCard.card.playerClass !== playerClass && deckCard.card.playerClass !== "Neutral") {
-                            if (!deckErrors) deckErrors = [];
-                            deckErrors.push("card " + deckCard.cardId + " is of invalid player class");
+
+                            // Update report with error
+                            if(!validationReport[clientDecks.name]) {
+                                validationReport[clientDecks.name] = {};
+                            }
+                            if(!validationReport[clientDecks.name].invalidCards) {
+                                validationReport[clientDecks.name].invalidCards = [];
+                            }
+
+                            validationReport[clientDecks.name].invalidCards.push(deckCard.cardId);
+                            validationReport.passed = false
                         }
                         cardCount += deckCard.cardQuantity;
                     }
 
                     // Check for 30 cards
                     if (cardCount !== 30) {
-                        if (!deckErrors) deckErrors = [];
-                        deckErrors.push("deck " + deck.id + " doesn't have 30 cards");
+                        // Update report with error
+                        if(!validationReport[clientDecks.name]) {
+                            validationReport[clientDecks.name] = {};
+                        }
+                        validationReport[clientDecks.name].invalidQuantity = cardCount - 30;
+                        validationReport.passed = false
                     }
-                }
-
-                // Update validation state
-                if(deckErrors && deckErrors.length > 0) {
-                    validationReport.errors = validationReport.errors.concat(deckErrors);
-                    validationReport.passed = false;
                 }
 
                 return finalCb();
@@ -276,7 +284,37 @@ console.log("clinet decks", clientDecks);
     }
 
 
-    // DECK GENERATION
+
+
+
+    // DECK FILLING
+
+    function fillDecks(draft, draftJSON, clientDecks, clientOptions, currentTime) {
+        return function(validationReport, finalCb) {
+
+            var validationReport = {
+                passed: true,
+                hasInvalidCards: false,
+                unauthorized: false,
+                deckErrors: []
+            };
+
+
+
+            var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
+            return finalCb(undefined, randomDecks);
+
+            var deckSubmitCurfew = draftJSON.settings.deckSubmitCurfew;
+            var numOfDecks = draftJSON.settings.numOfDecks;
+
+            validationReport
+
+
+
+            // If none of those other things then the decks should pass validation
+            return finalCb(undefined, clientDecks);
+        }
+    }
 
     function createRandomDecks(numOfDecks, draftJSON) {
 
@@ -367,6 +405,132 @@ console.log("clinet decks", clientDecks);
                     return deckCards;
                 }
             }
+        }
+    }
+
+    function completePartialDecks(draftJSON, clientDecks, clientOptions) {
+
+        // Keep Track of total card pool
+        var availableDeckCards = {};
+        var currentCard;
+        var cardId;
+        var i = draftJSON.cards.length;
+        while (i--) {
+            currentCard = draftJSON.cards[i];
+            cardId = currentCard.id.toString();
+            if (!availableDeckCards[cardId]) {
+                availableDeckCards[cardId] = {
+                    playerClass: currentCard.playerClass,
+                    cardQuantity: 1,
+                    cardId: cardId
+                };
+            } else {
+                availableDeckCards[cardId].cardQuantity++;
+            }
+        }
+
+        subtractUsedCards(availableDeckCards, clientDecks);
+
+
+        // Iterate over total number of decks
+        var deckIndex = draftJSON.settings.numOfDecks;
+        var currentDeck;
+        var excessCards;
+        while(deckIndex--) {
+
+            // Check if the client has made a deck for this index
+            currentDeck = clientDecks[deckIndex];
+            if(typeof currentDeck === "object") {
+                excessCards = normalizeDeck(currentDeck, availableDeckCards);
+                if(Array.isArray(excessCards) && excessCards.length > 0) {
+
+                }
+            }
+
+
+        }
+
+        // Trim off excess cards and return result
+
+    }
+
+    function subtractUsedCards(availableDeckCards, clientDecks) {
+
+        // Iterate over all the clients decks
+        var deckIndex = clientDecks.length;
+        var currDeck;
+        var deckCardIndex;
+        var currDeckCard;
+        var cardId;
+        while(deckIndex--) {
+            currDeck = clientDecks[deckIndex];
+
+            // Iterate over deck's deckCards
+            deckCardIndex = currDeck.deckCards.length;
+            while(deckCardIndex--) {
+                currDeckCard = currDeck.deckCards[deckCardIndex];
+                cardId = currDeckCard.cardId;
+
+
+                if(availableDeckCards[cardId]) {
+
+                    // Subtract this deck card from our available card
+                    availableDeckCards[cardId].cardQuantity -= currDeckCard.cardQuantity;
+                    // If this deckCard has a zero quantity, remove it
+                    if(availableDeckCards[cardId].cardQuantity < 1) {
+                        delete availableDeckCards[cardId];
+                    }
+                }
+            }
+        }
+    }
+
+    // Will either add more cards from our pool or return the excess ones it removed
+    function normalizeDeck(currentDeck, availableDeckCards) {
+
+    }
+
+
+
+
+    // SAVING
+
+    function saveDecks(draft, decks) {
+        return function(finalCb) {
+            var savedDecks = [];
+            return async.eachSeries(decks, function (deck, deckCb) {
+
+                deck.isOfficial = draft.isOfficial;
+                deck.redbullDraftId = draft.id;
+                return RedbullDeck.create(deck, function (err, newDeck) {
+                    if (err) return deckCb(err);
+
+                    savedDecks.push(newDeck);
+                    return async.eachSeries(deck.deckCards, function (deckCard, deckCardCb) {
+                        return newDeck.deckCards.create(deckCard, deckCardCb);
+                    }, deckCb);
+                });
+            }, function (err) {
+                return finalCb(err, savedDecks);
+            });
+        }
+    }
+
+    function refreshDraftState(draft, currentTime) {
+        return function (createdDecks, seriesCb) {
+
+            return draft.updateAttributes({
+                deckBuildStopTime: currentTime,
+                hasDecksContructed: true
+            }, function (err) {
+                if (err) return finalCb(err);
+
+                // return only the created decks Ids
+                var createdDeckIds = _.map(createdDecks, function (createdDeck) {
+                    return createdDeck.id;
+                });
+                return seriesCb(undefined, createdDeckIds);
+            });
         }
     }
 }
