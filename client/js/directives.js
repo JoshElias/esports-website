@@ -43,22 +43,24 @@ angular.module('app.directives', ['ui.load'])
                 setTooltip();
             });
 
-			var createUUID = function() {
-			  return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
-			}
-			var tmpUuid = createUUID();
+            var createUUID = function() {
+              return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
+            }
+            
+            var tmpUuid = createUUID();
 
             function setTooltip () {
                 var content = $compile('<img ng-src="'+scope.tooltipImg+'" alt="">')(scope);
-				var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
-				el.wTooltip({
-					delay: 500,
-					offsetX: xPos,
-					offsetY: -50,
-					content: content,
-					style: false,
-					className: 'hs-card-tooltip-' + tmpUuid
-				});
+                var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
+                
+                el.wTooltip({
+                  delay: 500,
+                  offsetX: xPos,
+                  offsetY: -50,
+                  content: content,
+                  style: false,
+                  className: 'hs-card-tooltip-' + tmpUuid
+                });
             }
 
             scope.$on('$destroy', function () {
@@ -1492,8 +1494,8 @@ angular.module('app.directives', ['ui.load'])
             }, true);
 
             scope.toggleFilterUniverse = function (universe) {
-                console.log('universe:', universe);
-                console.log('scope.filters.universes:', scope.filters.universes);
+//                console.log('universe:', universe);
+//                console.log('scope.filters.universes:', scope.filters.universes);
                 var index = scope.filters.universes.indexOf(universe);
                 if (index === -1) {
                     scope.filters.universes.push(universe);

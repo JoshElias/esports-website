@@ -426,16 +426,6 @@ var app = angular.module('app', [
                             paginationParams: ['$stateParams', 'StateParamHelper', '$q', 'Article', function($stateParams,  StateParamHelper, $q, Article) {
                                 var articleFilters = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
                                 
-                                var d = $q.defer();
-                                
-                                async.parallel([
-                                    function(paraCB){ 
-                                        
-                                    },
-                                    function(paraCB){  }
-                                ], function(err) {
-                                    
-                                });
                                 // if only 1 filter, parse into array
                                 if (angular.isString($stateParams.f)) {
                                     var tmp = $stateParams.f;
@@ -445,6 +435,8 @@ var app = angular.module('app', [
                                 
                                 // validate filters
                                 StateParamHelper.validateFilters($stateParams.f, articleFilters);
+                                
+                                StateParamHelper.validatePage($stateParams.p);
                                 
                                 var pattern = '/.*'+$stateParams.s+'.*/i',
                                 artWhere = {
@@ -545,7 +537,7 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log("roles", userRoles);
+//                                        console.log("roles", userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -668,7 +660,9 @@ var app = angular.module('app', [
                                 
                                 var artWhere = {
                                   isActive: true,
-                                  articleType: ['hs']
+                                  articleType: {
+                                      inq: ['hs']
+                                  }
                                 },
                                 tsDeckWhere = {
                                     isFeatured: true
@@ -798,6 +792,9 @@ var app = angular.module('app', [
                                 
                                 // validate filters
                                 StateParamHelper.validateFilters($stateParams.k, classFilters);
+                                
+                                StateParamHelper.validatePage($stateParams.tsp);
+                                StateParamHelper.validatePage($stateParams.comp);
                                 
                                 var pattern = '/.*'+$stateParams.s+'.*/i',
                                 tsWhere = {
@@ -1603,7 +1600,7 @@ var app = angular.module('app', [
                             filterParams: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', function($stateParams, StateParamHelper, $q, Hero, Map) {
 //                                console.log('$stateParams:', $stateParams);
 //                                console.log('first');
-                                console.log('$stateParams:', $stateParams);
+//                                console.log('$stateParams:', $stateParams);
                                 if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
                                     $stateParams.r = new Array($stateParams.r);
                                 }
@@ -1811,7 +1808,7 @@ var app = angular.module('app', [
 //                              });
                                 
                             }],
-                            dataGuidesCommunity: ['Guide', 'filterParams', '$q', 'HOTSGuideQueryService', function (Guide, filterParams, $q, HOTSGuideQueryService) {
+                            dataGuidesCommunity: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
                                 var d = $q.defer();
                                 
                                 if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
@@ -2015,11 +2012,15 @@ var app = angular.module('app', [
                                 }
                                 
                                 if (angular.isString($stateParams.u) && !_.isEmpty($stateParams.u)) {
-                                    $stateParams.u = new Array($stateParams.u)
+                                    $stateParams.u = new Array($stateParams.u);
                                 }
                                 
                                 if (angular.isString($stateParams.h) && !_.isEmpty($stateParams.h)) {
-                                    $stateParams.h = new Array($stateParams.h)
+                                    $stateParams.h = new Array($stateParams.h);
+                                }
+                                
+                                if (angular.isString($stateParams.m) && !_.isEmpty($stateParams.m)) {
+                                    $stateParams.m = new Array($stateParams.m);
                                 }
                                 
                                 var filters = {
@@ -2033,6 +2034,7 @@ var app = angular.module('app', [
                                 var possibleRoles = ['Warrior', 'Assassin', 'Support', 'Specialist'];
                                 var possibleUniverses = ['Warcraft', 'Starcraft', 'Diablo', 'Blizzard'];
                                 var possibleHeroes;
+                                var possibleMaps;
                                 
                                 StateParamHelper.validateFilters(filters.roles, possibleRoles);
                                 StateParamHelper.validateFilters(filters.universes, possibleUniverses);
@@ -2043,24 +2045,31 @@ var app = angular.module('app', [
                                 
                                 async.waterfall([
                                     function (waterCB) {
-                                        Hero.find({
-                                            filter: {
-                                                fields: {
-                                                    name: true
-                                                },
-                                                where: {
-                                                    isActive: true
+                                        if (!_.isEmpty(filters.heroes)) {
+                                            Hero.find({
+                                                filter: {
+                                                    fields: {
+                                                        name: true
+                                                    },
+                                                    where: {
+                                                        isActive: true
+                                                    }
                                                 }
-                                            }
-                                        }).$promise
-                                        .then(function (heros) {
-                                            
-                                            possibleHeroes = _.map(heros, function (hero) {
-                                                return hero.name;
+                                            }).$promise
+                                            .then(function (heros) {
+
+                                                possibleHeroes = _.map(heros, function (hero) {
+                                                    return hero.name;
+                                                });
+                                                StateParamHelper.validateFilters(filters.heroes, possibleHeroes);
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
                                             });
-                                            StateParamHelper.validateFilters(filters.heroes, possibleHeroes);
+                                        } else {
                                             return waterCB();
-                                        });
+                                        }
                                     },
                                     function (waterCB) {
                                         if (!_.isEmpty(filters.heroes)) {
@@ -2087,10 +2096,39 @@ var app = angular.module('app', [
                                     },
                                     function (waterCB) {
                                         if (filters.map) {
+                                            Map.find({
+                                                filter: {
+                                                    fields: {
+                                                        name: true
+                                                    },
+                                                    where: {
+                                                        isActive: true
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (maps) {
+
+                                                possibleMaps = _.map(maps, function (map) {
+                                                    return map.name;
+                                                });
+                                                StateParamHelper.validateFilters(filters.map, possibleMaps);
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (filters.map) {
                                             Map.findOne({
                                                 filter: {
                                                     where: {
-                                                        name: filters.map
+                                                        name: {
+                                                            inq: filters.map
+                                                        }
                                                     }
                                                 }
                                             }).$promise
@@ -2280,13 +2318,13 @@ var app = angular.module('app', [
                                   }
                                 
                                 return d.promise;
+                                
                             }],
                             communityGuideCount: ['paginationParams', 'HOTSGuideQueryService', '$q', 'StateParamHelper', 'Guide', function(paginationParams, HOTSGuideQueryService, $q, StateParamHelper, Guide) {
                                 
                                 var d = $q.defer();
                                 
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
-                                    
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
                                             return d.resolve(err);
@@ -2298,7 +2336,6 @@ var app = angular.module('app', [
                                     });
                                     
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
-                                      
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
                                             return d.resolve(err);
@@ -2310,7 +2347,6 @@ var app = angular.module('app', [
                                       });
                                       
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
-                                      
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
                                           if (err) {
                                               return d.resolve(err);

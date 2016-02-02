@@ -294,14 +294,25 @@ angular.module('app.controllers', ['ngCookies'])
 //                        }
 //                    }
 //                };
+                
+                var test = 'asdf';
+                
+                var test2 = parseInt(test) || 1;
+                console.log('test2:', test2);
 
                 if($scope.filters.classes.length > 0) {
                     options.filter.where.classTags = {
                         inq: $scope.filters.classes
                     }
+                } else {
+                    options.filter.where.classTags = {
+                        nin: $scope.filters.classes
+                    }
                 }
-
-                Article.find(options).$promise.then(function (data) {
+                
+                Article.find(options)
+                .$promise
+                .then(function (data) {
                     $scope.articles = data;
                 });
             }
@@ -11170,10 +11181,12 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.fetching = false;
             $scope.metaservice = MetaService;
             $scope.metaservice.setOg('https://tempostorm.com/articles');
+            
+            console.log('paginationParams:', paginationParams);
 
             // article filtering
             $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
-            $scope.articleFilter = [];
+            $scope.articleFilter = angular.copy(paginationParams.filters);
             
             $scope.toggleArticleFilter = function (type) {
                 if ($scope.isArticleFilter(type)) {
@@ -11182,7 +11195,7 @@ angular.module('app.controllers', ['ngCookies'])
                 } else {
                     $scope.articleFilter.push(type);
                 }
-
+                
                 $scope.getArticles();
             };
 
@@ -13005,6 +13018,7 @@ angular.module('app.controllers', ['ngCookies'])
           };
 
           $scope.updateDND = function (list, index) {
+              
               list.splice(index, 1);
 
               for (var i = 0; i < list.length; i++) {
@@ -13989,18 +14003,20 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminHOTSGuideService.deleteGuide(guide._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.guides.indexOf(guide);
-                                        if (index !== -1) {
-                                            $scope.guides.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: guide.name + ' deleted successfully.'
-                                        };
-                                    }
-                                });
+                                // TODO: this is using old stuff
+                                console.log('TODO: Delete Guides');
+//                                AdminHOTSGuideService.deleteGuide(guide._id).then(function (data) {
+//                                    if (data.success) {
+//                                        var index = $scope.guides.indexOf(guide);
+//                                        if (index !== -1) {
+//                                            $scope.guides.splice(index, 1);
+//                                        }
+//                                        $scope.success = {
+//                                            show: true,
+//                                            msg: guide.name + ' deleted successfully.'
+//                                        };
+//                                    }
+//                                });
                             }
                         },
                         cancel: {
@@ -14971,7 +14987,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guidesCommunity = dataGuidesCommunity;
             $scope.guidesFeatured = dataGuidesFeatured;
             
-            console.log('filterParams:', filterParams);
+//            console.log('filterParams:', filterParams);
 
             $scope.filters = {
                 roles: angular.copy(filterParams.roles),
@@ -14981,7 +14997,7 @@ angular.module('app.controllers', ['ngCookies'])
                 map: angular.copy(filterParams.map)
             };
             
-            console.log('$scope.filters.map:', $scope.filters.map);
+//            console.log('$scope.filters.map:', $scope.filters.map);
 
             // filtering
             function hasFilterRole (role) {
@@ -15063,7 +15079,6 @@ angular.module('app.controllers', ['ngCookies'])
 //                    }
 
                      if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
-                         console.log('this 1');
                         async.parallel([
                             function (paraCB) {
                                 HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
@@ -15100,7 +15115,6 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         ]);
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                        console.log('this 2');
                         async.parallel([
                             function (paraCB) {
                                 HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
@@ -15138,12 +15152,9 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         ])
                     } else if ($scope.filters.search != '') {
-                        console.log("searched");
                         async.parallel([
                             function (paraCB) {
-                                console.log('here 1');
                                 HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
-                                    console.log('articles:', articles);
                                     initializing = false;
                                     $scope.initializing = false;
                                     
@@ -15153,9 +15164,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             },
                             function (paraCB) {
-                                console.log('here 2');
                                 HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-                                    console.log('guides feat:', guides);
                                     initializing = false;
                                     $scope.initializing = false;
                                     
@@ -15165,9 +15174,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             },
                             function (paraCB) {
-                                console.log('here 3');
                                 HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-                                    console.log('guides not feat:', guides);
                                     initializing = false;
                                     $scope.initializing = false;
                                     
@@ -15675,7 +15682,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            console.log('paginationParams.tsParams:', paginationParams.tsParams);
             $scope.tempostormPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
-                console.log('page:', page);
+//                console.log('page:', page);
                 
                     StateParamHelper.updateStateParams({ 
                         tsp: $scope.tempostormPagination.page,
@@ -15950,11 +15957,11 @@ angular.module('app.controllers', ['ngCookies'])
                       val.talent.name = "Missing Talent"
                       val.talent.description = "Seems like this talent has been removed."
                   };
-                  console.log(val);
+//                  console.log(val);
                   return (val.guideHeroId === hero.id);
               });
 
-                console.log(heroTals);
+//                console.log(heroTals);
 
               out = heroTals;
 

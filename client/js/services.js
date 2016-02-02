@@ -899,7 +899,7 @@ angular.module('app.services', [])
                 return $http.post('/polls/vote', { poll: poll, votes: votes});
             },
             setStorage: function (poll, votes) {
-                console.log(poll, votes);
+//                console.log(poll, votes);
                 return $localStorage['tspoll-' + poll] = votes;
             },
             getStorage: function (poll) {
@@ -1172,8 +1172,6 @@ angular.module('app.services', [])
           if (angular.isUndefined(page)) return;
           
           var page = angular.isNumber(page) ? page : parseInt(page);
-//          console.log('page:', page);
-//          console.log('typeof page:', typeof page);
           
           if (angular.isDefined(page) && angular.isNumber(page) && page !== 1) {
               if (page <= 0) {
@@ -2598,7 +2596,7 @@ angular.module('app.services', [])
     .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
         return {
             getArticles: function (filters, isFeatured, limit, finalCallback) {
-                console.log('filters:', filters);
+//                console.log('filters:', filters);
 //                console.log('isFeatured:', isFeatured);
 //                console.log('limit:', limit);
 //                console.log('finalCallback:', finalCallback);
@@ -2623,7 +2621,7 @@ angular.module('app.services', [])
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
-                                    { title: { regexp: pattern }},
+                                    { name: { regexp: pattern }},
                                     { description: { regexp: pattern }}
                                 ]
                             }
@@ -2644,6 +2642,15 @@ angular.module('app.services', [])
                             
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
+                            
+                            if (!_.isEmpty(filters.search)) {
+                                var pattern = '/.*'+filters.search+'.*/i';
+                                where.or = [
+                                    { name: { regexp: pattern }},
+                                    { description: { regexp: pattern }}
+                                ]
+                            }
+                            
                             where.name = { inq: heroNames };
                             
                             Hero.find({
@@ -2748,9 +2755,19 @@ angular.module('app.services', [])
                     if (!_.isEmpty(filters.roles)) {
                         heroWhere.and.push({ role: { inq: filters.roles } });
                     }
+                    
+                    if (!_.isEmpty(filters.search)) {
+                        var pattern = '/.*'+filters.search+'.*/i';
+                        heroWhere.or = [
+                            { title: { regexp: pattern }},
+                            { description: { regexp: pattern }}
+                        ]
+                    }
+                    
                 } else if (filters.search != "") {
+                    
                     var pattern = '/.*'+filters.search+'.*/i';
-                    heroGuideWhere.or = [
+                    heroWhere.or = [
                         { name: { regexp: pattern } },
                         { description: { regexp: pattern } }
                     ]
@@ -2767,7 +2784,7 @@ angular.module('app.services', [])
                     function(seriesCallback) {
                         var selectedUniverses = filters.universes,
                             selectedRoles = filters.roles
-
+                        
                         Hero.find({
                             filter: {
                                 fields: ["id"],
