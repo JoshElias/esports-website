@@ -21,8 +21,8 @@ module.exports = function(Guide) {
     Guide.observe("loaded", utils.filterFields(fieldFilter));
     
     
-    Guide.topGuide = function (heroId, mapClassName, cb) {
-        var limit = 20;
+    Guide.topGuide = function (filters, cb) {
+        var limit = 10;
         var iter = 1;
         var Vote = Guide.app.models.vote;
         var Hero = Guide.app.models.hero;
@@ -81,25 +81,29 @@ module.exports = function(Guide) {
                         guideId: { exists: true }
                     }
                 }
-                var mapClassName = "towers-of-doom"
-                var heroId = "55076f1f515139ec1b3ebb43"
-                if(heroId) {
-                    var heroFilter = {
-                        where: {
-                            id: heroId
-                        },
-                        fields: {
-                            id: true,
-                            name: true
-                        },
-                        include: "guides"
+                
+                if(!_.isEmpty(filters)) {
+                    var heroFilter = {};
+                    
+                    if(filters.heroId) {
+                        heroFilter = {
+                            where: {
+                                id: filters.heroId
+                            },
+                            fields: {
+                                id: true,
+                                name: true
+                            },
+                            include: "guides"
+                        }
                     }
                     
-                    if (mapClassName) {
+                    if (filters.mapClassName) {
                         heroFilter.include = {
                             relation: "guides",
                             fields: {
-                                id: true
+                                id: true,
+                                name: true
                             },
                             scope: {
                                 include: {
@@ -112,29 +116,56 @@ module.exports = function(Guide) {
                         }
                     }
                     
-                    Hero.findOne(heroFilter, function (err, hero) {
+                    if (filters.search == "" && (!_.isEmpty(filters.universes) || !_.isEmpty(filters.roles))) {
+                        if(_.isUndefined(heroFilter.where))
+                            heroFilter.where = {}
+                        heroFilter.where.and = [];
+                        console.log(filters.universes);
+                        if (!_.isEmpty(filters.universes)) {
+                            heroFilter.where.and.push({ universe: { inq: filters.universes } });
+                        }
+
+                        if (!_.isEmpty(filters.roles)) {
+                            heroFilter.where.and.push({ role: { inq: filters.roles } });
+                        }
+                    } else if (filters.search != "") {
+                        var pattern = '/.*'+filters.search+'.*/i';
+                        heroFilter.where.or = [
+                            { name: { regexp: pattern } },
+                            { description: { regexp: pattern } }
+                        ]
+                    }
+                    console.log(heroFilter);
+                    Hero.find(heroFilter, function (err, heroes) {
                         if (err)
                             return seriesCb(err);
                         
-                        var heroJSON = hero.toJSON();
                         var ids = [];
-                        if(mapClassName) {
-                            fitleredGuides = _.filter(heroJSON.guides, function (guide) {
-                                return _.find(guide.maps, function (map) {
-                                    return (map.className === mapClassName)
-                                })
+                        if(filters.mapClassName) {
+                            filteredGuides = _.map(heroes, function (hero) {
+                                var heroJSON = hero.toJSON();
+                                return _.filter(heroJSON.guides, function (guide) {
+                                    return _.find(guide.maps, function (map) {
+                                        return (map.className === filters.mapClassName)
+                                    })
+                                });
                             });
+                            console.log(filteredGuides);
                             
-                            ids = _.map(fitleredGuides, function (val) {
+                            ids = _.map(filteredGuides, function (val) {
+                                console.log("/////////////", val);
                                 return val.id;
                             })
                         } else {
-                            ids = _.map(heroJSON.guides, function (val) { return val.id; });
+                            ids = _.map(heroes, function (hero) {
+                                var heroJSON = hero.toJSON();
+                                return _.map(heroJSON.guides, function (val) { return val.id; })
+                            });
                         }
                         voteFilter.where['guideId'] = {
-                            inq: ids
+                            inq: _.flatten(ids)
                         }
-                        
+                        console.log(ids);
                         return seriesCb(undefined, voteFilter);
                     })
                 } else {
@@ -148,6 +179,9 @@ module.exports = function(Guide) {
                 Vote.find(filter, function (err, votes) {
                     if (err)
                         return seriesCb(err);
+                    
+                    if(votes.length === 0)
+                        return cb(err, null);
                     
                     _.each(votes, function (vote) {
                         var id = vote.guideId;
@@ -175,10 +209,9 @@ module.exports = function(Guide) {
     Guide.remoteMethod(
         'topGuide',
         {
-            description: "Returns the guideId with the most votes, if a heroId is provided then will return the guide with the most votes for the particular hero.",
+            description: "Returns the guideId with the most votes, if a heroId is provided then will return the guide with the most votes for the particular hero. Filters take in { heroId, universes, role, mapClassName, search }",
             accepts: [
-              {arg: 'heroId', type: 'string', required:false, http: {source: 'query'}},
-              {arg: 'mapClassName', type: 'string', required:false, http: {source: 'query'}}
+              {arg: 'filters', type: 'object', required:false, http: {source: 'query'}}
             ],
             http: {verb: 'get'},
             isStatic: true,

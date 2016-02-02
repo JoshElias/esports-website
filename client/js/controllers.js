@@ -15323,8 +15323,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
-        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
+    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS', 'guideQueryParams',
+        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS, guideQueryParams) {
 
             $scope.tempostormGuides = dataTempostormGuides;
 //            console.log('dataTempostormGuides:', dataTempostormGuides);
@@ -15365,9 +15365,9 @@ angular.module('app.controllers', ['ngCookies'])
                if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetHeroMapGuides(1, 1, $scope.filters, null, function(err, guides) {
+                    doGetTopGuide($scope.filters, function(err, guide) {
                       if (err) return seriesCallback(err);
-                      $scope.topGuides = guides;
+                      $scope.topGuides = guide;
                       initializing = false;
                       return seriesCallback();
                     });
@@ -15396,10 +15396,9 @@ angular.module('app.controllers', ['ngCookies'])
               } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetHeroGuides(1, 1, $scope.search, $scope.filters, null, function (err, guides) {
-                        
+                    doGetTopGuide($scope.filters, function(err, guide) {
                       if (err) return seriesCallback(err);
-                      $scope.topGuides = guides;
+                      $scope.topGuides = guide;
                       initializing = false;
                       return seriesCallback();
                     });
@@ -15456,10 +15455,9 @@ angular.module('app.controllers', ['ngCookies'])
               } else {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides, count) {
-
+                    doGetTopGuide($scope.filters, function(err, guide) {
                       if (err) return seriesCallback(err);
-                      $scope.topGuides = guides;
+                      $scope.topGuides = guide;
                       initializing = false;
                       return seriesCallback();
                     });
@@ -15487,6 +15485,77 @@ angular.module('app.controllers', ['ngCookies'])
                   }
                 ], fnCallback);;
               }
+            }
+            
+            function doGetTopGuide (filters, callback) {
+                HOTSGuideQueryService.topGuide($scope.filters, function (err, guide) {
+                    if (_.isNull(guide.id) || _.isUndefined(guide.id))
+                        return callback(err, null);
+                    
+                    Guide.findById({
+                        id: guide.id,
+                        filter: {
+                            fields: guideQueryParams.fields,
+                            include: [
+                                {
+                                  relation: "author",
+                                  scope: {
+                                    fields: ['username']
+                                  }
+                                },
+                                {
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          fields: ['name', 'className'],
+                                            include: [
+                                                {
+                                                    relation: 'talents'
+                                                }
+                                            ]
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: {
+                                      relation: 'talent',
+                                      scope: {
+                                        fields: {
+                                          name: true,
+                                          className: true
+                                        }
+                                      }
+                                    },
+                                  }
+                                },
+                                {
+                                    relation: 'votes',
+                                    scope: {
+                                        fields: {
+                                            id: true,
+                                            direction: true
+                                        }
+                                    }
+                                }
+                              ]
+                        }
+                    })
+                    .$promise
+                    .then(function (data) {
+                        var dataArr = [];
+                            dataArr.push(data)
+                        
+                        initializing = false;
+                        return callback(err, dataArr);
+                    })
+                });
             }
           
             function doGetHeroMapGuides (page, perpage, filters, isFeatured, callback) {

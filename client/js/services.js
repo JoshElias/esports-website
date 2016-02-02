@@ -2619,6 +2619,35 @@ angular.module('app.services', [])
                     }
                 ])
             },
+            topGuide: function (filters, finalCallback) {
+                if ( 
+                !_.isUndefined(filters.heroes[0]) ||
+                !_.isEmpty(filters.universes) ||
+                !_.isEmpty(filters.roles) ||
+                !_.isEmpty(filters.search)
+                ) {
+                    var filter = { filters: {} }
+                    filter.filters['heroId']       = (!_.isUndefined(filters.heroes[0])) ? filters.heroes[0].id : undefined;
+                    filter.filters['mapClassName'] = (!_.isUndefined(filters.map)) ? filters.map.className : undefined;
+                    filter.filters['universes']    = filters.universes;
+                    filter.filters['roles']        = filters.roles;
+                    filter.filters['search']       = filters.search;
+                } else {
+                    var filter = {}
+                }
+               
+                
+                Guide.topGuide(filter)
+                .$promise
+                .then(function (data) {
+                    console.log(data);
+                    return finalCallback(undefined, data);
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    return finalCallback(err);
+                })
+            },
             getGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
                 //          console.log('filters:', filters);
                 //          console.log('isFeatured:', isFeatured);

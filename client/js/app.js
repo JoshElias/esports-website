@@ -1927,7 +1927,9 @@ var app = angular.module('app', [
                                 var d = $q.defer();
                                 async.waterfall([
                                     function (seriesCb) {
-                                        Guide.topGuide({})
+                                        Guide.topGuide({
+                                            
+                                        })
                                         .$promise
                                         .then(function (data) {
                                             console.log(data);
@@ -1943,7 +1945,7 @@ var app = angular.module('app', [
                                                 where: {
                                                     id: guideId.id
                                                 },
-                                                fields: guideQueryParams.fiends,
+                                                fields: guideQueryParams.fields,
                                                 include: [
                                                     {
                                                       relation: "author",
