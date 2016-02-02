@@ -8,11 +8,7 @@
   },
   "properties": {
     "name": {
-<<<<<<< aff3c83aca9d75f93826db296ad3622bba4e5a6f
-      "type": "string"
-=======
        "type": "string"
->>>>>>> working on deck fill
     },
     "playerClass": {
       "type": "string",
