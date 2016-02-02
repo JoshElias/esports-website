@@ -1,4 +1,5 @@
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
 
 // Description: 
 
@@ -36,7 +37,8 @@
 
 }
 
-.ts-plug {
+.ts-plg {
+    @include ts-div-styles;
 
 }
 
@@ -68,6 +70,10 @@
 
 
 
+.article-plg-fix {
+    width: 98.7%;
+}
+
 //*************************************
 // ---- plg standin divs ----
 //*************************************
@@ -91,4 +97,4 @@
     height: 90px;
     background-color: $hots-purple;
     margin: auto;
-}
+    }

@@ -23,6 +23,16 @@
 
         </div>
         
+            <!-- first fullwidth plg -->
+            
+            <div class="row fullwidth-plg-div clearfix hidden-sm hidden-xs">
+                <div class="col-xs-12 plg-long">
+                    <div class="plg-leader"></div>
+                </div>
+            </div>
+            
+            <!-- first fullwidth plg ends -->
+        
         <div class="row m-r-none m-l-none m-t-md">
             <div class="m-b-md article-left col-lg-8">
                 <div class="article-subscribe" ng-if="isPremium() && !isUser.premium && !isUser.admin && !isUser.contentProvider">
@@ -36,11 +46,22 @@
                     <!-- article content -->
                     <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>
                     <!-- / article content -->
+                    
+                    <!-- first fullwidth plg -->
+
+        
+                    <div class="plg-leader"></div>
+          
+
+                    <!-- first fullwidth plg ends -->
 
                     <div class="article-author m-t-md" ng-if="article.author">
                         <a class="hidden-xs" href="./user/{{article.author.username}}">
 							<img gravatar-src-once="authorEmail" alt="" />
 						</a>
+                        
+
+                        
                         
                         <div class="author-content">
                             <div class="author-top-wrapper clearfix">
@@ -66,6 +87,14 @@
             </div>
             
             <div class="m-b-md article-right col-lg-4">
+                
+                                    <!-- sidebar plg -->
+                    
+                    <div class="plg-sidebar plg-div m-b-md hidden-md ">
+                        <div class="plg-md-rt img-responsive"><p></p></div>
+                    </div>
+                    
+                    <!-- sidebar plg ends-->
                 
                 <div ng-if="article.deck" class="article-deck" db-deck deck="article.deck"></div>
                 
@@ -98,6 +127,6 @@
                 
             </div>
             
-        </div>
+        </div>    
     </div>
 </div>
