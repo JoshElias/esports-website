@@ -440,10 +440,17 @@ module.exports = function(RedbullDeck) {
             clientDeck = clientDecks[deckIndex];
 
             // Did the client provide this deck
+            if(typeof clientDecks[deckIndex] !== "object") {
+                clientDecks[deckIndex] = createRandomDecks(1, draftJSON, availableDeckComponents);
+                continue;
+            }
 
-            // Is it complete with 30 cards
-
+            // Make sure it's complete with 30 cards
+            clientDeck[deckIndex] = completeDeck(clientDeck[deckIndex], availableDeckComponents);
         }
+    }
+
+    function completeDeck(clientDeck, availableDeckComponents) {
 
     }
 
@@ -458,63 +465,41 @@ module.exports = function(RedbullDeck) {
                 playerClass: playerClass,
                 deckCards: deckCards
             }
-        };
-
-        // Get all the cards available for this draft
-        var availableDeckCards = {};
-        var currentCard;
-        var cardId;
-        var i = draftJSON.cards.length;
-        while (i--) {
-            currentCard = draftJSON.cards[i];
-            cardId = currentCard.id.toString();
-            if (!availableDeckCards[cardId]) {
-                availableDeckCards[cardId] = {
-                    playerClass: currentCard.playerClass,
-                    cardQuantity: 1,
-                    cardId: cardId
-                };
-            } else {
-                availableDeckCards[cardId].cardQuantity++;
-            }
         }
 
-
         // Get the random classes we will try to generate
-        var randomClasses = getRandomClasses(numOfDecks);
+        var randomClasses = getRandomClasses(numOfDecks, availableDeckComponents.classes);
 
         var deckIndex = numOfDecks;
         var playerClass;
         var deckCards;
         while (deckIndex--) {
             playerClass = randomClasses[deckIndex];
-            deckCards = createRandomDeckCardsForClass(30, playerClass, availableDeckCards);
+            deckCards = createRandomDeckCardsForClass(30, playerClass, availableDeckComponents);
             randomDecks.push(createDeckData(playerClass, deckCards));
         }
         return randomDecks;
     }
 
-
-    function getRandomClasses(numOfClasses, remainingClasses, randomClasses) {
-        remainingClasses = remainingClasses || HS_CLASSES;
+    function getRandomClasses(numOfClasses, availableDeckComponents, randomClasses) {
+        remainingClasses = availableDeckComponents.deckCards;
         randomClasses = randomClasses || [];
-        var randomIndex = utils.getRandomInt(0, remainingClasses.length - 1);
-        randomClasses.push(remainingClasses.splice(randomIndex, 1)[0]);
+        var randomIndex = utils.getRandomInt(0, availableDeckComponents.deckCards.length - 1);
+        randomClasses.push(availableDeckComponents.deckCards.splice(randomIndex, 1)[0]);
         if (randomClasses.length === numOfClasses) {
             return randomClasses;
         }
-        return getRandomClasses(numOfClasses, remainingClasses, randomClasses);
+        return getRandomClasses(numOfClasses, availableDeckComponents, randomClasses);
     }
 
-    function createRandomDeckCardsForClass(numOfCards, playerClass, availableDeckCards) {
+    function createRandomDeckCardsForClass(numOfCards, playerClass, availableDeckComponents) {
 
-        // Pick random 30 cards
         var deckCards = [];
         var cardCount = 0;
         var deckCard;
         var numCardsOfToAdd;
-        for (var cardId in availableDeckCards) {
-            deckCard = availableDeckCards[cardId];
+        for (var cardId in availableDeckComponents.deckCards) {
+            deckCard = availableDeckComponents.deckCards[cardId];
             if (deckCard.playerClass === playerClass || deckCard.playerClass === "Neutral") {
                 numCardsOfToAdd = Math.min(numOfCards - cardCount, deckCard.cardQuantity);
 
@@ -526,14 +511,14 @@ module.exports = function(RedbullDeck) {
                 });
                 cardCount += numCardsOfToAdd;
 
-                // subtract from available card
-                availableDeckCards[cardId].cardQuantity -= numCardsOfToAdd;
-                if (availableDeckCards[cardId].cardQuantity < 1) {
-                    delete availableDeckCards[cardId];
+                // subtract from available cards
+                availableDeckComponents.deckCards[cardId].cardQuantity -= numCardsOfToAdd;
+                if (availableDeckComponents.deckCards[cardId].cardQuantity < 1) {
+                    delete availableDeckComponents.deckCards[cardId];
                 }
 
                 // If we have enough cards exit
-                if (cardCount === 30) {
+                if (cardCount >= numOfCards) {
                     return deckCards;
                 }
             }
