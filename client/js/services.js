@@ -1169,13 +1169,25 @@ angular.module('app.services', [])
       // perpage - number
       servObj.validatePage = function (page, count, perpage) {
           // 404 if page entered manually is not valid
-          if (page !== 1) {
+          if (angular.isUndefined(page)) return;
+          
+          var page = angular.isNumber(page) ? page : parseInt(page);
+//          console.log('page:', page);
+//          console.log('typeof page:', typeof page);
+          
+          if (angular.isDefined(page) && angular.isNumber(page) && page !== 1) {
               if (page <= 0) {
                   this.replaceHistoryWith404();
+//                  console.log('page too low');
               } else if (page > Math.ceil(count / perpage)) {
+//                  console.log('page to high');
+                  this.replaceHistoryWith404();
+              } else if (isNaN(page)) {
+//                  console.log('was NaN');
                   this.replaceHistoryWith404();
               }
           }
+//          console.log('cleared page validation');
       };
       
       // this method expects:
@@ -1183,8 +1195,8 @@ angular.module('app.services', [])
       // availFilters - an array of available filters
       servObj.validateFilters = function (stateFilters, availFilters) {
           var found = _.difference(stateFilters, availFilters);
+//          console.log('found:', found);
           if (!_.isEmpty(found)) {
-              console.log('should not be here');
               this.replaceHistoryWith404();
           }
       };
@@ -2586,20 +2598,50 @@ angular.module('app.services', [])
     .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
         return {
             getArticles: function (filters, isFeatured, limit, finalCallback) {
-//                console.log(filters);
+                console.log('filters:', filters);
+//                console.log('isFeatured:', isFeatured);
+//                console.log('limit:', limit);
+//                console.log('finalCallback:', finalCallback);
                 async.waterfall([
                     function(seriesCallback) {
                         var where = {};
 
                         if ((!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) && _.isEmpty(filters.heroes)) {
-                            where.and = [];
+                            
+                            if (!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) {
+                                where.or = [];
+                            }
+                            
                             if (!_.isEmpty(filters.roles)) {
-                                where.and.push({ role: { inq: filters.roles }})
+                                where.or.push({ role: { inq: filters.roles }})
                             }
 
                             if (!_.isEmpty(filters.universes)) {
-                                where.and.push({ universe: { inq: filters.universes }})
+                                where.or.push({ universe: { inq: filters.universes }})
                             }
+                            
+                            if (!_.isEmpty(filters.search)) {
+                                var pattern = '/.*'+filters.search+'.*/i';
+                                where.or = [
+                                    { title: { regexp: pattern }},
+                                    { description: { regexp: pattern }}
+                                ]
+                            }
+                            
+//                            console.log('where:', where);
+                            Hero.find({
+                                filter: {
+                                    where: where,
+                                    fields: ["name"]
+                                }
+                            }, function (heroes) {
+//                                console.log('heroes: ', heroes);
+                                return seriesCallback(undefined, heroes);
+                            }, function (err) {
+                                console.log(err);
+                                return finalCallback(err);
+                            });
+                            
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
                             where.name = { inq: heroNames };
@@ -2617,7 +2659,27 @@ angular.module('app.services', [])
                                 return finalCallback(err);
                             });
                         } else if (_.isEmpty(filters.heroes)) {
-                            return seriesCallback(undefined, null);
+                            
+                            if (!_.isEmpty(filters.search)) {
+                                var pattern = '/.*'+filters.search+'.*/i';
+                                where.or = [
+                                    { title: { regexp: pattern }},
+                                    { description: { regexp: pattern }}
+                                ]
+                            }
+                            
+                            Hero.find({
+                                filter: {
+                                    where: where,
+                                    fields: ["name"]
+                                }
+                            }, function (heroes) {
+//                                console.log(heroes);
+                                return seriesCallback(undefined, heroes);
+                            }, function (err) {
+                                console.log(err);
+                                return finalCallback(err);
+                            });
                         }
                         
                     },
@@ -2634,7 +2696,9 @@ angular.module('app.services', [])
                                 } 
                             }
                         }
-
+                        
+//                        console.log('where:', where);
+                        
                         Article.find({
                             filter: {
                                 where: where,
@@ -2653,6 +2717,7 @@ angular.module('app.services', [])
                                 limit: limit
                             }
                         }, function (articles) {
+//                            console.log('ARTICLES!!:', articles);
                             return finalCallback(undefined, articles);
                         }, function (err) {
                             console.log(err);
@@ -2662,11 +2727,11 @@ angular.module('app.services', [])
                 ])
             },
             getGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
-                //          console.log('filters:', filters);
-                //          console.log('isFeatured:', isFeatured);
-                //          console.log('search:', search);
-                //          console.log('limit:', limit);
-                //          console.log('page:', page);
+//                          console.log('filters:', filters);
+//                          console.log('isFeatured:', isFeatured);
+//                          console.log('search:', search);
+//                          console.log('limit:', limit);
+//                          console.log('page:', page);
 
                 var order = "voteScore DESC";
                 var heroWhere = {};
@@ -2695,8 +2760,9 @@ angular.module('app.services', [])
                     guideWhere.isFeatured = isFeatured;
                     order = "createdDate DESC";
                 }
-
-
+                
+//                console.log('heroWhere:', heroWhere);
+                
                 async.waterfall([
                     function(seriesCallback) {
                         var selectedUniverses = filters.universes,

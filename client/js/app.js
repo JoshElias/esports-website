@@ -200,7 +200,7 @@ var app = angular.module('app', [
                 params: { url: undefined },
                 onEnter: ['$stateParams', '$location', function ($stateParams, $location) {
                     $location.url($stateParams.url);
-                    console.log($stateParams.url);
+//                    console.log($stateParams.url);
                 }],
                 seo: { title: '404' }
             })
@@ -423,9 +423,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
-                            paginationParams: ['$stateParams', 'StateParamHelper', function($stateParams,  StateParamHelper) {
-                                var articleFilters = ['ts', 'hs', 'hots', 'overwatch'];
+                            paginationParams: ['$stateParams', 'StateParamHelper', '$q', 'Article', function($stateParams,  StateParamHelper, $q, Article) {
+                                var articleFilters = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
                                 
+                                var d = $q.defer();
+                                
+                                async.parallel([
+                                    function(paraCB){ 
+                                        
+                                    },
+                                    function(paraCB){  }
+                                ], function(err) {
+                                    
+                                });
                                 // if only 1 filter, parse into array
                                 if (angular.isString($stateParams.f)) {
                                     var tmp = $stateParams.f;
@@ -1591,8 +1601,9 @@ var app = angular.module('app', [
                         controller: 'HOTSHomeCtrl',
                         resolve: {
                             filterParams: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', function($stateParams, StateParamHelper, $q, Hero, Map) {
+//                                console.log('$stateParams:', $stateParams);
+//                                console.log('first');
                                 console.log('$stateParams:', $stateParams);
-                                console.log('first');
                                 if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
                                     $stateParams.r = new Array($stateParams.r);
                                 }
@@ -1617,7 +1628,7 @@ var app = angular.module('app', [
                                     map: $stateParams.m || undefined
                                 };
                                 
-                                console.log('filters:', filters);
+//                                console.log('filters:', filters);
                                 var possibleRoles = ['Warrior', 'Assassin', 'Support', 'Specialist'];
                                 var possibleUniverses = ['Warcraft', 'Starcraft', 'Diablo', 'Blizzard'];
                                 var possibleHeroes;
@@ -1634,24 +1645,27 @@ var app = angular.module('app', [
                                 
                                 async.waterfall([
                                     function (waterCB) {
-                                        Hero.find({
-                                            filter: {
-                                                fields: {
-                                                    name: true
-                                                },
-                                                where: {
-                                                    isActive: true
+                                        if (!_.isEmpty(filters.heroes)) {
+                                            Hero.find({
+                                                filter: {
+                                                    fields: {
+                                                        name: true
+                                                    },
+                                                    where: {
+                                                        isActive: true
+                                                    }
                                                 }
-                                            }
-                                        }).$promise
-                                        .then(function (heros) {
-                                            possibleHeroes = _.map(heros, function (hero) {
-                                                return hero.name;
+                                            }).$promise
+                                            .then(function (heros) {
+                                                possibleHeroes = _.map(heros, function (hero) {
+                                                    return hero.name;
+                                                });
+                                                StateParamHelper.validateFilters(filters.heroes, possibleHeroes);
+                                                return waterCB();
                                             });
-                                            
-                                            StateParamHelper.validateFilters(filters.heroes, possibleHeroes);
+                                        } else {
                                             return waterCB();
-                                        });
+                                        }
                                     },
                                     function (waterCB) {
                                         if (!_.isEmpty(filters.heroes)) {
@@ -1705,8 +1719,12 @@ var app = angular.module('app', [
                                     function (waterCB) {
                                         if (filters.map) {
                                             Map.findOne({
-                                                where: {
-                                                    name: filters.map
+                                                filter: {
+                                                    where: {
+                                                        name: {
+                                                            inq: filters.map
+                                                        }
+                                                    }
                                                 }
                                             }).$promise
                                             .then(function (map) {
@@ -1721,25 +1739,43 @@ var app = angular.module('app', [
                                         }
                                     },
                                 ], function(err) {
-                                    if (err) return console.log('pagination query err: ', err);
+                                    if (err) return d.reject(err);
                                     d.resolve(filters);
                                 });
                                 
                                 return d.promise;
                                 
                             }],
-                            dataArticles: ['Article', 'filterParams', '$q', 'HOTSGuideQueryService', function (Article, filterParams, $q, HOTSGuideQueryService) {
-                                console.log('second');
-                                var d = $q.defer();
+                            dataArticles: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
                                 
-                                if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
+                                var d = $q.defer();
+                                // querying articles with empty obj due to promise not resolving
+                                // if filterParams contains any roles/universes
+                                if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
                                     HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
+                                } else if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
+                                } else if (filterParams.search != '') {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
+                                } else if (_.isEmpty(filterParams.hero) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
                                         d.resolve(articles);
                                     });
                                 } else {
-                                   HOTSGuideQueryService.getArticles(filterParams, true, 6, function (err, articles) {
-                                       d.resolve(articles);
-                                   });
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
                                 }
                                 
                                 return d.promise;
@@ -1776,32 +1812,31 @@ var app = angular.module('app', [
                                 
                             }],
                             dataGuidesCommunity: ['Guide', 'filterParams', '$q', 'HOTSGuideQueryService', function (Guide, filterParams, $q, HOTSGuideQueryService) {
-                                console.log('third');
                                 var d = $q.defer();
                                 
                                 if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(filterParams, false, 10, 1, function(err, guides) {
-                                        if (err) return d.resolve(err);
+                                        if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 } else if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
                                     HOTSGuideQueryService.getHeroGuides(filterParams, false, 10, 1, function (err, guides) {
-                                        if (err) return d.resolve(err);
+                                        if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 } else if (filterParams.search != '') {
                                     HOTSGuideQueryService.getGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
-                                        if (err) return d.resolve(err);
+                                        if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 } else if (_.isEmpty(filterParams.hero) && filterParams.map != undefined) {
                                     HOTSGuideQueryService.getMapGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
-                                        if (err) return d.resolve(err);
+                                        if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 } else {
                                    HOTSGuideQueryService.getGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
-                                       if (err) return d.resolve(err);
+                                       if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 }
@@ -1882,105 +1917,38 @@ var app = angular.module('app', [
 //                              });
                             }],
                             dataGuidesFeatured: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
-                                console.log('filterParams:', filterParams);
-                                console.log('fourth');
                                 var d = $q.defer();
-                                
+
                                 if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(filterParams, true, 10, 1, function(err, guides) {
-//                                        if (err) return d.resolve(err);
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
+                                    HOTSGuideQueryService.getHeroGuides(filterParams, true, 10, 1, function (err, guides) {
+                                        if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 } else if (filterParams.search != '') {
                                     HOTSGuideQueryService.getGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
-//                                        if (err) return d.resolve(err);
+                                        if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 } else if (_.isEmpty(filterParams.hero) && filterParams.map != undefined) {
                                     HOTSGuideQueryService.getMapGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
-//                                        if (err) return d.resolve(err);
+                                        if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 } else {
-                                    console.log('im here');
-                                    HOTSGuideQueryService.getGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
-                                        console.log('err:', err);
-                                        console.log('guides:', guides);
-//                                        if (err) return d.resolve(err);
+                                   HOTSGuideQueryService.getGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
+                                       if (err) return d.reject(err);
                                         d.resolve(guides);
                                     });
                                 }
                                 
                                 return d.promise;
-                                
-//                              return Guide.find({
-//                                filter: {
-//                                  limit: 10,
-//                                    order: "createdDate DESC",
-//                                  where: {
-//                                    isFeatured: true
-//                                  },
-//                                  fields: [
-//                                    "name", 
-//                                    "authorId", 
-//                                    "slug", 
-//                                    "voteScore", 
-//                                    "guideType", 
-//                                    "premium", 
-//                                    "id", 
-//                                    "talentTiers",
-//                                    "createdDate"
-//                                  ],
-//                                  include: [
-//                                    {
-//                                      relation: "author",
-//                                      scope: {
-//                                        fields: ['username']
-//                                      }
-//                                    },
-//                                    {
-//                                      relation: 'guideHeroes',
-//                                      scope: {
-//                                        include: [
-//                                          {
-//                                            relation: 'talents'
-//                                          },
-//                                          {
-//                                            relation: 'hero',
-//                                            scope: {
-//                                              fields: ['name', 'className']
-//                                            }
-//                                          }
-//                                        ]
-//                                      }
-//                                    },
-//                                    {
-//                                      relation: 'guideTalents',
-//                                      scope: {
-//                                        include: {
-//                                          relation: 'talent',
-//                                          scope: {
-//                                            fields: {
-//                                              name: true,
-//                                              className: true
-//                                            }
-//                                          }
-//                                        },
-//                                      }
-//                                    },
-//                                  ]
-//                                }
-//                              })
-//                              .$promise
-//                              .then(function (data) {
-//                                  return data;
-//                              })
-//                              .catch(function (err) {
-//                                  console.log(err);
-//                              });
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                                console.log('five');
                               return Hero.find({
                                 filter: {
                                     where: {
@@ -2010,7 +1978,6 @@ var app = angular.module('app', [
                             }],
 
                             dataMaps: ['Map', function (Map) {
-                                console.log('six');
                               return Map.find({})
                               .$promise
                               .then(function (data) {

@@ -250,8 +250,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone', '$stateParams',
-        function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone, $stateParams) {
+    .controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone', '$stateParams', 'filterParams',
+        function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone, $stateParams, filterParams) {
             
             // data
             $scope.articles = dataArticles;
@@ -279,20 +279,21 @@ angular.module('app.controllers', ['ngCookies'])
             }, true);
 
             function updateArticles (offset, perpage) {
-                var options = {
-                    filter: {
-                        limit: 6,
-                        order: "createdDate DESC",
-                        where: {
-                            isActive: true,
-                            articleType: ['hs']
-                        },
-                        include: ['author'],
-                        fields: {
-                            content: false
-                        }
-                    }
-                };
+                var options = filterParams.articleParams.options;
+//                var options = {
+//                    filter: {
+//                        limit: 6,
+//                        order: "createdDate DESC",
+//                        where: {
+//                            isActive: true,
+//                            articleType: ['hs']
+//                        },
+//                        include: ['author'],
+//                        fields: {
+//                            content: false
+//                        }
+//                    }
+//                };
 
                 if($scope.filters.classes.length > 0) {
                     options.filter.where.classTags = {
@@ -308,27 +309,29 @@ angular.module('app.controllers', ['ngCookies'])
             // update decks
             function updateTempostormDecks (page, perpage) {
 
-                var options = {
-                    filter: {
-                        limit: 10,
-                        order: "createdDate DESC",
-                        where: {
-                            isPublic: true,
-                            isFeatured: true
-                        },
-                        fields: {
-                            name: true,
-                            authorId: true,
-                            description: true,
-                            playerClass: true,
-                            premium: true,
-                            voteScore: true,
-                            heroName: true,
-                            createdDate: true
-                        },
-                        include: ['author']
-                    }
-                };
+//                var options = {
+//                    filter: {
+//                        limit: 10,
+//                        order: "createdDate DESC",
+//                        where: {
+//                            isPublic: true,
+//                            isFeatured: true
+//                        },
+//                        fields: {
+//                            name: true,
+//                            authorId: true,
+//                            description: true,
+//                            playerClass: true,
+//                            premium: true,
+//                            voteScore: true,
+//                            heroName: true,
+//                            createdDate: true
+//                        },
+//                        include: ['author']
+//                    }
+//                };
+                
+                var options = filterParams.tsDeckParams.options;
 
                 if($scope.filters.classes.length > 0) {
                     options.filter.where.playerClass = {
@@ -336,39 +339,43 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 } else {
                     options.filter.where.playerClass = {
-                        inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+                        inq: angular.copy(Hearthstone.classes.slice(1, 9))
                     }
                 }
 
-                Deck.find(options).$promise.then(function (data) {
+                Deck.find(options)
+                .$promise
+                .then(function (data) {
                     $timeout(function () {
                         $scope.tempostormDecks = data;
                     });
                 });
             }
-
+            
             function updateCommunityDecks (page, perpage) {
-                var options = {
-                    filter: {
-                        limit: 10,
-                        order: "createdDate DESC",
-                        where: {
-                            isPublic: true,
-                            isFeatured: false
-                        },
-                        fields: {
-                            name: true,
-                            authorId: true,
-                            description: true,
-                            playerClass: true,
-                            premium: true,
-                            voteScore: true,
-                            heroName: true,
-                            createdDate: true
-                        },
-                        include: ['author']
-                    }
-                };
+//                var options = {
+//                    filter: {
+//                        limit: 10,
+//                        order: "createdDate DESC",
+//                        where: {
+//                            isPublic: true,
+//                            isFeatured: false
+//                        },
+//                        fields: {
+//                            name: true,
+//                            authorId: true,
+//                            description: true,
+//                            playerClass: true,
+//                            premium: true,
+//                            voteScore: true,
+//                            heroName: true,
+//                            createdDate: true
+//                        },
+//                        include: ['author']
+//                    }
+//                };
+                
+                var options = filterParams.comDeckParams.options;
 
                 if($scope.filters.classes.length > 0) {
                     options.filter.where.playerClass = {
@@ -376,7 +383,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 } else {
                     options.filter.where.playerClass = {
-                        inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+                        inq: angular.copy(Hearthstone.classes.slice(1, 9))
                     }
                 }
 
@@ -14954,8 +14961,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService', 'StateParamHelper',
-        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService, StateParamHelper) {
+    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService', 'StateParamHelper', 'filterParams',
+        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService, StateParamHelper, filterParams) {
             
             // data
             $scope.heroes = dataHeroes;
@@ -14963,14 +14970,18 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.articles = dataArticles;
             $scope.guidesCommunity = dataGuidesCommunity;
             $scope.guidesFeatured = dataGuidesFeatured;
+            
+            console.log('filterParams:', filterParams);
 
             $scope.filters = {
-                roles: [],
-                universes: [],
-                search: '',
-                heroes: [],
-                map: undefined
+                roles: angular.copy(filterParams.roles),
+                universes: angular.copy(filterParams.universes),
+                search: angular.copy(filterParams.search),
+                heroes: angular.copy(filterParams.heroes),
+                map: angular.copy(filterParams.map)
             };
+            
+            console.log('$scope.filters.map:', $scope.filters.map);
 
             // filtering
             function hasFilterRole (role) {
@@ -15044,110 +15055,186 @@ angular.module('app.controllers', ['ngCookies'])
                     
 //                    initializing = true;
                     // article filters
-                    var articleFilters = [];
-                    for (var i = 0; i < $scope.heroes.length; i++) {
-                        if (!isFiltered($scope.heroes[i])) {
-                            articleFilters.push($scope.heroes[i].name);
-                        }
-                    }
+//                    var articleFilters = [];
+//                    for (var i = 0; i < $scope.heroes.length; i++) {
+//                        if (!isFiltered($scope.heroes[i])) {
+//                            articleFilters.push($scope.heroes[i].name);
+//                        }
+//                    }
 
                      if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+                         console.log('this 1');
                         async.parallel([
-                            function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, 1, function(err, guides) {
-                                    $scope.guidesFeatured = guides;
+                            function (paraCB) {
+                                HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
+                                    
                                     initializing = false;
                                     $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.articles = articles;
+                                    return paraCB();
                                 });
                             },
-                            function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, 1, function(err, guides) {
-                                    $scope.guidesCommunity = guides;
+                            function (paraCB) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, 1, function(err, guides) {
+                                    
                                     initializing = false;
                                     $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
+                                });
+                            },
+                            function (paraCB) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, 1, function(err, guides) {
+                                    
+                                    $scope.initializing = false;
+                                    initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesCommunity = guides;
+                                    return paraCB();
                                 });
                             }
                         ]);
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
+                        console.log('this 2');
                         async.parallel([
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
+                                    
+                                    initializing = false;
+                                    $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
                                     $scope.articles = articles;
-                                    initializing = false;
-                                    $scope.initializing = false;
+                                    return paraCB();
                                 });
                             },
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, 1, function (err, guides) {
-                                    $scope.guidesFeatured = guides;
-                                    initializing = false;
-                                });
-                            },
-                            function () {
-                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, 1, function (err, guides) {
-                                    $scope.guidesCommunity = guides;
+                                    
                                     initializing = false;
                                     $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
+                                });
+                            },
+                            function (paraCB) {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, 1, function (err, guides) {
+                                    
+                                    initializing = false;
+                                    $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesCommunity = guides;
+                                    return paraCB();
                                 });
 
                             }
                         ])
                     } else if ($scope.filters.search != '') {
-//                        console.log("search");
+                        console.log("searched");
                         async.parallel([
-                            function () {
-                                HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesFeatured = guides;
+                            function (paraCB) {
+                                console.log('here 1');
+                                HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
+                                    console.log('articles:', articles);
                                     initializing = false;
                                     $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.articles = articles;
+                                    return paraCB();
                                 });
                             },
-                            function () {
-                                HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesCommunity = guides;
+                            function (paraCB) {
+                                console.log('here 2');
+                                HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
+                                    console.log('guides feat:', guides);
                                     initializing = false;
                                     $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
+                                });
+                            },
+                            function (paraCB) {
+                                console.log('here 3');
+                                HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+                                    console.log('guides not feat:', guides);
+                                    initializing = false;
+                                    $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesCommunity = guides;
+                                    return paraCB();
                                 });
                             }
                         ]);
                     } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
                         async.parallel([
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesFeatured = guides;
+                                    
                                     initializing = false;
                                     $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
                                 });
                             },
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesCommunity = guides;
+                                    
                                     initializing = false;
                                     $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesCommunity = guides;
+                                    return paraCB();
                                 });
                             }
                         ]);
                     } else {
                         async.parallel([
-                            function () {
+                            function (paraCB) {
                                HOTSGuideQueryService.getArticles($scope.filters, true, 6, function (err, articles) {
-                                   $scope.articles = articles;
+                                   
                                    initializing = false;
                                    $scope.initializing = false;
+                                   
+                                   if (err) return paraCB(err);
+                                   $scope.articles = articles;
+                                   return paraCB();
                                });
                             },
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesFeatured = guides;
+                                    
                                     initializing = false;
                                     $scope.initializing = false;
+                                    
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
                                 });
                             },
-                            function () {
+                            function (paraCB) {
                                HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesCommunity = guides;
-                                    initializing = false;
+                                    
+                                   initializing = false;
                                    $scope.initializing = false;
+                                   
+                                   if (err) return paraCB(err);
+                                   $scope.guidesCommunity = guides;
+                                   return paraCB();
                                 });
                             }
                         ]);

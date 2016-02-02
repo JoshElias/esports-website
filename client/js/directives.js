@@ -704,16 +704,10 @@ angular.module('app.directives', ['ui.load'])
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-<<<<<<< 6e035407d76381c0a827a290a3e15f270da900cf
             var loading = false;
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
             var parentId = votable.id;
-=======
-//            console.log('$scope.votable:', $scope.votable);
-            var box,
-                callback;
->>>>>>> new state param pagination
             
             function getVoteInfo () {
                 setLoading(true);
@@ -1263,6 +1257,8 @@ angular.module('app.directives', ['ui.load'])
         },
         templateUrl: tpl + 'views/frontend/directives/hots.filtering.html',
         link: function (scope, element, attrs) {
+            scope.searchHeroes = angular.copy(scope.filters.search);
+            
             var initializing = true,
                 randHeroIndex = randomIntFromInterval (0,scope.heroes.length - 1);
 
@@ -1284,7 +1280,7 @@ angular.module('app.directives', ['ui.load'])
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
                 
-                console.log('scope:', scope);
+//                console.log('scope:', scope);
                 scope.$parent.searchGuides();
             }
 
@@ -1325,7 +1321,7 @@ angular.module('app.directives', ['ui.load'])
                 }
 
                 if (!scope.filters.heroes.length) {
-                    randHeroIndex = randomIntFromInterval(1, scope.heroes.length);
+                    randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                 }
             };
 
