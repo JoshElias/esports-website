@@ -84,7 +84,7 @@ angular.module('app.services', [])
                 User.login(options, where)
                     .$promise
                     .then(function (data) {
-                    //              console.log(data);
+
                     var user = data.user;
 
                     EventService.emit("EVENT_LOGIN", user);
@@ -1364,7 +1364,7 @@ angular.module('app.services', [])
         Hunter: ['Rexxar', 'Alleria'],
         Druid: ['Malfurion']
     };
-    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];    
+    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
     hs.deckTypes = ['None', 'Aggro', 'Control', 'Midrange', 'Combo', 'Theory Craft'];
     hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament', 'League of Explorers'];
 
@@ -1421,7 +1421,7 @@ angular.module('app.services', [])
 
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
-        
+
         var db = {
             id: data.id || null,
             authorId: data.authorId || User.getCurrentId(),
@@ -1515,7 +1515,7 @@ angular.module('app.services', [])
                 },
             ]
         };
-        
+
         db.init = function() {
             if (db.cards.length) {
                 db.sortDeck();
@@ -2001,8 +2001,8 @@ angular.module('app.services', [])
             db.removeChapter = function (index) {
                 db.chapters.splice(index,1);
             }
-        
-            
+
+
 
             db.newMatch = function (klass) {
                 //            console.log('vhat class?: ', klass);
@@ -2020,7 +2020,7 @@ angular.module('app.services', [])
             db.removeMatch = function (index) {
                 db.matchups.splice(index,1);
             }
-            
+
             db.init();
             return db;
         };
@@ -2211,8 +2211,8 @@ angular.module('app.services', [])
             };
 
             gb.talentsByTier = function (hero, tier) {
-                var temp = _.filter(hero.talents, function (val) { 
-                    return val.tier == tier 
+                var temp = _.filter(hero.talents, function (val) {
+                    return val.tier == tier
                 });
                 var talents = _.map(temp, function (val) { return val.talent; });
                 return talents;
@@ -2552,7 +2552,7 @@ angular.module('app.services', [])
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
                             where.name = { inq: heroNames };
-                            
+
                             Hero.find({
                                 filter: {
                                     where: where,
@@ -2568,19 +2568,19 @@ angular.module('app.services', [])
                         } else if (_.isEmpty(filters.heroes)) {
                             return seriesCallback(undefined, null);
                         }
-                        
+
                     },
                     function(heroes, seriesCallback) {
                         var where = {
                             articleType: ['hots']
                         };
-                        
+
                         if (!_.isNull(heroes)) {
                             where = {
                                 articleType: ['hots'],
                                 classTags: {
                                     inq: _.map(heroes, function(hero) { return hero.name; })
-                                } 
+                                }
                             }
                         }
 
@@ -2688,13 +2688,13 @@ angular.module('app.services', [])
                                 skip: ((page*limit) - limit),
                                 where: guideWhere,
                                 fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                 ],
@@ -2835,13 +2835,13 @@ angular.module('app.services', [])
                                     isPublic: true
                                 },
                                 fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                 ],
@@ -3075,7 +3075,7 @@ angular.module('app.services', [])
                         //filter out guides by map className
                         try {
                             var selectedGuides = [];
-                            _.each(heroes, function (hero) { 
+                            _.each(heroes, function (hero) {
                                 var filteredGuides = _.filter(hero.guides, function (guide) {
                                     return _.find(guide.maps, function (map) {
                                         return (map.className === filters.map.className)
@@ -3105,13 +3105,13 @@ angular.module('app.services', [])
                                             isPublic: true
                                         },
                                         fields: [
-                                            "name", 
-                                            "authorId", 
-                                            "slug", 
-                                            "voteScore", 
-                                            "guideType", 
-                                            "premium", 
-                                            "id", 
+                                            "name",
+                                            "authorId",
+                                            "slug",
+                                            "voteScore",
+                                            "guideType",
+                                            "premium",
+                                            "id",
                                             "talentTiers",
                                             "createdDate"
                                         ],
@@ -3472,7 +3472,7 @@ angular.module('app.services', [])
 
                     if (!find(item, arrName)) {
                         arr[d].push(item);
-                    } 
+                    }
                 }
 
                 function addToArr (item, arrName) {
@@ -3486,7 +3486,7 @@ angular.module('app.services', [])
 
                     if (!find(item, arrName)) {
                         arr[w].push(item);
-                    } 
+                    }
                 }
 
                 function toggleItem (item, arrName) {
