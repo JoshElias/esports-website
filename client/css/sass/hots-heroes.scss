@@ -848,27 +848,22 @@ This is the template for hots-hero-talents.
     ( class: (bolt-of-the-storm), pos: 12 ) // -360
 ) );
 
-//@include hots-hero-talents ( li-ming, (
-//    ( class: (), pos: 0 ), // 0
-//    ( class: (), pos: 1 ), // -30
-//    ( class: (), pos: 2 ), // -60
-//    ( class: (), pos: 3 ), // -90
-//    ( class: (), pos: 4 ), // -120
-//    ( class: (), pos: 5 ), // -150
-//    ( class: (), pos: 6 ), // -180
-//    ( class: (), pos: 7 ), // -210
-//    ( class: (), pos: 8 ), // -240
-//    ( class: (), pos: 9 ), // -270
-//    ( class: (), pos: 10 ), // -300
-//    ( class: (), pos: 11 ), // -330
-//    ( class: (), pos: 12 ), // -360
-//    ( class: (), pos: 13 ), // -390
-//    ( class: (), pos: 14 ), // -420
-//    ( class: (), pos: 15 ), // -450
-//    ( class: (), pos: 16 ), // -480
-//    ( class: (), pos: 17 ), // -510
-//    ( class: (), pos: 18 ) // -540
-//) );
+@include hots-hero-talents ( li-ming, (
+    ( class: (astral-presence), pos: 0 ), // 0
+    ( class: (power-hungry), pos: 1 ), // -30
+    ( class: (force-armor, charged-blast, seeker, fireflies), pos: 2 ), // -60
+    ( class: (aether-walker, calamity, illusionist, diamond-skin), pos: 3 ), // -90
+    ( class: (ess-of-johan, zeis-vengeance, arcane-orbit), pos: 4 ), // -120
+    ( class: (triumvirate), pos: 5 ), // -150
+    ( class: (dominance), pos: 6 ), // -180
+    ( class: (disintegrate, temporal-flux), pos: 7 ), // -210
+    ( class: (wave-of-force, repulsion), pos: 8 ), // -240
+    ( class: (cannoneer), pos: 9 ), // -270
+    ( class: (glass-cannon), pos: 10 ), // -300
+    ( class: (mirrorball), pos: 11 ), // -330
+    ( class: (tal-rashas-elements), pos: 12 ), // -360
+    ( class: (Archon-pure-power), pos: 13 ) // -390
+) );
 
 //talents: Lunara 
 
