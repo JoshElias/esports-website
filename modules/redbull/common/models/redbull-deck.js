@@ -53,7 +53,11 @@ module.exports = function(RedbullDeck) {
                 }
 =======
                 validateDecks(draftJSON, clientDecks, clientDecks, currentTime),
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
                 //normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
+=======
+                //fillDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
+>>>>>>> changes to deck
                 saveDecks(draft, clientDecks),
                 refreshDraftState(draft, currentTime)
 >>>>>>> working on deck fill
@@ -82,6 +86,7 @@ module.exports = function(RedbullDeck) {
 
 =======
 >>>>>>> working on deck fill
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
 
 
 
@@ -93,6 +98,15 @@ module.exports = function(RedbullDeck) {
             var validationErr = new Error("Redbull Decks submitted were invalid");
             validationErr.statusCode = 422;
             validationErr.code = "INVALID_REDBULL_DECKS";
+=======
+
+
+
+    // DECK VALIDATION
+
+    function validateDecks(draftJSON, clientDecks, clientOptions, currentTime) {
+        return function(finalCb) {
+>>>>>>> changes to deck
 
             // Did they break the curfew
             if (currentTime > draftJSON.deckSubmitCurfew) {
@@ -101,6 +115,13 @@ module.exports = function(RedbullDeck) {
                 return finalCb(undefined, randomDecks);
             }
 
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
+=======
+            var invalidDeckErr = new Error("Invalid structure was submitted as draft deck");
+            invalidDeckErr.statusCode = 422;
+            invalidDeckErr.code = 'DRAFT_DECK_VALIDATION_ERROR';
+
+>>>>>>> changes to deck
             var validationReport = {
                 deckErrors: [],
                 hasInvalidCards: false,
@@ -113,6 +134,7 @@ module.exports = function(RedbullDeck) {
                 validateCardAmounts(draftJSON, clientDecks, clientOptions, validationReport),
                 validateDeckStructure(clientDecks, validationReport)
             ], function (err) {
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
                 if(err && err !== true) return finalCb(err);
 
                 if(!clientOptions || !clientOptions.hasTimedOut) {
@@ -121,6 +143,10 @@ module.exports = function(RedbullDeck) {
                 }
 
                 return finalCb(undefined, validationReport);
+=======
+                if(err === true) return finalCb(undefined, validationReport)
+                return finalCb(err, validationReport);
+>>>>>>> changes to deck
             });
         }
     }
@@ -295,7 +321,11 @@ module.exports = function(RedbullDeck) {
 
     // DECK FILLING
 
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
     function normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime) {
+=======
+    function fillDecks(draft, draftJSON, clientDecks, clientOptions, currentTime) {
+>>>>>>> changes to deck
         return function(validationReport, finalCb) {
 
             var validationReport = {
@@ -305,6 +335,7 @@ module.exports = function(RedbullDeck) {
                 deckErrors: []
             };
 
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
             // Check if the submission had invalid cards
             if(validationReport.hasInvalidCards) {
                 var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
@@ -312,6 +343,8 @@ module.exports = function(RedbullDeck) {
             }
 
             // If we have invalid cards, remove them from the decks
+=======
+>>>>>>> changes to deck
 
 
             var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON);
@@ -421,7 +454,11 @@ module.exports = function(RedbullDeck) {
         }
     }
 
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
     function normalizeDecks(draftJSON, clientDecks, clientOptions) {
+=======
+    function completePartialDecks(draftJSON, clientDecks, clientOptions) {
+>>>>>>> changes to deck
 
         // Keep Track of total card pool
         var availableDeckCards = {};
@@ -467,11 +504,14 @@ module.exports = function(RedbullDeck) {
 
     }
 
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
     // Will either add more cards from our pool or return the excess ones it removed
     function normalizeDeck(currentDeck, availableDeckCards) {
 
     }
 
+=======
+>>>>>>> changes to deck
     function subtractUsedCards(availableDeckCards, clientDecks) {
 
         // Iterate over all the clients decks
@@ -503,9 +543,16 @@ module.exports = function(RedbullDeck) {
         }
     }
 
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
     function subtractUsedCards(availableDeckCards, clientDecks) {
 
 
+=======
+    // Will either add more cards from our pool or return the excess ones it removed
+    function normalizeDeck(currentDeck, availableDeckCards) {
+
+    }
+>>>>>>> changes to deck
 
 
 
@@ -538,7 +585,11 @@ module.exports = function(RedbullDeck) {
 
             return draft.updateAttributes({
                 deckBuildStopTime: currentTime,
+<<<<<<< c86708f5cbc724cf73a68bedabbac2cec924f3fa
                 hasDecksConstructed: true
+=======
+                hasDecksContructed: true
+>>>>>>> changes to deck
             }, function (err) {
                 if (err) return finalCb(err);
 
