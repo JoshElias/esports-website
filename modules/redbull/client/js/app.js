@@ -73,7 +73,8 @@ var redbull = angular.module('app.redbull', [
                                 RedbullDraft.findOne({
                                     filter: {
                                         where: {
-                                            id: $localStorage.draftId
+                                            id: $localStorage.draftId,
+                                            isActive: true
                                         },
                                         include: {
                                             relation: 'packs',
@@ -139,7 +140,8 @@ var redbull = angular.module('app.redbull', [
                                 return RedbullDraft.findOne({
                                     filter: {
                                         where: {
-                                            id: $localStorage.draftId
+                                            id: $localStorage.draftId,
+                                            isActive: true
                                         },
                                         fields: ['id', 'hasOpenedPacks'],
                                         include: [
@@ -187,7 +189,8 @@ var redbull = angular.module('app.redbull', [
                             return RedbullDraft.findOne({
                                 filter: {
                                     where: {
-                                        id: $stateParams.draftId
+                                        id: $stateParams.draftId,
+                                        isActive: true
                                     },
                                     fields: ['id', 'hasDecksConstructed'],
                                     include: [

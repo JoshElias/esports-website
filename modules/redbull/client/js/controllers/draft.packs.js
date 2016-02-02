@@ -22,6 +22,15 @@ angular.module('redbull.controllers')
     }*/
     
     function dirtyPacks (packs) {
+        var expansionOrders = {
+            'Soulbound' : 0,
+            'Basic': 1,
+            'Naxxramas': 2,
+            'Goblins Vs. Gnomes': 3,
+            'Blackrock Mountain': 4,
+            'The Grand Tournament': 5,
+            'League of Explorers': 6
+        };
         var newPacks = {};
         
         _.each(packs, function (pack) {
@@ -41,7 +50,8 @@ angular.module('redbull.controllers')
                     name: expansion.name,
                     className: expansion.className,
                     numOfPacks: expansion.numOfPacks,
-                    packs: []
+                    packs: [],
+                    orderNum: expansionOrders[expansion.name]
                 };
             }
             newPacks[expansion.name].packs.push({

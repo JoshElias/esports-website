@@ -30,14 +30,15 @@
         <div class="packs-scroller">
             <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, fadeScrollbars: true, interactiveScrollbars: true}">
                 <div class="iscroll-scroller">
-                    <div class="expansion-wrapper {{packs[expansion].className}}" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
+                    <div class="expansion-wrapper {{packs[expansion].className}}" ng-repeat="expansion in expansions | orderBy: 'orderNum' track by expansion" ng-init="enablePacks()">
                         <div class="pack-wrapper">
                             <div class="pack-tab {{packs[expansion].className}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
                             <div class="pack-next {{packs[expansion].className}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
                             <div class="pack {{packs[expansion].className}}" data-expansion="{{expansion}}"></div>
                         </div>
                         <div class="pack-label">
-                            <span class="{{packs[expansion].className}}">{{expansion}}</span>
+                            <span class="{{packs[expansion].className}}" ng-if="expansion !== 'Basic'">{{expansion}}</span>
+                            <span class="{{packs[expansion].className}}" ng-if="expansion === 'Basic'">Classic</span>
                         </div>
                     </div>
                 </div>
