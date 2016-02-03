@@ -110,25 +110,18 @@ angular.module('redbull.directives')
                 }
                 
                 // go to next event
-                var isNextEventing = false;
-                var eventCnt = 0;
                 function nextEvent() {
-                    if (isNextEventing) { return false; }
-                    isNextEventing = true;
-                    console.log('nextEvent: ', eventCnt++);
                     var e = $.Event('keydown');
                     e.which = 32;
                     e.keyCode = 32;
                     $timeout(function () {
                         el.trigger(e);
-                        isNextEventing = false;
-                    }, fastForwardSpeed);
+                    });
                 }
                 
                 // do next even in fast forward
                 scope.fastForwardNext = function () {
                     if (fastForward) {
-                        console.log('fastFowardNext');
                         $timeout(nextEvent, fastForwardSpeed);
                     }
                 };
@@ -140,7 +133,6 @@ angular.module('redbull.directives')
 
                 // start fast forwarding
                 scope.fastForwardToggle = function () {
-                    console.log('ff toggle');
                     if (!fastForward) {
                         fastForward = true;
                         el.addClass('fast-forward');

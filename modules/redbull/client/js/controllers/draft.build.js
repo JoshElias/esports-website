@@ -446,12 +446,8 @@ angular.module('redbull.controllers')
             });
         }
         
-        $scope.saveDecks = function (timesUp) {
-            if (!$scope.canEdit()) { return false; }
-            
-            timesUp = timesUp || false;
-            
-            if (!timesUp && !$scope.decksComplete()) {
+        $scope.saveDecksCheck = function () {
+            if (!$scope.decksComplete()) {
                 // error modal
                 var decks = draftSettings.numOfDecks;
                 var box = bootbox.dialog({
@@ -468,25 +464,78 @@ angular.module('redbull.controllers')
                     }
                 });
                 box.modal('show');
-                return false;
             } else {
-                // save decks
-                $scope.decksSaving = true;
-                
-                var cleanDecks = angular.copy($scope.decks);
-                _.each(cleanDecks, function (deck) {
-                    cleanDeck(deck);
-                });
-                
-                RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise.then(function (data) {
-                    delete $localStorage.draftDecks;
-                    delete $localStorage.draftId;
-                    
-                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
-                }).catch(function (data) {
-                    console.error(data);
-                });
+                $scope.saveConfirm();
             }
+        };
+        
+        $scope.saveConfirm = function () {
+            if (!$scope.canEdit()) { return false; }
+            var box = bootbox.dialog({
+                title: 'Save Decks',
+                message: 'Once you save your decks, you will not be able to make any changes. Are you sure you want to save?',
+                buttons: {
+                    continue: {
+                        label: 'Save Decks',
+                        className: 'btn-blue',
+                        callback: function () {
+                            box.modal('hide');
+                            $scope.saveDecks();
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        };
+        
+        $scope.saveDecks = function (timesUp) {
+            if (!$scope.canEdit()) { return false; }
+            timesUp = timesUp || false;
+            
+            // save decks
+            $scope.decksSaving = true;
+
+            var cleanDecks = angular.copy($scope.decks);
+            _.each(cleanDecks, function (deck) {
+                cleanDeck(deck);
+            });
+
+            RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise
+            .then(function (data) {
+                delete $localStorage.draftDecks;
+                delete $localStorage.draftId;
+                
+                if (timesUp) {
+                    bootbox.hideAll();
+                    var box = bootbox.dialog({
+                        title: 'Times Up!',
+                        message: 'You ran out of time and we have submitted your decks as is. Our system will now complete your decks for you. What does this mean?<br><br><strong>If you had fewer than '+ $scope.tournament.decksLimit +' decks or fewer than 30 cards in a deck?</strong><br>We will add some decks / cards for you. Random remaining classes will be selected, and we will fill your decks with random cards from the remaining card pool.<br><br><strong>If you had more than '+ $scope.tournament.decksLimit +' decks or 30 cards in a deck?</strong><br>We will randomly remove decks / cards until you have the appropriate amount.<br>',
+                        buttons: {
+                            continue: {
+                                label: 'View Decks',
+                                className: 'btn-blue',
+                                callback: function () {
+                                    box.modal('hide');
+                                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
+                                }
+                            }
+                        },
+                        closeButton: false
+                    });
+                    box.modal('show');
+                } else {
+                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
+                }
+            }).catch(function (data) {
+                console.error(data);
+            });
         };
 
     }
