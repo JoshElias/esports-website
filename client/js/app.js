@@ -129,13 +129,13 @@ var app = angular.module('app', [
 
         var throw404 = function ($state) {
             var options = {
-                location: true,
+                location: "replace",
                 inherit: true,
-                notify: false,
+                notify: true,
                 relative: $state.$current
             }
 
-            $state.transitionTo('app.404', options);
+            $state.transitionTo('app.404', {}, options);
         }
 
         // ignore ng-animate on font awesome spin

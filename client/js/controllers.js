@@ -55,7 +55,9 @@ angular.module('app.controllers', ['ngCookies'])
         }])
     .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService', 'EventService',
         function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
-
+            
+          $scope.currentRoles = {};
+            
           // Add 'redbulladmin' to current user if they have role.
           var redbullCheck = function(){
             if ($scope.currentUser) {
@@ -72,14 +74,40 @@ angular.module('app.controllers', ['ngCookies'])
               });
             }
           }
+          
+          var adminCheck = function() {
+              if ($scope.currentUser) {
+                  User.isInRoles({
+                      uid: $scope.currentUser.id,
+                      roleNames: ['$admin']
+                  }).$promise
+                  .then(function (res) {
+                      $scope.currentRoles.isAdmin = false;
+                      console.log('$scope.currentRoles.isAdmin:', $scope.currentRoles.isAdmin);
+                  })
+                  .catch(function (err) {
+                      return console.log('User.isInRoles: ', err);
+                  });
+              }
+          };
 
         $scope.currentUser = currentUser;
+        console.log('currentUser:', currentUser);
         redbullCheck();
-
+        adminCheck();
 
         EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+            console.log('logged in');
+            console.log('data:', data);
             $scope.currentUser = data;
+            
+            adminCheck();
             redbullCheck();
+        });
+        
+            
+        EventService.registerListener(EventService.EVENT_LOGOUT, function () {
+            console.log('logged out');
         });
 
         $scope.loginModal = function (state) {
@@ -13985,7 +14013,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editGuide = function (guide) {
 //                console.log(guide);
 
-
                 if (guide.guideType === 'hero') {
                     return $state.go('app.admin.hots.guides.edit.hero', { guideID: guide.id });
                 } else {
@@ -14003,20 +14030,30 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                // TODO: this is using old stuff
-                                console.log('TODO: Delete Guides');
-//                                AdminHOTSGuideService.deleteGuide(guide._id).then(function (data) {
-//                                    if (data.success) {
-//                                        var index = $scope.guides.indexOf(guide);
-//                                        if (index !== -1) {
-//                                            $scope.guides.splice(index, 1);
-//                                        }
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: guide.name + ' deleted successfully.'
-//                                        };
-//                                    }
-//                                });
+                                
+                                Guide.deleteById({
+                                    id: guide.id
+                                })
+                                .$promise
+                                .then(function (guideDeleted) {
+                                    console.log('guideDeleted:', guideDeleted);
+                                    var index = $scope.guides.indexOf(guide);
+                                    if (index !== -1) {
+                                        $scope.guides.splice(index, 1);
+                                    }
+                                    
+                                    AlertService.setSuccess({
+                                        show: true,
+                                        msg: guide.name + ' deleted successfully',
+                                    });
+                                })
+                                .catch(function (err) {
+                                    AlertService.setError({
+                                        show: true,
+                                        msg: 'Unable to delete ' + guide.name,
+                                        lbErr: err
+                                    });
+                                });
                             }
                         },
                         cancel: {
@@ -14034,6 +14071,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService',
         function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService) {
+            
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
 
