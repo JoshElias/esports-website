@@ -2170,7 +2170,7 @@ angular.module('app.services', [])
                         }
                     }).$promise
                         .then(function (heroTalents) {
-                        //              console.log('heroTalents:', heroTalents);
+                        console.log('heroTalents:', heroTalents);
                         hero.talents = heroTalents;
                     })
                         .catch(function (err) {
@@ -2223,7 +2223,7 @@ angular.module('app.services', [])
                 var temp = _.filter(hero.talents, function (val) { 
                     return val.tier == tier 
                 });
-                var talents = _.map(temp, function (val) { return val.talent; });
+                var talents = _.map(temp, function (val) { val.talent.orderNum = val.orderNum; return val.talent; });
                 return talents;
             };
 
