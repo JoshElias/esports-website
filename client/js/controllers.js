@@ -307,26 +307,8 @@ angular.module('app.controllers', ['ngCookies'])
             }, true);
 
             function updateArticles (offset, perpage) {
+                
                 var options = filterParams.articleParams.options;
-//                var options = {
-//                    filter: {
-//                        limit: 6,
-//                        order: "createdDate DESC",
-//                        where: {
-//                            isActive: true,
-//                            articleType: ['hs']
-//                        },
-//                        include: ['author'],
-//                        fields: {
-//                            content: false
-//                        }
-//                    }
-//                };
-                
-                var test = 'asdf';
-                
-                var test2 = parseInt(test) || 1;
-                console.log('test2:', test2);
 
                 if($scope.filters.classes.length > 0) {
                     options.filter.where.classTags = {
@@ -347,28 +329,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // update decks
             function updateTempostormDecks (page, perpage) {
-
-//                var options = {
-//                    filter: {
-//                        limit: 10,
-//                        order: "createdDate DESC",
-//                        where: {
-//                            isPublic: true,
-//                            isFeatured: true
-//                        },
-//                        fields: {
-//                            name: true,
-//                            authorId: true,
-//                            description: true,
-//                            playerClass: true,
-//                            premium: true,
-//                            voteScore: true,
-//                            heroName: true,
-//                            createdDate: true
-//                        },
-//                        include: ['author']
-//                    }
-//                };
                 
                 var options = filterParams.tsDeckParams.options;
 
@@ -385,34 +345,11 @@ angular.module('app.controllers', ['ngCookies'])
                 Deck.find(options)
                 .$promise
                 .then(function (data) {
-                    $timeout(function () {
-                        $scope.tempostormDecks = data;
-                    });
+                    $scope.tempostormDecks = data;
                 });
             }
             
             function updateCommunityDecks (page, perpage) {
-//                var options = {
-//                    filter: {
-//                        limit: 10,
-//                        order: "createdDate DESC",
-//                        where: {
-//                            isPublic: true,
-//                            isFeatured: false
-//                        },
-//                        fields: {
-//                            name: true,
-//                            authorId: true,
-//                            description: true,
-//                            playerClass: true,
-//                            premium: true,
-//                            voteScore: true,
-//                            heroName: true,
-//                            createdDate: true
-//                        },
-//                        include: ['author']
-//                    }
-//                };
                 
                 var options = filterParams.comDeckParams.options;
 
@@ -426,16 +363,15 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
 
-                Deck.find(options).$promise.then(function (data) {
-                    $timeout(function () {
-                        $scope.communityDecks = data;
-                    });
+                Deck.find(options)
+                .$promise
+                .then(function (data) {
+                    $scope.communityDecks = data;
                 });
             }
 
             //is premium
             $scope.isPremium = function (guide) {
-
                 if (!guide.premium.isPremium) { return false; }
                 var now = new Date().getTime(),
                     expiry = new Date(guide.premium.expiryDate).getTime();
@@ -15719,7 +15655,6 @@ angular.module('app.controllers', ['ngCookies'])
 //            console.log('paginationParams.tsParams:', paginationParams.tsParams);
             $scope.tempostormPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
-//                console.log('page:', page);
                 
                     StateParamHelper.updateStateParams({ 
                         tsp: $scope.tempostormPagination.page,

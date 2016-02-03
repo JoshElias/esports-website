@@ -706,6 +706,7 @@ angular.module('app.directives', ['ui.load'])
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+            
             var loading = false;
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
@@ -1282,7 +1283,6 @@ angular.module('app.directives', ['ui.load'])
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
                 
-//                console.log('scope:', scope);
                 scope.$parent.searchGuides();
             }
 
@@ -1494,8 +1494,6 @@ angular.module('app.directives', ['ui.load'])
             }, true);
 
             scope.toggleFilterUniverse = function (universe) {
-//                console.log('universe:', universe);
-//                console.log('scope.filters.universes:', scope.filters.universes);
                 var index = scope.filters.universes.indexOf(universe);
                 if (index === -1) {
                     scope.filters.universes.push(universe);

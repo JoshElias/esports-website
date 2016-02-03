@@ -1193,7 +1193,6 @@ angular.module('app.services', [])
       // availFilters - an array of available filters
       servObj.validateFilters = function (stateFilters, availFilters) {
           var found = _.difference(stateFilters, availFilters);
-//          console.log('found:', found);
           if (!_.isEmpty(found)) {
               this.replaceHistoryWith404();
           }

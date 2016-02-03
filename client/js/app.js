@@ -423,7 +423,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
-                            paginationParams: ['$stateParams', 'StateParamHelper', '$q', 'Article', function($stateParams,  StateParamHelper, $q, Article) {
+                            paginationParams: ['$stateParams', 'StateParamHelper', '$q', function($stateParams,  StateParamHelper, $q) {
                                 var articleFilters = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
                                 
                                 // if only 1 filter, parse into array
@@ -437,7 +437,6 @@ var app = angular.module('app', [
                                 StateParamHelper.validateFilters($stateParams.f, articleFilters);
                                 
                                 StateParamHelper.validatePage($stateParams.p);
-                                
                                 var pattern = '/.*'+$stateParams.s+'.*/i',
                                 artWhere = {
                                     isActive: true
@@ -660,9 +659,7 @@ var app = angular.module('app', [
                                 
                                 var artWhere = {
                                   isActive: true,
-                                  articleType: {
-                                      inq: ['hs']
-                                  }
+                                  articleType: ['hs']
                                 },
                                 tsDeckWhere = {
                                     isFeatured: true
@@ -1597,10 +1594,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
-                            filterParams: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', function($stateParams, StateParamHelper, $q, Hero, Map) {
-//                                console.log('$stateParams:', $stateParams);
-//                                console.log('first');
-//                                console.log('$stateParams:', $stateParams);
+                            filterParams: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', 'HOTS', function($stateParams, StateParamHelper, $q, Hero, Map, HOTS) {
                                 if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
                                     $stateParams.r = new Array($stateParams.r);
                                 }
@@ -1613,6 +1607,8 @@ var app = angular.module('app', [
                                     $stateParams.h = new Array($stateParams.h);
                                 }
                                 
+                                // normalizing all params to arrays incase we want to allow people to select multiple
+                                // maps/heroes down the road
                                 if (angular.isString($stateParams.m) && !_.isEmpty($stateParams.m)) {
                                     $stateParams.m = new Array($stateParams.m);
                                 }
@@ -1625,9 +1621,8 @@ var app = angular.module('app', [
                                     map: $stateParams.m || undefined
                                 };
                                 
-//                                console.log('filters:', filters);
-                                var possibleRoles = ['Warrior', 'Assassin', 'Support', 'Specialist'];
-                                var possibleUniverses = ['Warcraft', 'Starcraft', 'Diablo', 'Blizzard'];
+                                var possibleRoles = HOTS.roles;
+                                var possibleUniverses = HOTS.universes;
                                 var possibleHeroes;
                                 var possibleMaps;
                                 
@@ -1902,7 +1897,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            paginationFilters: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', function($stateParams, StateParamHelper, $q, Hero, Map) {
+                            paginationFilters: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', 'HOTS', function($stateParams, StateParamHelper, $q, Hero, Map, HOTS) {
                                 
                                 if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
                                     $stateParams.r = new Array($stateParams.r);
@@ -1928,8 +1923,8 @@ var app = angular.module('app', [
                                     map: $stateParams.m || undefined
                                 };
                                 
-                                var possibleRoles = ['Warrior', 'Assassin', 'Support', 'Specialist'];
-                                var possibleUniverses = ['Warcraft', 'Starcraft', 'Diablo', 'Blizzard'];
+                                var possibleRoles = HOTS.roles;
+                                var possibleUniverses = HOTS.universes;
                                 var possibleHeroes;
                                 var possibleMaps;
                                 
@@ -2138,6 +2133,7 @@ var app = angular.module('app', [
                                           relation: "author",
                                           scope: {
                                             fields: ['username']
+
                                           }
                                         },
                                         {
@@ -2181,25 +2177,23 @@ var app = angular.module('app', [
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         d.resolve(data);
                                     });
                                     
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
-                                      
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
-                                           return d.resolve(err);
+                                           return d.reject(err);
                                         }
                                         d.resolve(data);
                                       });
                                       
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
-                                      
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
                                           if (err) {
-                                             return d.resolve(err);
+                                             return d.reject(err);
                                           }
                                           d.resolve(data);
                                       });
@@ -2208,23 +2202,23 @@ var app = angular.module('app', [
                                       
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                           if (err) {
-                                             return d.resolve(err);
+                                             return d.reject(err);
                                           }
                                           d.resolve(data);
                                       });
                                   }
                                 
                                 return d.promise;
-                                
                             }],
                             communityGuideCount: ['paginationParams', 'HOTSGuideQueryService', '$q', 'StateParamHelper', 'Guide', function(paginationParams, HOTSGuideQueryService, $q, StateParamHelper, Guide) {
                                 
                                 var d = $q.defer();
                                 
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         paginationParams.comParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
@@ -2233,9 +2227,10 @@ var app = angular.module('app', [
                                     });
                                     
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         paginationParams.comParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
@@ -2244,9 +2239,10 @@ var app = angular.module('app', [
                                       });
                                       
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
                                           if (err) {
-                                              return d.resolve(err);
+                                              return d.reject(err);
                                           }
                                           
                                           paginationParams.comParams.total = count.count;
@@ -2259,7 +2255,7 @@ var app = angular.module('app', [
                                       
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false,  paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                           if (err) {
-                                              return d.resolve(err);
+                                              return d.reject(err);
                                           }
                                           paginationParams.comParams.total = count.count;
                                           StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
@@ -2271,13 +2267,13 @@ var app = angular.module('app', [
                                 return d.promise;
                             }],
                             dataTopGuide: ['$stateParams', '$q', 'HOTSGuideQueryService', 'paginationParams', function ($stateParams, $q, HOTSGuideQueryService, paginationParams) {
-                                
+
                               var d = $q.defer();
                                 
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         d.resolve(data);
                                     });
@@ -2285,7 +2281,7 @@ var app = angular.module('app', [
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         d.resolve(data);
                                       });
@@ -2293,7 +2289,7 @@ var app = angular.module('app', [
                                   } else {
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, null, paginationParams.guideFilters.search, 1, 1, function(err, data, count) {
                                           if (err) {
-                                              return d.resolve(err);
+                                              return d.reject(err);
                                           }
                                           d.resolve(data);
                                       });
@@ -2308,7 +2304,7 @@ var app = angular.module('app', [
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         d.resolve(data);
                                     });
@@ -2317,7 +2313,7 @@ var app = angular.module('app', [
                                       
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         d.resolve(data);
                                       });
@@ -2326,7 +2322,7 @@ var app = angular.module('app', [
                                       
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function (err, data, count) {
                                           if (err) {
-                                              return d.resolve(err);
+                                              return d.reject(err);
                                           }
                                           d.resolve(data);
                                       });
@@ -2334,7 +2330,7 @@ var app = angular.module('app', [
                                   } else {
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                           if (err) {
-                                              return d.resolve(err);
+                                              return d.reject(err);
                                           }
                                           d.resolve(data);
                                       });
@@ -2349,7 +2345,7 @@ var app = angular.module('app', [
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         paginationParams.tsParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
@@ -2360,7 +2356,7 @@ var app = angular.module('app', [
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         paginationParams.tsParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
@@ -2372,7 +2368,7 @@ var app = angular.module('app', [
                                       
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                         paginationParams.tsParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
@@ -2384,7 +2380,7 @@ var app = angular.module('app', [
                                       
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
-                                            return d.resolve(err);
+                                            return d.reject(err);
                                         }
                                           
                                         paginationParams.tsParams.total = count.count;
