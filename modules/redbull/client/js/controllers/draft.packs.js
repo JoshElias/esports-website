@@ -200,13 +200,6 @@ angular.module('redbull.controllers')
 
     // go to build
     $scope.goToBuild = function () {
-        $scope.goingToBuild = true;
-        RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
-            return $state.go('^.build');
-        }).catch(function () {
-            console.error('Unable to update draft');
-        });
-/*        
         var mins = draftSettings.deckBuildTimeLimit;
         var decks = draftSettings.numOfDecks;
         var box = bootbox.dialog({
@@ -236,7 +229,6 @@ angular.module('redbull.controllers')
             }
         });
         box.modal('show');
-*/
     };
     
 }]);
