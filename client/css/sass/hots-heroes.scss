@@ -1018,7 +1018,7 @@ This is the template for hots-hero-talents.
 //    ( class: (bolt-of-the-storm), pos: 15 ) // -450
 //) );
 
-@include hots-hero-talents ( heroName, (
+@include hots-hero-talents ( nova, (
     ( class: (tactical-espionage, ghost-protocol), pos: 0 ), // 0
     ( class: (advanced-cloaking), pos: 1 ), // -30
     ( class: (longshot, double-tap, crippling-shot), pos: 2 ), // -60
@@ -1033,11 +1033,8 @@ This is the template for hots-hero-talents.
     ( class: (precision-strike, precision-barrage), pos: 11 ), // -330
     ( class: (psionic-efficiency, perfect-shot), pos: 12 ), // -360
     ( class: (explosive-round), pos: 13 ), // -390
-    ( class: (rewind), pos: 14 ), // -420
-    ( class: (), pos: 15 ), // -450
-    ( class: (), pos: 16 ), // -480
-    ( class: (), pos: 17 ), // -510
-    ( class: (), pos: 18 ) // -540
+    ( class: (rewind), pos: 14 ) // -420
+
 ) );
 
 
