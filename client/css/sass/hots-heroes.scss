@@ -999,24 +999,48 @@ This is the template for hots-hero-talents.
 
 //talents: nova
 
-@include hots-hero-talents ( nova, (
-    ( class: (conjurers-pursuit), pos: 0 ), // 0
-    ( class: (psi-op-rangefinder, ambush-snipe, perfect-shot, explosive-round, railgun), pos: 1 ), // -30
-    ( class: (tazer-rounds, covert-ops, crippling-shot), pos: 2 ), // -60
-    ( class: (remote-delivery, lethal-decoy, double-fake), pos: 3 ), // -90
-    ( class: (gathering-power ), pos: 4 ), // -120
-    ( class: (envenom), pos: 5 ), // -150
-    ( class: (one-in-the-chamber), pos: 6 ), // -180
-    ( class: (anti-armor-shells), pos: 7 ), // -210
-    ( class: (triple-tap, fast-reload), pos: 8 ), // -240
-    ( class: (precision-strike, precision-barrage), pos: 9 ), // -270
-    ( class: (advanced-cloaking), pos: 10 ), // -300
-    ( class: (headshot), pos: 11 ), // -330
-    ( class: (spell-shield), pos: 12 ), // -360
-    ( class: (overdrive), pos: 13 ), // -390
+//@include hots-hero-talents ( nova, (
+//    ( class: (conjurers-pursuit), pos: 0 ), // 0
+//    ( class: (psi-op-rangefinder, ambush-snipe, perfect-shot, explosive-round, railgun), pos: 1 ), // -30
+//    ( class: (tazer-rounds, covert-ops, crippling-shot), pos: 2 ), // -60
+//    ( class: (remote-delivery, lethal-decoy, double-fake), pos: 3 ), // -90
+//    ( class: (gathering-power ), pos: 4 ), // -120
+//    ( class: (envenom), pos: 5 ), // -150
+//    ( class: (one-in-the-chamber), pos: 6 ), // -180
+//    ( class: (anti-armor-shells), pos: 7 ), // -210
+//    ( class: (triple-tap, fast-reload), pos: 8 ), // -240
+//    ( class: (precision-strike, precision-barrage), pos: 9 ), // -270
+//    ( class: (advanced-cloaking), pos: 10 ), // -300
+//    ( class: (headshot), pos: 11 ), // -330
+//    ( class: (spell-shield), pos: 12 ), // -360
+//    ( class: (overdrive), pos: 13 ), // -390
+//    ( class: (rewind), pos: 14 ), // -420
+//    ( class: (bolt-of-the-storm), pos: 15 ) // -450
+//) );
+
+@include hots-hero-talents ( heroName, (
+    ( class: (tactical-espionage, ghost-protocol), pos: 0 ), // 0
+    ( class: (advanced-cloaking), pos: 1 ), // -30
+    ( class: (longshot, double-tap, crippling-shot), pos: 2 ), // -60
+    ( class: (covert-ops), pos: 3 ), // -90
+    ( class: (remote-delivery, lethal-decoy), pos: 4 ), // -120
+    ( class: (rapid-projection), pos: 5 ), // -150
+    ( class: (holo-stability), pos: 6 ), // -180
+    ( class: (one-in-the-chamber), pos: 7 ), // -210
+    ( class: (anti-armor-shells), pos: 8 ), // -240
+    ( class: (snipe-master), pos: 9 ), // -270
+    ( class: (triple-tap, fast-reload), pos: 10 ), // -300
+    ( class: (precision-strike, precision-barrage), pos: 11 ), // -330
+    ( class: (psionic-efficiency, perfect-shot), pos: 12 ), // -360
+    ( class: (explosive-round), pos: 13 ), // -390
     ( class: (rewind), pos: 14 ), // -420
-    ( class: (bolt-of-the-storm), pos: 15 ) // -450
+    ( class: (), pos: 15 ), // -450
+    ( class: (), pos: 16 ), // -480
+    ( class: (), pos: 17 ), // -510
+    ( class: (), pos: 18 ) // -540
 ) );
+
+
 
 //talents: raynor
 
