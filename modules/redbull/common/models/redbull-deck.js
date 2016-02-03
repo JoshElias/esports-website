@@ -27,7 +27,7 @@ module.exports = function(RedbullDeck) {
         return async.waterfall(
             [
                 validateDecks(draftJSON, clientDecks, clientDecks, currentTime),
-                normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime),
+                normalizeDecks(draftJSON),
                 saveDecks(draft),
                 refreshDraftState(draft, currentTime)
             ],
@@ -51,6 +51,7 @@ module.exports = function(RedbullDeck) {
 
             // Did they break the curfew
             if (currentTime > draftJSON.deckSubmitCurfew) {
+
                 // Give them all random decks
                 var availableDeckComponents = getAvailableDeckComponents(draftJSON);
                 clientDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON, availableDeckComponents);
@@ -72,7 +73,7 @@ module.exports = function(RedbullDeck) {
                     return finalCb(invalidDeckErr);
                 }
 
-                return finalCb(undefined, validationReport);
+                return finalCb(undefined, clientDecks, validationReport);
             });
         }
     }
@@ -248,8 +249,8 @@ module.exports = function(RedbullDeck) {
     // DECK NORMALIZING
 
 
-    function normalizeDecks(draft, draftJSON, clientDecks, clientOptions, currentTime) {
-        return function (validationReport, finalCb) {
+    function normalizeDecks(draftJSON) {
+        return function (clientDecks, validationReport, finalCb) {
 
             // Check if the submission had invalid cards
             if (validationReport.hasInvalidCards) {
@@ -442,7 +443,7 @@ module.exports = function(RedbullDeck) {
 
             // Did the client provide this deck
             if(typeof clientDecks[deckIndex] !== "object") {
-                clientDecks[deckIndex] = createRandomDecks(1, draftJSON, availableDeckComponents);
+                clientDecks[deckIndex] = createRandomDecks(1, draftJSON, availableDeckComponents)[0];
                 continue;
             }
 
@@ -484,7 +485,7 @@ module.exports = function(RedbullDeck) {
         var randomDecks = [];
         function addRandomDeck(playerClass, deckCards) {
             var randomDeck = {
-                name: "random deck "+randomDecks.length,
+                name: playerClass+" Deck ",
                 redbullDraftId: draftJSON.id,
                 playerClass: playerClass,
                 deckCards: deckCards
@@ -568,7 +569,6 @@ module.exports = function(RedbullDeck) {
 
     function saveDecks(draft) {
         return function (decks, finalCb) {
-
             var savedDecks = [];
             return async.eachSeries(decks, function (deck, deckCb) {
 
@@ -579,7 +579,11 @@ module.exports = function(RedbullDeck) {
 
                     savedDecks.push(newDeck);
                     return async.eachSeries(deck.deckCards, function (deckCard, deckCardCb) {
-                        return newDeck.deckCards.create(deckCard, deckCardCb);
+
+                        delete deckCard.card;
+                        return newDeck.deckCards.create(deckCard, function(err, newDeckCard) {
+                            return deckCardCb(err);
+                        });
                     }, deckCb);
                 });
             }, function (err) {
