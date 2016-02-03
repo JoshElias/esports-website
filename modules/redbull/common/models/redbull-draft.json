@@ -44,6 +44,10 @@
       "type": "boolean",
       "default": false
     },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
     "authorId": {},
     "redbullDraftSettingsId": {}
   },
