@@ -1777,36 +1777,6 @@ var app = angular.module('app', [
                                 
                                 return d.promise;
                                 
-//                              return Article.find({
-//                                filter: {
-//                                    limit: 6,
-//                                    where: {
-//                                        isActive: true,
-//                                        articleType: ['hots']
-//                                    },
-//                                    fields: {
-//                                        title: true,
-//                                        description: true,
-//                                        photoNames: true,
-//                                        themeName: true,
-//                                        slug: true,
-//                                        articleType: true,
-//                                        premium: true,
-//                                        createdDate: true,
-//                                        authorId: true
-//                                    },
-//                                    include: ['author'],
-//                                    order: "createdDate DESC"
-//                                }
-//                              })
-//                              .$promise
-//                              .then(function (data) {
-//                                  return data;
-//                              })
-//                              .catch(function (err) {
-//                                  console.log(err);
-//                              });
-                                
                             }],
                             dataGuidesCommunity: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
                                 var d = $q.defer();
@@ -1839,79 +1809,6 @@ var app = angular.module('app', [
                                 }
                                 
                                 return d.promise;
-                                
-//                              return Guide.find({
-//                                filter: {
-//                                  limit: 10,
-//                                    order: "createdDate DESC",
-//                                  where: {
-//                                    isFeatured: false,
-//                                    isPublic: true
-//                                  },
-//                                  fields: [
-//                                    "name", 
-//                                    "authorId", 
-//                                    "slug", 
-//                                    "voteScore", 
-//                                    "guideType", 
-//                                    "premium", 
-//                                    "id", 
-//                                    "talentTiers",
-//                                    "createdDate"
-//                                  ],
-//                                  include: [
-//                                      {
-//                                         relation: "maps"
-//                                      },
-//                                    {
-//                                      relation: 'maps'
-//                                    },
-//                                    {
-//                                      relation: "author",
-//                                      scope: {
-//                                        fields: ['username']
-//                                      }
-//                                    },
-//                                    {
-//                                      relation: 'guideHeroes',
-//                                      scope: {
-//                                        include: [
-//                                          {
-//                                            relation: 'talents'
-//                                          },
-//                                          {
-//                                            relation: 'hero',
-//                                            scope: {
-//                                              fields: ['name', 'className']
-//                                            }
-//                                          }
-//                                        ]
-//                                      }
-//                                    },
-//                                    {
-//                                      relation: 'guideTalents',
-//                                      scope: {
-//                                        include: {
-//                                          relation: 'talent',
-//                                          scope: {
-//                                            fields: {
-//                                              name: true,
-//                                              className: true
-//                                            }
-//                                          }
-//                                        },
-//                                      }
-//                                    },
-//                                  ]
-//                                }
-//                              })
-//                              .$promise
-//                              .then(function (data) {
-//                                  return data;
-//                              })
-//                              .catch(function (err) {
-//                                  console.log(err);
-//                              });
                             }],
                             dataGuidesFeatured: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
                                 var d = $q.defer();
@@ -6424,7 +6321,6 @@ var app = angular.module('app', [
                         controller: 'AdminTeamListCtrl',
                         resolve: {
                             teamMembers: ['TeamMember', function (TeamMember) {
-
                                 var gameTypes = ['hs', 'hots', 'fifa', 'wow', 'cs', 'fgc' ]
                                 var gameTypeFilter = _.map(gameTypes, function (gameType) {
                                     return {game: gameType}
@@ -6433,13 +6329,15 @@ var app = angular.module('app', [
                                 return TeamMember.find({
                                     filter: {
                                         where: {
-                                            or: gameTypeFilter
+                                            game: {
+                                                inq: gameTypes
+                                            }
                                         }
                                     }
                                 })
                                 .$promise
                                 .then(function (teamMembers) {
-
+                                    console.log('teamMembers:', teamMembers);
                                     var teamMemberObj = {};
                                     for (var key in teamMembers) {
                                         var teamMember = teamMembers[key];
@@ -6450,6 +6348,8 @@ var app = angular.module('app', [
 
                                         teamMemberObj[teamMember.game].push(teamMember);
                                     }
+                                    
+                                    console.log('teamMemberObj:', teamMemberObj);
 
                                     return teamMemberObj;
 

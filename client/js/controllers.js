@@ -5451,13 +5451,12 @@ angular.module('app.controllers', ['ngCookies'])
 //                $scope.fifaMembers = fifaTeam;
 //                $scope.fgcMembers = fgcTeam;
 
-//            $scope.updateDND = function (list, index) {
-//                list.splice(index, 1);
-//                for (var i = 0; i < list.length; i++) {
-//                    list[i].orderNum = i + 1;
-//                }
-//                AdminTeamService.updateOrder(list);
-//            };
+            $scope.updateDND = function (list, index) {
+                list.splice(index, 1);
+                for (var i = 0; i < list.length; i++) {
+                    list[i].orderNum = i + 1;
+                }
+            };
 
             // delete member
             $scope.deleteMember = function deleteMember(member) {
