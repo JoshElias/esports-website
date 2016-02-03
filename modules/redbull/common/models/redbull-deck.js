@@ -6,8 +6,13 @@ var utils = require("./../../../../lib/utils");
 var HS_CLASSES = ["Mage", "Paladin", "Rogue", "Druid", "Shaman",
     "Warlock", "Hunter", "Priest", "Warrior"];
 
+var NUM_CARDS_PER_DECK = 30;
+var NUM_OF_LEGENDARIES = 1;
+var NUM_OF_CARDS_PER_DECK = 2;
+
 
 module.exports = function(RedbullDeck) {
+
 
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {
@@ -60,7 +65,7 @@ module.exports = function(RedbullDeck) {
             return async.series([
                 validateOfficial(draftJSON, validationReport),
                 validateCardAmounts(draftJSON, clientDecks, validationReport),
-                validateDeckStructure(clientDecks, validationReport)
+                validateDeckStructure(draftJSON, clientDecks, validationReport)
             ], function (err) {
                 if (err && err !== true) return finalCb(err);
 
@@ -77,7 +82,6 @@ module.exports = function(RedbullDeck) {
             });
         }
     }
-
 
     function validateOfficial(draftJSON, validationReport) {
         return function (finalCb) {
@@ -187,9 +191,20 @@ module.exports = function(RedbullDeck) {
         }
     }
 
-    function validateDeckStructure(clientDecks, validationReport) {
+    function validateDeckStructure(draftJSON,  clientDecks, validationReport) {
         return function (finalCb) {
             try {
+
+                // Get all cards in this draft in an associative
+                var draftCards = {};
+                var cardIndex = draftJSON.cards.length;
+                var currCard;
+                while(cardIndex--) {
+                    currCard = draftJSON.cards[cardIndex];
+                    if(!draftCards[currCard.id]) {
+                        draftCards[currCard.id] = currCard;
+                    }
+                }
 
                 // Iterate over decks
                 var deckIndex = clientDecks.length;
@@ -198,6 +213,8 @@ module.exports = function(RedbullDeck) {
 
                 var deckCardIndex;
                 var currDeckCard;
+                var serverCard;
+                var numOfExtraCards;
                 var cardCount;
 
                 while (deckIndex--) {
@@ -209,24 +226,39 @@ module.exports = function(RedbullDeck) {
                     deckCardIndex = currDeck.deckCards.length;
                     while (deckCardIndex--) {
                         currDeckCard = currDeck.deckCards[deckCardIndex];
-                        if (currDeckCard.card.playerClass !== playerClass && currDeckCard.card.playerClass !== "Neutral") {
+                        serverCard = draftCards[currDeckCard.cardId];
 
-                            // Update report with error
-                            if (!validationReport.deckErrors[currDeck.name]) {
-                                validationReport.deckErrors[currDeck.name] = {};
-                            }
-                            if (!validationReport.deckErrors[currDeck.name].invalidCards) {
-                                validationReport.deckErrors[currDeck.name].invalidCards = [];
-                            }
-
-                            validationReport.deckErrors[clientDecks.name].invalidCards.push(currDeckCard.cardId);
-                            validationReport.passed = false
+                        // Check for invalid player Class
+                        if (serverCard.playerClass !== playerClass && serverCard.playerClass !== "Neutral") {
+                            reportInvalidCard(currDeck.name, currDeckCard.cardId)
                         }
+
+                        // Check for more than one legendary of the same type
+                        if (serverCard.rarity === "Legendary" && currDeckCard.cardQuantity > NUM_OF_LEGENDARIES) {
+
+                            // Get amount of invalid legendaries
+                            numOfExtraCards = currDeckCard.cardQuantity - NUM_OF_LEGENDARIES;
+                            while(numOfExtraCards--) {
+                                reportInvalidCard(currDeck.name, currDeckCard.cardId);
+                            }
+                        }
+
+                        // Check for more than 2 cards in a deck
+                        if (currDeckCard.cardQuantity > NUM_OF_CARDS_PER_DECK) {
+
+                            // Get amount of invalid cards
+                            numOfExtraCards = currDeckCard.cardQuantity - NUM_OF_CARDS_PER_DECK;
+                            while(numOfExtraCards--) {
+                                reportInvalidCard(currDeck.name, currDeckCard.cardId);
+                            }
+                        }
+
+                        // Increment the cardCount
                         cardCount += currDeckCard.cardQuantity;
                     }
 
-                    // Check for 30 cards
-                    if (cardCount !== 30) {
+                    // Check number of cards per deck
+                    if (cardCount !== NUM_CARDS_PER_DECK) {
 
                         // Update report with error
                         if (!validationReport[currDeck.name]) {
@@ -237,6 +269,20 @@ module.exports = function(RedbullDeck) {
                     }
                 }
 
+                function reportInvalidCard(deckName, cardId) {
+
+                    if (!validationReport.deckErrors[deckName]) {
+                        validationReport.deckErrors[deckName] = {};
+                    }
+                    if (!validationReport.deckErrors[deckName].invalidCards) {
+                        validationReport.deckErrors[deckName].invalidCards = [];
+                    }
+
+                    validationReport.deckErrors[deckName].invalidCards.push(cardId);
+                    validationReport.passed = false
+                }
+
+
                 return finalCb();
 
             } catch (err) {
@@ -246,8 +292,8 @@ module.exports = function(RedbullDeck) {
     }
 
 
-    // DECK NORMALIZING
 
+    // DECK NORMALIZING
 
     function normalizeDecks(draftJSON) {
         return function (clientDecks, validationReport, finalCb) {
@@ -347,13 +393,13 @@ module.exports = function(RedbullDeck) {
                 currDeckCard = currDeck.deckCards[deckCardIndex];
 
                 // This deck is already full of cards. Anything else is extra
-                if (cardCount >= 30) {
+                if (cardCount >= NUM_CARDS_PER_DECK) {
                     currDeck.deckCards.splice(deckCardIndex, 1);
                     continue;
                 }
 
                 // Check if this card is pushing the card amount over limit
-                overflowAmount = cardCount + currDeckCard.cardQuantity - 30;
+                overflowAmount = cardCount + currDeckCard.cardQuantity - NUM_CARDS_PER_DECK;
                 if (overflowAmount > 0) {
 
                     // Since the deck is not full yet, it must still need one card
@@ -368,7 +414,6 @@ module.exports = function(RedbullDeck) {
 
         return clientDecks;
     }
-
 
     function getAvailableDeckComponents(draftJSON, clientDecks) {
 
@@ -387,6 +432,7 @@ module.exports = function(RedbullDeck) {
             if (!availableDeckComponents.deckCards[cardId]) {
                 availableDeckComponents.deckCards[cardId] = {
                     playerClass: currentCard.playerClass,
+                    rarity: currentCard.rarity,
                     cardQuantity: 1,
                     cardId: cardId
                 };
@@ -433,7 +479,6 @@ module.exports = function(RedbullDeck) {
         return availableDeckComponents;
     }
 
-
     function completeDecks(clientDecks, availableDeckComponents, draftJSON) {
         var draftSettings = draftJSON.settings;
 
@@ -447,7 +492,7 @@ module.exports = function(RedbullDeck) {
                 continue;
             }
 
-            // Make sure it's complete with 30 cards
+            // Make sure it's complete with appropriate cards
             clientDecks[deckIndex] = completeDeck(clientDecks[deckIndex], availableDeckComponents);
         }
 
@@ -465,9 +510,9 @@ module.exports = function(RedbullDeck) {
             cardCount += currDeckCard.cardQuantity;
         }
 
-        // Decks should NEVER be over 30 by this point
-        if(cardCount < 30) {
-            var cardDifference = 30 - cardCount;
+        // Decks should NEVER be over NUM_CARDS_PER_DECK by this point
+        if(cardCount < NUM_CARDS_PER_DECK) {
+            var cardDifference = NUM_CARDS_PER_DECK - cardCount;
 
             var randomDeckCards = createRandomDeckCardsForClass(cardDifference, clientDeck.playerClass, availableDeckComponents);
             deckCardIndex = randomDeckCards.length;
@@ -480,6 +525,9 @@ module.exports = function(RedbullDeck) {
         return clientDeck;
     }
 
+
+
+    // RANDOM
 
     function createRandomDecks(numOfDecks, draftJSON, availableDeckComponents) {
         var randomDecks = [];
@@ -536,8 +584,18 @@ module.exports = function(RedbullDeck) {
         var numCardsOfToAdd;
         for (var cardId in availableDeckComponents.deckCards) {
             deckCard = availableDeckComponents.deckCards[cardId];
+
+            // Check if this card qualifies for this deck
             if (deckCard.playerClass === playerClass || deckCard.playerClass === "Neutral") {
+
+                // Find out the amount of cards to add
                 numCardsOfToAdd = Math.min(numOfCards - cardCount, deckCard.cardQuantity);
+                // Limit cards depending on rarity
+                if(deckCard.rarity === "Legendary") {
+                    numCardsOfToAdd = Math.min(NUM_OF_LEGENDARIES, numCardsOfToAdd);
+                } else {
+                    numCardsOfToAdd = Math.min(NUM_OF_CARDS_PER_DECK, numCardsOfToAdd);
+                }
 
                 // push new deckCard
                 deckCards.push({
@@ -563,6 +621,7 @@ module.exports = function(RedbullDeck) {
             }
         }
     }
+
 
 
     // SAVING
