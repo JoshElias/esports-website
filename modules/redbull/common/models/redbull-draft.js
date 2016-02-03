@@ -227,17 +227,11 @@ module.exports = function(RedbullDraft) {
 
 
     RedbullDraft.submitDecks = function (draftId, clientDecks, options, finalCb) {
-        console.log("submitting decks in draft");
         if (finalCb === undefined && typeof options === 'function') {
             finalCb = options;
             options = undefined;
         }
         finalCb = finalCb || utils.createPromiseCallback();
-
-        console.log("draftId:", draftId);
-        console.log("clientDeck count:", clientDecks.length);
-        console.log("options:", options);
-        console.log("finalCb type:", typeof finalCb);
 
         var RedbullDeck = RedbullDraft.app.models.redbullDeck;
 
