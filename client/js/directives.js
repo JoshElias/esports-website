@@ -1243,6 +1243,12 @@ angular.module('app.directives', ['ui.load'])
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
             }
+            
+            scope.queryOnEmpty = function (str) {
+                if (_.isEmpty(str)) {
+                    scope.updateSearch();
+                }
+            }
 
             scope.hasFilterRole = function (role) {
                 for (var i = 0; i < scope.filters.roles.length; i++) {

@@ -85,7 +85,7 @@ module.exports = function(Guide) {
                 if(!_.isEmpty(filters)) {
                     var heroFilter = {};
                     
-                    if(filters.heroId) {
+                    if(filters.heroId || (!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes))) {
                         heroFilter = {
                             where: {
                                 id: filters.heroId
@@ -94,7 +94,9 @@ module.exports = function(Guide) {
                                 id: true,
                                 name: true
                             },
-                            include: "guides"
+                            include: {
+                                relation: "guides"
+                            }
                         }
                     }
                     
@@ -120,7 +122,7 @@ module.exports = function(Guide) {
                         if(_.isUndefined(heroFilter.where))
                             heroFilter.where = {}
                         heroFilter.where.and = [];
-                        console.log(filters.universes);
+                        
                         if (!_.isEmpty(filters.universes)) {
                             heroFilter.where.and.push({ universe: { inq: filters.universes } });
                         }
@@ -130,42 +132,46 @@ module.exports = function(Guide) {
                         }
                     } else if (filters.search != "") {
                         var pattern = '/.*'+filters.search+'.*/i';
+                        if (_.isUndefined(heroFilter.where))
+                            heroFilter.where = {};
+                        
+                        if(_.isUndefined(heroFilter.include))
+                            heroFilter.include = {
+                                relation: "guides"
+                            }
+                            
                         heroFilter.where.or = [
                             { name: { regexp: pattern } },
                             { description: { regexp: pattern } }
                         ]
                     }
-                    console.log(heroFilter);
+                    
                     Hero.find(heroFilter, function (err, heroes) {
                         if (err)
                             return seriesCb(err);
                         
                         var ids = [];
                         if(filters.mapClassName) {
-                            filteredGuides = _.map(heroes, function (hero) {
+                            _.each(heroes, function (hero) {
                                 var heroJSON = hero.toJSON();
-                                return _.filter(heroJSON.guides, function (guide) {
-                                    return _.find(guide.maps, function (map) {
-                                        return (map.className === filters.mapClassName)
+                                _.each(heroJSON.guides, function (guide) {
+                                    _.each(guide.maps, function (map) {
+                                        if (map.className == filters.mapClassName)
+                                            ids.push(guide.id);
                                     })
-                                });
-                            });
-                            console.log(filteredGuides);
-                            
-                            ids = _.map(filteredGuides, function (val) {
-                                console.log("/////////////", val);
-                                return val.id;
+                                })
                             })
                         } else {
                             ids = _.map(heroes, function (hero) {
                                 var heroJSON = hero.toJSON();
+
                                 return _.map(heroJSON.guides, function (val) { return val.id; })
                             });
                         }
                         voteFilter.where['guideId'] = {
                             inq: _.flatten(ids)
                         }
-                        console.log(ids);
+
                         return seriesCb(undefined, voteFilter);
                     })
                 } else {

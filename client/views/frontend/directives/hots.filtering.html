@@ -16,7 +16,7 @@
             <div class="col-xs-12 col-sm-4 m-b-md hots-filters-search">
                 <form ng-submit="updateSearch()">
                     <div class="input-group">
-                        <input type="text" class="form-control input-dark" ng-model="searchHeroes">
+                        <input type="text" class="form-control input-dark" ng-model="searchHeroes" ng-keyup="queryOnEmpty(searchHeroes)">
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-blue"><i class="fa fa-search"></i></button>
                         </span>

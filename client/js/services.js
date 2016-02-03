@@ -2649,12 +2649,6 @@ angular.module('app.services', [])
                 })
             },
             getGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
-                //          console.log('filters:', filters);
-                //          console.log('isFeatured:', isFeatured);
-                //          console.log('search:', search);
-                //          console.log('limit:', limit);
-                //          console.log('page:', page);
-
                 var order = "voteScore DESC";
                 var heroWhere = {};
                 var heroGuideWhere = {};

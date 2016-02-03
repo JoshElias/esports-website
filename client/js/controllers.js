@@ -15491,7 +15491,7 @@ angular.module('app.controllers', ['ngCookies'])
                 HOTSGuideQueryService.topGuide($scope.filters, function (err, guide) {
                     if (_.isNull(guide.id) || _.isUndefined(guide.id))
                         return callback(err, null);
-                    
+                    console.log(guide);
                     Guide.findById({
                         id: guide.id,
                         filter: {
