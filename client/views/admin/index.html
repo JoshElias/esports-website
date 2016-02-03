@@ -1,6 +1,7 @@
 <!-- side nav -->
 <div ui-admin-nav class="admin-side-nav">
     <ul class="nav">
+        <div class="redbull-lockout" ng-if="!currentUser.isRedbullAdmin">
         <li ng-class="{active:$state.includes('app.admin.dashboard')}">
             <a ui-sref="app.admin.dashboard">
                 <i class="fa fa-tachometer m-r-sm"></i>
@@ -110,7 +111,7 @@
                 <span>Users</span>
             </a>
         </li>
-        
+
         <li ng-class="{active:$state.includes('app.admin.polls')}">
             <a ui-sref="app.admin.polls.list">
                 <i class="fa fa-bar-chart-o m-r-sm"></i>
@@ -149,6 +150,30 @@
                 <span>Streams</span>
             </a>
         </li>-->
+        </div>
+        <!-- redbull -->
+        <li ng-class="{active:$state.includes('app.admin.redbull')}" class="nav-drop">
+            <a href="#" class="nav-drop-btn">
+                <span class="pull-right text-muted">
+                    <i class="fa fa-fw fa-angle-right"></i>
+                    <i class="fa fa-fw fa-angle-down"></i>
+                </span>
+                <i class="fa fa-star m-r-sm"></i>
+                <span>Redbull</span>
+            </a>
+            <ul class="nav nav-sub">
+                <li ng-class="{active:$state.includes('app.admin.redbull.settings')}">
+                    <a ui-sref="app.admin.redbull.settings">Settings</a>
+                </li>
+                <li ng-class="{active:$state.includes('app.admin.redbull.whitelist')}">
+                    <a ui-sref="app.admin.redbull.whitelist">Whitelist</a>
+                </li>
+                <li ng-class="{active:$state.includes('app.admin.redbull.decks')}">
+                    <a ui-sref="app.admin.redbull.decks">Decks</a>
+                </li>
+            </ul>
+        </li>
+        <!-- / hots -->
     </ul>
 </div>
 <!-- / side nav -->

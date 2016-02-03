@@ -42,8 +42,10 @@
         </div>
         <div class="sub-nav-links">
             <ul>
-                <li><a ui-sref="app.hs.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hots.talentCalculator.redirect">TALENT CALCULATOR</a></li><li><a ui-sref="app.hots.guideBuilder.step1">GUIDE BUILDER</a></li><li><a target="_blank" ng-href="http://store.tempostorm.com" href="http://store.tempostorm.com">STORE</a></li>
+                <li><a ui-sref="app.hs.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hots.talentCalculator.redirect">TALENT CALCULATOR</a></li><li><a ui-sref="app.hots.guideBuilder.step1">GUIDE BUILDER</a></li><li style="border-right: 0px;"><a target="_blank" ng-href="http://store.tempostorm.com" href="http://store.tempostorm.com">STORE</a></li>
+                <li style="border-left: none"><a target="_blank" ng-href="http://tempostorm.com" href="http://tempostorm.com"><subnav-redbull></subnav-redbull></a></li>
             </ul>
+            
         </div>
     </div>
 </div>
@@ -86,9 +88,9 @@
                 <h1 class="title">TEMPOSTORM RESOURCES</h1>
                 <h3 class="sub-title m-b-md">Amazing tools to help you up your game</h3>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6 m-b-md">
+                            <div class="col-xs-12 col-sm-6 m-b-md col-lg-20p">
                                 <a ui-sref="app.hs.snapshot.redirect" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/metasnapshot.jpg" class="img-responsive">
@@ -98,7 +100,17 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs">
+                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs col-lg-20p col-lg-20p-push">
+                                <a ui-sref="app.hs.redbull.home" class="home-resource">
+                                    <div class="inner"></div>
+                                    <img ng-src="{{app.cdn}}img/sealed-resource.jpg" class="img-responsive">
+                                    <div class="home-resource-content">
+                                        <h1>BUILD A SEALED DECK</h1>
+                                        <p>DRAFT PICK TO CREATE A LEGENDARY DECK</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-12 col-sm-4 m-b-md hidden-xs col-lg-20p col-lg-20p-pull">
                                 <a ui-sref="app.hs.deckBuilder.class" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/deckbuilder.jpg" class="img-responsive">
@@ -108,14 +120,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-xs-12 m-b-md">
-                                <a ui-sref="app.hs.decks.list" class="btn btn-hots"><div class="inner">VIEW ALL HEARTHSTONE DECKS</div></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs">
+                            <div class="col-xs-12 col-sm-4 m-b-md hidden-xs col-lg-20p">
                                 <a ui-sref="app.hots.talentCalculator.redirect" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/talentcalculator.jpg" class="img-responsive">
@@ -125,7 +130,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs">
+                            <div class="col-xs-12 col-sm-4 m-b-md hidden-xs col-lg-20p">
                                 <a ui-sref="app.hots.guideBuilder.step1" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/heroguide.jpg" class="img-responsive">
@@ -135,11 +140,8 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-xs-12 m-b-md">
-                                <a ui-sref="app.hots.guides.list" class="btn btn-hots"><div class="inner">VIEW ALL HEROES GUIDES</div></a>
-                            </div>
                         </div>
-                    </div>     
+                    </div>   
                 </div>
                 <div class="row">
                      <div class="col-sm-12 col-lg-6 m-b-sm">

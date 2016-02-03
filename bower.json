@@ -56,7 +56,8 @@
     "jrumble": "~1.3",
     "angular-iscroll": "~1.3.3",
     "angular-google-adsense": "~0.4.0",
-    "angular-recaptcha": "~2.2.5"
+    "angular-recaptcha": "~2.2.5",
+    "jqueryui-touch-punch": "*"
   },
   "resolutions": {
     "angular-ui-utils": "jq-0.2.3",

@@ -220,6 +220,7 @@
 @include hots-hero-filters-image (valla, 45);
 @include hots-hero-filters-image (zagara, 46);
 @include hots-hero-filters-image (zeratul, 47);
+@include hots-hero-filters-image (li-ming, 48);
 
 
 
@@ -325,6 +326,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(kharazim);
 @include hots-hero(leoric);
 @include hots-hero(lili);
+@include hots-hero(li-ming);
 @include hots-hero(morales);
 @include hots-hero(malfurion);
 @include hots-hero(muradin);
@@ -844,6 +846,23 @@ This is the template for hots-hero-talents.
     ( class: (kung-fu-hustle), pos: 10 ), // -300
     ( class: (storm-shield), pos: 11 ), // -330
     ( class: (bolt-of-the-storm), pos: 12 ) // -360
+) );
+
+@include hots-hero-talents ( li-ming, (
+    ( class: (astral-presence), pos: 0 ), // 0
+    ( class: (power-hungry), pos: 1 ), // -30
+    ( class: (force-armor, charged-blast, seeker, fireflies), pos: 2 ), // -60
+    ( class: (aether-walker, calamity, illusionist, diamond-skin), pos: 3 ), // -90
+    ( class: (ess-of-johan, zeis-vengeance, arcane-orbit), pos: 4 ), // -120
+    ( class: (triumvirate), pos: 5 ), // -150
+    ( class: (dominance), pos: 6 ), // -180
+    ( class: (disintegrate, temporal-flux), pos: 7 ), // -210
+    ( class: (wave-of-force, repulsion), pos: 8 ), // -240
+    ( class: (cannoneer), pos: 9 ), // -270
+    ( class: (glass-cannon), pos: 10 ), // -300
+    ( class: (mirrorball), pos: 11 ), // -330
+    ( class: (tal-rashas-elements), pos: 12 ), // -360
+    ( class: (Archon-pure-power), pos: 13 ) // -390
 ) );
 
 //talents: Lunara 
@@ -1602,6 +1621,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(kharazim, -25, -54, -60, 50);
 @include hots-snapshot-hero(leoric, -25, -54, -60, 50);
 @include hots-snapshot-hero(lili, -35, -40, -40, 100);
+//@include hots-snapshot-hero(li-ming, -80, -23, -40, 50);
 @include hots-snapshot-hero(morales, -25, -54, -60, 50);
 @include hots-snapshot-hero(malfurion, -25, -80, -60, 50);
 @include hots-snapshot-hero(muradin,  -25, -55, -60, 68);

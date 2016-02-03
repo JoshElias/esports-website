@@ -5,7 +5,8 @@ module.exports = {
       "loopback/server/models",
       "../../common/models",
       "./../models",
-      "../../node_modules/loopback-component-passport/lib/models"
+      "../../node_modules/loopback-component-passport/lib/models",
+      "../../modules/redbull/common/models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -229,7 +230,19 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
-    "redbullTournament": {
+    "redbullDraft": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "redbullDraftSettings": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "redbullPackCard": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "redbullDeck": {
         "dataSource": "mongodb",
         "public": true
     },

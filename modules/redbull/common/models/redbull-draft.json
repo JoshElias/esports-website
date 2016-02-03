@@ -1,0 +1,139 @@
+{
+  "name": "redbullDraft",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "draftStartTime": {
+      "type": "number"
+    },
+    "draftEndTime": {
+      "type": "number"
+    },
+    "packOpeningStartTime": {
+      "type": "number"
+    },
+    "packOpeningEndTime": {
+      "type": "number"
+    },
+    "hasOpenedPacks": {
+      "type": "boolean",
+      "default": false
+    },
+    "hasStartedBuildingDeck": {
+      "type": "boolean",
+      "default": false
+    },
+    "deckBuildStartTime": {
+      "type": "number"
+    },
+    "deckBuildStopTime": {
+      "type": "number"
+    },
+    "hasDecksConstructed": {
+      "type": "boolean",
+      "default": false
+    },
+    "deckSubmitCurfew": {
+      "type": "number"
+    },
+    "isOfficial": {
+      "type": "boolean",
+      "default": false
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "authorId": {},
+    "redbullDraftSettingsId": {}
+  },
+  "validations": [],
+  "relations": {
+    "cards": {
+      "type": "hasMany",
+      "model": "card",
+      "foreignKey": "redbullDraftId",
+      "through": "redbullPackCard"
+    },
+    "packCards": {
+      "type": "hasMany",
+      "model": "redbullPackCard",
+      "foreignKey": "redbullDraftId"
+    },
+    "packs": {
+      "type": "hasMany",
+      "model": "redbullPack",
+      "foreignKey": "redbullDraftId"
+    },
+    "decks": {
+      "type": "hasMany",
+      "model": "redbullDeck",
+      "foreignKey": "redbullDraftId"
+    },
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "settings": {
+      "type": "belongsTo",
+      "model": "redbullDraftSettings",
+      "foreignKey": "redbullDraftSettingsId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "finishedOpeningPacks"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "startDraftBuild"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "submitDecks"
+    }
+  ],
+  "methods": {}
+}

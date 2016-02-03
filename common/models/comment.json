@@ -28,27 +28,14 @@
     "voteScore": {
       "type": "number"
     },
-    "authorId": {
-      "type": {}
-    },
-    "articleId": {
-      "type": {}
-    },
-    "guideId": {
-      "type": {}
-    },
-    "deckId": {
-      "type": {}
-    },
-    "snapshotId": {
-      "type": {}
-    },
-    "forumPostId": {
-      "type": {}
-    },
-    "parentCommentId": {
-      "type": {}
-    }
+    "authorId": {},
+    "articleId": {},
+    "guideId": {},
+    "deckId": {},
+    "snapshotId": {},
+    "forumPostId": {},
+    "parentCommentId": {},
+    "redbullDeckId": {}
   },
   "validations": [],
   "relations": {
@@ -81,6 +68,11 @@
       "type": "belongsTo",
       "model": "forumPost",
       "foreignKey": "forumPostId"
+    },
+    "redbullDeck": {
+      "type": "belongsTo",
+      "model": "redbullDeck",
+      "foreignKey": "redbullDeckId"
     },
     "parentComment": {
       "type": "belongsTo",

@@ -15,6 +15,7 @@
 
 
 // mixin for opac div with box-shadow
+// will not work on divs that have elements positioned absolute that exceed the size of the div due to firefox.
 
 @mixin ts-div-styles {
     
