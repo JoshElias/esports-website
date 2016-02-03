@@ -221,6 +221,7 @@ angular.module('redbull.controllers')
         
         $scope.setFilterRarity = function (rarity) {
             $scope.filters.rarity = rarity;
+            updatePagination();
         };
         
         // has mechanics filtering

@@ -1,6 +1,6 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util', 
-    function ($q, $timeout, $interval, $rootScope, Util){
+.directive('redbullDraft', ['$q', '$timeout', '$window', '$interval', '$rootScope', 'Util', 
+    function ($q, $timeout, $window, $interval, $rootScope, Util){
         return {
             restrict: 'A',
             templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/redbull-draft.html',
@@ -110,18 +110,25 @@ angular.module('redbull.directives')
                 }
                 
                 // go to next event
+                var isNextEventing = false;
+                var eventCnt = 0;
                 function nextEvent() {
+                    if (isNextEventing) { return false; }
+                    isNextEventing = true;
+                    console.log('nextEvent: ', eventCnt++);
                     var e = $.Event('keydown');
                     e.which = 32;
                     e.keyCode = 32;
                     $timeout(function () {
-                        $(window).trigger(e);
-                    });
+                        el.trigger(e);
+                        isNextEventing = false;
+                    }, fastForwardSpeed);
                 }
                 
                 // do next even in fast forward
                 scope.fastForwardNext = function () {
                     if (fastForward) {
+                        console.log('fastFowardNext');
                         $timeout(nextEvent, fastForwardSpeed);
                     }
                 };
@@ -133,6 +140,7 @@ angular.module('redbull.directives')
 
                 // start fast forwarding
                 scope.fastForwardToggle = function () {
+                    console.log('ff toggle');
                     if (!fastForward) {
                         fastForward = true;
                         el.addClass('fast-forward');
