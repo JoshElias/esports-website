@@ -204,7 +204,7 @@ angular.module('redbull.controllers')
         var decks = draftSettings.numOfDecks;
         var box = bootbox.dialog({
             title: 'Build Decks',
-            message: 'You will have <strong>' + mins + ' minutes</strong> to build <strong>' + decks + ' decks</strong>. If you do not complete in the alloted time, your decks will be automatically submitted, and completed with random classes / cards that are left. The timer begins once you click the continue button.',
+            message: 'You will have <strong>' + mins + ' minutes</strong> to build <strong>' + decks + ' decks</strong>. If you do not complete in the alloted time, your decks will be automatically submitted, and completed with random classes / cards that are remaining. The timer begins once you click the continue button.',
             buttons: {
                 continue: {
                     label: 'Continue',
