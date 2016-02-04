@@ -123,7 +123,6 @@ var redbull = angular.module('app.redbull', [
                 }
             },
             seo: { title: 'Sealed Deck Generator', description: '', keywords: '' }
-            //access: { auth: true }
         })
         .state('app.hs.draft.build', {
             url: '/build',
@@ -136,7 +135,6 @@ var redbull = angular.module('app.redbull', [
                             return RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
-                            var d = $q.defer();
                             if ($localStorage.draftId) {
                                 return RedbullDraft.findOne({
                                     filter: {
@@ -156,18 +154,18 @@ var redbull = angular.module('app.redbull', [
                                         ]
                                     }
                                 }).$promise.then(function (data) {
+                                    console.log('build data: ', data);
                                     if (!data.hasOpenedPacks) {
                                         $state.go('app.hs.draft.packs');
                                         return $q.reject();
                                     } else {
-                                        return d.resolve(data);
+                                        return data;
                                     }
                                 });
                             } else {
                                 $state.go('app.hs.draft.packs');
                                 return $q.reject();
                             }
-                            return d.promise;
                         }],
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
@@ -353,7 +351,6 @@ var redbull = angular.module('app.redbull', [
                             return RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
-                            var d = $q.defer();
                             if ($localStorage.draftId) {
                                 return RedbullDraft.findOne({
                                     filter: {
@@ -378,14 +375,13 @@ var redbull = angular.module('app.redbull', [
                                         $state.go('app.hs.draft.packs');
                                         return $q.reject();
                                     } else {
-                                        return d.resolve(data);
+                                        return data;
                                     }
                                 });
                             } else {
                                 $state.go('app.hs.draft.packs');
                                 return $q.reject();
                             }
-                            return d.promise;
                         }],
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
