@@ -76,13 +76,17 @@
                                     </a>
                                     <ul class="dropdown-menu no-border-radius no-padding">
                                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{user.username}}">Profile</a></li>
-                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" 
+                                          ng-show="currentRoles.isAdmin">
+                                          <a ui-sref="app.admin.dashboard">Admin</a>
+                                        </li>
                                       <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
                                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                                     </ul>
                                 </li>
                             </span>
                         </li>
+                        
                     </ul>
 
                 </div>
@@ -99,8 +103,8 @@
                     </a>
                     <ul class="dropdown-menu no-border-radius no-padding dropdown-user-login">
                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{currentUser.username}}">Profile</a></li>
-                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin && !currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
+                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentRoles.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                     </ul>
                 </li>

@@ -9,13 +9,12 @@
 //  2.2.. content styles
 //  2.3.. home articles
 //  2.4.. home content
-//  2.5.. padding
+//  -- moved to ts-utility-styles --
 //  2.6.. sections
 //  2.7.. Wrappers
 //  2.8.. Headers
 //  2.9.. Line Heights
-//  2.10.. Margins
-//  2.11.. Buttons
+//  -- moved to ts-utility-styles --
 //  2.12.. modal
 //  2.13.. Background Overrides
 //  2.14.. other general styles
@@ -352,49 +351,6 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 }
 
 
-// 2.5.. padding
-
-.padding-none { padding-left: 0px; padding-right: 0px; }
-.padding-sm { padding-left: 2px; padding-right: 2px; }
-.padding-md { padding-left: 5px; padding-right: 5px; }
-
-.content-padding { padding-top: 70px; }
-
-.p-xs { padding: 5px; }
-.p-sm { padding: 10px; }
-.p-md { padding: 20px; }
-.p-lg { padding: 30px; }
-.p-xl { padding: 50px; }
-
-.p-t-xs { padding-top: 5px; }
-.p-r-xs { padding-right: 5px; }
-.p-b-xs { padding-bottom: 5px; }
-.p-l-xs { padding-left: 5px; }
-
-.p-t-sm { padding-top: 10px; }
-.p-r-sm { padding-right: 10px; }
-.p-b-sm { padding-bottom: 10px; }
-.p-l-sm { padding-left: 10px; }
-
-.p-t-md { padding-top: 20px; }
-.p-r-md { padding-right: 20px; }
-.p-b-md { padding-bottom: 20px; }
-.p-l-md { padding-left: 20px; }
-
-.p-t-lg { padding-top: 30px; }
-.p-r-lg { padding-right: 30px; }
-.p-b-lg { padding-bottom: 30px; }
-.p-l-lg { padding-left: 30px; }
-
-.p-t-xl { padding-top: 50px; }
-.p-r-xl { padding-right: 50px; }
-.p-b-xl { padding-bottom: 50px; }
-.p-l-xl { padding-left: 50px; }
-
-.p-t-none { padding-top: 0px; }
-.p-r-none { padding-right: 0px; }
-.p-b-none { padding-bottom: 0px; }
-.p-l-none { padding-left: 0px; }
 
 // 2.6.. sections
 
@@ -403,13 +359,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .section-search { margin: 10px 0; width: 200px; }
 
-// 2.7.. Wrappers
 
-.wrapper-none { padding: 0px; }
-.wrapper-xs { padding: 5px; }
-.wrapper-sm { padding: 10px; }
-.wrapper-md { padding: 20px; }
-.wrapper-lg { padding: 30px; }
 
 // 2.8.. Headers
 
@@ -421,164 +371,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .lh-md { line-height: 20px; }
 .lh-lg { line-height: 30px; }
 .lh-xl { line-height: 40px; }
-
-// 2.10.. Margins
-
-.m-t-xs { margin-top: 5px; }
-.m-r-xs { margin-right: 5px; }
-.m-b-xs { margin-bottom: 5px; }
-.m-l-xs { margin-left: 5px; }
-
-.m-t-sm { margin-top: 10px; }
-.m-r-sm { margin-right: 10px; }
-.m-b-sm { margin-bottom: 10px; }
-.m-l-sm { margin-left: 10px; }
-
-.m-t-md { margin-top: 20px; }
-.m-r-md { margin-right: 20px; }
-.m-b-md { margin-bottom: 20px; }
-.m-l-md { margin-left: 20px; }
-
-.m-t-lg { margin-top: 30px; }
-.m-r-lg { margin-right: 30px; }
-.m-b-lg { margin-bottom: 30px; }
-.m-l-lg { margin-left: 30px; }
-
-.m-t-xl { margin-top: 50px; }
-.m-r-xl { margin-right: 50px; }
-.m-b-xl { margin-bottom: 50px; }
-.m-l-xl { margin-left: 50px; }
-
-.m-t-none { margin-top: 0px; }
-.m-r-none { margin-right: 0px; }
-.m-b-none { margin-bottom: 0px; }
-.m-l-none { margin-left: 0px; }
-
-// 2.11.. Buttons
-.btn.wide { width: 100%; border-radius: 0; text-align: left; }
-.btn-rounded { border-radius: 17px; }
-.btn-green {
-    color: #fff !important;
-    background-color: #27c24c;
-    border-color: #27c24c;
-}
-
-.btn-green:hover,
-.btn-green:focus {
-    color: #fff !important;
-    background-color: #23ad44;
-    border-color: #20a03f;
-}
-
-.btn-blue {
-    background: #2766ad;
-    color: #FFF;
-}
-
-.btn-blue:hover,
-.btn-blue:focus {
-    background: #083f7d;
-    color: #FFF;
-}
-
-.btn-blue.active {
-    background: #083f7d;
-    color: #FFF;
-    font-weight: bold;
-} 
-
-.btn-blue:disabled {
-    background: #2766ad;
-    color: #FFF;
-    opacity: .5;
-}
-
-.btn-red {
-    background: #aa2526;
-    color: #FFF;
-}
-
-.btn-red:hover,
-.btn-red:focus {
-    background: #800d0d;
-    color: #FFF; 
-}
-
-.btn-red.active {
-    background: #aa2526;
-    color: #FFF;
-    font-weight: bold;
-}
-
-.btn-red:disabled {
-    background: #aa2526;
-    color: #FFF;
-    opacity: .5;
-}
-
-.btn-purple,
-.btn-purple:hover,
-.btn-purple:focus {
-    color: #FFF;
-    background-color: #7d4399;
-}
-
-.btn-purple:hover,
-.btn-purple:focus {
-    background-color: #4b285c;
-}
-
-.btn-orange,
-.btn-orange:hover,
-.btn-orange:focus {
-    color: #FFF;
-    background-color: #fbaf17;
-}
-
-.btn-orange:hover,
-.btn-orange:focus {
-    background-color: #97690e;
-}
-
-.btn-white {
-    background: #FFF;
-    color: #2766ad;
-    border-color: #083f7d;
-}
-
-.btn-white:hover,
-.btn-white:focus {
-    color: #2766ad;
-    background: #F2F2F2;
-}
-
-.btn-lg {
-    width: 300px;
-    padding: 12px 12px;
-    font-size: 20px;
-}
-
-.btn-ts-white {
-    color: #2766ad;
-    background-color: #fff;
-    border-color: #083f7d;
-}
-
-.btn-icon {
-    padding: 0 !important;
-    text-align: center;
-}
-
-.btn-icon i {
-    position: relative;
-    top: -1px;
-    line-height: 30px;
-}
-
-.btn-sm.btn-icon {
-    width: 30px;
-    height: 30px;
-}
 
 
 // 2.12.. modal 
@@ -979,6 +771,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .sub-nav.sticky .sub-nav-links ul { margin: 10px 0; }
 
 .sub-nav-pack {
+<<<<<<< HEAD
+=======
+    cursor: pointer;
+>>>>>>> origin
     pointer-events: all;
 }
 
@@ -987,7 +783,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     position: absolute !important; 
     left: 72% !important; 
     top: -50px !important;
-    z-index: 1 !important; 
+    z-index: 1 !important;
+    pointer-events: none;
 }
 
 .sub-nav-small-packs {
@@ -996,6 +793,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     margin-top: -90px !important;
     z-index: 1 !important;
     height: 51px;
+    pointer-events: none;
 }
 
 .redbull-pack-btn { 
@@ -1016,6 +814,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background: rgba(0, 0, 0, 0.7); 
     z-index: 2;
     text-transform: uppercase;
+    pointer-events: all;
 }
 
 .sub-nav-btn-small {

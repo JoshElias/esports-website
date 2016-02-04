@@ -43,22 +43,24 @@ angular.module('app.directives', ['ui.load'])
                 setTooltip();
             });
 
-			var createUUID = function() {
-			  return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
-			}
-			var tmpUuid = createUUID();
+            var createUUID = function() {
+              return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
+            }
+            
+            var tmpUuid = createUUID();
 
             function setTooltip () {
                 var content = $compile('<img ng-src="'+scope.tooltipImg+'" alt="">')(scope);
-				var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
-				el.wTooltip({
-					delay: 500,
-					offsetX: xPos,
-					offsetY: -50,
-					content: content,
-					style: false,
-					className: 'hs-card-tooltip-' + tmpUuid
-				});
+                var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
+                
+                el.wTooltip({
+                  delay: 500,
+                  offsetX: xPos,
+                  offsetY: -50,
+                  content: content,
+                  style: false,
+                  className: 'hs-card-tooltip-' + tmpUuid
+                });
             }
 
             scope.$on('$destroy', function () {
@@ -390,11 +392,7 @@ angular.module('app.directives', ['ui.load'])
                                 return;
                             } else {
                                 comment.votes[i].direction = direction;
-                                Comment.update({
-                                    where: {
-                                        id: comment.id
-                                    }
-                                }, comment)
+                                Comment.upsert(comment)
                                 .$promise.then(function (data) {
                                     comment.voted = direction;
                                     comment.votesCount = data.votesCount;
@@ -405,16 +403,17 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
+                    
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
-                        comment.votes.push(
-                            {
-                                direction: direction,
-                                userId: LoopBackAuth.currentUserId
-                            }
-                        );
-                        Comment.update({ where: { id: comment.id } }, comment)
-                        .$promise.then(function (data) {
+                        comment.votes.push({
+                            direction: direction,
+                            userId: LoopBackAuth.currentUserId
+                        });
+                        
+                        Comment.upsert(comment)
+                        .$promise
+                        .then(function (data) {
                             comment.voted = direction;
                             comment.votesCount = data.votesCount;
                         });
@@ -703,7 +702,8 @@ angular.module('app.directives', ['ui.load'])
             var theme = attrs.theme || 'multi';
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
-        controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+        controller: ['$scope', '$element', '$attrs', 'EventService', function ($scope, $element, $attrs, EventService) {
+//            console.log('$scope.votable:', $scope.votable);
             var loading = false;
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
@@ -729,7 +729,6 @@ angular.module('app.directives', ['ui.load'])
                         }
 
                         setLoading(false);
-                        return;
                     });
                 })
             }
@@ -765,8 +764,14 @@ angular.module('app.directives', ['ui.load'])
                     LoginModalService.showModal('login', function () {
                         $scope.vote(direction);
                     });
+                } else if (votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
+//                    console.log('cant vote');
+                    setLoading(false);
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
                 } else {
-                    if ($scope.voteInfo.hasVoted !== 0 && $attrs.theme !== 'single') {
+                    if (($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) && $attrs.theme !== 'single') {
+//                        console.log('vote exists');
                         var where = {}
                             where[objType + "Id"] = votable.id;
                             where["authorId"] = LoopBackAuth.currentUserId;
@@ -778,21 +783,23 @@ angular.module('app.directives', ['ui.load'])
                         })
                         .$promise
                         .then(function (vote) {
-                            Vote.prototype$updateAttributes({
-                                id: vote.id
-                            }, {
-                                direction: vote.direction*-1
+                            Vote.upsert({
+                                id: vote.id,
+                                direction: direction
                             })
                             .$promise
                             .then(getVoteInfo);
                         });
                     } else {
+//                        console.log('new vote');
                         var newVote = {}
                             newVote[objType + "Id"] = votable.id;
                             newVote["direction"] = direction;
                             newVote["authorId"] = LoopBackAuth.currentUserId;
 
-                        Vote.create({}, newVote, getVoteInfo);
+                        Vote.create(newVote)
+                        .$promise
+                        .then(getVoteInfo());
                     }
                 }
             }
@@ -1257,8 +1264,10 @@ angular.module('app.directives', ['ui.load'])
         },
         templateUrl: tpl + 'views/frontend/directives/hots.filtering.html',
         link: function (scope, element, attrs) {
+            scope.searchHeroes = angular.copy(scope.filters.search);
+            
             var initializing = true,
-                randHeroIndex = false;
+                randHeroIndex = randomIntFromInterval (0,scope.heroes.length - 1);
 
             function randomIntFromInterval (min,max) {
                 return Math.floor(Math.random()*(max-min+1)+min);
@@ -1277,6 +1286,14 @@ angular.module('app.directives', ['ui.load'])
 
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
+                
+                scope.$parent.searchGuides();
+            }
+            
+            scope.queryOnEmpty = function (str) {
+                if (_.isEmpty(str)) {
+                    scope.updateSearch();
+                }
             }
 
             scope.hasFilterRole = function (role) {
@@ -1298,8 +1315,10 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.toggleFilterHero = function (hero) {
-                var index = scope.filters.heroes.indexOf(hero);
-                if (index === -1) {
+//                var index = scope.filters.heroes.indexOf(hero);
+                var index = _.find(scope.filters.heroes, function (heroFilter) { return heroFilter.id === hero.id });
+                
+                if (!index) {
                     if (scope.filters.roles.length && scope.filters.roles.indexOf(hero.role) == -1) {
                         scope.filters.roles.push(hero.role);
                     }
@@ -1314,7 +1333,7 @@ angular.module('app.directives', ['ui.load'])
                 }
 
                 if (!scope.filters.heroes.length) {
-                    randHeroIndex = randomIntFromInterval(1, scope.heroes.length);
+                    randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                 }
             };
 
@@ -1338,7 +1357,10 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.hasFilterHero = function (hero) {
-                return (scope.filters.heroes.indexOf(hero) !== -1);
+                var hasHero = _.find(scope.filters.heroes, function(heroFilter) {
+                    return heroFilter.id === hero.id
+                });
+                return hasHero;
             };
 
             scope.hasFilterSearch = function (hero) {
@@ -1358,7 +1380,12 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.hasFilterMap = function (map) {
-                return (scope.filters.map === map);
+                if (scope.filters.map !== undefined) {
+                    return (scope.filters.map.id === map.id);
+                } else {
+                    return false;
+                }
+                
             };
 
             scope.hasAnyFilterMap = function () {
@@ -1366,7 +1393,12 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.toggleFilterMap = function (map) {
-                scope.filters.map = (scope.filters.map == map) ? undefined : map;
+                if (scope.filters.map !== undefined) {
+                    scope.filters.map = (scope.filters.map.id === map.id) ? undefined : map;
+                } else {
+                    scope.filters.map = map;
+                }
+                
             };
 
             scope.currentMapBack = function () {
@@ -1575,7 +1607,7 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
-.directive('hsFilterClassLarge', ['$filter', '$timeout', function ($filter, $timeout) {
+.directive('hsFilterClassLarge', ['$filter', '$timeout', 'StateParamHelper', function ($filter, $timeout, StateParamHelper) {
     return {
         restrict: 'A',
         scope: {
@@ -1604,6 +1636,10 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     scope.filters.classes.splice(index, 1);
                 }
+                
+                StateParamHelper.updateStateParams({
+                    k: scope.filters.classes
+                });
             };
 
             scope.hasFilterClass = function (klass) {

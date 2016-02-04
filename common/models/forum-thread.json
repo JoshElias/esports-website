@@ -16,19 +16,31 @@
     },
     "description": {
       "type": "string",
-      "validators": ["spam"]
+      "validators": [
+        "spam"
+      ]
     },
     "title": {
       "type": "string",
-      "validators": ["spam"]
+      "validators": [
+        "spam"
+      ]
     },
-    "forumCategoryId": {},
+    "forumCategoryId": {
+      "type": {}
+    },
     "slug": {
-      "url": {
-        "type": "string",
-        "validators": ["unique"]
-      },
-      "linked": {"type": "boolean"}
+      "type": {
+        "url": {
+          "type": "string",
+          "validators": [
+            "unique"
+          ]
+        },
+        "linked": {
+          "type": "boolean"
+        }
+      }
     },
     "oldPosts": {
       "type": [
@@ -57,22 +69,22 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     }
   ],
   "methods": {}

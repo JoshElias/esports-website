@@ -46,11 +46,6 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
-    },
-    "comment": {
-      "type": "belongsTo",
-      "model": "comment",
-      "foreignKey": "commentId"
     }
   },
   "acls": [
@@ -60,22 +55,22 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",

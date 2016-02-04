@@ -51,6 +51,19 @@ var app = angular.module('app', [
 
                     $state.go('app.login', { redirect: redirect });
                 }
+                if (toState.access && toState.access.admin && User.isAuthenticated()) {
+                    User.isInRoles({
+                        uid: LoopBackAuth.currentUserId,
+                        roleNames: ['$admin']
+                    })
+                    .$promise
+                    .then(function (data) {
+                        if (data.isInRoles.$admin !== true) {
+                            event.preventDefault();
+                            $state.transitionTo('app.home');
+                        }
+                    });
+                }
 
 //                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
 //                    //event.preventDefault();
@@ -129,13 +142,13 @@ var app = angular.module('app', [
 
         var throw404 = function ($state) {
             var options = {
-                location: true,
+                location: "replace",
                 inherit: true,
-                notify: false,
+                notify: true,
                 relative: $state.$current
             }
 
-            $state.transitionTo('app.404', options);
+            $state.transitionTo('app.404', {}, options);
         }
 
         // ignore ng-animate on font awesome spin
@@ -200,7 +213,7 @@ var app = angular.module('app', [
                 params: { url: undefined },
                 onEnter: ['$stateParams', '$location', function ($stateParams, $location) {
                     $location.url($stateParams.url);
-                    console.log($stateParams.url);
+//                    console.log($stateParams.url);
                 }],
                 seo: { title: '404' }
             })
@@ -417,49 +430,101 @@ var app = angular.module('app', [
                 }
             })
             .state('app.articles.list', {
-                url: '?s&p&t&f',
+                url: '?p&f&s',
                 views: {
                     articles: {
                         templateUrl: tpl + 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
-                            articles: ['$stateParams', '$q', 'Article', function ($stateParams, $q, Article) {
-                                var articleType = $stateParams.t || 'all',
-                                    filter = $stateParams.f || 'all',
-                                    page = $stateParams.p || 1,
-                                    perpage = 12,
-                                    search = $stateParams.s || '';
-
-                                return Article.find({
-                                    filter: {
-                                        where: {
-                                            isActive: true
-                                        },
+                            paginationParams: ['$stateParams', 'StateParamHelper', '$q', function($stateParams,  StateParamHelper, $q) {
+                                var articleFilters = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
+                                
+                                // if only 1 filter, parse into array
+                                if (angular.isString($stateParams.f)) {
+                                    var tmp = $stateParams.f;
+                                    $stateParams.f = [];
+                                    $stateParams.f.push(tmp);
+                                }
+                                
+                                // validate filters
+                                StateParamHelper.validateFilters($stateParams.f, articleFilters);
+                                
+                                StateParamHelper.validatePage($stateParams.p);
+                                var pattern = '/.*'+$stateParams.s+'.*/i',
+                                artWhere = {
+                                    isActive: true
+                                };
+                                
+                                if (!_.isEmpty($stateParams.s)) {
+                                    artWhere.or = [
+                                        { title: { regexp: pattern } },
+                                        { description: { regexp: pattern } },
+                                        { content: { regexp: pattern } }
+                                    ];
+                                }
+                                
+                                if ($stateParams.f) {
+                                    artWhere.articleType = {
+                                        inq: $stateParams.f
+                                    }
+                                }
+                                
+                                return {
+                                    artParams: {
+                                        page: parseInt($stateParams.p) || 1,
+                                        perpage: 12,
+                                        total: 0,
+                                        where: artWhere,
+                                        order: 'createdDate DESC',
                                         fields: {
                                             content: false,
                                             votes: false
                                         },
-                                        include: ['author'],
-                                        order: "createdDate DESC",
-                                        skip: ((page*perpage)-perpage),
-                                        limit: 12
+                                        include: [
+                                          {
+                                            relation: "author",
+                                            scope: {
+                                              fields: [
+                                                'id',
+                                                'username'
+                                              ]
+                                            }
+                                          }
+                                        ]
+                                    },
+                                    search: $stateParams.s || '',
+                                    filters: $stateParams.f || [],
+                                };
+                            }],
+                            articles: ['paginationParams', 'Article', function (paginationParams, Article) {
+                                
+                                return Article.find({
+                                    filter: {
+                                        where: paginationParams.artParams.where,
+                                        fields: paginationParams.artParams.fields,
+                                        include: paginationParams.artParams.include,
+                                        order: paginationParams.artParams.order,
+                                        skip: ((paginationParams.artParams.page * paginationParams.artParams.perpage) - paginationParams.artParams.perpage),
+                                        limit: paginationParams.artParams.perpage
                                     }
                                 })
                                 .$promise
                                 .then(function (articles) {
-                                    articles.page = page;
-                                    articles.perpage = perpage;
                                     return articles;
                                 });
 
                             }],
-                            articlesTotal: ['Article', function (Article) {
+                            articlesTotal: ['paginationParams', 'StateParamHelper', 'Article', function (paginationParams, StateParamHelper, Article) {
                                 return Article.count({
-                                    where: {
-                                        isActive: true
-                                    }
+                                    where: paginationParams.artParams.where
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (artCount) {
+                                    StateParamHelper.validatePage(paginationParams.artParams.page, artCount.count, paginationParams.artParams.perpage);
+                                    
+                                    paginationParams.artParams.total = artCount.count;
+                                    return artCount.count;
+                                });
                             }]
                         }
                     }
@@ -484,7 +549,7 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log("roles", userRoles);
+//                                        console.log("roles", userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -524,6 +589,16 @@ var app = angular.module('app', [
                                                     include: [
                                                         "author"
                                                     ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'votes', 
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true,
+                                                        authorId: true
+                                                    }
                                                 }
                                             },
                                             {
@@ -589,79 +664,149 @@ var app = angular.module('app', [
                 redirectTo: 'app.hs.deckBuilder.class'
             })
             .state('app.hs.home', {
-                url: '',
+                url: '?k',
                 views: {
                     hs: {
                         templateUrl: tpl + 'views/frontend/hs.home.html',
                         controller: 'HearthstoneHomeCtrl',
                         resolve: {
-                            dataArticles: ['Article', function (Article) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 6;
-                                return Article.find({
-                                  filter: {
-                                    limit: 6,
-                                    order: "createdDate DESC",
-                                    where: {
-                                      isActive: true,
-                                      articleType: ['hs']
+                            filterParams: ['$stateParams', 'StateParamHelper', 'Hearthstone', function($stateParams, StateParamHelper, Hearthstone) {
+                                var classFilters = angular.copy(Hearthstone.classes).splice(1, 9);
+                                
+                                // if only 1 filter, parse into array
+                                if (angular.isString($stateParams.k) && $stateParams.k.length) {
+                                    var tmp = $stateParams.k;
+                                    $stateParams.k = [];
+                                    $stateParams.k.push(tmp);
+                                } 
+                                
+                                var artWhere = {
+                                  isActive: true,
+                                  articleType: ['hs']
+                                },
+                                tsDeckWhere = {
+                                    isFeatured: true
+                                },
+                                comDeckWhere = {
+                                  isPublic: true,
+                                  isFeatured: false
+                                };
+                                
+                                // validate klass filters
+                                StateParamHelper.validateFilters($stateParams.k, classFilters);
+                                
+                                if (!_.isEmpty($stateParams.k)) {
+                                    
+                                    artWhere.classTags = {
+                                        inq: $stateParams.k
+                                    };
+                                    
+                                    tsDeckWhere.playerClass = {
+                                        inq: $stateParams.k
+                                    };
+                                    
+                                    comDeckWhere.playerClass = {
+                                        inq: $stateParams.k
+                                    };
+                                }
+                                return {
+                                    articleParams: {
+                                        options: {
+                                            filter: {
+                                            limit: 6,
+                                            order: "createdDate DESC",
+                                            where: artWhere,
+                                            include: ['author'],
+                                            fields: {
+                                              content: false
+                                            }
+                                          }
+                                        }
                                     },
-                                    include: ['author'],
-                                    fields: {
-                                      content: false
+                                    tsDeckParams: {
+                                        options: {
+                                            filter: {
+                                              limit: 10,
+                                              order: "createdDate DESC",
+                                              where: tsDeckWhere,
+                                              fields: {
+                                                id: true,
+                                                name: true,
+                                                description: true,
+                                                deckType: true,
+                                                playerClass: true,
+                                                heroName: true,
+                                                premium: true,
+                                                voteScore: true,
+                                                authorId: true,
+                                                slug: true,
+                                                createdDate: true
+                                              },
+                                              include: [
+                                                  {
+                                                      relation: "author"
+                                                  },
+                                                  {
+                                                      relation: "votes"
+                                                  }
+                                              ]
+                                            }
+                                        }
+                                    },
+                                    comDeckParams: {
+                                        options: {
+                                            filter: {
+                                              limit: 10,
+                                              order: "createdDate DESC",
+                                              where: comDeckWhere,
+                                              fields: {
+                                                id: true,
+                                                name: true,
+                                                description: true,
+                                                deckType: true,
+                                                playerClass: true,
+                                                heroName: true,
+                                                premium: true,
+                                                voteScore: true,
+                                                authorId: true,
+                                                slug: true,
+                                                createdDate: true
+                                              },
+                                              include: [
+                                                  {
+                                                      relation: "author"
+                                                  },
+                                                  {
+                                                      relation: "votes"
+                                                  }
+                                              ]
+                                            }
+                                        }
                                     }
-                                  }
-                                }).$promise;
+                                };
                             }],
-                            dataDecksTempostorm: ['Deck', function (Deck) {
-                                return Deck.find({
-                                  filter: {
-                                    limit: 10,
-                                    order: "createdDate DESC",
-                                    where: {
-                                        isFeatured: true
-                                    },
-                                    fields: {
-                                      name: true,
-                                      description: true,
-                                      deckType: true,
-                                      playerClass: true,
-                                      heroName: true,
-                                      premium: true,
-                                      voteScore: true,
-                                      authorId: true,
-                                      slug: true,
-                                      createdDate: true
-                                    },
-                                    include: ['author']
-                                  }
-                                }).$promise;
+                            dataArticles: ['Article', 'filterParams', function (Article, filterParams) {
+                                return Article.find(filterParams.articleParams.options).$promise;
                             }],
-                            dataDecksCommunity: ['Deck', function (Deck) {
-                                return Deck.find({
-                                  filter: {
-                                    limit: 10,
-                                    order: "createdDate DESC",
-                                    where: {
-                                        isPublic: true,
-                                        isFeatured: false
-                                    },
-                                    fields: {
-                                      name: true,
-                                      description: true,
-                                      deckType: true,
-                                      playerClass: true,
-                                      heroName: true,
-                                      premium: true,
-                                      voteScore: true,
-                                      authorId: true,
-                                      slug: true,
-                                      createdDate: true
-                                    },
-                                    include: ['author']
-                                  }
-                                }).$promise;
+                            dataDecksTempostorm: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
+                                return Deck.find(filterParams.tsDeckParams.options)
+                                .$promise
+                                .then(function (tempoDecks) {
+                                    _.each(tempoDecks, function(tempoDeck) {
+                                        tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
+                                    });
+                                    return tempoDecks;
+                                });
+                            }],
+                            dataDecksCommunity: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
+                                return Deck.find(filterParams.comDeckParams.options)
+                                .$promise
+                                .then(function (comDecks) {
+                                    _.each(comDecks, function(comDeck) {
+                                        comDeck.voteScore = Util.tally(comDeck.votes, 'direction');
+                                    });
+                                    return comDecks;
+                                });
                             }]
                         }
                     }
@@ -679,27 +824,70 @@ var app = angular.module('app', [
                 }
             })
             .state('app.hs.decks.list', {
-                url: '?p&s&k&a&o',
+                url: '?tsp&comp&k&s',
                 views: {
                     decks: {
                         templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
-                            tempostormDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var klass = $stateParams.k || false,
-                                    page = $stateParams.p || 1,
-                                    perpage = 4,
-                                    search = $stateParams.s || '',
-                                    age = $stateParams.a || '',
-                                    order = $stateParams.o || '';
-
-                                return Deck.find({
-                                    filter: {
-                                        where: {
-                                            isPublic: true,
-                                            isFeatured: true
-                                        },
+                            paginationParams: ['$stateParams', 'Hearthstone', 'StateParamHelper', function($stateParams, Hearthstone, StateParamHelper) {
+                                var classFilters = angular.copy(Hearthstone.classes).splice(1, 9);
+                                
+                                // if only 1 filter, parse into array
+                                if (angular.isString($stateParams.k)) {
+                                    var tmp = $stateParams.k;
+                                    $stateParams.k = [];
+                                    $stateParams.k.push(tmp);
+                                }
+                                
+                                // validate filters
+                                StateParamHelper.validateFilters($stateParams.k, classFilters);
+                                
+                                StateParamHelper.validatePage($stateParams.tsp);
+                                StateParamHelper.validatePage($stateParams.comp);
+                                
+                                var pattern = '/.*'+$stateParams.s+'.*/i',
+                                tsWhere = {
+                                    isFeatured: true
+                                },
+                                comWhere = {
+                                    isFeatured: false,
+                                    isPublic: true
+                                };
+                                
+                                if (!_.isEmpty($stateParams.s)) {
+                                    tsWhere.or = [
+                                        { name: { regexp: pattern } },
+                                        { description: { regexp: pattern } },
+                                        { deckType: { regexp: pattern } }
+                                    ];
+                                    
+                                    comWhere.or = [
+                                        { name: { regexp: pattern } },
+                                        { description: { regexp: pattern } },
+                                        { deckType: { regexp: pattern } }
+                                    ];
+                                }
+                                
+                                if ($stateParams.k) {
+                                    tsWhere.playerClass = {
+                                        inq: $stateParams.k
+                                    }
+                                    
+                                    comWhere.playerClass = {
+                                        inq: $stateParams.k
+                                    }
+                                }
+                                
+                                return {
+                                    tsParams: {
+                                        page: parseInt($stateParams.tsp) || 1,
+                                        perpage: 4,
+                                        total: 0,
+                                        where: tsWhere,
+                                        order: 'createdDate DESC',
                                         fields: {
+                                            id: true,
                                             name: true,
                                             description: true,
                                             slug: true,
@@ -719,72 +907,123 @@ var app = angular.module('app', [
                                                 'username'
                                               ]
                                             }
+                                          },
+                                          {
+                                            relation: "votes",
+                                            scope: {
+                                              fields: ['id', 'direction', 'authorId']
+                                            }
                                           }
-                                        ],
-                                        order: "createdDate DESC",
-                                        skip: (page * perpage) - perpage,
-                                        limit: perpage
-                                    }
-                                })
-                                .$promise;
-
-                            }],
-                            tempostormCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var search = $stateParams.s || '';
-
-                                return Deck.count({
-                                    where: {
-                                        isFeatured: true,
-                                    }
-                                })
-                                .$promise;
-
-                            }],
-                            communityDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var klass = $stateParams.k || false,
-                                    page = $stateParams.p || 1,
-                                    perpage = 12,
-                                    search = $stateParams.s || '',
-                                    age = $stateParams.a || '',
-                                    order = $stateParams.o || '';
-
-                                return Deck.find({
-                                    filter: {
-                                        where: {
-                                            isFeatured: false,
-                                            isPublic: true
-                                        },
+                                        ]
+                                    },
+                                    comParams: {
+                                        page: parseInt($stateParams.comp) || 1,
+                                        perpage: 12,
+                                        total: 0,
+                                        where: comWhere,
+                                        order: 'createdDate DESC',
                                         fields: {
+                                            id: true,
                                             name: true,
                                             description: true,
                                             slug: true,
                                             heroName: true,
                                             authorId: true,
-                                            voteScore: true,
                                             playerClass: true,
                                             dust: true,
                                             createdDate: true,
                                             premium: true
                                         },
-                                        include: ["author"],
-                                        order: "createdDate DESC",
-                                        skip: (page * perpage) - perpage,
-                                        limit: perpage
+                                        include: [
+                                          {
+                                            relation: "author",
+                                            scope: {
+                                              fields: [
+                                                'id',
+                                                'username'
+                                              ]
+                                            }
+                                          },
+                                          {
+                                            relation: "votes",
+                                              scope: {
+                                                  fields: ['id', 'direction', 'authorId']
+                                              }
+                                          }
+                                        ]
+                                    },
+                                    search: $stateParams.s || '',
+                                    klasses: $stateParams.k || [],
+                                };
+                            }],
+                            tempostormDecks: ['paginationParams', 'Deck', 'Util', function (paginationParams, Deck, Util) {
+                                return Deck.find({
+                                    filter: {
+                                        where: paginationParams.tsParams.where,
+                                        fields: paginationParams.tsParams.fields,
+                                        include: paginationParams.tsParams.include,
+                                        order: paginationParams.tsParams.order,
+                                        skip: (paginationParams.tsParams.page * paginationParams.tsParams.perpage) - paginationParams.tsParams.perpage,
+                                        limit: paginationParams.tsParams.perpage
                                     }
                                 })
-                                .$promise;
-                            }],
-                            communityCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var search = $stateParams.s || '';
+                                .$promise
+                                .then(function (data) {
+                                    _.each(data, function (deck) {
+                                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                                    });
+                                    
+                                    return data;
+                                });
 
+                            }],
+                            tempostormCount: ['paginationParams', '$state', 'StateParamHelper', 'Deck', function (paginationParams, $state, StateParamHelper,  Deck) {
                                 return Deck.count({
-                                    where: {
-                                        isFeatured: false,
-                                        isPublic: true
-                                    },
-                                    include: ["comments"]
+                                    where: paginationParams.tsParams.where
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (tsCount) {
+                                    
+                                    StateParamHelper.validatePage(paginationParams.tsParams.page, tsCount.count, paginationParams.tsParams.perpage);
+                                    
+                                    paginationParams.tsParams.total = tsCount.count;
+                                    
+                                    return tsCount.count;
+                                });
+
+                            }],
+                            communityDecks: ['paginationParams', 'Deck', 'Util', function (paginationParams, Deck, Util) {
+                                return Deck.find({
+                                    filter: {
+                                        where: paginationParams.comParams.where,
+                                        fields: paginationParams.comParams.fields,
+                                        include: paginationParams.comParams.include,
+                                        order: paginationParams.comParams.order,
+                                        skip: (paginationParams.comParams.page * paginationParams.comParams.perpage) - paginationParams.comParams.perpage,
+                                        limit: paginationParams.comParams.perpage
+                                    }
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    _.each(data, function (deck) {
+                                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                                    });
+                                    
+                                    return data;
+                                });
+                            }],
+                            communityCount: ['paginationParams', 'StateParamHelper', 'Deck', function (paginationParams, StateParamHelper, Deck) {
+                                return Deck.count({
+                                    where: paginationParams.comParams.where,
+                                })
+                                .$promise
+                                .then(function (comCount) {
+                                    
+                                    StateParamHelper.validatePage(paginationParams.comParams.page, comCount.count, paginationParams.comParams.perpage)
+                                    
+                                    paginationParams.comParams.total = comCount.count;
+                                    return comCount.count;
+                                });
                             }]
                         }
                     }
@@ -815,8 +1054,9 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            deck: ['$stateParams', '$state', 'Deck', function ($stateParams, $state, Deck) {
+                            deck: ['$stateParams', '$state', 'Deck', 'Util', function ($stateParams, $state, Deck, Util) {
                                 var stateSlug = $stateParams.slug;
+//                                console.log('stateSlug:', stateSlug);
                                 return Deck.findOne({
                                     filter: {
                                         where: {
@@ -870,6 +1110,12 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: "matchups"
+                                            },
+                                            {
+                                                relation: "votes",
+                                                scope: {
+                                                    fields: ['id', 'direction', 'authorId']
+                                                }
                                             }
                                         ]
                                     }
@@ -877,6 +1123,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (deck) {
 //                                    console.log('resolve deck:', deck);
+                                    deck.voteScore = Util.tally(deck.votes, 'direction');
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -897,10 +1144,16 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'cardsWithCoin',
+                                                relation: 'mulligansWithCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin',
+                                                relation: 'mulligansWithoutCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
                                             }
                                         ]
                                     }
@@ -1429,187 +1682,254 @@ var app = angular.module('app', [
                 }
             })
             .state('app.hots.home', {
-                url: '',
+                url: '?r&u&h&m&s',
                 views: {
                     hots: {
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
-                            dataArticles: ['Article', function (Article) {
-                              var filters = 'all',
-                                  offset = 0,
-                                  perpage = 6;
+                            filterParams: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', 'HOTS', function($stateParams, StateParamHelper, $q, Hero, Map, HOTS) {
+                                if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
+                                    $stateParams.r = new Array($stateParams.r);
+                                }
+                                
+                                if (angular.isString($stateParams.u) && !_.isEmpty($stateParams.u)) {
+                                    $stateParams.u = new Array($stateParams.u);
+                                }
+                                
+                                if (angular.isString($stateParams.h) && !_.isEmpty($stateParams.h)) {
+                                    $stateParams.h = new Array($stateParams.h);
+                                }
+                                
+                                // normalizing all params to arrays incase we want to allow people to select multiple
+                                // maps/heroes down the road
+                                if (angular.isString($stateParams.m) && !_.isEmpty($stateParams.m)) {
+                                    $stateParams.m = new Array($stateParams.m);
+                                }
+                                
+                                var filters = {
+                                    roles: $stateParams.r ? $stateParams.r : [],
+                                    universes: $stateParams.u ? $stateParams.u : [],
+                                    search: $stateParams.s ? $stateParams.s : '',
+                                    heroes: $stateParams.h ? $stateParams.h : [],
+                                    map: $stateParams.m || undefined
+                                };
+                                
+                                var possibleRoles = HOTS.roles;
+                                var possibleUniverses = HOTS.universes;
+                                var possibleHeroes;
+                                var possibleMaps;
+                                
+                                if (!_.isEmpty(filters.roles)) {
+                                    StateParamHelper.validateFilters(filters.roles, possibleRoles);
+                                }
+                                if (!_.isEmpty(filters.universes)) {
+                                    StateParamHelper.validateFilters(filters.universes, possibleUniverses);
+                                }
+                                
+                                var d = $q.defer();
+                                
+                                async.waterfall([
+                                    function (waterCB) {
+                                        if (!_.isEmpty(filters.heroes)) {
+                                            Hero.find({
+                                                filter: {
+                                                    fields: {
+                                                        name: true
+                                                    },
+                                                    where: {
+                                                        isActive: true
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (heros) {
+                                                possibleHeroes = _.map(heros, function (hero) {
+                                                    return hero.name;
+                                                });
+                                                StateParamHelper.validateFilters(filters.heroes, possibleHeroes);
+                                                return waterCB();
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (!_.isEmpty(filters.heroes)) {
+                                            Hero.find({
+                                                filter: {
+                                                    where: {
+                                                        name: {
+                                                            inq: filters.heroes
+                                                        }
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (heroes) {
+                                                var heroArr = new Array(heroes[0]);
+                                                filters.heroes = heroArr;
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (filters.map) {
+                                            Map.find({
+                                                filter: {
+                                                    fields: {
+                                                        name: true
+                                                    }
+                                                }
+                                            })
+                                            .$promise
+                                            .then(function (maps) {
+                                                
+                                                possibleMaps = _.map(maps, function(currentMap) {
+                                                    return currentMap.name;
+                                                });
+                                                
+                                                StateParamHelper.validateFilters(filters.map, possibleMaps);
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (filters.map) {
+                                            Map.findOne({
+                                                filter: {
+                                                    where: {
+                                                        name: {
+                                                            inq: filters.map
+                                                        }
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (map) {
+                                                filters.map = map;
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                ], function(err) {
+                                    if (err) return d.reject(err);
+                                    d.resolve(filters);
+                                });
+                                
+                                return d.promise;
+                                
+                            }],
+                            dataArticles: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
+                                
+                                var d = $q.defer();
+                                // querying articles with empty obj due to promise not resolving
+                                // if filterParams contains any roles/universes
+                                if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
+                                } else if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
+                                } else if (filterParams.search != '') {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
+                                } else if (_.isEmpty(filterParams.hero) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
+                                } else {
+                                    HOTSGuideQueryService.getArticles(filterParams, true, 6, function(err, articles) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(articles);
+                                    });
+                                }
+                                
+                                return d.promise;
+                                
+                            }],
+                            dataGuidesCommunity: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(filterParams, false, 10, 1, function(err, guides) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
+                                    HOTSGuideQueryService.getHeroGuides(filterParams, false, 10, 1, function (err, guides) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (filterParams.search != '') {
+                                    HOTSGuideQueryService.getGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (_.isEmpty(filterParams.hero) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getMapGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else {
+                                   HOTSGuideQueryService.getGuides(filterParams, false, filterParams.search, 10, 1, function(err, guides) {
+                                       if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                }
+                                
+                                return d.promise;
+                            }],
+                            dataGuidesFeatured: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
+                                var d = $q.defer();
 
-                              return Article.find({
-                                filter: {
-                                    limit: 6,
-                                    where: {
-                                        isActive: true,
-                                        articleType: ['hots']
-                                    },
-                                    fields: {
-                                        title: true,
-                                        description: true,
-                                        photoNames: true,
-                                        themeName: true,
-                                        slug: true,
-                                        articleType: true,
-                                        premium: true,
-                                        createdDate: true,
-                                        authorId: true
-                                    },
-                                    include: ['author'],
-                                    order: "createdDate DESC"
+                                if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(filterParams, true, 10, 1, function(err, guides) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (!_.isEmpty(filterParams.heroes) && filterParams.map == undefined) {
+                                    HOTSGuideQueryService.getHeroGuides(filterParams, true, 10, 1, function (err, guides) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (filterParams.search != '') {
+                                    HOTSGuideQueryService.getGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else if (_.isEmpty(filterParams.hero) && filterParams.map != undefined) {
+                                    HOTSGuideQueryService.getMapGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
+                                        if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
+                                } else {
+                                   HOTSGuideQueryService.getGuides(filterParams, true, filterParams.search, 10, 1, function(err, guides) {
+                                       if (err) return d.reject(err);
+                                        d.resolve(guides);
+                                    });
                                 }
-                              })
-                              .$promise
-                              .then(function (data) {
-                                  return data;
-                              })
-                              .catch(function (err) {
-                                  console.log(err);
-                              });
-                            }],
-                            dataGuidesCommunity: ['Guide', function (Guide) {
-                              return Guide.find({
-                                filter: {
-                                  limit: 10,
-                                    order: "createdDate DESC",
-                                  where: {
-                                    isFeatured: false,
-                                    isPublic: true
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                      {
-                                         relation: "maps"
-                                      },
-                                    {
-                                      relation: 'maps'
-                                    },
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        },
-                                      }
-                                    },
-                                  ]
-                                }
-                              })
-                              .$promise
-                              .then(function (data) {
-                                  return data;
-                              })
-                              .catch(function (err) {
-                                  console.log(err);
-                              });
-                            }],
-                            dataGuidesFeatured: ['Guide', function (Guide) {
-                              return Guide.find({
-                                filter: {
-                                  limit: 10,
-                                    order: "createdDate DESC",
-                                  where: {
-                                    isFeatured: true
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        },
-                                      }
-                                    },
-                                  ]
-                                }
-                              })
-                              .$promise
-                              .then(function (data) {
-                                  return data;
-                              })
-                              .catch(function (err) {
-                                  console.log(err);
-                              });
+                                
+                                return d.promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
@@ -1665,224 +1985,611 @@ var app = angular.module('app', [
                 }
             })
             .state('app.hots.guides.list', {
-                url: '?p&s&t&h&m&a&o',
+                url: '?tsp&comp&r&h&u&m&s',
                 views: {
                     guides: {
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            dataCommunityGuides: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                              return Guide.find({
-                                filter: {
-                                  limit: 10,
-                                  order: 'createdDate DESC',
-                                  where: {
+                            paginationFilters: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', 'HOTS', function($stateParams, StateParamHelper, $q, Hero, Map, HOTS) {
+                                
+                                if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
+                                    $stateParams.r = new Array($stateParams.r);
+                                }
+                                
+                                if (angular.isString($stateParams.u) && !_.isEmpty($stateParams.u)) {
+                                    $stateParams.u = new Array($stateParams.u);
+                                }
+                                
+                                if (angular.isString($stateParams.h) && !_.isEmpty($stateParams.h)) {
+                                    $stateParams.h = new Array($stateParams.h);
+                                }
+                                
+                                if (angular.isString($stateParams.m) && !_.isEmpty($stateParams.m)) {
+                                    $stateParams.m = new Array($stateParams.m);
+                                }
+                                
+                                var filters = {
+                                    roles: $stateParams.r ? $stateParams.r : [],
+                                    universes: $stateParams.u ? $stateParams.u : [],
+                                    search: $stateParams.s ? $stateParams.s : '',
+                                    heroes: $stateParams.h ? $stateParams.h : [],
+                                    map: $stateParams.m || undefined
+                                };
+                                
+                                var possibleRoles = HOTS.roles;
+                                var possibleUniverses = HOTS.universes;
+                                var possibleHeroes;
+                                var possibleMaps;
+                                
+                                StateParamHelper.validateFilters(filters.roles, possibleRoles);
+                                StateParamHelper.validateFilters(filters.universes, possibleUniverses);
+                                
+                                StateParamHelper.validatePage($stateParams.tsp); StateParamHelper.validatePage($stateParams.comp);
+                                
+                                var d = $q.defer();
+                                
+                                async.waterfall([
+                                    function (waterCB) {
+                                        if (!_.isEmpty(filters.heroes)) {
+                                            Hero.find({
+                                                filter: {
+                                                    fields: {
+                                                        name: true
+                                                    },
+                                                    where: {
+                                                        isActive: true
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (heros) {
+
+                                                possibleHeroes = _.map(heros, function (hero) {
+                                                    return hero.name;
+                                                });
+                                                StateParamHelper.validateFilters(filters.heroes, possibleHeroes);
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (!_.isEmpty(filters.heroes)) {
+                                            Hero.find({
+                                                filter: {
+                                                    where: {
+                                                        name: {
+                                                            inq: filters.heroes
+                                                        }
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (heroes) {
+                                                var heroArr = new Array(heroes[0]);
+                                                filters.heroes = heroArr;
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (filters.map) {
+                                            Map.find({
+                                                filter: {
+                                                    fields: {
+                                                        name: true
+                                                    },
+                                                    where: {
+                                                        isActive: true
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (maps) {
+
+                                                possibleMaps = _.map(maps, function (map) {
+                                                    return map.name;
+                                                });
+                                                StateParamHelper.validateFilters(filters.map, possibleMaps);
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                    function (waterCB) {
+                                        if (filters.map) {
+                                            Map.findOne({
+                                                filter: {
+                                                    where: {
+                                                        name: {
+                                                            inq: filters.map
+                                                        }
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (map) {
+                                                filters.map = map;
+                                                return waterCB();
+                                            })
+                                            .catch(function (err) {
+                                                return waterCB(err);
+                                            });
+                                        } else {
+                                            return waterCB();
+                                        }
+                                    },
+                                ], function(err) {
+                                    if (err) return console.log('pagination query err: ', err);
+                                    d.resolve(filters);
+                                });
+                                
+                                return d.promise;
+                            }],
+                            paginationParams: ['$stateParams', 'paginationFilters', 'Map', function($stateParams, paginationFilters, Map) {
+                                
+                                var tsWhere = {
+                                    isFeatured: true
+                                },
+                                comWhere = {
                                     isFeatured: false,
                                     isPublic: true
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: 'maps'
-                                    },
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
+                                };
+                                
+                                return {
+                                    guideFilters: paginationFilters,
+                                    tsParams: {
+                                        page: parseInt($stateParams.tsp) || 1,
+                                        perpage: 4,
+                                        total: 0,
+                                        where: tsWhere,
+                                        order: 'createdDate DESC',
+                                        fields: [
+                                            "name", 
+                                            "authorId", 
+                                            "slug", 
+                                            "voteScore", 
+                                            "guideType", 
+                                            "premium", 
+                                            "id", 
+                                            "talentTiers",
+                                            "createdDate"
+                                        ],
                                         include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
+                                        {
+                                          relation: "author",
                                           scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
+                                            fields: ['username']
                                           }
                                         },
-                                      }
+                                        {
+                                          relation: 'guideHeroes',
+                                          scope: {
+                                            include: [
+                                              {
+                                                relation: 'talents'
+                                              },
+                                              {
+                                                relation: 'hero',
+                                                scope: {
+                                                  fields: ['name', 'className']
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          relation: 'guideTalents',
+                                          scope: {
+                                            include: {
+                                              relation: 'talent',
+                                              scope: {
+                                                fields: {
+                                                  name: true,
+                                                  className: true
+                                                }
+                                              }
+                                            },
+                                          }
+                                        },
+                                      ]
                                     },
-                                  ]
-                                }
-                              }).$promise;
-                            }],
-                            communityGuideCount: ['Guide', function(Guide) {
-                                return Guide.count({
-                                    where: {
-                                        isFeatured: false,
-                                        isPublic: true
-                                    }
-                                }).$promise;
-                            }],
-                            dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                              var guideType = $stateParams.t || 'all',
-                                    filters = $stateParams.h || false,
-                                    order = $stateParams.o || 'high';
+                                    comParams: {
+                                        page: parseInt($stateParams.comp) || 1,
+                                        perpage: 10,
+                                        order: 'createdDate DESC',
+                                        fields: [
+                                            "name", 
+                                            "authorId", 
+                                            "slug", 
+                                            "voteScore", 
+                                            "guideType", 
+                                            "premium", 
+                                            "id", 
+                                            "talentTiers",
+                                            "createdDate"
+                                        ],
+                                        include: [
+                                        {
+                                          relation: 'maps'
+                                        },
+                                        {
+                                          relation: "author",
+                                          scope: {
+                                            fields: ['username']
 
-                              return Guide.find({
-                                filter: {
-                                  order: 'voteScore DESC',
-                                  limit: 1,
-                                  where: {
-                                      guideType: "hero",
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              include: ['talents'],
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                    {
-                                      relation: 'maps'
-                                    }
-                                  ]
-                                }
-                              }).$promise
-                              .then(function (guides) {
-                                  return guides;
-                              }).catch(function(err) {
-                                  console.log("error", err);
-                              });
-                            }],
-                            dataTempostormGuides: ['Guide', function (Guide) {
-                              return Guide.find({
-                                filter: {
-                                  order: 'createdDate DESC',
-                                  limit: 4,
-                                  where: {
-                                    isFeatured: true
-                                  },
-                                  fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                  ],
-                                  include: [
-                                    {
-                                      relation: "author",
-                                      scope: {
-                                        fields: ['username']
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideHeroes',
-                                      scope: {
-                                        include: [
-                                          {
-                                            relation: 'talents'
-                                          },
-                                          {
-                                            relation: 'hero',
-                                            scope: {
-                                              fields: ['name', 'className']
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    {
-                                      relation: 'guideTalents',
-                                      scope: {
-                                        include: {
-                                          relation: 'talent',
-                                          scope: {
-                                            fields: {
-                                              name: true,
-                                              className: true
-                                            }
                                           }
                                         },
-                                      }
-                                    },
-                                  ]
-                                }
-                              })
-                              .$promise;
-                            }],
-                            tempostormGuideCount: ['Guide', function(Guide) {
-                                return Guide.count({
-                                    where: {
-                                        isFeatured: true
+                                        {
+                                          relation: 'guideHeroes',
+                                          scope: {
+                                            include: [
+                                              {
+                                                relation: 'talents'
+                                              },
+                                              {
+                                                relation: 'hero',
+                                                scope: {
+                                                  fields: ['name', 'className']
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          relation: 'guideTalents',
+                                          scope: {
+                                            include: {
+                                              relation: 'talent',
+                                              scope: {
+                                                fields: {
+                                                  name: true,
+                                                  className: true
+                                                }
+                                              }
+                                            },
+                                          }
+                                        },
+                                      ]
                                     }
-                                }).$promise;
+                                };
+                            }],
+                            dataCommunityGuides: ['paginationParams', 'HOTSGuideQueryService', '$q', 'Guide', function (paginationParams, HOTSGuideQueryService, $q, Guide) {
+                                
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        d.resolve(data);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        if (err) {
+                                           return d.reject(err);
+                                        }
+                                        d.resolve(data);
+                                      });
+                                      
+                                  } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
+                                          if (err) {
+                                             return d.reject(err);
+                                          }
+                                          d.resolve(data);
+                                      });
+//                                    
+                                  } else {
+                                      
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                          if (err) {
+                                             return d.reject(err);
+                                          }
+                                          d.resolve(data);
+                                      });
+                                  }
+                                
+                                return d.promise;
+                            }],
+                            dataTopGuide: ['$stateParams', 'Guide', 'Util', '$q', function ($stateParams, Guide, Util, $q) {
+                                var d = $q.defer();
+                                async.waterfall([
+                                    function (seriesCb) {
+                                        Guide.topGuide({
+                                            
+                                        })
+                                        .$promise
+                                        .then(function (data) {
+                                            console.log(data);
+                                            return seriesCb(undefined, data);
+                                        })
+                                        .catch(function (err) {
+                                            console.log(err);
+                                        })
+                                    },
+                                    function (guideId, seriesCb) {
+                                        Guide.find({
+                                            filter: {
+                                                where: {
+                                                    id: guideId.id
+                                                },
+                                                fields: [
+                                                    "name",
+                                                    "authorId",
+                                                    "slug",
+                                                    "voteScore",
+                                                    "guideType",
+                                                    "premium",
+                                                    "id",
+                                                    "talentTiers",
+                                                    "createdDate"
+                                                ],
+                                                include: [
+                                                    {
+                                                      relation: "author",
+                                                      scope: {
+                                                        fields: ['username']
+                                                      }
+                                                    },
+                                                    {
+                                                      relation: 'guideHeroes',
+                                                      scope: {
+                                                        include: [
+                                                          {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                              fields: ['name', 'className'],
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents'
+                                                                    }
+                                                                ]
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    },
+                                                    {
+                                                      relation: 'guideTalents',
+                                                      scope: {
+                                                        include: {
+                                                          relation: 'talent',
+                                                          scope: {
+                                                            fields: {
+                                                              name: true,
+                                                              className: true
+                                                            }
+                                                          }
+                                                        },
+                                                      }
+                                                    },
+                                                    {
+                                                        relation: 'votes',
+                                                        scope: {
+                                                            fields: {
+                                                                id: true,
+                                                                direction: true
+                                                            }
+                                                        }
+                                                    }
+                                                  ]
+                                            }
+                                        })
+                                        .$promise
+                                        .then(function (data) {
+                                            console.log(data);
+                                            return seriesCb(undefined, data);
+                                        })
+                                        .catch(function (err) {
+                                            return seriesCb(err);
+                                        })
+                                    }
+                                ], function (err, guide) {
+                                    if (err) 
+                                        return console.log(err);
+                                    
+                                    d.resolve(guide);
+                                });
+                                
+                                return d.promise;
+                                
+                            }],
+                            communityGuideCount: ['paginationParams', 'HOTSGuideQueryService', '$q', 'StateParamHelper', 'Guide', function(paginationParams, HOTSGuideQueryService, $q, StateParamHelper, Guide) {
+                                
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        paginationParams.comParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
+                                        
+                                        d.resolve(count);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        paginationParams.comParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
+                                          
+                                        d.resolve(count);
+                                      });
+                                      
+                                  } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      
+                                      HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
+                                          if (err) {
+                                              return d.reject(err);
+                                          }
+                                          
+                                          paginationParams.comParams.total = count.count;
+                                          StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
+                                          
+                                          d.resolve(count);
+                                      });
+//                                    
+                                  } else {
+                                      
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false,  paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
+                                          if (err) {
+                                              return d.reject(err);
+                                          }
+                                          paginationParams.comParams.total = count.count;
+                                          StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
+                                          
+                                          d.resolve(count);
+                                      });
+                                  }
+                                
+                                return d.promise;
+                            }],
+                            dataTopGuide: ['$stateParams', '$q', 'HOTSGuideQueryService', 'paginationParams', function ($stateParams, $q, HOTSGuideQueryService, paginationParams) {
+
+                              var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        d.resolve(data);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        d.resolve(data);
+                                      });
+                                      
+                                  } else {
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, null, paginationParams.guideFilters.search, 1, 1, function(err, data, count) {
+                                          if (err) {
+                                              return d.reject(err);
+                                          }
+                                          d.resolve(data);
+                                      });
+                                  }
+                                
+                                return d.promise;
+                            }],
+                            dataTempostormGuides: ['paginationParams', '$q', 'HOTSGuideQueryService', 'Guide', function (paginationParams, $q, HOTSGuideQueryService, Guide) {
+                                
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        d.resolve(data);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        d.resolve(data);
+                                      });
+                                      
+                                  } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      
+                                      HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function (err, data, count) {
+                                          if (err) {
+                                              return d.reject(err);
+                                          }
+                                          d.resolve(data);
+                                      });
+//                                    
+                                  } else {
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                          if (err) {
+                                              return d.reject(err);
+                                          }
+                                          d.resolve(data);
+                                      });
+                                  }
+                                
+                                return d.promise;
+                            }],
+                            tempostormGuideCount: ['paginationParams', '$q', 'HOTSGuideQueryService', 'StateParamHelper', 'Guide', function(paginationParams, $q, HOTSGuideQueryService, StateParamHelper, Guide) {
+                                
+                                var d = $q.defer();
+                                
+                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        paginationParams.tsParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
+                                        
+                                        d.resolve(count);
+                                    });
+                                    
+                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        paginationParams.tsParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
+                                          
+                                        d.resolve(count);
+                                      });
+                                      
+                                  } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
+                                      
+                                      HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                        paginationParams.tsParams.total = count.count;
+                                        StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
+                                          
+                                        d.resolve(count);
+                                      });
+                                      
+                                  } else {
+                                      
+                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
+                                        if (err) {
+                                            return d.reject(err);
+                                        }
+                                          
+                                        paginationParams.tsParams.total = count.count;
+                                          
+                                        StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
+                                          
+                                        d.resolve(count);
+                                      });
+                                      
+                                  }
+                                
+                                return d.promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
@@ -1937,7 +2644,7 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            guide: ['$state', '$stateParams', 'Guide', function ($state, $stateParams, Guide) {
+                            guide: ['$state', '$stateParams', 'Guide', 'Util', function ($state, $stateParams, Guide, Util) {
                                 var slug = $stateParams.slug;
                                 return Guide.findOne({
                                     filter: {
@@ -2013,10 +2720,20 @@ var app = angular.module('app', [
                                                     }
                                                 ]
                                             }
+                                        },
+                                        {
+                                            relation: 'votes',
+                                            scope: {
+                                                fields: {
+                                                    id: true,
+                                                    direction: true
+                                                }
+                                            }
                                         }
                                       ]
                                     }
                                 }).$promise.then(function (data) {
+                                    data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
                                 })
                                 .catch(function (err) {
@@ -3527,7 +4244,7 @@ var app = angular.module('app', [
                 access: { auth: true },
             })
             .state('app.profile.edit.premium', {
-                url: '/premium',
+                url: '/premium?plan',
                 views: {
                     editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
@@ -3568,23 +4285,22 @@ var app = angular.module('app', [
                 },
                 access: { auth: true }
             })
-            .state('app.profile.subscription', {
-                url: '/subscription?plan',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
-                        controller: 'ProfileSubscriptionCtrl',
-                        resolve: {
-                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getUserProfile(username);
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true },
-                seo: { title: 'My Subscription', description: '', keywords: '' }
-            })
+//            .state('app.profile.subscription', {
+//                url: '/subscription?plan',
+//                views: {
+//                    profile: {
+//                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
+//                        controller: 'ProfileSubscriptionCtrl',
+//                        resolve: {
+//                            user: ['userProfile', function (userProfile) {
+//                                return userProfile;
+//                            }]
+//                        }
+//                    }
+//                },
+//                access: { auth: true },
+//                seo: { title: 'My Subscription', description: '', keywords: '' }
+//            })
             .state('app.admin', {
                 abstract: true,
                 url: 'admin',
@@ -3642,6 +4358,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: ['id', 'title', 'createdDate'],
@@ -3651,17 +4368,25 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            articlesCount: ['Article', function (Article) {
-                                return Article.count({}).$promise;
+                            articlesCount: ['Article', 'StateParamHelper', 'paginationParams', function (Article, StateParamHelper, paginationParams) {
+                                return Article.count({})
+                                .$promise
+                                .then(function (artCount) {
+                                    StateParamHelper.validatePage(paginationParams.page, artCount.count, paginationParams.perpage);
+                                    
+                                    paginationParams.total = artCount.count;
+                                    
+                                    return artCount.count;
+                                });
                             }],
                             articles: ['Article', 'paginationParams', function (Article, paginationParams) {
                                 var options = {
-                                        filter: {
-                                            limit: paginationParams.perpage,
-                                            order: "createdDate DESC",
-                                            fields: paginationParams.options.filter.fields
-                                        }
-                                    };
+                                    filter: {
+                                        limit: paginationParams.perpage,
+                                        order: paginationParams.options.filter.order,
+                                        fields: paginationParams.options.filter.fields
+                                    }
+                                };
 
                                 return Article.find(options)
                                 .$promise
@@ -3669,7 +4394,7 @@ var app = angular.module('app', [
                                     return data;
                                 });
                             }],
-                            authors: ['User', function(User){
+                            authors: ['User', function(User) {
                                 var options = {
                                     filter: {
                                         limit: 10,
@@ -3680,8 +4405,7 @@ var app = angular.module('app', [
                                         }
                                     }
                                 }
-
-
+                                
                                 return User.find(options)
                                 .$promise
                                 .then(function (data) {
@@ -3832,19 +4556,26 @@ var app = angular.module('app', [
                                     page: 1,
                                     perpage: 50,
                                     search: '',
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: ["id", "name", "playerClass", "description",]
                                         },
                                         where: {
                                             isPublic: true
-                                        }
+                                        },
+                                        order: "createdDate DESC",
                                     }
                                 };
                             }],
 
-                            decksCount: ['Deck', function(Deck) {
-                                return Deck.count({}).$promise;
+                            decksCount: ['Deck', 'paginationParams', function(Deck, paginationParams) {
+                                return Deck.count({}).$promise
+                                .then(function (deckCount) {
+                                    paginationParams.total = deckCount.count;
+                                    
+                                    return deckCount.count;
+                                });
                             }],
 
                             decks: ['Deck', 'paginationParams', function (Deck, paginationParams) {
@@ -4207,6 +4938,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -4221,12 +4953,11 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            cardsCount: ['Card', function(Card) {
+                            cardsCount: ['Card', 'paginationParams', function(Card, paginationParams) {
                                 return Card.count({})
                                 .$promise
                                 .then(function (cardCount) {
-                                    0-
-                                      ('cardCount: ', cardCount);
+                                    paginationParams.total = cardCount.count;
                                     return cardCount;
                                 })
                                 .catch(function (err) {
@@ -4325,6 +5056,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -4337,10 +5069,11 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            heroesCount: ['Hero', function (Hero) {
+                            heroesCount: ['Hero', 'paginationParams', function (Hero, paginationParams) {
                                 return Hero.count({})
                                 .$promise
                                 .then(function (data) {
+                                    paginationParams.total = data.count;
                                     return data.count;
                                 })
                             }],
@@ -4468,10 +5201,11 @@ var app = angular.module('app', [
                                     return data;
                                 });
                             }],
-                            talentCount: ['Talent', function(Talent) {
+                            talentCount: ['Talent', 'paginationParams', function(Talent, paginationParams) {
                                 return Talent.count()
                                 .$promise
                                 .then(function (talentCount) {
+                                    paginationParams.total = talentCount.count;
                                     return talentCount.count;
                                 });
                             }]
@@ -4541,6 +5275,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -4562,10 +5297,11 @@ var app = angular.module('app', [
                                     return data;
                                 });
                             }],
-                            mapCount: ['Map', function(Map) {
+                            mapCount: ['Map', 'paginationParams', function(Map, paginationParams) {
                                 return Map.count()
                                 .$promise
                                 .then(function (mapCount) {
+                                    paginationParams.total = mapCount.count;
                                     return mapCount.count;
                                 });
                             }]
@@ -4633,6 +5369,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -4650,10 +5387,11 @@ var app = angular.module('app', [
                             )
                             .$promise;
                             }],
-                            guideCount: ['Guide', function(Guide) {
+                            guideCount: ['Guide', 'paginationParams', function(Guide, paginationParams) {
                               return Guide.count()
                               .$promise
                               .then(function (guideCount) {
+                                paginationParams.total = guideCount.count;
                                 return guideCount.count;
                               });
                             }]
@@ -4778,15 +5516,42 @@ var app = angular.module('app', [
                 views: {
                     add: {
                         templateUrl: tpl + 'views/admin/hots.guides.add.map.html',
-                        controller: 'AdminHOTSGuideAddMapCtrl',
+                        controller: 'HOTSGuideBuilderMapCtrl',
                         resolve: {
-                            heroes: ['Hero', function (Hero) {
-                                return Hero.find({})
-                                .$promise;
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
                             }],
-                            maps: ['Map', function (Map) {
-                                return Map.find({})
-                                .$promise;
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
+                            }],
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -5218,6 +5983,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    tota: 0,
                                     options: {
                                         filter: {
                                             fields: {
@@ -5232,11 +5998,12 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            usersCount: ['User', function (User) {
+                            usersCount: ['User', 'paginationParams', function (User, paginationParams) {
                                 return User.count({})
                                 .$promise
                                 .then(function (usersCount) {
 //                                    console.log('usersCount: ', usersCount);
+                                    paginationParams.total = usersCount.count;
                                     return usersCount;
                                 })
                                 .catch(function (err) {
@@ -5409,10 +6176,11 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            pollsCount: ['Poll', function (Poll) {
+                            pollsCount: ['Poll', 'paginationParams', function (Poll, paginationParams) {
                                 return Poll.count({})
                                 .$promise
                                 .then(function (pollCount) {
+                                    paginationParams.total = pollCount.count;
                                     return pollCount;
                                 })
                                 .catch(function (err) {
@@ -5498,6 +6266,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             limit: 50,
@@ -5507,8 +6276,15 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            snapshotsCount: ['Snapshot', function (Snapshot) {
-                                return Snapshot.count({}).$promise;
+                            snapshotsCount: ['Snapshot', 'paginationParams', 'StateParamHelper', function (Snapshot, paginationParams, StateParamHelper) {
+                                return Snapshot.count({}).$promise
+                                .then(function (hsSnapshotCount) {
+                                    StateParamHelper.validatePage(paginationParams.page, hsSnapshotCount.count, paginationParams.perpage);
+                                    
+                                    paginationParams.total = hsSnapshotCount.count;
+                                    
+                                    return hsSnapshotCount.count;
+                                });
                             }],
                             snapshots: ['Snapshot', 'paginationParams', function (Snapshot, paginationParams) {
                                 return Snapshot.find(
@@ -5773,7 +6549,6 @@ var app = angular.module('app', [
                         controller: 'AdminTeamListCtrl',
                         resolve: {
                             teamMembers: ['TeamMember', function (TeamMember) {
-
                                 var gameTypes = ['hs', 'hots', 'fifa', 'wow', 'cs', 'fgc' ]
                                 var gameTypeFilter = _.map(gameTypes, function (gameType) {
                                     return {game: gameType}
@@ -5782,13 +6557,15 @@ var app = angular.module('app', [
                                 return TeamMember.find({
                                     filter: {
                                         where: {
-                                            or: gameTypeFilter
+                                            game: {
+                                                inq: gameTypes
+                                            }
                                         }
                                     }
                                 })
                                 .$promise
                                 .then(function (teamMembers) {
-
+                                    console.log('teamMembers:', teamMembers);
                                     var teamMemberObj = {};
                                     for (var key in teamMembers) {
                                         var teamMember = teamMembers[key];
@@ -5799,6 +6576,8 @@ var app = angular.module('app', [
 
                                         teamMemberObj[teamMember.game].push(teamMember);
                                     }
+                                    
+                                    console.log('teamMemberObj:', teamMemberObj);
 
                                     return teamMemberObj;
 
@@ -6000,6 +6779,7 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: perpage,
+                                    total: 0,
                                     options: {
                                         filter: {
                                             limit: perpage,
@@ -6009,8 +6789,12 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            vodsCount: ['Vod', function (Vod) {
-                                return Vod.count({}).$promise;
+                            vodsCount: ['Vod', 'paginationParams', function (Vod, paginationParams) {
+                                return Vod.count({}).$promise
+                                .then(function (vodCount) {
+                                    paginationParams.total = vodCount.count;
+                                    return vodCount;
+                                });
                             }],
                             vods: ['Vod', 'paginationParams', function(Vod, paginationParams) {
                                 var options = {

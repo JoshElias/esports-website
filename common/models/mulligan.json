@@ -18,7 +18,9 @@
       "type": "string"
     },
     "deckId": {
-      "required": true
+      "type": {
+        "required": true
+      }
     }
   },
   "validations": [],
@@ -60,22 +62,22 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",
@@ -101,7 +103,7 @@
       "permission": "ALLOW",
       "property": "__delete__cardsWithoutCoin"
     },
-	  {
+    {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
@@ -125,7 +127,7 @@
       "permission": "ALLOW",
       "property": "__create__cardsWithoutCoin"
     },
-	  {
+    {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",

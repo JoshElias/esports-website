@@ -7,8 +7,12 @@
     "validateUpsert": true
   },
   "properties": {
-    "spamRegexId": {},
-    "userId": {},
+    "spamRegexId": {
+      "type": {}
+    },
+    "userId": {
+      "type": {}
+    },
     "userAgent": {
       "type": "string"
     },
@@ -16,7 +20,9 @@
       "type": "string"
     },
     "matches": {
-      "type": ["string"]
+      "type": [
+        "string"
+      ]
     },
     "referer": {
       "type": "string"
@@ -51,22 +57,22 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     }
   ],
   "methods": {}

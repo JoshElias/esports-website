@@ -38,10 +38,16 @@
                     
                     <form class="ng-pristine ng-valid">
                     <div class="input-group">
-                        <input type="text" name="search" class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" placeholder="Search..." ng-model="filters.search" style=""> 
+                        <input type="text" name="search"
+                               class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" 
+                               placeholder="Search..." 
+                               ng-model="filters.search" style=""> 
                         <span class="input-group-btn">
-                            <button type="submit" type="submit" class="btn btn-blue btn-sm">
-                                <i class="fa fa-search"></i>
+                            <button type="submit" type="submit" 
+                                    class="btn btn-blue btn-sm"
+                                    ng-click="newSearch()">
+                                <span ng-show="!fetching"><i class="fa fa-search"></i></span>
+                                <span ng-show="fetching"><i class="fa fa-spinner pulse"></i></span>
                             </button>
                         </span>
                     </div>
@@ -95,10 +101,16 @@
                     
                 <form class="ng-pristine ng-valid">
                     <div class="input-group">
-                        <input type="text" name="search" class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" placeholder="Search..." ng-model="filters.search" style=""> 
+                        <input type="text" name="search"
+                               class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" 
+                               placeholder="Search..." 
+                               ng-model="filters.search" style=""> 
                         <span class="input-group-btn">
-                            <button type="submit" type="submit" class="btn btn-blue btn-sm">
-                                <i class="fa fa-search"></i>
+                            <button type="submit" type="submit" 
+                                    class="btn btn-blue btn-sm"
+                                    ng-click="newSearch()">
+                                <span ng-show="!fetching"><i class="fa fa-search"></i></span>
+                                <span ng-show="fetching"><i class="fa fa-spinner pulse"></i></span>
                             </button>
                         </span>
                     </div>

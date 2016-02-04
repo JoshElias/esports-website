@@ -26,7 +26,7 @@ module.exports = function(User) {
     invalidCatpchaTokenErr.statusCode = 400;
     invalidCatpchaTokenErr.code = 'INVALID_CAPTCHA_TOKEN';
 
-
+    
 
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
         ctx.req.logIn(ctx.result.toJSON().user, function (err) {
@@ -722,6 +722,9 @@ module.exports = function(User) {
 
 
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
+        console.log('User.setSubscriptionPlan');
+        console.log('plan:', plan);
+        console.log('cctoken:', cctoken);
         cb = cb || utils.createPromiseCallback();
 
         User.getCurrent(function (err, user) {
@@ -754,8 +757,9 @@ module.exports = function(User) {
             subscription.cancel(user, cb);
         });
     };
-    
 
+    
+    
     User.remoteMethod(
         'isInRoles',
         {
