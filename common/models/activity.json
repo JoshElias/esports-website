@@ -11,18 +11,30 @@
     "activityType": {
       "type": "string"
     },
-    "authorId": {},
+    "authorId": {
+      "type": {}
+    },
     "createdDate": {
       "type": "date"
     },
     "isActive": {
       "type": "boolean"
     },
-    "articleId": {},
-    "deckId": {},
-    "snapshotId": {},
-    "forumPostId": {},
-    "guideId": {}
+    "articleId": {
+      "type": {}
+    },
+    "deckId": {
+      "type": {}
+    },
+    "snapshotId": {
+      "type": {}
+    },
+    "forumPostId": {
+      "type": {}
+    },
+    "guideId": {
+      "type": {}
+    }
   },
   "validations": [],
   "relations": {
@@ -64,16 +76,16 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     }
   ],
   "methods": {}

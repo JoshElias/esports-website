@@ -73,6 +73,11 @@
     //*************************************
 
     .guide-header { background: #2766ad url('../img/hots/hots-blue-banner.png') no-repeat right top; border-bottom: 1px solid #083f7d; }
+    .guide-header  { 
+        .guide-name-wrapper {
+            min-width: 80%;
+        }
+    }
     .guide-header h1 { margin-top: 10px; font-family: 'Open Sans Bold'; color: #FFF; }
     .guide-header p,
     .guide-header p a { color: #FFF; }

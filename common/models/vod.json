@@ -15,9 +15,11 @@
       "type": "date",
       "defaultFn": "now"
     },
-   "youtubeId": {
+    "youtubeId": {
       "type": "string",
-      "validators": ["youtubeId"]
+      "validators": [
+        "youtubeId"
+      ]
     },
     "subtitle": {
       "type": "string"
@@ -35,22 +37,22 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     }
   ],
   "methods": {}

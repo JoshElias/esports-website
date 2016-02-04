@@ -1,9 +1,5 @@
-<div class="panel panel-success animated" ng-show="success.show">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
-        <strong>{{success.msg}}</strong>
-    </div>
-</div>
+<alert-box theme="admin"></alert-box>
+
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
         <div class="pull-right" ng-if="guides">
@@ -48,19 +44,29 @@
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="pull-right">
-            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+        <div class="pull-right" ng-if="guides">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ guidePagination.total === 0 ? guidePagination.total : ((guidePagination.page - 1) * guidePagination.perpage) + 1 }}</strong> 
+                to <strong>{{  guidePagination.page * guidePagination.perpage > guidePagination.total ? guidePagination.total : guidePagination.page * guidePagination.perpage }}</strong> 
+                of <strong>{{ guidePagination.total }}</strong>
             </span>
+            <div pagination="guidePagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
-            <form>
-                <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchGuides()">
-                </span>
+            <form class="form-inline" ng-submit="searchGuides()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

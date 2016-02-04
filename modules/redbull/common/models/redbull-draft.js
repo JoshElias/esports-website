@@ -5,10 +5,6 @@ var utils = require("./../../../../lib/utils");
 
 module.exports = function(RedbullDraft) {
 
-    var contextErr = new Error('Could not find context');
-    contextErr.statusCode = 500;
-    contextErr.code = 'NO_CONTEXT';
-
 
 
     // START DRAFT
@@ -33,14 +29,18 @@ module.exports = function(RedbullDraft) {
 
             clientData.redbullDraftSettingsId = draftSettings.id;
 
-
             return checkForOfficialDraft(clientData, next)
         });
     }
 
-    // TODO: kick an unauthorized user
+
     function checkForOfficialDraft(clientData, finalCb) {
         var User = RedbullDraft.app.models.user;
+
+        var notOfficialErr = new Error("You're not authorized to start an official draft");
+        notOfficialErr.statusCode = 401;
+        notOfficialErr.code = "NOT_AUTHORIZED_FOR_OFFICIAL_DRAFT";
+
 
         // Does the user want to create an official deck?
         if(!clientData.isOfficial) {
@@ -50,13 +50,16 @@ module.exports = function(RedbullDraft) {
         // Is the user logged in?
         var loopbackContext = loopback.getCurrentContext();
         if(!loopbackContext || !loopbackContext.active) {
-                return finalCb();
+            var noContextErr = new Error("Server could not find http context. Contact system admin.");
+            noContextErr.statusCode = 500;
+            noContextErr.code = 'NO_HTTP_CONTEXT';
+            return finalCb(noContextErr);
         }
         var req = loopbackContext.active.http.req;
 
         // Do we have a user Id
         if (!req.accessToken || !req.accessToken.userId) {
-            return finalCb()
+            return finalCb(notOfficialErr)
         }
         var userId = req.accessToken.userId.toString();
 
@@ -67,45 +70,28 @@ module.exports = function(RedbullDraft) {
         return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
             if (err) return finalCb(err);
 
-            // Check if the user is registered to be an active player
-            if (clientData.isOfficial) {
-                clientData.isOfficial = !isInRoles.none;
-                return finalCb();
+            // If the user tried to start an official draft without authorization
+            if(isInRoles.none) {
+                return finalCb(notOfficialErr);
             }
+
 
             // Check if the active player has already done a draft
             return RedbullDraft.findOne({where: {authorId: userId, isOfficial:true, isActive:true}}, function (err, draft) {
                 if (err) return finalCb(err);
                 else if (!draft) return finalCb();
 
-                return handleRegisteredPlayerError(draft, finalCb);
+                // Only one official draft per user!
+                var alreadyDraftedErr = new Error('User has already drafted');
+                alreadyDraftedErr.statusCode = 400;
+                alreadyDraftedErr.code = 'ALREADY_DRAFTED';
+                alreadyDraftedErr.draftId = draft.id;
+
+                return finalCb(alreadyDraftedErr);
             });
         });
     }
 
-    function handleRegisteredPlayerError(draft, finalCb) {
-
-        var alreadyDraftedErr = new Error('User has already drafted');
-        alreadyDraftedErr.statusCode = 400;
-        alreadyDraftedErr.code = 'ALREADY_DRAFTED';
-
-        // Check if user as already drafted packs
-        if (!draft.hasOpenedPacks) {
-            //var decodedPackOpenerData = JSON.parse(draft.packOpenerString);
-            //alreadyDraftedErr.packOpenerData = decodedPackOpenerData;
-            return finalCb(alreadyDraftedErr);
-        }
-
-        // Make another query for the cards
-        return RedbullDraft.findById(draft.id, {
-            include: ["cards"]
-        }, function (err, deckbuilderData) {
-            if (err) finalCb(err);
-
-            alreadyDraftedErr.deckBuilderData = deckbuilderData;
-            return finalCb(alreadyDraftedErr);
-        });
-    }
 
 
     // If the before save completed without err, attach the package
@@ -155,6 +141,12 @@ module.exports = function(RedbullDraft) {
 
         return RedbullDraft.findById(draftId, {fields:{id:true}}, function(err, draft) {
             if(err) return finalCb(err);
+            else if(!draft) {
+                var noDraftErr = new Error("Unable to find draft with id", draftId);
+                noDraftErr.statusCode = 404;
+                noDraftErr.code = "UNABLE_TO_FIND_DRAFT";
+                return finalCb(noDraftErr);
+            }
 
             return draft.updateAttributes({
                 hasOpenedPacks: true,
@@ -242,7 +234,11 @@ module.exports = function(RedbullDraft) {
                     {
                         relation: "cards",
                         scope: {
-                            fields: ["playerClass"]
+                            fields: {
+                                id: true,
+                                playerClass: true,
+                                rarity: true
+                            }
                         }
                     },
                     {

@@ -234,8 +234,9 @@
                                                                     GENERAL
                                                                 </span>
                                                             </div>
-                                                            <div class="tech-card" ng-repeat="card in tech.cardTech | orderBy: 'orderNum'">
-                                                                <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style='background-image: url("{{app.cdn}}cards/{{card.card.photoNames.small}}")'>
+                                                            <div class="tech-card" ng-repeat="card in tech.cardTech | orderBy: 'orderNum'" hs-card tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
+                             data-tooltip-pos="right" hs-card>
+                                                                <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style='background-image: url("https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}")'>
                                                                     <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
                                                                     <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
                                                                     {{card.card.name}}

@@ -94,9 +94,11 @@
     <div class="guide-text map-discussion"></div>
     <div class="db-section m-b-md" ng-repeat="content in guide.content track by $index | orderBy: 'orderNum'">
         <div class="gb-content-title">
-            <div class="gb-content-btns clearfix">
+            <div class="gb-chapter-carets">
                 <a href="#" class="gb-content-down m-r-xs" ng-class="{ 'disabled': $index == (guide.content.length - 1) }" ng-show="guide.content.length > 1" ng-click="guide.moveContentDown(content)"><i class="fa fa-caret-down"></i></a>
                 <a href="#" class="gb-content-up m-r-md" ng-class="{ 'disabled': $index == 0 }" ng-show="guide.content.length > 1" ng-click="guide.moveContentUp(content)"><i class="fa fa-caret-up"></i></a>
+            </div>
+            <div class="gb-content-btns clearfix">
                 <a href="#" class="gb-content-delete" ng-show="guide.content.length" ng-click="guide.deleteContent(content)"><i class="fa fa-times"></i></a>
             </div>
             <input type="text" name="contentTitle{{$index}}" class="form-control input-content-title" value="" ng-model="content.title">
@@ -112,6 +114,9 @@
 </div>
 <div class="container" ng-show="step === 5">
     <div class="guide-text save-guide-now"></div>
+  
+    <alert-box theme="admin"></alert-box>
+  
     <div class="panel panel-danger error-modal" ng-show="!guide.hasAnyMap() || !guide.hasAnyChapter()">
         <div class="panel-heading">
             <strong>UNABLE TO SAVE GUIDE</strong>
@@ -159,7 +164,7 @@
                             <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.video">
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Premium</label>
                             <div class="col-sm-10">
@@ -183,7 +188,7 @@
                             </div>
                         </div>
                     </div>
-                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                    <div ng-if="isUserAdmin || isUserContentProvider">
                         <div class="form-group row">
                             <label for="premium" class="col-sm-2 control-label">Featured</label>
                             <div class="col-sm-10">
@@ -193,8 +198,8 @@
                                         <b class="caret"></b>
                                     </button>
                                     <ul class="list-group dropdown-menu dropdown-dark">
-                                        <li class="list-group-item" ng-class="{active: guide.featured === type.value}" ng-repeat="type in featuredTypes">
-                                            <a href="#" ng-click="guide.featured = type.value">{{type.text}}</a>
+                                        <li class="list-group-item" ng-class="{active: guide.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                            <a href="#" ng-click="guide.isFeatured = type.value">{{type.text}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -205,12 +210,12 @@
                         <div class="col-sm-10 col-sm-offset-2">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="public" ng-model="guide.public" value="true"> Make this guide public
+                                    <input type="radio" name="public" ng-model="guide.isPublic" ng-value="true"> Make this guide public
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="public" ng-model="guide.public" value="false"> Make this guide private
+                                    <input type="radio" name="public" ng-model="guide.isPublic" ng-value="false"> Make this guide private
                                 </label>
                             </div>
                         </div>

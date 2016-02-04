@@ -118,7 +118,7 @@
             </div>
             <ul class="list-group" dnd-list="hero.talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
                 <li class="list-group-item admin-list-item lh-lg clearfix"
-                    ng-repeat="talent in hero.talents track by $index"
+                    ng-repeat="talent in hero.talents"
                     dnd-draggable="talent"
                     dnd-moved="updateDND(hero.talents, $index)"
                     dnd-disable-if="hero.talents.length < 2"

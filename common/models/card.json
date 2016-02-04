@@ -54,16 +54,20 @@
       "type": "boolean",
       "required": true
     },
-    "mechanics": [
-      "string"
-    ],
+    "mechanics": {
+      "type": [
+        "string"
+      ]
+    },
     "cardType": {
       "type": "string",
       "required": true
     },
-    "deckIds": [
-      "string"
-    ],
+    "deckIds": {
+      "type": [
+        "string"
+      ]
+    },
     "deckable": {
       "type": "boolean"
     },
@@ -103,16 +107,16 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     }
   ],
   "methods": {}
