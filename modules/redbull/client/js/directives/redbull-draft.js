@@ -1,6 +1,6 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util', 
-    function ($q, $timeout, $interval, $rootScope, Util){
+.directive('redbullDraft', ['$q', '$timeout', '$window', '$interval', '$rootScope', 'Util', 
+    function ($q, $timeout, $window, $interval, $rootScope, Util){
         return {
             restrict: 'A',
             templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/redbull-draft.html',
@@ -115,7 +115,7 @@ angular.module('redbull.directives')
                     e.which = 32;
                     e.keyCode = 32;
                     $timeout(function () {
-                        $(window).trigger(e);
+                        el.trigger(e);
                     });
                 }
                 

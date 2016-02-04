@@ -798,6 +798,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+    pointer-events: none;
 }
 
 .sub-nav-btn {
@@ -816,7 +817,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .sub-nav-btn-small {
     position: relative;
     bottom: 95px;
-    left: 0px;
+    left: -10px;
+    pointer-events: all;
     @media only screen and (min-width: 1500px) {
         left: 175px;
     }
@@ -827,17 +829,18 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     position: absolute !important; 
     top: -50px !important;
     height: 51px;
+    pointer-events: none;
 }
 
 .sticky .sub-nav-btn {
-    bottom: 10px;
+    bottom: 5px;
     right: 355px;
 }
 
 .sticky .sub-nav-btn-small {
     position: relative;
     margin-top: -170px;
-    left: 25px;
+    left: 30px;
     @media only screen and (min-width: 1500px) {
         left: 185px;
     }

@@ -40,14 +40,6 @@
     "isFeatured": {
       "type": "boolean"
     },
-    "votes": {
-      "type": [
-        "object"
-      ]
-    },
-    "voteScore": {
-      "type": "number"
-    },
     "viewCount": {
       "type": "number"
     },

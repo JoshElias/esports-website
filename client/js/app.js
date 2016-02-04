@@ -1534,7 +1534,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.snapshots.snapshot.html',
                         controller: 'HearthstoneSnapshotCtrl',
                         resolve: {
-                            dataSnapshot: ['$stateParams', '$state', 'Snapshot', function ($stateParams, $state, Snapshot) {
+                            dataSnapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
                                 var slug = $stateParams.slug;
                                 return Snapshot.findOne({
                                     filter: {
@@ -1655,12 +1655,23 @@ var app = angular.module('app', [
                                                         }
                                                     ],
                                                 }
+                                            },
+                                            {
+                                                relation: 'votes',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true,
+                                                        authorId: true
+                                                    }
+                                                }
                                             }
                                         ]
                                     }
                                 }).$promise
-                                .then(function (data) {
-                                    return data;
+                                .then(function (snapshot) {
+                                    snapshot.voteScore = Util.tally(snapshot.votes, 'direction');
+                                    return snapshot;
                                 })
                                 .catch(function (err) {
                                     if (err.status === 404) {
@@ -1992,7 +2003,6 @@ var app = angular.module('app', [
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
                             paginationFilters: ['$stateParams', 'StateParamHelper', '$q', 'Hero', 'Map', 'HOTS', function($stateParams, StateParamHelper, $q, Hero, Map, HOTS) {
-                                
                                 if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
                                     $stateParams.r = new Array($stateParams.r);
                                 }
@@ -2304,16 +2314,30 @@ var app = angular.module('app', [
                                 
                                 return d.promise;
                             }],
-                            dataTopGuide: ['$stateParams', 'Guide', 'Util', '$q', function ($stateParams, Guide, Util, $q) {
+                            dataTopGuide: ['$stateParams', 'Guide', 'Util', '$q', 'paginationParams', function ($stateParams, Guide, Util, $q, paginationParams) {
                                 var d = $q.defer();
+                                
+                                if ( 
+                                !_.isEmpty(paginationParams.guideFilters.heroes[0]) ||
+                                !_.isEmpty(paginationParams.guideFilters.universes) ||
+                                !_.isEmpty(paginationParams.guideFilters.roles) ||
+                                !_.isEmpty(paginationParams.guideFilters.search)
+                                ) {
+                                    var filter = { filters: {} };
+                                    filter.filters['heroId']       = (!_.isEmpty(paginationParams.guideFilters.heroes[0])) ? paginationParams.guideFilters.heroes[0].id : undefined;
+                                    filter.filters['mapClassName'] = (!_.isUndefined(paginationParams.guideFilters.map)) ? paginationParams.guideFilters.map.className : undefined;
+                                    filter.filters['universes']    = paginationParams.guideFilters.universes;
+                                    filter.filters['roles']        = paginationParams.guideFilters.roles;
+                                    filter.filters['search']       = paginationParams.guideFilters.search;
+                                } else {
+                                    var filter = {}
+                                }
+                                
                                 async.waterfall([
                                     function (seriesCb) {
-                                        Guide.topGuide({
-                                            
-                                        })
+                                        Guide.topGuide(filter)
                                         .$promise
                                         .then(function (data) {
-                                            console.log(data);
                                             return seriesCb(undefined, data);
                                         })
                                         .catch(function (err) {
@@ -2390,7 +2414,7 @@ var app = angular.module('app', [
                                         })
                                         .$promise
                                         .then(function (data) {
-                                            console.log(data);
+                                            data[0].voteScore = Util.tally(data[0].votes, 'direction');
                                             return seriesCb(undefined, data);
                                         })
                                         .catch(function (err) {
@@ -2398,9 +2422,8 @@ var app = angular.module('app', [
                                         })
                                     }
                                 ], function (err, guide) {
-                                    if (err) 
-                                        return console.log(err);
-                                    
+                                    if (err) return console.log(err);
+//                                    console.log('guide:', guide);
                                     d.resolve(guide);
                                 });
                                 
@@ -2463,37 +2486,37 @@ var app = angular.module('app', [
                                 
                                 return d.promise;
                             }],
-                            dataTopGuide: ['$stateParams', '$q', 'HOTSGuideQueryService', 'paginationParams', function ($stateParams, $q, HOTSGuideQueryService, paginationParams) {
-
-                              var d = $q.defer();
-                                
-                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
-                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
-                                        if (err) {
-                                            return d.reject(err);
-                                        }
-                                        d.resolve(data);
-                                    });
-                                    
-                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
-                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
-                                        if (err) {
-                                            return d.reject(err);
-                                        }
-                                        d.resolve(data);
-                                      });
-                                      
-                                  } else {
-                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, null, paginationParams.guideFilters.search, 1, 1, function(err, data, count) {
-                                          if (err) {
-                                              return d.reject(err);
-                                          }
-                                          d.resolve(data);
-                                      });
-                                  }
-                                
-                                return d.promise;
-                            }],
+//                            dataTopGuide: ['$stateParams', '$q', 'HOTSGuideQueryService', 'paginationParams', function ($stateParams, $q, HOTSGuideQueryService, paginationParams) {
+//                                console.log('running');
+//                              var d = $q.defer();
+//                                
+//                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
+//                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
+//                                        if (err) {
+//                                            return d.reject(err);
+//                                        }
+//                                        d.resolve(data);
+//                                    });
+//                                    
+//                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
+//                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
+//                                        if (err) {
+//                                            return d.reject(err);
+//                                        }
+//                                        d.resolve(data);
+//                                      });
+//                                      
+//                                  } else {
+//                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, null, paginationParams.guideFilters.search, 1, 1, function(err, data, count) {
+//                                          if (err) {
+//                                              return d.reject(err);
+//                                          }
+//                                          d.resolve(data);
+//                                      });
+//                                  }
+//                                
+//                                return d.promise;
+//                            }],
                             dataTempostormGuides: ['paginationParams', '$q', 'HOTSGuideQueryService', 'Guide', function (paginationParams, $q, HOTSGuideQueryService, Guide) {
                                 
                                 var d = $q.defer();
@@ -4308,7 +4331,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/admin/index.html',
                         resolve: {
-                            app: ['User', 'currentUser', '$state', function(User, currentUser, $state){
+                          admin: ['User', 'LoopBackAuth', '$state', function(User, LoopBackAuth, $state){
+                            var currentUser = LoopBackAuth.currentUserData;
                                 var roles = {};
                                 User.isInRoles({uid:currentUser.id, roleNames:['$admin', '$redbullAdmin']}).$promise
                                     .then(function(val){
@@ -4316,10 +4340,8 @@ var app = angular.module('app', [
                                         if (!!roles.none){
                                             $state.go('app.404');
                                         }
+                                      return true;
                                     });
-                            }],
-                            admin: ['User', function (User) {
-                                return true;
                             }]
                         }
                     }

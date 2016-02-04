@@ -8,22 +8,11 @@
   },
   "properties": {
     "name": {
-      "type": "string"
+       "type": "string"
     },
     "playerClass": {
       "type": "string",
       "required": true
-    },
-    "viewCount": {
-      "type": "number",
-      "default": 0
-    },
-    "votes": [
-      "object"
-    ],
-    "voteScore": {
-      "type": "number",
-      "default": 0
     },
     "isOfficial": {
       "type": "boolean",
@@ -83,29 +72,6 @@
       "principalType": "ROLE",
       "principalId": "$redbullAdmin",
       "permission": "ALLOW"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW",
-      "property": "create"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$everyone",
-      "permission": "ALLOW",
-      "property": "__edit__cards"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$everyone",
-      "permission": "ALLOW",
-      "property": "__create__draft"
     }
   ],
   "methods": {}

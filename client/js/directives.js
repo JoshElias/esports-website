@@ -708,10 +708,10 @@ angular.module('app.directives', ['ui.load'])
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
             var parentId = votable.id;
-            
+
             function getVoteInfo () {
                 setLoading(true);
-                
+
                 return Vote.getScore({
                     parentId: parentId
                 })
@@ -727,38 +727,38 @@ angular.module('app.directives', ['ui.load'])
                             score: score.score,
                             hasVoted: hasVoted.hasVoted
                         }
-                        
+
                         setLoading(false);
                     });
                 })
             }
             //initial load
             getVoteInfo();
-            
+
             function setLoading (bool) {
                 loading = bool;
             }
-            
+
             $scope.voteInfo = {}
-            
+
             $scope.isLoading = function () {
                 if (_.isEmpty($scope.voteInfo) || loading) {
                     return true;
                 }
-                
+
                 return false;
             }
-            
+
             $scope.hasVoted = function (direction) {
                 return $scope.voteInfo.hasVoted == direction;
             }
-            
+
             $scope.vote = function (direction) {
+                if(loading)
+                    return;
+
                 setLoading(true);
-//                console.log('here we go....');
-//                console.log('votable:', votable);
-//                console.log('$scope.voteInfo:', $scope.voteInfo);
-                
+
                 if (_.isNull(LoopBackAuth.currentUserId)) {
                     setLoading(false);
                     LoginModalService.showModal('login', function () {
@@ -775,12 +775,11 @@ angular.module('app.directives', ['ui.load'])
                         var where = {}
                             where[objType + "Id"] = votable.id;
                             where["authorId"] = LoopBackAuth.currentUserId;
-                        
-//                        console.log('where:', where);
-                        Vote.findOne({ 
-                            filter: { 
+
+                        Vote.findOne({
+                            filter: {
                                 where: where
-                            } 
+                            }
                         })
                         .$promise
                         .then(function (vote) {
@@ -804,7 +803,7 @@ angular.module('app.directives', ['ui.load'])
                     }
                 }
             }
-            
+
             EventService.registerListener(EventService.EVENT_LOGIN, getVoteInfo);
             EventService.registerListener(EventService.EVENT_LOGOUT, getVoteInfo);
         }]

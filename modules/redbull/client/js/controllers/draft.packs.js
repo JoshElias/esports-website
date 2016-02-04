@@ -15,7 +15,8 @@ angular.module('redbull.controllers')
             $scope.goingToBuild = true;
             RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
                 return $state.go('^.build');
-            }).catch(function () {
+            }).catch(function (response) {
+                console.log(response);
                 console.error('Unable to update draft');
             });
         }
@@ -200,18 +201,11 @@ angular.module('redbull.controllers')
 
     // go to build
     $scope.goToBuild = function () {
-        $scope.goingToBuild = true;
-        RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
-            return $state.go('^.build');
-        }).catch(function () {
-            console.error('Unable to update draft');
-        });
-/*        
         var mins = draftSettings.deckBuildTimeLimit;
         var decks = draftSettings.numOfDecks;
         var box = bootbox.dialog({
             title: 'Build Decks',
-            message: 'You will have <strong>' + mins + ' minutes</strong> to build <strong>' + decks + ' decks</strong>. If you do not complete in the alloted time, your decks will be automatically submitted, and completed with random classes / cards that are left. The timer begins once you click the continue button.',
+            message: 'You will have <strong>' + mins + ' minutes</strong> to build <strong>' + decks + ' decks</strong>. If you do not complete in the allotted time, your decks will be automatically submitted, and completed with random classes / cards that are remaining. The timer begins once you click the continue button.',
             buttons: {
                 continue: {
                     label: 'Continue',
@@ -221,7 +215,8 @@ angular.module('redbull.controllers')
                         $scope.goingToBuild = true;
                         RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
                             return $state.go('^.build');
-                        }).catch(function () {
+                        }).catch(function (response) {
+                            console.log(response);
                             console.error('Unable to update draft');
                         });
                     }
@@ -236,7 +231,6 @@ angular.module('redbull.controllers')
             }
         });
         box.modal('show');
-*/
     };
     
 }]);

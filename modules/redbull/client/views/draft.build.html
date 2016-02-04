@@ -150,7 +150,7 @@
         </div>
         
         <div class="deck-save-button">
-            <button class="btn btn-block btn-blue" ng-click="saveDecks()" ng-disabled="decksSaving" ng-if="!tournament.hasDecksConstructed">
+            <button class="btn btn-block btn-blue" ng-click="saveDecksCheck()" ng-disabled="decksSaving" ng-if="!tournament.hasDecksConstructed">
                 SAVE DECKS
                 <i class="fa fa-refresh fa-spin" ng-if="decksSaving"></i>
             </button>
@@ -161,7 +161,7 @@
         
     </div>
     
-    <!--<draft-timer start-time="tournament.deckBuildStartTime" time-limit="tournament.deckBuildTimeLimit" on-time-up="timesUp" ng-if="!tournament.hasDecksConstructed"></draft-timer>-->
+    <draft-timer start-time="tournament.deckBuildStartTime" time-limit="tournament.deckBuildTimeLimit" on-time-up="timesUp" ng-if="!tournament.hasDecksConstructed"></draft-timer>
     
     <div class="draft-build-cards">
         <div class="container container-override">

@@ -6,9 +6,19 @@
             <div class="section-search pull-right">
                 <form name="search-form">
                     <div class="input-group">
-                        <input type="text" class="form-control input-dark" placeholder="search..." ng-model="search">
+                        <input type="text" 
+                               class="form-control input-dark" placeholder="search..."
+                               ng-model="search"
+                               ng-keyup="queryOnEmpty(search)">
                         <span class="input-group-btn">
-                            <button type="submit" class="btn input-dark" ng-click="getArticles()"><i class="fa fa-search"></i></button>
+                            <button type="submit" class="btn input-dark" ng-click="getArticles()">
+                                <span ng-if="!fetching">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                                <span ng-if="fetching">
+                                    <i class="fa fa-spinner fa-pulse"></i>
+                                </span>
+                            </button>
                         </span>
                     </div>
                 </form>

@@ -41,7 +41,8 @@
                         <input type="text" name="search"
                                class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" 
                                placeholder="Search..." 
-                               ng-model="filters.search" style=""> 
+                               ng-model="filters.search"
+                               ng-keyup="queryOnEmpty(filters.search)"> 
                         <span class="input-group-btn">
                             <button type="submit" type="submit" 
                                     class="btn btn-blue btn-sm"
@@ -104,7 +105,8 @@
                         <input type="text" name="search"
                                class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" 
                                placeholder="Search..." 
-                               ng-model="filters.search" style=""> 
+                               ng-model="filters.search"
+                               ng-keyup="queryOnEmpty(filters.search)"> 
                         <span class="input-group-btn">
                             <button type="submit" type="submit" 
                                     class="btn btn-blue btn-sm"
