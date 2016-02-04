@@ -2758,7 +2758,6 @@ angular.module('app.services', [])
                     var filter = {}
                 }
                
-                console.log('filter:', filter);
                 Guide.topGuide(filter)
                 .$promise
                 .then(function (data) {

@@ -2333,13 +2333,11 @@ var app = angular.module('app', [
                                     var filter = {}
                                 }
                                 
-                                console.log('filter:', filter);
                                 async.waterfall([
                                     function (seriesCb) {
                                         Guide.topGuide(filter)
                                         .$promise
                                         .then(function (data) {
-                                            console.log('top guide:', data);
                                             return seriesCb(undefined, data);
                                         })
                                         .catch(function (err) {
@@ -2416,7 +2414,6 @@ var app = angular.module('app', [
                                         })
                                         .$promise
                                         .then(function (data) {
-                                            console.log('data:', data);
                                             data[0].voteScore = Util.tally(data[0].votes, 'direction');
                                             return seriesCb(undefined, data);
                                         })

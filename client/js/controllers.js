@@ -15446,8 +15446,6 @@ angular.module('app.controllers', ['ngCookies'])
 //            console.log('dataCommunityGuides:', dataCommunityGuides);
 //            $scope.communityGuideTalents = communityTalents;
             
-            console.log('dataTopGuide:', dataTopGuide);
-            
             $scope.topGuides = dataTopGuide ? dataTopGuide : false;
 //            $scope.topGuidesTalents = topGuideTalents;
 
