@@ -278,60 +278,48 @@ var redbull = angular.module('app.redbull', [
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
                             return RedbullDraftSettings.findOne().$promise;
                         }],
-                        draft: ['$state', '$localStorage', 'RedbullDraft', '$q', function ($state, $localStorage, RedbullDraft, $q) {
+                        draft: ['$state', 'RedbullDraft', '$q', function ($state, RedbullDraft, $q) {
                             var d = $q.defer();
-                            if ($localStorage.draftId) {
-                                RedbullDraft.findOne({
-                                    filter: {
-                                        where: {
-                                            id: $localStorage.draftId,
-                                            isOfficial: true,
-                                            isActive: true
-                                        },
-                                        include: {
-                                            relation: 'packs',
-                                            scope: {
-                                                include: [{
-                                                    relation: 'packCards',
-                                                    scope: {
-                                                        include: [{
-                                                            relation: 'card',
-                                                            scope: {
-                                                                fields: ['cardType', 'cost', 'expansion', 'name', 'photoNames', 'playerClass', 'rarity']
-                                                            }
-                                                        },{
-                                                            relation: 'expansion'
-                                                        }],
-                                                        order: 'orderNum ASC'
-                                                    }
-                                                }],
-                                                order: 'orderNum ASC'
-                                            }
+                            RedbullDraft.findOne({
+                                filter: {
+                                    where: {
+                                        isOfficial: true,
+                                        isActive: true
+                                    },
+                                    include: {
+                                        relation: 'packs',
+                                        scope: {
+                                            include: [{
+                                                relation: 'packCards',
+                                                scope: {
+                                                    include: [{
+                                                        relation: 'card',
+                                                        scope: {
+                                                            fields: ['cardType', 'cost', 'expansion', 'name', 'photoNames', 'playerClass', 'rarity']
+                                                        }
+                                                    },{
+                                                        relation: 'expansion'
+                                                    }],
+                                                    order: 'orderNum ASC'
+                                                }
+                                            }],
+                                            order: 'orderNum ASC'
                                         }
                                     }
-                                }).$promise.then(function (data) {
-                                    return d.resolve(data);
-                                }).catch(function (response) {
-                                    if (response.status === 404) {
-                                        RedbullDraft.create({ isOfficial: true }).$promise
-                                        .then(function (data) {
-                                            $localStorage.draftId = data.id;
-                                            d.resolve(data);
-                                        }).catch(function (response) {
-                                            $state.go('app.404');
-                                            return $q.reject();
-                                        });
-                                    }
-                                });
-                            } else {
-                                RedbullDraft.create({ isOfficial: true }).$promise
-                                .then(function (data) {
-                                    d.resolve(data);
-                                }).catch(function (response) {
-                                    $state.go('app.404');
-                                    return $q.reject();
-                                });
-                            }
+                                }
+                            }).$promise.then(function (data) {
+                                return d.resolve(data);
+                            }).catch(function (response) {
+                                if (response.status === 404) {
+                                    RedbullDraft.create({ isOfficial: true }).$promise
+                                    .then(function (data) {
+                                        d.resolve(data);
+                                    }).catch(function (response) {
+                                        $state.go('app.404');
+                                        return $q.reject();
+                                    });
+                                }
+                            });
                             return d.promise;
                         }]
                     }
@@ -350,43 +338,37 @@ var redbull = angular.module('app.redbull', [
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
                             return RedbullDraftSettings.findOne().$promise;
                         }],
-                        draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
-                            if ($localStorage.draftId) {
-                                return RedbullDraft.findOne({
-                                    filter: {
-                                        where: {
-                                            id: $localStorage.draftId,
-                                            isOfficial: true,
-                                            isActive: true
-                                        },
-                                        fields: ['id', 'hasOpenedPacks'],
-                                        include: [
-                                            {
-                                                relation: 'cards',
-                                                scope: {
-                                                    fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
-                                                    order: ['cost ASC', 'name ASC']
-                                                }
+                        draft: ['$state', '$q', 'RedbullDraft', function ($state, $q, RedbullDraft) {
+                            return RedbullDraft.findOne({
+                                filter: {
+                                    where: {
+                                        isOfficial: true,
+                                        isActive: true
+                                    },
+                                    fields: ['id', 'hasOpenedPacks'],
+                                    include: [
+                                        {
+                                            relation: 'cards',
+                                            scope: {
+                                                fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
+                                                order: ['cost ASC', 'name ASC']
                                             }
-                                        ]
-                                    }
-                                }).$promise.then(function (data) {
-                                    if (!data.hasOpenedPacks) {
-                                        $state.go('app.hs.draft.packs');
-                                        return $q.reject();
-                                    } else {
-                                        return data;
-                                    }
-                                });
-                            } else {
-                                $state.go('app.hs.draft.packs');
-                                return $q.reject();
-                            }
+                                        }
+                                    ]
+                                }
+                            }).$promise.then(function (data) {
+                                if (!data.hasOpenedPacks) {
+                                    $state.go('app.hs.redbull.draft.packs');
+                                    return $q.reject();
+                                } else {
+                                    return data;
+                                }
+                            });
                         }],
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
                         }],
-                        draftBuildStart: ['$localStorage', 'RedbullDraft', 'draft', function ($localStorage, RedbullDraft, draft) {
+                        draftBuildStart: ['RedbullDraft', 'draft', function (RedbullDraft, draft) {
                             return RedbullDraft.startDraftBuild({ draftId: draft.id }).$promise;
                         }]
                     }
@@ -394,8 +376,7 @@ var redbull = angular.module('app.redbull', [
             },
             seo: { title: 'Sealed Deck Generator', description: '', keywords: '' },
             access: { auth: true }
-        })
-        .state('app.admin.redbull', {
+        })        .state('app.admin.redbull', {
             abstract: true,
             url: '/redbull',
             views: {
