@@ -1,6 +1,5 @@
 angular.module('redbull.controllers')
 .controller('DraftPacksCardCtrl', ['$scope', '$timeout', function ($scope, $timeout){
-    console.log('DraftPacksCardCtrl');
     var vm = this;
     var playAudio = $scope.$parent.playAudio;
     var announcerRarities = ['rare', 'epic', 'legendary'];
@@ -39,7 +38,6 @@ angular.module('redbull.controllers')
 
     // card mouse down
     $scope.cardMouseDown = function ($event, card) {
-        console.log('cardMouseDown');
         // don't allow mouse click while fast forwarding
         if ($scope.$parent.isFastForward() && $event.hasOwnProperty('originalEvent')) { return false; }
         
