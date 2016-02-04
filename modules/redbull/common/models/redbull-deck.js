@@ -16,7 +16,6 @@ module.exports = function(RedbullDeck) {
 
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {
-        console.log("saving Client decks", clientOptions)
 
         // Gather variables needed to save decks
         var currentTime = Date.now();
@@ -448,7 +447,7 @@ module.exports = function(RedbullDeck) {
 
         var availableDeckComponents = {
             deckCards: {},
-            classes: HS_CLASSES
+            classes: HS_CLASSES.slice()
         };
 
         // Get all of the deck cards available in this draft and index by cardId
@@ -571,11 +570,7 @@ module.exports = function(RedbullDeck) {
         }
 
         // Get the random classes we will try to generate
-        console.log("HS_CLASSES", HS_CLASSES);
-        console.log("available deck components: ", availableDeckComponents.classes);
         var randomClasses = getRandomClasses(numOfDecks, availableDeckComponents.classes);
-        console.log("numOfDecks", numOfDecks);
-        console.log("randomClasses", randomClasses);
 
         var deckIndex = numOfDecks;
         var playerClass;
@@ -590,7 +585,7 @@ module.exports = function(RedbullDeck) {
 
     function getRandomClasses(numOfClasses, remainingClasses, randomClasses) {
         // Create or use these
-        remainingClasses = remainingClasses || HS_CLASSES;
+        remainingClasses = remainingClasses || HS_CLASSES.slice();
         randomClasses = randomClasses || [];
 
         // Get another random class from the remaining classes
