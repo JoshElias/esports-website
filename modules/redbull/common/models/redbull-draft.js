@@ -141,6 +141,12 @@ module.exports = function(RedbullDraft) {
 
         return RedbullDraft.findById(draftId, {fields:{id:true}}, function(err, draft) {
             if(err) return finalCb(err);
+            else if(!draft) {
+                var noDraftErr = new Error("Unable to find draft with id", draftId);
+                noDraftErr.statusCode = 404;
+                noDraftErr.code = "UNABLE_TO_FIND_DRAFT";
+                return finalCb(noDraftErr);
+            }
 
             return draft.updateAttributes({
                 hasOpenedPacks: true,

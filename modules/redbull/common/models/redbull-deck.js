@@ -222,6 +222,7 @@ module.exports = function(RedbullDeck) {
                     if(numOfDecksToRemove <= 0) {
                         return;
                     }
+                    return removeRandomDecks(numOfDecksToRemove);
                 }
 
 
@@ -438,6 +439,8 @@ module.exports = function(RedbullDeck) {
         if(numOfCardsToRemove <= 0) {
             return;
         }
+
+        return removeRandomCards(numOfCardsToRemove, clientDecks, deckIndex);
     }
 
     function getAvailableDeckComponents(draftJSON, clientDecks) {
