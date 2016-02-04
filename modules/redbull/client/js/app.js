@@ -170,6 +170,9 @@ var redbull = angular.module('app.redbull', [
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
                         }],
+                        draftDecks: [function () {
+                            return [];
+                        }],
                         draftBuildStart: ['$localStorage', 'RedbullDraft', 'draft', function ($localStorage, RedbullDraft, draft) {
                             return RedbullDraft.startDraftBuild({ draftId: draft.id }).$promise;
                         }]
@@ -345,13 +348,18 @@ var redbull = angular.module('app.redbull', [
                                         isOfficial: true,
                                         isActive: true
                                     },
-                                    fields: ['id', 'hasOpenedPacks'],
+                                    fields: ['id', 'hasOpenedPacks', 'isOfficial'],
                                     include: [
                                         {
                                             relation: 'cards',
                                             scope: {
                                                 fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
                                                 order: ['cost ASC', 'name ASC']
+                                            }
+                                        },{
+                                            relation: 'decks',
+                                            scope: {
+                                                fields: ['id']
                                             }
                                         }
                                     ]
@@ -367,6 +375,33 @@ var redbull = angular.module('app.redbull', [
                         }],
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
+                        }],
+                        draftDecks: ['draft', 'RedbullDeck', function (draft, RedbullDeck) {
+                            var deckIds = [];
+
+                            for (var i = 0; i < draft.decks.length; i++) {
+                                deckIds.push(draft.decks[i].id);
+                            }
+
+                            return (deckIds.length) ? RedbullDeck.find({
+                                filter: {
+                                    where: {
+                                        id: { inq: deckIds }
+                                    },
+                                    include: {
+                                        relation: 'deckCards',
+                                        scope: {
+                                            include: {
+                                                relation: 'card',
+                                                scope: {
+                                                    fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text']
+                                                }
+                                            }
+                                        }
+                                    },
+                                    order: 'orderNum ASC'
+                                }
+                            }).$promise : [];
                         }],
                         draftBuildStart: ['RedbullDraft', 'draft', function (RedbullDraft, draft) {
                             return RedbullDraft.startDraftBuild({ draftId: draft.id }).$promise;
