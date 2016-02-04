@@ -3666,7 +3666,7 @@ angular.module('app.services', [])
                         this.createArr(arrName);
                     }
 
-                    _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
+                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
                 }
 
                 function removeFromArr (item, arrName, crud) {
