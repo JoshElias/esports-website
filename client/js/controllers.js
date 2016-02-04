@@ -11211,9 +11211,16 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getArticles = function() {
                 updateArticles(1, paginationParams.artParams.perpage, $scope.search);
             }
+            
+            $scope.queryOnEmpty = function(search) {
+                if (_.isEmpty(search)) {
+                    $scope.getArticles();
+                }
+            };
 
             // pagination
             function updateArticles (page, perpage, search, callback) {
+                $scope.fetching = true;
                 
                 var pattern = '/.*'+search+'.*/i';
                 
@@ -11255,7 +11262,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 
                 AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
-                    
+                    $scope.fetching = false;
                     if (err) return console.log('paginate err: ', err);
                     $scope.articlePagination.page = page;
                     $scope.articlePagination.perpage = perpage;
@@ -11587,6 +11594,13 @@ angular.module('app.controllers', ['ngCookies'])
                 updateTempostormDecks(1, 4);
                 updateCommunityDecks(1, 12);
             }
+            
+            
+            $scope.queryOnEmpty = function(search) {
+                if (_.isEmpty(search)) {
+                    $scope.newSearch();
+                }
+            };
 
             function getQuery (featured, isPublic, page, perpage) {
                 var pattern = '/.*'+$scope.filters.search+'.*/i';
@@ -15421,8 +15435,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS', 'StateParamHelper', 'paginationParams',
-        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS, StateParamHelper, paginationParams) {
+    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS', 'StateParamHelper', 'paginationParams', 'Util',
+        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS, StateParamHelper, paginationParams, Util) {
 
             $scope.tempostormGuides = dataTempostormGuides;
 //            console.log('dataTempostormGuides:', dataTempostormGuides);
@@ -15431,7 +15445,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.communityGuides = dataCommunityGuides;
 //            console.log('dataCommunityGuides:', dataCommunityGuides);
 //            $scope.communityGuideTalents = communityTalents;
-
+            
+            console.log('dataTopGuide:', dataTopGuide);
+            
             $scope.topGuides = dataTopGuide ? dataTopGuide : false;
 //            $scope.topGuidesTalents = topGuideTalents;
 
@@ -15670,6 +15686,9 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (data) {
+                        
+                        data.voteScore = Util.tally(data.votes, 'direction');
+                        
                         var dataArr = [];
                             dataArr.push(data)
                         

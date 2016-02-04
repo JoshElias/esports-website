@@ -81,9 +81,6 @@
     "viewCount": {
       "type": "number"
     },
-    "voteScore": {
-      "type": "number"
-    },
     "authorId": {
       "type": {}
     },

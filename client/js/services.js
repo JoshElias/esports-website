@@ -2758,11 +2758,11 @@ angular.module('app.services', [])
                     var filter = {}
                 }
                
-                
+                console.log('filter:', filter);
                 Guide.topGuide(filter)
                 .$promise
                 .then(function (data) {
-                    console.log(data);
+//                    console.log(data);
                     return finalCallback(undefined, data);
                 })
                 .catch(function (err) {
