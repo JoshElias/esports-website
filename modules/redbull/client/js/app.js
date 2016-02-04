@@ -136,6 +136,7 @@ var redbull = angular.module('app.redbull', [
                             return RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
+                            var d = $q.defer();
                             if ($localStorage.draftId) {
                                 return RedbullDraft.findOne({
                                     filter: {
@@ -159,13 +160,14 @@ var redbull = angular.module('app.redbull', [
                                         $state.go('app.hs.draft.packs');
                                         return $q.reject();
                                     } else {
-                                        return data;
+                                        return d.resolve(data);
                                     }
                                 });
                             } else {
                                 $state.go('app.hs.draft.packs');
                                 return $q.reject();
                             }
+                            return d.promise;
                         }],
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
@@ -278,7 +280,7 @@ var redbull = angular.module('app.redbull', [
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
                             return RedbullDraftSettings.findOne().$promise;
                         }],
-                        draft: ['$localStorage', 'RedbullDraft', '$q', function ($localStorage, RedbullDraft, $q) {
+                        draft: ['$state', '$localStorage', 'RedbullDraft', '$q', function ($state, $localStorage, RedbullDraft, $q) {
                             var d = $q.defer();
                             if ($localStorage.draftId) {
                                 RedbullDraft.findOne({
@@ -312,14 +314,14 @@ var redbull = angular.module('app.redbull', [
                                 }).$promise.then(function (data) {
                                     return d.resolve(data);
                                 }).catch(function (response) {
-                                    console.error(response);
                                     if (response.status === 404) {
                                         RedbullDraft.create({ isOfficial: true }).$promise
                                         .then(function (data) {
                                             $localStorage.draftId = data.id;
                                             d.resolve(data);
                                         }).catch(function (response) {
-                                            console.error(response);
+                                            $state.go('app.404');
+                                            return $q.reject();
                                         });
                                     }
                                 });
@@ -327,6 +329,9 @@ var redbull = angular.module('app.redbull', [
                                 RedbullDraft.create({ isOfficial: true }).$promise
                                 .then(function (data) {
                                     d.resolve(data);
+                                }).catch(function (response) {
+                                    $state.go('app.404');
+                                    return $q.reject();
                                 });
                             }
                             return d.promise;
@@ -348,6 +353,7 @@ var redbull = angular.module('app.redbull', [
                             return RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
+                            var d = $q.defer();
                             if ($localStorage.draftId) {
                                 return RedbullDraft.findOne({
                                     filter: {
@@ -372,13 +378,14 @@ var redbull = angular.module('app.redbull', [
                                         $state.go('app.hs.draft.packs');
                                         return $q.reject();
                                     } else {
-                                        return data;
+                                        return d.resolve(data);
                                     }
                                 });
                             } else {
                                 $state.go('app.hs.draft.packs');
                                 return $q.reject();
                             }
+                            return d.promise;
                         }],
                         draftCards: ['draft', function (draft) {
                             return draft.cards;
