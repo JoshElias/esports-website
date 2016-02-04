@@ -22,11 +22,11 @@ var redbull = angular.module('app.redbull', [
         redbull.service    = $provide.service;
         redbull.constant   = $provide.constant;
         redbull.value      = $provide.value;
-        
+
         // cdn templates
         var moduleTpl = (tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/';
 
-        
+
         $stateProvider
         .state('app.hs.redbull', {
             abstract: true,
@@ -230,11 +230,11 @@ var redbull = angular.module('app.redbull', [
                         }],
                         draftDecks: ['draft', 'RedbullDeck', function (draft, RedbullDeck) {
                             var deckIds = [];
-                        
+
                             for (var i = 0; i < draft.decks.length; i++) {
                                 deckIds.push(draft.decks[i].id);
                             }
-                            
+
                             return RedbullDeck.find({
                                 filter: {
                                     where: {
@@ -428,6 +428,52 @@ var redbull = angular.module('app.redbull', [
                     controller: 'AdminRedbullDecksCtrl',
                 }
             },
+          resolve:{
+            officialDrafts: ['RedbullDraft', function(RedbullDraft){
+              return RedbullDraft.find({
+                filter:{
+                  where:{
+                    isOfficial: true
+                  },
+                  include:
+                    {
+                      relation: 'decks',
+                      scope:{
+                      include: {
+                        relation: 'deckCards',
+                        scope:{
+                          include: {
+                            relation: 'card',
+                            scope:{
+                            fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text']
+                            }
+                          }
+                        }
+
+                      }}
+                    }
+                }
+              })
+                .$promise
+            }],
+            officialPlayers: ['officialDrafts', 'User', function(officialDrafts, User){
+              var authors = [];
+              _.forEach(officialDrafts, function(draft){
+                authors.push(draft.authorId);
+              });
+              return User.find({
+                filter:{
+                  where:{
+                    id: {inq: authors}
+                  }
+                }
+              })
+                .$promise
+            }],
+            draftPlayers: ['RedbullDraft', function (RedbullDraft) {
+              return RedbullDraft.getDraftPlayers().$promise;
+            }]
+          },
             access: { auth: true, admin: true }
         })
         ;
