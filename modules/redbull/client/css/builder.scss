@@ -983,6 +983,18 @@
 				    height: calc(100% - 50px);
                 }
             }
+            
+            &.is-official {
+                .draft-build-decks {
+                    .decks {
+                        min-height: 100%;
+                        height: 100%;
+                    }
+                    .deck-save-button {
+                        display: none;
+                    }
+                }
+            }
         }
 
     } /* .draft-build */

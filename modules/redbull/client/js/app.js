@@ -281,11 +281,12 @@ var redbull = angular.module('app.redbull', [
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
                             return RedbullDraftSettings.findOne().$promise;
                         }],
-                        draft: ['$state', 'RedbullDraft', '$q', function ($state, RedbullDraft, $q) {
+                        draft: ['$state', 'RedbullDraft', '$q', 'LoopBackAuth', function ($state, RedbullDraft, $q, LoopBackAuth) {
                             var d = $q.defer();
                             RedbullDraft.findOne({
                                 filter: {
                                     where: {
+                                        authorId: LoopBackAuth.currentUserId,
                                         isOfficial: true,
                                         isActive: true
                                     },
@@ -341,10 +342,11 @@ var redbull = angular.module('app.redbull', [
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
                             return RedbullDraftSettings.findOne().$promise;
                         }],
-                        draft: ['$state', '$q', 'RedbullDraft', function ($state, $q, RedbullDraft) {
+                        draft: ['$state', '$q', 'RedbullDraft', 'LoopBackAuth', function ($state, $q, RedbullDraft, LoopBackAuth) {
                             return RedbullDraft.findOne({
                                 filter: {
                                     where: {
+                                        authorId: LoopBackAuth.currentUserId,
                                         isOfficial: true,
                                         isActive: true
                                     },
@@ -371,6 +373,9 @@ var redbull = angular.module('app.redbull', [
                                 } else {
                                     return data;
                                 }
+                            }).catch(function (response) {
+                                $state.go('app.hs.redbull.draft.packs');
+                                return $q.reject();
                             });
                         }],
                         draftCards: ['draft', function (draft) {

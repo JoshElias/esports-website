@@ -1,6 +1,6 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', '$location', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'RedbullDraft', 'draftSettings', 'draftCards', 'draftDecks', 'draftBuildStart', 
-    function ($scope, $compile, $filter, $state, $localStorage, $location, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, RedbullDraft, draftSettings, draftCards, draftDecks, draftBuildStart) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'RedbullDraft', 'draftSettings', 'draftCards', 'draftDecks', 'draftBuildStart', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, RedbullDraft, draftSettings, draftCards, draftDecks, draftBuildStart) {
         var draft = draftBuildStart.draft;
         
         $scope.draftId = draft.id;
@@ -551,7 +551,7 @@ angular.module('redbull.controllers')
                                     if (!$scope.tournament.isOfficial) {
                                         return $state.go('^.decks', { draftId: draft.id });
                                     } else {
-                                        $location.reload();
+                                        $state.reload();
                                     }
                                 }
                             }
@@ -561,7 +561,7 @@ angular.module('redbull.controllers')
                     box.modal('show');
                 } else {
                     if ($scope.tournament.isOfficial) {
-                        $location.reload();
+                        $state.reload();
                     } else {
                         return $state.go('^.decks', { draftId: draft.id });
                     }
