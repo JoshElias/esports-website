@@ -213,7 +213,7 @@ angular.module('redbull.controllers')
                     callback: function () {
                         box.modal('hide');
                         $scope.goingToBuild = true;
-                        RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
+                        RedbullDraft.finishedOpeningPacks({ draftId: draft.id }).$promise.then(function () {
                             return $state.go('^.build');
                         }).catch(function (response) {
                             console.log(response);

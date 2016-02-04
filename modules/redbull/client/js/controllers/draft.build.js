@@ -509,8 +509,10 @@ angular.module('redbull.controllers')
 
             RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise
             .then(function (data) {
-                delete $localStorage.draftDecks;
-                delete $localStorage.draftId;
+                if (!draft.isOfficial) {
+                    delete $localStorage.draftDecks;
+                    delete $localStorage.draftId;
+                }
                 
                 if (timesUp) {
                     bootbox.hideAll();
@@ -523,7 +525,11 @@ angular.module('redbull.controllers')
                                 className: 'btn-blue',
                                 callback: function () {
                                     box.modal('hide');
-                                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
+                                    if (!draft.isOfficial) {
+                                        return $state.go('^.decks', { draftId: draft.id });
+                                    } else {
+                                        $location.reload();
+                                    }
                                 }
                             }
                         },
@@ -531,7 +537,11 @@ angular.module('redbull.controllers')
                     });
                     box.modal('show');
                 } else {
-                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
+                    if (draft.isOfficial) {
+                        $location.reload();
+                    } else {
+                        return $state.go('^.decks', { draftId: draft.id });
+                    }
                 }
             }).catch(function (data) {
                 console.error(data);
