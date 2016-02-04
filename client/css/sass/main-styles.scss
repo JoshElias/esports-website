@@ -770,12 +770,17 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .sub-nav.sticky { position: fixed; top: 52px; z-index: 1000; width: 100%; box-shadow: none; }
 .sub-nav.sticky .sub-nav-links ul { margin: 10px 0; }
 
+.sub-nav-pack {
+    pointer-events: all;
+}
+
 .sub-nav-packs {
     margin-left: 3% !important;
     position: absolute !important; 
     left: 72% !important; 
     top: -50px !important;
-    z-index: 1 !important; 
+    z-index: 1 !important;
+    pointer-events: none;
 }
 
 .sub-nav-small-packs {
@@ -784,6 +789,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     margin-top: -90px !important;
     z-index: 1 !important;
     height: 51px;
+    pointer-events: none;
 }
 
 .redbull-pack-btn { 
@@ -803,6 +809,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background: rgba(0, 0, 0, 0.7); 
     z-index: 2;
     text-transform: uppercase;
+    pointer-events: all;
 }
 
 .sub-nav-btn-small {
