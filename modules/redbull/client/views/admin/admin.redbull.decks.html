@@ -4,19 +4,33 @@
   </div>
   <div class="panel-body">
 
-    <div class="row decks-gutter-fix">
+    <div class="row panel panel-danger decks-gutter-fix">
+      <div ng-if="pendingPlayers.length > 0" class="panel-heading">
+        Players who haven't completed drafts
+      </div>
+      <div ng-repeat="pending in pendingPlayers" class="panel-body">
+        {{ pending.username }}
+      </div>
+    </div>
 
-      <div class="col-md-12">
+    <div class="row decks-gutter-fix panel panel-success">
+
+      <div class="col-md-12 panel-heading">
         <h3>Completed Drafts</h3>
       </div>
-      <div ng-repeat="player in officialPlayers | filter:activeDrafts" class="col-md-12 draft-build">
-        <div class="row admin-draft-decks"><h4>{{ player.username }}</h4>
-          <div class="draft-block" ng-repeat="draft in player.drafts | filter:{isActive: true}">
+      <div class="panel-body">
+      <div ng-repeat="player in officialPlayers | filter:activeDrafts" class="col-md-12 draft-build ">
+        <div class="row admin-draft-decks panel panel-default">
+          <div class="panel-heading">{{ player.username }}</div>
+          <div class="draft-block panel-body" ng-repeat="draft in player.drafts | filter:{isActive: true}">
+            <div class="col-xs-12">
             <span class="pull-right">
               <button class="btn btn-danger" ng-if="userIsAdmin" ng-click="promptDelete(draft)">DELETE Draft</button>
-              <button class="btn btn-danger" ng-click="promptInactive(draft)">Deactive Draft</button></span>
+              <button class="btn btn-danger" ng-click="promptInactive(draft)">Deactive Draft</button>
+            </span>
+            </div>
           <div class="col-md-12 decks">
-            <div class="col-md-4 deck {{deck.playerClass.toLowerCase()}}" ng-repeat="deck in draft.decks">
+            <div class="col-md-4 deck {{deck.playerClass.toLowerCase()}} active" ng-repeat="deck in draft.decks">
 
               <div class="deck-title-bar">
                 <div class="deck-title-bar-inner">
@@ -55,31 +69,23 @@
           </div>
         </div>
       </div>
-    </div>
-
-
-    <div class="row decks-gutter-fix">
-      <div ng-if="pendingPlayers.length > 0" class="col-md-12">
-        <h4>Players who haven't completed drafts</h4>
-      </div>
-      <div ng-repeat="pending in pendingPlayers" class="col-md-12">
-        {{ pending.username }}
       </div>
     </div>
 
-
-    <div class="row decks-gutter-fix">
-      <div  class="col-md-12">
+    <div class="row decks-gutter-fix panel panel-warning">
+      <div  class="col-md-12 panel-heading">
         <h4>Archived Drafts</h4>
       </div>
+      <div class="panel-body">
       <div ng-repeat="player in officialPlayers | filter:noActiveDrafts" class="col-md-12 draft-build">
-        <div class="row admin-draft-decks"><h4>{{ player.username }}</h4>
+        <div class="row admin-draft-decks panel panel-default">
+          <div class="panel-heading">{{ player.username }}</div>
           <div class="draft-block" ng-repeat="draft in player.drafts | filter:{isActive: false}">
             <span class="pull-right">
               <button class="btn btn-danger" ng-if="userIsAdmin" ng-click="promptDelete(draft)">DELETE Draft</button>
               </span>
             <div class="col-md-12 decks">
-              <div class="col-md-4 deck {{deck.playerClass.toLowerCase()}}" ng-repeat="deck in draft.decks">
+              <div class="col-md-4 deck {{deck.playerClass.toLowerCase()}} active" ng-repeat="deck in draft.decks">
 
                 <div class="deck-title-bar">
                   <div class="deck-title-bar-inner">
@@ -118,6 +124,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>

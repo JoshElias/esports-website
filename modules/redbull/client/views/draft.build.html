@@ -9,7 +9,7 @@
 </div>
 <!-- end Mobile override div -->
 
-<div class="draft-build" ng-class="{ completed: tournament.hasDecksConstructed }">
+<div class="draft-build" ng-class="{ completed: tournament.hasDecksConstructed, 'is-official': tournament.isOfficial }">
     <!-- mobile cardpool button -->
     <div class="filter-button-bar">
         <button class="filtering-mobile-toggle-btn btn btn-blue" ng-click="mobileCardFilters = !mobileCardFilters">Filtering</button>
@@ -154,7 +154,7 @@
                 SAVE DECKS
                 <i class="fa fa-refresh fa-spin" ng-if="decksSaving"></i>
             </button>
-            <button class="btn btn-block btn-blue" ng-click="shareDecks()" ng-if="tournament.hasDecksConstructed">
+            <button class="btn btn-block btn-blue" ng-click="shareDecks()" ng-if="tournament.hasDecksConstructed && !tournament.isOfficial">
                 SHARE DECKS
             </button>
         </div>

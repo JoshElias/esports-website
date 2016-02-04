@@ -116,6 +116,7 @@ module.exports = function(RedbullDeck) {
             }
 
             // Do they have the right role
+            var User = RedbullDeck.app.models.user;
             return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
                 if (err) return finalCb(err);
                 else if (!isInRoles.none) return finalCb();
@@ -447,7 +448,7 @@ module.exports = function(RedbullDeck) {
 
         var availableDeckComponents = {
             deckCards: {},
-            classes: HS_CLASSES
+            classes: HS_CLASSES.slice()
         };
 
         // Get all of the deck cards available in this draft and index by cardId
@@ -585,16 +586,13 @@ module.exports = function(RedbullDeck) {
 
     function getRandomClasses(numOfClasses, remainingClasses, randomClasses) {
         // Create or use these
-        remainingClasses = remainingClasses || HS_CLASSES;
+        remainingClasses = remainingClasses || HS_CLASSES.slice();
         randomClasses = randomClasses || [];
-        if(remainingClasses.length < 1) {
-            return randomClasses;
-        }
 
         // Get another random class from the remaining classes
         var randomIndex = utils.getRandomInt(0, remainingClasses.length - 1);
         randomClasses.push(remainingClasses.splice(randomIndex, 1)[0]); // Splice return array so we grab only element
-        if (randomClasses.length === numOfClasses) {
+        if (randomClasses.length >= numOfClasses || remainingClasses.length < 1) {
             return randomClasses;
         }
         return getRandomClasses(numOfClasses, remainingClasses, randomClasses);
