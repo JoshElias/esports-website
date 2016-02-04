@@ -4,19 +4,22 @@
   </div>
   <div class="panel-body">
 
-    <div class="row">
+    <div class="row decks-gutter-fix">
 
       <div class="col-md-12">
         <h3>Completed Drafts</h3>
       </div>
       <div ng-repeat="player in officialPlayers" class="col-md-12 draft-build">
         <div class="row admin-draft-decks"><h4>{{ player.username }}</h4>
+          <div class="draft-block">
+            <span class="pull-right">Set Draft as Inactive</span>
           <div class="col-md-12 decks">
             <div class="col-md-4 deck {{deck.playerClass.toLowerCase()}}" ng-repeat="deck in player.draft.decks">
 
               <div class="deck-title-bar">
                 <div class="deck-title-bar-inner">
                   <div class="deck-title">{{deck.name}}</div>
+                  <div class="deck-bg"></div>
                 </div>
               </div>
 
@@ -47,6 +50,7 @@
             </div>
 
           </div>
+          </div>
         </div>
 
 
@@ -54,7 +58,7 @@
     </div>
 
 
-    <div class="row">
+    <div class="row decks-gutter-fix">
       <div ng-if="pendingPlayers.length > 0" class="col-md-12">
         <h4>Players who haven't completed drafts</h4>
       </div>

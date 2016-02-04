@@ -1,16 +1,34 @@
 @import '_mixins.scss';
 
+.decks-gutter-fix{
+  margin-left:0;
+  margin-right:0;
+  padding-top:10px;
+  padding-bottom:10px;
+}
+
 .admin-draft-decks {
-  position: fixed;
-  top: 52px;
-  right: 0px;
-  bottom: 0px;
-  width: 300px;
-  background: rgba(0,0,0,.4);
+  height: 600px;
   border-left: 1px solid #000;
 
+  .draft-block{
+    padding-top:0;
+    span{
+      padding:8px;
+    }
+  }
+
+
+  h4{
+    margin-bottom:0;
+    margin-left:15px;
+    margin-right:15px;
+    padding:10px;
+  }
+
+
   @media screen and (max-width: 1650px) {
-    margin-top: 45px;
+    margin-top: 20px;
   }
 
   .deck-add-button {
@@ -61,15 +79,9 @@
 
   .decks {
     min-height: calc(100% - 100px);
-    height: calc(100% - 100px);
-    display: -webkit-flex;
-    display: -moz-flex;
-    display: -ms-flex;
-    display: flex;
-    -webkit-flex-direction: column;
+    background-color: rgba(0,0,0,.4);
 
     .deck {
-      height: 48px;
       overflow: hidden;
       position: relative;
 
@@ -81,6 +93,7 @@
         .deck-title-bar-inner {
           height: 48px;
           border: 1px solid rgba(255,255,255,.4);
+
 
           .deck-title {
             padding-right: 54px;
@@ -95,6 +108,11 @@
             text-overflow: ellipsis;
             overflow: hidden;
             text-shadow: 0px 0px 2px rgba(0,0,0,1);
+
+            .deck-bg{
+              width:100%;
+              height:100%;
+            }
           } /* .deck-title */
 
           .deck-delete {
@@ -136,9 +154,9 @@
       @include draft-deck (warrior, 199, 156, 110);
 
       .deck-cards {
-        position: absolute;
         height:500px;
         width: 100%;
+        background: rgba(0,0,0,.4);
 
         .deck-card {
           margin-right: 9px;
