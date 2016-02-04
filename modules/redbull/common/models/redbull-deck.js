@@ -16,7 +16,6 @@ module.exports = function(RedbullDeck) {
 
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {
-        console.log("client options:", clientOptions);
 
         // Gather variables needed to save decks
         var currentTime = Date.now();
@@ -34,7 +33,7 @@ module.exports = function(RedbullDeck) {
             [
                 validateDecks(draftJSON, clientDecks, clientOptions, currentTime),
                 normalizeDecks(draftJSON),
-                saveDecks(draft),
+                saveDecks(draftJSON),
                 refreshDraftState(draft, currentTime)
             ],
             finalCb
@@ -46,7 +45,6 @@ module.exports = function(RedbullDeck) {
     // DECK VALIDATION
 
     function validateDecks(draftJSON, clientDecks, clientOptions, currentTime) {
-        console.log("client options decks:", clientOptions);
         return function (finalCb) {
 
             var validationReport = {
@@ -565,10 +563,6 @@ module.exports = function(RedbullDeck) {
                 playerClass: playerClass,
                 deckCards: deckCards
             }
-
-            if(typeof draftJSON.authorId === "string") {
-                randomDeck.authorId = draftJSON.authorId;
-            }
             randomDecks.push(randomDeck);
         }
 
@@ -653,13 +647,23 @@ module.exports = function(RedbullDeck) {
 
     // SAVING
 
-    function saveDecks(draft) {
+    function saveDecks(draftJSON) {
         return function (decks, finalCb) {
+
+            // parent data
+            var isOfficial = draftJSON.isOfficial;
+            var redbullDraftId = draftJSON.id;
+            var authorId = draftJSON.authorId;
+
             var savedDecks = [];
+
             return async.eachSeries(decks, function (deck, deckCb) {
 
-                deck.isOfficial = draft.isOfficial;
-                deck.redbullDraftId = draft.id;
+                // Slap on parentData to the deck
+                deck.isOfficial = isOfficial;
+                deck.redbullDraftId = redbullDraftId;
+                deck.authorId = authorId;
+
                 return RedbullDeck.create(deck, function (err, newDeck) {
                     if (err) return deckCb(err);
 
