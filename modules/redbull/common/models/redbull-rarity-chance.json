@@ -40,15 +40,9 @@
     "permission": "ALLOW",
     "accessType": "WRITE"
   },
-    {
-      "principalType": "ROLE",
-      "principalId": "$redbullAdmin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
-    },
   {
     "principalType": "ROLE",
-    "principalId": "$owner",
+    "principalId": "$redbullAdmin",
     "permission": "ALLOW",
     "accessType": "WRITE"
   }],

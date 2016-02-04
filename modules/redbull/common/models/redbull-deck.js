@@ -16,6 +16,7 @@ module.exports = function(RedbullDeck) {
 
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {
+        console.log("client options:", clientOptions);
 
         // Gather variables needed to save decks
         var currentTime = Date.now();
@@ -31,7 +32,7 @@ module.exports = function(RedbullDeck) {
 
         return async.waterfall(
             [
-                validateDecks(draftJSON, clientDecks, clientDecks, currentTime),
+                validateDecks(draftJSON, clientDecks, clientOptions, currentTime),
                 normalizeDecks(draftJSON),
                 saveDecks(draft),
                 refreshDraftState(draft, currentTime)
@@ -45,6 +46,7 @@ module.exports = function(RedbullDeck) {
     // DECK VALIDATION
 
     function validateDecks(draftJSON, clientDecks, clientOptions, currentTime) {
+        console.log("client options decks:", clientOptions);
         return function (finalCb) {
 
             var validationReport = {
@@ -205,6 +207,25 @@ module.exports = function(RedbullDeck) {
                         draftCards[currCard.id] = currCard;
                     }
                 }
+
+                // Get number of decks submitted
+                var numOfDecks = clientDecks.length;
+                var overflowAmount = numOfDecks - draftJSON.settings.numOfDecks;
+                if(overflowAmount > 0) {
+                    removeRandomDecks(overflowAmount, clientDecks);
+                }
+
+                function removeRandomDecks(numOfDecksToRemove) {
+                    // Get a random deckCard Index
+                    var randomDeckIndex = utils.getRandomInt(0, clientDecks.length-1);
+                    clientDecks.splice(randomDeckIndex, 1);
+                    numOfDecksToRemove--
+
+                    if(numOfDecksToRemove <= 0) {
+                        return;
+                    }
+                }
+
 
                 // Iterate over decks
                 var deckIndex = clientDecks.length;
@@ -375,14 +396,13 @@ module.exports = function(RedbullDeck) {
 
     function removeExtraCards(clientDecks) {
 
-        // Iterate over total number of decks
+        // Find the number of cards to trim by iterating over the deck
         var deckIndex = clientDecks.length;
         var currDeck;
         var cardCount;
 
         var deckCardIndex;
         var currDeckCard;
-        var overflowAmount;
         while (deckIndex--) {
             currDeck = clientDecks[deckIndex];
             cardCount = 0;
@@ -392,27 +412,34 @@ module.exports = function(RedbullDeck) {
             while (deckCardIndex--) {
                 currDeckCard = currDeck.deckCards[deckCardIndex];
 
-                // This deck is already full of cards. Anything else is extra
-                if (cardCount >= NUM_CARDS_PER_DECK) {
-                    currDeck.deckCards.splice(deckCardIndex, 1);
-                    continue;
-                }
-
-                // Check if this card is pushing the card amount over limit
-                overflowAmount = cardCount + currDeckCard.cardQuantity - NUM_CARDS_PER_DECK;
-                if (overflowAmount > 0) {
-
-                    // Since the deck is not full yet, it must still need one card
-                    clientDecks[deckIndex].deckCards[deckCardIndex].cardQuantity = 1;
-                    cardCount++;
-                }
-
                 // Add to the card count
-                cardCount += clientDecks[deckIndex].deckCards[deckCardIndex].cardQuantity;
+                cardCount += currDeckCard.cardQuantity;
+            }
+
+            // This deck is already full of cards. Anything else is extra randomly
+            var overflowAmount = cardCount - NUM_CARDS_PER_DECK;
+            if (overflowAmount > 0) {
+                removeRandomCards(overflowAmount, clientDecks, deckIndex);
             }
         }
 
         return clientDecks;
+    }
+
+    function removeRandomCards(numOfCardsToRemove, clientDecks, deckIndex) {
+        // Get a random deckCard Index
+        var randomDeckCardIndex = utils.getRandomInt(0, clientDecks[deckIndex].deckCards.length-1);
+        // Decrement it's card quanity by 1
+        clientDecks[deckIndex].deckCards[randomDeckCardIndex].cardQuantity--;
+        numOfCardsToRemove--;
+        // If the quantity is 0 then remove the deckCard from the deck
+        if(clientDecks[deckIndex].deckCards[randomDeckCardIndex].cardQuantity <= 0) {
+            clientDecks[deckIndex].deckCards.splice(randomDeckCardIndex, 1);
+        }
+
+        if(numOfCardsToRemove <= 0) {
+            return;
+        }
     }
 
     function getAvailableDeckComponents(draftJSON, clientDecks) {
