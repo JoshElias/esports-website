@@ -116,6 +116,7 @@ module.exports = function(RedbullDeck) {
             }
 
             // Do they have the right role
+            var User = RedbullDeck.app.models.user;
             return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
                 if (err) return finalCb(err);
                 else if (!isInRoles.none) return finalCb();
