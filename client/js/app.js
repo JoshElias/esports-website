@@ -51,6 +51,19 @@ var app = angular.module('app', [
 
                     $state.go('app.login', { redirect: redirect });
                 }
+                if (toState.access && toState.access.admin && User.isAuthenticated()) {
+                    User.isInRoles({
+                        uid: LoopBackAuth.currentUserId,
+                        roleNames: ['$admin']
+                    })
+                    .$promise
+                    .then(function (data) {
+                        if (data.isInRoles.$admin !== true) {
+                            event.preventDefault();
+                            $state.transitionTo('app.home');
+                        }
+                    });
+                }
 
 //                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
 //                    //event.preventDefault();
@@ -579,6 +592,16 @@ var app = angular.module('app', [
                                                 }
                                             },
                                             {
+                                                relation: 'votes', 
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true,
+                                                        authorId: true
+                                                    }
+                                                }
+                                            },
+                                            {
                                                 relation: "relatedArticles",
                                                 scope: {
                                                     fields: [
@@ -707,6 +730,7 @@ var app = angular.module('app', [
                                               order: "createdDate DESC",
                                               where: tsDeckWhere,
                                               fields: {
+                                                id: true,
                                                 name: true,
                                                 description: true,
                                                 deckType: true,
@@ -718,7 +742,14 @@ var app = angular.module('app', [
                                                 slug: true,
                                                 createdDate: true
                                               },
-                                              include: ['author']
+                                              include: [
+                                                  {
+                                                      relation: "author"
+                                                  },
+                                                  {
+                                                      relation: "votes"
+                                                  }
+                                              ]
                                             }
                                         }
                                     },
@@ -729,6 +760,7 @@ var app = angular.module('app', [
                                               order: "createdDate DESC",
                                               where: comDeckWhere,
                                               fields: {
+                                                id: true,
                                                 name: true,
                                                 description: true,
                                                 deckType: true,
@@ -740,7 +772,14 @@ var app = angular.module('app', [
                                                 slug: true,
                                                 createdDate: true
                                               },
-                                              include: ['author']
+                                              include: [
+                                                  {
+                                                      relation: "author"
+                                                  },
+                                                  {
+                                                      relation: "votes"
+                                                  }
+                                              ]
                                             }
                                         }
                                     }
@@ -749,11 +788,25 @@ var app = angular.module('app', [
                             dataArticles: ['Article', 'filterParams', function (Article, filterParams) {
                                 return Article.find(filterParams.articleParams.options).$promise;
                             }],
-                            dataDecksTempostorm: ['Deck', 'filterParams', function (Deck, filterParams) {
-                                return Deck.find(filterParams.tsDeckParams.options).$promise;
+                            dataDecksTempostorm: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
+                                return Deck.find(filterParams.tsDeckParams.options)
+                                .$promise
+                                .then(function (tempoDecks) {
+                                    _.each(tempoDecks, function(tempoDeck) {
+                                        tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
+                                    });
+                                    return tempoDecks;
+                                });
                             }],
-                            dataDecksCommunity: ['Deck', 'filterParams', function (Deck, filterParams) {
-                                return Deck.find(filterParams.comDeckParams.options).$promise;
+                            dataDecksCommunity: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
+                                return Deck.find(filterParams.comDeckParams.options)
+                                .$promise
+                                .then(function (comDecks) {
+                                    _.each(comDecks, function(comDeck) {
+                                        comDeck.voteScore = Util.tally(comDeck.votes, 'direction');
+                                    });
+                                    return comDecks;
+                                });
                             }]
                         }
                     }
@@ -834,6 +887,7 @@ var app = angular.module('app', [
                                         where: tsWhere,
                                         order: 'createdDate DESC',
                                         fields: {
+                                            id: true,
                                             name: true,
                                             description: true,
                                             slug: true,
@@ -853,6 +907,12 @@ var app = angular.module('app', [
                                                 'username'
                                               ]
                                             }
+                                          },
+                                          {
+                                            relation: "votes",
+                                            scope: {
+                                              fields: ['id', 'direction', 'authorId']
+                                            }
                                           }
                                         ]
                                     },
@@ -863,12 +923,12 @@ var app = angular.module('app', [
                                         where: comWhere,
                                         order: 'createdDate DESC',
                                         fields: {
+                                            id: true,
                                             name: true,
                                             description: true,
                                             slug: true,
                                             heroName: true,
                                             authorId: true,
-                                            voteScore: true,
                                             playerClass: true,
                                             dust: true,
                                             createdDate: true,
@@ -883,6 +943,12 @@ var app = angular.module('app', [
                                                 'username'
                                               ]
                                             }
+                                          },
+                                          {
+                                            relation: "votes",
+                                              scope: {
+                                                  fields: ['id', 'direction', 'authorId']
+                                              }
                                           }
                                         ]
                                     },
@@ -890,7 +956,7 @@ var app = angular.module('app', [
                                     klasses: $stateParams.k || [],
                                 };
                             }],
-                            tempostormDecks: ['paginationParams', 'Deck', function (paginationParams, Deck) {
+                            tempostormDecks: ['paginationParams', 'Deck', 'Util', function (paginationParams, Deck, Util) {
                                 return Deck.find({
                                     filter: {
                                         where: paginationParams.tsParams.where,
@@ -901,7 +967,14 @@ var app = angular.module('app', [
                                         limit: paginationParams.tsParams.perpage
                                     }
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (data) {
+                                    _.each(data, function (deck) {
+                                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                                    });
+                                    
+                                    return data;
+                                });
 
                             }],
                             tempostormCount: ['paginationParams', '$state', 'StateParamHelper', 'Deck', function (paginationParams, $state, StateParamHelper,  Deck) {
@@ -919,7 +992,7 @@ var app = angular.module('app', [
                                 });
 
                             }],
-                            communityDecks: ['paginationParams', 'Deck', function (paginationParams, Deck) {
+                            communityDecks: ['paginationParams', 'Deck', 'Util', function (paginationParams, Deck, Util) {
                                 return Deck.find({
                                     filter: {
                                         where: paginationParams.comParams.where,
@@ -930,7 +1003,14 @@ var app = angular.module('app', [
                                         limit: paginationParams.comParams.perpage
                                     }
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (data) {
+                                    _.each(data, function (deck) {
+                                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                                    });
+                                    
+                                    return data;
+                                });
                             }],
                             communityCount: ['paginationParams', 'StateParamHelper', 'Deck', function (paginationParams, StateParamHelper, Deck) {
                                 return Deck.count({
@@ -974,8 +1054,9 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            deck: ['$stateParams', '$state', 'Deck', function ($stateParams, $state, Deck) {
+                            deck: ['$stateParams', '$state', 'Deck', 'Util', function ($stateParams, $state, Deck, Util) {
                                 var stateSlug = $stateParams.slug;
+//                                console.log('stateSlug:', stateSlug);
                                 return Deck.findOne({
                                     filter: {
                                         where: {
@@ -1029,6 +1110,12 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: "matchups"
+                                            },
+                                            {
+                                                relation: "votes",
+                                                scope: {
+                                                    fields: ['id', 'direction', 'authorId']
+                                                }
                                             }
                                         ]
                                     }
@@ -1036,6 +1123,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (deck) {
 //                                    console.log('resolve deck:', deck);
+                                    deck.voteScore = Util.tally(deck.votes, 'direction');
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -1056,10 +1144,16 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'cardsWithCoin',
+                                                relation: 'mulligansWithCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin',
+                                                relation: 'mulligansWithoutCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
                                             }
                                         ]
                                     }
@@ -2210,6 +2304,109 @@ var app = angular.module('app', [
                                 
                                 return d.promise;
                             }],
+                            dataTopGuide: ['$stateParams', 'Guide', 'Util', '$q', function ($stateParams, Guide, Util, $q) {
+                                var d = $q.defer();
+                                async.waterfall([
+                                    function (seriesCb) {
+                                        Guide.topGuide({
+                                            
+                                        })
+                                        .$promise
+                                        .then(function (data) {
+                                            console.log(data);
+                                            return seriesCb(undefined, data);
+                                        })
+                                        .catch(function (err) {
+                                            console.log(err);
+                                        })
+                                    },
+                                    function (guideId, seriesCb) {
+                                        Guide.find({
+                                            filter: {
+                                                where: {
+                                                    id: guideId.id
+                                                },
+                                                fields: [
+                                                    "name",
+                                                    "authorId",
+                                                    "slug",
+                                                    "voteScore",
+                                                    "guideType",
+                                                    "premium",
+                                                    "id",
+                                                    "talentTiers",
+                                                    "createdDate"
+                                                ],
+                                                include: [
+                                                    {
+                                                      relation: "author",
+                                                      scope: {
+                                                        fields: ['username']
+                                                      }
+                                                    },
+                                                    {
+                                                      relation: 'guideHeroes',
+                                                      scope: {
+                                                        include: [
+                                                          {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                              fields: ['name', 'className'],
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents'
+                                                                    }
+                                                                ]
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    },
+                                                    {
+                                                      relation: 'guideTalents',
+                                                      scope: {
+                                                        include: {
+                                                          relation: 'talent',
+                                                          scope: {
+                                                            fields: {
+                                                              name: true,
+                                                              className: true
+                                                            }
+                                                          }
+                                                        },
+                                                      }
+                                                    },
+                                                    {
+                                                        relation: 'votes',
+                                                        scope: {
+                                                            fields: {
+                                                                id: true,
+                                                                direction: true
+                                                            }
+                                                        }
+                                                    }
+                                                  ]
+                                            }
+                                        })
+                                        .$promise
+                                        .then(function (data) {
+                                            console.log(data);
+                                            return seriesCb(undefined, data);
+                                        })
+                                        .catch(function (err) {
+                                            return seriesCb(err);
+                                        })
+                                    }
+                                ], function (err, guide) {
+                                    if (err) 
+                                        return console.log(err);
+                                    
+                                    d.resolve(guide);
+                                });
+                                
+                                return d.promise;
+                                
+                            }],
                             communityGuideCount: ['paginationParams', 'HOTSGuideQueryService', '$q', 'StateParamHelper', 'Guide', function(paginationParams, HOTSGuideQueryService, $q, StateParamHelper, Guide) {
                                 
                                 var d = $q.defer();
@@ -2447,7 +2644,7 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            guide: ['$state', '$stateParams', 'Guide', function ($state, $stateParams, Guide) {
+                            guide: ['$state', '$stateParams', 'Guide', 'Util', function ($state, $stateParams, Guide, Util) {
                                 var slug = $stateParams.slug;
                                 return Guide.findOne({
                                     filter: {
@@ -2523,10 +2720,20 @@ var app = angular.module('app', [
                                                     }
                                                 ]
                                             }
+                                        },
+                                        {
+                                            relation: 'votes',
+                                            scope: {
+                                                fields: {
+                                                    id: true,
+                                                    direction: true
+                                                }
+                                            }
                                         }
                                       ]
                                     }
                                 }).$promise.then(function (data) {
+                                    data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
                                 })
                                 .catch(function (err) {
@@ -4037,7 +4244,7 @@ var app = angular.module('app', [
                 access: { auth: true },
             })
             .state('app.profile.edit.premium', {
-                url: '/premium',
+                url: '/premium?plan',
                 views: {
                     editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
@@ -4078,23 +4285,22 @@ var app = angular.module('app', [
                 },
                 access: { auth: true }
             })
-            .state('app.profile.subscription', {
-                url: '/subscription?plan',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
-                        controller: 'ProfileSubscriptionCtrl',
-                        resolve: {
-                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getUserProfile(username);
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true },
-                seo: { title: 'My Subscription', description: '', keywords: '' }
-            })
+//            .state('app.profile.subscription', {
+//                url: '/subscription?plan',
+//                views: {
+//                    profile: {
+//                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
+//                        controller: 'ProfileSubscriptionCtrl',
+//                        resolve: {
+//                            user: ['userProfile', function (userProfile) {
+//                                return userProfile;
+//                            }]
+//                        }
+//                    }
+//                },
+//                access: { auth: true },
+//                seo: { title: 'My Subscription', description: '', keywords: '' }
+//            })
             .state('app.admin', {
                 abstract: true,
                 url: 'admin',
@@ -5311,15 +5517,42 @@ var app = angular.module('app', [
                 views: {
                     add: {
                         templateUrl: tpl + 'views/admin/hots.guides.add.map.html',
-                        controller: 'AdminHOTSGuideAddMapCtrl',
+                        controller: 'HOTSGuideBuilderMapCtrl',
                         resolve: {
-                            heroes: ['Hero', function (Hero) {
-                                return Hero.find({})
-                                .$promise;
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
                             }],
-                            maps: ['Map', function (Map) {
-                                return Map.find({})
-                                .$promise;
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
+                            }],
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }

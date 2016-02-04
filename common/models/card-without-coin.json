@@ -9,10 +9,14 @@
   },
   "properties": {
     "cardId": {
-      "required": true
+      "type": {
+        "required": true
+      }
     },
     "mulliganId": {
-      "required": true
+      "type": {
+        "required": true
+      }
     }
   },
   "validations": [],
@@ -35,16 +39,16 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",

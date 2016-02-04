@@ -392,11 +392,7 @@ angular.module('app.directives', ['ui.load'])
                                 return;
                             } else {
                                 comment.votes[i].direction = direction;
-                                Comment.update({
-                                    where: {
-                                        id: comment.id
-                                    }
-                                }, comment)
+                                Comment.upsert(comment)
                                 .$promise.then(function (data) {
                                     comment.voted = direction;
                                     comment.votesCount = data.votesCount;
@@ -407,16 +403,17 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
+                    
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
-                        comment.votes.push(
-                            {
-                                direction: direction,
-                                userId: LoopBackAuth.currentUserId
-                            }
-                        );
-                        Comment.update({ where: { id: comment.id } }, comment)
-                        .$promise.then(function (data) {
+                        comment.votes.push({
+                            direction: direction,
+                            userId: LoopBackAuth.currentUserId
+                        });
+                        
+                        Comment.upsert(comment)
+                        .$promise
+                        .then(function (data) {
                             comment.voted = direction;
                             comment.votesCount = data.votesCount;
                         });
@@ -705,8 +702,8 @@ angular.module('app.directives', ['ui.load'])
             var theme = attrs.theme || 'multi';
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
-        controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-            
+        controller: ['$scope', '$element', '$attrs', 'EventService', function ($scope, $element, $attrs, EventService) {
+//            console.log('$scope.votable:', $scope.votable);
             var loading = false;
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
@@ -732,7 +729,6 @@ angular.module('app.directives', ['ui.load'])
                         }
                         
                         setLoading(false);
-                        return;
                     });
                 })
             }
@@ -758,22 +754,29 @@ angular.module('app.directives', ['ui.load'])
             }
             
             $scope.vote = function (direction) {
-                if(loading)
-                    return;
-                
                 setLoading(true);
+//                console.log('here we go....');
+//                console.log('votable:', votable);
+//                console.log('$scope.voteInfo:', $scope.voteInfo);
                 
                 if (_.isNull(LoopBackAuth.currentUserId)) {
                     setLoading(false);
                     LoginModalService.showModal('login', function () {
                         $scope.vote(direction);
                     });
+                } else if (votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
+//                    console.log('cant vote');
+                    setLoading(false);
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
                 } else {
-                    if ($scope.voteInfo.hasVoted !== 0 && $attrs.theme !== 'single') {
+                    if (($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) && $attrs.theme !== 'single') {
+//                        console.log('vote exists');
                         var where = {}
                             where[objType + "Id"] = votable.id;
                             where["authorId"] = LoopBackAuth.currentUserId;
                         
+//                        console.log('where:', where);
                         Vote.findOne({ 
                             filter: { 
                                 where: where
@@ -781,21 +784,23 @@ angular.module('app.directives', ['ui.load'])
                         })
                         .$promise
                         .then(function (vote) {
-                            Vote.prototype$updateAttributes({
-                                id: vote.id
-                            }, {
-                                direction: vote.direction*-1
+                            Vote.upsert({
+                                id: vote.id,
+                                direction: direction
                             })
                             .$promise
                             .then(getVoteInfo);
                         });
                     } else {
+//                        console.log('new vote');
                         var newVote = {}
                             newVote[objType + "Id"] = votable.id;
                             newVote["direction"] = direction;
                             newVote["authorId"] = LoopBackAuth.currentUserId;
 
-                        Vote.create({}, newVote, getVoteInfo);
+                        Vote.create(newVote)
+                        .$promise
+                        .then(getVoteInfo());
                     }
                 }
             }
@@ -1284,6 +1289,12 @@ angular.module('app.directives', ['ui.load'])
                 scope.filters.search = scope.searchHeroes;
                 
                 scope.$parent.searchGuides();
+            }
+            
+            scope.queryOnEmpty = function (str) {
+                if (_.isEmpty(str)) {
+                    scope.updateSearch();
+                }
             }
 
             scope.hasFilterRole = function (role) {

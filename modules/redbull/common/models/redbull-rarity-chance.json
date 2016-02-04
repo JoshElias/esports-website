@@ -13,7 +13,9 @@
     "percentage": {
       "type": "number"
     },
-    "redbullExpansionId":{}
+    "redbullExpansionId": {
+      "type": {}
+    }
   },
   "validations": [],
   "relations": {

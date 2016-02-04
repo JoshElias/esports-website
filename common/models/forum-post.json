@@ -16,14 +16,18 @@
     },
     "content": {
       "type": "string",
-      "validators": ["spam"]
+      "validators": [
+        "spam"
+      ]
     },
     "createdDate": {
       "type": "date"
     },
     "title": {
       "type": "string",
-      "validators": ["spam"]
+      "validators": [
+        "spam"
+      ]
     },
     "viewCount": {
       "type": "number"
@@ -42,8 +46,12 @@
     "votes": {
       "type": "object"
     },
-    "forumThreadId": {},
-    "authorId": {}
+    "forumThreadId": {
+      "type": {}
+    },
+    "authorId": {
+      "type": {}
+    }
   },
   "validations": [],
   "relations": {
@@ -72,28 +80,28 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "accessType": "WRITE",
       "property": "create"
     },
     {

@@ -722,6 +722,9 @@ module.exports = function(User) {
 
 
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
+        console.log('User.setSubscriptionPlan');
+        console.log('plan:', plan);
+        console.log('cctoken:', cctoken);
         cb = cb || utils.createPromiseCallback();
 
         User.getCurrent(function (err, user) {
@@ -754,8 +757,9 @@ module.exports = function(User) {
             subscription.cancel(user, cb);
         });
     };
-    
 
+    
+    
     User.remoteMethod(
         'isInRoles',
         {

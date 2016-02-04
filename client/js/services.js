@@ -1374,6 +1374,15 @@ angular.module('app.services', [])
                 });
 
                 return out;
+            },
+            tally: function (arr, key) {
+                var out = 0;
+                _.each(arr, function(obj) {
+
+                    out += obj[key];
+
+                });
+                return out;
             }
         };
     }])
@@ -2221,7 +2230,7 @@ angular.module('app.services', [])
                         }
                     }).$promise
                         .then(function (heroTalents) {
-                        //              console.log('heroTalents:', heroTalents);
+                        console.log('heroTalents:', heroTalents);
                         hero.talents = heroTalents;
                     })
                         .catch(function (err) {
@@ -2274,7 +2283,7 @@ angular.module('app.services', [])
                 var temp = _.filter(hero.talents, function (val) { 
                     return val.tier == tier 
                 });
-                var talents = _.map(temp, function (val) { return val.talent; });
+                var talents = _.map(temp, function (val) { val.talent.orderNum = val.orderNum; return val.talent; });
                 return talents;
             };
 
@@ -2592,7 +2601,7 @@ angular.module('app.services', [])
             }
         };
     }])
-    .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
+    .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', 'Util', function (Hero, Map, Guide, Article, Util) {
         return {
             getArticles: function (filters, isFeatured, limit, finalCallback) {
 //                console.log('filters:', filters);
@@ -2732,13 +2741,36 @@ angular.module('app.services', [])
                     }
                 ])
             },
+            topGuide: function (filters, finalCallback) {
+                if ( 
+                !_.isUndefined(filters.heroes[0]) ||
+                !_.isEmpty(filters.universes) ||
+                !_.isEmpty(filters.roles) ||
+                !_.isEmpty(filters.search)
+                ) {
+                    var filter = { filters: {} }
+                    filter.filters['heroId']       = (!_.isUndefined(filters.heroes[0])) ? filters.heroes[0].id : undefined;
+                    filter.filters['mapClassName'] = (!_.isUndefined(filters.map)) ? filters.map.className : undefined;
+                    filter.filters['universes']    = filters.universes;
+                    filter.filters['roles']        = filters.roles;
+                    filter.filters['search']       = filters.search;
+                } else {
+                    var filter = {}
+                }
+               
+                
+                Guide.topGuide(filter)
+                .$promise
+                .then(function (data) {
+                    console.log(data);
+                    return finalCallback(undefined, data);
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    return finalCallback(err);
+                })
+            },
             getGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
-//                          console.log('filters:', filters);
-//                          console.log('isFeatured:', isFeatured);
-//                          console.log('search:', search);
-//                          console.log('limit:', limit);
-//                          console.log('page:', page);
-
                 var order = "voteScore DESC";
                 var heroWhere = {};
                 var heroGuideWhere = {};
@@ -2869,9 +2901,23 @@ angular.module('app.services', [])
                                             },
                                         }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                 ]
                             }
                         }).$promise.then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tally(guide.votes, 'direction');
+                            });
+                            
                             return seriesCallback(undefined, guides, guideWhere);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -3016,9 +3062,23 @@ angular.module('app.services', [])
                                             },
                                         }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                 ]
                             }
                         }).$promise.then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tally(guide.votes, 'direction');
+                            });
+                            
                             return seriesCallback(undefined, guides, guideIds);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -3121,12 +3181,20 @@ angular.module('app.services', [])
                                     },
                                     {
                                         relation: "maps"
+                                    },
+                                    {
+                                        relation: 'votes'
                                     }
                                 ]
                             }
                         })
                             .$promise
                             .then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tally(guide.votes, 'direction');
+                            });
+                            
                             return seriesCallback(undefined, guides, guideIds);
                         })
                             .catch(function (err) {
@@ -3286,9 +3354,23 @@ angular.module('app.services', [])
                                                     },
                                                 }
                                             },
+                                            {
+                                                relation: 'votes',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true
+                                                    }
+                                                }
+                                            }
                                         ]
                                     }
                                 }).$promise.then(function (guides) {
+                                    
+                                    _.each(guides, function(guide) {
+                                        guide.voteScore = Util.tally(guide.votes, 'direction');
+                                    });
+                                    
                                     return waterCallback(undefined, guides);
                                 }).catch(function (err) {
                                     return waterCallback(err);
