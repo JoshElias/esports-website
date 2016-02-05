@@ -1,0 +1,71 @@
+{
+  "name": "redbullPack",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "orderNum": {
+      "type": "number"
+    },
+    "redbullDraftId": {},
+    "redbullExpansionId": {},
+    "ownerId": {}
+  },
+  "validations": [],
+  "relations": {
+    "draft": {
+      "type": "belongsTo",
+      "model": "redbullDraft",
+      "foreignKey": "redbullDraftId"
+    },
+    "packCards": {
+      "type": "hasMany",
+      "model": "redbullPackCard",
+      "foreignKey": "redbullPackId"
+    },
+    "cards": {
+      "type": "hasMany",
+      "model": "card",
+      "foreignKey": "redbullPackId",
+      "through": "redbullPackCard"
+    },
+    "owner": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "ownerId"
+    }
+  },
+  "acls": [{
+    "principalType": "ROLE",
+    "principalId": "$everyone",
+    "permission": "DENY"
+  },
+  {
+    "principalType": "ROLE",
+    "principalId": "$everyone",
+    "permission": "ALLOW",
+    "accessType": "READ"
+  },
+  {
+    "principalType": "ROLE",
+    "principalId": "$admin",
+    "permission": "ALLOW",
+    "accessType": "WRITE"
+  },
+    {
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+  {
+    "principalType": "ROLE",
+    "principalId": "$owner",
+    "permission": "ALLOW",
+    "accessType": "WRITE"
+  }],
+  "methods": {}
+}

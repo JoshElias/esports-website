@@ -1,14 +1,47 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'DraftCards', 
-    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, DraftCards) {
-        var allCards = DraftCards.getCards();
-        if (!allCards.length) {
-            return $state.go('app.redbull.draft.packs');
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'RedbullDraft', 'draftSettings', 'draftCards', 'draftBuildStart', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, RedbullDraft, draftSettings, draftCards, draftBuildStart) {
+        var draft = draftBuildStart.draft;
+        
+        $scope.draftId = draft.id;
+        $scope.decksSaving = false;
+        
+        // set cards
+        var allCards = getCards(draftCards);
+
+        function cardIndex (card, cards) {
+            for (var i = 0; i < cards.length; i++) {
+                if (cards[i].card.id === card.id) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    
+        function getCards (cards) {
+            var out = [];
+            if (!cards.length) { return out; }
+            for (var i = 0; i < cards.length; i++) {
+                var index = cardIndex(cards[i], out);
+                if (index !== -1) {
+                    out[index].qty++;
+                } else {
+                    out.push({
+                        qty: 1,
+                        card: cards[i]
+                    });
+                }
+            }
+            return out;
         }
         
+        // tournament settings
         $scope.tournament = {
-            allowDuplicateClasses: false,
-            decksLimit: 3
+            allowDuplicateClasses: draftSettings.allowDuplicateClasses,
+            decksLimit: draftSettings.numOfDecks,
+            deckBuildStartTime: draft.deckBuildStartTime,
+            deckBuildTimeLimit: draftSettings.deckBuildTimeLimit,
+            hasDecksConstructed: draft.hasDecksConstructed
         };
         
         // classes
@@ -25,14 +58,15 @@ angular.module('redbull.controllers')
             { name: 'Legendary', value: 'Legendary' },
         ];
         
+        $scope.mobileCardFilters = false;
+        $scope.manaCurveFilter = false;
         $scope.currentDeck = null;
         $scope.cards = {
             sorted: {},
             current: [],
         };
         $scope.decks = [];
-        $scope.decksLimit = 3;
-
+        
         $scope.search = '';
         $scope.manaCosts = [0,1,2,3,4,5,6,7];
         $scope.cardMechanics = Hearthstone.mechanics;
@@ -132,8 +166,13 @@ angular.module('redbull.controllers')
             // return page of results
             return cards.slice(start, start + $scope.perpage);
         }
-
+        
+        $scope.canEdit = function () {
+            return (!$scope.tournament.hasDecksConstructed && !$scope.decksSaving);
+        };
+        
         $scope.addCardToDeck = function (card) {
+            if (!$scope.canEdit()) { return false; }
             var deck = $scope.currentDeck;
             var cardQty = card.qty;
             var cardUsed = $scope.qtyUsed(card);
@@ -146,8 +185,8 @@ angular.module('redbull.controllers')
         };
 
         $scope.removeCardFromDeck = function (card) {
-            if (!$scope.currentDeck) { return false; }
-            $scope.currentDeck.removeCard(card);
+            if (!$scope.currentDeck || !$scope.canEdit()) { return false; }
+            $scope.currentDeck.removeCardFromDeck(card.card);
         };
         
         $scope.qtyUsed = function (card) {
@@ -245,6 +284,7 @@ angular.module('redbull.controllers')
         };
 
         $scope.deleteDeck = function ($event, deck) {
+            if (!$scope.canEdit()) { return false; }
             // stop prop
             $event.stopPropagation();
 
@@ -293,6 +333,7 @@ angular.module('redbull.controllers')
 
         // add deck modal
         $scope.addDeckWnd = function () {
+            if (!$scope.canEdit()) { return false; }
             if ($scope.decks.length >= 9) {
                 var box = bootbox.dialog({
                     title: 'Add Deck',
@@ -354,7 +395,7 @@ angular.module('redbull.controllers')
         
         $scope.decksComplete = function () {
             var decks = $scope.decks;
-            if (!decks || !decks.length || decks.length !== 3) { return false; }
+            if (!decks || !decks.length || decks.length !== $scope.tournament.decksLimit) { return false; }
             for (var i = 0; i < decks.length; i++) {
                 if (decks[i].getSize() !== 30) {
                     return false;
@@ -363,22 +404,88 @@ angular.module('redbull.controllers')
             return true;
         };
         
-        $scope.saveDecks = function () {
-            var box = bootbox.dialog({
-                title: 'Save Decks',
-                message: 'This feature has not been completed yet.',
-                buttons: {
-                    cancel: {
-                        label: 'OK',
-                        className: 'btn-blue',
-                        callback: function () {
-                            box.modal('hide');
+        $scope.timesUp = function () {
+            $scope.saveDecks(true);
+        };
+                
+        function cleanDeck (deck) {
+            deck.deckCards = deck.cards;
+
+            delete deck.author;
+            delete deck.basic;
+            delete deck.cards;
+            delete deck.chapters;
+            delete deck.comments;
+            delete deck.deckType;
+            delete deck.description;
+            delete deck.dust;
+            delete deck.gameModeType;
+            delete deck.heroName;
+            delete deck.isFeatured;
+            delete deck.isPublic;
+            delete deck.matchups;
+            delete deck.mulligans;
+            delete deck.premium;
+            delete deck.slug;
+            delete deck.voteScore;
+            delete deck.votes;
+            delete deck.youtubeId;
+            
+            _.each(deck.deckCards, function (card) {
+                delete card.deckId;
+                delete card.card.cardType;
+                delete card.card.cost;
+                delete card.card.expansion;
+                delete card.card.mechanics;
+                delete card.card.name;
+                delete card.card.photoNames;
+                delete card.card.race;
+                delete card.card.rarity;
+                delete card.card.text;
+            });
+        }
+        
+        $scope.saveDecks = function (timesUp) {
+            if (!$scope.canEdit()) { return false; }
+            
+            timesUp = timesUp || false;
+            
+            if (!timesUp && !$scope.decksComplete()) {
+                // error modal
+                var decks = draftSettings.numOfDecks;
+                var box = bootbox.dialog({
+                    title: 'Error Saving Decks',
+                    message: '<strong>Error:</strong> You must have <strong>' + decks + ' decks all with <strong>30 cards</strong> to save.',
+                    buttons: {
+                        cancel: {
+                            label: 'OK',
+                            className: 'btn-blue',
+                            callback: function () {
+                                box.modal('hide');
+                            }
                         }
                     }
-                }
-            });
-            box.modal('show');
-
+                });
+                box.modal('show');
+                return false;
+            } else {
+                // save decks
+                $scope.decksSaving = true;
+                
+                var cleanDecks = angular.copy($scope.decks);
+                _.each(cleanDecks, function (deck) {
+                    cleanDeck(deck);
+                });
+                
+                RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise.then(function (data) {
+                    delete $localStorage.draftDecks;
+                    delete $localStorage.draftId;
+                    
+                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
+                }).catch(function (data) {
+                    console.error(data);
+                });
+            }
         };
 
     }

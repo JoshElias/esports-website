@@ -40,6 +40,20 @@
         <!-- articles -->
         <div class="articles-list m-t-lg">
             <!-- article -->
+        
+            <!-- first fullwidth plg -->
+
+            <div class="row fullwidth-plg-div ts-plg clearfix hidden-sm hidden-xs article-plg-fix">
+                <div class="col-lg-6 col-md-12 plg-long">
+                    <div class="plg-leader img-responsive"></div>
+                </div>
+                <div class="col-lg-6 col-md-12 plg-long">
+                    <div class="plg-leader img-responsive"></div>
+                </div>
+            </div>
+
+            <!-- first fullwidth plg ends -->
+            
             <div class="row no-pad">
                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="article in articles | orderBy: '-createdDate' track by $index">
                     <div class="article-wrapper m-b-md">

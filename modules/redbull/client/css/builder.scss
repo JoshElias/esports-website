@@ -4,6 +4,38 @@
     
     .draft-build {
         
+        @media screen and (max-width: 1650px) {
+            padding-top: 45px;
+        }
+        
+        .draft-build-timer {
+            margin: 0 300px;
+            background: rgba(0,0,0,.4);
+            border-bottom: 1px solid rgba(255,255,255,.4);
+            text-align: center;
+            color: #FFF;
+            font-family: 'Open Sans Bold';
+            
+            h1 {
+                margin: 0;
+                padding: 10px 0px;
+                font-size: 12px;
+                color: #ddb03f;
+            }
+            
+            .time {
+                font-size: 30px;
+                
+                @media screen and (max-width: 1650px) {
+                    font-size: 25px;
+                }
+            }
+            
+            @media screen and (max-width: 1650px) {
+                margin-left: 0px;        
+            }
+        }
+        
         .draft-build-filtering {
             position: fixed;
             top: 52px;
@@ -12,6 +44,57 @@
             width: 300px;
             background: rgba(0,0,0,.4);
             border-right: 1px solid #000;
+            
+            @media screen and (max-width: 1650px) {
+                display: none;
+                margin-top: 45px;
+            
+                &.mobile-show {
+                    display: block;
+                    z-index: 350;
+                    background-color: black;
+                }
+            }
+            
+             &.mana-closed {
+                    
+                    .mana-curve {
+                        
+                         h3 {
+                    
+                            &:after {
+//                                font-size: 20px;
+//                                font-weight: bold;
+//                                position: relative;
+//                                right: -180px;
+//                                top: 3px;
+//                                font-family: FontAwesome;
+                                content: "\f107";
+                            }
+                        }
+                        
+                        
+                        ul {
+                            display: none;
+                        }
+                    }
+                    
+                    .card-search {
+                        top: 36px !important;
+                    }
+                    
+                    .mana-cost {
+                        top: 121px !important;
+                    }
+                    
+                    .card-rarity {
+                        top: 200px !important;
+                    }
+                    
+                    .card-mechanics {
+                       top: 287px !important;
+                    }
+                }
             
             h3 {
                 height: 35px;
@@ -30,6 +113,21 @@
                 top: 0px;
                 left: 0px;
                 width: 299px;
+                
+                h3 {
+                    
+                    cursor: pointer;
+                    
+                    &:after {
+                        font-size: 20px;
+                        font-weight: bold;
+                        position: absolute;
+                        right: 24px;
+                        
+                        font-family: FontAwesome;
+                        content: "\f106";
+                    }
+                }
                 
                 ul {
                     display: block;
@@ -152,16 +250,13 @@
                                 outline: none;
                                 border: none;
                             }
-                            
                         }
                     }
                     
                     div:last-child {
                         margin-right: 0px;
                     }
-                    
                 }
-                
             } /* .mana-cost */
             
             .card-rarity {
@@ -246,17 +341,21 @@
             background: rgba(0,0,0,.4);
             border-left: 1px solid #000;
             
+            @media screen and (max-width: 1650px) {
+                margin-top: 45px;
+            }
+            
             .deck-add-button {
                 height: 50px;
                 border-bottom: 1px solid #000;
                 
                 button {
                     display: block;
-                    width: 300px;
+                    width: 298px;
                     height: 50px;
                     line-height: 50px;
                     outline: none;
-                    border: none;
+                    border: 1px solid rgba(255,255,255,.4);
                     text-align: left;
                     text-indent: 20px;
                     color: #FFF;
@@ -627,8 +726,32 @@
         
         .draft-build-cards {
             
+            .container {
+                
+                &.container-override {
+                
+                    @media screen and (max-width: 1650px) {
+                        margin-left: 0;
+                        width: 75%;
+                       // margin-top: 45px;
+                    }
+                    
+                     @media screen and (max-width: 1200px) {
+                        width: 70%;            
+                    }
+                    
+                    @media screen and (max-width: 992px) {
+                        width: 65%;            
+                    }
+                    
+                    @media screen and (max-width: 768px) {
+                        width: 60%;            
+                    }
+                }
+            }
+            
             .card-filter-classes {
-                margin: 20px auto;
+                margin: 20px auto 0px auto;
                 padding: 0;
                 width: 401px;
                 
@@ -717,12 +840,38 @@
 
                     &.right {
                         right: 0px;
+                        
+                        @media screen and (max-width: 1200px) {
+                            right: 30%;
+                        } //media 1200px
+                        
+                         @media screen and (max-width: 992px) {
+                            right: 40%;
+                        } //media 992px
+                        
+                        @media screen and (max-width: 768px) {
+                            right: 320px;
+                        } //media 1200px
+                        
                     } /* .right */
 
                     i {
                         font-size: 48px;
                         color: rgba(255,255,255,1);
                     } /* i */
+                    
+                    @media screen and (max-width: 1200px) {
+                        position: fixed;
+                        top: 50%;
+                    } //media 1200px
+                    
+                    @media screen and (max-width: 992px) {
+                        //top: 50%;
+                    } //media 992px
+                    
+                    @media screen and (max-width: 768px) {
+                       // top: 15%;
+                    } //media 768px
 
                 } /* button */
 
@@ -730,6 +879,11 @@
                     position: relative;
                     padding: 30px;
                     min-height: 810px;
+                    
+                    @media screen and (max-width: 992px){
+                        padding-left: 0px;
+                        padding-right: 55px;
+                    }
                     
                     .draft-build-card {
                         float: left;
@@ -772,7 +926,29 @@
                             line-height: 18px;
                             text-align: center;
                             opacity: .5;
+                            
+                            @media screen and (max-width: 768px) {
+                                margin: -10px 16px 0px auto;
+                            }
+                            
                         } /* .card-qty */
+                        
+                        @media screen and (max-width: 1200px) {
+                            width: 25%;
+                            
+                        } // media styles
+                        
+                        @media screen and (max-width: 992px) {
+                            width: 33%;
+                            
+                        } // media styles
+                        
+                        @media screen and (max-width: 768px) {
+                            //width: 33%;
+                            -ms-transform: scale(.85); /* IE 9 */
+                            -webkit-transform: scale(.85); /* Safari */
+                            transform: scale(.85);
+                        } // media styles
                         
                     } /* .draft-build-card */
                     
@@ -784,12 +960,93 @@
                 font-size: 30px;
                 color: #FFF;
                 text-align: center;
-                line-height: 750px;
+                line-height: 200px;
+                
+//                @media screen and (max-width: 1200px) {
+//                    line-height: 400px;
+//                }
+//                
+//                @media screen and (max-width: 992px) {
+//                    line-height: 200px;
+//                }
             }
             
         } /* .draft-build-cards */
         
+        &.completed {
+            .draft-build-decks {
+                .deck-add-button {
+                    display: none;
+                }
+                .decks {
+                    min-height: calc(100% - 50px);
+				    height: calc(100% - 50px);
+                }
+            }
+        }
+        
     } /* .draft-build */
+    
+    .filter-button-bar {
+        position: fixed;
+        display: none;
+        z-index: 500;
+        height: 45px;
+        width: 100%;
+        background-color: #2766ad;
+        padding: 5px 20px;
+        top: 52px;
+        
+        
+        @media screen and (max-width:1650px) {
+                display: block;
+        }
+        
+        button.filtering-mobile-toggle-btn {
+            //display: none;
+            //position: absolute;
+            //top: 65px;
+            //left: 25px;
+            border-radius: 2px; 
+            text-transform: uppercase !important;
+        } // Mobile filtering button
+    } // mobile filtering bar
+    
+    .mobile-override {
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: auto;
+        height: auto;
+        z-index: 501;
+        background-color: rgba(38,38,38,1);
+        
+        @media screen and (max-width:750px) {
+
+            display: block;
+                    
+            .override-msg {
+                width: 300px;
+                padding: 20px;
+                margin: 100px auto;
+                
+                color: white;
+
+                h2 {
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+
+                p {
+                    text-align: center;
+
+                }
+            }  
+        }
+    }// mobile drafter front page override div
     
 } /* .redbull-draft */
 
@@ -833,3 +1090,68 @@
     }
 
 } /* .new-deck-classes */
+
+.draft-deck-share {
+    text-align: center;
+
+    .btn-facebook,
+    .btn-googleplus,
+    .btn-stumbleupon,
+    .btn-twitter {
+        border-radius: 0;
+        color: #fff;
+    }
+    
+    .btn-twitter {
+        background: #00acee;
+    }
+    
+    .btn-twitter:link,
+    .btn-twitter:visited {
+        color: #fff;
+    }
+    .btn-twitter:active,
+    .btn-twitter:hover {
+        background: #0087bd;
+        color:#fff;
+    }
+    
+    .btn-facebook {
+        background: #3b5998;
+    }
+    .btn-facebook:link,
+    .btn-facebook:visited {
+        color:#fff;
+    }
+    .btn-facebook:active,
+    .btn-facebook:hover {
+        background: #30477a;
+        color: #fff;
+    }
+    
+    .btn-googleplus {
+        background: #e93f2e;
+    }
+    .btn-googleplus:link,
+    .btn-googleplus:visited {
+        color: #fff;
+    }
+    .btn-googleplus:active,
+    .btn-googleplus:hover {
+        background: #ba3225;
+        color: #fff;
+    }
+    
+    .btn-stumbleupon {
+        background: #f74425;
+    }
+    .btn-stumbleupon:link,
+    .btn-stumbleupon:visited {
+        color: #fff;
+    }
+    .btn-stumbleupon:active,
+    .btn-stumbleupon:hover {
+        background: #c7371e;
+        color: #fff;
+    }
+} /* .draft-deck-share */

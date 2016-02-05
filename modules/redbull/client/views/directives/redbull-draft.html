@@ -1,6 +1,21 @@
 <!-- preloader -->
-<div class="preloader" ng-if="isLoading"><i class="fa fa-refresh fa-spin"></i></div>
+<div class="preloader" ng-if="getIsLoading()"><i class="fa fa-refresh fa-spin"></i>
+    <div class="container loadingBar"> 
+        <div ng-style="{'width': percentLoaded, 'background-color': 'rgba(39, 102, 173, 0.6)', 'height' : '100%'}"></div>
+    </div>
+</div>
 <!-- / preloader -->
+
+<!-- Mobile override div -->
+<div class="mobile-override">
+    <div class="override-msg">
+        <h2>Feature Unavailable</h2>
+        <p>This feature is unavailable on devices and browsers with this resolution.</p>
+        <p>Please use a device with a larger resolution.</p>
+
+    </div>
+</div>
+<!-- end Mobile override div -->
 
 <!-- draft wrapper -->
 <div class="draft-wrapper">
@@ -15,25 +30,27 @@
         <div class="packs-scroller">
             <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, fadeScrollbars: true, interactiveScrollbars: true}">
                 <div class="iscroll-scroller">
-                    <div class="expansion-wrapper {{packs[expansion].expansionClass}}" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
+                    <div class="expansion-wrapper {{packs[expansion].className}}" ng-repeat="expansion in expansions | orderBy: 'orderNum' track by expansion" ng-init="enablePacks()">
                         <div class="pack-wrapper">
-                            <div class="pack-tab {{packs[expansion].expansionClass}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
-                            <div class="pack-next {{packs[expansion].expansionClass}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
-                            <div class="pack {{packs[expansion].expansionClass}}" data-expansion="{{expansion}}"></div>
+                            <div class="pack-tab {{packs[expansion].className}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
+                            <div class="pack-next {{packs[expansion].className}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
+                            <div class="pack {{packs[expansion].className}}" data-expansion="{{expansion}}"></div>
                         </div>
                         <div class="pack-label">
-                            <span class="{{packs[expansion].expansionClass}}" ng-if="expansion !== 'Basic'">{{expansion}}</span>
-                            <span class="{{packs[expansion].expansionClass}}" ng-if="expansion === 'Basic'">Classic</span>
+                            <span class="{{packs[expansion].className}}" ng-if="expansion !== 'Basic'">{{expansion}}</span>
+                            <span class="{{packs[expansion].className}}" ng-if="expansion === 'Basic'">Classic</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+<!--
         <div class="pack-settings-button">
             <button class="btn btn-blue btn-block" ng-click="$parent.settingsWnd()">
                 Pack Settings
             </button>
         </div>
+-->
         <div class="volume-control">
             <draft-volume></draft-volume>
         </div>
@@ -66,8 +83,21 @@
 </div>
 <!-- / draft wrapper -->
 
+<!-- mobile cardpool button -->
+<button class="cardpool-mobile-toggle-btn btn btn-blue" ng-click="mobileCardpool = !mobileCardpool">Card Pool</button>
+
+<div class="card-pool-button mobile-card-pool-buttons">
+        <button class="btn btn-blue btn-block" ng-click="fastForwardToggle()" ng-if="!draftComplete">
+            <span ng-if="!isFastForward()">Open All Packs</span>
+            <span ng-if="isFastForward()">Stop Opening Packs</span>
+            <i class="fa fa-refresh fa-spin" ng-if="isFastForward()"></i>
+        </button>
+        <button class="btn btn-blue btn-block" ng-show="draftComplete" ng-click="$parent.goToBuild()">Build Decks</button>
+</div>
+<!-- / mobile cardpool and pack opening button -->
+
 <!-- card pool -->
-<div class="card-pool">
+<div class="card-pool" ng-class="{ 'mobile-show': mobileCardpool }">
     <div class="card-pool-title">Card Pool</div>
     <div class="card-pool-cards">
         <p ng-if="!cardPool.length">

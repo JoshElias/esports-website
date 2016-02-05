@@ -1,111 +1,94 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'cards', function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, cards){
-    // temp tournament settings
-    $localStorage.draftDecks = [];
-    var defaultTournament = {
-            packs: [
-                {
-                    expansion: 'Soulbound',
-                    packs: 15,
-                    chances: {
-                        basic: 100,
-                        common: 0,
-                        rare: 0,
-                        epic: 0,
-                        legendary: 0
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'Basic',
-                    packs: 10,
-                    chances: {
-                        basic: 0,
-                        common: 72,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 3
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'Naxxramas',
-                    packs: 5,
-                    chances: {
-                        basic: 0,
-                        common: 74,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 1
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'Goblins Vs. Gnomes',
-                    packs: 10,
-                    chances: {
-                        basic: 0,
-                        common: 72,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 3
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'Blackrock Mountain',
-                    packs: 5,
-                    chances: {
-                        basic: 0,
-                        common: 74,
-                        rare: 25,
-                        epic: 0,
-                        legendary: 1
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'The Grand Tournament',
-                    packs: 10,
-                    chances: {
-                        basic: 0,
-                        common: 72,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 3
-                    },
-                    isActive: true
-                },
-                {
-                    expansion: 'League of Explorers',
-                    packs: 8,
-                    chances: {
-                        basic: 0,
-                        common: 74,
-                        rare: 21,
-                        epic: 4,
-                        legendary: 1
-                    },
-                    isActive: true
-                },
-            ]
-        };
+.controller('DraftPacksCtrl', [
+    '$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft', 
+    function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draftSettings, draft){
+    if (draft.hasOpenedPacks) { return $state.go('^.build'); }
     
-    $scope.tournament = ($localStorage.tournament) ? angular.copy($localStorage.tournament) : defaultTournament;
+    if (!$localStorage.draftId && !draft.isOfficial) {
+        $localStorage.draftId = draft.id;
+    }
+    
+    // TODO: REMOVE THIS BEFORE LAUNCH
+    /*document.addEventListener("keydown", skipPacks, false);
+    function skipPacks (e) {
+        if (e.which === 13) {
+            $scope.goingToBuild = true;
+            RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
+                return $state.go('^.build');
+            }).catch(function () {
+                console.error('Unable to update draft');
+            });
+        }
+    }*/
+    
+    function dirtyPacks (packs) {
+        var expansionOrders = {
+            'Soulbound' : 0,
+            'Basic': 1,
+            'Naxxramas': 2,
+            'Goblins Vs. Gnomes': 3,
+            'Blackrock Mountain': 4,
+            'The Grand Tournament': 5,
+            'League of Explorers': 6
+        };
+        var newPacks = {};
+        
+        _.each(packs, function (pack) {
+            var expansion;
+            var cards = [];
+            
+            _.each(pack.packCards, function (packCard) {
+                // expansion
+                expansion = packCard.expansion; // name, className, numOfPacks
+
+                // cards for pack
+                cards.push(packCard.card);
+            });
+            
+            if (!newPacks[expansion.name]) {
+                newPacks[expansion.name] = {
+                    name: expansion.name,
+                    className: expansion.className,
+                    numOfPacks: expansion.numOfPacks,
+                    packs: [],
+                    orderNum: expansionOrders[expansion.name]
+                };
+            }
+            newPacks[expansion.name].packs.push({
+                cards: cards,
+                className: expansion.className,
+                expansionName: expansion.name
+            });
+        });
+        
+        return newPacks;
+    }
     
     // variables
     $scope.isLoading = true;
     $scope.isSuccessful = false;
     $scope.percentLoaded = 0;
+    $scope.goingToBuild = false;
+    
     // packs
     $scope.currentPack = {};
-    $scope.packs = DraftPacks.getPacks(cards, $scope.tournament);
+    
+    if (draft.packOpenerData) {
+        $scope.packs = draft.packOpenerData;
+    } else {
+        $scope.packs = dirtyPacks(draft.packs);
+    }
     
     // file variables
     var fileLocations = [];
     var imagePath = (tpl !== './') ? 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
-    var ext = '.mp3';
+    var ext = getAudioExt();
     var audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/';
+    
+    function getAudioExt () {
+        var audioTest = new Audio();
+        return (audioTest.canPlayType('audio/ogg')) ? '.ogg' : '.mp3';
+    }
     
     // load cards for preloader
     var cardImages = [];
@@ -115,6 +98,7 @@ angular.module('redbull.controllers')
             for (var y = 0; y < $scope.packs[key].packs[x].cards.length; y++) {
                 if (cardImages.indexOf($scope.packs[key].packs[x].cards[y].photoNames.small) === -1) {
                     cardImages.push($scope.packs[key].packs[x].cards[y].photoNames.small);
+                    cardImages.push($scope.packs[key].packs[x].cards[y].photoNames.medium);
                     cardImages.push($scope.packs[key].packs[x].cards[y].photoNames.large);
                 }
             }
@@ -125,16 +109,15 @@ angular.module('redbull.controllers')
         fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
     }
     
-    
     // image files
     var imageFiles = [
         'bg.jpg',
         'bg-glow.jpg',
         'done.png',
         'pack.png',
-        'pack-loe.png',
-        'pack-naxx.png',
-        'pack-brm.png',
+        'book-loe.png',
+        'book-naxx.png',
+        'book-brm.png',
         'pack-gvg.png',
         'pack-tgt.png',
         'pack-soulbound.png',
@@ -147,6 +130,7 @@ angular.module('redbull.controllers')
         'back-soulbound.png',
         'back-tgt.png',
         'pack-frame.png',
+        'book-frame.png',
         'pack-tab.png',
         'volume-nob.png',
         'volume-slider.png',
@@ -159,8 +143,19 @@ angular.module('redbull.controllers')
         fileLocations.push( $scope.app.cdn + imagePath + imageFiles[i] );
     }
 
+    // volume
+    $scope.volume = ($localStorage.draftVolume !== undefined) ? $localStorage.draftVolume : 35;
+    $scope.muted = ($localStorage.draftMuted !== undefined) ? $localStorage.draftMuted : false;
+    
+    $scope.$watch('volume', function (newValue) {
+        $localStorage.draftVolume = $scope.volume;
+    });
+    
+    $scope.$watch('muted', function (newValue) {
+        $localStorage.draftMuted = $scope.muted;
+    });
+    
     // audio files
-    $scope.volume = 35;
     $scope.audioFiles = {
         'announcer_epic':           { file: 'announcer_epic' + ext, volume: .3 },
         'announcer_legendary':      { file: 'announcer_legendary' + ext, volume: .3 },
@@ -179,7 +174,7 @@ angular.module('redbull.controllers')
         'pack_release':             { file: 'pack_release' + ext, volume: .5 },
         'pack_shake':               { file: 'pack_shake' + ext, volume: .5 },
         'pack_aura':                { file: 'pack_aura' + ext, volume: .05 },
-        'pack_burst':               { file: 'pack_burst' + ext, volume: .5 },
+        'pack_burst':               { file: 'pack_burst' + ext, volume: .3 },
     };
 
     // load audio for preloader
@@ -199,91 +194,49 @@ angular.module('redbull.controllers')
             console.error( "File Failed", fileLocation );
         },
         function handleNotify( event ) {
-            $scope.percentLoaded = event.percent;
+            $scope.percentLoaded = event.percent+"%";
         }
     );
 
-    // temp settings window
-    $scope.$watch(function () { return $scope.tournament; }, function (newValue) {
-        $scope.tournament = newValue;
-    }, true);
-    
-    function settingsError () {
-        for (var i = 0; i < $scope.tournament.packs.length; i++) {
-            if ($scope.tournament.packs[i].isActive) {
-                
-                // test packs
-                if (isNaN(parseInt($scope.tournament.packs[i].packs)) || parseInt($scope.tournament.packs[i].packs) < 1) {
-                    return 'Expansion ' + $scope.tournament.packs[i].expansion + ': Can not have zero packs.';
-                }
-                
-                // test percentage
-                var count = 0;
-            
-                for (key in $scope.tournament.packs[i].chances) {
-                    count += $scope.tournament.packs[i].chances[key];
-                }
-
-                if (count !== 100) {
-                    return 'Expansion ' + $scope.tournament.packs[i].expansion + ': Chances do not add up to 100%.';
-                }
-            }
-        }
-        return false;
-    }
-    
-    $scope.settingsWnd = function () {
-        AlertService.reset();
-        var oldSettings = angular.copy($scope.tournament);
+    // go to build
+    $scope.goToBuild = function () {
+        $scope.goingToBuild = true;
+        RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
+            return $state.go('^.build');
+        }).catch(function () {
+            console.error('Unable to update draft');
+        });
+/*        
+        var mins = draftSettings.deckBuildTimeLimit;
+        var decks = draftSettings.numOfDecks;
         var box = bootbox.dialog({
-            title: 'Pack Settings',
-            message: $compile('<pack-settings tournament="tournament"></pack-settings>')($scope),
+            title: 'Build Decks',
+            message: 'You will have <strong>' + mins + ' minutes</strong> to build <strong>' + decks + ' decks</strong>. If you do not complete in the alloted time, your decks will be automatically submitted, and completed with random classes / cards that are left. The timer begins once you click the continue button.',
             buttons: {
-                save: {
-                    label: 'Save',
+                continue: {
+                    label: 'Continue',
                     className: 'btn-blue',
                     callback: function () {
-                        var error = settingsError();
-                        if (!error) {
-                            $localStorage.tournament = $scope.tournament;
-                            $window.location.reload();
-                        } else {
-                            AlertService.setError({ show: true, msg: error });
-                            return false;
-                        }
+                        box.modal('hide');
+                        $scope.goingToBuild = true;
+                        RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
+                            return $state.go('^.build');
+                        }).catch(function () {
+                            console.error('Unable to update draft');
+                        });
                     }
                 },
                 cancel: {
                     label: 'Cancel',
                     className: 'btn-default pull-left',
                     callback: function () {
-                        $scope.tournament = oldSettings;
                         box.modal('hide');
                     }
                 }
             }
         });
         box.modal('show');
-    };
-    
-    $scope.goToBuild = function () {
-        return $state.go('app.redbull.draft.build');
-        
-        /*var box = bootbox.dialog({
-            title: 'Build Decks',
-            message: 'This feature has not been completed yet.',
-            buttons: {
-                cancel: {
-                    label: 'OK',
-                    className: 'btn-blue',
-                    callback: function () {
-                        box.modal('hide');
-                    }
-                }
-            }
-        });
-        box.modal('show');
-        */
+*/
     };
     
 }]);

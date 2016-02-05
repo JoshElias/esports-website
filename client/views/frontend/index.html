@@ -61,8 +61,8 @@
                         <li ng-class="{active:$state.includes('app.sponsors')}"><a ui-sref="app.sponsors">Sponsors</a></li>
                         <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
                         <li class="hidden-lg hidden-md hidden-sm"><a target="_blank" ng-href="http://store.tempostorm.com" href="http://store.tempostorm.com">Store</a></li>
-                        
-                        
+
+
                         <li>
                             <span class="dropdown-grid">
                                 <li class="hidden-sm hidden-md hidden-lg sub" ng-click="loginModal('login')" ng-hide="currentUser"><a href="#">Login</a></li>
@@ -77,6 +77,7 @@
                                     <ul class="dropdown-menu no-border-radius no-padding">
                                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{user.username}}">Profile</a></li>
                                       <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
                                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                                     </ul>
                                 </li>
@@ -99,6 +100,7 @@
                     <ul class="dropdown-menu no-border-radius no-padding dropdown-user-login">
                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{currentUser.username}}">Profile</a></li>
                       <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                     </ul>
                 </li>
@@ -115,3 +117,8 @@
 <!-- footer -->
 <footer ng-hide="$state.includes('app.admin')"></footer>
 <!-- / footer -->
+
+<!-- footer-ad -->
+
+<footer-redbull ng-if="!$state.includes('app.admin') && !$state.includes('app.hs.redbull') && !$state.includes('app.hs.draft')"></footer-redbull>
+<!-- / footer-ad -->

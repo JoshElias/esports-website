@@ -1,0 +1,112 @@
+{
+  "name": "redbullDeck",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "playerClass": {
+      "type": "string",
+      "required": true
+    },
+    "viewCount": {
+      "type": "number",
+      "default": 0
+    },
+    "votes": [
+      "object"
+    ],
+    "voteScore": {
+      "type": "number",
+      "default": 0
+    },
+    "isOfficial": {
+      "type": "boolean",
+      "default": false
+    },
+    "redbullDraftId": {},
+    "authorId": {}
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "deckCards": {
+      "type": "hasMany",
+      "model": "deckCard",
+      "foreignKey": "redbullDeckId",
+      "isChild": true
+    },
+    "cards": {
+      "type": "hasMany",
+      "model": "card",
+      "foreignKey": "redbullDeckId",
+      "through": "deckCard"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "redbullDeckId"
+    },
+    "draft": {
+      "type": "belongsTo",
+      "model": "redbullDraft",
+      "foreignKey": "redbullDraftId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__edit__cards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__draft"
+    }
+  ],
+  "methods": {}
+}

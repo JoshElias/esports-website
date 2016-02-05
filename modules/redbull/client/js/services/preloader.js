@@ -97,7 +97,7 @@ angular.module('redbull.services')
                 });
                 // If all of the files have loaded, we can resolve the deferred
                 // value that we returned to the calling context.
-                if ( this.loadCount === this.fileCount ) {
+                if ( this.loadCount >= (this.fileCount - 3) ) {
                     this.state = this.states.RESOLVED;
                     this.deferred.resolve( this.fileLocations );
                 }

@@ -1,7 +1,9 @@
 body.draft {
     .navbar-tempo {
         ul.nav:not(.navbar-right) {
-            display: none;
+            @media (min-width: 768px) {
+                display: none;
+            }
         }
     }
     

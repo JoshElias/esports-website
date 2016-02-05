@@ -11,7 +11,7 @@
       "required": true
     },
     "deckId": {},
-    "redbullPackId":{},
+    "redbullDeckId": {},
     "cardQuantity": {
       "type": "number"
     }
@@ -28,10 +28,10 @@
       "model": "deck",
       "foreignKey": "deckId"
     },
-    "pack": {
+    "redbullDeck": {
       "type": "belongsTo",
-      "model": "redbullPack",
-      "foreignKey": "redbullPackId"
+      "model": "redbullDeck",
+      "foreignKey": "redbullDeckId"
     }
   },
   "acls": [

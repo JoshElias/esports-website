@@ -1,0 +1,65 @@
+{
+  "name": "redbullDraftSettings",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "cardsPerPack": {
+      "type": "number",
+      "default": 5
+    },
+    "deckBuildTimeLimit": {
+      "type": "number",
+      "default": 30
+    },
+    "deckBuildGracePeriod": {
+      "type": "number",
+      "default": 1
+    },
+    "numOfDecks": {
+      "type": "number",
+      "default": 3
+    },
+    "allowDuplicateClasses" : {
+      "type": "boolean"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [{
+    "principalType": "ROLE",
+    "principalId": "$everyone",
+    "permission": "DENY"
+  },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }],
+  "methods": {}
+}

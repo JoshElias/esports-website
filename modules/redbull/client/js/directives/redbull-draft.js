@@ -1,6 +1,6 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util', 'DraftCards', 
-    function ($q, $timeout, $interval, $rootScope, Util, DraftCards){
+.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util', 
+    function ($q, $timeout, $interval, $rootScope, Util){
         return {
             restrict: 'A',
             templateUrl: ((tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/') + 'directives/redbull-draft.html',
@@ -10,6 +10,8 @@ angular.module('redbull.directives')
                 currentPack: '=',
                 audioFiles: '=',
                 volume: '=',
+                muted: '=',
+                percentLoaded: '='
             },
             link: function (scope, el, attrs) {
                 var startShake = null,
@@ -26,6 +28,7 @@ angular.module('redbull.directives')
                     doneDurationFF = 500,
                     currentExpansion = null;
                 
+                scope.mobileCardpool = false;
                 scope.draftComplete = false;
                 scope.cardPool = [];
                 scope.expansions = [];
@@ -42,12 +45,16 @@ angular.module('redbull.directives')
                 // watch current pack
                 scope.$watch('currentPack', function (newValue) {
                     scope.currentPack = newValue;
-                });
-                
+                }); 
+                 
                 // watch loading
                 scope.$watch('isLoading', function (newValue) {
                     scope.isLoading = newValue;
                 });
+                
+                scope.getIsLoading = function () {
+                    return scope.isLoading;
+                };
 
                 // check if any expansion still has packs to open
                 function hasMorePacks () {
@@ -93,6 +100,7 @@ angular.module('redbull.directives')
                 
                 // play audio clip
                 scope.playAudio = function ( audioName ) {
+                    if (scope.volume === 0 || scope.muted) { return false; }
                     var audio = new Audio();
                     audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
                     audio.load();
@@ -188,8 +196,10 @@ angular.module('redbull.directives')
                             scroll: false,
                             revert: true,
                             start: function() {
-                                if (!packDropped) {
-                                    
+                                if (packDropped) {
+                                    return false;
+                                } else {
+
                                     // remove one from packs count
                                     var expansion = $(pack).attr('data-expansion');
                                     scope.$apply(function () {
@@ -225,7 +235,7 @@ angular.module('redbull.directives')
                                     scope.playAudio('pack_release');
 
                                     // move pack wrapper to bottom
-                                    $(pack).closest('.pack-wrapper').css('z-index', '100');
+                                    $(pack).closest('.expansion-wrapper').css('z-index', '100');
 
                                     // fade out glowing background
                                     if ($('.pack.ui-draggable-dragging').length === 1) {
@@ -256,7 +266,7 @@ angular.module('redbull.directives')
                             scope.playAudio('pack_grab');
 
                             // move pack wrapper to top
-                            $(pack).closest('.pack-wrapper').css('z-index', '103');
+                            $(pack).closest('.expansion-wrapper').css('z-index', '103');
 
                             // stop shaking the pack
                             $(pack).trigger('stopRumble');
@@ -355,7 +365,7 @@ angular.module('redbull.directives')
                         stopShakeTimer();
                         
                         // play audio for pack burst
-                        //scope.playAudio('pack_burst');
+                        scope.playAudio('pack_burst');
 
                         // fade out pack
                         $pack.fadeOut(0, function() {
@@ -436,12 +446,12 @@ angular.module('redbull.directives')
                         scope.playAudio('done_fade');
                         
                         // fade out done button
-                        $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF));
+                        $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration / 2 : fadeDurationFF));
                         
                         // remove blur
                         el.removeClass('blurred');
 
-                        $('.cards').fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF), function() {
+                        $('.cards').fadeOut(((!fastForward) ? fadeDuration / 2 : fadeDurationFF), function() {
                             if (!anotherPack) {
                                 scope.expansions.splice(scope.expansions.indexOf(currentExpansion), 1);
                             }
@@ -504,8 +514,6 @@ angular.module('redbull.directives')
                             card: card
                         });
                     }
-                    // TODO: remove this for production
-                    DraftCards.setCards(scope.cardPool);
                 }
 
                 // sorted card pool
