@@ -138,6 +138,8 @@ module.exports = function(User) {
             finalCallback);
         }
 
+        
+        
         /**
          * Confirm the user's identity.
          *
