@@ -6,6 +6,8 @@
 
 .hots-styles .hots-guide-styles-new {
     
+    
+    
     .guide-header { 
         background: transparent; 
         border-bottom: 0px solid transparent;
@@ -42,10 +44,16 @@
     .guide-votes { margin: 15px 0; }
 
     .guide-page {
+        
+        background: #221b36 url('../img/hots/maps/bgs/base.jpg') no-repeat center top;
+        background-attachment: fixed;
+        background-size: cover;
+        
         .guide-right { float: right; width: 300px; }
         .guide-left { margin-right: 320px; }
         .guide-content { position: relative; }
         .guide-content iframe { width: 100% !important; }
+        
     }
     
     .guide-section { 
