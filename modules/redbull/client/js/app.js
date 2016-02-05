@@ -154,7 +154,6 @@ var redbull = angular.module('app.redbull', [
                                         ]
                                     }
                                 }).$promise.then(function (data) {
-                                    console.log('build data: ', data);
                                     if (!data.hasOpenedPacks) {
                                         $state.go('app.hs.draft.packs');
                                         return $q.reject();

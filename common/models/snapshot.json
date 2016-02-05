@@ -43,14 +43,6 @@
     "photoNames": {
       "type": "object"
     },
-    "voteScore": {
-      "type": "number"
-    },
-    "votes": {
-      "type": [
-        "string"
-      ]
-    },
     "isActive": {
       "type": "boolean"
     },

@@ -24,7 +24,8 @@
     "packCards": {
       "type": "hasMany",
       "model": "redbullPackCard",
-      "foreignKey": "redbullPackId"
+      "foreignKey": "redbullPackId",
+      "isChild": true
     },
     "cards": {
       "type": "hasMany",

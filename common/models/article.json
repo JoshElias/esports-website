@@ -44,14 +44,6 @@
     "viewCount": {
       "type": "number"
     },
-    "votes": {
-      "type": [
-        "string"
-      ]
-    },
-    "voteScore": {
-      "type": "number"
-    },
     "isFeatured": {
       "type": "boolean"
     },
