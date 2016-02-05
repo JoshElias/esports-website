@@ -40,11 +40,6 @@
       "foreignKey": "redbullDeckId",
       "through": "deckCard"
     },
-    "comments": {
-      "type": "hasMany",
-      "model": "comment",
-      "foreignKey": "redbullDeckId"
-    },
     "draft": {
       "type": "belongsTo",
       "model": "redbullDraft",

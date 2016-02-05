@@ -62,17 +62,20 @@
     "packCards": {
       "type": "hasMany",
       "model": "redbullPackCard",
-      "foreignKey": "redbullDraftId"
+      "foreignKey": "redbullDraftId",
+      "isChild": true
     },
     "packs": {
       "type": "hasMany",
       "model": "redbullPack",
-      "foreignKey": "redbullDraftId"
+      "foreignKey": "redbullDraftId",
+      "isChild": true
     },
     "decks": {
       "type": "hasMany",
       "model": "redbullDeck",
-      "foreignKey": "redbullDraftId"
+      "foreignKey": "redbullDraftId",
+      "isChild": true
     },
     "author": {
       "type": "belongsTo",
