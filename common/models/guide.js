@@ -22,7 +22,6 @@ module.exports = function(Guide) {
     
     
     Guide.topGuide = function (filters, cb) {
-        console.log('filters:', filters);
         var limit = 10;
         var iter = 1;
         var Vote = Guide.app.models.vote;
@@ -60,9 +59,7 @@ module.exports = function(Guide) {
             var sorted = _.sortBy(arr, 'score');
             var limited = sorted.slice((sorted.length-(limit*iter)), sorted.length-(limit*(iter-1)));
             var ids = limited = _.map(limited, function (val) { return val.id });
-            
-            console.log('ids:', ids);
-            
+                        
             queryGuides(ids, function (err, guides) {
                 if (err) 
                     return seriesCb(err);
@@ -185,9 +182,7 @@ module.exports = function(Guide) {
             function (filter, seriesCb) {
                 var order = {};
                 var arr = [];
-                
-                console.log('filter:', filter.where.guideId.inq);
-                
+                                
                 Vote.find(filter, function (err, votes) {
                     if (err)
                         return seriesCb(err);
