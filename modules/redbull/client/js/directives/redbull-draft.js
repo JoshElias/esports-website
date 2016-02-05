@@ -299,7 +299,7 @@ angular.module('redbull.directives')
                 });
                 
                 // enable spacebar
-                $(window).keydown(function(e) {
+                $(window).unbind('keydown').bind('keydown', function(e) {
                     // only spacebar
                     if ((e.keyCode || e.which) === 32) {
                         
