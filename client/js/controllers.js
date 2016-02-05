@@ -8072,11 +8072,11 @@ angular.module('app.controllers', ['ngCookies'])
 //                        console.log('series results: ', results);
                         $state.go('app.admin.users.list');
                         $scope.fetching = false;
-						AlertService.setSuccess({
-							persist: true,
-							show: false,
-							msg: user.username + ' created successfully'
-						});
+                        AlertService.setSuccess({
+                          persist: true,
+                          show: false,
+                          msg: user.username + ' created successfully'
+                        });
                     }
                 });
             };
