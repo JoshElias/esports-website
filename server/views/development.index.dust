@@ -79,6 +79,7 @@
     <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
     <script src="./vendor/angular-iscroll/dist/lib/angular-iscroll.js"></script>
     <script src="./vendor/angular-recaptcha/release/angular-recaptcha.min.js"></script>
+    <script src="./vendor/angular-svg-round-progressbar/build/roundProgress.js"></script>
 
     <!-- app -->
     <script src="./dist/js/services/lb-services.js"></script>
