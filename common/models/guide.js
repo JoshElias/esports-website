@@ -26,6 +26,7 @@ module.exports = function(Guide) {
         var iter = 1;
         var Vote = Guide.app.models.vote;
         var Hero = Guide.app.models.hero;
+        
         var queryGuides = function (ids, findCb) {
             Guide.find({
                 where: {
@@ -58,7 +59,7 @@ module.exports = function(Guide) {
             var sorted = _.sortBy(arr, 'score');
             var limited = sorted.slice((sorted.length-(limit*iter)), sorted.length-(limit*(iter-1)));
             var ids = limited = _.map(limited, function (val) { return val.id });
-
+                        
             queryGuides(ids, function (err, guides) {
                 if (err) 
                     return seriesCb(err);
@@ -181,7 +182,7 @@ module.exports = function(Guide) {
             function (filter, seriesCb) {
                 var order = {};
                 var arr = [];
-                
+                                
                 Vote.find(filter, function (err, votes) {
                     if (err)
                         return seriesCb(err);

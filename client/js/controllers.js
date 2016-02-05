@@ -390,10 +390,33 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', { 
+                                    username: currentUser.username, 
+                                    plan: plan 
+                                });
+                            });
+
+                        }
+                    });
+                    
                 } else {
                     LoginModalService.showModal('login', function () {
                         $scope.getPremium(plan);
@@ -5056,12 +5079,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.loadLatest = function () {
                 Snapshot.findOne({
                     filter: {
-                        limit: 1,
                         order: "createdDate DESC",
-                        fields: {
-                            votes: false,
-                            voteScore: false
-                        },
                         include: [
                             {
                                 relation: "authors",
@@ -8072,11 +8090,11 @@ angular.module('app.controllers', ['ngCookies'])
 //                        console.log('series results: ', results);
                         $state.go('app.admin.users.list');
                         $scope.fetching = false;
-						AlertService.setSuccess({
-							persist: true,
-							show: false,
-							msg: user.username + ' created successfully'
-						});
+                        AlertService.setSuccess({
+                          persist: true,
+                          show: false,
+                          msg: user.username + ' created successfully'
+                        });
                     }
                 });
             };
@@ -11211,9 +11229,16 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getArticles = function() {
                 updateArticles(1, paginationParams.artParams.perpage, $scope.search);
             }
+            
+            $scope.queryOnEmpty = function(search) {
+                if (_.isEmpty(search)) {
+                    $scope.getArticles();
+                }
+            };
 
             // pagination
             function updateArticles (page, perpage, search, callback) {
+                $scope.fetching = true;
                 
                 var pattern = '/.*'+search+'.*/i';
                 
@@ -11255,7 +11280,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 
                 AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
-                    
+                    $scope.fetching = false;
                     if (err) return console.log('paginate err: ', err);
                     $scope.articlePagination.page = page;
                     $scope.articlePagination.perpage = perpage;
@@ -11526,15 +11551,34 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', {
+                                    username: currentUser.username,
+                                    plan: plan
+                                });
+                            });
+                        }
+                    });
                 } else {
                     LoginModalService.showModal('login', function () {
-                        if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
-                            $scope.getPremium(plan);
-                        }
+                        $scope.getPremium(plan);
                     });
                 }
             }
@@ -11587,6 +11631,13 @@ angular.module('app.controllers', ['ngCookies'])
                 updateTempostormDecks(1, 4);
                 updateCommunityDecks(1, 12);
             }
+            
+            
+            $scope.queryOnEmpty = function(search) {
+                if (_.isEmpty(search)) {
+                    $scope.newSearch();
+                }
+            };
 
             function getQuery (featured, isPublic, page, perpage) {
                 var pattern = '/.*'+$scope.filters.search+'.*/i';
@@ -13436,13 +13487,17 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.hero.characters.splice(index, 1);
             };
 
-            $scope.updateDND = function (list, index) {
+            $scope.updateDND = function (list, index, item, key) {
                 list.splice(index, 1);
-
+                
                 for (var i = 0; i < list.length; i++) {
                     list[i].orderNum = i + 1;
                 }
             };
+            
+            $scope.afterDND = function (item, key) {
+                console.log(item, key);
+            }
 
             $scope.editHero = function () {
               var arrs = angular.copy(CrudMan.getArrs());
@@ -13452,9 +13507,27 @@ angular.module('app.controllers', ['ngCookies'])
               var talsToAdd  = tals.toWrite;
               var abils = arrs.abilities;
               var abilsToAdd = abils.toWrite;
+                
+                _.each(abils.exists, function (abil) {
+                    var b = _.find(hero.abilities, function (heroAbil) {
+                        return (abil.id == heroAbil.id);
+                    });
+                    
+                    if(b && b.orderNum !== abil.orderNum) {
+                        arrs.abilities.toWrite.push(b);
+                    }
+                });
 
-//              console.log(arrs);
-
+                _.each(tals.exists, function (tal) {
+                    var b = _.find(hero.talents, function (heroTal) {
+                        return (tal.id == heroTal.id);
+                    });
+                    
+                    if(b && b.orderNum !== tal.orderNum) {
+                        arrs.talents.toWrite.push(b);
+                    }
+                });
+                
               delete hero.abilities;
               delete hero.talents;
 
@@ -15421,8 +15494,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS', 'StateParamHelper', 'paginationParams',
-        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS, StateParamHelper, paginationParams) {
+    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS', 'StateParamHelper', 'paginationParams', 'Util',
+        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS, StateParamHelper, paginationParams, Util) {
 
             $scope.tempostormGuides = dataTempostormGuides;
 //            console.log('dataTempostormGuides:', dataTempostormGuides);
@@ -15431,7 +15504,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.communityGuides = dataCommunityGuides;
 //            console.log('dataCommunityGuides:', dataCommunityGuides);
 //            $scope.communityGuideTalents = communityTalents;
-
+            
             $scope.topGuides = dataTopGuide ? dataTopGuide : false;
 //            $scope.topGuidesTalents = topGuideTalents;
 
@@ -15670,6 +15743,9 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (data) {
+                        
+                        data.voteScore = Util.tally(data.votes, 'direction');
+                        
                         var dataArr = [];
                             dataArr.push(data)
                         
@@ -16210,10 +16286,33 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', { 
+                                    username: currentUser.username, 
+                                    plan: plan 
+                                });
+                            });
+
+                        }
+                    });
+                    
                 } else {
                     LoginModalService.showModal('login', function () {
                         $scope.getPremium(plan);

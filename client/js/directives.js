@@ -192,7 +192,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 ])
-.directive('signupForm', ['$state', 'User', 'LoginModalService', function ($state, User, LoginModalService) {
+.directive('signupForm', ['$state', '$window', 'User', 'LoginModalService', 'AlertService', function ($state, $window, User, LoginModalService, AlertService) {
     return {
       templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
       scope: true,
@@ -231,6 +231,7 @@ angular.module('app.directives', ['ui.load'])
 
       $scope.signup = function(email, username, password) {
         if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined ) {
+            
           User.create({
               email: email,
               username: username,
@@ -243,8 +244,13 @@ angular.module('app.directives', ['ui.load'])
                 $state.go('app.verify');
             }
           }, function(err) {
-            $scope.errors = err;
-            $scope.showError = true;
+              $window.scrollTo(0, 0);
+              AlertService.setError({
+                  show: true,
+                  msg: 'Unable to Create Account',
+                  lbErr: err
+              });
+              
           });
         }
       }

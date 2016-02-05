@@ -94,7 +94,7 @@
                 <li class="list-group-item admin-list-item lh-lg clearfix"
                     ng-repeat="ability in hero.abilities"
                     dnd-draggable="ability"
-                    dnd-moved="updateDND(hero.abilities, $index)"
+                    dnd-moved="updateDND(hero.abilities, $index, ability, 'abilities')"
                     dnd-disable-if="hero.abilities.length < 2"
                     dnd-type="'ability'"
                 >
@@ -120,7 +120,8 @@
                 <li class="list-group-item admin-list-item lh-lg clearfix"
                     ng-repeat="talent in hero.talents"
                     dnd-draggable="talent"
-                    dnd-moved="updateDND(hero.talents, $index)"
+                    dnd-moved="updateDND(hero.talents, $index, talent, 'talents')"
+                    dnd-dragend="afterDND(talent, 'talents')"
                     dnd-disable-if="hero.talents.length < 2"
                     dnd-type="'talent'"
                 >

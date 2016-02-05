@@ -26,8 +26,8 @@ module.exports = function(User) {
     invalidCatpchaTokenErr.statusCode = 400;
     invalidCatpchaTokenErr.code = 'INVALID_CAPTCHA_TOKEN';
 
-    
 
+    
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
         ctx.req.logIn(ctx.result.toJSON().user, function (err) {
             next(err);
@@ -138,6 +138,8 @@ module.exports = function(User) {
             finalCallback);
         }
 
+        
+        
         /**
          * Confirm the user's identity.
          *

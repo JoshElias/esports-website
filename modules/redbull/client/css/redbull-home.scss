@@ -92,6 +92,8 @@ $font-grey: #c7c9c8;
         user-select: none;
         border: 1px solid $rb-white;
         border-radius: 0px;
+        min-width: 265px;
+        transition: all 0.3s ease 0s;
         
         &.override {
             font-size: 16px;
