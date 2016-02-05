@@ -1,3 +1,11 @@
+<!-- preloader -->
+<div class="preloader" ng-if="isLoading === true"><i class="fa fa-refresh fa-spin"></i>
+  <div class="container loadingBar">
+    <div ng-style="{'width': percentLoaded, 'background-color': 'rgba(39, 102, 173, 0.6)', 'height' : '100%'}"></div>
+  </div>
+</div>
+<!-- / preloader -->
+
 <div class="draft container-fluid"
      redbull-draft
      packs="packs"

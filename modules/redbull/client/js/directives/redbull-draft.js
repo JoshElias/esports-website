@@ -98,16 +98,22 @@ angular.module('redbull.directives')
                     return (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length);
                 }
 
+
+
+
                 // play audio clip
                 scope.playAudio = function ( audioName ) {
+                  if(scope.isLoading){
+                    return false;
+                  }
+                  var audio = new Audio();
+                  audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
+                  audio.load();
                     if (scope.volume === 0 || scope.muted) { return false; }
-                    var audio = new Audio();
-                    audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
-                    audio.load();
                     audio.volume = scope.audioFiles[audioName].volume * (scope.volume / 100);
                     audio.playbackRate = (!fastForward) ? 1 : 2;
                     audio.play();
-                }
+                };
 
                 // go to next event
                 function nextEvent() {

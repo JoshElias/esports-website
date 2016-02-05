@@ -53,6 +53,7 @@ angular.module('redbull.services')
             },
             // I determine if the preloader has successfully loaded all of the files.
             isResolved: function isResolved() {
+              console.log("internal isResolved");
                 return( this.state === this.states.RESOLVED );
             },
             // I initiate the preload of the files. Returns a promise.
@@ -62,7 +63,6 @@ angular.module('redbull.services')
                     return( this.promise );
                 }
                 this.state = this.states.LOADING;
-              console.log(this.fileLocations);
                 for ( var i = 0 ; i < this.fileCount ; i++ ) {
                     this.loadFileLocation( this.fileLocations[ i ] );
                 }
@@ -98,7 +98,9 @@ angular.module('redbull.services')
                 });
                 // If all of the files have loaded, we can resolve the deferred
                 // value that we returned to the calling context.
+              console.log(this.fileCount - this.loadCount);
                 if ( this.loadCount >= (this.fileCount) ) {
+                  console.log("loadcount >= filecount");
                     this.state = this.states.RESOLVED;
                     this.deferred.resolve( this.fileLocations );
                 }
@@ -131,8 +133,10 @@ angular.module('redbull.services')
                 function fileLoaded ( event ) {
                     // Since the load event is asynchronous, we have to
                     // tell AngularJS that something changed.
+                  console.log("pre-apply");
                     $rootScope.$apply(
                         function() {
+                          console.log("internal file loading", event.target.src);
                             preloader.handleFileLoad( event.target.src );
                             // Clean up object reference to help with the
                             // garbage collection in the closure.
