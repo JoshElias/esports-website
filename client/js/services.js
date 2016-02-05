@@ -2758,11 +2758,10 @@ angular.module('app.services', [])
                     var filter = {}
                 }
                
-                
                 Guide.topGuide(filter)
                 .$promise
                 .then(function (data) {
-                    console.log(data);
+//                    console.log(data);
                     return finalCallback(undefined, data);
                 })
                 .catch(function (err) {
@@ -3666,7 +3665,7 @@ angular.module('app.services', [])
                         this.createArr(arrName);
                     }
 
-                    _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
+                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
                 }
 
                 function removeFromArr (item, arrName, crud) {
