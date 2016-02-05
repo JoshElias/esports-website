@@ -15,15 +15,7 @@ module.exports = function(RedbullDraft) {
     function filterOfficialDrafts(ctx, deckInstance, finalCb) {
         var User = RedbullDraft.app.models.user;
 
-        // Is the user logged in?
-        var loopbackContext = loopback.getCurrentContext();
-        if(!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
-            var noContextErr = new Error("Server could not find http context. Contact system admin.");
-            noContextErr.statusCode = 500;
-            noContextErr.code = 'NO_HTTP_CONTEXT';
-            return finalCb(noContextErr);
-        }
-        var req = loopbackContext.active.http.req;
+        var req = ctx.req;
 
         // Do we have a user Id
         if (!req.accessToken || !req.accessToken.userId) {
@@ -64,7 +56,6 @@ module.exports = function(RedbullDraft) {
                             ["$owner"],
                             {modelClass: "redbullDeck", modelId: result.id},
                             function (err, isInRoles) {
-                                console.log("isInRoles inside result", isInRoles);
                                 if(err) return resultCb(err);
                                 if(!isInRoles.none) {
                                     answer.push(result);
@@ -89,7 +80,6 @@ module.exports = function(RedbullDraft) {
                         ["$owner"],
                         {modelClass: "redbullDeck", modelId: ctx.result.id},
                         function (err, isInRoles) {
-                            console.log("isInRoles inside result", isInRoles);
                             if(err) return finalCb(err);
                             if(isInRoles.none) {
                                 var noDeckErr = new Error('unable to find deck');

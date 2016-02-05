@@ -14,6 +14,7 @@ var NUM_OF_CARDS_PER_DECK = 2;
 module.exports = function(RedbullDeck) {
 
 
+
     // HIDING OFFICIAL
 
     RedbullDeck.afterRemote("**", function (ctx, redbullDeck, next) {
@@ -23,15 +24,7 @@ module.exports = function(RedbullDeck) {
     function filterOfficialDecks(ctx, deckInstance, finalCb) {
         var User = RedbullDeck.app.models.user;
 
-        // Is the user logged in?
-        var loopbackContext = loopback.getCurrentContext();
-        if(!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
-            var noContextErr = new Error("Server could not find http context. Contact system admin.");
-            noContextErr.statusCode = 500;
-            noContextErr.code = 'NO_HTTP_CONTEXT';
-            return finalCb(noContextErr);
-        }
-        var req = loopbackContext.active.http.req;
+        var req = ctx.req;
 
         // Do we have a user Id
         if (!req.accessToken || !req.accessToken.userId) {
