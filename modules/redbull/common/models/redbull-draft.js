@@ -6,6 +6,108 @@ var utils = require("./../../../../lib/utils");
 module.exports = function(RedbullDraft) {
 
 
+    // HIDING OFFICIAL
+
+    RedbullDraft.afterRemote("**", function (ctx, redbullDraft, next) {
+        return filterOfficialDrafts(ctx, redbullDraft, next);
+    });
+
+    function filterOfficialDrafts(ctx, deckInstance, finalCb) {
+        var User = RedbullDraft.app.models.user;
+
+        // Is the user logged in?
+        var loopbackContext = loopback.getCurrentContext();
+        if(!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
+            var noContextErr = new Error("Server could not find http context. Contact system admin.");
+            noContextErr.statusCode = 500;
+            noContextErr.code = 'NO_HTTP_CONTEXT';
+            return finalCb(noContextErr);
+        }
+        var req = loopbackContext.active.http.req;
+
+        // Do we have a user Id
+        if (!req.accessToken || !req.accessToken.userId) {
+            return applyFilter();
+        }
+        var userId = req.accessToken.userId.toString();
+
+        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], function (err, isInRoles) {
+            if(err) return finalCb(err);
+            if(isInRoles.none) return applyFilter();
+
+            return finalCb();
+        });
+
+        function applyFilter() {
+
+            // Sets the context's result and finished the filter function
+            function done(err, answer) {
+                if(err) return finalCb(err);
+
+                ctx.result = answer;
+                return finalCb();
+            }
+
+            if (ctx.result) {
+
+                // handle arrays of results
+                if (Array.isArray(deckInstance)) {
+                    var answer = [];
+                    async.eachSeries(ctx.result, function(result, resultCb) {
+
+                        if(!result.isOfficial) {
+                            answer.push(result);
+                            return resultCb();
+                        }
+
+                        return User.isInRoles(userId,
+                            ["$owner"],
+                            {modelClass: "redbullDeck", modelId: result.id},
+                            function (err, isInRoles) {
+                                console.log("isInRoles inside result", isInRoles);
+                                if(err) return resultCb(err);
+                                if(!isInRoles.none) {
+                                    answer.push(result);
+                                }
+                                return resultCb();
+                            }
+                        );
+                    }, function(err) {
+                        return done(err, answer);
+                    });
+
+                    // Handle single result
+                } else {
+                    var answer = {};
+
+                    if(!ctx.result.isOfficial) {
+                        answer = ctx.result;
+                        return done(undefined, answer);
+                    }
+
+                    return User.isInRoles(userId,
+                        ["$owner"],
+                        {modelClass: "redbullDeck", modelId: ctx.result.id},
+                        function (err, isInRoles) {
+                            console.log("isInRoles inside result", isInRoles);
+                            if(err) return finalCb(err);
+                            if(isInRoles.none) {
+                                var noDeckErr = new Error('unable to find deck');
+                                noDeckErr.statusCode = 404;
+                                noDeckErr.code = 'DECK_NOT_FOUND';
+                                return done(noDeckErr)
+                            }
+
+                            answer = ctx.result;
+
+                            return done(undefined, answer);
+                        }
+                    );
+                }
+            }
+        }
+    }
+
 
     // START DRAFT
 
