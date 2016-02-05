@@ -14,6 +14,104 @@ var NUM_OF_CARDS_PER_DECK = 2;
 module.exports = function(RedbullDeck) {
 
 
+    // HIDING OFFICIAL
+
+    RedbullDeck.afterRemote("**", function (ctx, redbullDeck, next) {
+        return filterOfficialDecks(ctx, redbullDeck, next);
+    });
+
+    function filterOfficialDecks(ctx, deckInstance, finalCb) {
+        var User = RedbullDeck.app.models.user;
+
+        // Is the user logged in?
+        var loopbackContext = loopback.getCurrentContext();
+        if(!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
+            var noContextErr = new Error("Server could not find http context. Contact system admin.");
+            noContextErr.statusCode = 500;
+            noContextErr.code = 'NO_HTTP_CONTEXT';
+            return finalCb(noContextErr);
+        }
+        var req = loopbackContext.active.http.req;
+
+        // Do we have a user Id
+        if (!req.accessToken || !req.accessToken.userId) {
+            return applyFilter();
+        }
+        var userId = req.accessToken.userId.toString();
+
+        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], function (err, isInRoles) {
+            if(err) return finalCb(err);
+            if(isInRoles.none) return applyFilter();
+
+            return finalCb();
+        });
+
+        function applyFilter() {
+
+            // Sets the context's result and finished the filter function
+            function done(err, answer) {
+                if(err) return finalCb(err);
+
+                ctx.result = answer;
+                return finalCb();
+            }
+
+            if (ctx.result) {
+
+                // handle arrays of results
+                if (Array.isArray(deckInstance)) {
+                    var answer = [];
+                    async.eachSeries(ctx.result, function(result, resultCb) {
+
+                        if(!result.isOfficial) {
+                            answer.push(result);
+                            return resultCb();
+                        }
+
+                        return User.isInRoles(userId,
+                            ["$owner"],
+                            {modelClass: "redbullDeck", modelId: result.id},
+                            function (err, isInRoles) {
+                                console.log("isInRoles inside result", isInRoles);
+                                if(err) return resultCb(err);
+                                if(!isInRoles.none) {
+                                    answer.push(result);
+                                }
+                                return resultCb();
+                            }
+                        );
+                    }, function(err) {
+                        return done(err, answer);
+                    });
+
+                // Handle single result
+                } else {
+                    var answer = {};
+
+                    if(!ctx.result.isOfficial) {
+                        answer = ctx.result;
+                        return done(undefined, answer);
+                    }
+
+                    return User.isInRoles(userId,
+                        ["$owner"],
+                        {modelClass: "redbullDeck", modelId: result.id},
+                        function (err, isInRoles) {
+                            console.log("isInRoles inside result", isInRoles);
+                            if(err) return finalCb(err);
+                            if(!isInRoles.none) {
+                                answer = ctx.result;
+                            }
+
+                            return done(undefined, answer);
+                        }
+                    );
+                }
+            }
+        }
+    }
+
+
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {
 
@@ -99,7 +197,7 @@ module.exports = function(RedbullDeck) {
 
             // Get loopback context for request obj
             var loopbackContext = loopback.getCurrentContext();
-            if (!loopbackContext || !loopbackContext.active) {
+            if (!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
                 return finalCb();
             }
             var req = loopbackContext.active.http.req;
