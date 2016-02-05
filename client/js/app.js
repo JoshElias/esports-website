@@ -54,11 +54,11 @@ var app = angular.module('app', [
                 if (toState.access && toState.access.admin && User.isAuthenticated()) {
                     User.isInRoles({
                         uid: LoopBackAuth.currentUserId,
-                        roleNames: ['$admin']
+                        roleNames: ['$admin', '$redbullAdmin']
                     })
                     .$promise
                     .then(function (data) {
-                        if (data.isInRoles.$admin !== true) {
+                        if (data.isInRoles.$admin !== true && data.isInRoles.$redbullAdmin !== true) {
                             event.preventDefault();
                             $state.transitionTo('app.home');
                         }
@@ -438,23 +438,23 @@ var app = angular.module('app', [
                         resolve: {
                             paginationParams: ['$stateParams', 'StateParamHelper', '$q', function($stateParams,  StateParamHelper, $q) {
                                 var articleFilters = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
-                                
+
                                 // if only 1 filter, parse into array
                                 if (angular.isString($stateParams.f)) {
                                     var tmp = $stateParams.f;
                                     $stateParams.f = [];
                                     $stateParams.f.push(tmp);
                                 }
-                                
+
                                 // validate filters
                                 StateParamHelper.validateFilters($stateParams.f, articleFilters);
-                                
+
                                 StateParamHelper.validatePage($stateParams.p);
                                 var pattern = '/.*'+$stateParams.s+'.*/i',
                                 artWhere = {
                                     isActive: true
                                 };
-                                
+
                                 if (!_.isEmpty($stateParams.s)) {
                                     artWhere.or = [
                                         { title: { regexp: pattern } },
@@ -462,13 +462,13 @@ var app = angular.module('app', [
                                         { content: { regexp: pattern } }
                                     ];
                                 }
-                                
+
                                 if ($stateParams.f) {
                                     artWhere.articleType = {
                                         inq: $stateParams.f
                                     }
                                 }
-                                
+
                                 return {
                                     artParams: {
                                         page: parseInt($stateParams.p) || 1,
@@ -497,7 +497,7 @@ var app = angular.module('app', [
                                 };
                             }],
                             articles: ['paginationParams', 'Article', function (paginationParams, Article) {
-                                
+
                                 return Article.find({
                                     filter: {
                                         where: paginationParams.artParams.where,
@@ -521,7 +521,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (artCount) {
                                     StateParamHelper.validatePage(paginationParams.artParams.page, artCount.count, paginationParams.artParams.perpage);
-                                    
+
                                     paginationParams.artParams.total = artCount.count;
                                     return artCount.count;
                                 });
@@ -592,7 +592,7 @@ var app = angular.module('app', [
                                                 }
                                             },
                                             {
-                                                relation: 'votes', 
+                                                relation: 'votes',
                                                 scope: {
                                                     fields: {
                                                         id: true,
@@ -672,14 +672,14 @@ var app = angular.module('app', [
                         resolve: {
                             filterParams: ['$stateParams', 'StateParamHelper', 'Hearthstone', function($stateParams, StateParamHelper, Hearthstone) {
                                 var classFilters = angular.copy(Hearthstone.classes).splice(1, 9);
-                                
+
                                 // if only 1 filter, parse into array
                                 if (angular.isString($stateParams.k) && $stateParams.k.length) {
                                     var tmp = $stateParams.k;
                                     $stateParams.k = [];
                                     $stateParams.k.push(tmp);
-                                } 
-                                
+                                }
+
                                 var artWhere = {
                                   isActive: true,
                                   articleType: ['hs']
@@ -691,20 +691,20 @@ var app = angular.module('app', [
                                   isPublic: true,
                                   isFeatured: false
                                 };
-                                
+
                                 // validate klass filters
                                 StateParamHelper.validateFilters($stateParams.k, classFilters);
-                                
+
                                 if (!_.isEmpty($stateParams.k)) {
-                                    
+
                                     artWhere.classTags = {
                                         inq: $stateParams.k
                                     };
-                                    
+
                                     tsDeckWhere.playerClass = {
                                         inq: $stateParams.k
                                     };
-                                    
+
                                     comDeckWhere.playerClass = {
                                         inq: $stateParams.k
                                     };
@@ -832,20 +832,20 @@ var app = angular.module('app', [
                         resolve: {
                             paginationParams: ['$stateParams', 'Hearthstone', 'StateParamHelper', function($stateParams, Hearthstone, StateParamHelper) {
                                 var classFilters = angular.copy(Hearthstone.classes).splice(1, 9);
-                                
+
                                 // if only 1 filter, parse into array
                                 if (angular.isString($stateParams.k)) {
                                     var tmp = $stateParams.k;
                                     $stateParams.k = [];
                                     $stateParams.k.push(tmp);
                                 }
-                                
+
                                 // validate filters
                                 StateParamHelper.validateFilters($stateParams.k, classFilters);
-                                
+
                                 StateParamHelper.validatePage($stateParams.tsp);
                                 StateParamHelper.validatePage($stateParams.comp);
-                                
+
                                 var pattern = '/.*'+$stateParams.s+'.*/i',
                                 tsWhere = {
                                     isFeatured: true
@@ -854,31 +854,31 @@ var app = angular.module('app', [
                                     isFeatured: false,
                                     isPublic: true
                                 };
-                                
+
                                 if (!_.isEmpty($stateParams.s)) {
                                     tsWhere.or = [
                                         { name: { regexp: pattern } },
                                         { description: { regexp: pattern } },
                                         { deckType: { regexp: pattern } }
                                     ];
-                                    
+
                                     comWhere.or = [
                                         { name: { regexp: pattern } },
                                         { description: { regexp: pattern } },
                                         { deckType: { regexp: pattern } }
                                     ];
                                 }
-                                
+
                                 if ($stateParams.k) {
                                     tsWhere.playerClass = {
                                         inq: $stateParams.k
                                     }
-                                    
+
                                     comWhere.playerClass = {
                                         inq: $stateParams.k
                                     }
                                 }
-                                
+
                                 return {
                                     tsParams: {
                                         page: parseInt($stateParams.tsp) || 1,
@@ -972,7 +972,7 @@ var app = angular.module('app', [
                                     _.each(data, function (deck) {
                                         deck.voteScore = Util.tally(deck.votes, 'direction');
                                     });
-                                    
+
                                     return data;
                                 });
 
@@ -983,11 +983,11 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (tsCount) {
-                                    
+
                                     StateParamHelper.validatePage(paginationParams.tsParams.page, tsCount.count, paginationParams.tsParams.perpage);
-                                    
+
                                     paginationParams.tsParams.total = tsCount.count;
-                                    
+
                                     return tsCount.count;
                                 });
 
@@ -1008,7 +1008,7 @@ var app = angular.module('app', [
                                     _.each(data, function (deck) {
                                         deck.voteScore = Util.tally(deck.votes, 'direction');
                                     });
-                                    
+
                                     return data;
                                 });
                             }],
@@ -1018,9 +1018,9 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (comCount) {
-                                    
+
                                     StateParamHelper.validatePage(paginationParams.comParams.page, comCount.count, paginationParams.comParams.perpage)
-                                    
+
                                     paginationParams.comParams.total = comCount.count;
                                     return comCount.count;
                                 });
@@ -1703,21 +1703,21 @@ var app = angular.module('app', [
                                 if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
                                     $stateParams.r = new Array($stateParams.r);
                                 }
-                                
+
                                 if (angular.isString($stateParams.u) && !_.isEmpty($stateParams.u)) {
                                     $stateParams.u = new Array($stateParams.u);
                                 }
-                                
+
                                 if (angular.isString($stateParams.h) && !_.isEmpty($stateParams.h)) {
                                     $stateParams.h = new Array($stateParams.h);
                                 }
-                                
+
                                 // normalizing all params to arrays incase we want to allow people to select multiple
                                 // maps/heroes down the road
                                 if (angular.isString($stateParams.m) && !_.isEmpty($stateParams.m)) {
                                     $stateParams.m = new Array($stateParams.m);
                                 }
-                                
+
                                 var filters = {
                                     roles: $stateParams.r ? $stateParams.r : [],
                                     universes: $stateParams.u ? $stateParams.u : [],
@@ -1725,21 +1725,21 @@ var app = angular.module('app', [
                                     heroes: $stateParams.h ? $stateParams.h : [],
                                     map: $stateParams.m || undefined
                                 };
-                                
+
                                 var possibleRoles = HOTS.roles;
                                 var possibleUniverses = HOTS.universes;
                                 var possibleHeroes;
                                 var possibleMaps;
-                                
+
                                 if (!_.isEmpty(filters.roles)) {
                                     StateParamHelper.validateFilters(filters.roles, possibleRoles);
                                 }
                                 if (!_.isEmpty(filters.universes)) {
                                     StateParamHelper.validateFilters(filters.universes, possibleUniverses);
                                 }
-                                
+
                                 var d = $q.defer();
-                                
+
                                 async.waterfall([
                                     function (waterCB) {
                                         if (!_.isEmpty(filters.heroes)) {
@@ -1798,11 +1798,11 @@ var app = angular.module('app', [
                                             })
                                             .$promise
                                             .then(function (maps) {
-                                                
+
                                                 possibleMaps = _.map(maps, function(currentMap) {
                                                     return currentMap.name;
                                                 });
-                                                
+
                                                 StateParamHelper.validateFilters(filters.map, possibleMaps);
                                                 return waterCB();
                                             })
@@ -1839,12 +1839,12 @@ var app = angular.module('app', [
                                     if (err) return d.reject(err);
                                     d.resolve(filters);
                                 });
-                                
+
                                 return d.promise;
-                                
+
                             }],
                             dataArticles: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
-                                
+
                                 var d = $q.defer();
                                 // querying articles with empty obj due to promise not resolving
                                 // if filterParams contains any roles/universes
@@ -1874,13 +1874,13 @@ var app = angular.module('app', [
                                         d.resolve(articles);
                                     });
                                 }
-                                
+
                                 return d.promise;
-                                
+
                             }],
                             dataGuidesCommunity: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
                                 var d = $q.defer();
-                                
+
                                 if (!_.isEmpty(filterParams.heroes) && filterParams.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(filterParams, false, 10, 1, function(err, guides) {
                                         if (err) return d.reject(err);
@@ -1907,7 +1907,7 @@ var app = angular.module('app', [
                                         d.resolve(guides);
                                     });
                                 }
-                                
+
                                 return d.promise;
                             }],
                             dataGuidesFeatured: ['filterParams', '$q', 'HOTSGuideQueryService', function (filterParams, $q, HOTSGuideQueryService) {
@@ -1939,7 +1939,7 @@ var app = angular.module('app', [
                                         d.resolve(guides);
                                     });
                                 }
-                                
+
                                 return d.promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
@@ -2006,19 +2006,19 @@ var app = angular.module('app', [
                                 if (angular.isString($stateParams.r) && !_.isEmpty($stateParams.r)) {
                                     $stateParams.r = new Array($stateParams.r);
                                 }
-                                
+
                                 if (angular.isString($stateParams.u) && !_.isEmpty($stateParams.u)) {
                                     $stateParams.u = new Array($stateParams.u);
                                 }
-                                
+
                                 if (angular.isString($stateParams.h) && !_.isEmpty($stateParams.h)) {
                                     $stateParams.h = new Array($stateParams.h);
                                 }
-                                
+
                                 if (angular.isString($stateParams.m) && !_.isEmpty($stateParams.m)) {
                                     $stateParams.m = new Array($stateParams.m);
                                 }
-                                
+
                                 var filters = {
                                     roles: $stateParams.r ? $stateParams.r : [],
                                     universes: $stateParams.u ? $stateParams.u : [],
@@ -2026,19 +2026,19 @@ var app = angular.module('app', [
                                     heroes: $stateParams.h ? $stateParams.h : [],
                                     map: $stateParams.m || undefined
                                 };
-                                
+
                                 var possibleRoles = HOTS.roles;
                                 var possibleUniverses = HOTS.universes;
                                 var possibleHeroes;
                                 var possibleMaps;
-                                
+
                                 StateParamHelper.validateFilters(filters.roles, possibleRoles);
                                 StateParamHelper.validateFilters(filters.universes, possibleUniverses);
-                                
+
                                 StateParamHelper.validatePage($stateParams.tsp); StateParamHelper.validatePage($stateParams.comp);
-                                
+
                                 var d = $q.defer();
-                                
+
                                 async.waterfall([
                                     function (waterCB) {
                                         if (!_.isEmpty(filters.heroes)) {
@@ -2143,11 +2143,11 @@ var app = angular.module('app', [
                                     if (err) return console.log('pagination query err: ', err);
                                     d.resolve(filters);
                                 });
-                                
+
                                 return d.promise;
                             }],
                             paginationParams: ['$stateParams', 'paginationFilters', 'Map', function($stateParams, paginationFilters, Map) {
-                                
+
                                 var tsWhere = {
                                     isFeatured: true
                                 },
@@ -2155,7 +2155,7 @@ var app = angular.module('app', [
                                     isFeatured: false,
                                     isPublic: true
                                 };
-                                
+
                                 return {
                                     guideFilters: paginationFilters,
                                     tsParams: {
@@ -2165,13 +2165,13 @@ var app = angular.module('app', [
                                         where: tsWhere,
                                         order: 'createdDate DESC',
                                         fields: [
-                                            "name", 
-                                            "authorId", 
-                                            "slug", 
-                                            "voteScore", 
-                                            "guideType", 
-                                            "premium", 
-                                            "id", 
+                                            "name",
+                                            "authorId",
+                                            "slug",
+                                            "voteScore",
+                                            "guideType",
+                                            "premium",
+                                            "id",
                                             "talentTiers",
                                             "createdDate"
                                         ],
@@ -2219,13 +2219,13 @@ var app = angular.module('app', [
                                         perpage: 10,
                                         order: 'createdDate DESC',
                                         fields: [
-                                            "name", 
-                                            "authorId", 
-                                            "slug", 
-                                            "voteScore", 
-                                            "guideType", 
-                                            "premium", 
-                                            "id", 
+                                            "name",
+                                            "authorId",
+                                            "slug",
+                                            "voteScore",
+                                            "guideType",
+                                            "premium",
+                                            "id",
                                             "talentTiers",
                                             "createdDate"
                                         ],
@@ -2275,9 +2275,9 @@ var app = angular.module('app', [
                                 };
                             }],
                             dataCommunityGuides: ['paginationParams', 'HOTSGuideQueryService', '$q', 'Guide', function (paginationParams, HOTSGuideQueryService, $q, Guide) {
-                                
+
                                 var d = $q.defer();
-                                
+
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
@@ -2285,7 +2285,7 @@ var app = angular.module('app', [
                                         }
                                         d.resolve(data);
                                     });
-                                    
+
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
@@ -2293,7 +2293,7 @@ var app = angular.module('app', [
                                         }
                                         d.resolve(data);
                                       });
-                                      
+
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
                                           if (err) {
@@ -2301,9 +2301,9 @@ var app = angular.module('app', [
                                           }
                                           d.resolve(data);
                                       });
-//                                    
+//
                                   } else {
-                                      
+
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                           if (err) {
                                              return d.reject(err);
@@ -2311,7 +2311,7 @@ var app = angular.module('app', [
                                           d.resolve(data);
                                       });
                                   }
-                                
+
                                 return d.promise;
                             }],
                             dataTopGuide: ['$stateParams', 'Guide', 'Util', '$q', 'paginationParams', function ($stateParams, Guide, Util, $q, paginationParams) {
@@ -2423,104 +2423,72 @@ var app = angular.module('app', [
                                     }
                                 ], function (err, guide) {
                                     if (err) return console.log(err);
-//                                    console.log('guide:', guide);
                                     d.resolve(guide);
                                 });
-                                
+
                                 return d.promise;
-                                
+
                             }],
                             communityGuideCount: ['paginationParams', 'HOTSGuideQueryService', '$q', 'StateParamHelper', 'Guide', function(paginationParams, HOTSGuideQueryService, $q, StateParamHelper, Guide) {
-                                
+
                                 var d = $q.defer();
-                                
+
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
-                                    
+
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
                                             return d.reject(err);
                                         }
                                         paginationParams.comParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
-                                        
+
                                         d.resolve(count);
                                     });
-                                    
+
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
-                                      
+
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, false, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                         if (err) {
                                             return d.reject(err);
                                         }
                                         paginationParams.comParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
-                                          
+
                                         d.resolve(count);
                                       });
-                                      
+
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
-                                      
+
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, false, paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function (err, data, count) {
                                           if (err) {
                                               return d.reject(err);
                                           }
-                                          
+
                                           paginationParams.comParams.total = count.count;
                                           StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
-                                          
+
                                           d.resolve(count);
                                       });
-//                                    
+//
                                   } else {
-                                      
+
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false,  paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                           if (err) {
                                               return d.reject(err);
                                           }
                                           paginationParams.comParams.total = count.count;
                                           StateParamHelper.validatePage(paginationParams.comParams.page, paginationParams.comParams.total, paginationParams.comParams.perpage);
-                                          
+
                                           d.resolve(count);
                                       });
                                   }
-                                
+
                                 return d.promise;
                             }],
-//                            dataTopGuide: ['$stateParams', '$q', 'HOTSGuideQueryService', 'paginationParams', function ($stateParams, $q, HOTSGuideQueryService, paginationParams) {
-//                                console.log('running');
-//                              var d = $q.defer();
-//                                
-//                                if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
-//                                    HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
-//                                        if (err) {
-//                                            return d.reject(err);
-//                                        }
-//                                        d.resolve(data);
-//                                    });
-//                                    
-//                                  } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
-//                                      HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, null, 1, 1, function(err, data, count) {
-//                                        if (err) {
-//                                            return d.reject(err);
-//                                        }
-//                                        d.resolve(data);
-//                                      });
-//                                      
-//                                  } else {
-//                                      HOTSGuideQueryService.getGuides(paginationParams.guideFilters, null, paginationParams.guideFilters.search, 1, 1, function(err, data, count) {
-//                                          if (err) {
-//                                              return d.reject(err);
-//                                          }
-//                                          d.resolve(data);
-//                                      });
-//                                  }
-//                                
-//                                return d.promise;
-//                            }],
                             dataTempostormGuides: ['paginationParams', '$q', 'HOTSGuideQueryService', 'Guide', function (paginationParams, $q, HOTSGuideQueryService, Guide) {
-                                
+
                                 var d = $q.defer();
-                                
+
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
@@ -2528,25 +2496,25 @@ var app = angular.module('app', [
                                         }
                                         d.resolve(data);
                                     });
-                                    
+
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
-                                      
+
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
                                             return d.reject(err);
                                         }
                                         d.resolve(data);
                                       });
-                                      
+
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
-                                      
+
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function (err, data, count) {
                                           if (err) {
                                               return d.reject(err);
                                           }
                                           d.resolve(data);
                                       });
-//                                    
+//
                                   } else {
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                           if (err) {
@@ -2555,13 +2523,13 @@ var app = angular.module('app', [
                                           d.resolve(data);
                                       });
                                   }
-                                
+
                                 return d.promise;
                             }],
                             tempostormGuideCount: ['paginationParams', '$q', 'HOTSGuideQueryService', 'StateParamHelper', 'Guide', function(paginationParams, $q, HOTSGuideQueryService, StateParamHelper, Guide) {
-                                
+
                                 var d = $q.defer();
-                                
+
                                 if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map != undefined) {
                                     HOTSGuideQueryService.getHeroMapGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
@@ -2569,10 +2537,10 @@ var app = angular.module('app', [
                                         }
                                         paginationParams.tsParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
-                                        
+
                                         d.resolve(count);
                                     });
-                                    
+
                                   } else if (!_.isEmpty(paginationParams.guideFilters.heroes) && paginationParams.guideFilters.map == undefined) {
                                       HOTSGuideQueryService.getHeroGuides(paginationParams.guideFilters, true, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
@@ -2580,38 +2548,38 @@ var app = angular.module('app', [
                                         }
                                         paginationParams.tsParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
-                                          
+
                                         d.resolve(count);
                                       });
-                                      
+
                                   } else if (_.isEmpty(paginationParams.guideFilters.hero) && paginationParams.guideFilters.map != undefined) {
-                                      
+
                                       HOTSGuideQueryService.getMapGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
                                             return d.reject(err);
                                         }
                                         paginationParams.tsParams.total = count.count;
                                         StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
-                                          
+
                                         d.resolve(count);
                                       });
-                                      
+
                                   } else {
-                                      
+
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, true, paginationParams.guideFilters.search, paginationParams.tsParams.perpage, paginationParams.tsParams.page, function(err, data, count) {
                                         if (err) {
                                             return d.reject(err);
                                         }
-                                          
+
                                         paginationParams.tsParams.total = count.count;
-                                          
+
                                         StateParamHelper.validatePage(paginationParams.tsParams.page, paginationParams.tsParams.total, paginationParams.tsParams.perpage);
-                                          
+
                                         d.resolve(count);
                                       });
-                                      
+
                                   }
-                                
+
                                 return d.promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
@@ -4396,9 +4364,9 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (artCount) {
                                     StateParamHelper.validatePage(paginationParams.page, artCount.count, paginationParams.perpage);
-                                    
+
                                     paginationParams.total = artCount.count;
-                                    
+
                                     return artCount.count;
                                 });
                             }],
@@ -4428,7 +4396,7 @@ var app = angular.module('app', [
                                         }
                                     }
                                 }
-                                
+
                                 return User.find(options)
                                 .$promise
                                 .then(function (data) {
@@ -4596,7 +4564,7 @@ var app = angular.module('app', [
                                 return Deck.count({}).$promise
                                 .then(function (deckCount) {
                                     paginationParams.total = deckCount.count;
-                                    
+
                                     return deckCount.count;
                                 });
                             }],
@@ -6303,9 +6271,9 @@ var app = angular.module('app', [
                                 return Snapshot.count({}).$promise
                                 .then(function (hsSnapshotCount) {
                                     StateParamHelper.validatePage(paginationParams.page, hsSnapshotCount.count, paginationParams.perpage);
-                                    
+
                                     paginationParams.total = hsSnapshotCount.count;
-                                    
+
                                     return hsSnapshotCount.count;
                                 });
                             }],
@@ -6599,7 +6567,7 @@ var app = angular.module('app', [
 
                                         teamMemberObj[teamMember.game].push(teamMember);
                                     }
-                                    
+
                                     console.log('teamMemberObj:', teamMemberObj);
 
                                     return teamMemberObj;

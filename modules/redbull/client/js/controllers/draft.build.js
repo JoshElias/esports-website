@@ -1,6 +1,6 @@
 angular.module('redbull.controllers')
-.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'RedbullDraft', 'draftSettings', 'draftCards', 'draftBuildStart', 
-    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, RedbullDraft, draftSettings, draftCards, draftBuildStart) {
+.controller('DraftBuildCtrl', ['$scope', '$compile', '$filter', '$state', '$localStorage', 'Hearthstone', 'DeckBuilder', 'bootbox', 'AlertService', 'Pagination', 'RedbullDraft', 'draftSettings', 'draftCards', 'draftDecks', 'draftBuildStart', 
+    function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, RedbullDraft, draftSettings, draftCards, draftDecks, draftBuildStart) {
         var draft = draftBuildStart.draft;
         
         $scope.draftId = draft.id;
@@ -41,7 +41,8 @@ angular.module('redbull.controllers')
             decksLimit: draftSettings.numOfDecks,
             deckBuildStartTime: draft.deckBuildStartTime,
             deckBuildTimeLimit: draftSettings.deckBuildTimeLimit,
-            hasDecksConstructed: draft.hasDecksConstructed
+            hasDecksConstructed: draft.hasDecksConstructed,
+            isOfficial: draft.isOfficial || false
         };
         
         // classes
@@ -65,7 +66,6 @@ angular.module('redbull.controllers')
             sorted: {},
             current: [],
         };
-        $scope.decks = [];
         
         $scope.search = '';
         $scope.manaCosts = [0,1,2,3,4,5,6,7];
@@ -90,8 +90,29 @@ angular.module('redbull.controllers')
         }
         sortCards();
         
+        // decks
+        $scope.decks = [];
+        // clean deck for isOfficial decks
+        function cleanLoadedDeck (deck) {
+            var newDeck = angular.copy(deck);
+
+            newDeck.cards = newDeck.deckCards;
+            delete newDeck.deckCards;
+            
+            return newDeck;
+        }
+        
+        function cleanLoadedDecks (decks) {
+            var newDecks = [];
+            for (var i = 0; i < decks.length; i++) {
+                var deck = cleanLoadedDeck(decks[i]);
+                newDecks.push(deck);
+            }
+            return newDecks;
+        }
+        
         function initDecks () {
-            var decks = $localStorage.draftDecks;
+            var decks = ($scope.tournament.isOfficial) ? cleanLoadedDecks(draftDecks) : $localStorage.draftDecks;
             if (decks && decks.length) {
                 for (var i = 0; i < decks.length; i++) {
                     $scope.decks.push(DeckBuilder.new(decks[i].playerClass, decks[i]));
@@ -100,10 +121,12 @@ angular.module('redbull.controllers')
         }
         initDecks();
         
-        // save decks to local storage for now
-        $scope.$watch(function () { return $scope.decks; }, function (newValue) {
-            $localStorage.draftDecks = newValue;
-        }, true);
+        if (!$scope.tournament.isOfficial) {
+            // save decks to local storage for now
+            $scope.$watch(function () { return $scope.decks; }, function (newValue) {
+                $localStorage.draftDecks = newValue;
+            }, true);
+        }
         
         // pagination
         $scope.perpage = 15;
@@ -509,8 +532,10 @@ angular.module('redbull.controllers')
 
             RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise
             .then(function (data) {
-                delete $localStorage.draftDecks;
-                delete $localStorage.draftId;
+                if (!$scope.tournament.isOfficial) {
+                    delete $localStorage.draftDecks;
+                    delete $localStorage.draftId;
+                }
                 
                 if (timesUp) {
                     bootbox.hideAll();
@@ -523,7 +548,11 @@ angular.module('redbull.controllers')
                                 className: 'btn-blue',
                                 callback: function () {
                                     box.modal('hide');
-                                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
+                                    if (!$scope.tournament.isOfficial) {
+                                        return $state.go('^.decks', { draftId: draft.id });
+                                    } else {
+                                        $state.reload();
+                                    }
                                 }
                             }
                         },
@@ -531,7 +560,11 @@ angular.module('redbull.controllers')
                     });
                     box.modal('show');
                 } else {
-                    return $state.go('app.hs.draft.decks', { draftId: draft.id });
+                    if ($scope.tournament.isOfficial) {
+                        $state.reload();
+                    } else {
+                        return $state.go('^.decks', { draftId: draft.id });
+                    }
                 }
             }).catch(function (data) {
                 console.error(data);
