@@ -1,5 +1,5 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$q', '$timeout', '$window', '$interval', '$rootScope', 'Util', 
+.directive('redbullDraft', ['$q', '$timeout', '$window', '$interval', '$rootScope', 'Util',
     function ($q, $timeout, $window, $interval, $rootScope, Util){
         return {
             restrict: 'A',
@@ -27,31 +27,31 @@ angular.module('redbull.directives')
                     fadeDurationFF = 200,
                     doneDurationFF = 500,
                     currentExpansion = null;
-                
+
                 scope.mobileCardpool = false;
                 scope.draftComplete = false;
                 scope.cardPool = [];
                 scope.expansions = [];
                 scope.packsCount = [];
                 scope.cardsFlipped = 0;
-                
+
                 // init expansions and currentPack
                 for (var key in scope.packs) {
                     scope.expansions.push(key);
                     scope.currentPack[key] = 0;
                     scope.packsCount[key] = scope.packs[key].packs.length;
                 };
-                
+
                 // watch current pack
                 scope.$watch('currentPack', function (newValue) {
                     scope.currentPack = newValue;
-                }); 
-                 
+                });
+
                 // watch loading
                 scope.$watch('isLoading', function (newValue) {
                     scope.isLoading = newValue;
                 });
-                
+
                 scope.getIsLoading = function () {
                     return scope.isLoading;
                 };
@@ -66,12 +66,12 @@ angular.module('redbull.directives')
                     }
                     return false;
                 }
-                
+
                 // return number of packs remaining in stack for given expansion
                 scope.packTabCount = function (expansion) {
                     return scope.packsCount[expansion];
                 };
-                
+
                 // get first expansion that has packs left to be opened
                 function nextExpansion () {
                     for (var i = 0; i < scope.expansions.length; i++) {
@@ -82,22 +82,22 @@ angular.module('redbull.directives')
                     }
                     return false;
                 }
-                
+
                 // expansion to class
                 scope.expansionToClass = function (expansion) {
                     return Util.slugify(expansion);
                 };
-                
+
                 // inc pack for expansion
                 function nextPack (expansion) {
                     scope.currentPack[expansion]++;
                 }
-                
+
                 function hasAnotherPack () {
                     if (!currentExpansion) { return false; }
                     return (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length);
                 }
-                
+
                 // play audio clip
                 scope.playAudio = function ( audioName ) {
                     if (scope.volume === 0 || scope.muted) { return false; }
@@ -108,7 +108,7 @@ angular.module('redbull.directives')
                     audio.playbackRate = (!fastForward) ? 1 : 2;
                     audio.play();
                 }
-                
+
                 // go to next event
                 function nextEvent() {
                     var e = $.Event('keydown');
@@ -118,14 +118,14 @@ angular.module('redbull.directives')
                         el.trigger(e);
                     });
                 }
-                
+
                 // do next even in fast forward
                 scope.fastForwardNext = function () {
                     if (fastForward) {
                         $timeout(nextEvent, fastForwardSpeed);
                     }
                 };
-                
+
                 // return if fast forwarding
                 scope.isFastForward = function () {
                     return fastForward;
@@ -142,7 +142,7 @@ angular.module('redbull.directives')
                         el.removeClass('fast-forward');
                     }
                 };
-                
+
                 // shake pack
                 function shakePack () {
                     scope.playAudio('pack_shake');
@@ -151,18 +151,18 @@ angular.module('redbull.directives')
                         $('.pack-wrapper').trigger('stopRumble');
                     }, 750);
                 }
-                
+
                 // start shaking pack timer
                 function startShakeTimer () {
                     shakeLoop = $interval(shakePack, shakeInterval);
                 }
-                
+
                 // stop shaking pack timer
                 function stopShakeTimer () {
                     $timeout.cancel(startShake);
                     $interval.cancel(shakeLoop);
                 }
-                
+
                 // init pack shaking timers
                 startShake = $timeout(function() {
                     shakePack();
@@ -181,9 +181,9 @@ angular.module('redbull.directives')
                 }).mouseup(function() {
                     el.removeClass('grabbing clicking');
                 });
-                
+
                 scope.enablePacks = function () {
-                    
+
                     // pack rumbling
                     $('.pack-wrapper').jrumble();
 
@@ -205,10 +205,10 @@ angular.module('redbull.directives')
                                     scope.$apply(function () {
                                         scope.packsCount[expansion]--;
                                     });
-                                    
+
                                     // change mouse icon for grab
                                     el.addClass('grabbing');
-                                    
+
                                     // enable draggable
                                     $(pack).data('draggable', true);
 
@@ -273,7 +273,7 @@ angular.module('redbull.directives')
 
                             // stop shaking the pack
                             stopShakeTimer();
-                            
+
                         }
                     }).mouseup(function() {
                         // TODO: doesn't work
@@ -297,36 +297,36 @@ angular.module('redbull.directives')
                         packDrop(expansion, 'mouse');
                     }
                 });
-                
+
                 // enable spacebar
-                $(window).keydown(function(e) {
+              $(window).unbind('keydown').bind('keydown', function(e) {
                     // only spacebar
                     if ((e.keyCode || e.which) === 32) {
-                        
+
                         // don't allow space bar if fast forwarding
                         if (fastForward && e.hasOwnProperty('originalEvent')) { return false };
 
                         // spacebar to drop pack
                         if (!scope.isLoading && !packDropped && $('.pack.ui-draggable-dragging').length === 0) {
-                                
+
                                 // drop pack
                                 packDrop(null, 'spacebar');
-                        
+
                         // spacebar to flip card / click done
                         } else if (!scope.isLoading && packDropped) {
                             var card, btn;
-                            
+
                             // flip next
                             if (scope.cardsFlipped < 5) {
-                                
+
                                 card = $('.card').not('.flipped-left').not('.flipped-right').eq(0);
                                 if (card.is(':visible')) {
                                     card.mousedown();
                                 }
-                            
+
                             // click done button
                             } else {
-                                
+
                                 btn = $('.btn-done');
                                 if (btn.is(':visible')) {
                                     $timeout(function () {
@@ -339,10 +339,10 @@ angular.module('redbull.directives')
                 });
 
                 // stop scrolling with spacebar
-                $(window).onkeydown = function(e) { 
+                $(window).onkeydown = function(e) {
                     return !(e.keyCode == 32);
                 };
-                
+
                 function packDrop(expansion, droppedBy) {
                     if (!packDropped) {
                         packDropped = true;
@@ -353,7 +353,7 @@ angular.module('redbull.directives')
 
                         // disable pack dragging
                         $(".pack").draggable("disable");
-                        
+
                         // if fast forwarding remove one from pack count
                         if (fastForward || droppedBy === 'spacebar') {
                             scope.$apply(function () {
@@ -363,7 +363,7 @@ angular.module('redbull.directives')
 
                         // stop shaking pack
                         stopShakeTimer();
-                        
+
                         // play audio for pack burst
                         scope.playAudio('pack_burst');
 
@@ -372,26 +372,26 @@ angular.module('redbull.directives')
                             if (!anotherPack) {
                                 $pack.closest('.expansion-wrapper').slideUp(fadeDuration);
                             }
-                            
+
                             // return hidden pack
                             $pack.css({
                                 'left': '0px',
                                 'top': '0px',
                                 //'transform': 'scale(1) perspective(0) rotateY(0)'
                             });
-                            
+
                             // fade out glow
                             $('.bg-glow').removeClass('glow-pulse').stop().fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF));
-                            
+
                             // blur bg
                             el.addClass('blurred');
-                            
+
                             // set cards and show
                             $('.cards').fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
                                 if (anotherPack) {
                                     $pack.fadeIn(0);
                                 }
-                                
+
                                 if (fastForward) {
                                     nextEvent();
                                 }
@@ -400,7 +400,7 @@ angular.module('redbull.directives')
 
                     }
                 };
-                
+
                 scope.cardFlip = function ($event, cardElement) {
                     scope.cardsFlipped++;
                     var cardX = $event.pageX - $(cardElement).offset().left;
@@ -410,13 +410,13 @@ angular.module('redbull.directives')
                         $(cardElement).addClass('flipped-right');
                     }
                 };
-                
+
                 scope.cards = function () {
                     if (!currentExpansion) { return []; }
                     var cards = scope.packs[currentExpansion].packs[scope.currentPack[currentExpansion]].cards;
                     return cards;
                 };
-                
+
                 // show done button
                 scope.showDoneButton = function () {
                     $timeout(function() {
@@ -430,24 +430,24 @@ angular.module('redbull.directives')
                         }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
                     }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
                 };
-                
+
                 // done mouse down
                 scope.doneMouseDown = function ($event) {
                     if (fastForward && $event.hasOwnProperty('originalEvent')) { return false; }
-                    
+
                     if (!done) {
                         var anotherPack = hasAnotherPack();
                         done = true;
-                        
+
                         // enable pack dragging
                         $('.pack').draggable('enable');
-                        
+
                         // play audio
                         scope.playAudio('done_fade');
-                        
+
                         // fade out done button
                         $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration / 2 : fadeDurationFF));
-                        
+
                         // remove blur
                         el.removeClass('blurred');
 
@@ -455,7 +455,7 @@ angular.module('redbull.directives')
                             if (!anotherPack) {
                                 scope.expansions.splice(scope.expansions.indexOf(currentExpansion), 1);
                             }
-                        
+
                             packDropped = false;
 
                             $('.card').removeClass('flipped-left flipped-right');
@@ -472,7 +472,7 @@ angular.module('redbull.directives')
                                 $timeout(function() {
                                     done = false;
                                 }, ((!fastForward) ? fadeDuration : fadeDurationFF));
-                                
+
                                 if (fastForward) {
                                     nextEvent();
                                 }
@@ -487,11 +487,11 @@ angular.module('redbull.directives')
                         });
                     }
                 };
-                
+
                 scope.$on('$destroy', function () {
                     stopShakeTimer();
                 });
-                
+
                 // card pool
                 // check if card exists in pool
                 function cardExistsInPool (card) {
