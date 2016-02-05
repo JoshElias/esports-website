@@ -1,8 +1,8 @@
 angular.module('redbull.controllers')
 .controller('AdminRedbullDecksCtrl', ['$scope', 'Hearthstone', 'officialDrafts', 'officialPlayers', 'draftPlayers',
-    'RedbullDraft', 'RedbullDeck', 'User', 'DeckBuilder', 'LoopBackAuth',
+    'RedbullDraft', 'RedbullDeck', 'User', 'DeckBuilder', 'LoopBackAuth', 'AlertService', '$window',
   function ($scope, Hearthstone, officialDrafts, officialPlayers, draftPlayers,
-            RedbullDraft, RedbullDeck, User, DeckBuilder, LoopBackAuth){
+            RedbullDraft, RedbullDeck, User, DeckBuilder, LoopBackAuth, AlertService, $window){
 
 
     User.isInRoles({uid: LoopBackAuth.currentUserId, roleNames: ['$admin']}).$promise
@@ -19,7 +19,7 @@ angular.module('redbull.controllers')
     $scope.officialPlayers = officialPlayers;
     $scope.draftPlayers = draftPlayers.players;
 
-    console.log("officialPlayers:", $scope.officialPlayers);
+    //console.log("officialPlayers:", $scope.officialPlayers);
 
     var officialPlayerIds = [];
     var draftPlayerIds = [];
@@ -34,29 +34,22 @@ angular.module('redbull.controllers')
 
           extendDraft.drafts.push(_.clone(JSON.parse(JSON.stringify(draft))));
 
-          console.log(extendDraft.drafts);
+          //console.log(extendDraft.drafts);
         }
       });
 
       // Now extend the player with all the drafts found.
       _.extend(player, extendDraft);
 
-      console.log("extended player:", player);
+      //console.log("extended player:", player);
 
     });
     _.forEach(draftPlayers.players, function(player){
       draftPlayerIds.push(player.id);
     });
 
-    var pendingPlayerIds =  _.difference(draftPlayerIds, officialPlayerIds);
 
-    $scope.pendingPlayers = _.filter($scope.draftPlayers, function(player){
-      return !(officialPlayerIds.includes(player.id))
-    });
-
-    console.log("PENDING PLAYERS", $scope.pendingPlayers);
-
-    console.log("officialDrafts", $scope.officialDrafts);
+   // console.log("officialDrafts", $scope.officialDrafts);
 
     $scope.activeDrafts = function(player){
       var match = false;
@@ -80,30 +73,81 @@ angular.module('redbull.controllers')
       return !(match === false)
     };
 
-    $scope.promptInactive = function (draft) {
-
-      var decks = [];
-      _.forEach(draft.decks, function(deck){
-        decks.push(deck.name);
-      });
+    $scope.promptInactive = function (draft, username) {
 
       var box = bootbox.dialog({
         title: 'Set Draft as INACTIVE',
-        message: 'Are you sure you want to deactive this draft with the following decks: <br/><strong>' +
-          decks + '</strong>? <br/><br /> This is undoable',
+        message: 'Are you sure you want to deactive this draft for the player: <strong>' +
+        username + '</strong>? <br/><br /> This cannot be undone.',
         buttons: {
           delete: {
             label: 'Set Inactive',
             className: 'btn-danger',
             callback: function () {
-              console.log("set Inactive: ", draft);
+              //console.log("set Inactive: ", draft);
               draft.isActive = false;
               RedbullDraft.upsert(draft).$promise.then(function(res){
-                console.log("result", res);
+                //console.log("result", res);
+                $window.scrollTo(0, 0);
+                AlertService.setSuccess({
+                  show:true,
+                  msg: 'Draft has been set as Inactive'
+                });
+
+              }).catch(function(err){
+                console.error(err);
+                $window.scrollTo(0, 0);
+                AlertService.setError({
+                  show:true,
+                  msg: 'Could not deactive deck',
+                  lbErr: err
+                });
 
               });
               }
             },
+          cancel: {
+            label: 'Cancel',
+            className: 'btn-default pull-left',
+            callback: function () {
+              box.modal('hide');
+            }
+          }
+        }
+      });
+      box.modal('show');
+    };
+
+    $scope.promptDelete = function (draft, username) {
+
+      var box = bootbox.dialog({
+        title: 'DELETE Draft',
+        message: 'Are you sure you want to DELETE this draft for the player: <strong>' +
+        username + '</strong>? <br/><br /> This cannot be undone',
+        buttons: {
+          delete: {
+            label: 'DELETE Draft',
+            className: 'btn-danger',
+            callback: function () {
+              draft.isActive = false;
+              RedbullDraft.deleteById({ id: draft.id }).$promise.then(function(res){
+                //console.log("result", res);
+                $window.scrollTo(0, 0);
+                AlertService.setSuccess({
+                  show:true,
+                  msg: 'Draft has been Deleted'
+                });
+
+              }).catch(function(err){
+                console.error(err);
+                AlertService.setError({
+                  show:true,
+                  msg: 'Could not delete Draft',
+                  lbErr: err
+                });
+              });
+            }
+          },
           cancel: {
             label: 'Cancel',
             className: 'btn-default pull-left',

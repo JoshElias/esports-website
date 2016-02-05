@@ -1,32 +1,21 @@
-<div class="panel panel-default br-none">
-  <div class="panel-heading clearfix">
-    <h3 class="pull-left">Tournament Decks</h3>
-  </div>
-  <div class="panel-body">
-
-    <div class="row panel panel-danger decks-gutter-fix">
-      <div ng-if="pendingPlayers.length > 0" class="panel-heading">
-        Players who haven't completed drafts
-      </div>
-      <div ng-repeat="pending in pendingPlayers" class="panel-body">
-        {{ pending.username }}
-      </div>
-    </div>
+<alert-box theme="admin"></alert-box>
 
     <div class="row decks-gutter-fix panel panel-success">
 
       <div class="col-md-12 panel-heading">
-        <h3>Completed Drafts</h3>
+        Completed Drafts
       </div>
       <div class="panel-body">
-      <div ng-repeat="player in officialPlayers | filter:activeDrafts" class="col-md-12 draft-build ">
+      <div ng-repeat="player in officialPlayers | filter:activeDrafts track by player.id" class="col-md-12 draft-build ">
         <div class="row admin-draft-decks panel panel-default">
-          <div class="panel-heading">{{ player.username }}</div>
-          <div class="draft-block panel-body" ng-repeat="draft in player.drafts | filter:{isActive: true}">
+          <div class="panel-heading" data-toggle="collapse" href="#collapseComplete{{player.id}}">
+            {{ player.username }}
+          </div>
+          <div class="draft-block panel-body collapse" ng-repeat="draft in player.drafts | filter:{isActive: true}" id="collapseComplete{{player.id}}">
             <div class="col-xs-12">
-            <span class="pull-right">
-              <button class="btn btn-danger" ng-if="userIsAdmin" ng-click="promptDelete(draft)">DELETE Draft</button>
-              <button class="btn btn-danger" ng-click="promptInactive(draft)">Deactive Draft</button>
+               <span class="pull-right">
+              <button class="btn btn-danger btn-xs" ng-if="userIsAdmin" ng-click="promptDelete(draft, player.username)">DELETE Draft</button>
+              <button class="btn btn-danger btn-xs" ng-click="promptInactive(draft, player.username)">Deactive Draft</button>
             </span>
             </div>
           <div class="col-md-12 decks">
@@ -40,7 +29,7 @@
               </div>
 
               <div class="deck-cards">
-                <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
+                <div class="iscroll-wrapper">
                   <div class="iscroll-scroller">
 
                     <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}"
@@ -74,17 +63,22 @@
 
     <div class="row decks-gutter-fix panel panel-warning">
       <div  class="col-md-12 panel-heading">
-        <h4>Archived Drafts</h4>
+        Archived Drafts
       </div>
       <div class="panel-body">
-      <div ng-repeat="player in officialPlayers | filter:noActiveDrafts" class="col-md-12 draft-build">
+      <div ng-repeat="player in officialPlayers | filter:noActiveDrafts track by player.id" class="col-md-12 draft-build">
         <div class="row admin-draft-decks panel panel-default">
-          <div class="panel-heading">{{ player.username }}</div>
+          <div class="panel-heading" role="button" data-toggle="collapse" href="#collapseArchive{{player.id}}">
+            {{ player.username }}
+          </div>
           <div class="draft-block" ng-repeat="draft in player.drafts | filter:{isActive: false}">
-            <span class="pull-right">
-              <button class="btn btn-danger" ng-if="userIsAdmin" ng-click="promptDelete(draft)">DELETE Draft</button>
-              </span>
-            <div class="col-md-12 decks">
+            <div class="col-xs-12">
+              <span class="pull-right">
+              <button class="btn btn-danger btn-xs" ng-if="userIsAdmin" ng-click="promptDelete(draft)">DELETE Draft</button>
+          </span>
+            </div>
+
+            <div class="col-md-12 decks panel-body collapse" id="collapseArchive{{player.id}}">
               <div class="col-md-4 deck {{deck.playerClass.toLowerCase()}} active" ng-repeat="deck in draft.decks">
 
                 <div class="deck-title-bar">
@@ -95,7 +89,7 @@
                 </div>
 
                 <div class="deck-cards">
-                  <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
+                  <div class="iscroll-wrapper">
                     <div class="iscroll-scroller">
 
                       <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}"
@@ -126,5 +120,3 @@
       </div>
     </div>
     </div>
-  </div>
-</div>
