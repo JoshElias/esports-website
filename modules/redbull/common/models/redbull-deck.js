@@ -14,6 +14,7 @@ var NUM_OF_CARDS_PER_DECK = 2;
 module.exports = function(RedbullDeck) {
 
 
+
     // HIDING OFFICIAL
 
     RedbullDeck.afterRemote("**", function (ctx, redbullDeck, next) {
@@ -23,15 +24,7 @@ module.exports = function(RedbullDeck) {
     function filterOfficialDecks(ctx, deckInstance, finalCb) {
         var User = RedbullDeck.app.models.user;
 
-        // Is the user logged in?
-        var loopbackContext = loopback.getCurrentContext();
-        if(!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
-            var noContextErr = new Error("Server could not find http context. Contact system admin.");
-            noContextErr.statusCode = 500;
-            noContextErr.code = 'NO_HTTP_CONTEXT';
-            return finalCb(noContextErr);
-        }
-        var req = loopbackContext.active.http.req;
+        var req = ctx.req;
 
         // Do we have a user Id
         if (!req.accessToken || !req.accessToken.userId) {
@@ -72,7 +65,6 @@ module.exports = function(RedbullDeck) {
                             ["$owner"],
                             {modelClass: "redbullDeck", modelId: result.id},
                             function (err, isInRoles) {
-                                console.log("isInRoles inside result", isInRoles);
                                 if(err) return resultCb(err);
                                 if(!isInRoles.none) {
                                     answer.push(result);
@@ -95,13 +87,17 @@ module.exports = function(RedbullDeck) {
 
                     return User.isInRoles(userId,
                         ["$owner"],
-                        {modelClass: "redbullDeck", modelId: result.id},
+                        {modelClass: "redbullDeck", modelId: ctx.result.id},
                         function (err, isInRoles) {
-                            console.log("isInRoles inside result", isInRoles);
                             if(err) return finalCb(err);
-                            if(!isInRoles.none) {
-                                answer = ctx.result;
+                            if(isInRoles.none) {
+                                var noDeckErr = new Error('unable to find deck');
+                                noDeckErr.statusCode = 404;
+                                noDeckErr.code = 'DECK_NOT_FOUND';
+                                return done(noDeckErr)
                             }
+
+                            answer = ctx.result;
 
                             return done(undefined, answer);
                         }
@@ -423,7 +419,6 @@ module.exports = function(RedbullDeck) {
                 var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON, availableDeckComponents);
                 return finalCb(undefined, randomDecks);
             }
-
 
             // If we have invalid cards, remove them from the decks
             clientDecks = removeInvalidCards(clientDecks, validationReport);
