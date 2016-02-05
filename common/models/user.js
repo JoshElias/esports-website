@@ -467,17 +467,17 @@ module.exports = function(User) {
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
-        var ctx = loopback.getCurrentContext();
+        var loopbackContext = loopback.getCurrentContext();
 
 
         // Check for the roles we already have
         var isInRoles = {};
-        if (ctx.active) {
+        if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
             if (typeof ctx.active.http.req.roles !== "object") {
                 ctx.active.http.req.roles = {};
             }
 
-            var currentRoles = ctx.active.http.req.roles[uid];
+            var currentRoles = loopbackContext.active.http.req.roles[uid];
             for (var key in currentRoles) {
                 isInRoles[key] = currentRoles[key];
             }
@@ -541,8 +541,8 @@ module.exports = function(User) {
         }, function (err) {
             if (err) return cb(err);
 
-            if (ctx.active) {
-                ctx.active.http.req.roles[uid] = isInRoles;
+            if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
+                loopbackContext.active.http.req.roles[uid] = isInRoles;
             }
             cb(err, isInRoles);
         });
@@ -747,9 +747,6 @@ module.exports = function(User) {
 
 
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
-        console.log('User.setSubscriptionPlan');
-        console.log('plan:', plan);
-        console.log('cctoken:', cctoken);
         cb = cb || utils.createPromiseCallback();
 
         User.getCurrent(function (err, user) {

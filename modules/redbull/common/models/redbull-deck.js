@@ -72,7 +72,6 @@ module.exports = function(RedbullDeck) {
                             ["$owner"],
                             {modelClass: "redbullDeck", modelId: result.id},
                             function (err, isInRoles) {
-                                console.log("isInRoles inside result", isInRoles);
                                 if(err) return resultCb(err);
                                 if(!isInRoles.none) {
                                     answer.push(result);
@@ -95,13 +94,17 @@ module.exports = function(RedbullDeck) {
 
                     return User.isInRoles(userId,
                         ["$owner"],
-                        {modelClass: "redbullDeck", modelId: result.id},
+                        {modelClass: "redbullDeck", modelId: ctx.result.id},
                         function (err, isInRoles) {
-                            console.log("isInRoles inside result", isInRoles);
                             if(err) return finalCb(err);
-                            if(!isInRoles.none) {
-                                answer = ctx.result;
+                            if(isInRoles.none) {
+                                var noDeckErr = new Error('unable to find deck');
+                                noDeckErr.statusCode = 404;
+                                noDeckErr.code = 'DECK_NOT_FOUND';
+                                return done(noDeckErr)
                             }
+
+                            answer = ctx.result;
 
                             return done(undefined, answer);
                         }
@@ -423,7 +426,6 @@ module.exports = function(RedbullDeck) {
                 var randomDecks = createRandomDecks(draftJSON.settings.numOfDecks, draftJSON, availableDeckComponents);
                 return finalCb(undefined, randomDecks);
             }
-
 
             // If we have invalid cards, remove them from the decks
             clientDecks = removeInvalidCards(clientDecks, validationReport);
