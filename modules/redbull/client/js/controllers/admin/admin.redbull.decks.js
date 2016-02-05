@@ -84,7 +84,7 @@ angular.module('redbull.controllers')
             label: 'Set Inactive',
             className: 'btn-danger',
             callback: function () {
-              console.log("set Inactive: ", draft);
+              //console.log("set Inactive: ", draft);
               draft.isActive = false;
               RedbullDraft.upsert(draft).$promise.then(function(res){
                 //console.log("result", res);
@@ -95,7 +95,7 @@ angular.module('redbull.controllers')
                 });
 
               }).catch(function(err){
-                console.log(err);
+                console.error(err);
                 $window.scrollTo(0, 0);
                 AlertService.setError({
                   show:true,
@@ -139,7 +139,7 @@ angular.module('redbull.controllers')
                 });
 
               }).catch(function(err){
-                console.log(err);
+                console.error(err);
                 AlertService.setError({
                   show:true,
                   msg: 'Could not delete Draft',
