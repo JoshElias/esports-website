@@ -1,4 +1,5 @@
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
 
 // Description: this is the main styles file for Tempostorm, it contains the key styles used throughout the site as well as some specific styles for smaller features
 
@@ -347,9 +348,10 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .home-content {
     .home-spons {
         width: 100%;
+        
+       @include ts-hover-glow ($color);
     }
 }
-
 
 
 // 2.6.. sections
@@ -819,6 +821,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     bottom: 80px;
     left: -10px;
     pointer-events: all;
+    transition: background 0.3s ease 0s;
+    
+    
     @media only screen and (min-width: 1500px) {
         left: 175px;
     }
