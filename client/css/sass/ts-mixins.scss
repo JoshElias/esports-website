@@ -38,7 +38,7 @@ $color: $ts-blue;
         @media screen and (min-width: 767px) {
             &:hover { 
                 //color: rgba(255,255,255,1); 
-                box-shadow: 0px 0px 30px rgba($color, 1);
+                box-shadow: 0px 0px 50px rgba($color, 1);
                 animation: pulse 2s infinite;
                 border: 1px solid rgba($color, 0.8);
                 

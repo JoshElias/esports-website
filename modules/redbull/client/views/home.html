@@ -14,7 +14,7 @@
                 <button class="m-t-xl hidden-xs pack-button tourney-button btn-blue" ng-click="draftLoadingToggle()" ng-disabled="isDraftLoading()">
                     
                     <span ng-if="!isDraftLoading()">Open packs now!</span>
-                    <span ng-if="isDraftLoading()">Loading </span>
+                    <span class="m-r-sm" ng-if="isDraftLoading()">Loading </span>
                     <i class="fa fa-refresh fa-spin" ng-if="isDraftLoading()"></i>
                 
                 </button>
