@@ -139,6 +139,7 @@ module.exports = function(User) {
         }
 
         
+        
         /**
          * Confirm the user's identity.
          *
