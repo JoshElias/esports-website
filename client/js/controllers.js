@@ -5056,12 +5056,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.loadLatest = function () {
                 Snapshot.findOne({
                     filter: {
-                        limit: 1,
                         order: "createdDate DESC",
-                        fields: {
-                            votes: false,
-                            voteScore: false
-                        },
                         include: [
                             {
                                 relation: "authors",
