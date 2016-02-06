@@ -6,6 +6,7 @@ var utils = require("./../../../../lib/utils");
 module.exports = function(RedbullDraft) {
 
 
+
     // HIDING OFFICIAL
 
     RedbullDraft.afterRemote("**", function (ctx, redbullDraft, next) {
@@ -99,6 +100,7 @@ module.exports = function(RedbullDraft) {
     }
 
 
+
     // START DRAFT
 
     RedbullDraft.observe("before save", handleNewDraftRequest);
@@ -124,7 +126,6 @@ module.exports = function(RedbullDraft) {
             return checkForOfficialDraft(clientData, next)
         });
     }
-
 
     function checkForOfficialDraft(clientData, finalCb) {
         var User = RedbullDraft.app.models.user;
@@ -248,7 +249,7 @@ module.exports = function(RedbullDraft) {
         });
 
         return finalCb.promise;
-    }
+    };
 
 
 
@@ -295,7 +296,6 @@ module.exports = function(RedbullDraft) {
         return finalCb.promise;
     };
 
-
     function newDraftState(draftSettings) {
         var currentTime = Date.now();
         var draftUpdates = {};
@@ -307,6 +307,7 @@ module.exports = function(RedbullDraft) {
         draftUpdates.deckSubmitCurfew = currentTime + buildTimeLimitMillis + gracePeriodMillis;
         return draftUpdates;
     }
+
 
 
     RedbullDraft.submitDecks = function (draftId, clientDecks, options, finalCb) {
@@ -412,7 +413,6 @@ module.exports = function(RedbullDraft) {
 
         return finalCb.promise;
     };
-
 
     RedbullDraft.removeDraftPlayer = function (uid, options, finalCb) {
         if (finalCb === undefined && typeof options === 'function') {

@@ -423,27 +423,6 @@ module.exports = function(RedbullDeck) {
         }
     }
 
-
-    function removeExtraDecks(clientDecks, validationReport) {
-        if(validationReport.tooManyDecks > 0) {
-            clientDecks = removeRandomDecks(validationReport.tooManyDecks, clientDecks);
-        }
-        return clientDecks;
-    }
-
-    function removeRandomDecks(numOfDecksToRemove, clientDecks) {
-        // Get a random deckCard Index
-        var randomDeckIndex = utils.getRandomInt(0, clientDecks.length-1);
-        clientDecks.splice(randomDeckIndex, 1);
-        numOfDecksToRemove--;
-
-        if(numOfDecksToRemove <= 0) {
-            return clientDecks;
-        }
-        return removeRandomDecks(numOfDecksToRemove, clientDecks);
-    }
-
-
     function removeInvalidCards(clientDecks, validationReport) {
 
         // Iterate over all the clients decks
@@ -496,6 +475,24 @@ module.exports = function(RedbullDeck) {
         return clientDecks;
     }
 
+    function removeExtraDecks(clientDecks, validationReport) {
+        if(validationReport.tooManyDecks > 0) {
+            clientDecks = removeRandomDecks(validationReport.tooManyDecks, clientDecks);
+        }
+        return clientDecks;
+    }
+
+    function removeRandomDecks(numOfDecksToRemove, clientDecks) {
+        // Get a random deckCard Index
+        var randomDeckIndex = utils.getRandomInt(0, clientDecks.length-1);
+        clientDecks.splice(randomDeckIndex, 1);
+        numOfDecksToRemove--;
+
+        if(numOfDecksToRemove <= 0) {
+            return clientDecks;
+        }
+        return removeRandomDecks(numOfDecksToRemove, clientDecks);
+    }
 
     function removeExtraCards(clientDecks) {
 
