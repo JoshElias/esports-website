@@ -150,7 +150,21 @@ angular.module('redbull.controllers')
               label: 'DELETE Draft',
               className: 'btn-danger',
               callback: function () {
+                var idx = false;
+                _.forEach($scope.officialPlayers, function(player){
+                  if(player.username == username){
+                    _.forEach(player.inactiveDrafts, function(internalDraft, i){
+                      if(draft.id === internalDraft.id){
+                        idx = i;
+                      }
+                    })
+                  }
+                });
+                if (idx != false){
+                  $scope.officialPlayers.inactiveDrafts.splice(idx,1);
+                }
                 draft.isActive = false;
+                console.log(draft.id);
                 RedbullDraft.deleteById({id: draft.id}).$promise.then(function (res) {
                   draft = null;
 
