@@ -5,7 +5,7 @@ var utils = require("./../../../../lib/utils");
 
 module.exports = function(RedbullDraft) {
 
-/*
+
     // HIDING OFFICIAL
 
     RedbullDraft.afterRemote("**", function (ctx, redbullDraft, next) {
@@ -13,7 +13,6 @@ module.exports = function(RedbullDraft) {
     });
 
     function filterOfficialDrafts(ctx, deckInstance, finalCb) {
-      console.log("we're in");
         var User = RedbullDraft.app.models.user;
 
         var req = ctx.req;
@@ -32,7 +31,6 @@ module.exports = function(RedbullDraft) {
         });
 
         function applyFilter() {
-          console.log("applyFilter", ctx.result);
             if(!ctx.result) {
                 return finalCb();
             }
@@ -57,10 +55,8 @@ module.exports = function(RedbullDraft) {
 
                     return User.isInRoles(userId,
                         ["$owner"],
-                        {modelClass: "redbullDeck", modelId: result.id},
+                        {modelClass: "redbullDraft", modelId: result.id},
                         function (err, isInRoles) {
-                            console.log("isInRoles:", isInRoles);
-
                             if(err) return resultCb(err);
                             if(!isInRoles.none) {
                                 answer.push(result);
@@ -83,12 +79,10 @@ module.exports = function(RedbullDraft) {
 
                 return User.isInRoles(userId,
                     ["$owner"],
-                    {modelClass: "redbullDeck", modelId: ctx.result.id},
+                    {modelClass: "redbullDraft", modelId: ctx.result.id},
                     function (err, isInRoles) {
-                      console.log(err, isInRoles);
                         if(err) return finalCb(err);
                         if(isInRoles.none) {
-                            console.log("isInRoles:", isInRoles);
                             var noDeckErr = new Error('unable to find deck');
                             noDeckErr.statusCode = 404;
                             noDeckErr.code = 'DECK_NOT_FOUND';
@@ -103,7 +97,7 @@ module.exports = function(RedbullDraft) {
             }
         }
     }
-*/
+
 
     // START DRAFT
 
