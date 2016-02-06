@@ -848,6 +848,8 @@ This is the template for hots-hero-talents.
     ( class: (bolt-of-the-storm), pos: 12 ) // -360
 ) );
 
+//talents: Li-Ming 
+
 @include hots-hero-talents ( li-ming, (
     ( class: (astral-presence), pos: 0 ), // 0
     ( class: (power-hungry), pos: 1 ), // -30
@@ -862,7 +864,7 @@ This is the template for hots-hero-talents.
     ( class: (glass-cannon), pos: 10 ), // -300
     ( class: (mirrorball), pos: 11 ), // -330
     ( class: (tal-rashas-elements), pos: 12 ), // -360
-    ( class: (Archon-pure-power), pos: 13 ) // -390
+    ( class: (archon-pure-power), pos: 13 ) // -390
 ) );
 
 //talents: Lunara 

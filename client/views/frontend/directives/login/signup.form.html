@@ -1,16 +1,8 @@
 <div class="signup-form row">
         <div class="login-form-email col-sm-12 wrapper-none">
-            <div class="panel panel-danger error-modal animated" ng-show="showError">
-                <div class="panel-heading">
-                    <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                    <strong>Unable to create account</strong>
-                </div>
-                <div class="panel-body">
-                    <ul class="error text-danger">
-                        <li ng-repeat="err in errors">{{err.msg}}</li>
-                    </ul>
-                </div>
-            </div>
+            
+            <alert-box theme="admin"></alert-box>
+            
             <form class="form-horizontal form-modal" role="form" name="signupForm">
             <div class="form-group">
                 <input type="email" class="form-control input-dark login-email" id="email" placeholder="Email Address" ng-model="signup.email" required>

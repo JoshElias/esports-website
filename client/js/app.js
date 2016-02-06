@@ -2664,6 +2664,7 @@ var app = angular.module('app', [
                                                   fields: [
                                                     'className',
                                                     'description',
+                                                    'universe',
                                                     'heroType',
                                                     'name',
                                                     'role'

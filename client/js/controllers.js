@@ -390,10 +390,33 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', { 
+                                    username: currentUser.username, 
+                                    plan: plan 
+                                });
+                            });
+
+                        }
+                    });
+                    
                 } else {
                     LoginModalService.showModal('login', function () {
                         $scope.getPremium(plan);
@@ -8067,11 +8090,11 @@ angular.module('app.controllers', ['ngCookies'])
 //                        console.log('series results: ', results);
                         $state.go('app.admin.users.list');
                         $scope.fetching = false;
-						AlertService.setSuccess({
-							persist: true,
-							show: false,
-							msg: user.username + ' created successfully'
-						});
+                        AlertService.setSuccess({
+                          persist: true,
+                          show: false,
+                          msg: user.username + ' created successfully'
+                        });
                     }
                 });
             };
@@ -11528,15 +11551,34 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', {
+                                    username: currentUser.username,
+                                    plan: plan
+                                });
+                            });
+                        }
+                    });
                 } else {
                     LoginModalService.showModal('login', function () {
-                        if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
-                            $scope.getPremium(plan);
-                        }
+                        $scope.getPremium(plan);
                     });
                 }
             }
@@ -16244,10 +16286,33 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', { 
+                                    username: currentUser.username, 
+                                    plan: plan 
+                                });
+                            });
+
+                        }
+                    });
+                    
                 } else {
                     LoginModalService.showModal('login', function () {
                         $scope.getPremium(plan);

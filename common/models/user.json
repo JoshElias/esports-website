@@ -18,7 +18,8 @@
       "type": "string"
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "firstName": {
       "type": "string"
@@ -36,7 +37,8 @@
       "type": "string"
     },
     "subscription": {
-      "type": "object"
+      "type": "object",
+      "default": {}
     },
     "isProvider": {
       "type": "boolean"
