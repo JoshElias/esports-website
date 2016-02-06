@@ -9333,7 +9333,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
+            $scope.classPagination = AjaxPagination.new({ perpage: 15, total: classCardsCount.count },
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -9345,7 +9345,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
+            $scope.neutralPagination = AjaxPagination.new({ perpage: 15, total: neutralCardsCount.count },
                 function (page, perpage) {
 
                     var d = $q.defer();
@@ -10121,7 +10121,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
+            $scope.classPagination = AjaxPagination.new({ perpage: 15, total: classCardsCount.count },
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -10133,7 +10133,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
+            $scope.neutralPagination = AjaxPagination.new({ perpage: 15, total: neutralCardsCount.count },
                 function (page, perpage) {
 
                     var d = $q.defer();
