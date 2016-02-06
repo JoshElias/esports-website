@@ -15,7 +15,7 @@ module.exports = function(server) {
         var model = cleanModels[key];
 
         model.observe("before save", validator.validate);
-        model.observe("after save", utils.saveChildren);
+        //model.observe("after save", utils.saveChildren);
         model.observe('before delete', utils.destroyRelations);
     }
 };

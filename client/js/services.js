@@ -2718,6 +2718,8 @@ angular.module('app.services', [])
                             filter: {
                                 where: where,
                                 fields: {
+                                    id: true,
+                                    authorId: true,
                                     title: true,
                                     description: true,
                                     photoNames: true,

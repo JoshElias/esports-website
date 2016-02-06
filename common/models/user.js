@@ -15,7 +15,7 @@ module.exports = function(User) {
 
 
     var noUserErr = new Error('unable to find user');
-    noUserErr.statusCode = 400;
+    noUserErr.statusCode = 404;
     noUserErr.code = 'USER_NOT_FOUND';
 
     var invalidTokenErr = new Error('Invalid token');
@@ -457,25 +457,28 @@ module.exports = function(User) {
 
 
 
-    User.isInRoles = function(uid, roleNames, cb) {
+    User.isInRoles = function(uid, roleNames, options, cb) {
+        if (cb === undefined && typeof options === 'function') {
+            cb = options;
+            options = undefined;
+        }
+
         cb = cb || utils.createPromiseCallback();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
-        var ctx = loopback.getCurrentContext();
+        var loopbackContext = loopback.getCurrentContext();
 
-        uid = uid.toString();
 
         // Check for the roles we already have
         var isInRoles = {};
-        // Only run if there's context....
-        if(ctx && ctx.active){
-            if(typeof ctx.active.http.req.roles !== "object") {
+        if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
+            if (typeof ctx.active.http.req.roles !== "object") {
                 ctx.active.http.req.roles = {};
             }
 
-            var currentRoles = ctx.active.http.req.roles[uid];
-            for(var key in currentRoles) {
+            var currentRoles = loopbackContext.active.http.req.roles[uid];
+            for (var key in currentRoles) {
                 isInRoles[key] = currentRoles[key];
             }
         }
@@ -484,11 +487,11 @@ module.exports = function(User) {
         if (Object.keys(isInRoles).length > 0) {
             var all = true;
             var none = true;
-            for(var key in isInRoles) {
-              var inRoleVal = isInRoles[key];
-                if(!inRoleVal && all) {
+            for (var key in isInRoles) {
+                var inRoleVal = isInRoles[key];
+                if (!inRoleVal && all) {
                     all = false;
-                } else if(inRoleVal && none) {
+                } else if (inRoleVal && none) {
                     none = false;
                 }
 
@@ -500,29 +503,53 @@ module.exports = function(User) {
             isInRoles.none = true;
         }
 
-        async.eachSeries(roleNames, function(roleName, eachCb) {
-            if(typeof isInRoles[roleName] !== "undefined") {
+        async.eachSeries(roleNames, function (roleName, eachCb) {
+
+            if (typeof isInRoles[roleName] !== "undefined") {
                 return eachCb();
             }
 
-            return Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, function(err, isRole) {
-                if(err) return eachCb(err);
+            function updateIsInRoles(err, isRole) {
+                //console.log("IS ROLE:",err, isRole);
+                if (err) return eachCb(err);
 
-                if(!isRole && isInRoles.all) {
+                if (!isRole && isInRoles.all) {
                     isInRoles.all = false;
-                } else if(isRole && isInRoles.none) {
+                } else if (isRole && isInRoles.none) {
                     isInRoles.none = false;
                 }
 
+                //console.log("setting rolename", roleName);
+                //console.log("to", isRole);
                 isInRoles[roleName] = isRole;
                 return eachCb();
-            });
-        }, function(err) {
-            if(err) return cb(err);
+            }
 
-            // again only if ctx
-            if(ctx && ctx.active) {
-                ctx.active.http.req.roles[uid] = isInRoles;
+            // Handle the $owner role specially.
+            if (roleName === "$owner") {
+
+                if (typeof options !== "object") {
+                    return updateIsInRoles(undefined, false);
+                }
+
+                var modelClass = loopback.getModel(options.modelClass);
+
+                //console.log("isOwner being called");
+                //console.log("modelClass", modelClass);
+                //console.log("options", options);
+                //console.log("uid", uid);
+                return Role.isOwner(modelClass, options.modelId, uid, updateIsInRoles);
+            }
+
+            // Handle all other roles
+            return Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, updateIsInRoles);
+
+
+        }, function (err) {
+            if (err) return cb(err);
+
+            if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
+                loopbackContext.active.http.req.roles[uid] = isInRoles;
             }
             cb(err, isInRoles);
         });
@@ -693,38 +720,40 @@ module.exports = function(User) {
 
     User.getCurrent = function(finalCb) {
 
-        var err = new Error('no user found');
-        err.statusCode = 400;
-        err.code = 'USER_NOT_FOUND';
+        // Is the user logged in?
+        var loopbackContext = loopback.getCurrentContext();
+        if(!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
+            var noContextErr = new Error("Server could not find http context. Contact system admin.");
+            noContextErr.statusCode = 500;
+            noContextErr.code = 'NO_HTTP_CONTEXT';
+            return finalCb(noContextErr);
+        }
+        var req = loopbackContext.active.http.req;
 
-        var ctx = loopback.getCurrentContext();
-        if (!ctx || !ctx.active) return finalCb();
-        var res = ctx.active.http.res;
-        var req = ctx.active.http.req;
-
+        // Return if we've already cached the current user
         if (req.currentUser)
             return finalCb(undefined, req.currentUser);
 
-        if(!req.accessToken || typeof req.accessToken.userId !== "object")
+        // Do we have a user Id
+        if (!req.accessToken || !req.accessToken.userId) {
             return finalCb();
+        }
+        var userId = req.accessToken.userId.toString();
 
 
-        User.app.models.user.findById(req.accessToken.userId, function (err, user) {
+        return User.findById(userId, function (err, user) {
             if (err) return finalCb(err);
             else if(user) {
                 req.currentUser = user;
-                ctx.set("currentUser", user);
+                loopbackContext.set("currentUser", user);
             }
 
-            finalCb(undefined, user);
+            return finalCb(undefined, user);
         });
     };
 
 
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
-        console.log('User.setSubscriptionPlan');
-        console.log('plan:', plan);
-        console.log('cctoken:', cctoken);
         cb = cb || utils.createPromiseCallback();
 
         User.getCurrent(function (err, user) {
