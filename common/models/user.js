@@ -64,7 +64,6 @@ module.exports = function(User) {
                     /*
                 // Verify Capcha
                 function(seriesCb) {
-                    console.log("CTX KEYS NIGGA:", Object.keys(ctx));
                     if(typeof ctx.options !== "object" || typeof ctx.options.captchaToken !== "string") {
                         seriesCb(invalidCatpchaTokenErr);
                     }
@@ -138,7 +137,6 @@ module.exports = function(User) {
             finalCallback);
         }
 
-        
         
         /**
          * Confirm the user's identity.
