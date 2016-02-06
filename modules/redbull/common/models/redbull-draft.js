@@ -222,16 +222,18 @@ module.exports = function(RedbullDraft) {
     // OPENING PACKS
 
     RedbullDraft.finishedOpeningPacks = function(draftId, options, finalCb) {
+        //console.log("hi")
         if (finalCb === undefined && typeof options === 'function') {
             finalCb = options;
             options = undefined;
         }
         finalCb = finalCb || utils.createPromiseCallback();
 
-        //var User = RedbullDraft.app.models.user;
         var currentTime = Date.now();
 
-        return RedbullDraft.findById(draftId, {fields:{id:true}}, function(err, draft) {
+        //console.log("getting draftById", draftId);
+        RedbullDraft.findById(draftId, {fields:{id:true}}, function(err, draft) {
+            //console.log("returned", err, draft);
             if(err) return finalCb(err);
             else if(!draft) {
                 var noDraftErr = new Error("Unable to find draft with id", draftId);
@@ -239,11 +241,12 @@ module.exports = function(RedbullDraft) {
                 noDraftErr.code = "UNABLE_TO_FIND_DRAFT";
                 return finalCb(noDraftErr);
             }
-
+//console.log("updating attributes");
             return draft.updateAttributes({
                 hasOpenedPacks: true,
                 packOpeningEndTime: currentTime
             }, function(err) {
+                //console.log("done updating attributes", err)
                 return finalCb(err);
             });
         });
@@ -320,7 +323,7 @@ module.exports = function(RedbullDraft) {
         var RedbullDeck = RedbullDraft.app.models.redbullDeck;
 
         // Does the given draft exist and have official set?
-        return RedbullDraft.findById(draftId,
+        RedbullDraft.findById(draftId,
             {
                 include: [
                     {
