@@ -3217,8 +3217,10 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image', 'CrudMan',
         function ($scope, $upload, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image, CrudMan) {
+           
+            var curProgress = 0;
+            var maxProgress = 0;
             var CrudMan = new CrudMan();
-
             var deckTechList = _.flatten(_.map(snapshot.deckTiers, function (deckTier) {
                         return _.map(deckTier.deckTech, function (tech) {
                             return tech;
@@ -3236,6 +3238,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.matching = false;
             $scope.selectedDecks = [];
             $scope.removedDecks = [];
+            $scope.isLoading = false;
 
             // special
             var deckBootBox = undefined,
@@ -3281,7 +3284,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             function setErr(err) {
-                $scope.saving = false;
+                $scope.isLoading = false;
                 if (_.isUndefined(err)) {
                     AlertService.reset();
                     return;
@@ -4096,8 +4099,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
             /* TIERS METHODS */
 
+            $scope.getProgress = function () {
+                return Math.floor((curProgress/maxProgress)*100);
+            }
+            
             $scope.editSnapshot = function () {
-                $scope.saving = true;
+                $scope.isLoading = true;
+                
                 var err = {};
                 var arrs = CrudMan.getArrs();
                 var snapCopy = angular.copy($scope.snapshot);
@@ -4164,224 +4172,240 @@ angular.module('app.controllers', ['ngCookies'])
                     'comments',
                     'deckTiers'
                 ]);
-
-                var newId = { id: snapVar.id };
-                async.series([
-                    function (seriesCb) {
-                        async.each(snapCopy.deckMatchups, function (m) {
-                            if(!_.isUndefined(m.id)) {
-                                DeckMatchup.destroyById({
-                                    id: m.id
-                                });
-                            }
-                        });
-
-                        return seriesCb();
-                    },
-                    function (seriesCb) {
-                        Snapshot.deckMatchups.createMany({
-                            id: $scope.snapshot.id
-                        }, cleanDeckMatchups)
-                        .$promise
-                        .then(function () {
-                            return seriesCb();
+                
+                _.each(snapVar.deckTiers, function (deckTier) {
+                    maxProgress++;
+                    _.each(deckTier.deckTech, function (deckTech) {
+                        maxProgress++;
+                        _.each(deckTech.cardTech, function (cardTech) {
+                            maxProgress++;
                         })
-                        .catch(seriesCb);
-                    }
-                ], function (err) {
-                    if (err) {
-                        console.log("err:", err);
-                        $scope.saving = false;
-                        return;
-                    }
+                    })
+                })
+                
+                console.log(maxProgress);
 
-                    Snapshot.update({
-                        where: {
-                            id: snapVar.id
-                        }
-                    }, snapVar)
-                    .$promise
-                    .then(function (data) {
-                        async.parallel([
-                            function (parallelCb) {
-                                async.each(decksToDelete, function (item, eachCb) {
-                                    DeckTier.destroyById({
-                                        id: item
-                                    })
-                                    .$promise
-                                    .then(function () {
-                                        return eachCb();
-                                    });
-                                }, parallelCb);
-                            },
-                            function (parallelCb) {
-                                async.each(deckTechsToDelete, function (item, eachCb) {
-                                    DeckTech.destroyById({
-                                        id: item
-                                    })
-                                    .$promise
-                                    .then(function () {
-                                        return eachCb();
-                                    });
-                                }, parallelCb);
-                            },
-                            function (parallelCb) {
-                                async.each(cardTechsToDelete, function (item, eachCb) {
-                                    CardTech.destroyById({
-                                        id: item
-                                    })
-                                    .$promise
-                                    .then(function () {
-                                        return eachCb();
-                                    });
-                                }, parallelCb);
-                            },
-                        ], function () {
-                            $state.go('app.admin.hearthstone.snapshots.list');
-                        });
-                    });
-                });
-
-
-
-
-//                async.waterfall([
-//                    function (seriesCallback) {
-//                        var stripped = {};
-//
-//                        stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
-//                        stripped.decks = _.flatten(stripped.authors, true);
-//
-//                        stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
-//                        stripped.matches = _.flatten(stripped.matches, true);
-//
-//                        stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
-//                        stripped.decks = _.flatten(stripped.decks, true);
-//
-//                        stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
-//                        stripped.deckTech = _.flatten(stripped.deckTech, true);
-//
-//                        stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
-//                        stripped.cardTech = _.flatten(stripped.cardTech, true);
-//
-//                        return seriesCallback(undefined, stripped);
-//                    }, function (stripped, seriesCallback) {
-//                        async.each(stripped.decks, function(deck, deckTierCB) {
-//                            console.log("deck:",deck);
-//                            DeckTier.upsert({}, deck)
-//                            .$promise
-//                            .then(function (dataDeck) {
-//                                async.each(deck.deckTech, function(deckTech, deckTechCB) {
-//                                    deckTech.deckTierId = dataDeck.id;
-//                                    DeckTech.upsert({}, deckTech)
-//                                    .$promise
-//                                    .then(function (dataDeckTech) {
-//                                        async.each(deckTech.cardTech, function(cardTech, cardTechCB) {
-//                                            cardTech.deckTechId = dataDeckTech.id;
-//                                            CardTech.upsert({}, cardTech)
-//                                            .$promise
-//                                            .then(function() {
-//                                                console.log("CardTech was successful");
-//                                                return cardTechCB();
-//                                            })
-//                                            .catch(function (err) {
-//                                                console.log("CardTech errored out!", err);
-//                                                return seriesCallback(err);
-//                                            });
-//                                        }, function() {
-//                                            console.log("DeckTech was successful");
-//                                            return deckTechCB();
-//                                        });
-//                                    }).catch(function(err) {
-//                                        console.log("DeckTech errored out!", err);
-//                                        return seriesCallback(err);
-//                                    });
-//                                }, function () {
-//                                    return deckTierCB();
+//                var newId = { id: snapVar.id };
+//                async.series([
+//                    function (seriesCb) {
+//                        async.each(snapCopy.deckMatchups, function (m) {
+//                            if(!_.isUndefined(m.id)) {
+//                                DeckMatchup.destroyById({
+//                                    id: m.id
 //                                });
-//                            })
-//                            .catch(function(err) {
-//                                console.log("DeckTier errored out!", err);
-//                                return seriesCallback(err);
-//                            });
-//                        }, function() {
-//                            return seriesCallback(undefined, stripped);
+//                            }
 //                        });
-//                    }, function (stripped, seriesCallback) {
-//                        async.each(stripped.authors, function (author, authorCB) {
 //
-//                            author.authorId = author.user.id;
-//                            author.snapshotId = $scope.snapshot.id;
-//                            SnapshotAuthor.upsert({}, author)
-//                            .$promise
-//                            .then(function () {
-//                                console.log("SnapshotAuthor was successful!");
-//                                return authorCB();
-//                            })
-//                            .catch(function (err) {
-//                                console.log("SnapshotAuthor errored out!", err);
-//                                return seriesCallback(err);
-//                            });
-//                        }, function () {
-//                            return seriesCallback(undefined);
-//                        });
-//                    }, function (seriesCallback) {
-//                        Snapshot.deckMatchups.destroyAll({
+//                        return seriesCb();
+//                    },
+//                    function (seriesCb) {
+//                        Snapshot.deckMatchups.createMany({
 //                            id: $scope.snapshot.id
-//                        })
-//                        .$promise
-//                        .then(function (data) {
-//                            console.log("SnapshotMatchups DELETE successful!");
-//
-//                            Snapshot.deckMatchups.createMany({
-//                                id: $scope.snapshot.id
-//                            }, $scope.snapshot.matches)
-//                            .$promise
-//                            .then(function () {
-//                                console.log("SnapshotMatchups CREATE successful!");
-//                                return seriesCallback(undefined);
-//                            })
-//                            .catch(function (err) {
-//                                console.log("SnapshotMatchups CREATE failed!", err);
-//                                return seriesCallback(err);
-//                            });
-//                        })
-//                        .catch(function (err) {
-//                            console.log("SnapshotMatchups DELETE failed!");
-//                            return seriesCallback(err);
-//                        });
-//                    }, function (seriesCallback) {
-//                        console.log("deleting: authors");
-//                        delete $scope.snapshot.authors;
-//                        console.log("deleting: matches");
-//                        delete $scope.snapshot.matches;
-//                        console.log("deleting: deckMatches");
-//                        delete $scope.snapshot.deckMatches;
-//                        console.log("deleting: tiers");
-//                        delete $scope.snapshot.tiers;
-//                        Snapshot.upsert({}, $scope.snapshot)
+//                        }, cleanDeckMatchups)
 //                        .$promise
 //                        .then(function () {
-//                            console.log("Snapshot was successful!");
-//                            return seriesCallback(undefined);
+//                            return seriesCb();
 //                        })
-//                        .catch(function (err) {
-//                            console.log("snapshot errored out!", err);
-//                            return seriesCallback(err);
-//                        });
+//                        .catch(seriesCb);
 //                    }
 //                ], function (err) {
-//                    if (err) { console.log("Fatal error snapshot NOT saved!"); console.error(err); return; }
+//                    if (err) {
+//                        console.log("err:", err);
+//                        $scope.saving = false;
+//                        return;
+//                    }
 //
-//                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been edited successfully.' });
-//                    $state.go('app.admin.snapshots.list');
+//                    Snapshot.update({
+//                        where: {
+//                            id: snapVar.id
+//                        }
+//                    }, snapVar)
+//                    .$promise
+//                    .then(function (data) {
+//                        async.parallel([
+//                            function (parallelCb) {
+//                                async.each(decksToDelete, function (item, eachCb) {
+//                                    DeckTier.destroyById({
+//                                        id: item
+//                                    })
+//                                    .$promise
+//                                    .then(function () {
+//                                        return eachCb();
+//                                    });
+//                                }, parallelCb);
+//                            },
+//                            function (parallelCb) {
+//                                async.each(deckTechsToDelete, function (item, eachCb) {
+//                                    DeckTech.destroyById({
+//                                        id: item
+//                                    })
+//                                    .$promise
+//                                    .then(function () {
+//                                        return eachCb();
+//                                    });
+//                                }, parallelCb);
+//                            },
+//                            function (parallelCb) {
+//                                async.each(cardTechsToDelete, function (item, eachCb) {
+//                                    CardTech.destroyById({
+//                                        id: item
+//                                    })
+//                                    .$promise
+//                                    .then(function () {
+//                                        return eachCb();
+//                                    });
+//                                }, parallelCb);
+//                            },
+//                        ], function () {
+//                            $state.go('app.admin.hearthstone.snapshots.list');
+//                        });
+//                    });
 //                });
+
+
+//                function (seriesCallback) {
+//                    var stripped = {};
+//
+//                    stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
+//                    stripped.decks = _.flatten(stripped.authors, true);
+//
+//                    stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
+//                    stripped.matches = _.flatten(stripped.matches, true);
+//
+//                    stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
+//                    stripped.decks = _.flatten(stripped.decks, true);
+//
+//                    stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
+//                    stripped.deckTech = _.flatten(stripped.deckTech, true);
+//
+//                    stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
+//                    stripped.cardTech = _.flatten(stripped.cardTech, true);
+//
+//                    return seriesCallback(undefined, stripped);
+//                }, 
+
+
+                async.waterfall([
+                    function (seriesCallback) {
+                        async.each(snapVar.deckTiers, function(deck, deckTierCB) {
+                            curProgress++;
+                            
+                            DeckTier.upsert({}, deck)
+                            .$promise
+                            .then(function (dataDeck) {
+                                async.each(deck.deckTech, function(deckTech, deckTechCB) {
+                                    curProgress++;
+                                    
+                                    deckTech.deckTierId = dataDeck.id;
+                                    DeckTech.upsert({}, deckTech)
+                                    .$promise
+                                    .then(function (dataDeckTech) {
+                                        async.each(deckTech.cardTech, function(cardTech, cardTechCB) {
+                                            curProgress++;
+                                            
+                                            cardTech.deckTechId = dataDeckTech.id;
+                                            CardTech.upsert({}, cardTech)
+                                            .$promise
+                                            .then(function() {
+//                                                console.log("CardTech was successful");
+                                                return cardTechCB();
+                                            })
+                                            .catch(function (err) {
+//                                                console.log("CardTech errored out!", err);
+                                                return seriesCallback(err);
+                                            });
+                                        }, function() {
+//                                            console.log("DeckTech was successful");
+                                            return deckTechCB();
+                                        });
+                                    }).catch(function(err) {
+//                                        console.log("DeckTech errored out!", err);
+                                        return seriesCallback(err);
+                                    });
+                                }, function () {
+                                    return deckTierCB();
+                                });
+                            })
+                            .catch(function(err) {
+//                                console.log("DeckTier errored out!", err);
+                                return seriesCallback(err);
+                            });
+                        }, function() {
+                            return seriesCallback(undefined);
+                        });
+                    }, function (seriesCallback) {
+                        async.each(snapVar.authors, function (author, authorCB) {
+
+                            author.authorId = author.user.id;
+                            author.snapshotId = $scope.snapshot.id;
+                            SnapshotAuthor.upsert({}, author)
+                            .$promise
+                            .then(function () {
+//                                console.log("SnapshotAuthor was successful!");
+                                return authorCB();
+                            })
+                            .catch(function (err) {
+//                                console.log("SnapshotAuthor errored out!", err);
+                                return seriesCallback(err);
+                            });
+                        }, function () {
+                            return seriesCallback(undefined);
+                        });
+                    }, function (seriesCallback) {
+                        Snapshot.deckMatchups.destroyAll({
+                            id: $scope.snapshot.id
+                        })
+                        .$promise
+                        .then(function (data) {
+//                            console.log("SnapshotMatchups DELETE successful!");
+
+                            Snapshot.deckMatchups.createMany({
+                                id: $scope.snapshot.id
+                            }, $scope.snapshot.matches)
+                            .$promise
+                            .then(function () {
+//                                console.log("SnapshotMatchups CREATE successful!");
+                                return seriesCallback(undefined);
+                            })
+                            .catch(function (err) {
+//                                console.log("SnapshotMatchups CREATE failed!", err);
+                                return seriesCallback(err);
+                            });
+                        })
+                        .catch(function (err) {
+//                            console.log("SnapshotMatchups DELETE failed!");
+                            return seriesCallback(err);
+                        });
+                    }, function (seriesCallback) {
+                        delete $scope.snapshot.authors;
+                        delete $scope.snapshot.matches;
+                        delete $scope.snapshot.deckMatches;
+                        delete $scope.snapshot.tiers;
+                        Snapshot.upsert({}, $scope.snapshot)
+                        .$promise
+                        .then(function () {
+                            console.log("Snapshot was successful!");
+                            return seriesCallback(undefined);
+                        })
+                        .catch(function (err) {
+                            console.log("snapshot errored out!", err);
+                            return seriesCallback(err);
+                        });
+                    }
+                ], function (err) {
+                    if (err) { console.log("Fatal error snapshot NOT saved!"); console.error(err); return; }
+
+                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been edited successfully.' });
+                    $state.go('app.admin.hearthstone.snapshots.list');
+                });
             };
         }
     ])
     .controller('AdminHearthstoneSnapshotAddCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
         function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
 
+            var curProgress = 0;
+            var maxProgress = 0;
             var deckBootBox = undefined,
                 authorBootBox = undefined,
                 cardBootBox = undefined,
@@ -4447,6 +4471,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             function setErr(err) {
+                $scope.loading = false;
                 if (_.isEmpty(err)) {
                     AlertService.reset();
                 }
@@ -4464,6 +4489,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.removedDecks = [];
             $scope.lockDND = true;
             $scope.loaded = false;
+            $scope.loading = false;
 
             $scope.updateDND = function (list, index, d) {
                 list.splice(index, 1);
@@ -5219,8 +5245,14 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.setSlug();
                 });
             }
+            
+            $scope.getProgress = function () {
+                return Math.floor((curProgress/maxProgress)*100);
+            }
 
             $scope.addSnapshot = function () {
+                $scope.loading = true;
+                
                 var err = {};
                 var snapCopy = angular.copy($scope.snapshot);
 
@@ -5228,6 +5260,7 @@ angular.module('app.controllers', ['ngCookies'])
                 snapCopy.deckMatchups = [];
                 snapCopy.deckMatchups = snapCopy.matches;
 
+                //we build deckTiers and validate the deckTechs here
                 _.each(snapCopy.tiers, function (tier) {
                     _.each(tier.decks, function (deck) {
                         deck.tier = tier.tier;
@@ -5245,11 +5278,13 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                 });
 
+                //throw errors and halt execution here
                 if (!_.isEmpty(err)) {
                     setErr(err);
                     return;
                 }
 
+                //clean the snapshot object
                 var snapVar = Util.cleanObj(snapCopy, [
                     'snapNum',
                     'title',
@@ -5268,141 +5303,177 @@ angular.module('app.controllers', ['ngCookies'])
 
                 var d = new Date();
                 snapVar.createdDate = d.toISOString();
-
-
-
-                Snapshot.create({}, snapVar)
-                  .$promise
-                  .then(function (data) {
-                    $state.go('app.admin.hearthstone.snapshots.list');
-                });
-//                async.waterfall([
-//                    function (waterfallCb) {
-//                        var stripped = {};
+                
+                _.each(snapVar.deckTiers, function (deckTier) {
+                    maxProgress++;
+                    _.each(deckTier.deckTech, function (deckTech) {
+                        maxProgress++;
+                        _.each(deckTech.cardTech, function (cardTech) {
+                            maxProgress++;
+                        })
+                    })
+                })
+                
+//                function (waterfallCb) {
+//                    var stripped = {};
 //
-//                        console.log("step 1", $scope.snapshot);
+//                    console.log("step 1", $scope.snapshot);
 //
-//                        stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
-//                        stripped.decks = _.flatten(stripped.authors, true);
+//                    stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
+//                    stripped.decks = _.flatten(stripped.authors, true);
 ////                        delete $scope.snapshot.authors;
 //
-//                        stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
-//                        stripped.matches = _.flatten(stripped.matches, true);
+//                    stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
+//                    stripped.matches = _.flatten(stripped.matches, true);
 ////                        delete $scope.snapshot.matches;
 //
-//                        stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
-//                        stripped.decks = _.flatten(stripped.decks, true);
+//                    stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
+//                    stripped.decks = _.flatten(stripped.decks, true);
 ////                        delete $scope.snapshot.tiers;
 //
-//                        stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
-//                        stripped.deckTech = _.flatten(stripped.deckTech, true);
+//                    stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
+//                    stripped.deckTech = _.flatten(stripped.deckTech, true);
 //
-//                        stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
-//                        stripped.cardTech = _.flatten(stripped.cardTech, true);
+//                    stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
+//                    stripped.cardTech = _.flatten(stripped.cardTech, true);
 //
-//                        return waterfallCb(undefined, stripped);
-//                    }, function (stripped, waterfallCb) {
-//
-//                        console.log("step 2", stripped);
-//
-//                        Snapshot.upsert({}, $scope.snapshot)
-//                        .$promise
-//                        .then(function (dataSnapshot) {
-//                            console.log("snapshot created", dataSnapshot);
-//                            async.each(stripped.decks, function(deck, deckTierCB) {
-//                                deck.snapshotId = dataSnapshot.id;
-//                                DeckTier.upsert({}, deck)
-//                                .$promise
-//                                .then(function (dataDeck) {
-//                                    async.each(deck.deckTech, function(deckTech, deckTechCB) {
-//                                        deckTech.deckTierId = dataDeck.id;
-//                                        DeckTech.upsert({}, deckTech)
-//                                        .$promise
-//                                        .then(function (dataDeckTech) {
-//                                            async.each(deckTech.cardTech, function(cardTech, cardTechCB) {
-//                                                cardTech.deckTechId = dataDeckTech.id;
-//                                                CardTech.upsert({}, cardTech)
-//                                                .$promise
-//                                                .then(function() {
-//                                                    console.log("CardTech was successful");
-//                                                    return cardTechCB();
-//                                                })
-//                                                .catch(function (err) {
-//                                                    console.log("CardTech errored out!", err);
-//                                                    return waterfallCb(err);
-//                                                });
-//                                            }, function() {
-//                                                console.log("DeckTech was successful");
-//                                                return deckTechCB();
-//                                            });
-//                                        }).catch(function(err) {
-//                                            console.log("DeckTech errored out!", err);
-//                                            return waterfallCb(err);
-//                                        });
-//                                    }, function () {
-//                                        return deckTierCB();
-//                                    });
-//                                })
-//                                .catch(function(err) {
-//                                    console.log("DeckTier errored out!", err);
-//                                    return waterfallCb(err);
-//                                });
-//                            }, function() {
-//                                async.series([
-//                                    function(seriesCallback) {
-//                                        Snapshot.deckMatchups.createMany({
-//                                            id: dataSnapshot.id
-//                                        }, $scope.snapshot.matches)
-//                                        .$promise
-//                                        .then(function () {
-//                                            console.log("SnapshotMatchups CREATE successful!");
-//                                            return seriesCallback();
-//                                        })
-//                                        .catch(function (err) {
-//                                            console.log("SnapshotMatchups CREATE failed!", err);
-//                                            return seriesCallback(err);
-//                                        });
-//                                    }, function (seriesCallback) {
-//                                        async.each(stripped.authors, function (author, authorCb) {
-//
-//                                            author.authorId = author.user.id;
-//                                            author.snapshotId = dataSnapshot.id;
-//
-//                                            SnapshotAuthor.upsert({}, author)
-//                                            .$promise
-//                                            .then(function () {
-//                                                console.log("SnapshotAuthor was successful!");
-//                                                return authorCb();
-//                                            })
-//                                            .catch(function (err) {
-//                                                console.log("SnapshotAuthor errored out!", err);
-//                                                return seriesCallback(err);
-//                                            });
-//                                        }, function () {
-//                                            return seriesCallback();
-//                                        });
-//                                    }
-//                                ], function (err) {
-//                                    if(err) return waterfallCb(err);
-//
-//                                    return waterfallCb(undefined);
-//                                });
-//
-//                            });
-//                        })
-//                        .catch(function (err) {
-//                            console.log("snapshot errored out!", err);
-//                            return waterfallCb(err);
-//                        });
-//                    }
-//                ], function (err) {
-//                    console.log("step 3");
-//
-//                    if (err) { console.log("Fatal error snapshot NOT saved!"); console.error(err); return; }
-//
-//                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been added successfully.' });
-//                    $state.go('app.admin.snapshots.list');
+//                    return waterfallCb(undefined, stripped);
+//                },  
+
+//                Snapshot.create({}, snapVar)
+//                  .$promise
+//                  .then(function (data) {
+//                    $state.go('app.admin.hearthstone.snapshots.list');
 //                });
+                
+                
+                
+                async.waterfall([
+                    function (waterfallCb) {
+                        //cleaning the snapshot object
+                        var cleanedSnap = Util.cleanObj(snapVar, [
+                            'snapNum',
+                            'title',
+                            'createdDate',
+                            'content',
+                            'slug',
+                            'isActive',
+                            'voteScore',
+                            'photoNames',
+                            'comments'
+                        ]);
+                        
+                        return waterfallCb(undefined, cleanedSnap);
+                    },
+                    function (cleanSnap, waterfallCb) {
+                        Snapshot.create({}, cleanSnap)
+                        .$promise
+                        .then(function (dataSnapshot) {
+                            async.eachSeries(snapVar.deckTiers, function(deck, deckTierCB) {
+                                var tempDeckTech = deck.deckTech;
+                                delete deck.deckTech;
+                                
+                                deck.snapshotId = dataSnapshot.id;
+                                DeckTier.create({}, deck)
+                                .$promise
+                                .then(function (dataDeck) {
+                                    curProgress++;
+                                    
+                                    async.eachSeries(tempDeckTech, function(deckTech, deckTechCB) {
+                                        var tempCardTech = deckTech.cardTech;
+                                        delete deckTech.cardTech;
+                                        
+                                        deckTech.deckTierId = dataDeck.id;
+                                        DeckTech.create({}, deckTech)
+                                        .$promise
+                                        .then(function (dataDeckTech) {
+                                            curProgress++;
+                                            
+                                            async.eachSeries(tempCardTech, function(cardTech, cardTechCB) {
+                                                cardTech.deckTechId = dataDeckTech.id;
+                                                CardTech.create({}, cardTech)
+                                                .$promise
+                                                .then(function() {
+                                                    curProgress++;
+                                                    console.log("CardTech was successful");
+                                                    return cardTechCB();
+                                                })
+                                                .catch(function (err) {
+                                                    console.log("CardTech errored out!", err);
+                                                    return waterfallCb(err);
+                                                });
+                                            }, function() {
+                                                console.log("DeckTech was successful");
+                                                return deckTechCB();
+                                            });
+                                        }).catch(function(err) {
+                                            console.log("DeckTech errored out!", err);
+                                            return waterfallCb(err);
+                                        });
+                                    }, function () {
+                                        return deckTierCB();
+                                    });
+                                })
+                                .catch(function(err) {
+                                    console.log("DeckTier errored out!", err);
+                                    return waterfallCb(err);
+                                });
+                            }, function() {
+                                async.series([
+                                    function(seriesCallback) {
+                                        Snapshot.deckMatchups.createMany({
+                                            id: dataSnapshot.id
+                                        }, snapVar.deckMatchups)
+                                        .$promise
+                                        .then(function () {
+                                            console.log("SnapshotMatchups CREATE successful!");
+                                            return seriesCallback();
+                                        })
+                                        .catch(function (err) {
+                                            console.log("SnapshotMatchups CREATE failed!", err);
+                                            return seriesCallback(err);
+                                        });
+                                    }, function (seriesCallback) {
+                                        async.each(snapVar.authors, function (author, authorCb) {
+
+                                            author.authorId = author.user.id;
+                                            author.snapshotId = dataSnapshot.id;
+
+                                            SnapshotAuthor.upsert({}, author)
+                                            .$promise
+                                            .then(function () {
+                                                console.log("SnapshotAuthor was successful!");
+                                                return authorCb();
+                                            })
+                                            .catch(function (err) {
+                                                console.log("SnapshotAuthor errored out!", err);
+                                                return seriesCallback(err);
+                                            });
+                                        }, function () {
+                                            return seriesCallback();
+                                        });
+                                    }
+                                ], function (err) {
+                                    if(err) return waterfallCb(err);
+
+                                    return waterfallCb(undefined);
+                                });
+
+                            });
+                        })
+                        .catch(function (err) {
+                            console.log("snapshot errored out!", err);
+                            return waterfallCb(err);
+                        });
+                    }
+                ], function (err) {
+                    console.log("step 3");
+
+                    if (err) { console.log("Fatal error snapshot NOT saved!"); console.error(err); return; }
+
+                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been added successfully.' });
+                    $state.go('app.admin.hearthstone.snapshots.list');
+                });
             };
         }
     ])
