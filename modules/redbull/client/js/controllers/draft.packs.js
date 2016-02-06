@@ -186,7 +186,7 @@ angular.module('redbull.controllers')
     // handle preload
     Preloader.preloadFiles( fileLocations ).then(
         function handleResolve( fileLocations ) {
-          console.log("handle resolve");
+
             $scope.isLoading = false;
             $scope.isSuccessful = true;
         },
@@ -196,7 +196,6 @@ angular.module('redbull.controllers')
             console.error( "File Failed", fileLocation );
         },
         function handleNotify( event ) {
-          console.log("notify", event);
             $scope.percentLoaded = event.percent+"%";
         }
     );

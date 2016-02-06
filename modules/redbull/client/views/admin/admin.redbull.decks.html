@@ -40,7 +40,7 @@
                     <div class="deck-card {{card.card.playerClass.toLowerCase()}}"
                          ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}"
                          ng-repeat="card in deck.deckCards track by card.card.id"
-                         data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
+                         data-tooltip-img="'http://cdn.tempostorm.netdna-cdn.com/cards/' + card.card.photoNames.large"
                          data-tooltip-pos="left" hs-card
                          ng-click="removeCardFromDeck(card)">
                       <div class="card-pool-card-mana">{{card.card.cost}}</div>
@@ -49,7 +49,7 @@
                         <i class="fa fa-star"></i>
                       </div>
                       <div class="card-pool-card-photo">
-                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}"
+                        <img ng-src="http://cdn.tempostorm.netdna-cdn.com/cards/{{card.card.photoNames.small}}"
                              alt="card.card.name">
                       </div>
                       <div class="card-pool-card-name">{{card.card.name}}</div>
@@ -121,7 +121,7 @@
                     <div class="deck-card {{card.card.playerClass.toLowerCase()}}"
                          ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}"
                          ng-repeat="card in deck.deckCards track by card.card.id"
-                         data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
+                         data-tooltip-img="'http://cdn.tempostorm.netdna-cdn.com/cards/' + card.card.photoNames.large"
                          data-tooltip-pos="left" hs-card
                          ng-click="removeCardFromDeck(card)">
                       <div class="card-pool-card-mana">{{card.card.cost}}</div>
@@ -130,7 +130,7 @@
                         <i class="fa fa-star"></i>
                       </div>
                       <div class="card-pool-card-photo">
-                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}"
+                        <img ng-src="http://cdn.tempostorm.netdna-cdn.com/cards/{{card.card.photoNames.small}}"
                              alt="card.card.name">
                       </div>
                       <div class="card-pool-card-name">{{card.card.name}}</div>
