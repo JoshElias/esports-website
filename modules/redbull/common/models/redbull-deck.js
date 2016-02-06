@@ -18,6 +18,7 @@ module.exports = function(RedbullDeck) {
     // HIDING OFFICIAL
 
     RedbullDeck.afterRemote("**", function (ctx, redbullDeck, next) {
+        console.log("plz help me")
         return filterOfficialDecks(ctx, redbullDeck, next);
     });
 
@@ -41,6 +42,10 @@ module.exports = function(RedbullDeck) {
 
         function applyFilter() {
 
+            if(!ctx.result) {
+                return finalCb();
+            }
+
             // Sets the context's result and finished the filter function
             function done(err, answer) {
                 if(err) return finalCb(err);
@@ -49,60 +54,57 @@ module.exports = function(RedbullDeck) {
                 return finalCb();
             }
 
-            if (ctx.result) {
+            // handle arrays of results
+            if (Array.isArray(deckInstance)) {
+                var answer = [];
+                async.eachSeries(ctx.result, function(result, resultCb) {
 
-                // handle arrays of results
-                if (Array.isArray(deckInstance)) {
-                    var answer = [];
-                    async.eachSeries(ctx.result, function(result, resultCb) {
-
-                        if(!result.isOfficial) {
-                            answer.push(result);
-                            return resultCb();
-                        }
-
-                        return User.isInRoles(userId,
-                            ["$owner"],
-                            {modelClass: "redbullDeck", modelId: result.id},
-                            function (err, isInRoles) {
-                                if(err) return resultCb(err);
-                                if(!isInRoles.none) {
-                                    answer.push(result);
-                                }
-                                return resultCb();
-                            }
-                        );
-                    }, function(err) {
-                        return done(err, answer);
-                    });
-
-                // Handle single result
-                } else {
-                    var answer = {};
-
-                    if(!ctx.result.isOfficial) {
-                        answer = ctx.result;
-                        return done(undefined, answer);
+                    if(!result.isOfficial) {
+                        answer.push(result);
+                        return resultCb();
                     }
 
                     return User.isInRoles(userId,
                         ["$owner"],
-                        {modelClass: "redbullDeck", modelId: ctx.result.id},
+                        {modelClass: "redbullDeck", modelId: result.id},
                         function (err, isInRoles) {
-                            if(err) return finalCb(err);
-                            if(isInRoles.none) {
-                                var noDeckErr = new Error('unable to find deck');
-                                noDeckErr.statusCode = 404;
-                                noDeckErr.code = 'DECK_NOT_FOUND';
-                                return done(noDeckErr)
+                            if(err) return resultCb(err);
+                            if(!isInRoles.none) {
+                                answer.push(result);
                             }
-
-                            answer = ctx.result;
-
-                            return done(undefined, answer);
+                            return resultCb();
                         }
                     );
+                }, function(err) {
+                    return done(err, answer);
+                });
+
+            // Handle single result
+            } else {
+                var answer = {};
+
+                if(!ctx.result.isOfficial) {
+                    answer = ctx.result;
+                    return done(undefined, answer);
                 }
+
+                return User.isInRoles(userId,
+                    ["$owner"],
+                    {modelClass: "redbullDeck", modelId: ctx.result.id},
+                    function (err, isInRoles) {
+                        if(err) return finalCb(err);
+                        if(isInRoles.none) {
+                            var noDeckErr = new Error('unable to find deck');
+                            noDeckErr.statusCode = 404;
+                            noDeckErr.code = 'DECK_NOT_FOUND';
+                            return done(noDeckErr)
+                        }
+
+                        answer = ctx.result;
+
+                        return done(undefined, answer);
+                    }
+                );
             }
         }
     }
