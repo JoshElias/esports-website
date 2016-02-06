@@ -52,7 +52,7 @@ angular.module('redbull.controllers')
           }
         });
 
-        if(hasActive.hasInactive === false && hasActive.hasActive === false) {
+        if(hasActive.hasInactive === false && hasActive.hasActive === false && hasActive.incompleteDraft == false) {
           //console.log("no drafts...");
           hasActive.noDraft = true;
         }
@@ -88,7 +88,8 @@ angular.module('redbull.controllers')
         return !(match === false)
       };
 
-      $scope.promptInactive = function (player) {
+      $scope.promptInactive = function ($event, player) {
+        $event.stopPropagation();
 
         var box = bootbox.dialog({
           title: 'Set Draft as INACTIVE',
@@ -138,8 +139,8 @@ angular.module('redbull.controllers')
         box.modal('show');
       };
 
-      $scope.promptDelete = function (draft, username) {
-
+      $scope.promptDelete = function ($event, draft, username) {
+        $event.stopPropagation();
         var box = bootbox.dialog({
           title: 'DELETE Draft',
           message: 'Are you sure you want to DELETE this draft for the player: <strong>' +
@@ -149,9 +150,24 @@ angular.module('redbull.controllers')
               label: 'DELETE Draft',
               className: 'btn-danger',
               callback: function () {
+                var idx = false;
+                _.forEach($scope.officialPlayers, function(player){
+                  if(player.username == username){
+                    _.forEach(player.inactiveDrafts, function(internalDraft, i){
+                      if(draft.id === internalDraft.id){
+                        idx = i;
+                      }
+                    })
+                  }
+                });
+                if (idx != false){
+                  $scope.officialPlayers.inactiveDrafts.splice(idx,1);
+                }
                 draft.isActive = false;
+                console.log(draft.id);
                 RedbullDraft.deleteById({id: draft.id}).$promise.then(function (res) {
                   draft = null;
+
                   $window.scrollTo(0, 0);
                   AlertService.setSuccess({
                     show: true,

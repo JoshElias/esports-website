@@ -13,11 +13,11 @@
           {{ player.username }}
            <span class="pull-right">
               <button class="btn btn-danger btn-xs" ng-if="userIsAdmin"
-                      ng-click="promptDelete(player.activeDraft, player.username)">
+                      ng-click="promptDelete($event, player.activeDraft, player.username)">
                 DELETE Draft
               </button>
               <button class="btn btn-danger btn-xs"
-                      ng-click="promptInactive(player)">
+                      ng-click="promptInactive($event, player)">
                 Deactivate Draft
               </button>
             </span>
@@ -66,7 +66,11 @@
       <div class="row admin-draft-decks panel panel-warning">
         <div class="panel-heading">
           {{ player.username }}
-          <span class="pull-right">Status: Incomplete Draft</span>
+          <span class="pull-right">
+
+            Status: Incomplete Draft
+          </span>
+
         </div>
       </div>
 
@@ -75,7 +79,10 @@
       <div class="row admin-draft-decks panel panel-danger">
         <div class="panel-heading">
           {{ player.username }}
-          <span class="pull-right">Status: Draft not started</span>
+          <span class="pull-right">
+
+            Status: Draft not started
+          </span>
         </div>
       </div>
 
@@ -101,7 +108,7 @@
           <div class="draft-block col-xs-12 list-group-item" ng-repeat="draft in player.inactiveDrafts">
             <div class="col-xs-12">
             <span class="pull-right">
-              <button class="btn btn-danger btn-xs" ng-if="userIsAdmin" ng-click="promptDelete(draft, player.username)">DELETE Draft
+              <button class="btn btn-danger btn-xs" ng-if="userIsAdmin" ng-click="promptDelete($event, draft, player.username)">DELETE Draft
               </button>
               </span>
             </div>
