@@ -13,6 +13,7 @@ module.exports = function(RedbullDraft) {
     });
 
     function filterOfficialDrafts(ctx, deckInstance, finalCb) {
+      console.log("we're in");
         var User = RedbullDraft.app.models.user;
 
         var req = ctx.req;
@@ -31,7 +32,7 @@ module.exports = function(RedbullDraft) {
         });
 
         function applyFilter() {
-
+          console.log("applyFilter", ctx.result);
             if(!ctx.result) {
                 return finalCb();
             }
@@ -58,6 +59,7 @@ module.exports = function(RedbullDraft) {
                         ["$owner"],
                         {modelClass: "redbullDeck", modelId: result.id},
                         function (err, isInRoles) {
+                          console.log(err, isInRoles);
                             if(err) return resultCb(err);
                             if(!isInRoles.none) {
                                 answer.push(result);
@@ -82,6 +84,7 @@ module.exports = function(RedbullDraft) {
                     ["$owner"],
                     {modelClass: "redbullDeck", modelId: ctx.result.id},
                     function (err, isInRoles) {
+                      console.log(err, isInRoles);
                         if(err) return finalCb(err);
                         if(isInRoles.none) {
                             var noDeckErr = new Error('unable to find deck');

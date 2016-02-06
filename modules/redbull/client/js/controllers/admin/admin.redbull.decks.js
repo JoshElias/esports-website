@@ -52,7 +52,7 @@ angular.module('redbull.controllers')
           }
         });
 
-        if(hasActive.hasInactive === false && hasActive.hasActive === false) {
+        if(hasActive.hasInactive === false && hasActive.hasActive === false && hasActive.incompleteDraft == false) {
           //console.log("no drafts...");
           hasActive.noDraft = true;
         }
@@ -88,7 +88,8 @@ angular.module('redbull.controllers')
         return !(match === false)
       };
 
-      $scope.promptInactive = function (player) {
+      $scope.promptInactive = function ($event, player) {
+        $event.stopPropagation();
 
         var box = bootbox.dialog({
           title: 'Set Draft as INACTIVE',
@@ -138,8 +139,8 @@ angular.module('redbull.controllers')
         box.modal('show');
       };
 
-      $scope.promptDelete = function (draft, username) {
-
+      $scope.promptDelete = function ($event, draft, username) {
+        $event.stopPropagation();
         var box = bootbox.dialog({
           title: 'DELETE Draft',
           message: 'Are you sure you want to DELETE this draft for the player: <strong>' +
@@ -152,6 +153,7 @@ angular.module('redbull.controllers')
                 draft.isActive = false;
                 RedbullDraft.deleteById({id: draft.id}).$promise.then(function (res) {
                   draft = null;
+
                   $window.scrollTo(0, 0);
                   AlertService.setSuccess({
                     show: true,
