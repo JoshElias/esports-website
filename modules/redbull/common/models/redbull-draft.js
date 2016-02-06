@@ -5,7 +5,7 @@ var utils = require("./../../../../lib/utils");
 
 module.exports = function(RedbullDraft) {
 
-
+/*
     // HIDING OFFICIAL
 
     RedbullDraft.afterRemote("**", function (ctx, redbullDraft, next) {
@@ -58,6 +58,7 @@ module.exports = function(RedbullDraft) {
                         ["$owner"],
                         {modelClass: "redbullDeck", modelId: result.id},
                         function (err, isInRoles) {
+                            console.log("isInRoles:", isInRoles);
                             if(err) return resultCb(err);
                             if(!isInRoles.none) {
                                 answer.push(result);
@@ -84,6 +85,7 @@ module.exports = function(RedbullDraft) {
                     function (err, isInRoles) {
                         if(err) return finalCb(err);
                         if(isInRoles.none) {
+                            console.log("isInRoles:", isInRoles);
                             var noDeckErr = new Error('unable to find deck');
                             noDeckErr.statusCode = 404;
                             noDeckErr.code = 'DECK_NOT_FOUND';
@@ -98,7 +100,7 @@ module.exports = function(RedbullDraft) {
             }
         }
     }
-
+*/
 
     // START DRAFT
 

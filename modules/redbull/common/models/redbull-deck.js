@@ -13,12 +13,11 @@ var NUM_OF_CARDS_PER_DECK = 2;
 
 module.exports = function(RedbullDeck) {
 
-
+/*
 
     // HIDING OFFICIAL
 
     RedbullDeck.afterRemote("**", function (ctx, redbullDeck, next) {
-        console.log("plz help me")
         return filterOfficialDecks(ctx, redbullDeck, next);
     });
 
@@ -108,7 +107,7 @@ module.exports = function(RedbullDeck) {
             }
         }
     }
-
+*/
 
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {

@@ -510,6 +510,7 @@ module.exports = function(User) {
             }
 
             function updateIsInRoles(err, isRole) {
+                //console.log("IS ROLE:",err, isRole);
                 if (err) return eachCb(err);
 
                 if (!isRole && isInRoles.all) {
@@ -518,6 +519,8 @@ module.exports = function(User) {
                     isInRoles.none = false;
                 }
 
+                //console.log("setting rolename", roleName);
+                //console.log("to", isRole);
                 isInRoles[roleName] = isRole;
                 return eachCb();
             }
@@ -531,6 +534,10 @@ module.exports = function(User) {
 
                 var modelClass = loopback.getModel(options.modelClass);
 
+                //console.log("isOwner being called");
+                //console.log("modelClass", modelClass);
+                //console.log("options", options);
+                //console.log("uid", uid);
                 return Role.isOwner(modelClass, options.modelId, uid, updateIsInRoles);
             }
 
