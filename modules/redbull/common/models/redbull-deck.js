@@ -13,7 +13,6 @@ var NUM_OF_CARDS_PER_DECK = 2;
 
 module.exports = function(RedbullDeck) {
 
-/*
 
     // HIDING OFFICIAL
 
@@ -107,7 +106,7 @@ module.exports = function(RedbullDeck) {
             }
         }
     }
-*/
+
 
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {
@@ -145,6 +144,7 @@ module.exports = function(RedbullDeck) {
             var validationReport = {
                 deckErrors: {},
                 hasInvalidCards: false,
+                tooManyDecks: 0,
                 unauthorized: false,
                 passed: true
             };
@@ -306,21 +306,9 @@ module.exports = function(RedbullDeck) {
                 var numOfDecks = clientDecks.length;
                 var overflowAmount = numOfDecks - draftJSON.settings.numOfDecks;
                 if(overflowAmount > 0) {
-                    removeRandomDecks(overflowAmount, clientDecks);
+                    validationReport.tooManyDecks = overflowAmount;
+                    validationReport.passed = false;
                 }
-
-                function removeRandomDecks(numOfDecksToRemove) {
-                    // Get a random deckCard Index
-                    var randomDeckIndex = utils.getRandomInt(0, clientDecks.length-1);
-                    clientDecks.splice(randomDeckIndex, 1);
-                    numOfDecksToRemove--
-
-                    if(numOfDecksToRemove <= 0) {
-                        return;
-                    }
-                    return removeRandomDecks(numOfDecksToRemove);
-                }
-
 
                 // Iterate over decks
                 var deckIndex = clientDecks.length;
@@ -423,6 +411,7 @@ module.exports = function(RedbullDeck) {
 
             // If we have invalid cards, remove them from the decks
             clientDecks = removeInvalidCards(clientDecks, validationReport);
+            clientDecks = removeExtraDecks(clientDecks, validationReport);
             clientDecks = removeExtraCards(clientDecks);
             var availableDeckComponents = getAvailableDeckComponents(draftJSON, clientDecks);
 
@@ -433,7 +422,6 @@ module.exports = function(RedbullDeck) {
             return finalCb(undefined, clientDecks);
         }
     }
-
 
     function removeInvalidCards(clientDecks, validationReport) {
 
@@ -487,6 +475,24 @@ module.exports = function(RedbullDeck) {
         return clientDecks;
     }
 
+    function removeExtraDecks(clientDecks, validationReport) {
+        if(validationReport.tooManyDecks > 0) {
+            clientDecks = removeRandomDecks(validationReport.tooManyDecks, clientDecks);
+        }
+        return clientDecks;
+    }
+
+    function removeRandomDecks(numOfDecksToRemove, clientDecks) {
+        // Get a random deckCard Index
+        var randomDeckIndex = utils.getRandomInt(0, clientDecks.length-1);
+        clientDecks.splice(randomDeckIndex, 1);
+        numOfDecksToRemove--;
+
+        if(numOfDecksToRemove <= 0) {
+            return clientDecks;
+        }
+        return removeRandomDecks(numOfDecksToRemove, clientDecks);
+    }
 
     function removeExtraCards(clientDecks) {
 
