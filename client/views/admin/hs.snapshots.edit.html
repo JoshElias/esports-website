@@ -24,7 +24,7 @@
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-class="{active: snapshot.slug.linked}" ng-click="toggleSlugLink()"><i class="fa" ng-class="{'fa-link': snapshot.slug.linked, 'fa-unlink': !snapshot.slug.linked}"></i></button>
                     </span>
-                    <input type="text" id="slug" name="slug" class="form-control" ng-model="snapshot.slug.url" ng-readonly="snapshot.slug.linked" required>
+                    <input type="text" id="slug" name="slug" class="form-control" ng-model="snapshot.slug.url" ng-init="setSlug()" ng-readonly="snapshot.slug.linked" required>
                 </div>
             </div>
         </div>

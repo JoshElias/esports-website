@@ -4183,7 +4183,7 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                 })
                 
-                console.log(maxProgress);
+//                console.log(maxProgress);
 
 //                var newId = { id: snapVar.id };
 //                async.series([
@@ -4377,14 +4377,53 @@ angular.module('app.controllers', ['ngCookies'])
                             return seriesCallback(err);
                         });
                     }, function (seriesCallback) {
+                        async.parallel([
+                            function (parallelCb) {
+                                async.each(decksToDelete, function (item, eachCb) {
+                                    DeckTier.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    });
+                                }, parallelCb);
+                            },
+                            function (parallelCb) {
+                                async.each(deckTechsToDelete, function (item, eachCb) {
+                                    DeckTech.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    });
+                                }, parallelCb);
+                            },
+                            function (parallelCb) {
+                                async.each(cardTechsToDelete, function (item, eachCb) {
+                                    CardTech.destroyById({
+                                        id: item
+                                    })
+                                    .$promise
+                                    .then(function () {
+                                        return eachCb();
+                                    });
+                                }, parallelCb);
+                            },
+                        ], function () {
+                            return seriesCallback();
+                        });
+                    }, function (seriesCallback) {
                         delete $scope.snapshot.authors;
                         delete $scope.snapshot.matches;
                         delete $scope.snapshot.deckMatches;
                         delete $scope.snapshot.tiers;
+                
                         Snapshot.upsert({}, $scope.snapshot)
                         .$promise
                         .then(function () {
-                            console.log("Snapshot was successful!");
+//                            console.log("Snapshot was successful!");
                             return seriesCallback(undefined);
                         })
                         .catch(function (err) {
@@ -5067,7 +5106,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTech = function (t) {
-//              console.log(t);
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                         for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
@@ -5206,8 +5244,8 @@ angular.module('app.controllers', ['ngCookies'])
                     //BUILD TIERS//
                     snapshot.tiers = [];
                     _.each(stripped['decks'], function (deck) {
-                        if (snapshot.tiers[deck.tier-1] === undefined) {
-                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
+                        if (snapshot.tiers[deck.tier - 1] === undefined) {
+                            snapshot.tiers[deck.tier - 1] = { decks: [], tier: deck.tier };
                         }
                         deck.ranks.splice(0,0,deck.ranks[0]);
                         deck.ranks.pop();
@@ -5395,7 +5433,7 @@ angular.module('app.controllers', ['ngCookies'])
                                                 .$promise
                                                 .then(function() {
                                                     curProgress++;
-                                                    console.log("CardTech was successful");
+//                                                    console.log("CardTech was successful");
                                                     return cardTechCB();
                                                 })
                                                 .catch(function (err) {
@@ -5403,7 +5441,7 @@ angular.module('app.controllers', ['ngCookies'])
                                                     return waterfallCb(err);
                                                 });
                                             }, function() {
-                                                console.log("DeckTech was successful");
+//                                                console.log("DeckTech was successful");
                                                 return deckTechCB();
                                             });
                                         }).catch(function(err) {
@@ -5426,7 +5464,7 @@ angular.module('app.controllers', ['ngCookies'])
                                         }, snapVar.deckMatchups)
                                         .$promise
                                         .then(function () {
-                                            console.log("SnapshotMatchups CREATE successful!");
+//                                            console.log("SnapshotMatchups CREATE successful!");
                                             return seriesCallback();
                                         })
                                         .catch(function (err) {
@@ -5442,7 +5480,7 @@ angular.module('app.controllers', ['ngCookies'])
                                             SnapshotAuthor.upsert({}, author)
                                             .$promise
                                             .then(function () {
-                                                console.log("SnapshotAuthor was successful!");
+//                                                console.log("SnapshotAuthor was successful!");
                                                 return authorCb();
                                             })
                                             .catch(function (err) {
@@ -5467,9 +5505,11 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     }
                 ], function (err) {
-                    console.log("step 3");
-
-                    if (err) { console.log("Fatal error snapshot NOT saved!"); console.error(err); return; }
+                    if (err) { 
+                        console.log("Fatal error snapshot NOT saved!");
+                        console.error(err);
+                        return;
+                    }
 
                     AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been added successfully.' });
                     $state.go('app.admin.hearthstone.snapshots.list');

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "angular.min.js": "angular.min.5bcabd93.js",
   "app.min.js": "app.min.9ff55b01.js",
   "vendor.min.js": "vendor.min.4682e0de.js",
@@ -7,4 +8,14 @@
   "style.min.css": "style.min.e46a931e.css",
   "vendor.min.css": "vendor.min.ae26999c.css",
   "modules.min.css": "modules.min.c64bcad4.css"
+=======
+  "angular.min.js": "angular.min.472975ae.js",
+  "app.min.js": "app.min.f55db919.js",
+  "vendor.min.js": "vendor.min.8a01677c.js",
+  "modules.min.js": "modules.min.2c9c3272.js",
+  "lb-services.min.js": "lb-services.min.62079960.js",
+  "style.min.css": "style.min.8803a068.css",
+  "vendor.min.css": "vendor.min.60b209a2.css",
+  "modules.min.css": "modules.min.7f6323cf.css"
+>>>>>>> origin
 }
