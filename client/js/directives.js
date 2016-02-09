@@ -829,9 +829,17 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
+            var tooltip;
+            
             $timeout(function () {
-                $(element).tooltip();
+                tooltip = $(element).tooltip();
             });
+            
+//            scope.$on('$destroy', function () {
+//                if (tooltip.next()) {
+//                    tooltip.next().remove();
+//                }
+//            });
         }
     };
 }])

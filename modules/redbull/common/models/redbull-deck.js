@@ -14,6 +14,100 @@ var NUM_OF_CARDS_PER_DECK = 2;
 module.exports = function(RedbullDeck) {
 
 
+    // HIDING OFFICIAL
+
+    RedbullDeck.afterRemote("**", function (ctx, redbullDeck, next) {
+        return filterOfficialDecks(ctx, redbullDeck, next);
+    });
+
+    function filterOfficialDecks(ctx, deckInstance, finalCb) {
+        var User = RedbullDeck.app.models.user;
+
+        var req = ctx.req;
+
+        // Do we have a user Id
+        if (!req.accessToken || !req.accessToken.userId) {
+            return applyFilter();
+        }
+        var userId = req.accessToken.userId.toString();
+
+        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], function (err, isInRoles) {
+            if(err) return finalCb(err);
+            if(isInRoles.none) return applyFilter();
+
+            return finalCb();
+        });
+
+        function applyFilter() {
+
+            if(!ctx.result) {
+                return finalCb();
+            }
+
+            // Sets the context's result and finished the filter function
+            function done(err, answer) {
+                if(err) return finalCb(err);
+
+                ctx.result = answer;
+                return finalCb();
+            }
+
+            // handle arrays of results
+            if (Array.isArray(deckInstance)) {
+                var answer = [];
+                async.eachSeries(ctx.result, function(result, resultCb) {
+
+                    if(!result.isOfficial) {
+                        answer.push(result);
+                        return resultCb();
+                    }
+
+                    return User.isInRoles(userId,
+                        ["$owner"],
+                        {modelClass: "redbullDeck", modelId: result.id},
+                        function (err, isInRoles) {
+                            if(err) return resultCb(err);
+                            if(!isInRoles.none) {
+                                answer.push(result);
+                            }
+                            return resultCb();
+                        }
+                    );
+                }, function(err) {
+                    return done(err, answer);
+                });
+
+            // Handle single result
+            } else {
+                var answer = {};
+
+                if(!ctx.result.isOfficial) {
+                    answer = ctx.result;
+                    return done(undefined, answer);
+                }
+
+                return User.isInRoles(userId,
+                    ["$owner"],
+                    {modelClass: "redbullDeck", modelId: ctx.result.id},
+                    function (err, isInRoles) {
+                        if(err) return finalCb(err);
+                        if(isInRoles.none) {
+                            var noDeckErr = new Error('unable to find deck');
+                            noDeckErr.statusCode = 404;
+                            noDeckErr.code = 'DECK_NOT_FOUND';
+                            return done(noDeckErr)
+                        }
+
+                        answer = ctx.result;
+
+                        return done(undefined, answer);
+                    }
+                );
+            }
+        }
+    }
+
+
 
     RedbullDeck.saveDraftDecks = function (draft, clientDecks, clientOptions, finalCb) {
 
@@ -50,6 +144,7 @@ module.exports = function(RedbullDeck) {
             var validationReport = {
                 deckErrors: {},
                 hasInvalidCards: false,
+                tooManyDecks: 0,
                 unauthorized: false,
                 passed: true
             };
@@ -99,7 +194,7 @@ module.exports = function(RedbullDeck) {
 
             // Get loopback context for request obj
             var loopbackContext = loopback.getCurrentContext();
-            if (!loopbackContext || !loopbackContext.active) {
+            if (!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
                 return finalCb();
             }
             var req = loopbackContext.active.http.req;
@@ -211,21 +306,9 @@ module.exports = function(RedbullDeck) {
                 var numOfDecks = clientDecks.length;
                 var overflowAmount = numOfDecks - draftJSON.settings.numOfDecks;
                 if(overflowAmount > 0) {
-                    removeRandomDecks(overflowAmount, clientDecks);
+                    validationReport.tooManyDecks = overflowAmount;
+                    validationReport.passed = false;
                 }
-
-                function removeRandomDecks(numOfDecksToRemove) {
-                    // Get a random deckCard Index
-                    var randomDeckIndex = utils.getRandomInt(0, clientDecks.length-1);
-                    clientDecks.splice(randomDeckIndex, 1);
-                    numOfDecksToRemove--
-
-                    if(numOfDecksToRemove <= 0) {
-                        return;
-                    }
-                    return removeRandomDecks(numOfDecksToRemove);
-                }
-
 
                 // Iterate over decks
                 var deckIndex = clientDecks.length;
@@ -326,9 +409,9 @@ module.exports = function(RedbullDeck) {
                 return finalCb(undefined, randomDecks);
             }
 
-
             // If we have invalid cards, remove them from the decks
             clientDecks = removeInvalidCards(clientDecks, validationReport);
+            clientDecks = removeExtraDecks(clientDecks, validationReport);
             clientDecks = removeExtraCards(clientDecks);
             var availableDeckComponents = getAvailableDeckComponents(draftJSON, clientDecks);
 
@@ -339,7 +422,6 @@ module.exports = function(RedbullDeck) {
             return finalCb(undefined, clientDecks);
         }
     }
-
 
     function removeInvalidCards(clientDecks, validationReport) {
 
@@ -393,6 +475,24 @@ module.exports = function(RedbullDeck) {
         return clientDecks;
     }
 
+    function removeExtraDecks(clientDecks, validationReport) {
+        if(validationReport.tooManyDecks > 0) {
+            clientDecks = removeRandomDecks(validationReport.tooManyDecks, clientDecks);
+        }
+        return clientDecks;
+    }
+
+    function removeRandomDecks(numOfDecksToRemove, clientDecks) {
+        // Get a random deckCard Index
+        var randomDeckIndex = utils.getRandomInt(0, clientDecks.length-1);
+        clientDecks.splice(randomDeckIndex, 1);
+        numOfDecksToRemove--;
+
+        if(numOfDecksToRemove <= 0) {
+            return clientDecks;
+        }
+        return removeRandomDecks(numOfDecksToRemove, clientDecks);
+    }
 
     function removeExtraCards(clientDecks) {
 

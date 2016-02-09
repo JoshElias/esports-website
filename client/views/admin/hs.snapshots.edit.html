@@ -259,7 +259,17 @@
         
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || saving" ng-click="editSnapshot()">Edit Meta Snapshot <i ng-if="saving" style="font-size: 22px;" class="fa fa-pulse fa-spinner"></i></button>
+            <button type="submit" class="btn btn-blue btn-lg snapshot-btn" ng-disabled="form.$invalid || loading" ng-click="editSnapshot()">
+                Edit Meta Snapshot
+<!--
+                <div class="progress" ng-if="loading">
+                  <div class="progress-bar" role="progressbar"
+                  aria-valuenow="getProgress()" aria-valuemin="0" aria-valuemax="100" style="width:{{getProgress()}}%">
+                      {{getProgress()}}%
+                  </div>
+                </div>
+-->
+            </button>
         </div>
     </div>
     </form>

@@ -105,6 +105,7 @@ var redbull = angular.module('app.redbull', [
                                         RedbullDraft.create().$promise
                                         .then(function (data) {
                                             $localStorage.draftId = data.id;
+                                            $localStorage.draftDecks = [];
                                             d.resolve(data);
                                         }).catch(function (response) {
                                             console.error(response);
