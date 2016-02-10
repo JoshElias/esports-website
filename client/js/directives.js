@@ -719,7 +719,6 @@ angular.module('app.directives', ['ui.load'])
             $scope.voteInfo = {};
             
             function getVoteInfo (cb) {
-                setLoading(true);
                 async.waterfall([
                     getVotes,
                     calcVotes
@@ -794,25 +793,23 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.vote = function (direction) {
-                if(loading)
+                if (loading)
                     return;
 
-                setLoading(true);
-
                 if (_.isNull(LoopBackAuth.currentUserId)) {
-                    setLoading(false);
                     LoginModalService.showModal('login', function (result) {
-                        getVoteInfo(function () {
+                        getVoteInfo(function() {
                             $scope.vote(direction);
                         });
                     });
                 } else if ($attrs.theme === 'multi' && votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
-                    setLoading(false);
-                    bootbox.alert("You can't vote for your own content.");
                     return false;
                 } else {
-                    if (($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) && $attrs.theme !== 'single') {
-                        var where = {}
+                    if ($scope.voteInfo.hasVoted === direction) {
+                        return;
+                    } else if ($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) {
+                        setLoading(true);
+                        var where = {};
                             where[objType + "Id"] = votable.id;
                             where["authorId"] = LoopBackAuth.currentUserId;
 
@@ -831,7 +828,6 @@ angular.module('app.directives', ['ui.load'])
                             }, vote)
                             .$promise
                             .then(function(voteUpdated) {
-                                setLoading(false);
                                 
                                 _.each(votable.votes, function(vote) {
                                     if (voteUpdated.id === vote.id) {
@@ -843,9 +839,8 @@ angular.module('app.directives', ['ui.load'])
                             });
                         });
                         
-                    } else if ($attrs.theme === 'single' && $scope.voteInfo.hasVoted === 1) {
-                        return setLoading(false);
                     } else {
+                        setLoading(true);
                         var newVote = {};
                             newVote[objType + "Id"] = votable.id;
                             newVote["direction"] = direction;
@@ -854,7 +849,6 @@ angular.module('app.directives', ['ui.load'])
                         Vote.create(newVote)
                         .$promise
                         .then(function (voteCreated) {
-                            
                             votable.votes.push(voteCreated);
                             getVoteInfo();
                         });
