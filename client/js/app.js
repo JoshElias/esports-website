@@ -4037,7 +4037,18 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             authorId: userProfile.id
-                                        }
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'author',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        username: true
+                                                    }
+                                                }
+                                            }
+                                        ]
                                     }
                                 })
                                 .$promise;
