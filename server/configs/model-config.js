@@ -219,31 +219,31 @@ module.exports = {
         "public": true
     },
     "redbullExpansion": {
-        "dataSource": "mongodb",
+        "dataSource": "tournament-mongo",
         "public": true
     },
     "redbullRarityChance": {
-        "dataSource": "mongodb",
+        "dataSource": "tournament-mongo",
         "public": true
     },
     "redbullPack": {
-        "dataSource": "mongodb",
+        "dataSource": "tournament-mongo",
         "public": true
     },
     "redbullDraft": {
-        "dataSource": "mongodb",
+        "dataSource": "tournament-mongo",
         "public": true
     },
     "redbullDraftSettings": {
-        "dataSource": "mongodb",
+        "dataSource": "tournament-mongo",
         "public": true
     },
     "redbullPackCard": {
-        "dataSource": "mongodb",
+        "dataSource": "tournament-mongo",
         "public": true
     },
     "redbullDeck": {
-        "dataSource": "mongodb",
+        "dataSource": "tournament-mongo",
         "public": true
     },
     "spamRegex": {
