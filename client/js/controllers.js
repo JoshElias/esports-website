@@ -2704,7 +2704,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
             
             
-        console.log('article:', article);
+//        console.log('article:', article);
         $scope.editArticle = function (article) {
             $scope.fetching = true;
 

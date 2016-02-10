@@ -805,6 +805,7 @@ angular.module('app.directives', ['ui.load'])
                 } else if ($attrs.theme === 'multi' && votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
                     return false;
                 } else {
+                    
                     if ($scope.voteInfo.hasVoted === direction) {
                         return;
                     } else if ($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) {

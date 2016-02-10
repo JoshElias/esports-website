@@ -2702,10 +2702,12 @@ angular.module('app.services', [])
                         
                         if (_.isEmpty(filters.heroes)) {
                             where = {
+                                isActive: true,
                                 articleType: ['hots']
                             }
                         } else {
                             where = {
+                                isActive: true,
                                 articleType: ['hots'],
                                 classTags: {
                                     inq: _.map(heroes, function(hero) { return hero.name; })
