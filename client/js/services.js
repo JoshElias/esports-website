@@ -2230,7 +2230,6 @@ angular.module('app.services', [])
                         }
                     }).$promise
                         .then(function (heroTalents) {
-                        console.log('heroTalents:', heroTalents);
                         hero.talents = heroTalents;
                     })
                         .catch(function (err) {
@@ -2699,17 +2698,19 @@ angular.module('app.services', [])
 
                     },
                     function(heroes, seriesCallback) {
-                        var where = {
-                            articleType: ['hots']
-                        };
-
-                        if (!_.isNull(heroes)) {
+                        var where = {};
+                        
+                        if (_.isEmpty(filters.heroes)) {
+                            where = {
+                                articleType: ['hots']
+                            }
+                        } else {
                             where = {
                                 articleType: ['hots'],
                                 classTags: {
                                     inq: _.map(heroes, function(hero) { return hero.name; })
                                 }
-                            }
+                            };
                         }
                         
 //                        console.log('where:', where);
