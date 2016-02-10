@@ -2230,7 +2230,6 @@ angular.module('app.services', [])
                         }
                     }).$promise
                         .then(function (heroTalents) {
-                        console.log('heroTalents:', heroTalents);
                         hero.talents = heroTalents;
                     })
                         .catch(function (err) {

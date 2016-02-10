@@ -4032,7 +4032,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.articles.html',
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
-                            articles: ['userProfile', 'Article', function (userProfile, Article) {
+                            articles: ['userProfile', 'Util', 'Article', function (userProfile, Util, Article) {
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -4047,11 +4047,22 @@ var app = angular.module('app', [
                                                         username: true
                                                     }
                                                 }
+                                            },
+                                            {
+                                                relation: 'votes',
                                             }
                                         ]
                                     }
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (articles) {
+                                    console.log('articles:', articles);
+                                    _.each(articles, function(article) {
+                                        article.voteScore = Util.tally(article.votes, 'direction');
+                                    });
+                                    
+                                    return articles;
+                                });;
                             }]
                         }
                     }
