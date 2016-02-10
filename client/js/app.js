@@ -557,7 +557,7 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            article: ['$state', '$stateParams', 'Article', function ($state, $stateParams, Article) {
+                            article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
                                 var slug = $stateParams.slug;
 
                                 return Article.findOne({
@@ -630,6 +630,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
+                                    data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
                                 })
                                 .catch(function (err) {
@@ -1802,7 +1803,6 @@ var app = angular.module('app', [
                                                 possibleMaps = _.map(maps, function(currentMap) {
                                                     return currentMap.name;
                                                 });
-
                                                 StateParamHelper.validateFilters(filters.map, possibleMaps);
                                                 return waterCB();
                                             })
@@ -2718,7 +2718,8 @@ var app = angular.module('app', [
                                             scope: {
                                                 fields: {
                                                     id: true,
-                                                    direction: true
+                                                    direction: true,
+                                                    authorId: true
                                                 }
                                             }
                                         }

@@ -123,6 +123,7 @@ angular.module('app.directives', ['ui.load'])
             }
         }],
         link: function($scope, el, attr) {
+            
             $scope.setTitle = function(s) {
                 $(".modal-title")[0].innerHTML = s;
             }
@@ -714,38 +715,71 @@ angular.module('app.directives', ['ui.load'])
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
             var parentId = votable.id;
-
-            function getVoteInfo () {
+            var votableType = objType.toString() + 'Id';
+            $scope.voteInfo = {};
+            
+            function getVoteInfo (cb) {
                 setLoading(true);
-
-                return Vote.getScore({
-                    parentId: parentId
-                })
-                .$promise
-                .then(function (score) {
-                    return Vote.hasVoted({
-                        parentId: parentId,
-                        uid: LoopBackAuth.currentUserId
-                    })
-                    .$promise
-                    .then(function (hasVoted) {
-                        $scope.voteInfo = {
-                            score: score.score,
-                            hasVoted: hasVoted.hasVoted
-                        }
-
-                        setLoading(false);
-                    });
+                async.waterfall([
+                    getVotes,
+                    calcVotes
+                ], function (err, voteInfo) {
+                    setLoading(false);
+                    $scope.voteInfo = voteInfo;
+                    if (!_.isUndefined(cb) && angular.isFunction(cb))
+                        return cb();
                 })
             }
+            
+            function getVotes (cb) {
+                var voteOptions = {
+                    filter: {
+                        where: {
+                            
+                        }
+                    }
+                };
+                
+                voteOptions.filter.where[votableType] = parentId;
+                Vote.find(voteOptions)
+                .$promise
+                .then(function (votes) {
+//                    setLoading(false);
+                    votable.votes = votes;
+                    return cb(undefined, votes);
+                });
+            }
+            
+            function calcVotes (votes, cb) {
+                var hasVoted,
+                    voteScore = 0;
+                
+                Vote.hasVoted({
+                    parentId: parentId,
+                    uid: LoopBackAuth.currentUserId
+                }).$promise
+                .then(function (data) {
+                    hasVoted = data.hasVoted;
+                
+                    _.each(votes, function(vote) {
+                        voteScore += vote.direction;
+                    });
+                
+                    var voteInfo = {
+                        score: voteScore,
+                        hasVoted: hasVoted
+                    };
+                    
+                    return cb(undefined, voteInfo);
+                });
+            }
+            
             //initial load
             getVoteInfo();
 
             function setLoading (bool) {
                 loading = bool;
             }
-
-            $scope.voteInfo = {}
 
             $scope.isLoading = function () {
                 if (_.isEmpty($scope.voteInfo) || loading) {
@@ -767,17 +801,17 @@ angular.module('app.directives', ['ui.load'])
 
                 if (_.isNull(LoopBackAuth.currentUserId)) {
                     setLoading(false);
-                    LoginModalService.showModal('login', function () {
-                        $scope.vote(direction);
+                    LoginModalService.showModal('login', function (result) {
+                        getVoteInfo(function () {
+                            $scope.vote(direction);
+                        });
                     });
-                } else if (votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
-//                    console.log('cant vote');
+                } else if ($attrs.theme === 'multi' && votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
                     setLoading(false);
                     bootbox.alert("You can't vote for your own content.");
                     return false;
                 } else {
                     if (($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) && $attrs.theme !== 'single') {
-//                        console.log('vote exists');
                         var where = {}
                             where[objType + "Id"] = votable.id;
                             where["authorId"] = LoopBackAuth.currentUserId;
@@ -789,23 +823,41 @@ angular.module('app.directives', ['ui.load'])
                         })
                         .$promise
                         .then(function (vote) {
+                            
+                            vote.direction = direction;
+                            
                             Vote.upsert({
-                                id: vote.id,
-                                direction: direction
-                            })
+                                id: vote.id
+                            }, vote)
                             .$promise
-                            .then(getVoteInfo);
+                            .then(function(voteUpdated) {
+                                setLoading(false);
+                                
+                                _.each(votable.votes, function(vote) {
+                                    if (voteUpdated.id === vote.id) {
+                                        vote.direction = direction;
+                                    }
+                                });
+                                
+                                getVoteInfo();
+                            });
                         });
+                        
+                    } else if ($attrs.theme === 'single' && $scope.voteInfo.hasVoted === 1) {
+                        return setLoading(false);
                     } else {
-//                        console.log('new vote');
-                        var newVote = {}
+                        var newVote = {};
                             newVote[objType + "Id"] = votable.id;
                             newVote["direction"] = direction;
                             newVote["authorId"] = LoopBackAuth.currentUserId;
 
                         Vote.create(newVote)
                         .$promise
-                        .then(getVoteInfo());
+                        .then(function (voteCreated) {
+                            
+                            votable.votes.push(voteCreated);
+                            getVoteInfo();
+                        });
                     }
                 }
             }
