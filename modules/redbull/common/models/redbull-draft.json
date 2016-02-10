@@ -62,17 +62,20 @@
     "packCards": {
       "type": "hasMany",
       "model": "redbullPackCard",
-      "foreignKey": "redbullDraftId"
+      "foreignKey": "redbullDraftId",
+      "isChild": true
     },
     "packs": {
       "type": "hasMany",
       "model": "redbullPack",
-      "foreignKey": "redbullDraftId"
+      "foreignKey": "redbullDraftId",
+      "isChild": true
     },
     "decks": {
       "type": "hasMany",
       "model": "redbullDeck",
-      "foreignKey": "redbullDraftId"
+      "foreignKey": "redbullDraftId",
+      "isChild": true
     },
     "author": {
       "type": "belongsTo",
@@ -91,6 +94,29 @@
       "principalId": "$everyone",
       "permission": "DENY"
     },
+
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY",
+      "property": "find"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "find"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW",
+      "property": "find"
+    },
+
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
@@ -133,7 +159,51 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "submitDecks"
+    },
+
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW",
+      "property": "addDraftPlayer"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "addDraftPlayer"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW",
+      "property": "getDraftPlayers"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "getDraftPlayers"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
+      "permission": "ALLOW",
+      "property": "removeDraftPlayer"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "removeDraftPlayer"
     }
+
   ],
   "methods": {}
 }

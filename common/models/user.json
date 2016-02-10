@@ -7,6 +7,9 @@
   "options": {
     "validateUpsert": true
   },
+  "hidden": [
+    "password"
+  ],
   "properties": {
     "email": {
       "type": "string"
@@ -15,7 +18,8 @@
       "type": "string"
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "firstName": {
       "type": "string"
@@ -33,7 +37,8 @@
       "type": "string"
     },
     "subscription": {
-      "type": "object"
+      "type": "object",
+      "default": {}
     },
     "isProvider": {
       "type": "boolean"
@@ -60,7 +65,6 @@
       "type": "object"
     }
   },
-  "hidden": ["password"],
   "validations": [],
   "relations": {
     "activities": {
@@ -91,22 +95,22 @@
   },
   "acls": [
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
       "accessType": "EXECUTE",

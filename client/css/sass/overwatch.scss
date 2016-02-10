@@ -71,7 +71,11 @@ $pos-y: 4px;
     .ow-hero-selected.#{$hero} {
         
         background: url('../img/overwatch/hero-sidebar/#{$hero}.png') center ;
-        }
+         transition: 1.0s ease;
+        -moz-transition: 1.0s ease;
+        -webkit-transition: 1.0s ease;
+    
+    }
 }
 
 
@@ -341,15 +345,19 @@ $pos-y: 4px;
         padding: 0;
         bottom: 0;
         opacity: 0.3;
+        transition: 1.0s ease;
+        -moz-transition: 1.0s ease;
+        -webkit-transition: 1.0s ease;
     }
 
     .ow-hero-selected.neutral {
         background: url('../img/overwatch/hero-sidebar/neutral.png') center ;
+        transition: 1.0s ease;
+        -moz-transition: 1.0s ease;
+        -webkit-transition: 1.0s ease;
     }
 
-    .ow-hero-selected.bastion {
-           background: url('../img/overwatch/hero-sidebar/bastion.png') center ;
-    }
+
 
 
 
@@ -531,6 +539,9 @@ $pos-y: 4px;
             left: -210px;
             width: 140%;
             z-index: 10;
+             transition: 1.0s ease;
+        -moz-transition: 1.0s ease;
+        -webkit-transition: 1.0s ease;
 
              @media (max-width: 1200px) {
 

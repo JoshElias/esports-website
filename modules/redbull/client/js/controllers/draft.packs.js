@@ -1,13 +1,13 @@
 angular.module('redbull.controllers')
 .controller('DraftPacksCtrl', [
-    '$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft', 
+    '$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft',
     function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draftSettings, draft){
     if (draft.hasOpenedPacks) { return $state.go('^.build'); }
-    
+
     if (!$localStorage.draftId && !draft.isOfficial) {
         $localStorage.draftId = draft.id;
     }
-    
+
     // TODO: REMOVE THIS BEFORE LAUNCH
     /*document.addEventListener("keydown", skipPacks, false);
     function skipPacks (e) {
@@ -15,12 +15,13 @@ angular.module('redbull.controllers')
             $scope.goingToBuild = true;
             RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
                 return $state.go('^.build');
-            }).catch(function () {
+            }).catch(function (response) {
+                console.log(response);
                 console.error('Unable to update draft');
             });
         }
     }*/
-    
+
     function dirtyPacks (packs) {
         var expansionOrders = {
             'Soulbound' : 0,
@@ -32,11 +33,11 @@ angular.module('redbull.controllers')
             'League of Explorers': 6
         };
         var newPacks = {};
-        
+
         _.each(packs, function (pack) {
             var expansion;
             var cards = [];
-            
+
             _.each(pack.packCards, function (packCard) {
                 // expansion
                 expansion = packCard.expansion; // name, className, numOfPacks
@@ -44,7 +45,7 @@ angular.module('redbull.controllers')
                 // cards for pack
                 cards.push(packCard.card);
             });
-            
+
             if (!newPacks[expansion.name]) {
                 newPacks[expansion.name] = {
                     name: expansion.name,
@@ -60,36 +61,36 @@ angular.module('redbull.controllers')
                 expansionName: expansion.name
             });
         });
-        
+
         return newPacks;
     }
-    
+
     // variables
     $scope.isLoading = true;
     $scope.isSuccessful = false;
     $scope.percentLoaded = 0;
     $scope.goingToBuild = false;
-    
+
     // packs
     $scope.currentPack = {};
-    
+
     if (draft.packOpenerData) {
         $scope.packs = draft.packOpenerData;
     } else {
         $scope.packs = dirtyPacks(draft.packs);
     }
-    
+
     // file variables
     var fileLocations = [];
     var imagePath = (tpl !== './') ? 'img/modules/redbull/client/img/' : 'dist/img/modules/redbull/client/img/';
     var ext = getAudioExt();
     var audioPath = (tpl !== './') ? 'audio/' : 'dist/audio/';
-    
+
     function getAudioExt () {
         var audioTest = new Audio();
         return (audioTest.canPlayType('audio/ogg')) ? '.ogg' : '.mp3';
     }
-    
+
     // load cards for preloader
     var cardImages = [];
     var cardPath = 'cards/';
@@ -106,9 +107,9 @@ angular.module('redbull.controllers')
     }
     for (var i = 0; i < cardImages.length; i++) {
         // TODO: make https
-        fileLocations.push( 'http://cdn.tempostorm.netdna-cdn.com/' + cardPath + cardImages[i] );
+        fileLocations.push( 'https://cdn-tempostorm.netdna-ssl.com/' + cardPath + cardImages[i] );
     }
-    
+
     // image files
     var imageFiles = [
         'bg.jpg',
@@ -137,7 +138,7 @@ angular.module('redbull.controllers')
         'hero-select.png',
         'card-bottom.png',
     ];
-    
+
     // load images for preloader
     for (var i = 0; i < imageFiles.length; i++) {
         fileLocations.push( $scope.app.cdn + imagePath + imageFiles[i] );
@@ -146,15 +147,15 @@ angular.module('redbull.controllers')
     // volume
     $scope.volume = ($localStorage.draftVolume !== undefined) ? $localStorage.draftVolume : 35;
     $scope.muted = ($localStorage.draftMuted !== undefined) ? $localStorage.draftMuted : false;
-    
+
     $scope.$watch('volume', function (newValue) {
         $localStorage.draftVolume = $scope.volume;
     });
-    
+
     $scope.$watch('muted', function (newValue) {
         $localStorage.draftMuted = $scope.muted;
     });
-    
+
     // audio files
     $scope.audioFiles = {
         'announcer_epic':           { file: 'announcer_epic' + ext, volume: .3 },
@@ -181,10 +182,11 @@ angular.module('redbull.controllers')
     for (var key in $scope.audioFiles) {
         fileLocations.push( $scope.app.cdn + audioPath + $scope.audioFiles[key].file );
     }
-    
+
     // handle preload
     Preloader.preloadFiles( fileLocations ).then(
         function handleResolve( fileLocations ) {
+
             $scope.isLoading = false;
             $scope.isSuccessful = true;
         },
@@ -200,18 +202,11 @@ angular.module('redbull.controllers')
 
     // go to build
     $scope.goToBuild = function () {
-        $scope.goingToBuild = true;
-        RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
-            return $state.go('^.build');
-        }).catch(function () {
-            console.error('Unable to update draft');
-        });
-/*        
         var mins = draftSettings.deckBuildTimeLimit;
         var decks = draftSettings.numOfDecks;
         var box = bootbox.dialog({
             title: 'Build Decks',
-            message: 'You will have <strong>' + mins + ' minutes</strong> to build <strong>' + decks + ' decks</strong>. If you do not complete in the alloted time, your decks will be automatically submitted, and completed with random classes / cards that are left. The timer begins once you click the continue button.',
+            message: 'You will have <strong>' + mins + ' minutes</strong> to build <strong>' + decks + ' decks</strong>. If you do not complete in the allotted time, your decks will be automatically submitted, and completed with random classes / cards that are remaining. The timer begins once you click the continue button.',
             buttons: {
                 continue: {
                     label: 'Continue',
@@ -219,9 +214,10 @@ angular.module('redbull.controllers')
                     callback: function () {
                         box.modal('hide');
                         $scope.goingToBuild = true;
-                        RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
+                        RedbullDraft.finishedOpeningPacks({ draftId: draft.id }).$promise.then(function () {
                             return $state.go('^.build');
-                        }).catch(function () {
+                        }).catch(function (response) {
+                            console.log(response);
                             console.error('Unable to update draft');
                         });
                     }
@@ -236,7 +232,6 @@ angular.module('redbull.controllers')
             }
         });
         box.modal('show');
-*/
     };
-    
+
 }]);

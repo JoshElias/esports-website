@@ -20,22 +20,24 @@
     "orderNum": {
       "type": "number"
     },
-    "pollId": {}
+    "pollId": {
+      "type": {}
+    }
   },
   "validations": [],
   "relations": {
     "poll": {
-        "type": "belongsTo",
-        "model": "poll",
-        "foreignKey": "pollId"
+      "type": "belongsTo",
+      "model": "poll",
+      "foreignKey": "pollId"
     }
   },
   "acls": [
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     }
   ],
   "methods": {}

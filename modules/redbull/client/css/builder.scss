@@ -1,13 +1,13 @@
 @import '_mixins.scss';
 
 .redbull-draft {
-    
+
     .draft-build {
-        
+
         @media screen and (max-width: 1650px) {
             padding-top: 45px;
         }
-        
+
         .draft-build-timer {
             margin: 0 300px;
             background: rgba(0,0,0,.4);
@@ -15,27 +15,27 @@
             text-align: center;
             color: #FFF;
             font-family: 'Open Sans Bold';
-            
+
             h1 {
                 margin: 0;
                 padding: 10px 0px;
                 font-size: 12px;
                 color: #ddb03f;
             }
-            
+
             .time {
                 font-size: 30px;
-                
+
                 @media screen and (max-width: 1650px) {
                     font-size: 25px;
                 }
             }
-            
+
             @media screen and (max-width: 1650px) {
-                margin-left: 0px;        
+                margin-left: 0px;
             }
         }
-        
+
         .draft-build-filtering {
             position: fixed;
             top: 52px;
@@ -44,24 +44,24 @@
             width: 300px;
             background: rgba(0,0,0,.4);
             border-right: 1px solid #000;
-            
+
             @media screen and (max-width: 1650px) {
                 display: none;
                 margin-top: 45px;
-            
+
                 &.mobile-show {
                     display: block;
                     z-index: 350;
                     background-color: black;
                 }
             }
-            
+
              &.mana-closed {
-                    
+
                     .mana-curve {
-                        
+
                          h3 {
-                    
+
                             &:after {
 //                                font-size: 20px;
 //                                font-weight: bold;
@@ -72,30 +72,30 @@
                                 content: "\f107";
                             }
                         }
-                        
-                        
+
+
                         ul {
                             display: none;
                         }
                     }
-                    
+
                     .card-search {
                         top: 36px !important;
                     }
-                    
+
                     .mana-cost {
                         top: 121px !important;
                     }
-                    
+
                     .card-rarity {
                         top: 200px !important;
                     }
-                    
+
                     .card-mechanics {
                        top: 287px !important;
                     }
                 }
-            
+
             h3 {
                 height: 35px;
                 line-height: 35px;
@@ -107,39 +107,39 @@
                 margin-bottom: 0px;
                 font-family: 'Open Sans Bold';
             }
-            
+
             .mana-curve {
                 position: absolute;
                 top: 0px;
                 left: 0px;
                 width: 299px;
-                
+
                 h3 {
-                    
+
                     cursor: pointer;
-                    
+
                     &:after {
                         font-size: 20px;
                         font-weight: bold;
                         position: absolute;
                         right: 24px;
-                        
+
                         font-family: FontAwesome;
                         content: "\f106";
                     }
                 }
-                
+
                 ul {
                     display: block;
                     width: 90%;
                     padding: 0;
                     margin: 9px auto;
-                
+
                     li {
                         float: left;
                         list-style: none;
                         width: 12.5%;
-                    
+
                         .mana-curve-amt {
                             width: 100%;
                             text-align: center;
@@ -151,7 +151,7 @@
                             text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
                             margin-bottom: 5px;
                         } /* .mana-curve-amt */
-                        
+
                         .mana-curve-bar {
                             position: relative;
                             width: 50%;
@@ -159,7 +159,7 @@
                             height: 100px;
                             background: url('../img/black-60.png');
                             background: rgba(255,255,255,.15);
-                            
+
                             span {
                                 position: absolute;
                                 left: 0px;
@@ -171,7 +171,7 @@
                                 background: #2268AD;
                             } /* span */
                         } /* .mana-curve-bar */
-                        
+
                         .mana-curve-num {
                             position: relative;
                             width: 50%;
@@ -184,40 +184,40 @@
                             color: #FFF;
                             font-weight: bold;
                             text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-                        
+
                             span {
                                 position: absolute;
                                 top: 1px;
                                 font-size: 10px;
                             } /* span */
                         } /* .mana-curve-num */
-                        
+
                     } /* li */
                 } /* ul */
-                
+
             } /* .mana-curve */
-            
+
             .card-search {
                 position: absolute;
                 top: 200px;
                 left: 0px;
                 width: 299px;
-                
+
                 form {
                     margin: 10px;
                 } /* form */
-                
+
             } /* .card-search */
-            
+
             .mana-cost {
                 position: absolute;
                 top: 285px;
                 left: 0px;
                 width: 299px;
-                
+
                 .mana-crystals {
                     margin: 10px 21px 10px 22px;
-                    
+
                     div {
                         margin-right: 8px;
                         opacity: .6;
@@ -229,22 +229,22 @@
                         font-size: 10px;
                         text-align: center;
                         float: left;
-                        
+
                         &:hover {
                             opacity: 1;
                         }
-                        
+
                         &.active {
                             opacity: 1;
                             background-position: top;
                         }
-                        
+
                         a {
                             display: block;
                             height: 25px;
                             width: 25px;
                             color: white;
-                            
+
                             &:focus,
                             &:active {
                                 outline: none;
@@ -252,37 +252,37 @@
                             }
                         }
                     }
-                    
+
                     div:last-child {
                         margin-right: 0px;
                     }
                 }
             } /* .mana-cost */
-            
+
             .card-rarity {
                 position: absolute;
                 top: 365px;
                 left: 0px;
                 width: 299px;
-                
+
                 button {
                     width: 100%;
                     text-align: left;
                 }
-                
+
                 ul,
                 ul li {
                     width: 100%;
                 }
-                
+
             } /* .card-rarity */
-            
+
             .card-mechanics {
                 position: absolute;
                 top: 454px;
                 bottom: 0px;
                 width: 299px;
-                
+
                 .mechanics-wrapper {
                     position: absolute;
                     top: 35px;
@@ -290,20 +290,20 @@
                     bottom: 0px;
                     width: 300px;
                 }
-                
+
                 ul {
                     margin: 0;
                     padding: 0;
-                    
+
                     li {
                         height: 30px;
                         list-style: none;
                         border-bottom: 1px solid #000;
-                        
+
                         &:last-child {
                             border-bottom: none;
                         }
-                        
+
                         button {
                             display: block;
                             width: 100%;
@@ -315,23 +315,23 @@
                             outline: none;
                             background: none;
                             border: none;
-                            
+
                             &:hover {
                                 background: rgba(255,255,255,.2);
                             }
-                            
+
                             &.active {
                                 background: rgba(39, 102, 173, 1);
                             }
                         }
                     }
-                    
+
                 }
-                
+
             } /* .card-effect */
-            
+
         } /* .draft-build-filtering */
-        
+
         .draft-build-decks {
             position: fixed;
             top: 52px;
@@ -340,15 +340,15 @@
             width: 300px;
             background: rgba(0,0,0,.4);
             border-left: 1px solid #000;
-            
+
             @media screen and (max-width: 1650px) {
                 margin-top: 45px;
             }
-            
+
             .deck-add-button {
                 height: 50px;
                 border-bottom: 1px solid #000;
-                
+
                 button {
                     display: block;
                     width: 298px;
@@ -362,15 +362,15 @@
                     font-size: 14px;
                     text-transform: uppercase;
                     background: #000 url("../img/modules/redbull/client/img/deck-top.png") no-repeat;
-                    
+
                     &:hover {
                         background-color: rgba(255,255,255,.2);
                     } /* :hover */
-                    
+
                 } /* button */
-                
+
             } /* .deck-add-button */
-            
+
             .deck-save-button {
                 position: absolute;
                 bottom: 0px;
@@ -378,7 +378,7 @@
                 width: 300px;
                 height: 50px;
                 border-top: 1px solid #000;
-                
+
                 button {
                     display: block;
                     width: 300px;
@@ -388,9 +388,9 @@
                     font-size: 14px;
                     text-transform: uppercase;
                 } /* button */
-                
+
             } /* .deck-add-button */
-            
+
             .decks {
                 min-height: calc(100% - 100px);
 				height: calc(100% - 100px);
@@ -398,22 +398,23 @@
 				display: -moz-flex;
 				display: -ms-flex;
 				display: flex;
+                flex-direction: column;
 				-webkit-flex-direction: column;
 
                 .deck {
                     height: 48px;
                     overflow: hidden;
                     position: relative;
-                    
+
                     .deck-title-bar {
                         position: relative;
                         height: 48px;
                         cursor: pointer;
-                        
+
                         .deck-title-bar-inner {
                             height: 48px;
                             border: 1px solid rgba(255,255,255,.4);
-                            
+
                             .deck-title {
                                 padding-right: 54px;
                                 color: #FFF;
@@ -452,11 +453,11 @@
                                 } /* :hover */
 
                             } /* .deck-delete */
-                            
+
                         } /* .deck-title-bar-inner */
-                        
+
                     } /* .deck-title-bar */
-                    
+
                     @include draft-deck (druid, 255, 125, 10);
                     @include draft-deck (hunter, 171, 212, 115);
                     @include draft-deck (mage, 105, 204, 240);
@@ -466,13 +467,13 @@
                     @include draft-deck (shaman, 0, 112, 222);
                     @include draft-deck (warlock, 148, 130, 201);
                     @include draft-deck (warrior, 199, 156, 110);
-                    
+
                     .deck-cards {
                         position: absolute;
                         top: 48px;
                         bottom: 38px;
                         width: 100%;
-                        
+
                         .deck-card {
                             margin-right: 9px;
                             position: relative;
@@ -487,7 +488,7 @@
                             transition: opacity .3s linear;
                             background: #262626;
                             -webkit-user-drag: none;
-                            
+
                             &.druid {
                                 background: rgba(255, 125, 10, .5);
 
@@ -672,9 +673,9 @@
                             }/* .multi */
 
                         }/* .deck-card */
-                        
+
                     } /* .deck-cards */
-                    
+
                     .deck-count {
                         display: none;
                         color: #FFF;
@@ -687,7 +688,7 @@
                         bottom: 0px;
                         height: 38px;
                         line-height: 38px;
-                        
+
                         .deck-count-inner {
                             position: absolute;
                             top: 0px;
@@ -699,7 +700,7 @@
                             line-height: 38px;
                         }
                     }
-                    
+
                     &.active {
                         height: 15px;
                         height: auto;
@@ -707,62 +708,62 @@
                         -moz-flex: 1 1 auto;
                         -ms-flex: 1 1 auto;
                         flex: 1 1 auto;
-                        
+
                         .deck-cards {
                             flex-grow: 1;
                         }
-                        
+
                         .deck-cards,
                         .deck-count {
                             display: block;
                         }
                     }
-                    
+
                 } /* .deck */
-                
+
             } /* .decks */
-            
+
         } /* .draft-build-decks */
-        
+
         .draft-build-cards {
-            
+
             .container {
-                
+
                 &.container-override {
-                
+
                     @media screen and (max-width: 1650px) {
                         margin-left: 0;
                         width: 75%;
                        // margin-top: 45px;
                     }
-                    
+
                      @media screen and (max-width: 1200px) {
-                        width: 70%;            
+                        width: 70%;
                     }
-                    
+
                     @media screen and (max-width: 992px) {
-                        width: 65%;            
+                        width: 65%;
                     }
-                    
+
                     @media screen and (max-width: 768px) {
-                        width: 60%;            
+                        width: 60%;
                     }
                 }
             }
-            
+
             .card-filter-classes {
                 margin: 20px auto 0px auto;
                 padding: 0;
                 width: 401px;
-                
+
                 &.filtered {
                     width: 73px;
                 }
-                
+
                 li {
                     display: inline-block;
                     list-style: none;
-                    
+
                     button {
                         margin-right: 10px;
                         width: 31px;
@@ -773,7 +774,7 @@
                         opacity: .5;
                         border: none;
                         outline: none;
-                        
+
                         &.neutral {
                             width: 32px;
                             background: url('../img/neutralcards.png') no-repeat;
@@ -800,20 +801,20 @@
                         &.shaman.active { background-position: -124px -256px; }
                         &.active { opacity: 1; }
                     }
-                    
+
                     &:last-child {
                         button {
                             margin-right: 0px;
                         }
                     }
-                    
+
                 } /* li */
-                
+
             } /* .card-filter-classes */
-            
+
             .draft-build-pool {
                 position: relative;
-                
+
                 button.draft-build-cards-pagination {
                     position: absolute;
                     margin-top: -25px;
@@ -825,11 +826,11 @@
                     box-shadow: none;
                     z-index: 101;
                     opacity: .8;
-                    
+
                     &:hover {
                         opacity: 1;
                     } /* :hover */
-                    
+
                     &:disabled {
                         opacity: .2;
                     } /* :disabled */
@@ -840,35 +841,35 @@
 
                     &.right {
                         right: 0px;
-                        
+
                         @media screen and (max-width: 1200px) {
                             right: 30%;
                         } //media 1200px
-                        
+
                          @media screen and (max-width: 992px) {
                             right: 40%;
                         } //media 992px
-                        
+
                         @media screen and (max-width: 768px) {
                             right: 320px;
                         } //media 1200px
-                        
+
                     } /* .right */
 
                     i {
                         font-size: 48px;
                         color: rgba(255,255,255,1);
                     } /* i */
-                    
+
                     @media screen and (max-width: 1200px) {
                         position: fixed;
                         top: 50%;
                     } //media 1200px
-                    
+
                     @media screen and (max-width: 992px) {
                         //top: 50%;
                     } //media 992px
-                    
+
                     @media screen and (max-width: 768px) {
                        // top: 15%;
                     } //media 768px
@@ -879,12 +880,12 @@
                     position: relative;
                     padding: 30px;
                     min-height: 810px;
-                    
+
                     @media screen and (max-width: 992px){
                         padding-left: 0px;
                         padding-right: 55px;
                     }
-                    
+
                     .draft-build-card {
                         float: left;
                         position: relative;
@@ -896,11 +897,11 @@
                         -ms-user-select: none;
                         user-select: none;
                         -webkit-user-drag: none;
-                        
+
                         &.disabled {
                             opacity: .3;
                         }
-                            
+
                         a,
                         img {
                             position: relative;
@@ -911,7 +912,7 @@
                             -webkit-user-drag: none;
                             z-index: 2;
                         } /* a, img */
-                        
+
                         .card-qty {
                             position: relative;
                             z-index: 1;
@@ -926,67 +927,104 @@
                             line-height: 18px;
                             text-align: center;
                             opacity: .5;
-                            
+
                             @media screen and (max-width: 768px) {
                                 margin: -10px 16px 0px auto;
                             }
-                            
+
                         } /* .card-qty */
-                        
+
                         @media screen and (max-width: 1200px) {
                             width: 25%;
-                            
+
                         } // media styles
-                        
+
                         @media screen and (max-width: 992px) {
                             width: 33%;
-                            
+
                         } // media styles
-                        
+
                         @media screen and (max-width: 768px) {
                             //width: 33%;
                             -ms-transform: scale(.85); /* IE 9 */
                             -webkit-transform: scale(.85); /* Safari */
                             transform: scale(.85);
                         } // media styles
-                        
+
                     } /* .draft-build-card */
-                    
+
                 } /* .draft-build-cards-view-wrapper */
-                
+
             } /* .draft-build-pool */
-            
+
             .draft-build-pool-no-match {
                 font-size: 30px;
                 color: #FFF;
                 text-align: center;
                 line-height: 200px;
-                
+
 //                @media screen and (max-width: 1200px) {
 //                    line-height: 400px;
 //                }
-//                
+//
 //                @media screen and (max-width: 992px) {
 //                    line-height: 200px;
 //                }
             }
-            
+
         } /* .draft-build-cards */
-        
+
         &.completed {
+            
+            
+            
             .draft-build-decks {
+                //decks for sharing.
+                @media screen and (max-width:750px) {
+                z-index: 1000;
+                background: black;
+                margin-top: 0px;
+                width: 100%;
+                    
+                    .decks {
+                        height: calc(100%) !important;
+                    }
+                    
+                    .deck-save-button {
+                        display: none;
+                        width: 100%;
+                        
+                        button {
+                            width: 100%;
+                        }
+                    }
+                }
+                
                 .deck-add-button {
                     display: none;
                 }
+                
                 .decks {
                     min-height: calc(100% - 50px);
 				    height: calc(100% - 50px);
                 }
             }
+            
+            &.is-official {
+                .draft-build-decks {
+                    .decks {
+                        min-height: 100%;
+                        height: 100%;
+                    }
+                    .deck-save-button {
+                        display: none;
+                    }
+                }
+            }
         }
-        
+
     } /* .draft-build */
-    
+
     .filter-button-bar {
         position: fixed;
         display: none;
@@ -996,22 +1034,22 @@
         background-color: #2766ad;
         padding: 5px 20px;
         top: 52px;
-        
-        
+
+
         @media screen and (max-width:1650px) {
                 display: block;
         }
-        
+
         button.filtering-mobile-toggle-btn {
             //display: none;
             //position: absolute;
             //top: 65px;
             //left: 25px;
-            border-radius: 2px; 
+            border-radius: 2px;
             text-transform: uppercase !important;
         } // Mobile filtering button
     } // mobile filtering bar
-    
+
     .mobile-override {
         display: none;
         position: absolute;
@@ -1023,16 +1061,16 @@
         height: auto;
         z-index: 501;
         background-color: rgba(38,38,38,1);
-        
+
         @media screen and (max-width:750px) {
 
             display: block;
-                    
+
             .override-msg {
                 width: 300px;
                 padding: 20px;
                 margin: 100px auto;
-                
+
                 color: white;
 
                 h2 {
@@ -1044,10 +1082,10 @@
                     text-align: center;
 
                 }
-            }  
+            }
         }
     }// mobile drafter front page override div
-    
+
 } /* .redbull-draft */
 
 .new-deck-classes {
@@ -1060,11 +1098,11 @@
         display: inline-block;
         width: 176px;
         height: 129px;
-        
+
         &:nth-child(3n+3) {
             margin-right: 0px;
         }
-        
+
         button {
             width: 176px;
             height: 129px;
@@ -1085,7 +1123,7 @@
             @include draft-hero-select (warlock, 7);
             @include draft-hero-select (warrior, 8);
             &.inactive { opacity: .3; }
-            
+
         }
     }
 
@@ -1101,11 +1139,11 @@
         border-radius: 0;
         color: #fff;
     }
-    
+
     .btn-twitter {
         background: #00acee;
     }
-    
+
     .btn-twitter:link,
     .btn-twitter:visited {
         color: #fff;
@@ -1115,7 +1153,7 @@
         background: #0087bd;
         color:#fff;
     }
-    
+
     .btn-facebook {
         background: #3b5998;
     }
@@ -1128,7 +1166,7 @@
         background: #30477a;
         color: #fff;
     }
-    
+
     .btn-googleplus {
         background: #e93f2e;
     }
@@ -1141,7 +1179,7 @@
         background: #ba3225;
         color: #fff;
     }
-    
+
     .btn-stumbleupon {
         background: #f74425;
     }
@@ -1154,4 +1192,17 @@
         background: #c7371e;
         color: #fff;
     }
+    
+//    @media screen and (max-width:750px) {
+//           
+//        a {
+//            width: 80%;
+//            margin-bottom: 20px;
+//            
+//            &:last-of-type {
+//                margin-left: -4px;
+//            }
+//        
+//        }
+//    }    
 } /* .draft-deck-share */

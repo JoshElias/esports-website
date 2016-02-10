@@ -6,7 +6,41 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    
+
+
+  .preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #161213;
+    z-index: 999;
+
+    i {
+      margin: -25px 0 0 -25px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 50px;
+      font-size: 50px;
+      color: #FFF;
+    }
+
+    .loadingBar {
+      width: 300px;
+      height: 20px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -150px;
+      margin-top: 55px;
+      border: 1px solid rgba(39, 102, 173, 0.60);
+      padding-left: 0px;
+      padding-right: 0px
+    }
+  }
+
     .draft {
         position: absolute;
         top: 52px;
@@ -25,7 +59,7 @@
         a {
           cursor: url("../img/modules/redbull/client/img/cursor.png") 10 2, auto;
         }
-        
+
         &.blurred,
         &.fast-forward {
             .bg,
@@ -45,7 +79,7 @@
         &.clicking {
             cursor: url("../img/modules/redbull/client/img/click.png"), auto;
         }
-        
+
         .bg,
         .expansion-wrapper {
             -webkit-filter: blur(0px);
@@ -60,39 +94,8 @@
             -ms-transition: .5s -ms-filter linear;
             -o-transition: .5s -o-filter linear;
         }
-        
-        .preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #161213;
-            z-index: 999;
 
-            i {
-                margin: -25px 0 0 -25px;
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                height: 50px;
-                font-size: 50px;
-                color: #FFF;
-            }
-            
-            .loadingBar {
-                width: 300px;
-                height: 20px; 
-                position: absolute; 
-                top: 50%; 
-                left: 50%; 
-                margin-left: -150px; 
-                margin-top: 55px; 
-                border: 1px solid rgba(39, 102, 173, 0.60); 
-                padding-left: 0px; 
-                padding-right: 0px    
-            }
-        }
+
 
         .draft-wrapper {
             position: absolute;
@@ -124,21 +127,21 @@
                 height: 600px; //height: 684px;
                 background: url("../img/modules/redbull/client/img/bg-glow.png") no-repeat center center;
                 z-index: 3;
-                
+
                 &.glow-pulse {
                     webkit-animation: glow-pulse 2s linear;
                     animation: glow-pulse 5s linear infinite;
                 }
-                
+
                 @keyframes glow-pulse {
                     0% { opacity: 1; }
                     25% { opacity: .7; }
                     50% { opacity: 1; }
                     75% { opacity: .6; }
                     100% { opacity: 1; }
-                } 
+                }
             }
-            
+
             .packs {
                 position: fixed;
                 top: 52px;
@@ -148,15 +151,15 @@
                 background: rgba(46,43,41,.4);
                 border-right: 1px solid #000;
                 z-index: 99;
-                
+
                @media screen and (max-width:1330px) {
                     width: 200px;
                 }
-                
+
                 .iscroll-wrapper {
                     overflow: inherit;
                 }
-                
+
                 /* temp button for settings */
                 .packs-scroller {
                     position: absolute;
@@ -165,7 +168,7 @@
                     right: 0px;
                     bottom: 50px;
                 }
-                
+
                 .pack-settings-button {
                     position: absolute;
                     top: auto;
@@ -182,7 +185,7 @@
                     }
                 }
                 /* end temp button for settings */
-                
+
                 .volume-control {
                     position: absolute;
                     top: auto;
@@ -192,12 +195,12 @@
                     height: 50px;
                     border-top: 1px solid #000;
                     background: rgba(46,43,41,1);
-                    
+
                     @media screen and (max-width:1330px) {
                         height: 30px;
                         left: -41px;
                     }
-                    
+
                     .volume-tooltip {
                         display: block;
                         position: absolute;
@@ -215,7 +218,7 @@
                         border-radius: 4px;
                         z-index: 3;
                     }
-                    
+
                     .volume-slider-wrapper {
                         position: relative;
                         margin: 6px auto;
@@ -223,7 +226,7 @@
                         width: 282px;
                         height: 38px;
                         background: url("../img/modules/redbull/client/img/volume-slider.png") center top no-repeat;
-                        
+
                          @media screen and (max-width:1330px) {
                             -ms-transform: scale(.7); /* IE 9 */
                             -webkit-transform: scale(.7); /* Safari */
@@ -231,13 +234,13 @@
                             margin: -3px auto;
                         }
                     }
-                    
+
                     .volume-slider {
                         position: relative;
                         width: 162px;
                         height: 31px;
                     }
-                    
+
                     .volume-slider-mute {
                         position: absolute;
                         top: 3px;
@@ -248,13 +251,13 @@
                         color: #c6a74c;
                         text-shadow: 0px 0px 1px #353227;
                         font-size: 20px;
-                        
+
                         &.muted {
                             color: #2c2a26;
                             text-shadow: 0px 0px 1px #000;
                         }
                     }
-                    
+
                     .ui-slider-handle {
                         position: absolute;
                         top: 0px;
@@ -266,7 +269,7 @@
                         background: url("../img/modules/redbull/client/img/volume-nob.png") center top no-repeat;
                         outline: none;
                     }
-                    
+
                     .ui-slider-range {
                         position: absolute;
                         top: 0;
@@ -274,7 +277,7 @@
                         height: 100%;
                     }
                 }
-                
+
                 .expansion-wrapper {
                     position: relative;
                     margin: 15px auto;
@@ -283,7 +286,7 @@
                     height: 271px;
                     background: url("../img/modules/redbull/client/img/pack-frame.png") center top no-repeat;
                     z-index: 100;
-                    
+
                     &.league-of-explorers,
                     &.blackrock-mountain,
                     &.naxxramas {
@@ -291,7 +294,7 @@
                         height: 227px;
                         padding-top: 19px;
                         padding-left: 10px;
-                        
+
                         .pack-wrapper {
                             height: 144px !important;
                         }
@@ -300,12 +303,12 @@
                         padding-top: 24px;
                         padding-left: 12px;
                     }
-                    
+
                     &.goblins-vs-gnomes,
                     &.the-grand-tournament {
                         padding-top: 12px;
                     }
-                    
+
                     .pack-wrapper {
                         position: relative;
                         margin: 0 auto;
@@ -343,21 +346,21 @@
                             height: 212px;
                             background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
                             z-index: 101;
-                            
+
                             &.league-of-explorers,
                             &.blackrock-mountain,
                             &.naxxramas {
                                 width: 142px;
                                 height: 129px;
                             }
-                            
+
                             &.league-of-explorers {
                                 height: 143px;
                             }
                             &.blackrock-mountain {
                                 height: 141px;
                             }
-                            
+
                             &.league-of-explorers {
                                 background: url("../img/modules/redbull/client/img/book-loe.png") no-repeat;
                             }
@@ -421,13 +424,13 @@
                             width: 141px;
                             transform: rotate(-3deg);
                             text-transform: uppercase;
-                            
+
                             &.naxxramas,
                             &.goblins-vs-gnomes,
                             &.the-grand-tournament {
                                 top: 8px;
                             }
-                            
+
                             &.blackrock-mountain,
                             &.league-of-explorers {
                                 top: 2px;
@@ -469,12 +472,12 @@
                     height: 350px;
                     transition: transform 300ms;
                     -webkit-transition: -webkit-transform 300ms;
-                    
+
                     &:nth-child(1) {
                         //margin-left: -94px;
                         //margin-top: -332px;
                         margin-left: -129px;
-                        margin-top: -414px;            
+                        margin-top: -414px;
                     }
                     &:nth-child(2) {
                         //margin-left: -296px;
@@ -500,44 +503,44 @@
                         margin-left: 25px;
                         margin-top: 49px;
                     }
-                    
-                    
+
+
                     @media screen and (max-width:1330px) {
                         -ms-transform: scale(.7); /* IE 9 */
                         -webkit-transform: scale(.7); /* Safari */
                         transform: scale(.7);
-                        
+
                         &:nth-child(1) {
                             margin-top: -345px;
                         }
-                        
-                    
+
+
                         &:nth-child(2) {
                             margin-left: -301px;
                             margin-top: -256px;
                         }
-                    
+
                         &:nth-child(3) {
                             margin-left: 45px;
                             margin-top: -256px;
                         }
-                    
+
                         &:nth-child(4) {
                             margin-left: -228px;
                             margin-top: -21px;
                         }
-                    
+
                         &:nth-child(5) {
                             margin-left: -33px;
                             margin-top: -21px;
                         }
-                        
+
                         @media screen and (max-height:656px) {
-                            
+
                         -ms-transform: scale(.65); /* IE 9 */
                         -webkit-transform: scale(.65); /* Safari */
                         transform: scale(.65);
-                            
+
                             &:nth-child(1) {
                                 margin-top: -190px;
                                 margin-left: -426px;
@@ -557,7 +560,7 @@
 
                             &:nth-child(4) {
                                 margin-top: -190px;
-  
+
                                 margin-left: 25px;
 
                             }
@@ -565,11 +568,11 @@
                             &:nth-child(5) {
                                 margin-top: -190px;
                                 //margin-left: 16px;
-                                margin-left: 175px; 
+                                margin-left: 175px;
 
                             }
-                            
-                            
+
+
                         }
                     }
 
@@ -586,7 +589,7 @@
                         //height: 272px;
                         transition: box-shadow 500ms;
                         -webkit-transition: box-shadow 500ms;
-                        
+
                         &.league-of-explorers {
                             left: 30px;
                             top: 44px;
@@ -621,25 +624,25 @@
                             width: 193px;
                             height: 288px;
                         }
-                        
+
                     }
 
                     &:not(.flipped-left):not(.flipped-right):hover {
                         transform: scale(1.15) rotate(0.0001deg);
                         -webkit-transform: scale(1.15) rotate(0.0001deg);
-                        
+
                              @media screen and (max-width:1330px) {
                                     -ms-transform: scale(.7); /* IE 9 */
                                     -webkit-transform: scale(.7); /* Safari */
                                     transform: scale(.7);
-                                 
+
                                  @media screen and (max-height:656px) {
                                     -ms-transform: scale(.65); /* IE 9 */
                                     -webkit-transform: scale(.65); /* Safari */
                                     transform: scale(.65);
                                  }
                              }
-                        
+
                         .card-glow {
                             &.rare {
                                 box-shadow: 0 0 75px #0066ff;
@@ -665,7 +668,7 @@
                         -webkit-transform: perspective(1000px) rotateY(0deg);
                         transition: transform 800ms ease-in-out 300ms;
                         -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
-                        
+
                         &.league-of-explorers {
                             background: url("../img/modules/redbull/client/img/back-loe.png") no-repeat;
                         }
@@ -685,14 +688,14 @@
                         &.the-grand-tournament {
                             background: url("../img/modules/redbull/client/img/back-tgt.png") no-repeat;
                         }
-                        
+
                         &.basic {
                             background: url("../img/modules/redbull/client/img/back-basic.png") no-repeat;
                         }
-                        
+
                         &.soulbound {
                             background: url("../img/modules/redbull/client/img/back-soulbound.png") no-repeat;
-                        }    
+                        }
                     }
 
                     .card-front {
@@ -707,7 +710,7 @@
                         -webkit-transform: perspective(1000px) rotateY(180deg);
                         transition: transform 800ms ease-in-out 300ms;
                         -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
-                        
+
 
                         img {
                             width: 251px;
@@ -763,7 +766,7 @@
             }
 
         }/* .draft-wrapper */
-        
+
         &.fast-forward {
             .draft-wrapper {
                 .cards {
@@ -778,7 +781,7 @@
         }
 
     }/* .draft */
-    
+
     .card-pool {
         position: fixed;
         top: 52px;
@@ -788,7 +791,7 @@
         background: rgba(0,0,0,.4);
         border-left: 1px solid #000;
         z-index: 99;
-        
+
         @media screen and (max-width:1200px) {
             display: none;
             z-index: 300;
@@ -804,7 +807,7 @@
             right: 0px;
             height: 50px;
         }
-        
+
         .card-pool-title {
             color: #FFF;
             font-size: 20px;
@@ -814,52 +817,52 @@
             background: #000 url("../img/modules/redbull/client/img/deck-top.png") no-repeat;
             border-bottom: 1px solid #000;
         }
-        
+
         .card-pool-button {
             top: auto;
             bottom: 0px;
             left: 0px;
             right: 0px;
             border-top: 1px solid #000;
-            
+
             @media screen and (max-width:1200px) {
                 display: none;
             }
-            
+
             button {
                 position: relative;
                 height: 50px;
                 line-height: 38px;
-                
+
                 i {
                     position: absolute;
                     right: 20px;
                     top: 18px;
                 }
             }
-            
+
             a {
                 height: 50px;
                 line-height: 38px;
             }
         }
-        
+
         .card-pool-cards {
             position: absolute;
             top: 51px;
             left: 0px;
             right: 0px;
             bottom: 51px;
-            
+
             p {
                 color: #d4d4d4;
                 padding: 10px;
-                
+
                 i {
                     color: #FFF;
                 }
             }
-            
+
             .card-pool-card {
                 margin-right: 9px;
                 position: relative;
@@ -873,17 +876,17 @@
                 -webkit-transition: opacity .3s linear;
                 transition: opacity .3s linear;
                 background: rgba(38, 38, 38, .5);
-                
+
                 &.druid {
                     background: rgba(255, 125, 10, .5);
-                    
+
                     @media screen and (min-width: 1200px) {
                         &:hover {
                             background: rgba(255, 125, 10, .8);
                         }
                     }
                 }
-                
+
                 &.hunter {
                     background: rgba(171, 212, 115, .5);
 
@@ -893,17 +896,17 @@
                         }
                      }
                 }
-                
+
                 &.mage {
                     background: rgba(105, 204, 240, .5);
-                    
+
                     @media screen and (min-width: 1200px) {
                         &:hover {
                             background: rgba(105, 204, 240, .8);
                         }
                     }
                 }
-                
+
                 &.paladin {
                     background: rgba(245, 140, 186, .5);
 
@@ -913,7 +916,7 @@
                         }
                      }
                 }
-                
+
                 &.priest {
                     background: rgba(255, 255, 255, .5);
 
@@ -923,7 +926,7 @@
                         }
                     }
                 }
-                
+
                 &.rogue {
                     background: rgba(255, 245, 105, .5);
 
@@ -933,17 +936,17 @@
                         }
                     }
                 }
-                
+
                 &.shaman {
                     background: rgba(0, 112, 222, .5);
-                    
+
                     @media screen and (min-width: 1200px) {
                         &:hover {
                             background: rgba(0, 112, 222, .8);
                         }
                     }
                 }
-                
+
                 &.warlock {
                     background: rgba(148, 130, 201, .5);
 
@@ -953,17 +956,17 @@
                         }
                     }
                 }
-                
+
                 &.warrior {
                     background: rgba(199, 156, 110, .5);
-                    
+
                     @media screen and (min-width: 1200px) {
                         &:hover {
                             background: rgba(199, 156, 110, .8);
                         }
                     }
                 }
-                
+
                  @media screen and (min-width: 1200px) {
                     &:hover {
                         background: rgba(61,60,60,1);
@@ -1037,7 +1040,7 @@
                         height: 26px;
                     }/* img */
                 }/* .card-pool-card-photo */
-                
+
                 &.legendary {
                     .card-pool-card-photo {
                         img {
@@ -1045,7 +1048,7 @@
                         }
                     }
                 }
-                
+
                 &.multi {
                     .card-pool-card-legendary {
                         right: 30px;
@@ -1078,9 +1081,9 @@
 
             }/* .card-pool-card */
         }/* .card-pool-cards */
-        
+
     }/* .card-pool */
-    
+
     .cardpool-mobile-toggle-btn {
         display: none;
         position: absolute;
@@ -1095,11 +1098,11 @@
             display: block;
         }
     }
-    
+
     .card-pool-button {
-        
+
         &.mobile-card-pool-buttons {
-        
+
             .btn {
                 position: absolute;
                 top: 10px;
@@ -1110,14 +1113,14 @@
                 border-radius: 2px;
                 width: 190px;
                 display: none;
-                
+
                 @media screen and (max-width:1200px) {
                     display: block;
                 }
             }
         }
     }
-    
+
     .mobile-show {
         display: block;
     }
@@ -1133,16 +1136,16 @@
         height: auto;
         z-index: 501;
         background-color: rgba(38,38,38,1);
-        
+
         @media screen and (max-width:750px) {
 
             display: block;
-                    
+
             .override-msg {
                 width: 300px;
                 padding: 20px;
                 margin: 100px auto;
-                
+
                 color: white;
 
                 h2 {
@@ -1154,7 +1157,7 @@
                     text-align: center;
 
                 }
-            }  
+            }
         }
     }// mobile drafter front page override div
 }/* .redbull-draft */
@@ -1166,16 +1169,16 @@
 .pack-settings-content {
     height: 400px;
     overflow: hidden;
-    
+
     h3,
     p.rarity {
         text-transform: uppercase;
     }
-    
+
     .form-group {
         margin-bottom: 0px;
     }
-    
+
     .pack-settings-expansion:last-child .panel {
         margin-bottom: 0px;
     }

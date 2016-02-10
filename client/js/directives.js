@@ -43,22 +43,24 @@ angular.module('app.directives', ['ui.load'])
                 setTooltip();
             });
 
-			var createUUID = function() {
-			  return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
-			}
-			var tmpUuid = createUUID();
+            var createUUID = function() {
+              return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
+            }
+            
+            var tmpUuid = createUUID();
 
             function setTooltip () {
                 var content = $compile('<img ng-src="'+scope.tooltipImg+'" alt="">')(scope);
-				var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
-				el.wTooltip({
-					delay: 500,
-					offsetX: xPos,
-					offsetY: -50,
-					content: content,
-					style: false,
-					className: 'hs-card-tooltip-' + tmpUuid
-				});
+                var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
+                
+                el.wTooltip({
+                  delay: 500,
+                  offsetX: xPos,
+                  offsetY: -50,
+                  content: content,
+                  style: false,
+                  className: 'hs-card-tooltip-' + tmpUuid
+                });
             }
 
             scope.$on('$destroy', function () {
@@ -121,6 +123,7 @@ angular.module('app.directives', ['ui.load'])
             }
         }],
         link: function($scope, el, attr) {
+            
             $scope.setTitle = function(s) {
                 $(".modal-title")[0].innerHTML = s;
             }
@@ -190,7 +193,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 ])
-.directive('signupForm', ['$state', 'User', 'LoginModalService', function ($state, User, LoginModalService) {
+.directive('signupForm', ['$state', '$window', 'User', 'LoginModalService', 'AlertService', function ($state, $window, User, LoginModalService, AlertService) {
     return {
       templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
       scope: true,
@@ -229,6 +232,7 @@ angular.module('app.directives', ['ui.load'])
 
       $scope.signup = function(email, username, password) {
         if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined ) {
+            
           User.create({
               email: email,
               username: username,
@@ -241,8 +245,13 @@ angular.module('app.directives', ['ui.load'])
                 $state.go('app.verify');
             }
           }, function(err) {
-            $scope.errors = err;
-            $scope.showError = true;
+              $window.scrollTo(0, 0);
+              AlertService.setError({
+                  show: true,
+                  msg: 'Unable to Create Account',
+                  lbErr: err
+              });
+              
           });
         }
       }
@@ -390,11 +399,7 @@ angular.module('app.directives', ['ui.load'])
                                 return;
                             } else {
                                 comment.votes[i].direction = direction;
-                                Comment.update({
-                                    where: {
-                                        id: comment.id
-                                    }
-                                }, comment)
+                                Comment.upsert(comment)
                                 .$promise.then(function (data) {
                                     comment.voted = direction;
                                     comment.votesCount = data.votesCount;
@@ -405,16 +410,17 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
+                    
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
-                        comment.votes.push(
-                            {
-                                direction: direction,
-                                userId: LoopBackAuth.currentUserId
-                            }
-                        );
-                        Comment.update({ where: { id: comment.id } }, comment)
-                        .$promise.then(function (data) {
+                        comment.votes.push({
+                            direction: direction,
+                            userId: LoopBackAuth.currentUserId
+                        });
+                        
+                        Comment.upsert(comment)
+                        .$promise
+                        .then(function (data) {
                             comment.voted = direction;
                             comment.votesCount = data.votesCount;
                         });
@@ -703,100 +709,154 @@ angular.module('app.directives', ['ui.load'])
             var theme = attrs.theme || 'multi';
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
-        controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+        controller: ['$scope', '$element', '$attrs', 'EventService', function ($scope, $element, $attrs, EventService) {
+//            console.log('$scope.votable:', $scope.votable);
             var loading = false;
             var objType = Object.keys($scope.votable)[0];
             var votable = $scope.votable[objType];
             var parentId = votable.id;
+            var votableType = objType.toString() + 'Id';
+            $scope.voteInfo = {};
             
-            function getVoteInfo () {
-                setLoading(true);
-                
-                return Vote.getScore({
-                    parentId: parentId
-                })
-                .$promise
-                .then(function (score) {
-                    return Vote.hasVoted({
-                        parentId: parentId,
-                        uid: LoopBackAuth.currentUserId
-                    })
-                    .$promise
-                    .then(function (hasVoted) {
-                        $scope.voteInfo = {
-                            score: score.score,
-                            hasVoted: hasVoted.hasVoted
-                        }
-                        
-                        setLoading(false);
-                        return;
-                    });
+            function getVoteInfo (cb) {
+                async.waterfall([
+                    getVotes,
+                    calcVotes
+                ], function (err, voteInfo) {
+                    setLoading(false);
+                    $scope.voteInfo = voteInfo;
+                    if (!_.isUndefined(cb) && angular.isFunction(cb))
+                        return cb();
                 })
             }
+            
+            function getVotes (cb) {
+                var voteOptions = {
+                    filter: {
+                        where: {
+                            
+                        }
+                    }
+                };
+                
+                voteOptions.filter.where[votableType] = parentId;
+                Vote.find(voteOptions)
+                .$promise
+                .then(function (votes) {
+//                    setLoading(false);
+                    votable.votes = votes;
+                    return cb(undefined, votes);
+                });
+            }
+            
+            function calcVotes (votes, cb) {
+                var hasVoted,
+                    voteScore = 0;
+                
+                Vote.hasVoted({
+                    parentId: parentId,
+                    uid: LoopBackAuth.currentUserId
+                }).$promise
+                .then(function (data) {
+                    hasVoted = data.hasVoted;
+                
+                    _.each(votes, function(vote) {
+                        voteScore += vote.direction;
+                    });
+                
+                    var voteInfo = {
+                        score: voteScore,
+                        hasVoted: hasVoted
+                    };
+                    
+                    return cb(undefined, voteInfo);
+                });
+            }
+            
             //initial load
             getVoteInfo();
-            
+
             function setLoading (bool) {
                 loading = bool;
             }
-            
-            $scope.voteInfo = {}
-            
+
             $scope.isLoading = function () {
                 if (_.isEmpty($scope.voteInfo) || loading) {
                     return true;
                 }
-                
+
                 return false;
             }
-            
+
             $scope.hasVoted = function (direction) {
                 return $scope.voteInfo.hasVoted == direction;
             }
-            
+
             $scope.vote = function (direction) {
-                if(loading)
+                if (loading)
                     return;
-                
-                setLoading(true);
-                
+
                 if (_.isNull(LoopBackAuth.currentUserId)) {
-                    setLoading(false);
-                    LoginModalService.showModal('login', function () {
-                        $scope.vote(direction);
+                    LoginModalService.showModal('login', function (result) {
+                        getVoteInfo(function() {
+                            $scope.vote(direction);
+                        });
                     });
+                } else if ($attrs.theme === 'multi' && votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
+                    return false;
                 } else {
-                    if ($scope.voteInfo.hasVoted !== 0 && $attrs.theme !== 'single') {
-                        var where = {}
+                    
+                    if ($scope.voteInfo.hasVoted === direction) {
+                        return;
+                    } else if ($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) {
+                        setLoading(true);
+                        var where = {};
                             where[objType + "Id"] = votable.id;
                             where["authorId"] = LoopBackAuth.currentUserId;
-                        
-                        Vote.findOne({ 
-                            filter: { 
+
+                        Vote.findOne({
+                            filter: {
                                 where: where
-                            } 
+                            }
                         })
                         .$promise
                         .then(function (vote) {
-                            Vote.prototype$updateAttributes({
+                            
+                            vote.direction = direction;
+                            
+                            Vote.upsert({
                                 id: vote.id
-                            }, {
-                                direction: vote.direction*-1
-                            })
+                            }, vote)
                             .$promise
-                            .then(getVoteInfo);
+                            .then(function(voteUpdated) {
+                                
+                                _.each(votable.votes, function(vote) {
+                                    if (voteUpdated.id === vote.id) {
+                                        vote.direction = direction;
+                                    }
+                                });
+                                
+                                getVoteInfo();
+                            });
                         });
+                        
                     } else {
-                        var newVote = {}
+                        setLoading(true);
+                        var newVote = {};
                             newVote[objType + "Id"] = votable.id;
                             newVote["direction"] = direction;
                             newVote["authorId"] = LoopBackAuth.currentUserId;
 
-                        Vote.create({}, newVote, getVoteInfo);
+                        Vote.create(newVote)
+                        .$promise
+                        .then(function (voteCreated) {
+                            votable.votes.push(voteCreated);
+                            getVoteInfo();
+                        });
                     }
                 }
             }
-            
+
             EventService.registerListener(EventService.EVENT_LOGIN, getVoteInfo);
             EventService.registerListener(EventService.EVENT_LOGOUT, getVoteInfo);
         }]
@@ -816,9 +876,17 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
+            var tooltip;
+            
             $timeout(function () {
-                $(element).tooltip();
+                tooltip = $(element).tooltip();
             });
+            
+//            scope.$on('$destroy', function () {
+//                if (tooltip.next()) {
+//                    tooltip.next().remove();
+//                }
+//            });
         }
     };
 }])
@@ -1257,8 +1325,10 @@ angular.module('app.directives', ['ui.load'])
         },
         templateUrl: tpl + 'views/frontend/directives/hots.filtering.html',
         link: function (scope, element, attrs) {
+            scope.searchHeroes = angular.copy(scope.filters.search);
+            
             var initializing = true,
-                randHeroIndex = false;
+                randHeroIndex = randomIntFromInterval (0,scope.heroes.length - 1);
 
             function randomIntFromInterval (min,max) {
                 return Math.floor(Math.random()*(max-min+1)+min);
@@ -1277,6 +1347,14 @@ angular.module('app.directives', ['ui.load'])
 
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
+                
+                scope.$parent.searchGuides();
+            }
+            
+            scope.queryOnEmpty = function (str) {
+                if (_.isEmpty(str)) {
+                    scope.updateSearch();
+                }
             }
 
             scope.hasFilterRole = function (role) {
@@ -1298,8 +1376,10 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.toggleFilterHero = function (hero) {
-                var index = scope.filters.heroes.indexOf(hero);
-                if (index === -1) {
+//                var index = scope.filters.heroes.indexOf(hero);
+                var index = _.find(scope.filters.heroes, function (heroFilter) { return heroFilter.id === hero.id });
+                
+                if (!index) {
                     if (scope.filters.roles.length && scope.filters.roles.indexOf(hero.role) == -1) {
                         scope.filters.roles.push(hero.role);
                     }
@@ -1314,7 +1394,7 @@ angular.module('app.directives', ['ui.load'])
                 }
 
                 if (!scope.filters.heroes.length) {
-                    randHeroIndex = randomIntFromInterval(1, scope.heroes.length);
+                    randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                 }
             };
 
@@ -1338,7 +1418,10 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.hasFilterHero = function (hero) {
-                return (scope.filters.heroes.indexOf(hero) !== -1);
+                var hasHero = _.find(scope.filters.heroes, function(heroFilter) {
+                    return heroFilter.id === hero.id
+                });
+                return hasHero;
             };
 
             scope.hasFilterSearch = function (hero) {
@@ -1358,7 +1441,12 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.hasFilterMap = function (map) {
-                return (scope.filters.map === map);
+                if (scope.filters.map !== undefined) {
+                    return (scope.filters.map.id === map.id);
+                } else {
+                    return false;
+                }
+                
             };
 
             scope.hasAnyFilterMap = function () {
@@ -1366,7 +1454,12 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.toggleFilterMap = function (map) {
-                scope.filters.map = (scope.filters.map == map) ? undefined : map;
+                if (scope.filters.map !== undefined) {
+                    scope.filters.map = (scope.filters.map.id === map.id) ? undefined : map;
+                } else {
+                    scope.filters.map = map;
+                }
+                
             };
 
             scope.currentMapBack = function () {
@@ -1575,7 +1668,7 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
-.directive('hsFilterClassLarge', ['$filter', '$timeout', function ($filter, $timeout) {
+.directive('hsFilterClassLarge', ['$filter', '$timeout', 'StateParamHelper', function ($filter, $timeout, StateParamHelper) {
     return {
         restrict: 'A',
         scope: {
@@ -1604,6 +1697,10 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     scope.filters.classes.splice(index, 1);
                 }
+                
+                StateParamHelper.updateStateParams({
+                    k: scope.filters.classes
+                });
             };
 
             scope.hasFilterClass = function (klass) {

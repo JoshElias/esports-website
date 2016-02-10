@@ -9,18 +9,18 @@
 </div>
 <!-- end Mobile override div -->
 
-<div class="draft-build" ng-class="{ completed: tournament.hasDecksConstructed }">
+<div class="draft-build" ng-class="{ completed: tournament.hasDecksConstructed, 'is-official': tournament.isOfficial }">
     <!-- mobile cardpool button -->
     <div class="filter-button-bar">
         <button class="filtering-mobile-toggle-btn btn btn-blue" ng-click="mobileCardFilters = !mobileCardFilters">Filtering</button>
     <!-- mobile cardpool button -->
     </div>
-    
+
     <div class="draft-build-filtering" ng-class="{ 'mobile-show': mobileCardFilters, 'mana-closed': manaCurveFilter }">
-    
+
         <div class="mana-curve">
             <h3 ng-click="manaCurveFilter = !manaCurveFilter">Mana Curve</h3>
-            
+
             <ul class="clearfix">
                 <li ng-repeat="cost in manaCosts">
                     <div class="mana-curve-amt">{{manaCount(cost)}}</div>
@@ -28,9 +28,9 @@
                     <div class="mana-curve-num">{{cost}}<span ng-if="cost === 7">+</span></div>
                 </li>
             </ul>
-            
+
         </div>
-        
+
         <div class="card-search">
             <h3>Card Search</h3>
             <form>
@@ -42,21 +42,21 @@
                 </div>
             </form>
         </div>
-        
+
         <div class="mana-cost">
             <h3>Mana Cost</h3>
-            
+
             <div class="mana-crystals clearfix">
                 <div ng-class="{active: filters.mana === cost}" ng-repeat="cost in manaCosts">
                     <a href="#" ng-click="toggleFilterByMana(cost); pagination.setPage(1)">{{cost}}<span ng-if="cost === 7">+</span></a>
                 </div>
             </div>
-            
+
         </div>
-        
+
         <div class="card-rarity">
             <h3>Card Rarity</h3>
-            
+
             <div class="dropdown m-t-sm m-l-sm m-r-sm m-b-sm">
                 <button class="btn card-rarity-btn input-dark" type="button" data-toggle="dropdown">
                     <span>
@@ -73,12 +73,12 @@
                     </li>
                 </ul>
             </div>
-            
+
         </div>
-        
+
         <div class="card-mechanics">
             <h3>Card Mechanics</h3>
-            
+
             <div class="mechanics-wrapper">
                 <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
                     <div class="iscroll-scroller">
@@ -90,38 +90,38 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
-        
+
     </div>
-    
+
     <div class="draft-build-decks">
-        
+
         <div class="deck-add-button">
             <button ng-click="addDeckWnd()" ng-disabled="!canEdit()">
                 <i class="fa fa-plus-circle"></i>
                 Add Deck
             </button>
         </div>
-        
+
         <div class="decks">
-            
+
             <div class="deck {{deck.playerClass.toLowerCase()}}" ng-class="{ active: isCurrentDeck(deck) }" ng-repeat="deck in decks">
-                
+
                 <div class="deck-title-bar" ng-click="toggleCurrentDeck(deck)">
                     <div class="deck-title-bar-inner">
                         <button class="deck-delete" ng-click="deleteDeck($event, deck)" ng-if="canEdit()"><i class="fa fa-times"></i></button>
                         <div class="deck-title">{{deck.name}}</div>
                     </div>
                 </div>
-                
+
                 <div class="deck-cards">
                     <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
                         <div class="iscroll-scroller">
-                            
-                            <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}" 
-                                 ng-repeat="card in deck.cards track by card.card.id" 
-                                 data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
+
+                            <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}"
+                                 ng-repeat="card in deck.cards track by card.card.id"
+                                 data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
                                  data-tooltip-pos="left" hs-card
                                  ng-click="removeCardFromDeck(card)">
                                 <div class="card-pool-card-mana">{{card.card.cost}}</div>
@@ -134,35 +134,35 @@
                                 </div>
                                 <div class="card-pool-card-name">{{card.card.name}}</div>
                             </div>
-                    
+
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="deck-count">
                     <div class="deck-count-inner">
                         {{deck.getSize()}}/30
                     </div>
                 </div>
-                
+
             </div>
-            
+
         </div>
-        
+
         <div class="deck-save-button">
-            <button class="btn btn-block btn-blue" ng-click="saveDecks()" ng-disabled="decksSaving" ng-if="!tournament.hasDecksConstructed">
+            <button class="btn btn-block btn-blue" ng-click="saveDecksCheck()" ng-disabled="decksSaving" ng-if="!tournament.hasDecksConstructed">
                 SAVE DECKS
                 <i class="fa fa-refresh fa-spin" ng-if="decksSaving"></i>
             </button>
-            <button class="btn btn-block btn-blue" ng-click="shareDecks()" ng-if="tournament.hasDecksConstructed">
+            <button class="btn btn-block btn-blue" ng-click="shareDecks()" ng-if="tournament.hasDecksConstructed && !tournament.isOfficial">
                 SHARE DECKS
             </button>
         </div>
-        
+
     </div>
-    
-    <!--<draft-timer start-time="tournament.deckBuildStartTime" time-limit="tournament.deckBuildTimeLimit" on-time-up="timesUp" ng-if="!tournament.hasDecksConstructed"></draft-timer>-->
-    
+
+    <draft-timer start-time="tournament.deckBuildStartTime" time-limit="tournament.deckBuildTimeLimit" on-time-up="timesUp" ng-if="!tournament.hasDecksConstructed"></draft-timer>
+
     <div class="draft-build-cards">
         <div class="container container-override">
             <ul class="card-filter-classes clearfix" ng-class="{ filtered: currentDeck }">
@@ -192,5 +192,5 @@
             </div>
         </div>
     </div>
-    
+
 </div>
