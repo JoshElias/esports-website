@@ -1068,6 +1068,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     var indexToDel = $scope.decks.indexOf(deck);
                                     if (indexToDel !== -1) {
                                         $scope.decks.splice(indexToDel, 1);
+                                        $scope.$parent.deckCount--;
                                     }
                                 })
                                 .catch(function (err) {
@@ -1215,20 +1216,9 @@ angular.module('app.controllers', ['ngCookies'])
                                     var index = $scope.guides.indexOf(guide);
                                     if (index !== -1) {
                                         $scope.guides.splice(index, 1);
+                                        $scope.$parent.guideCount--;
                                     }
                                 });
-//                                HOTSGuideService.guideDelete(guide._id).success(function (data) {
-//                                    if (data.success) {
-//                                        var index = $scope.guides.indexOf(guide);
-//                                        if (index !== -1) {
-//                                            $scope.guides.splice(index, 1);
-//                                        }
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: 'guide "' + guide.name + '" deleted successfully.'
-//                                        };
-//                                    }
-//                                });
                             }
                         },
                         cancel: {
