@@ -975,10 +975,35 @@
         } /* .draft-build-cards */
 
         &.completed {
+            
+            
+            
             .draft-build-decks {
+                //decks for sharing.
+                @media screen and (max-width:750px) {
+                z-index: 1000;
+                background: black;
+                margin-top: 0px;
+                width: 100%;
+                    
+                    .decks {
+                        height: calc(100%) !important;
+                    }
+                    
+                    .deck-save-button {
+                        display: none;
+                        width: 100%;
+                        
+                        button {
+                            width: 100%;
+                        }
+                    }
+                }
+                
                 .deck-add-button {
                     display: none;
                 }
+                
                 .decks {
                     min-height: calc(100% - 50px);
 				    height: calc(100% - 50px);
@@ -1167,4 +1192,17 @@
         background: #c7371e;
         color: #fff;
     }
+    
+//    @media screen and (max-width:750px) {
+//           
+//        a {
+//            width: 80%;
+//            margin-bottom: 20px;
+//            
+//            &:last-of-type {
+//                margin-left: -4px;
+//            }
+//        
+//        }
+//    }    
 } /* .draft-deck-share */
