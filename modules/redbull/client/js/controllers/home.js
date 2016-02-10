@@ -2,7 +2,7 @@ angular.module('redbull.controllers')
 .controller('RedbullHomeCtrl', ['$scope', '$state', 'User', 'LoginModalService', function ($scope, $state, User, LoginModalService){
     
     function goToDrafts () {
-        return $state.transitionTo('app.redbull.tournament.draft.packs');
+        return $state.transitionTo('app.hs.redbull.home');
     }
     
     function goToPacks () {

@@ -30,7 +30,7 @@ var redbull = angular.module('app.redbull', [
         $stateProvider
         .state('app.hs.redbull', {
             abstract: true,
-            url: '/redbull',
+            url: '/sealed-generator',
             views: {
                 hs: {
                     templateUrl: moduleTpl + 'index.html'
@@ -45,7 +45,14 @@ var redbull = angular.module('app.redbull', [
                     controller: 'RedbullHomeCtrl'
                 }
             },
-            seo: { title: 'Red Bull Team Brawl: Hearthstone Presented by Honda', description: 'Tempo Storm is proud to announce we have partnered with the amazing team at Red Bull and in connection with Honda will be providing the worlds first Hearthstone Sealed Deck tournament! Featuring your favorite teams and players, battling it out in this new format to determine a champion!', keywords: '' }
+            seo: { title: 'Sealed Pack Generator', description: 'Tempo Storm is proud to present the worlds first Hearthstone Sealed Deck generator!', keywords: '' }
+        })
+        .state('app.hs.redirect', {
+            url: '/redbull',
+            onEnter: ['$state', function ($state) {
+                $state.go('app.hs.redbull.home');
+            }],
+            seo: { title: 'Sealed Pack Generator', description: 'Tempo Storm is proud to present the worlds first Hearthstone Sealed Deck generator!', keywords: '' }
         })
         .state('app.hs.draft', {
             abstract: true,
