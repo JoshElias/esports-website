@@ -1068,6 +1068,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     var indexToDel = $scope.decks.indexOf(deck);
                                     if (indexToDel !== -1) {
                                         $scope.decks.splice(indexToDel, 1);
+                                        $scope.$parent.deckCount--;
                                     }
                                 })
                                 .catch(function (err) {
@@ -1215,20 +1216,9 @@ angular.module('app.controllers', ['ngCookies'])
                                     var index = $scope.guides.indexOf(guide);
                                     if (index !== -1) {
                                         $scope.guides.splice(index, 1);
+                                        $scope.$parent.guideCount--;
                                     }
                                 });
-//                                HOTSGuideService.guideDelete(guide._id).success(function (data) {
-//                                    if (data.success) {
-//                                        var index = $scope.guides.indexOf(guide);
-//                                        if (index !== -1) {
-//                                            $scope.guides.splice(index, 1);
-//                                        }
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: 'guide "' + guide.name + '" deleted successfully.'
-//                                        };
-//                                    }
-//                                });
                             }
                         },
                         cancel: {
@@ -2524,37 +2514,37 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.removeRelatedArticle = function (a) {
                 // removing related articles
-				// remove from toCreate
-				// push to toDelete if it exist in db
+                // remove from toCreate
+                // push to toDelete if it exist in db
 
-				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
-					if (toCrArticle.id === a.id) {
-						relatedArticleChanges.toCreate.splice(index, 1);
-						return;
-					}
-				});
+                angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
+                  if (toCrArticle.id === a.id) {
+                    relatedArticleChanges.toCreate.splice(index, 1);
+                    return;
+                  }
+                });
 
-				ArticleArticle.find({
-					filter: {
-						where: {
-							childArticleId: a.id,
-							parentArticleId: $scope.article.id
-						}
-					}
-				}).$promise
-				.then(function (relatedArticle) {
-					// related article exist in db
-					if (relatedArticle.length !== 0) {
-						relatedArticleChanges.toDelete.push(a);
-					}
-				});
+                ArticleArticle.find({
+                  filter: {
+                    where: {
+                      childArticleId: a.id,
+                      parentArticleId: $scope.article.id
+                    }
+                  }
+                }).$promise
+                .then(function (relatedArticle) {
+                  // related article exist in db
+                  if (relatedArticle.length !== 0) {
+                    relatedArticleChanges.toDelete.push(a);
+                  }
+                });
 
-				angular.forEach($scope.article.related, function(relArticle, index) {
-					if (relArticle.id === a.id) {
-						$scope.article.related.splice(index, 1);
-						return;
-					}
-				});
+                angular.forEach($scope.article.related, function(relArticle, index) {
+                  if (relArticle.id === a.id) {
+                    $scope.article.related.splice(index, 1);
+                    return;
+                  }
+                });
             }
 
             $scope.closeBox = function () {
@@ -2702,128 +2692,132 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             };
 
-            $scope.articleImg = getImage();
+        $scope.articleImg = getImage();
 
-            function getImage () {
-                $scope.imgPath = 'articles/';
-                if (!$scope.article.photoNames) {
-                    return 'img/blank.png';
-                }
-				var URL = (tpl === './') ? cdn2 : tpl;
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
-            };
+        function getImage () {
+            $scope.imgPath = 'articles/';
+            if (!$scope.article.photoNames) {
+                return 'img/blank.png';
+            }
+            var URL = (tpl === './') ? cdn2 : tpl;
+            return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
+        };
+            
+            
+//        console.log('article:', article);
+        $scope.editArticle = function (article) {
+            $scope.fetching = true;
 
-            $scope.editArticle = function (article) {
-                $scope.fetching = true;
+				    // unlink guides/decks depending on what type of guide
+				    if (article.articleType[0] !== 'hs') {
+                article['deck'] = null;
+                article['deckId'] = null;
+				    }
 
-				// unlink guides/decks depending on what type of guide
-				if (article.articleType[0] !== 'hs') {
-					article['deck'] = null;
-					article['deckId'] = null;
-				}
+				    if (article.articleType[0] !== 'hots') {
+                article['guide'] = null;
+                article['guideId'] = null;
+				    }
 
-				if (article.articleType[0] !== 'hots') {
-					article['guide'] = null;
-					article['guideId'] = null;
-				}
+            async.parallel([
+              function (paraCB) {
+                  Article.prototype$updateAttributes({
+                      id: article.id
+                  }, article)
+                  .$promise
+                  .then(function (articleUpdated) {
+                      return paraCB();
+                  })
+                  .catch(function (err) {
+                      return paraCB(err);
+                  });
+              },
+              function(paraCB) {
 
-				async.parallel([
-					function (paraCB) {
-						Article.upsert(article)
-						.$promise
-						.then(function (articleUpserted) {
-							return paraCB();
-						})
-						.catch(function (err) {
-							return paraCB(err);
-						});
-					},
-					function(paraCB){
+                async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
 
-						async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
+                  async.waterfall([
+                    function (wateryCB) {
+                      ArticleArticle.findOne({
+                        filter: {
+                          where: {
+                            childArticleId: relatedToDelete.id,
+                            parentArticleId: article.id
+                          }
+                        }
+                      }).$promise
+                      .then(function (articleFound) {
+                        return wateryCB(null, articleFound);
+                      })
+                      .catch(function (err) {
+                        return wateryCB(err);
+                      });
+                    },
+                    function (articleFound, wateryCB) {
+                      ArticleArticle.destroyById({
+                        id: articleFound.id
+                      }).$promise
+                      .then(function (relArticleDestroyed) {
+                        return wateryCB();
+                      })
+                      .catch(function (err) {
+                        return wateryCB(err);
+                      });
+                    }
+                  ], function(err) {
+                    if (err) {
+                      return relatedToDeleteCB(err);
+                    }
+                    return relatedToDeleteCB();
+                  });
 
-							async.waterfall([
-								function (wateryCB) {
-									ArticleArticle.findOne({
-										filter: {
-											where: {
-												childArticleId: relatedToDelete.id,
-												parentArticleId: article.id
-											}
-										}
-									}).$promise
-									.then(function (articleFound) {
-										return wateryCB(null, articleFound);
-									})
-									.catch(function (err) {
-										return wateryCB(err);
-									});
-								},
-								function (articleFound, wateryCB) {
-									ArticleArticle.destroyById({
-										id: articleFound.id
-									}).$promise
-									.then(function (relArticleDestroyed) {
-										return wateryCB();
-									})
-									.catch(function (err) {
-										return wateryCB(err);
-									});
-								}
-							], function(err) {
-								if (err) {
-									return relatedToDeleteCB(err);
-								}
-								return relatedToDeleteCB();
-							});
-
-						}, function(err) {
-							if (err) {
-								return paraCB(err);
-							}
-							return paraCB();
-						});
-					},
-					function(paraCB) {
-						async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
-							var articleArticle = {
-								parentArticleId: article.id,
-								childArticleId: relatedArticle.id
-							};
-							ArticleArticle.create(articleArticle)
-							.$promise
-							.then(function (relatedArticleCreated) {
-								return relatedCreateCB();
-							})
-							.catch(function (err) {
-								return relatedCreateCB(err);
-							});
-						}, function (err) {
-							if (err) {
-								return paraCB(err);
-							}
-							return paraCB();
-						});
-					}
-				], function(err) {
-					$scope.fetching = false;
-					$window.scrollTo(0, 0);
-					if (err) {
-						console.log('async para err: ', err);
-						return AlertService.setError({
-							show: true,
-							msg: article.title + ' could not be updated',
-							lbErr: err
-						});
-					}
-					AlertService.setSuccess({
-						show: false,
-						persist: true,
-						msg: article.title + ' updated successfully',
-					});
-					$state.transitionTo('app.admin.articles.list');
-				});
-      };
+                }, function(err) {
+                  if (err) {
+                    return paraCB(err);
+                  }
+                  return paraCB();
+                });
+              },
+              function(paraCB) {
+                async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
+                  var articleArticle = {
+                    parentArticleId: article.id,
+                    childArticleId: relatedArticle.id
+                  };
+                  ArticleArticle.create(articleArticle)
+                  .$promise
+                  .then(function (relatedArticleCreated) {
+                    return relatedCreateCB();
+                  })
+                  .catch(function (err) {
+                    return relatedCreateCB(err);
+                  });
+                }, function (err) {
+                  if (err) {
+                    return paraCB(err);
+                  }
+                  return paraCB();
+                });
+              }
+            ], function(err) {
+              $scope.fetching = false;
+              $window.scrollTo(0, 0);
+              if (err) {
+                console.log('async para err: ', err);
+                return AlertService.setError({
+                  show: true,
+                  msg: article.title + ' could not be updated',
+                  lbErr: err
+                });
+              }
+              AlertService.setSuccess({
+                show: false,
+                persist: true,
+                msg: article.title + ' updated successfully',
+              });
+              $state.transitionTo('app.admin.articles.list');
+            });
+          };
 
 //          $scope.getNames = function () {
 //              AdminArticleService.getNames($scope.article).success(function (data) {
@@ -2868,7 +2862,8 @@ angular.module('app.controllers', ['ngCookies'])
                     order: paginationParams.options.filter.order,
                     skip: ((page*perpage)-perpage),
                     limit: perpage,
-                    where: {}
+                    where: {},
+                    include: ['author']
                   }
                 };
 
