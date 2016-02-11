@@ -10,8 +10,26 @@ var NUM_CARDS_PER_DECK = 30;
 var NUM_OF_LEGENDARIES = 1;
 var NUM_OF_CARDS_PER_DECK = 2;
 
+var DECK_RESULT_LIMIT = 9;
+
 
 module.exports = function(RedbullDeck) {
+
+
+    // LIMIT FIND ALLS TO 9
+    RedbullDeck.observe("access", limitDeckFind);
+
+
+    function limitDeckFind(ctx, finalCb) {
+
+        if(!ctx.query) {
+            ctx.query = {};
+        }
+
+        ctx.query.limit = DECK_RESULT_LIMIT;
+        finalCb();
+    }
+
 
 
     // HIDING OFFICIAL

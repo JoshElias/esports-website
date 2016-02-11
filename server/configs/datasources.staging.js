@@ -12,6 +12,16 @@ module.exports = {
 	    },
 	    "allowExtendedOperators": true
 	},
+	"tournament-mongo": {
+		"url": 'mongodb://52.36.61.197:27017,52.8.70.39:27017,52.72.111.236:27017,52.29.157.100:27017/tournament?readPreference=nearest&w=1',
+		"connector": "loopback-connector-mongodb",
+		"server": {
+			"auto_reconnect": true,
+			"reconnectTries": 100,
+			"reconnectInterval": 1000
+		},
+		"allowExtendedOperators": true
+	},
 	"mandrill": {
 	    "name": "mandrill",
 	    "connector": "loopback-connector-mandrill",
