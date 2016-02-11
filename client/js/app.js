@@ -2881,7 +2881,10 @@ var app = angular.module('app', [
                                             isActive: true
                                         }
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                });
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({
@@ -3104,28 +3107,31 @@ var app = angular.module('app', [
                                 }).$promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                              return Hero.find({
-                                filter: {
-                                  fields: {
-                                    where: {
-                                        isActive: true
-                                    },
-                                    oldTalents: false,
-                                    oldAbilities: false,
-                                    price: false,
-                                    title: false,
-                                    manaType: false,
-                                    characters: false
-                                  }
-                                }
-                              }).$promise;
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: {
+                                            oldTalents: false,
+                                            oldAbilities: false,
+                                            price: false,
+                                            title: false,
+                                            manaType: false,
+                                            characters: false
+                                        }
+                                    }
+                                }).$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                });
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({
                                     filter: {
                                         where: {
                                             isActive: true
-                                        },
+                                        }
                                     }
                                 }).$promise;
                             }]
@@ -5528,6 +5534,7 @@ var app = angular.module('app', [
                                     total: 0,
                                     options: {
                                         filter: {
+                                            order: 'createdDate DESC',
                                             fields: {
 //                                                id: true,
 //                                                username: true
@@ -5692,13 +5699,18 @@ var app = angular.module('app', [
                                 }
                             }],
                             dataHeroes: ['Hero', function (Hero) {
+                                console.log('heeeeeere');
                                 return Hero.find({
                                     filter: {
                                         where: {
                                             isActive: true
                                         }
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (heroes) {
+                                    console.log('heroes:', heroes);
+                                    return heroes;
+                                });
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({

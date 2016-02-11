@@ -17227,6 +17227,7 @@ angular.module('app.controllers', ['ngCookies'])
                   return $scope.updateGuide();
                 });
               } else {
+                $scope.fetching = true;
                 var guideCopy = angular.copy($scope.guide);
                 guideCopy.slug = Util.slugify(guideCopy.name);
                 guideCopy.guideHeroes = _.map(guideCopy.heroes, function (val) { return { heroId: val.hero.id } });
@@ -17392,7 +17393,6 @@ angular.module('app.controllers', ['ngCookies'])
                         });
 
                       },
-
                       function(seriesCB) {
 
                         async.each(guideCopy.maps, function(map, mapCB) {
@@ -17426,6 +17426,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                   }
                 ], function(err, results) {
+                  $scope.fetching = false;
                   if (err) {
                     $window.scrollTo(0, 0);
                     AlertService.setError({
