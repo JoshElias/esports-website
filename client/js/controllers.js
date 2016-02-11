@@ -1016,15 +1016,118 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('ProfileArticlesCtrl', ['$scope', 'articles',
-        function ($scope, articles) {
+    .controller('ProfileArticlesCtrl', ['$scope', 'articles', 'EventService', 'Util', 'User', 'userProfile', 'Article',
+        function ($scope, articles, EventService, Util, User, userProfile, Article) {
             $scope.articles = articles;
+            
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                refreshArticles();
+            });
+
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                refreshArticles();
+            });
+            
+            function getWhere() {
+                var where = {
+                    authorId: userProfile.id
+                };
+
+                if (User.getCurrentId() !== userProfile.id) {
+                    where.isActive = true;
+                }
+                
+                return where;
+            }
+            
+            function refreshArticles() {
+                Article.find({
+                    filter: {
+                        order: 'createdDate DESC',
+                        where: getWhere(),
+                        include: [
+                            {
+                                relation: 'author',
+                                scope: {
+                                    fields: {
+                                        id: true,
+                                        username: true
+                                    }
+                                }
+                            },
+                            {
+                                relation: 'votes',
+                            }
+                        ]
+                    }
+                })
+                .$promise
+                .then(function (articles) {
+                    _.each(articles, function(article) {
+                        article.voteScore = Util.tally(article.votes, 'direction');
+                    });
+
+                    $scope.articles = articles;
+                })
+                .catch(function (err) {
+                    console.log('err:', err);
+                });
+            }
+            
         }
     ])
-    .controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'Deck', 'decks',
-        function ($scope, $state, bootbox, Deck, decks) {
+    .controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'Deck', 'decks', 'EventService', 'Util', 'userProfile', 'User',
+        function ($scope, $state, bootbox, Deck, decks, EventService, Util, userProfile, User) {
             $scope.decks = decks;
+            
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                refreshDecks();
+            });
 
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                refreshDecks();
+            });
+            
+            function getWhere() {
+                var where = {
+                    authorId: userProfile.id
+                };
+
+                if (User.getCurrentId() !== userProfile.id) {
+                    where.isPublic = true;
+                }
+                
+                return where;
+            }
+            
+            function refreshDecks() {
+                Deck.find({
+                    filter: {
+                        order: "createdDate DESC",
+                        where: getWhere(),
+                        include: [
+                            {
+                                relation: 'author'
+                            },
+                            {
+                                relation: 'votes'
+                            }
+                        ]
+                    }
+                })
+                .$promise
+                .then(function (decks) {
+                    _.each(decks, function(deck) {
+                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                    });
+
+                    $scope.decks = decks;
+                })
+                .catch(function (err) {
+                    console.log('err:', err);
+                });
+            }
+            
             //is premium
             $scope.isPremium = function (guide) {
                 if (!guide.premium || !guide.premium.isPremium) { return false; }
@@ -1089,9 +1192,85 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'guides', 'Guide',
-        function ($scope, $state, bootbox, HOTSGuideService, guides, Guide) {
+    .controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'guides', 'Guide', 'EventService', 'User', 'userProfile', 'Util',
+        function ($scope, $state, bootbox, HOTSGuideService, guides, Guide, EventService, User, userProfile, Util) {
+            
             $scope.guides = guides;
+            
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                refreshGuides();
+            });
+
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                refreshGuides();
+            });
+            
+            function getWhere() {
+                var where = {
+                    authorId: userProfile.id
+                };
+
+                if (User.getCurrentId() !== userProfile.id) {
+                    where.isPublic = true;
+                }
+                return where;
+            }
+            function refreshGuides() {
+                Guide.find({
+                    filter: {
+                        order: "createdDate DESC",
+                        where: getWhere(),
+                        include: [
+                            {
+                                relation: 'author'
+                            },
+                            {
+                                relation: 'guideHeroes',
+                                scope: {
+                                    include: [
+                                        {
+                                            relation: 'hero',
+                                            scope: {
+                                                include: [
+                                                    {
+                                                        relation: 'talents'
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                relation: 'guideTalents',
+                                scope: {
+                                    include: [
+                                        {
+                                            relation: 'talent'
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                relation: 'maps'
+                            },
+                            {
+                                relation: 'votes'
+                            }
+                        ]
+                    }
+                }).$promise
+                .then(function (guides) {
+                    _.each(guides, function(guide) {
+                        guide.voteScore = Util.tally(guide.votes, 'direction');
+                    });
+
+                    $scope.guides = guides;
+                })
+                .catch(function (err) {
+                    console.log('err:', err);
+                });
+            }
             // guides
             $scope.getGuideCurrentHero = function (guide) {
                 return (guide.currentHero) ? guide.currentHero : guide.guideHeroes[0];
@@ -16629,153 +16808,115 @@ angular.module('app.controllers', ['ngCookies'])
                 });
 
                 cleanGuide.guideTalents = _.flatten(temp);
-
-                stripped.votes = [
-                  {
-                    userId: User.getCurrentId(),
-                    direction: 1
-                  }
-                ];
-
-                stripped.voteScore = 1;
-
-//                console.log('before save:', stripped);
-//                console.log('$scope.guide:', $scope.guide);
-//                  Guide.create({}, stripped)
-//                .$promise
-//                .then(function (guideData) {
-////                  console.log('guideData:', guideData);
-////                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-//
-//                  Guide.guideHeroes.createMany({
-//                    id: guideData.id
-//                  }, cleanGuide.guideHeroes)
-//                  .$promise
-//                  .then(function (guideHeroData) {
-//                    var tals = [];
-//
-//                    _.each(guideHeroData, function(eachVal) {
-//                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-//                        return filterVal.heroId === eachVal.heroId;
-//                      });
-//
-//                      _.each(heroTals, function (innerEachVal, index, list) {
-//                        innerEachVal.guideId = guideData.id;
-//                        innerEachVal.guideHeroId = eachVal.id;
-//                      });
-//
-//                      tals.push(heroTals);
-//                    });
-
-//                    console.log('tals:', tals);
-                    var guideCreated;
-                    var tals = [];
-                    async.series([
-                      function (seriesCB) {
-                          Guide.create(stripped)
-                          .$promise
-                          .then(function (createdGuide) {
-                              guideCreated = createdGuide;
-                              return seriesCB();
-                          })
-                          .catch(function (err) {
-                              return seriesCB(err);
-                          });
-                      },
-                      function (seriesCB) {
-                          Guide.guideHeroes.createMany({
-                              id: guideCreated.id
-                          }, cleanGuide.guideHeroes)
-                          .$promise
-                          .then(function (guideHeroData) {
-                              
-                              _.each(guideHeroData, function(eachVal) {
-                                var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                                  return filterVal.heroId === eachVal.heroId;
-                                });
-
-                                  _.each(heroTals, function (innerEachVal, index, list) {
-                                    innerEachVal.guideId = guideCreated.id;
-                                    innerEachVal.guideHeroId = eachVal.id;
-                                  });
-                                  tals.push(heroTals);
-                              });
-
-                              return seriesCB();
-                          })
-                          .catch(function (err) {
-                              return seriesCB(err);
-                          });
-                      },
-                      function (seriesCB) {
-                        Guide.guideTalents.createMany({
-                          id: guideCreated.id
-                        }, tals)
-                        .$promise
-                        .then(function (guideTalentData) {
+                  
+                var guideCreated;
+                var tals = [];
+                async.series([
+                  function (seriesCB) {
+                      Guide.create(stripped)
+                      .$promise
+                      .then(function (createdGuide) {
+                          guideCreated = createdGuide;
                           return seriesCB();
-                        })
-                        .catch(function (err) {
-                          console.log('guide talent err', err);
+                      })
+                      .catch(function (err) {
                           return seriesCB(err);
-                        });
-                      },
-                      function (seriesCB) {
-                          var freeVote = {
-                              direction: 1,
-                              createdDate: new Date().toISOString(),
-                              authorId: User.getCurrentId()
-                          };
+                      });
+                  },
+                  function (seriesCB) {
+                      Guide.guideHeroes.createMany({
+                          id: guideCreated.id
+                      }, cleanGuide.guideHeroes)
+                      .$promise
+                      .then(function (guideHeroData) {
 
-                          Guide.votes.create({
-                              id: guideCreated.id
-                          }, freeVote)
-                          .$promise
-                          .then(function (voteCreated) {
-                              return seriesCB();
-                          })
-                          .catch(function (err) {
-                              return seriesCB(err);
+                          _.each(guideHeroData, function(eachVal) {
+                            var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                              return filterVal.heroId === eachVal.heroId;
+                            });
+
+                              _.each(heroTals, function (innerEachVal, index, list) {
+                                innerEachVal.guideId = guideCreated.id;
+                                innerEachVal.guideHeroId = eachVal.id;
+                              });
+                              tals.push(heroTals);
                           });
-                      },
-                      function (seriesCB) {
-                        async.each(cleanGuide.maps, function(map, mapCB) {
+
+                          return seriesCB();
+                      })
+                      .catch(function (err) {
+                          return seriesCB(err);
+                      });
+                  },
+                  function (seriesCB) {
+                    Guide.guideTalents.createMany({
+                      id: guideCreated.id
+                    }, tals)
+                    .$promise
+                    .then(function (guideTalentData) {
+                      return seriesCB();
+                    })
+                    .catch(function (err) {
+                      console.log('guide talent err', err);
+                      return seriesCB(err);
+                    });
+                  },
+                  function (seriesCB) {
+                      var freeVote = {
+                          direction: 1,
+                          createdDate: new Date().toISOString(),
+                          authorId: User.getCurrentId()
+                      };
+
+                      Guide.votes.create({
+                          id: guideCreated.id
+                      }, freeVote)
+                      .$promise
+                      .then(function (voteCreated) {
+                          return seriesCB();
+                      })
+                      .catch(function (err) {
+                          return seriesCB(err);
+                      });
+                  },
+                  function (seriesCB) {
+                    async.each(cleanGuide.maps, function(map, mapCB) {
 //                          console.log('map.id:', map.id);
 //                          console.log('guideData:', guideData);
-                          Guide.maps.link({
-                            id: guideCreated.id,
-                            fk: map.id
-                          }, null)
-                          .$promise
-                          .then(function (mapLinkData) {
+                      Guide.maps.link({
+                        id: guideCreated.id,
+                        fk: map.id
+                      }, null)
+                      .$promise
+                      .then(function (mapLinkData) {
 //                            console.log('mapLinkData:', mapLinkData);
-                            return mapCB();
-                          })
-                          .catch(function (err) {
-                            console.log('map link err:', err);
-                            return mapCB(err);
-                          });
-                        }, function (err, results) {
-                          if (err) {
-                            return seriesCB(err);
-                          }
-                          return seriesCB();
-                        });
-
-                      }], function (err, results) {
-                          $scope.fetching = false;
-                          if (err) {
-                            $window.scrollTo(0, 0);
-                            AlertService.setError({
-                              show: true,
-                              lbErr: err,
-                              msg: 'Unable to Save Guide'
-                            });
-                            return console.log('series err:', err);
-                          }
-                          $scope.app.settings.guide = null;
-                          $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
+                        return mapCB();
+                      })
+                      .catch(function (err) {
+                        console.log('map link err:', err);
+                        return mapCB(err);
+                      });
+                    }, function (err, results) {
+                      if (err) {
+                        return seriesCB(err);
+                      }
+                      return seriesCB();
                     });
+
+                  }], function (err, results) {
+                      $scope.fetching = false;
+                      if (err) {
+                        $window.scrollTo(0, 0);
+                        AlertService.setError({
+                          show: true,
+                          lbErr: err,
+                          msg: 'Unable to Save Guide'
+                        });
+                        return console.log('series err:', err);
+                      }
+                      $scope.app.settings.guide = null;
+                      $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
+                });
 
               }
             };
