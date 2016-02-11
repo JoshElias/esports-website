@@ -303,8 +303,10 @@
                 
                 .bar-back {
                     fill: rgba(255, 255, 255, 0.09);
-                        
+                }
                 
+                circle {
+                    fill: $white;
                 }
                 
               
@@ -321,6 +323,14 @@
                 &.burst {
                     fill: #2766ad;
                     
+                    text {
+                       
+                    }
+                    
+                    circle {
+                        fill: #2766ad; 
+                        
+                    }
                                         
                 }
                 &.push {
@@ -352,9 +362,9 @@
             
             
             .chart {
-                width: 100%;
+               width: 80%;
                 height: 160px;
-                
+                margin-left: 20%;
             }
             
 //            .chart:hover,
