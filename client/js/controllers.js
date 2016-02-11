@@ -9722,7 +9722,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             function saveDeck(deck) {
-
+                
                 deck.votes = [
                     {
                         userID: User.getCurrentId(),
@@ -14284,6 +14284,7 @@ angular.module('app.controllers', ['ngCookies'])
                                         lbErr: err
                                     });
                                 });
+                                
                             }
                         },
                         cancel: {
@@ -14517,90 +14518,103 @@ angular.module('app.controllers', ['ngCookies'])
 
 //                console.log('saving stripped:', stripped);
 //                console.log('$scope.guide:', $scope.guide);
-                  Guide.create({}, stripped)
-                .$promise
-                .then(function (guideData) {
-//                  console.log('guideData:', guideData);
-//                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-
-                  Guide.guideHeroes.createMany({
-                    id: guideData.id
-                  }, cleanGuide.guideHeroes)
-                  .$promise
-                  .then(function (guideHeroData) {
-                    var tals = [];
-
-                    _.each(guideHeroData, function(eachVal) {
-                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                        return filterVal.heroId === eachVal.heroId;
-                      });
-
-                      _.each(heroTals, function (innerEachVal, index, list) {
-                        innerEachVal.guideId = guideData.id;
-                        innerEachVal.guideHeroId = eachVal.id;
-                      });
-
-                      tals.push(heroTals);
-                    });
-
-//                    console.log('tals:', tals);
-                    async.series([
-                      function (seriesCB) {
-                        Guide.guideTalents.createMany({
-                          id: guideData.id
-                        }, tals)
-                        .$promise
-                        .then(function (guideTalentData) {
+                  
+                 var guideCreated;
+                var tals = [];
+                async.series([
+                  function (seriesCB) {
+                      Guide.create(stripped)
+                      .$promise
+                      .then(function (createdGuide) {
+                          guideCreated = createdGuide;
                           return seriesCB();
-                        })
-                        .catch(function (err) {
-                          console.log('guide talent err', err);
+                      })
+                      .catch(function (err) {
                           return seriesCB(err);
-                        });
-                      },
-                      function (seriesCB) {
-                          var freeVote = {
-                              direction: 1,
-                              createdDate: new Date().toISOString(),
-                              authorId: User.getCurrentId()
-                          };
+                      });
+                  },
+                  function (seriesCB) {
+                      Guide.guideHeroes.createMany({
+                          id: guideCreated.id
+                      }, cleanGuide.guideHeroes)
+                      .$promise
+                      .then(function (guideHeroData) {
 
-                          Guide.votes.create({
-                              id: guideData.id
-                          }, freeVote)
-                          .$promise
-                          .then(function (voteCreated) {
-                              return seriesCB();
-                          })
-                          .catch(function (err) {
-                              return seriesCB(err);
+                          _.each(guideHeroData, function(eachVal) {
+                            var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                              return filterVal.heroId === eachVal.heroId;
+                            });
+
+                              _.each(heroTals, function (innerEachVal, index, list) {
+                                innerEachVal.guideId = guideCreated.id;
+                                innerEachVal.guideHeroId = eachVal.id;
+                              });
+                              tals.push(heroTals);
                           });
-                      },
-                      function (seriesCB) {
-                        async.each(cleanGuide.maps, function(map, mapCB) {
+
+                          return seriesCB();
+                      })
+                      .catch(function (err) {
+                          return seriesCB(err);
+                      });
+                  },
+                  function (seriesCB) {
+                    Guide.guideTalents.createMany({
+                      id: guideCreated.id
+                    }, tals)
+                    .$promise
+                    .then(function (guideTalentData) {
+                      return seriesCB();
+                    })
+                    .catch(function (err) {
+                      console.log('guide talent err', err);
+                      return seriesCB(err);
+                    });
+                  },
+                  function (seriesCB) {
+                      var freeVote = {
+                          direction: 1,
+                          createdDate: new Date().toISOString(),
+                          authorId: User.getCurrentId()
+                      };
+
+                      Guide.votes.create({
+                          id: guideCreated.id
+                      }, freeVote)
+                      .$promise
+                      .then(function (voteCreated) {
+                          return seriesCB();
+                      })
+                      .catch(function (err) {
+                          return seriesCB(err);
+                      });
+                  },
+                  function (seriesCB) {
+                    async.each(cleanGuide.maps, function(map, mapCB) {
 //                          console.log('map.id:', map.id);
 //                          console.log('guideData:', guideData);
-                          Guide.maps.link({
-                            id: guideData.id,
-                            fk: map.id
-                          }, null).$promise
-                          .then(function (mapLinkData) {
+                      Guide.maps.link({
+                        id: guideCreated.id,
+                        fk: map.id
+                      }, null)
+                      .$promise
+                      .then(function (mapLinkData) {
 //                            console.log('mapLinkData:', mapLinkData);
-                            return mapCB();
-                          })
-                          .catch(function (err) {
-                            console.log('map link err:', err);
-                            return mapCB(err);
-                          });
-                        }, function (err, results) {
-                          if (err) {
-                            return seriesCB(err);
-                          }
-                          return seriesCB();
-                        });
-
+                        return mapCB();
+                      })
+                      .catch(function (err) {
+                        console.log('map link err:', err);
+                        return mapCB(err);
+                      });
+                    }, function (err, results) {
+                      if (err) {
+                        return seriesCB(err);
                       }
-                    ], function (err, results) {
+                      return seriesCB();
+                    });
+
+                  }], function (err, results) {
+                      $scope.fetching = false;
                       if (err) {
                         $window.scrollTo(0, 0);
                         AlertService.setError({
@@ -14611,28 +14625,7 @@ angular.module('app.controllers', ['ngCookies'])
                         return console.log('series err:', err);
                       }
                       $scope.app.settings.guide = null;
-                      $state.go('app.hots.guides.guide', { slug: guideData.slug });
-                    });
-
-                  })
-                  .catch(function (err) {
-                    $window.scrollTo(0, 0);
-                    AlertService.setError({
-                      show: true,
-                      lbErr: err,
-                      msg: 'Unable to Save Guide'
-                    });
-                    console.log('guide hero err', err);
-                  });
-                })
-                .catch(function (err) {
-                    $window.scrollTo(0, 0);
-                    AlertService.setError({
-                      show: true,
-                      lbErr: err,
-                      msg: 'Unable to Save Guide'
-                    });
-                  console.log('guide err', err);
+                      $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
                 });
 
               }
@@ -16432,28 +16425,25 @@ angular.module('app.controllers', ['ngCookies'])
 
 			      $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
-
+            
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                if ($scope.guide.premium.isPremium) {
-                    location.reload();
-                }
 
-                // Check if user is admin or contentProvider
-//                User.isInRoles({
-//                    uid: User.getCurrentId(),
-//                    roleNames: ['$admin', '$contentProvider']
-//                })
-//                .$promise
-//                .then(function (userRoles) {
-////                    console.log('userRoles: ', userRoles);
-//                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
-//                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
-//                    return userRoles;
-//                })
-//                .catch(function (roleErr) {
-//                    console.log('roleErr: ', roleErr);
-//                });
+//                 Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
             });
 
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
@@ -16603,6 +16593,7 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
+                $scope.fetching = true;
                 var cleanGuide = angular.copy($scope.guide);
                 cleanGuide.slug = Util.slugify(cleanGuide.name);
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
@@ -16650,37 +16641,75 @@ angular.module('app.controllers', ['ngCookies'])
 
 //                console.log('before save:', stripped);
 //                console.log('$scope.guide:', $scope.guide);
-                  Guide.create({}, stripped)
-                .$promise
-                .then(function (guideData) {
-//                  console.log('guideData:', guideData);
-//                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-
-                  Guide.guideHeroes.createMany({
-                    id: guideData.id
-                  }, cleanGuide.guideHeroes)
-                  .$promise
-                  .then(function (guideHeroData) {
-                    var tals = [];
-
-                    _.each(guideHeroData, function(eachVal) {
-                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                        return filterVal.heroId === eachVal.heroId;
-                      });
-
-                      _.each(heroTals, function (innerEachVal, index, list) {
-                        innerEachVal.guideId = guideData.id;
-                        innerEachVal.guideHeroId = eachVal.id;
-                      });
-
-                      tals.push(heroTals);
-                    });
+//                  Guide.create({}, stripped)
+//                .$promise
+//                .then(function (guideData) {
+////                  console.log('guideData:', guideData);
+////                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
+//
+//                  Guide.guideHeroes.createMany({
+//                    id: guideData.id
+//                  }, cleanGuide.guideHeroes)
+//                  .$promise
+//                  .then(function (guideHeroData) {
+//                    var tals = [];
+//
+//                    _.each(guideHeroData, function(eachVal) {
+//                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+//                        return filterVal.heroId === eachVal.heroId;
+//                      });
+//
+//                      _.each(heroTals, function (innerEachVal, index, list) {
+//                        innerEachVal.guideId = guideData.id;
+//                        innerEachVal.guideHeroId = eachVal.id;
+//                      });
+//
+//                      tals.push(heroTals);
+//                    });
 
 //                    console.log('tals:', tals);
+                    var guideCreated;
+                    var tals = [];
                     async.series([
                       function (seriesCB) {
+                          Guide.create(stripped)
+                          .$promise
+                          .then(function (createdGuide) {
+                              guideCreated = createdGuide;
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
+                          Guide.guideHeroes.createMany({
+                              id: guideCreated.id
+                          }, cleanGuide.guideHeroes)
+                          .$promise
+                          .then(function (guideHeroData) {
+                              
+                              _.each(guideHeroData, function(eachVal) {
+                                var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                                  return filterVal.heroId === eachVal.heroId;
+                                });
+
+                                  _.each(heroTals, function (innerEachVal, index, list) {
+                                    innerEachVal.guideId = guideCreated.id;
+                                    innerEachVal.guideHeroId = eachVal.id;
+                                  });
+                                  tals.push(heroTals);
+                              });
+
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
                         Guide.guideTalents.createMany({
-                          id: guideData.id
+                          id: guideCreated.id
                         }, tals)
                         .$promise
                         .then(function (guideTalentData) {
@@ -16699,7 +16728,7 @@ angular.module('app.controllers', ['ngCookies'])
                           };
 
                           Guide.votes.create({
-                              id: guideData.id
+                              id: guideCreated.id
                           }, freeVote)
                           .$promise
                           .then(function (voteCreated) {
@@ -16714,9 +16743,10 @@ angular.module('app.controllers', ['ngCookies'])
 //                          console.log('map.id:', map.id);
 //                          console.log('guideData:', guideData);
                           Guide.maps.link({
-                            id: guideData.id,
+                            id: guideCreated.id,
                             fk: map.id
-                          }, null).$promise
+                          }, null)
+                          .$promise
                           .then(function (mapLinkData) {
 //                            console.log('mapLinkData:', mapLinkData);
                             return mapCB();
@@ -16732,41 +16762,20 @@ angular.module('app.controllers', ['ngCookies'])
                           return seriesCB();
                         });
 
-                      }
-                    ], function (err, results) {
-                      if (err) {
-                        $window.scrollTo(0, 0);
-                        AlertService.setError({
-                          show: true,
-                          lbErr: err,
-                          msg: 'Unable to Save Guide'
-                        });
-                        return console.log('series err:', err);
-                      }
-                      $scope.app.settings.guide = null;
-                      $state.go('app.hots.guides.guide', { slug: guideData.slug });
+                      }], function (err, results) {
+                          $scope.fetching = false;
+                          if (err) {
+                            $window.scrollTo(0, 0);
+                            AlertService.setError({
+                              show: true,
+                              lbErr: err,
+                              msg: 'Unable to Save Guide'
+                            });
+                            return console.log('series err:', err);
+                          }
+                          $scope.app.settings.guide = null;
+                          $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
                     });
-
-                  })
-                  .catch(function (err) {
-                    $window.scrollTo(0, 0);
-                    AlertService.setError({
-                      show: true,
-                      lbErr: err,
-                      msg: 'Unable to Save Guide'
-                    });
-                    console.log('guide hero err', err);
-                  });
-                })
-                .catch(function (err) {
-                    $window.scrollTo(0, 0);
-                    AlertService.setError({
-                      show: true,
-                      lbErr: err,
-                      msg: 'Unable to Save Guide'
-                    });
-                  console.log('guide err', err);
-                });
 
               }
             };
@@ -16780,25 +16789,25 @@ angular.module('app.controllers', ['ngCookies'])
 
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                if ($scope.guide.premium.isPremium) {
-                    location.reload();
-                }
+//                if ($scope.guide.premium.isPremium) {
+//                    location.reload();
+//                }
 
                 // Check if user is admin or contentProvider
-//                User.isInRoles({
-//                    uid: User.getCurrentId(),
-//                    roleNames: ['$admin', '$contentProvider']
-//                })
-//                .$promise
-//                .then(function (userRoles) {
-////                    console.log('userRoles: ', userRoles);
-//                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
-//                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
-//                    return userRoles;
-//                })
-//                .catch(function (roleErr) {
-//                    console.log('roleErr: ', roleErr);
-//                });
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
             });
 
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
@@ -16911,6 +16920,8 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.saveGuide();
                     });
                 } else {
+                    $scope.fetching = true;
+                    
                     $scope.guide.slug = Util.slugify($scope.guide.name);
 //                    $scope.authorId = LoopBackAuth.currentUserId;
 
@@ -16923,59 +16934,114 @@ angular.module('app.controllers', ['ngCookies'])
 
                     $scope.guide.voteScore = 1;
 //                    console.log('saving $scope.guide:', $scope.guide);
-
-                    Guide.create({}, $scope.guide)
-                    .$promise
-                    .then(function (guideData) {
-
-                        Guide.maps.link({
-                            id: guideData.id,
-                            fk: $scope.guide.maps[0].id
-                        }, null)
-                        .$promise
-                        .then(function (mapLinkData) {
-//                          console.log('mapLinkData:', mapLinkData);
-                          Vote.create({
-                              direction: 1,
-                              createdDate: new Date().toISOString(),
-                              authorId: User.getCurrentId(),
-                              guideId: guideData.id
-                          })
-                          .$promise
-                          .then(function (voteCreated) {
-                              $scope.app.settings.guide = null;
-                              $state.go('app.hots.guides.guide', { slug: guideData.slug });
-                          })
-                          .catch(function (err) {
-                              $window.scrollTo(0, 0);
-                              AlertService.setError({
+                    
+                    var guideCreated;
+                    async.waterfall([
+                        function (waterCB) {
+                            Guide.create($scope.guide)
+                            .$promise
+                            .then(function (createdGuide) {
+                                guideCreated = createdGuide;
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        },
+                        function(waterCB) {
+                            Guide.maps.link({
+                                id: guideCreated.id,
+                                fk: $scope.maps[0].id
+                            }, null)
+                            .$promise
+                            .then(function (mapLinkData) {
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        },
+                        function (waterCB) {
+                            Vote.create({
+                                direction: 1,
+                                createdDate: new Date().toISOString(),
+                                authorId: User.getCurrentId(),
+                                guideId: guideCreated.id
+                            })
+                            .$promise
+                            .then(function (voteCreated) {
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        }
+                    ], function (err) {
+                        $window.scrollTo(0, 0);
+                        $scope.fetching = true;
+                        if (err) {
+                            return AlertService.setError({
                                 show: true,
                                 msg: 'Unable to Save Guide',
                                 lbErr: err
-                              });
-                              console.log("Creating the guide - map link failed:", err);
-                          });
-
-                        })
-                        .catch(function (err) {
-                            $window.scrollTo(0, 0);
-                            AlertService.setError({
-                              show: true,
-                              msg: 'Unable to Save Guide',
-                              lbErr: err
                             });
-                            console.log("Creating the guide - map link failed:", err);
-                        })
-                    })
-                    .catch(function (err) {
-                        $window.scrollTo(0, 0);
-                        AlertService.setError({
-                          show: true,
-                          msg: 'Unable to Save Guide',
-                          lbErr: err
-                        });
-                        console.log("Creating the guide failed:", err);
-                    })
+                        }
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
+                    });
+
+//                    Guide.create({}, $scope.guide)
+//                    .$promise
+//                    .then(function (guideData) {
+//
+//                        Guide.maps.link({
+//                            id: guideData.id,
+//                            fk: $scope.guide.maps[0].id
+//                        }, null)
+//                        .$promise
+//                        .then(function (mapLinkData) {
+////                          console.log('mapLinkData:', mapLinkData);
+//                          Vote.create({
+//                              direction: 1,
+//                              createdDate: new Date().toISOString(),
+//                              authorId: User.getCurrentId(),
+//                              guideId: guideData.id
+//                          })
+//                          .$promise
+//                          .then(function (voteCreated) {
+//                              $scope.app.settings.guide = null;
+//                              $state.go('app.hots.guides.guide', { slug: guideData.slug });
+//                          })
+//                          .catch(function (err) {
+//                              $window.scrollTo(0, 0);
+//                              AlertService.setError({
+//                                show: true,
+//                                msg: 'Unable to Save Guide',
+//                                lbErr: err
+//                              });
+//                              console.log("Creating the guide - map link failed:", err);
+//                          });
+//
+//                        })
+//                        .catch(function (err) {
+//                            $window.scrollTo(0, 0);
+//                            AlertService.setError({
+//                              show: true,
+//                              msg: 'Unable to Save Guide',
+//                              lbErr: err
+//                            });
+//                            console.log("Creating the guide - map link failed:", err);
+//                        })
+//                    })
+//                    .catch(function (err) {
+//                        $window.scrollTo(0, 0);
+//                        AlertService.setError({
+//                          show: true,
+//                          msg: 'Unable to Save Guide',
+//                          lbErr: err
+//                        });
+//                        console.log("Creating the guide failed:", err);
+//                    })
                 }
             };
         }
@@ -17514,6 +17580,7 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 } else {
                     $scope.guide.slug = Util.slugify($scope.guide.name);
+                    $scope.fetching = true;
 
                     async.parallel([
                         function(paraCB){
@@ -17552,6 +17619,7 @@ angular.module('app.controllers', ['ngCookies'])
                             });
                         }
                     ], function(err, results) {
+                        $scope.fetching = false;
                         if (err) {
                             $window.scrollTo(0, 0);
                             AlertService.setError({
