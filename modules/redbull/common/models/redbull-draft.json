@@ -77,6 +77,11 @@
       "foreignKey": "redbullDraftId",
       "isChild": true
     },
+    "archivedCards": {
+      "type": "hasMany",
+      "model": "archivedDraftCard",
+      "foreignKey": "redbullDraftId"
+    },
     "author": {
       "type": "belongsTo",
       "model": "user",
