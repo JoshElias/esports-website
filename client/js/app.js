@@ -5708,7 +5708,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (heroes) {
-                                    console.log('heroes:', heroes);
                                     return heroes;
                                 });
                             }],
