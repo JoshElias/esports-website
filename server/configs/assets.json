@@ -1,10 +1,10 @@
 {
-  "angular.min.js": "angular.min.5bcabd93.js",
-  "app.min.js": "app.min.99ee2fa1.js",
+  "angular.min.js": "angular.min.7acda47b.js",
+  "app.min.js": "app.min.c47a4c97.js",
   "vendor.min.js": "vendor.min.4682e0de.js",
   "modules.min.js": "modules.min.a8cdcbc8.js",
   "lb-services.min.js": "lb-services.min.1f53d5f8.js",
   "style.min.css": "style.min.5b19430f.css",
-  "vendor.min.css": "vendor.min.ae26999c.css",
-  "modules.min.css": "modules.min.501f736c.css"
+  "vendor.min.css": "vendor.min.da34c89d.css",
+  "modules.min.css": "modules.min.7d38b0f3.css"
 }
