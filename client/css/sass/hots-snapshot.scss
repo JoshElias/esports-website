@@ -294,11 +294,101 @@
         
         .smaller-qualities {
             
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
             padding: 0;
             
+            .bar {
+                
+                .bar-back {
+                    fill: rgba(255, 255, 255, 0.09);
+                        
+                
+                }
+                
+              
+                
+                              
+                //height: 30px;
+                
+                transition: fill .3s ease;
+                
+                stroke: white;
+                stroke-width: 0px;
+                opacity: 1;
+              
+                &.burst {
+                    fill: #2766ad;
+                    
+                                        
+                }
+                &.push {
+                    fill: #7d3193;
+                      
+                }
+                &.survive {
+                    fill: #35b44b;
+                        
+                }
+                &.scale {
+                    fill: #d62a28;
+                         
+                }
+                &.utility {
+                    fill: #fba31b;
+                        
+                }
+            }
+                
+                
+            
+              text {
+                text-transform: uppercase;
+                font-size: 14px;
+                  font-weight: 500;
+                fill: $white;
+              }
+            
+            
+            .chart {
+                width: 100%;
+                height: 160px;
+                
+            }
+            
+//            .chart:hover,
+//            .chart:focus {
+//              .bar {
+//                fill: #aaa;
+//              }
+//            }
+            
+//            .bar:hover,
+//            .bar:focus {
+//              fill: red !important;
+//
+//              text {
+//                fill: red;
+//              }
+//            }
+
+
+            
+            
+            .relative-pos {
+                position: relative;
+                width: 100%;
+            }
+            
             h4 {
-                font-size: 22px;
+                font-size: 16px;
                 text-shadow: none;
+                width: 140px;
+                right: 2%;
+                text-align: right;
+                position: absolute;
+                line-height: 1em;
             }
             
             .progress-wrapper {
@@ -310,25 +400,27 @@
                 .qualities-numbers {
                     position: absolute;
                     width: 100%;
-                    top: -17px;
+                    top: 0px;
+                    right: 49%;
+                    
                     .burst-number {
                         
                     }
                     .push-number {
-                        position: relative;
-                        top: -32px;
+                       
+                        top: 25px;
                     }
                     .survive-number {
-                         position: relative;
-                        top: -64px;
+                         
+                       top: 50px;
                     }
                     .scale-number {
-                         position: relative;
-                        top: -98px;
+                         
+                       top: 75px;
                     }
                     .utility-number {
-                         position: relative;
-                        top: -131px;
+                         
+                        top: 100px;
                     }
                 }
                 
@@ -338,6 +430,7 @@
                 }
             }
         }
+    
         
         .quality {
             
@@ -350,84 +443,7 @@
             @media screen and (min-width: 520px){
                        margin-bottom: 45px;
             }
-            
-//            @media screen and (max-width: 520px) {
-//                float: none;
-//                clear: both;
-//                
-//                height: 65px;
-//                
-//            }
-            
-//            .outer-circle {
-//                border: 2px solid $white;
-//                border-radius: 50%;
-//                width: 75px;
-//                height: 75px;
-//                margin: 0 auto;
-//                
-//
-//                
-//                @media screen and (max-width: 600px) {
-//                        width: 60px;
-//                        height: 60px;
-//                    }
-//                
-//                @media screen and (max-width: 520px) {
-//                        margin-left: 0px;
-//                        margin-right: 15px;
-//                        float: left;
-//                        border: transparent;
-//                    }
-//
-////                .circle {
-////                    text-align: center;
-////                    font-size: 35px;
-////                    color: $white;
-////                    font-weight: 700;
-////                    border: 4px solid $white;
-////                    background-color: $ts-blue;
-////                    border-radius: 50%;
-////                    width: 65px;
-////                    height: 65px;
-////                    margin: 3px;
-////                    padding: 2px;
-////                    
-////
-////                    
-////                     @media screen and (max-width: 600px) {
-////                        width: 50px;
-////                        height: 50px;
-////                        font-size: 25px;
-////                        padding: 3px 3px 2px 2px;
-////                    }
-////                    
-////                    @media screen and (max-width: 520px) {
-////                        border: transparent;
-////                        padding: 7px 0px 1px 0px;
-////                    }
-////                 
-////                    
-////                }
-////                
-////                .push { 
-////                       background-color: $bright-purple; 
-////                }
-////                
-////                .survive { 
-////                       background-color: $bright-green; 
-////                }
-////                
-////                .scale { 
-////                       background-color: $bright-red; 
-////                }
-////                
-////                .utility { 
-////                       background-color: $bright-orange; 
-////                }
-//                
-//            }
-//            
+ 
             .quality-title {
                 
                 text-align: center;
@@ -493,12 +509,13 @@
                 
                     @media screen and (max-width: 450px){
                         top: 17%;
-                        font-size: 12vw !important;
+                        //font-size: 12px !important;
                     }
                 
                 }
             }
         }
+  
     
     
     
