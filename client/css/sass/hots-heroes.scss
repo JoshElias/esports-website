@@ -220,6 +220,7 @@
 @include hots-hero-filters-image (valla, 45);
 @include hots-hero-filters-image (zagara, 46);
 @include hots-hero-filters-image (zeratul, 47);
+@include hots-hero-filters-image (li-ming, 48);
 
 
 
@@ -325,6 +326,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(kharazim);
 @include hots-hero(leoric);
 @include hots-hero(lili);
+@include hots-hero(li-ming);
 @include hots-hero(morales);
 @include hots-hero(malfurion);
 @include hots-hero(muradin);
@@ -846,6 +848,25 @@ This is the template for hots-hero-talents.
     ( class: (bolt-of-the-storm), pos: 12 ) // -360
 ) );
 
+//talents: Li-Ming 
+
+@include hots-hero-talents ( li-ming, (
+    ( class: (astral-presence), pos: 0 ), // 0
+    ( class: (power-hungry), pos: 1 ), // -30
+    ( class: (force-armor, charged-blast, seeker, fireflies), pos: 2 ), // -60
+    ( class: (aether-walker, calamity, illusionist, diamond-skin), pos: 3 ), // -90
+    ( class: (ess-of-johan, zeis-vengeance, arcane-orbit), pos: 4 ), // -120
+    ( class: (triumvirate), pos: 5 ), // -150
+    ( class: (dominance), pos: 6 ), // -180
+    ( class: (disintegrate, temporal-flux), pos: 7 ), // -210
+    ( class: (wave-of-force, repulsion), pos: 8 ), // -240
+    ( class: (cannoneer), pos: 9 ), // -270
+    ( class: (glass-cannon), pos: 10 ), // -300
+    ( class: (mirrorball), pos: 11 ), // -330
+    ( class: (tal-rashas-elements), pos: 12 ), // -360
+    ( class: (archon-pure-power), pos: 13 ) // -390
+) );
+
 //talents: Lunara 
 
 @include hots-hero-talents ( lunara, (
@@ -980,24 +1001,45 @@ This is the template for hots-hero-talents.
 
 //talents: nova
 
+//@include hots-hero-talents ( nova, (
+//    ( class: (conjurers-pursuit), pos: 0 ), // 0
+//    ( class: (psi-op-rangefinder, ambush-snipe, perfect-shot, explosive-round, railgun), pos: 1 ), // -30
+//    ( class: (tazer-rounds, covert-ops, crippling-shot), pos: 2 ), // -60
+//    ( class: (remote-delivery, lethal-decoy, double-fake), pos: 3 ), // -90
+//    ( class: (gathering-power ), pos: 4 ), // -120
+//    ( class: (envenom), pos: 5 ), // -150
+//    ( class: (one-in-the-chamber), pos: 6 ), // -180
+//    ( class: (anti-armor-shells), pos: 7 ), // -210
+//    ( class: (triple-tap, fast-reload), pos: 8 ), // -240
+//    ( class: (precision-strike, precision-barrage), pos: 9 ), // -270
+//    ( class: (advanced-cloaking), pos: 10 ), // -300
+//    ( class: (headshot), pos: 11 ), // -330
+//    ( class: (spell-shield), pos: 12 ), // -360
+//    ( class: (overdrive), pos: 13 ), // -390
+//    ( class: (rewind), pos: 14 ), // -420
+//    ( class: (bolt-of-the-storm), pos: 15 ) // -450
+//) );
+
 @include hots-hero-talents ( nova, (
-    ( class: (conjurers-pursuit), pos: 0 ), // 0
-    ( class: (psi-op-rangefinder, ambush-snipe, perfect-shot, explosive-round, railgun), pos: 1 ), // -30
-    ( class: (tazer-rounds, covert-ops, crippling-shot), pos: 2 ), // -60
-    ( class: (remote-delivery, lethal-decoy, double-fake), pos: 3 ), // -90
-    ( class: (gathering-power ), pos: 4 ), // -120
-    ( class: (envenom), pos: 5 ), // -150
-    ( class: (one-in-the-chamber), pos: 6 ), // -180
-    ( class: (anti-armor-shells), pos: 7 ), // -210
-    ( class: (triple-tap, fast-reload), pos: 8 ), // -240
-    ( class: (precision-strike, precision-barrage), pos: 9 ), // -270
-    ( class: (advanced-cloaking), pos: 10 ), // -300
-    ( class: (headshot), pos: 11 ), // -330
-    ( class: (spell-shield), pos: 12 ), // -360
-    ( class: (overdrive), pos: 13 ), // -390
-    ( class: (rewind), pos: 14 ), // -420
-    ( class: (bolt-of-the-storm), pos: 15 ) // -450
+    ( class: (tactical-espionage, ghost-protocol), pos: 0 ), // 0
+    ( class: (advanced-cloaking), pos: 1 ), // -30
+    ( class: (longshot, double-tap, crippling-shot), pos: 2 ), // -60
+    ( class: (covert-ops), pos: 3 ), // -90
+    ( class: (remote-delivery, lethal-decoy), pos: 4 ), // -120
+    ( class: (rapid-projection), pos: 5 ), // -150
+    ( class: (holo-stability), pos: 6 ), // -180
+    ( class: (one-in-the-chamber), pos: 7 ), // -210
+    ( class: (anti-armor-shells), pos: 8 ), // -240
+    ( class: (snipe-master), pos: 9 ), // -270
+    ( class: (triple-tap, fast-reload), pos: 10 ), // -300
+    ( class: (precision-strike, precision-barrage), pos: 11 ), // -330
+    ( class: (psionic-efficiency, perfect-shot), pos: 12 ), // -360
+    ( class: (explosive-round), pos: 13 ), // -390
+    ( class: (rewind), pos: 14 ) // -420
+
 ) );
+
+
 
 //talents: raynor
 
@@ -1602,6 +1644,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(kharazim, -25, -54, -60, 50);
 @include hots-snapshot-hero(leoric, -25, -54, -60, 50);
 @include hots-snapshot-hero(lili, -35, -40, -40, 100);
+//@include hots-snapshot-hero(li-ming, -80, -23, -40, 50);
 @include hots-snapshot-hero(morales, -25, -54, -60, 50);
 @include hots-snapshot-hero(malfurion, -25, -80, -60, 50);
 @include hots-snapshot-hero(muradin,  -25, -55, -60, 68);

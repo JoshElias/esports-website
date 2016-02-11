@@ -84,7 +84,7 @@ angular.module('app.services', [])
                 User.login(options, where)
                     .$promise
                     .then(function (data) {
-                    //              console.log(data);
+
                     var user = data.user;
 
                     EventService.emit("EVENT_LOGIN", user);
@@ -899,7 +899,7 @@ angular.module('app.services', [])
                 return $http.post('/polls/vote', { poll: poll, votes: votes});
             },
             setStorage: function (poll, votes) {
-                console.log(poll, votes);
+//                console.log(poll, votes);
                 return $localStorage['tspoll-' + poll] = votes;
             },
             getStorage: function (poll) {
@@ -1137,8 +1137,70 @@ angular.module('app.services', [])
     }
 
     return pagination;
-})
-    .factory('AjaxPagination', [function () {
+  })
+  .factory('StateParamHelper', ['$state', '$timeout', function ($state, $timeout) {
+      var servObj = {};
+      // ui.router hack for updating $stateParams without reloading resolves/controller
+      // and allows History API to work.
+    
+      servObj.updateStateParams = function(stateParams) {
+          $state.current.reloadOnSearch = false;
+          
+          $state.transitionTo($state.current.name, stateParams, {
+              location: true,
+              inherit: true,
+              relative: $state.$current.name,
+              notify: false
+          });
+          
+          $timeout(function () {
+            $state.current.reloadOnSearch = undefined;
+          });
+      };
+      
+      servObj.replaceHistoryWith404 = function() {
+          $state.transitionTo('app.404', {}, {
+              location: "replace"
+          });
+      };
+      // this method expects: 
+      // page - number
+      // count - number
+      // perpage - number
+      servObj.validatePage = function (page, count, perpage) {
+          // 404 if page entered manually is not valid
+          if (angular.isUndefined(page)) return;
+          
+          var page = angular.isNumber(page) ? page : parseInt(page);
+          
+          if (angular.isDefined(page) && angular.isNumber(page) && page !== 1) {
+              if (page <= 0) {
+                  this.replaceHistoryWith404();
+//                  console.log('page too low');
+              } else if (page > Math.ceil(count / perpage)) {
+//                  console.log('page to high');
+                  this.replaceHistoryWith404();
+              } else if (isNaN(page)) {
+//                  console.log('was NaN');
+                  this.replaceHistoryWith404();
+              }
+          }
+//          console.log('cleared page validation');
+      };
+      
+      // this method expects:
+      // stateFilters - a stateParam array of values
+      // availFilters - an array of available filters
+      servObj.validateFilters = function (stateFilters, availFilters) {
+          var found = _.difference(stateFilters, availFilters);
+          if (!_.isEmpty(found)) {
+              this.replaceHistoryWith404();
+          }
+      };
+      
+      return servObj;
+  }])
+  .factory('AjaxPagination', ['$state', '$timeout', function ($state, $timeout) {
         var pagination = {};
 
         pagination.update = function (serviceName, searchFilter, countFilter, callback) {
@@ -1182,12 +1244,12 @@ angular.module('app.services', [])
             });
         };
 
-        pagination.new = function (perpage, total, callback) {
+        pagination.new = function (options, callback) {
             //      console.log('callback:', callback);
             var paginate = {
-                page: 1,
-                perpage: perpage || 10,
-                total: total || 0,
+                page: options.page || 1,
+                perpage: options.perpage || 10,
+                total: options.total || 0,
                 loading: false,
                 callback: function (newTotal) {
                     this.loading = false;
@@ -1312,6 +1374,15 @@ angular.module('app.services', [])
                 });
 
                 return out;
+            },
+            tally: function (arr, key) {
+                var out = 0;
+                _.each(arr, function(obj) {
+
+                    out += obj[key];
+
+                });
+                return out;
             }
         };
     }])
@@ -1364,7 +1435,7 @@ angular.module('app.services', [])
         Hunter: ['Rexxar', 'Alleria'],
         Druid: ['Malfurion']
     };
-    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];    
+    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
     hs.deckTypes = ['None', 'Aggro', 'Control', 'Midrange', 'Combo', 'Theory Craft'];
     hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament', 'League of Explorers'];
 
@@ -1421,7 +1492,7 @@ angular.module('app.services', [])
 
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
-        
+
         var db = {
             id: data.id || null,
             authorId: data.authorId || User.getCurrentId(),
@@ -1515,7 +1586,7 @@ angular.module('app.services', [])
                 },
             ]
         };
-        
+
         db.init = function() {
             if (db.cards.length) {
                 db.sortDeck();
@@ -2001,8 +2072,6 @@ angular.module('app.services', [])
             db.removeChapter = function (index) {
                 db.chapters.splice(index,1);
             }
-        
-            
 
             db.newMatch = function (klass) {
                 //            console.log('vhat class?: ', klass);
@@ -2020,7 +2089,7 @@ angular.module('app.services', [])
             db.removeMatch = function (index) {
                 db.matchups.splice(index,1);
             }
-            
+
             db.init();
             return db;
         };
@@ -2161,7 +2230,6 @@ angular.module('app.services', [])
                         }
                     }).$promise
                         .then(function (heroTalents) {
-                        //              console.log('heroTalents:', heroTalents);
                         hero.talents = heroTalents;
                     })
                         .catch(function (err) {
@@ -2211,10 +2279,10 @@ angular.module('app.services', [])
             };
 
             gb.talentsByTier = function (hero, tier) {
-                var temp = _.filter(hero.talents, function (val) { 
-                    return val.tier == tier 
+                var temp = _.filter(hero.talents, function (val) {
+                    return val.tier == tier
                 });
-                var talents = _.map(temp, function (val) { return val.talent; });
+                var talents = _.map(temp, function (val) { val.talent.orderNum = val.orderNum; return val.talent; });
                 return talents;
             };
 
@@ -2532,27 +2600,66 @@ angular.module('app.services', [])
             }
         };
     }])
-    .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
+    .factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', 'Util', function (Hero, Map, Guide, Article, Util) {
         return {
             getArticles: function (filters, isFeatured, limit, finalCallback) {
-//                console.log(filters);
+//                console.log('filters:', filters);
+//                console.log('isFeatured:', isFeatured);
+//                console.log('limit:', limit);
+//                console.log('finalCallback:', finalCallback);
                 async.waterfall([
                     function(seriesCallback) {
                         var where = {};
 
                         if ((!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) && _.isEmpty(filters.heroes)) {
-                            where.and = [];
+                            
+                            if (!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) {
+                                where.or = [];
+                            }
+                            
                             if (!_.isEmpty(filters.roles)) {
-                                where.and.push({ role: { inq: filters.roles }})
+                                where.or.push({ role: { inq: filters.roles }})
                             }
 
                             if (!_.isEmpty(filters.universes)) {
-                                where.and.push({ universe: { inq: filters.universes }})
+                                where.or.push({ universe: { inq: filters.universes }})
                             }
+                            
+                            if (!_.isEmpty(filters.search)) {
+                                var pattern = '/.*'+filters.search+'.*/i';
+                                where.or = [
+                                    { name: { regexp: pattern }},
+                                    { description: { regexp: pattern }}
+                                ]
+                            }
+                            
+//                            console.log('where:', where);
+                            Hero.find({
+                                filter: {
+                                    where: where,
+                                    fields: ["name"]
+                                }
+                            }, function (heroes) {
+//                                console.log('heroes: ', heroes);
+                                return seriesCallback(undefined, heroes);
+                            }, function (err) {
+                                console.log(err);
+                                return finalCallback(err);
+                            });
+                            
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
-                            where.name = { inq: heroNames };
                             
+                            if (!_.isEmpty(filters.search)) {
+                                var pattern = '/.*'+filters.search+'.*/i';
+                                where.or = [
+                                    { name: { regexp: pattern }},
+                                    { description: { regexp: pattern }}
+                                ]
+                            }
+                            
+                            where.name = { inq: heroNames };
+
                             Hero.find({
                                 filter: {
                                     where: where,
@@ -2566,28 +2673,56 @@ angular.module('app.services', [])
                                 return finalCallback(err);
                             });
                         } else if (_.isEmpty(filters.heroes)) {
-                            return seriesCallback(undefined, null);
+                            
+                            if (!_.isEmpty(filters.search)) {
+                                var pattern = '/.*'+filters.search+'.*/i';
+                                where.or = [
+                                    { title: { regexp: pattern }},
+                                    { description: { regexp: pattern }}
+                                ]
+                            }
+                            
+                            Hero.find({
+                                filter: {
+                                    where: where,
+                                    fields: ["name"]
+                                }
+                            }, function (heroes) {
+//                                console.log(heroes);
+                                return seriesCallback(undefined, heroes);
+                            }, function (err) {
+                                console.log(err);
+                                return finalCallback(err);
+                            });
                         }
-                        
+
                     },
                     function(heroes, seriesCallback) {
-                        var where = {
-                            articleType: ['hots']
-                        };
+                        var where = {};
                         
-                        if (!_.isNull(heroes)) {
+                        if (_.isEmpty(filters.heroes)) {
                             where = {
+                                isActive: true,
+                                articleType: ['hots']
+                            }
+                        } else {
+                            where = {
+                                isActive: true,
                                 articleType: ['hots'],
                                 classTags: {
                                     inq: _.map(heroes, function(hero) { return hero.name; })
-                                } 
-                            }
+                                }
+                            };
                         }
-
+                        
+//                        console.log('where:', where);
+                        
                         Article.find({
                             filter: {
                                 where: where,
                                 fields: {
+                                    id: true,
+                                    authorId: true,
                                     title: true,
                                     description: true,
                                     photoNames: true,
@@ -2602,6 +2737,7 @@ angular.module('app.services', [])
                                 limit: limit
                             }
                         }, function (articles) {
+//                            console.log('ARTICLES!!:', articles);
                             return finalCallback(undefined, articles);
                         }, function (err) {
                             console.log(err);
@@ -2610,13 +2746,35 @@ angular.module('app.services', [])
                     }
                 ])
             },
+            topGuide: function (filters, finalCallback) {
+                if ( 
+                !_.isUndefined(filters.heroes[0]) ||
+                !_.isEmpty(filters.universes) ||
+                !_.isEmpty(filters.roles) ||
+                !_.isEmpty(filters.search)
+                ) {
+                    var filter = { filters: {} }
+                    filter.filters['heroId']       = (!_.isUndefined(filters.heroes[0])) ? filters.heroes[0].id : undefined;
+                    filter.filters['mapClassName'] = (!_.isUndefined(filters.map)) ? filters.map.className : undefined;
+                    filter.filters['universes']    = filters.universes;
+                    filter.filters['roles']        = filters.roles;
+                    filter.filters['search']       = filters.search;
+                } else {
+                    var filter = {}
+                }
+               
+                Guide.topGuide(filter)
+                .$promise
+                .then(function (data) {
+//                    console.log(data);
+                    return finalCallback(undefined, data);
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    return finalCallback(err);
+                })
+            },
             getGuides: function (filters, isFeatured, search, limit, page, finalCallback) {
-                //          console.log('filters:', filters);
-                //          console.log('isFeatured:', isFeatured);
-                //          console.log('search:', search);
-                //          console.log('limit:', limit);
-                //          console.log('page:', page);
-
                 var order = "voteScore DESC";
                 var heroWhere = {};
                 var heroGuideWhere = {};
@@ -2632,9 +2790,19 @@ angular.module('app.services', [])
                     if (!_.isEmpty(filters.roles)) {
                         heroWhere.and.push({ role: { inq: filters.roles } });
                     }
+                    
+                    if (!_.isEmpty(filters.search)) {
+                        var pattern = '/.*'+filters.search+'.*/i';
+                        heroWhere.or = [
+                            { title: { regexp: pattern }},
+                            { description: { regexp: pattern }}
+                        ]
+                    }
+                    
                 } else if (filters.search != "") {
+                    
                     var pattern = '/.*'+filters.search+'.*/i';
-                    heroGuideWhere.or = [
+                    heroWhere.or = [
                         { name: { regexp: pattern } },
                         { description: { regexp: pattern } }
                     ]
@@ -2644,13 +2812,14 @@ angular.module('app.services', [])
                     guideWhere.isFeatured = isFeatured;
                     order = "createdDate DESC";
                 }
-
-
+                
+//                console.log('heroWhere:', heroWhere);
+                
                 async.waterfall([
                     function(seriesCallback) {
                         var selectedUniverses = filters.universes,
                             selectedRoles = filters.roles
-
+                        
                         Hero.find({
                             filter: {
                                 fields: ["id"],
@@ -2688,13 +2857,13 @@ angular.module('app.services', [])
                                 skip: ((page*limit) - limit),
                                 where: guideWhere,
                                 fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                 ],
@@ -2736,9 +2905,23 @@ angular.module('app.services', [])
                                             },
                                         }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                 ]
                             }
                         }).$promise.then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tally(guide.votes, 'direction');
+                            });
+                            
                             return seriesCallback(undefined, guides, guideWhere);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -2835,13 +3018,13 @@ angular.module('app.services', [])
                                     isPublic: true
                                 },
                                 fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "voteScore", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
+                                    "name",
+                                    "authorId",
+                                    "slug",
+                                    "voteScore",
+                                    "guideType",
+                                    "premium",
+                                    "id",
                                     "talentTiers",
                                     "createdDate"
                                 ],
@@ -2883,9 +3066,23 @@ angular.module('app.services', [])
                                             },
                                         }
                                     },
+                                    {
+                                        relation: 'votes',
+                                        scope: {
+                                            fields: {
+                                                id: true,
+                                                direction: true
+                                            }
+                                        }
+                                    }
                                 ]
                             }
                         }).$promise.then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tally(guide.votes, 'direction');
+                            });
+                            
                             return seriesCallback(undefined, guides, guideIds);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -2988,12 +3185,20 @@ angular.module('app.services', [])
                                     },
                                     {
                                         relation: "maps"
+                                    },
+                                    {
+                                        relation: 'votes'
                                     }
                                 ]
                             }
                         })
                             .$promise
                             .then(function (guides) {
+                            
+                            _.each(guides, function(guide) {
+                                guide.voteScore = Util.tally(guide.votes, 'direction');
+                            });
+                            
                             return seriesCallback(undefined, guides, guideIds);
                         })
                             .catch(function (err) {
@@ -3020,22 +3225,22 @@ angular.module('app.services', [])
             },
             getHeroMapGuides: function (filters, isFeatured, limit, page, finalCallback) {
                 var selectedHeroes = filters.heroes;
-
                 if (_.isEmpty(selectedHeroes)) {
                     return;
                 }
-
+                
                 var where = {}
 
                 if (isFeatured !== null) {
                     where.isFeatured = isFeatured
                 }
-
+                
                 async.waterfall([
                     //get selected heroes
                     function (seriesCallback) {
+                        
                         var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
-
+                        
                         Hero.find({
                             filter: {
                                 fields: ["id"],
@@ -3075,7 +3280,7 @@ angular.module('app.services', [])
                         //filter out guides by map className
                         try {
                             var selectedGuides = [];
-                            _.each(heroes, function (hero) { 
+                            _.each(heroes, function (hero) {
                                 var filteredGuides = _.filter(hero.guides, function (guide) {
                                     return _.find(guide.maps, function (map) {
                                         return (map.className === filters.map.className)
@@ -3105,13 +3310,13 @@ angular.module('app.services', [])
                                             isPublic: true
                                         },
                                         fields: [
-                                            "name", 
-                                            "authorId", 
-                                            "slug", 
-                                            "voteScore", 
-                                            "guideType", 
-                                            "premium", 
-                                            "id", 
+                                            "name",
+                                            "authorId",
+                                            "slug",
+                                            "voteScore",
+                                            "guideType",
+                                            "premium",
+                                            "id",
                                             "talentTiers",
                                             "createdDate"
                                         ],
@@ -3153,9 +3358,23 @@ angular.module('app.services', [])
                                                     },
                                                 }
                                             },
+                                            {
+                                                relation: 'votes',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true
+                                                    }
+                                                }
+                                            }
                                         ]
                                     }
                                 }).$promise.then(function (guides) {
+                                    
+                                    _.each(guides, function(guide) {
+                                        guide.voteScore = Util.tally(guide.votes, 'direction');
+                                    });
+                                    
                                     return waterCallback(undefined, guides);
                                 }).catch(function (err) {
                                     return waterCallback(err);
@@ -3451,7 +3670,7 @@ angular.module('app.services', [])
                         this.createArr(arrName);
                     }
 
-                    _.each(inArr, function (val) { arrs[arrName].exists.push(val); });
+                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
                 }
 
                 function removeFromArr (item, arrName, crud) {
@@ -3472,7 +3691,7 @@ angular.module('app.services', [])
 
                     if (!find(item, arrName)) {
                         arr[d].push(item);
-                    } 
+                    }
                 }
 
                 function addToArr (item, arrName) {
@@ -3486,7 +3705,7 @@ angular.module('app.services', [])
 
                     if (!find(item, arrName)) {
                         arr[w].push(item);
-                    } 
+                    }
                 }
 
                 function toggleItem (item, arrName) {

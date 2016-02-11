@@ -1,6 +1,5 @@
 module.exports = function(server) {
     var Role = server.models.Role;
-    var RoleMapping = server.models.RoleMapping;
     var User = server.models.user;
     var loopback = require("loopback");
     var utils = require("../../lib/utils");
@@ -8,6 +7,7 @@ module.exports = function(server) {
 
 
     Role.registerResolver('$premium', function(role, ctx, cb) {
+
         function reject() {
             process.nextTick(function() {
                 cb(null, false);

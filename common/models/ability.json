@@ -1,4 +1,4 @@
- {
+{
   "name": "ability",
   "plural": "abilities",
   "base": "PersistedModel",
@@ -35,8 +35,12 @@
     "mana": {
       "type": "number"
     },
-    "heroId": {},
-    "charNames": []
+    "heroId": {
+      "type": {}
+    },
+    "charNames": {
+      "type": []
+    }
   },
   "validations": [],
   "relations": {

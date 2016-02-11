@@ -14,7 +14,9 @@
     "slug": {
       "type": "string",
       "required": true,
-      "validators": ["unique"]
+      "validators": [
+        "unique"
+      ]
     },
     "guideType": {
       "type": "string",
@@ -25,7 +27,9 @@
     },
     "youtubeId": {
       "type": "string",
-      "validators": ["youtubeId"]
+      "validators": [
+        "youtubeId"
+      ]
     },
     "createdDate": {
       "type": "date"
@@ -35,14 +39,6 @@
     },
     "isFeatured": {
       "type": "boolean"
-    },
-    "votes": {
-      "type": [
-        "object"
-      ]
-    },
-    "voteScore": {
-      "type": "number"
     },
     "viewCount": {
       "type": "number"
@@ -56,7 +52,9 @@
     "content": {
       "type": "array"
     },
-    "authorId": {},
+    "authorId": {
+      "type": {}
+    },
     "oldMaps": {
       "type": [
         "string"
@@ -108,6 +106,11 @@
       "type": "hasMany",
       "model": "guideTalent",
       "foreignKey": "guideId"
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "guideId"
     }
   },
   "acls": [
@@ -117,35 +120,54 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "accessType": "WRITE",
       "property": "create"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "topGuide"
     },
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__create__comments"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__edit__votes"
     }
   ],
   "methods": {}

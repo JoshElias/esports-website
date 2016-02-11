@@ -1,4 +1,4 @@
- {
+{
   "name": "deck",
   "plural": "decks",
   "base": "PersistedModel",
@@ -44,7 +44,9 @@
     },
     "description": {
       "type": "string",
-      "validators": ["spam"]
+      "validators": [
+        "spam"
+      ]
     },
     "isFeatured": {
       "type": "boolean"
@@ -52,7 +54,9 @@
     "name": {
       "type": "string",
       "required": true,
-      "validators": ["spam"]
+      "validators": [
+        "spam"
+      ]
     },
     "heroName": {
       "type": "string"
@@ -70,47 +74,63 @@
     },
     "slug": {
       "type": "string",
-      "validators": ["unique"]
+      "validators": [
+        "unique"
+      ]
     },
     "viewCount": {
       "type": "number"
     },
-    "votes": [
-      "object"
-    ],
-    "voteScore": {
-      "type": "number"
+    "authorId": {
+      "type": {}
     },
-    "authorId": {},
-    "cardIds": [
-      "string"
-    ],
-    "oldComments": [
-      "string"
-    ],
-    "oldMulligans": [
-      "object"
-    ],
-    "oldCards": [
-      "object"
-    ],
+    "cardIds": {
+      "type": [
+        "string"
+      ]
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    },
+    "oldMulligans": {
+      "type": [
+        "object"
+      ]
+    },
+    "oldCards": {
+      "type": [
+        "object"
+      ]
+    },
     "youtubeId": {
       "type": "string",
-      "validators": ["youtubeId"]
+      "validators": [
+        "youtubeId"
+      ]
     },
-    "chapters": [
-      {
-        "title": {
-          "type": "string",
-          "validators": ["spam"]
-        },
-        "orderNum": {"type": "number"},
-        "content": {
-          "type": "string",
-          "validators": ["spam"]
+    "chapters": {
+      "type": [
+        {
+          "title": {
+            "type": "string",
+            "validators": [
+              "spam"
+            ]
+          },
+          "orderNum": {
+            "type": "number"
+          },
+          "content": {
+            "type": "string",
+            "validators": [
+              "spam"
+            ]
+          }
         }
-      }
-    ],
+      ]
+    },
     "dust": {
       "type": "number"
     }
@@ -144,6 +164,11 @@
       "model": "mulligan",
       "foreignKey": "deckId",
       "isChild": true
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "deckId"
     }
   },
   "acls": [
@@ -153,10 +178,10 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",
@@ -181,25 +206,25 @@
       "property": "upsert"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
-      "property": "premium",
-      "accessType": "WRITE"
+      "property": "premium"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
       "permission": "ALLOW",
-      "property": "premium",
-      "accessType": "WRITE"
+      "property": "premium"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$contentProvider",
       "permission": "ALLOW",
-      "property": "premium",
-      "accessType": "WRITE"
+      "property": "premium"
     },
     {
       "principalType": "ROLE",
@@ -242,6 +267,18 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__create__comments"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__edit__votes"
     }
   ],
   "methods": {}

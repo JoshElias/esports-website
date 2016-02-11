@@ -56,6 +56,8 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService', 'EventService',
         function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
 
+          $scope.currentRoles = {};
+
           // Add 'redbulladmin' to current user if they have role.
           var redbullCheck = function(){
             if ($scope.currentUser) {
@@ -73,13 +75,34 @@ angular.module('app.controllers', ['ngCookies'])
             }
           }
 
+          var adminCheck = function() {
+              if ($scope.currentUser) {
+                  User.isInRoles({
+                      uid: $scope.currentUser.id,
+                      roleNames: ['$admin']
+                  }).$promise
+                  .then(function (res) {
+                      $scope.currentRoles.isAdmin = res.isInRoles.$admin;
+                  })
+                  .catch(function (err) {
+                      return console.log('User.isInRoles: ', err);
+                  });
+              }
+          };
+
         $scope.currentUser = currentUser;
         redbullCheck();
-
+        adminCheck();
 
         EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
             $scope.currentUser = data;
+
+            adminCheck();
             redbullCheck();
+        });
+
+
+        EventService.registerListener(EventService.EVENT_LOGOUT, function () {
         });
 
         $scope.loginModal = function (state) {
@@ -250,8 +273,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone',
-        function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone) {
+    .controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone', '$stateParams', 'filterParams', 'Util',
+        function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone, $stateParams, filterParams, Util) {
             // data
             $scope.articles = dataArticles;
             $scope.tempostormDecks = dataDecksTempostorm;
@@ -260,7 +283,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // filters
             $scope.filters = {
-                classes: [],
+                classes: $stateParams.k ? angular.copy($stateParams.k) : [],
                 search: ''
             };
 
@@ -278,55 +301,29 @@ angular.module('app.controllers', ['ngCookies'])
             }, true);
 
             function updateArticles (offset, perpage) {
-                var options = {
-                    filter: {
-                        limit: 6,
-                        order: "createdDate DESC",
-                        where: {
-                            articleType: ['hs']
-                        },
-                        include: ['author'],
-                        fields: {
-                            content: false
-                        }
-                    }
-                };
+
+                var options = filterParams.articleParams.options;
 
                 if($scope.filters.classes.length > 0) {
                     options.filter.where.classTags = {
                         inq: $scope.filters.classes
                     }
+                } else {
+                    options.filter.where.classTags = {
+                        nin: $scope.filters.classes
+                    }
                 }
 
-                Article.find(options).$promise.then(function (data) {
+                Article.find(options)
+                .$promise
+                .then(function (data) {
                     $scope.articles = data;
                 });
             }
 
             // update decks
             function updateTempostormDecks (page, perpage) {
-
-                var options = {
-                    filter: {
-                        limit: 10,
-                        order: "createdDate DESC",
-                        where: {
-                            isPublic: true,
-                            isFeatured: true
-                        },
-                        fields: {
-                            name: true,
-                            authorId: true,
-                            description: true,
-                            playerClass: true,
-                            premium: true,
-                            voteScore: true,
-                            heroName: true,
-                            createdDate: true
-                        },
-                        include: ['author']
-                    }
-                };
+                var options = filterParams.tsDeckParams.options;
 
                 if($scope.filters.classes.length > 0) {
                     options.filter.where.playerClass = {
@@ -334,39 +331,23 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 } else {
                     options.filter.where.playerClass = {
-                        inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+                        inq: angular.copy(Hearthstone.classes.slice(1, 9))
                     }
                 }
 
-                Deck.find(options).$promise.then(function (data) {
-                    $timeout(function () {
-                        $scope.tempostormDecks = data;
+                Deck.find(options)
+                .$promise
+                .then(function (tempoDecks) {
+                    _.each(tempoDecks, function(tempoDeck) {
+                        tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
                     });
+
+                    $scope.tempostormDecks = tempoDecks;
                 });
             }
 
             function updateCommunityDecks (page, perpage) {
-                var options = {
-                    filter: {
-                        limit: 10,
-                        order: "createdDate DESC",
-                        where: {
-                            isPublic: true,
-                            isFeatured: false
-                        },
-                        fields: {
-                            name: true,
-                            authorId: true,
-                            description: true,
-                            playerClass: true,
-                            premium: true,
-                            voteScore: true,
-                            heroName: true,
-                            createdDate: true
-                        },
-                        include: ['author']
-                    }
-                };
+                var options = filterParams.comDeckParams.options;
 
                 if($scope.filters.classes.length > 0) {
                     options.filter.where.playerClass = {
@@ -374,20 +355,23 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 } else {
                     options.filter.where.playerClass = {
-                        inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+                        inq: angular.copy(Hearthstone.classes.slice(1, 9))
                     }
                 }
 
-                Deck.find(options).$promise.then(function (data) {
-                    $timeout(function () {
-                        $scope.communityDecks = data;
+                Deck.find(options)
+                .$promise
+                .then(function (comDecks) {
+                    _.each(comDecks, function(comDeck) {
+                        comDeck.voteScore = Util.tally(comDeck.votes, 'direction');
                     });
+
+                    $scope.communityDecks = comDecks;
                 });
             }
 
             //is premium
             $scope.isPremium = function (guide) {
-
                 if (!guide.premium.isPremium) { return false; }
                 var now = new Date().getTime(),
                     expiry = new Date(guide.premium.expiryDate).getTime();
@@ -406,10 +390,33 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', { 
+                                    username: currentUser.username, 
+                                    plan: plan 
+                                });
+                            });
+
+                        }
+                    });
+                    
                 } else {
                     LoginModalService.showModal('login', function () {
                         $scope.getPremium(plan);
@@ -484,6 +491,7 @@ angular.module('app.controllers', ['ngCookies'])
             var plan = user.subscription.plan || 'tempostorm_quarterly';
 
             $scope.user = user;
+            $scope.plan = user.subscription && user.subscription.plan ? user.subscription.plan : 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
             $scope.isPremium = isPremium;
@@ -495,10 +503,31 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.testString = function (str) {
                 var pattern = /^[\w\._-]*$/,
-                    word = $scope.user.social[str];
+                    word = $scope.user.social && $scope.user.social[str] ? $scope.user.social[str] : false;
 
-                return pattern.test(word);
+                if (word) {
+                    return pattern.test(word);
+                } else {
+                    return false;
+                }
             }
+
+            $scope.selectPlan = function(plan) {
+                $state.current.reloadOnSearch = false;
+                // update state param without refreshing page
+                $state.transitionTo($state.current.name, {plan: plan}, {
+                    location: true,
+                    inherit: true,
+                    relative: $state.$current.name,
+                    notify: false
+                });
+
+                $scope.plan = plan;
+
+                $timeout(function () {
+                  $state.current.reloadOnSearch = undefined;
+                });
+            };
 
             function getServerIp () {
                 return location.host;
@@ -559,20 +588,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.subform.isBusy = b;
             }
 
-            $scope.setPlan = function (pl) {
-                plan = pl;
-            }
-
-            $scope.getPlan = function () {
-                console.log(plan);
-                return plan
-            }
-
             $scope.subscribe = function (code, result) {
                 $scope.setLoading(true);
-                User.setSubscriptionPlan({}, { plan: $scope.getPlan(), cctoken: result.id })
+                User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
                 .$promise
                 .then(function () {
+
                     $scope.number = undefined;
                     $scope.cvc = undefined;
                     $scope.expiry = undefined;
@@ -691,146 +712,146 @@ angular.module('app.controllers', ['ngCookies'])
             return $state.transitionTo('app.profile.edit', { username: $stateParams.username });
         }
     ])
-    .controller('ProfileSubscriptionCtrl', ['$scope', '$stateParams', 'SubscriptionService',
-        function ($scope, $stateParams, SubscriptionService) {
-            $scope.loading = false;
-            $scope.profile = user;
-            $scope.error = '';
-            $scope.success = '';
-
-            if ($scope.profile.subscription.isSubscribed) {
-                $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
-            } else {
-                var plan;
-                switch ($stateParams.plan) {
-                    case 'monthly':
-                        plan = 'tempostorm_monthly';
-                        break;
-                    case 'quarterly':
-                        plan = 'tempostorm_quarterly';
-                        break;
-                    case 'semi':
-                    default:
-                        plan = 'tempostorm_semi';
-                        break;
-                }
-                $scope.plan = plan;
-            }
-
-            $scope.isLoading = function () {
-                return $scope.loading;
-            }
-
-            $scope.setLoading = function (bool) {
-                $scope.loading = bool;
-            }
-
-            $scope.setSuccess = function (s) {
-                $scope.error = '';
-                $scope.success = s;
-            }
-
-            $scope.setError = function (s) {
-                $scope.success = '';
-                $scope.error = s;
-            }
-
-            $scope.setErrorCode = function (c) {
-                $scope.error = 'An error has occured. Code: ' + c + ': ' + $scope.getError(c);
-            }
-
-            $scope.getError = function (c) {
-                switch (c) {
-                    case 400 : return 'Missing a required parameter.'; break;
-                    case 401 : return 'No valid API key provided.'; break;
-                    case 402 : return 'Parameters were valid but request failed. Check your information and please try again.'; break;
-                    case 404 : return 'The requested item doesn\'t exist!'; break;
-                    case 500 || 502 || 503 || 504 : return 'Something went wrong on Stripe\'s end.'; break;
-
-                }
-            }
-
-            $scope.getExpiryDate = function () {
-                var expiryISO = $scope.profile.subscription.expiryDate;
-                if (!expiryISO) { return false; }
-
-                var now = new Date().getTime(),
-                    expiryTS = new Date(expiryISO).getTime();
-
-                return (expiryTS > now) ? expiryTS : false;
-            };
-
-            $scope.isSubscribed = function () {
-                return $scope.profile.subscription.isSubscribed;
-            }
-
-        $scope.subscribe = function (code, result) {
-            $scope.setLoading(true);
-            if (result.error) {
-                $scope.setErrorCode(code);
-                $scope.setLoading(false);
-            } else {
-                SubscriptionService.setPlan($scope.plan, result.id).success(function (data) {
-                    if (data.success) {
-                        SubscriptionService.setSubscribed(true);
-                        SubscriptionService.setTsPlan(data.plan);
-
-                        $scope.profile.subscription.isSubscribed = true;
-                        $scope.profile.subscription.plan = data.plan;
-
-                        $scope.number = '';
-                        $scope.cvc = '';
-                        $scope.expiry = '';
-                        $scope.error =  '';
-                        $scope.setSuccess('We have successfully processed your payment. Thank you for subscribing with TempoStorm.com!');
-                    } else {
-                        $scope.setError( 'An unknown error has occured.' );
-                        $scope.setLoading(false);
-                    }
-                });
-            }
-        };
-
-        $scope.updateCard = function (code, result) {
-            if (result.error) {
-            } else {
-                SubscriptionService.setCard(result.id).success(function (data) {
-                    if (!data.success) {
-                        console.log('error');
-                    } else {
-                        $scope.profile.subscription.last4 = data.subscription.last4;
-                        $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
-                        $scope.number = '';
-                        $scope.cvc = '';
-                        $scope.expiry = '';
-                    }
-                });
-            }
-        }
-
-        $scope.updatePlan = function () {
-            SubscriptionService.setPlan($scope.plan).success(function (data) {
-                if (data.success) {
-                    SubscriptionService.setTsPlan(data.plan);
-                    $scope.profile.subscription.plan = data.plan;
-                    $scope.plan = data.plan;
-                }
-            });
-        }
-
-        $scope.cancel = function () {
-            SubscriptionService.cancel()
-            .success(function (data) {
-                if (data.success) {
-                    SubscriptionService.setSubscribed(false);
-                    SubscriptionService.setExpiry(data.subscription.expiryDate);
-                    $scope.profile.subscription.isSubscribed = false;
-                    $scope.profile.subscription.expiryDate = data.subscription.expiryDate;
-                }
-            });
-        }
-    }
-])
+//    .controller('ProfileSubscriptionCtrl', ['$scope', 'user', '$stateParams', 'SubscriptionService',
+//        function ($scope, user, $stateParams, SubscriptionService) {
+//            $scope.loading = false;
+//            $scope.profile = user;
+//            $scope.error = '';
+//            $scope.success = '';
+//
+//            if ($scope.profile.subscription && $scope.profile.subscription.isSubscribed) {
+//                $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
+//            } else {
+//                var plan;
+//                switch ($stateParams.plan) {
+//                    case 'monthly':
+//                        plan = 'tempostorm_monthly';
+//                        break;
+//                    case 'quarterly':
+//                        plan = 'tempostorm_quarterly';
+//                        break;
+//                    case 'semi':
+//                    default:
+//                        plan = 'tempostorm_semi';
+//                        break;
+//                }
+//                $scope.plan = plan;
+//            }
+//
+//            $scope.isLoading = function () {
+//                return $scope.loading;
+//            }
+//
+//            $scope.setLoading = function (bool) {
+//                $scope.loading = bool;
+//            }
+//
+//            $scope.setSuccess = function (s) {
+//                $scope.error = '';
+//                $scope.success = s;
+//            }
+//
+//            $scope.setError = function (s) {
+//                $scope.success = '';
+//                $scope.error = s;
+//            }
+//
+//            $scope.setErrorCode = function (c) {
+//                $scope.error = 'An error has occured. Code: ' + c + ': ' + $scope.getError(c);
+//            }
+//
+//            $scope.getError = function (c) {
+//                switch (c) {
+//                    case 400 : return 'Missing a required parameter.'; break;
+//                    case 401 : return 'No valid API key provided.'; break;
+//                    case 402 : return 'Parameters were valid but request failed. Check your information and please try again.'; break;
+//                    case 404 : return 'The requested item doesn\'t exist!'; break;
+//                    case 500 || 502 || 503 || 504 : return 'Something went wrong on Stripe\'s end.'; break;
+//
+//                }
+//            }
+//
+//            $scope.getExpiryDate = function () {
+//                var expiryISO = $scope.profile.subscription && $scope.profile.subscription.expiryDate ? $scope.profile.subscription.expiryDate : false;
+//                if (!expiryISO) { return false; }
+//
+//                var now = new Date().getTime(),
+//                    expiryTS = new Date(expiryISO).getTime();
+//
+//                return (expiryTS > now) ? expiryTS : false;
+//            };
+//
+//            $scope.isSubscribed = function () {
+//                return $scope.profile.subscription ? $scope.profile.subscription.isSubscribed : false;
+//            }
+//
+//        $scope.subscribe = function (code, result) {
+//            $scope.setLoading(true);
+//            if (result.error) {
+//                $scope.setErrorCode(code);
+//                $scope.setLoading(false);
+//            } else {
+//                SubscriptionService.setPlan($scope.plan, result.id).success(function (data) {
+//                    if (data.success) {
+//                        SubscriptionService.setSubscribed(true);
+//                        SubscriptionService.setTsPlan(data.plan);
+//
+//                        $scope.profile.subscription.isSubscribed = true;
+//                        $scope.profile.subscription.plan = data.plan;
+//
+//                        $scope.number = '';
+//                        $scope.cvc = '';
+//                        $scope.expiry = '';
+//                        $scope.error =  '';
+//                        $scope.setSuccess('We have successfully processed your payment. Thank you for subscribing with TempoStorm.com!');
+//                    } else {
+//                        $scope.setError( 'An unknown error has occured.' );
+//                        $scope.setLoading(false);
+//                    }
+//                });
+//            }
+//        };
+//
+//        $scope.updateCard = function (code, result) {
+//            if (result.error) {
+//            } else {
+//                SubscriptionService.setCard(result.id).success(function (data) {
+//                    if (!data.success) {
+//                        console.log('error');
+//                    } else {
+//                        $scope.profile.subscription.last4 = data.subscription.last4;
+//                        $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
+//                        $scope.number = '';
+//                        $scope.cvc = '';
+//                        $scope.expiry = '';
+//                    }
+//                });
+//            }
+//        }
+//
+//        $scope.updatePlan = function () {
+//            SubscriptionService.setPlan($scope.plan).success(function (data) {
+//                if (data.success) {
+//                    SubscriptionService.setTsPlan(data.plan);
+//                    $scope.profile.subscription.plan = data.plan;
+//                    $scope.plan = data.plan;
+//                }
+//            });
+//        }
+//
+//        $scope.cancel = function () {
+//            SubscriptionService.cancel()
+//            .success(function (data) {
+//                if (data.success) {
+//                    SubscriptionService.setSubscribed(false);
+//                    SubscriptionService.setExpiry(data.subscription.expiryDate);
+//                    $scope.profile.subscription.isSubscribed = false;
+//                    $scope.profile.subscription.expiryDate = data.subscription.expiryDate;
+//                }
+//            });
+//        }
+//    }
+//])
 .controller('ProfileActivityCtrl', ['$scope', '$sce', '$filter', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth', 'Deck', 'Guide',
     function ($scope, $sce, $filter, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth, Deck, Guide) {
 
@@ -1047,6 +1068,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     var indexToDel = $scope.decks.indexOf(deck);
                                     if (indexToDel !== -1) {
                                         $scope.decks.splice(indexToDel, 1);
+                                        $scope.$parent.deckCount--;
                                     }
                                 })
                                 .catch(function (err) {
@@ -1194,20 +1216,9 @@ angular.module('app.controllers', ['ngCookies'])
                                     var index = $scope.guides.indexOf(guide);
                                     if (index !== -1) {
                                         $scope.guides.splice(index, 1);
+                                        $scope.$parent.guideCount--;
                                     }
                                 });
-//                                HOTSGuideService.guideDelete(guide._id).success(function (data) {
-//                                    if (data.success) {
-//                                        var index = $scope.guides.indexOf(guide);
-//                                        if (index !== -1) {
-//                                            $scope.guides.splice(index, 1);
-//                                        }
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: 'guide "' + guide.name + '" deleted successfully.'
-//                                        };
-//                                    }
-//                                });
                             }
                         },
                         cancel: {
@@ -1587,7 +1598,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.cardPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.cardPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateCards(page, perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, count) {
@@ -2503,37 +2514,37 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.removeRelatedArticle = function (a) {
                 // removing related articles
-				// remove from toCreate
-				// push to toDelete if it exist in db
+                // remove from toCreate
+                // push to toDelete if it exist in db
 
-				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
-					if (toCrArticle.id === a.id) {
-						relatedArticleChanges.toCreate.splice(index, 1);
-						return;
-					}
-				});
+                angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
+                  if (toCrArticle.id === a.id) {
+                    relatedArticleChanges.toCreate.splice(index, 1);
+                    return;
+                  }
+                });
 
-				ArticleArticle.find({
-					filter: {
-						where: {
-							childArticleId: a.id,
-							parentArticleId: $scope.article.id
-						}
-					}
-				}).$promise
-				.then(function (relatedArticle) {
-					// related article exist in db
-					if (relatedArticle.length !== 0) {
-						relatedArticleChanges.toDelete.push(a);
-					}
-				});
+                ArticleArticle.find({
+                  filter: {
+                    where: {
+                      childArticleId: a.id,
+                      parentArticleId: $scope.article.id
+                    }
+                  }
+                }).$promise
+                .then(function (relatedArticle) {
+                  // related article exist in db
+                  if (relatedArticle.length !== 0) {
+                    relatedArticleChanges.toDelete.push(a);
+                  }
+                });
 
-				angular.forEach($scope.article.related, function(relArticle, index) {
-					if (relArticle.id === a.id) {
-						$scope.article.related.splice(index, 1);
-						return;
-					}
-				});
+                angular.forEach($scope.article.related, function(relArticle, index) {
+                  if (relArticle.id === a.id) {
+                    $scope.article.related.splice(index, 1);
+                    return;
+                  }
+                });
             }
 
             $scope.closeBox = function () {
@@ -2681,128 +2692,132 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             };
 
-            $scope.articleImg = getImage();
+        $scope.articleImg = getImage();
 
-            function getImage () {
-                $scope.imgPath = 'articles/';
-                if (!$scope.article.photoNames) {
-                    return 'img/blank.png';
-                }
-				var URL = (tpl === './') ? cdn2 : tpl;
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
-            };
+        function getImage () {
+            $scope.imgPath = 'articles/';
+            if (!$scope.article.photoNames) {
+                return 'img/blank.png';
+            }
+            var URL = (tpl === './') ? cdn2 : tpl;
+            return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
+        };
+            
+            
+//        console.log('article:', article);
+        $scope.editArticle = function (article) {
+            $scope.fetching = true;
 
-            $scope.editArticle = function (article) {
-                $scope.fetching = true;
+				    // unlink guides/decks depending on what type of guide
+				    if (article.articleType[0] !== 'hs') {
+                article['deck'] = null;
+                article['deckId'] = null;
+				    }
 
-				// unlink guides/decks depending on what type of guide
-				if (article.articleType[0] !== 'hs') {
-					article['deck'] = null;
-					article['deckId'] = null;
-				}
+				    if (article.articleType[0] !== 'hots') {
+                article['guide'] = null;
+                article['guideId'] = null;
+				    }
 
-				if (article.articleType[0] !== 'hots') {
-					article['guide'] = null;
-					article['guideId'] = null;
-				}
+            async.parallel([
+              function (paraCB) {
+                  Article.prototype$updateAttributes({
+                      id: article.id
+                  }, article)
+                  .$promise
+                  .then(function (articleUpdated) {
+                      return paraCB();
+                  })
+                  .catch(function (err) {
+                      return paraCB(err);
+                  });
+              },
+              function(paraCB) {
 
-				async.parallel([
-					function (paraCB) {
-						Article.upsert(article)
-						.$promise
-						.then(function (articleUpserted) {
-							return paraCB();
-						})
-						.catch(function (err) {
-							return paraCB(err);
-						});
-					},
-					function(paraCB){
+                async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
 
-						async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
+                  async.waterfall([
+                    function (wateryCB) {
+                      ArticleArticle.findOne({
+                        filter: {
+                          where: {
+                            childArticleId: relatedToDelete.id,
+                            parentArticleId: article.id
+                          }
+                        }
+                      }).$promise
+                      .then(function (articleFound) {
+                        return wateryCB(null, articleFound);
+                      })
+                      .catch(function (err) {
+                        return wateryCB(err);
+                      });
+                    },
+                    function (articleFound, wateryCB) {
+                      ArticleArticle.destroyById({
+                        id: articleFound.id
+                      }).$promise
+                      .then(function (relArticleDestroyed) {
+                        return wateryCB();
+                      })
+                      .catch(function (err) {
+                        return wateryCB(err);
+                      });
+                    }
+                  ], function(err) {
+                    if (err) {
+                      return relatedToDeleteCB(err);
+                    }
+                    return relatedToDeleteCB();
+                  });
 
-							async.waterfall([
-								function (wateryCB) {
-									ArticleArticle.findOne({
-										filter: {
-											where: {
-												childArticleId: relatedToDelete.id,
-												parentArticleId: article.id
-											}
-										}
-									}).$promise
-									.then(function (articleFound) {
-										return wateryCB(null, articleFound);
-									})
-									.catch(function (err) {
-										return wateryCB(err);
-									});
-								},
-								function (articleFound, wateryCB) {
-									ArticleArticle.destroyById({
-										id: articleFound.id
-									}).$promise
-									.then(function (relArticleDestroyed) {
-										return wateryCB();
-									})
-									.catch(function (err) {
-										return wateryCB(err);
-									});
-								}
-							], function(err) {
-								if (err) {
-									return relatedToDeleteCB(err);
-								}
-								return relatedToDeleteCB();
-							});
-
-						}, function(err) {
-							if (err) {
-								return paraCB(err);
-							}
-							return paraCB();
-						});
-					},
-					function(paraCB) {
-						async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
-							var articleArticle = {
-								parentArticleId: article.id,
-								childArticleId: relatedArticle.id
-							};
-							ArticleArticle.create(articleArticle)
-							.$promise
-							.then(function (relatedArticleCreated) {
-								return relatedCreateCB();
-							})
-							.catch(function (err) {
-								return relatedCreateCB(err);
-							});
-						}, function (err) {
-							if (err) {
-								return paraCB(err);
-							}
-							return paraCB();
-						});
-					}
-				], function(err) {
-					$scope.fetching = false;
-					$window.scrollTo(0, 0);
-					if (err) {
-						console.log('async para err: ', err);
-						return AlertService.setError({
-							show: true,
-							msg: article.title + ' could not be updated',
-							lbErr: err
-						});
-					}
-					AlertService.setSuccess({
-						show: false,
-						persist: true,
-						msg: article.title + ' updated successfully',
-					});
-					$state.transitionTo('app.admin.articles.list');
-				});
-      };
+                }, function(err) {
+                  if (err) {
+                    return paraCB(err);
+                  }
+                  return paraCB();
+                });
+              },
+              function(paraCB) {
+                async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
+                  var articleArticle = {
+                    parentArticleId: article.id,
+                    childArticleId: relatedArticle.id
+                  };
+                  ArticleArticle.create(articleArticle)
+                  .$promise
+                  .then(function (relatedArticleCreated) {
+                    return relatedCreateCB();
+                  })
+                  .catch(function (err) {
+                    return relatedCreateCB(err);
+                  });
+                }, function (err) {
+                  if (err) {
+                    return paraCB(err);
+                  }
+                  return paraCB();
+                });
+              }
+            ], function(err) {
+              $scope.fetching = false;
+              $window.scrollTo(0, 0);
+              if (err) {
+                console.log('async para err: ', err);
+                return AlertService.setError({
+                  show: true,
+                  msg: article.title + ' could not be updated',
+                  lbErr: err
+                });
+              }
+              AlertService.setSuccess({
+                show: false,
+                persist: true,
+                msg: article.title + ' updated successfully',
+              });
+              $state.transitionTo('app.admin.articles.list');
+            });
+          };
 
 //          $scope.getNames = function () {
 //              AdminArticleService.getNames($scope.article).success(function (data) {
@@ -2847,7 +2862,8 @@ angular.module('app.controllers', ['ngCookies'])
                     order: paginationParams.options.filter.order,
                     skip: ((page*perpage)-perpage),
                     limit: perpage,
-                    where: {}
+                    where: {},
+                    include: ['author']
                   }
                 };
 
@@ -2903,7 +2919,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.articlePagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateArticles(page, perpage, $scope.search, function (err, count) {
@@ -3057,7 +3073,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.snapshotPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.snapshotPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -3196,8 +3212,10 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image', 'CrudMan',
         function ($scope, $upload, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image, CrudMan) {
+           
+            var curProgress = 0;
+            var maxProgress = 0;
             var CrudMan = new CrudMan();
-
             var deckTechList = _.flatten(_.map(snapshot.deckTiers, function (deckTier) {
                         return _.map(deckTier.deckTech, function (tech) {
                             return tech;
@@ -3215,6 +3233,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.matching = false;
             $scope.selectedDecks = [];
             $scope.removedDecks = [];
+            $scope.isLoading = false;
 
             // special
             var deckBootBox = undefined,
@@ -3260,7 +3279,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             function setErr(err) {
-                $scope.saving = false;
+                $scope.isLoading = false;
                 if (_.isUndefined(err)) {
                     AlertService.reset();
                     return;
@@ -4075,8 +4094,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
             /* TIERS METHODS */
 
+            $scope.getProgress = function () {
+                return Math.floor((curProgress/maxProgress)*100);
+            }
+            
             $scope.editSnapshot = function () {
-                $scope.saving = true;
+                $scope.isLoading = true;
+                
                 var err = {};
                 var arrs = CrudMan.getArrs();
                 var snapCopy = angular.copy($scope.snapshot);
@@ -4143,44 +4167,211 @@ angular.module('app.controllers', ['ngCookies'])
                     'comments',
                     'deckTiers'
                 ]);
-
-                var newId = { id: snapVar.id };
-                async.series([
-                    function (seriesCb) {
-                        async.each(snapCopy.deckMatchups, function (m) {
-                            if(!_.isUndefined(m.id)) {
-                                DeckMatchup.destroyById({
-                                    id: m.id
-                                });
-                            }
-                        });
-
-                        return seriesCb();
-                    },
-                    function (seriesCb) {
-                        Snapshot.deckMatchups.createMany({
-                            id: $scope.snapshot.id
-                        }, cleanDeckMatchups)
-                        .$promise
-                        .then(function () {
-                            return seriesCb();
+                
+                _.each(snapVar.deckTiers, function (deckTier) {
+                    maxProgress++;
+                    _.each(deckTier.deckTech, function (deckTech) {
+                        maxProgress++;
+                        _.each(deckTech.cardTech, function (cardTech) {
+                            maxProgress++;
                         })
-                        .catch(seriesCb);
-                    }
-                ], function (err) {
-                    if (err) {
-                        console.log("err:", err);
-                        $scope.saving = false;
-                        return;
-                    }
+                    })
+                })
+                
+//                console.log(maxProgress);
 
-                    Snapshot.update({
-                        where: {
-                            id: snapVar.id
-                        }
-                    }, snapVar)
-                    .$promise
-                    .then(function (data) {
+//                var newId = { id: snapVar.id };
+//                async.series([
+//                    function (seriesCb) {
+//                        async.each(snapCopy.deckMatchups, function (m) {
+//                            if(!_.isUndefined(m.id)) {
+//                                DeckMatchup.destroyById({
+//                                    id: m.id
+//                                });
+//                            }
+//                        });
+//
+//                        return seriesCb();
+//                    },
+//                    function (seriesCb) {
+//                        Snapshot.deckMatchups.createMany({
+//                            id: $scope.snapshot.id
+//                        }, cleanDeckMatchups)
+//                        .$promise
+//                        .then(function () {
+//                            return seriesCb();
+//                        })
+//                        .catch(seriesCb);
+//                    }
+//                ], function (err) {
+//                    if (err) {
+//                        console.log("err:", err);
+//                        $scope.saving = false;
+//                        return;
+//                    }
+//
+//                    Snapshot.update({
+//                        where: {
+//                            id: snapVar.id
+//                        }
+//                    }, snapVar)
+//                    .$promise
+//                    .then(function (data) {
+//                        async.parallel([
+//                            function (parallelCb) {
+//                                async.each(decksToDelete, function (item, eachCb) {
+//                                    DeckTier.destroyById({
+//                                        id: item
+//                                    })
+//                                    .$promise
+//                                    .then(function () {
+//                                        return eachCb();
+//                                    });
+//                                }, parallelCb);
+//                            },
+//                            function (parallelCb) {
+//                                async.each(deckTechsToDelete, function (item, eachCb) {
+//                                    DeckTech.destroyById({
+//                                        id: item
+//                                    })
+//                                    .$promise
+//                                    .then(function () {
+//                                        return eachCb();
+//                                    });
+//                                }, parallelCb);
+//                            },
+//                            function (parallelCb) {
+//                                async.each(cardTechsToDelete, function (item, eachCb) {
+//                                    CardTech.destroyById({
+//                                        id: item
+//                                    })
+//                                    .$promise
+//                                    .then(function () {
+//                                        return eachCb();
+//                                    });
+//                                }, parallelCb);
+//                            },
+//                        ], function () {
+//                            $state.go('app.admin.hearthstone.snapshots.list');
+//                        });
+//                    });
+//                });
+
+
+//                function (seriesCallback) {
+//                    var stripped = {};
+//
+//                    stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
+//                    stripped.decks = _.flatten(stripped.authors, true);
+//
+//                    stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
+//                    stripped.matches = _.flatten(stripped.matches, true);
+//
+//                    stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
+//                    stripped.decks = _.flatten(stripped.decks, true);
+//
+//                    stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
+//                    stripped.deckTech = _.flatten(stripped.deckTech, true);
+//
+//                    stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
+//                    stripped.cardTech = _.flatten(stripped.cardTech, true);
+//
+//                    return seriesCallback(undefined, stripped);
+//                }, 
+
+
+                async.waterfall([
+                    function (seriesCallback) {
+                        async.each(snapVar.deckTiers, function(deck, deckTierCB) {
+                            curProgress++;
+                            
+                            DeckTier.upsert({}, deck)
+                            .$promise
+                            .then(function (dataDeck) {
+                                async.each(deck.deckTech, function(deckTech, deckTechCB) {
+                                    curProgress++;
+                                    
+                                    deckTech.deckTierId = dataDeck.id;
+                                    DeckTech.upsert({}, deckTech)
+                                    .$promise
+                                    .then(function (dataDeckTech) {
+                                        async.each(deckTech.cardTech, function(cardTech, cardTechCB) {
+                                            curProgress++;
+                                            
+                                            cardTech.deckTechId = dataDeckTech.id;
+                                            CardTech.upsert({}, cardTech)
+                                            .$promise
+                                            .then(function() {
+//                                                console.log("CardTech was successful");
+                                                return cardTechCB();
+                                            })
+                                            .catch(function (err) {
+//                                                console.log("CardTech errored out!", err);
+                                                return seriesCallback(err);
+                                            });
+                                        }, function() {
+//                                            console.log("DeckTech was successful");
+                                            return deckTechCB();
+                                        });
+                                    }).catch(function(err) {
+//                                        console.log("DeckTech errored out!", err);
+                                        return seriesCallback(err);
+                                    });
+                                }, function () {
+                                    return deckTierCB();
+                                });
+                            })
+                            .catch(function(err) {
+//                                console.log("DeckTier errored out!", err);
+                                return seriesCallback(err);
+                            });
+                        }, function() {
+                            return seriesCallback(undefined);
+                        });
+                    }, function (seriesCallback) {
+                        async.each(snapVar.authors, function (author, authorCB) {
+
+                            author.authorId = author.user.id;
+                            author.snapshotId = $scope.snapshot.id;
+                            SnapshotAuthor.upsert({}, author)
+                            .$promise
+                            .then(function () {
+//                                console.log("SnapshotAuthor was successful!");
+                                return authorCB();
+                            })
+                            .catch(function (err) {
+//                                console.log("SnapshotAuthor errored out!", err);
+                                return seriesCallback(err);
+                            });
+                        }, function () {
+                            return seriesCallback(undefined);
+                        });
+                    }, function (seriesCallback) {
+                        Snapshot.deckMatchups.destroyAll({
+                            id: $scope.snapshot.id
+                        })
+                        .$promise
+                        .then(function (data) {
+//                            console.log("SnapshotMatchups DELETE successful!");
+
+                            Snapshot.deckMatchups.createMany({
+                                id: $scope.snapshot.id
+                            }, $scope.snapshot.matches)
+                            .$promise
+                            .then(function () {
+//                                console.log("SnapshotMatchups CREATE successful!");
+                                return seriesCallback(undefined);
+                            })
+                            .catch(function (err) {
+//                                console.log("SnapshotMatchups CREATE failed!", err);
+                                return seriesCallback(err);
+                            });
+                        })
+                        .catch(function (err) {
+//                            console.log("SnapshotMatchups DELETE failed!");
+                            return seriesCallback(err);
+                        });
+                    }, function (seriesCallback) {
                         async.parallel([
                             function (parallelCb) {
                                 async.each(decksToDelete, function (item, eachCb) {
@@ -4216,151 +4407,39 @@ angular.module('app.controllers', ['ngCookies'])
                                 }, parallelCb);
                             },
                         ], function () {
-                            $state.go('app.admin.hearthstone.snapshots.list');
+                            return seriesCallback();
                         });
-                    });
-                });
-
-
-
-
-//                async.waterfall([
-//                    function (seriesCallback) {
-//                        var stripped = {};
-//
-//                        stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
-//                        stripped.decks = _.flatten(stripped.authors, true);
-//
-//                        stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
-//                        stripped.matches = _.flatten(stripped.matches, true);
-//
-//                        stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
-//                        stripped.decks = _.flatten(stripped.decks, true);
-//
-//                        stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
-//                        stripped.deckTech = _.flatten(stripped.deckTech, true);
-//
-//                        stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
-//                        stripped.cardTech = _.flatten(stripped.cardTech, true);
-//
-//                        return seriesCallback(undefined, stripped);
-//                    }, function (stripped, seriesCallback) {
-//                        async.each(stripped.decks, function(deck, deckTierCB) {
-//                            console.log("deck:",deck);
-//                            DeckTier.upsert({}, deck)
-//                            .$promise
-//                            .then(function (dataDeck) {
-//                                async.each(deck.deckTech, function(deckTech, deckTechCB) {
-//                                    deckTech.deckTierId = dataDeck.id;
-//                                    DeckTech.upsert({}, deckTech)
-//                                    .$promise
-//                                    .then(function (dataDeckTech) {
-//                                        async.each(deckTech.cardTech, function(cardTech, cardTechCB) {
-//                                            cardTech.deckTechId = dataDeckTech.id;
-//                                            CardTech.upsert({}, cardTech)
-//                                            .$promise
-//                                            .then(function() {
-//                                                console.log("CardTech was successful");
-//                                                return cardTechCB();
-//                                            })
-//                                            .catch(function (err) {
-//                                                console.log("CardTech errored out!", err);
-//                                                return seriesCallback(err);
-//                                            });
-//                                        }, function() {
-//                                            console.log("DeckTech was successful");
-//                                            return deckTechCB();
-//                                        });
-//                                    }).catch(function(err) {
-//                                        console.log("DeckTech errored out!", err);
-//                                        return seriesCallback(err);
-//                                    });
-//                                }, function () {
-//                                    return deckTierCB();
-//                                });
-//                            })
-//                            .catch(function(err) {
-//                                console.log("DeckTier errored out!", err);
-//                                return seriesCallback(err);
-//                            });
-//                        }, function() {
-//                            return seriesCallback(undefined, stripped);
-//                        });
-//                    }, function (stripped, seriesCallback) {
-//                        async.each(stripped.authors, function (author, authorCB) {
-//
-//                            author.authorId = author.user.id;
-//                            author.snapshotId = $scope.snapshot.id;
-//                            SnapshotAuthor.upsert({}, author)
-//                            .$promise
-//                            .then(function () {
-//                                console.log("SnapshotAuthor was successful!");
-//                                return authorCB();
-//                            })
-//                            .catch(function (err) {
-//                                console.log("SnapshotAuthor errored out!", err);
-//                                return seriesCallback(err);
-//                            });
-//                        }, function () {
-//                            return seriesCallback(undefined);
-//                        });
-//                    }, function (seriesCallback) {
-//                        Snapshot.deckMatchups.destroyAll({
-//                            id: $scope.snapshot.id
-//                        })
-//                        .$promise
-//                        .then(function (data) {
-//                            console.log("SnapshotMatchups DELETE successful!");
-//
-//                            Snapshot.deckMatchups.createMany({
-//                                id: $scope.snapshot.id
-//                            }, $scope.snapshot.matches)
-//                            .$promise
-//                            .then(function () {
-//                                console.log("SnapshotMatchups CREATE successful!");
-//                                return seriesCallback(undefined);
-//                            })
-//                            .catch(function (err) {
-//                                console.log("SnapshotMatchups CREATE failed!", err);
-//                                return seriesCallback(err);
-//                            });
-//                        })
-//                        .catch(function (err) {
-//                            console.log("SnapshotMatchups DELETE failed!");
-//                            return seriesCallback(err);
-//                        });
-//                    }, function (seriesCallback) {
-//                        console.log("deleting: authors");
-//                        delete $scope.snapshot.authors;
-//                        console.log("deleting: matches");
-//                        delete $scope.snapshot.matches;
-//                        console.log("deleting: deckMatches");
-//                        delete $scope.snapshot.deckMatches;
-//                        console.log("deleting: tiers");
-//                        delete $scope.snapshot.tiers;
-//                        Snapshot.upsert({}, $scope.snapshot)
-//                        .$promise
-//                        .then(function () {
+                    }, function (seriesCallback) {
+                        delete $scope.snapshot.authors;
+                        delete $scope.snapshot.matches;
+                        delete $scope.snapshot.deckMatches;
+                        delete $scope.snapshot.tiers;
+                
+                        Snapshot.upsert({}, $scope.snapshot)
+                        .$promise
+                        .then(function () {
 //                            console.log("Snapshot was successful!");
-//                            return seriesCallback(undefined);
-//                        })
-//                        .catch(function (err) {
-//                            console.log("snapshot errored out!", err);
-//                            return seriesCallback(err);
-//                        });
-//                    }
-//                ], function (err) {
-//                    if (err) { console.log("Fatal error snapshot NOT saved!"); console.error(err); return; }
-//
-//                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been edited successfully.' });
-//                    $state.go('app.admin.snapshots.list');
-//                });
+                            return seriesCallback(undefined);
+                        })
+                        .catch(function (err) {
+                            console.log("snapshot errored out!", err);
+                            return seriesCallback(err);
+                        });
+                    }
+                ], function (err) {
+                    if (err) { console.log("Fatal error snapshot NOT saved!"); console.error(err); return; }
+
+                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been edited successfully.' });
+                    $state.go('app.admin.hearthstone.snapshots.list');
+                });
             };
         }
     ])
     .controller('AdminHearthstoneSnapshotAddCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
         function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
 
+            var curProgress = 0;
+            var maxProgress = 0;
             var deckBootBox = undefined,
                 authorBootBox = undefined,
                 cardBootBox = undefined,
@@ -4426,6 +4505,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             function setErr(err) {
+                $scope.loading = false;
                 if (_.isEmpty(err)) {
                     AlertService.reset();
                 }
@@ -4443,6 +4523,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.removedDecks = [];
             $scope.lockDND = true;
             $scope.loaded = false;
+            $scope.loading = false;
 
             $scope.updateDND = function (list, index, d) {
                 list.splice(index, 1);
@@ -5020,7 +5101,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeTech = function (t) {
-//              console.log(t);
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                         for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].deckTech.length; j++) {
@@ -5058,12 +5138,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.loadLatest = function () {
                 Snapshot.findOne({
                     filter: {
-                        limit: 1,
                         order: "createdDate DESC",
-                        fields: {
-                            votes: false,
-                            voteScore: false
-                        },
                         include: [
                             {
                                 relation: "authors",
@@ -5164,8 +5239,8 @@ angular.module('app.controllers', ['ngCookies'])
                     //BUILD TIERS//
                     snapshot.tiers = [];
                     _.each(stripped['decks'], function (deck) {
-                        if (snapshot.tiers[deck.tier-1] === undefined) {
-                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
+                        if (snapshot.tiers[deck.tier - 1] === undefined) {
+                            snapshot.tiers[deck.tier - 1] = { decks: [], tier: deck.tier };
                         }
                         deck.ranks.splice(0,0,deck.ranks[0]);
                         deck.ranks.pop();
@@ -5203,8 +5278,14 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.setSlug();
                 });
             }
+            
+            $scope.getProgress = function () {
+                return Math.floor((curProgress/maxProgress)*100);
+            }
 
             $scope.addSnapshot = function () {
+                $scope.loading = true;
+                
                 var err = {};
                 var snapCopy = angular.copy($scope.snapshot);
 
@@ -5212,6 +5293,7 @@ angular.module('app.controllers', ['ngCookies'])
                 snapCopy.deckMatchups = [];
                 snapCopy.deckMatchups = snapCopy.matches;
 
+                //we build deckTiers and validate the deckTechs here
                 _.each(snapCopy.tiers, function (tier) {
                     _.each(tier.decks, function (deck) {
                         deck.tier = tier.tier;
@@ -5229,11 +5311,13 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                 });
 
+                //throw errors and halt execution here
                 if (!_.isEmpty(err)) {
                     setErr(err);
                     return;
                 }
 
+                //clean the snapshot object
                 var snapVar = Util.cleanObj(snapCopy, [
                     'snapNum',
                     'title',
@@ -5252,141 +5336,179 @@ angular.module('app.controllers', ['ngCookies'])
 
                 var d = new Date();
                 snapVar.createdDate = d.toISOString();
-
-
-
-                Snapshot.create({}, snapVar)
-                  .$promise
-                  .then(function (data) {
-                    $state.go('app.admin.hearthstone.snapshots.list');
-                });
-//                async.waterfall([
-//                    function (waterfallCb) {
-//                        var stripped = {};
+                
+                _.each(snapVar.deckTiers, function (deckTier) {
+                    maxProgress++;
+                    _.each(deckTier.deckTech, function (deckTech) {
+                        maxProgress++;
+                        _.each(deckTech.cardTech, function (cardTech) {
+                            maxProgress++;
+                        })
+                    })
+                })
+                
+//                function (waterfallCb) {
+//                    var stripped = {};
 //
-//                        console.log("step 1", $scope.snapshot);
+//                    console.log("step 1", $scope.snapshot);
 //
-//                        stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
-//                        stripped.decks = _.flatten(stripped.authors, true);
+//                    stripped['authors'] = _.map($scope.snapshot.authors, function (author) { return author });
+//                    stripped.decks = _.flatten(stripped.authors, true);
 ////                        delete $scope.snapshot.authors;
 //
-//                        stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
-//                        stripped.matches = _.flatten(stripped.matches, true);
+//                    stripped['matches'] = _.map($scope.snapshot.matches, function (matchup) { return matchup });
+//                    stripped.matches = _.flatten(stripped.matches, true);
 ////                        delete $scope.snapshot.matches;
 //
-//                        stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
-//                        stripped.decks = _.flatten(stripped.decks, true);
+//                    stripped['decks'] = _.map($scope.snapshot.tiers, function (tier) { return tier.decks; });
+//                    stripped.decks = _.flatten(stripped.decks, true);
 ////                        delete $scope.snapshot.tiers;
 //
-//                        stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
-//                        stripped.deckTech = _.flatten(stripped.deckTech, true);
+//                    stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
+//                    stripped.deckTech = _.flatten(stripped.deckTech, true);
 //
-//                        stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
-//                        stripped.cardTech = _.flatten(stripped.cardTech, true);
+//                    stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
+//                    stripped.cardTech = _.flatten(stripped.cardTech, true);
 //
-//                        return waterfallCb(undefined, stripped);
-//                    }, function (stripped, waterfallCb) {
-//
-//                        console.log("step 2", stripped);
-//
-//                        Snapshot.upsert({}, $scope.snapshot)
-//                        .$promise
-//                        .then(function (dataSnapshot) {
-//                            console.log("snapshot created", dataSnapshot);
-//                            async.each(stripped.decks, function(deck, deckTierCB) {
-//                                deck.snapshotId = dataSnapshot.id;
-//                                DeckTier.upsert({}, deck)
-//                                .$promise
-//                                .then(function (dataDeck) {
-//                                    async.each(deck.deckTech, function(deckTech, deckTechCB) {
-//                                        deckTech.deckTierId = dataDeck.id;
-//                                        DeckTech.upsert({}, deckTech)
-//                                        .$promise
-//                                        .then(function (dataDeckTech) {
-//                                            async.each(deckTech.cardTech, function(cardTech, cardTechCB) {
-//                                                cardTech.deckTechId = dataDeckTech.id;
-//                                                CardTech.upsert({}, cardTech)
-//                                                .$promise
-//                                                .then(function() {
-//                                                    console.log("CardTech was successful");
-//                                                    return cardTechCB();
-//                                                })
-//                                                .catch(function (err) {
-//                                                    console.log("CardTech errored out!", err);
-//                                                    return waterfallCb(err);
-//                                                });
-//                                            }, function() {
-//                                                console.log("DeckTech was successful");
-//                                                return deckTechCB();
-//                                            });
-//                                        }).catch(function(err) {
-//                                            console.log("DeckTech errored out!", err);
-//                                            return waterfallCb(err);
-//                                        });
-//                                    }, function () {
-//                                        return deckTierCB();
-//                                    });
-//                                })
-//                                .catch(function(err) {
-//                                    console.log("DeckTier errored out!", err);
-//                                    return waterfallCb(err);
-//                                });
-//                            }, function() {
-//                                async.series([
-//                                    function(seriesCallback) {
-//                                        Snapshot.deckMatchups.createMany({
-//                                            id: dataSnapshot.id
-//                                        }, $scope.snapshot.matches)
-//                                        .$promise
-//                                        .then(function () {
-//                                            console.log("SnapshotMatchups CREATE successful!");
-//                                            return seriesCallback();
-//                                        })
-//                                        .catch(function (err) {
-//                                            console.log("SnapshotMatchups CREATE failed!", err);
-//                                            return seriesCallback(err);
-//                                        });
-//                                    }, function (seriesCallback) {
-//                                        async.each(stripped.authors, function (author, authorCb) {
-//
-//                                            author.authorId = author.user.id;
-//                                            author.snapshotId = dataSnapshot.id;
-//
-//                                            SnapshotAuthor.upsert({}, author)
-//                                            .$promise
-//                                            .then(function () {
-//                                                console.log("SnapshotAuthor was successful!");
-//                                                return authorCb();
-//                                            })
-//                                            .catch(function (err) {
-//                                                console.log("SnapshotAuthor errored out!", err);
-//                                                return seriesCallback(err);
-//                                            });
-//                                        }, function () {
-//                                            return seriesCallback();
-//                                        });
-//                                    }
-//                                ], function (err) {
-//                                    if(err) return waterfallCb(err);
-//
-//                                    return waterfallCb(undefined);
-//                                });
-//
-//                            });
-//                        })
-//                        .catch(function (err) {
-//                            console.log("snapshot errored out!", err);
-//                            return waterfallCb(err);
-//                        });
-//                    }
-//                ], function (err) {
-//                    console.log("step 3");
-//
-//                    if (err) { console.log("Fatal error snapshot NOT saved!"); console.error(err); return; }
-//
-//                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been added successfully.' });
-//                    $state.go('app.admin.snapshots.list');
+//                    return waterfallCb(undefined, stripped);
+//                },  
+
+//                Snapshot.create({}, snapVar)
+//                  .$promise
+//                  .then(function (data) {
+//                    $state.go('app.admin.hearthstone.snapshots.list');
 //                });
+                
+                
+                
+                async.waterfall([
+                    function (waterfallCb) {
+                        //cleaning the snapshot object
+                        var cleanedSnap = Util.cleanObj(snapVar, [
+                            'snapNum',
+                            'title',
+                            'createdDate',
+                            'content',
+                            'slug',
+                            'isActive',
+                            'voteScore',
+                            'photoNames',
+                            'comments'
+                        ]);
+                        
+                        return waterfallCb(undefined, cleanedSnap);
+                    },
+                    function (cleanSnap, waterfallCb) {
+                        Snapshot.create({}, cleanSnap)
+                        .$promise
+                        .then(function (dataSnapshot) {
+                            async.eachSeries(snapVar.deckTiers, function(deck, deckTierCB) {
+                                var tempDeckTech = deck.deckTech;
+                                delete deck.deckTech;
+                                
+                                deck.snapshotId = dataSnapshot.id;
+                                DeckTier.create({}, deck)
+                                .$promise
+                                .then(function (dataDeck) {
+                                    curProgress++;
+                                    
+                                    async.eachSeries(tempDeckTech, function(deckTech, deckTechCB) {
+                                        var tempCardTech = deckTech.cardTech;
+                                        delete deckTech.cardTech;
+                                        
+                                        deckTech.deckTierId = dataDeck.id;
+                                        DeckTech.create({}, deckTech)
+                                        .$promise
+                                        .then(function (dataDeckTech) {
+                                            curProgress++;
+                                            
+                                            async.eachSeries(tempCardTech, function(cardTech, cardTechCB) {
+                                                cardTech.deckTechId = dataDeckTech.id;
+                                                CardTech.create({}, cardTech)
+                                                .$promise
+                                                .then(function() {
+                                                    curProgress++;
+//                                                    console.log("CardTech was successful");
+                                                    return cardTechCB();
+                                                })
+                                                .catch(function (err) {
+                                                    console.log("CardTech errored out!", err);
+                                                    return waterfallCb(err);
+                                                });
+                                            }, function() {
+//                                                console.log("DeckTech was successful");
+                                                return deckTechCB();
+                                            });
+                                        }).catch(function(err) {
+                                            console.log("DeckTech errored out!", err);
+                                            return waterfallCb(err);
+                                        });
+                                    }, function () {
+                                        return deckTierCB();
+                                    });
+                                })
+                                .catch(function(err) {
+                                    console.log("DeckTier errored out!", err);
+                                    return waterfallCb(err);
+                                });
+                            }, function() {
+                                async.series([
+                                    function(seriesCallback) {
+                                        Snapshot.deckMatchups.createMany({
+                                            id: dataSnapshot.id
+                                        }, snapVar.deckMatchups)
+                                        .$promise
+                                        .then(function () {
+//                                            console.log("SnapshotMatchups CREATE successful!");
+                                            return seriesCallback();
+                                        })
+                                        .catch(function (err) {
+                                            console.log("SnapshotMatchups CREATE failed!", err);
+                                            return seriesCallback(err);
+                                        });
+                                    }, function (seriesCallback) {
+                                        async.each(snapVar.authors, function (author, authorCb) {
+
+                                            author.authorId = author.user.id;
+                                            author.snapshotId = dataSnapshot.id;
+
+                                            SnapshotAuthor.upsert({}, author)
+                                            .$promise
+                                            .then(function () {
+//                                                console.log("SnapshotAuthor was successful!");
+                                                return authorCb();
+                                            })
+                                            .catch(function (err) {
+                                                console.log("SnapshotAuthor errored out!", err);
+                                                return seriesCallback(err);
+                                            });
+                                        }, function () {
+                                            return seriesCallback();
+                                        });
+                                    }
+                                ], function (err) {
+                                    if(err) return waterfallCb(err);
+
+                                    return waterfallCb(undefined);
+                                });
+
+                            });
+                        })
+                        .catch(function (err) {
+                            console.log("snapshot errored out!", err);
+                            return waterfallCb(err);
+                        });
+                    }
+                ], function (err) {
+                    if (err) { 
+                        console.log("Fatal error snapshot NOT saved!");
+                        console.error(err);
+                        return;
+                    }
+
+                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been added successfully.' });
+                    $state.go('app.admin.hearthstone.snapshots.list');
+                });
             };
         }
     ])
@@ -5403,13 +5525,12 @@ angular.module('app.controllers', ['ngCookies'])
 //                $scope.fifaMembers = fifaTeam;
 //                $scope.fgcMembers = fgcTeam;
 
-//            $scope.updateDND = function (list, index) {
-//                list.splice(index, 1);
-//                for (var i = 0; i < list.length; i++) {
-//                    list[i].orderNum = i + 1;
-//                }
-//                AdminTeamService.updateOrder(list);
-//            };
+            $scope.updateDND = function (list, index) {
+                list.splice(index, 1);
+                for (var i = 0; i < list.length; i++) {
+                    list[i].orderNum = i + 1;
+                }
+            };
 
             // delete member
             $scope.deleteMember = function deleteMember(member) {
@@ -5715,7 +5836,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.vodPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.vodPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateVods(page, perpage, $scope.search, function (err, count) {
@@ -5918,7 +6039,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.deckPagination = AjaxPagination.new($scope.perpage, $scope.total, function(page, perpage) {
+            $scope.deckPagination = AjaxPagination.new(paginationParams, function(page, perpage) {
                 var d = $q.defer();
                 updateDecks(page, perpage, $scope.search, function (err, count) {
                     if (err) return console.log('err: ', err);
@@ -6160,8 +6281,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService) {
+    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService', 'Vote',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService, Vote) {
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
 
@@ -6870,6 +6991,20 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .catch(function (err) {
                             console.log('deck matchup err:', err);
+                            return waterCB(err);
+                        });
+                    },
+                    function (waterCB) {
+                        Vote.create({
+                            direction: 1,
+                            createdDate: new Date().toISOString(),
+                            deckId: deckId,
+                            authorId: User.getCurrentId()
+                        }).$promise
+                        .then(function (voteCreated) {
+                            return waterCB();
+                        })
+                        .catch(function (err) {
                             return waterCB(err);
                         });
                     },
@@ -7889,7 +8024,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.userPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.userPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateUsers(page, perpage, $scope.search, function (err, count) {
@@ -8061,11 +8196,11 @@ angular.module('app.controllers', ['ngCookies'])
 //                        console.log('series results: ', results);
                         $state.go('app.admin.users.list');
                         $scope.fetching = false;
-						AlertService.setSuccess({
-							persist: true,
-							show: false,
-							msg: user.username + ' created successfully'
-						});
+                        AlertService.setSuccess({
+                          persist: true,
+                          show: false,
+                          msg: user.username + ' created successfully'
+                        });
                     }
                 });
             };
@@ -8242,7 +8377,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.pollPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.pollPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updatePolls(page, perpage, $scope.search, function (err, count) {
@@ -9032,8 +9167,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService) {
+    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService', 'Vote',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService, Vote) {
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
 
@@ -9304,7 +9439,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
+            $scope.classPagination = AjaxPagination.new({ perpage: 15, total: classCardsCount.count },
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -9316,7 +9451,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
+            $scope.neutralPagination = AjaxPagination.new({ perpage: 15, total: neutralCardsCount.count },
                 function (page, perpage) {
 
                     var d = $q.defer();
@@ -9678,9 +9813,7 @@ angular.module('app.controllers', ['ngCookies'])
                     'youtubeId'
                 ]);
 
-
-
-                console.log('deck before save:', cleanDeck);
+//                console.log('deck before save:', cleanDeck);
 
 
                 // save deck + children (array names were changed to avoid this)
@@ -9727,6 +9860,24 @@ angular.module('app.controllers', ['ngCookies'])
                         .$promise
                         .then(function (cardCreated) {
 //                            console.log('cardCreated:', cardCreated);
+                            return waterCB();
+                        })
+                        .catch(function (err) {
+                            return waterCB(err);
+                        });
+                    },
+                    function (waterCB) {
+                        var deckVote = {
+                            direction: 1,
+                            createdDate: new Date().toISOString(),
+                            authorId: User.getCurrentId()
+                        };
+
+                        Deck.votes.create({
+                            id: deckId
+                        }, deckVote)
+                        .$promise
+                        .then(function (voteCreated) {
                             return waterCB();
                         })
                         .catch(function (err) {
@@ -10076,7 +10227,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
+            $scope.classPagination = AjaxPagination.new({ perpage: 15, total: classCardsCount.count },
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -10088,7 +10239,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
+            $scope.neutralPagination = AjaxPagination.new({ perpage: 15, total: neutralCardsCount.count },
                 function (page, perpage) {
 
                     var d = $q.defer();
@@ -11150,16 +11301,13 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'articlesTotal', 'MetaService', 'AjaxPagination',
-        function ($scope, $state, $q, $timeout, Article, articles, articlesTotal, MetaService, AjaxPagination) {
+    .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'MetaService', 'AjaxPagination', 'paginationParams', 'StateParamHelper',
+        function ($scope, $state, $q, $timeout, Article, articles, MetaService, AjaxPagination, paginationParams, StateParamHelper) {
             //if (!data.success) { return $state.transitionTo('app.articles.list'); }
-
 //            console.log('articles:', articles);
+
             // articles
             $scope.articles = articles;
-            $scope.total = articlesTotal.count;
-            $scope.page = parseInt(articles.page);
-            $scope.perpage = articles.perpage;
             $scope.search = "";
             $scope.fetching = false;
             $scope.metaservice = MetaService;
@@ -11167,7 +11315,8 @@ angular.module('app.controllers', ['ngCookies'])
 
             // article filtering
             $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch', 'wow'];
-            $scope.articleFilter = [];
+            $scope.articleFilter = angular.copy(paginationParams.filters);
+
             $scope.toggleArticleFilter = function (type) {
                 if ($scope.isArticleFilter(type)) {
                     var index = $scope.articleFilter.indexOf(type);
@@ -11184,76 +11333,75 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getArticles = function() {
-                updateArticles(1, $scope.perpage, $scope.search);
+                updateArticles(1, paginationParams.artParams.perpage, $scope.search);
             }
+
+            $scope.queryOnEmpty = function(search) {
+                if (_.isEmpty(search)) {
+                    $scope.getArticles();
+                }
+            };
 
             // pagination
             function updateArticles (page, perpage, search, callback) {
                 $scope.fetching = true;
 
-                var options = {},
-                    countOptions = {},
-                    pattern = '/.*'+search+'.*/i';//new RegExp('.*'+search+'.*', "i")'';
+                var pattern = '/.*'+search+'.*/i';
 
-                countOptions['where'] = {
-                    isActive: true,
-                    articleType: {
-                        inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
+                var options = {
+                    filter: {
+                        where: paginationParams.artParams.where,
+                        fields: paginationParams.artParams.fields,
+                        include: paginationParams.artParams.include,
+                        order: paginationParams.artParams.order,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage
                     }
+                },
+                countOptions = {
+                    where: paginationParams.artParams.where
                 };
 
-                options.filter = {
-                    where: {
-                        isActive: true,
-                        articleType: {
-                            inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
-                        }
-                    },
-                    fields: {
-                        content: false,
-                        votes: false
-                    },
-                    include: ['author'],
-                    order: "createdDate DESC",
-                    skip: ((page*perpage)-perpage),
-                    limit: 12
-                };
-
-                if ($scope.search.length > 0) {
-                    options.filter.where['or'] = [
-                        { title: { regexp: pattern } },
-                        { description: { regexp: pattern } },
-                        { content: { regexp: pattern } }
-                    ];
-                    countOptions.where.or = [
-                        { title: { regexp: pattern } },
-                        { description: { regexp: pattern } },
-                        { content: { regexp: pattern } }
-                    ];
+                options.filter.where.articleType = {
+                    inq: $scope.articleFilter.length ? $scope.articleFilter : $scope.articleTypes
                 }
 
-                Article.count(countOptions, function (count) {
-                    Article.find(options, function (articles) {
-                        $scope.articlePagination.total = count.count;
-                        $scope.articlePagination.page = page;
-                        $scope.articlePagination.perpage = perpage;
+                if (!_.isEmpty($scope.search)) {
+                    options.filter.where.or = [
+                    { title: { regexp: pattern } },
+                    { description: { regexp: pattern } },
+                    { content: { regexp: pattern } }
+                  ]
+                } else {
+                    // have to delete filters that may have been passed from resolve
+                    if (options.filter.where.or) {
+                        delete options.filter.where.or;
+                    }
+                }
 
-                        $timeout(function () {
-                            $scope.articles = articles;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
+                StateParamHelper.updateStateParams({
+                    p: page,
+                    f: $scope.articleFilter,
+                    s: search
+                });
+
+                AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('paginate err: ', err);
+                    $scope.articlePagination.page = page;
+                    $scope.articlePagination.perpage = perpage;
+                    $scope.articles = data;
+                    $scope.articlePagination.total = count.count;
+                    if (callback) {
+                        return callback(count.count)
+                    }
                 });
             }
 
             // page flipping
-            $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.articlePagination = AjaxPagination.new(paginationParams.artParams,
                 function (page, perpage) {
                     var d = $q.defer();
-
                     updateArticles(page, perpage, $scope.search, function (data) {
                         d.resolve(data);
                     });
@@ -11509,22 +11657,41 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', {
+                                    username: currentUser.username,
+                                    plan: plan
+                                });
+                            });
+                        }
+                    });
                 } else {
                     LoginModalService.showModal('login', function () {
-                        if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
-                            $scope.getPremium(plan);
-                        }
+                        $scope.getPremium(plan);
                     });
                 }
             }
         }
     ])
-    .controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount',
-        function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, tempostormCount, communityDecks, communityCount) {
+    .controller('DecksCtrl', ['$scope', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'communityDecks', 'paginationParams', 'StateParamHelper',
+        function ($scope, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, communityDecks, paginationParams, StateParamHelper) {
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
 
 //            console.log('tempostormCount:', tempostormCount);
@@ -11535,22 +11702,22 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deckSearch = '';
             $scope.tempostormDecks = tempostormDecks;
             $scope.tempostormPagination = {
-                total: tempostormCount.count
+                total: paginationParams.tsParams.total
             };
             $scope.communityDecks = communityDecks;
             $scope.communityPagination = {
-                total: communityCount.count
+                total: paginationParams.comParams.total
             };
             // filters
             $scope.filters = {
-                classes: [],
-                search: ''
+                classes: paginationParams.klasses || [],
+                search: paginationParams.search || ''
             };
 
             $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
 
             var initializing = true;
-            $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            $scope.$watch(function(){ return $scope.filters.classes; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
@@ -11566,9 +11733,17 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.newSearch = function () {
-//				        console.log('$scope.filters.search:', $scope.filters.search);
-                $scope.filters.search = $scope.deckSearch;
+                $scope.fetching = true;
+                updateTempostormDecks(1, 4);
+                updateCommunityDecks(1, 12);
             }
+
+
+            $scope.queryOnEmpty = function(search) {
+                if (_.isEmpty(search)) {
+                    $scope.newSearch();
+                }
+            };
 
             function getQuery (featured, isPublic, page, perpage) {
                 var pattern = '/.*'+$scope.filters.search+'.*/i';
@@ -11580,6 +11755,7 @@ angular.module('app.controllers', ['ngCookies'])
                             isPublic: true
                         },
                         fields: {
+                            id: true,
                             name: true,
                             description: true,
                             slug: true,
@@ -11598,22 +11774,38 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
 
-                if (!isPublic) {
-                    delete options.filter.where.isPublic;
+                if (featured) {
+                    options.filter.where   =  paginationParams.tsParams.where,
+                    options.filter.fields  =  paginationParams.tsParams.fields,
+                    options.filter.include =  paginationParams.tsParams.include,
+                    options.filter.order   =  paginationParams.tsParams.order,
+                    options.filter.skip    =  (page * perpage) - perpage,
+                    options.filter.limit   =  paginationParams.tsParams.perpage
+                } else {
+                    options.filter.where   =  paginationParams.comParams.where,
+                    options.filter.fields  =  paginationParams.comParams.fields,
+                    options.filter.include =  paginationParams.comParams.include,
+                    options.filter.order   =  paginationParams.comParams.order,
+                    options.filter.skip    =  (page * perpage) - perpage,
+                    options.filter.limit   =  paginationParams.comParams.perpage
                 }
 
-                if (!_.isEmpty($scope.filters.classes)) {
-                    options.filter.where.playerClass = {
-                        inq: $scope.filters.classes
-                    }
+
+                options.filter.where.playerClass = {
+                    inq: $scope.filters.classes.length ? $scope.filters.classes : $scope.classes
                 }
 
-                if ($scope.filters.search.length > 0) {
+                if (!_.isEmpty($scope.filters.search)) {
                     options.filter.where.or = [
                     { name: { regexp: pattern } },
                     { description: { regexp: pattern } },
                     { deckType: { regexp: pattern } }
                   ]
+                } else {
+                    // have to delete filters that may have been passed from resolve
+                    if (options.filter.where.or) {
+                        delete options.filter.where.or;
+                    }
                 }
 
                 return options;
@@ -11621,36 +11813,32 @@ angular.module('app.controllers', ['ngCookies'])
 
             // pagination
             function updateTempostormDecks (page, perpage, callback) {
+
+                StateParamHelper.updateStateParams({
+                    tsp: page,
+                    s: $scope.filters.search,
+                    k: $scope.filters.classes
+                });
+
                 AjaxPagination.update(Deck, getQuery(true, false, page, perpage), getQuery(true, false, page, perpage).filter, function (err, data, count) {
+
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.tempostormPagination.page = page;
                     $scope.tempostormPagination.perpage = perpage;
+                    _.each(data, function(deck) {
+                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                    });
                     $scope.tempostormDecks = data;
                     $scope.tempostormPagination.total = count.count;
                     if (callback) {
                         callback(null, count);
                     }
                 });
-//                Deck.find(getQuery(true, page, perpage))
-//                .$promise
-//                .then(function (data) {
-//                    $scope.tempostormPagination.total = data.total;
-//                    $scope.tempostormPagination.page = page;
-//                    $timeout(function () {
-//                        $scope.tempostormDecks = data;
-//
-//                        if (callback) {
-//                            return callback(data);
-//                        }
-//                    });
-//                })
-//                .then(function (err) {
-//                    console.log("There's been an error 1:", err);
-//                });
             }
 
-            $scope.tempostormPagination = AjaxPagination.new(4, $scope.tempostormPagination.total,
+
+            $scope.tempostormPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -11662,37 +11850,32 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            //TODO: MAKE CASE-INSENSITIVE QUERY WORK
             function updateCommunityDecks (page, perpage, callback) {
+
+                StateParamHelper.updateStateParams({
+                    comp: page,
+                    s: $scope.filters.search,
+                    k: $scope.filters.classes
+                });
+
                 AjaxPagination.update(Deck, getQuery(false, true, page, perpage), getQuery(false, true, page, perpage).filter, function (err, data, count) {
+
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.communityPagination.page = page;
                     $scope.communityPagination.perpage = perpage;
+                    _.each(data, function(deck) {
+                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                    });
                     $scope.communityDecks = data;
                     $scope.communityPagination.total = count.count;
                     if (callback) {
                         callback(null, count);
                     }
                 });
-//                Deck.find(getQuery(false, page, perpage))
-//                .$promise
-//                .then(function (data) {
-//                    $scope.communityPagination.total = data.total;
-//                    $scope.communityPagination.page = page;
-//                    $timeout(function () {
-//                        $scope.communityDecks = data;
-//
-//                        if (callback) {
-//                            return callback(data);
-//                        }
-//                    });
-//                }).then(function (err) {
-//                    console.log("There's been an error 2:", err);
-//                });
             }
 
-            $scope.communityPagination = AjaxPagination.new(12, $scope.communityPagination.total,
+            $scope.communityPagination = AjaxPagination.new(paginationParams.comParams,
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -11769,7 +11952,20 @@ angular.module('app.controllers', ['ngCookies'])
                                     {
                                         relation: "mulligans",
                                         scope: {
-                                            include: ['cardsWithCoin', 'cardsWithoutCoin']
+                                            include: [
+                                                {
+                                                    relation: 'mulligansWithCoin',
+                                                    scope: {
+                                                        include: 'card'
+                                                    }
+                                                },
+                                                {
+                                                    relation: 'mulligansWithoutCoin',
+                                                    scope: {
+                                                        include: 'card'
+                                                    }
+                                                }
+                                            ]
                                         }
                                     },
                                     {
@@ -11824,7 +12020,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.votableDeck = {
                 deck: $scope.deck
             }
-            
+
 //            console.log('$scope.deck:', $scope.deck);
 
 //            console.log('currentMulligan: ', $scope.currentMulligan);
@@ -11914,9 +12110,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.isMulliganSet = function (mulligan) {
 //                console.log('mulligan: ',mulligan);
-                return (mulligan.cardsWithCoin.length > 0
+                return (mulligan.mulligansWithCoin.length > 0
                         || mulligan.instructionsWithCoin.length > 0
-                        || mulligan.cardsWithoutCoin.length > 0
+                        || mulligan.mulligansWithoutCoin.length > 0
                         || mulligan.instructionsWithoutCoin.length > 0);
             };
 
@@ -11938,13 +12134,13 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!$scope.anyMulliganSet()) { return false; }
                 if (!$scope.currentMulligan) { return false; }
 //                console.log('coin: ', $scope.coin);
-                var cards = ($scope.coin) ? $scope.currentMulligan.cardsWithCoin : $scope.currentMulligan.cardsWithoutCoin;
+                var cards = ($scope.coin) ? $scope.currentMulligan.mulligansWithCoin : $scope.currentMulligan.mulligansWithoutCoin;
 
 //                console.log('cards: ', cards);
 //                console.log('card: ', card);
 
                 for (var i = 0; i < cards.length; i++) {
-                    if (cards[i].id === card.card.id) { return false; }
+                    if (cards[i].card.id === card.card.id) { return false; }
                 }
 
                 return true;
@@ -11960,7 +12156,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMulliganCards = function () {
                 if (!$scope.currentMulligan) { return false; }
                 var m = $scope.currentMulligan;
-                return ($scope.coin) ? m.cardsWithCoin : m.cardsWithoutCoin;
+                return ($scope.coin) ? m.mulligansWithCoin : m.mulligansWithoutCoin;
             };
 
             $scope.cardLeft = function ($index) {
@@ -12075,6 +12271,42 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.deck.voteScore = updateVotes();
+
+            // get premium
+            $scope.getPremium = function (plan) {
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', {
+                                    username: currentUser.username,
+                                    plan: plan
+                                });
+                            });
+
+                        }
+                    });
+
+                } else {
+                    LoginModalService.showModal('login', function () {
+                        $scope.getPremium(plan);
+                    });
+                }
+            }
         }
     ])
     .controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
@@ -12742,7 +12974,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.heroPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.heroPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateHeroes(page, perpage, $scope.search, function (err, count) {
@@ -13024,6 +13256,7 @@ angular.module('app.controllers', ['ngCookies'])
           };
 
           $scope.updateDND = function (list, index) {
+
               list.splice(index, 1);
 
               for (var i = 0; i < list.length; i++) {
@@ -13360,13 +13593,17 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.hero.characters.splice(index, 1);
             };
 
-            $scope.updateDND = function (list, index) {
+            $scope.updateDND = function (list, index, item, key) {
                 list.splice(index, 1);
 
                 for (var i = 0; i < list.length; i++) {
                     list[i].orderNum = i + 1;
                 }
             };
+
+            $scope.afterDND = function (item, key) {
+                console.log(item, key);
+            }
 
             $scope.editHero = function () {
               var arrs = angular.copy(CrudMan.getArrs());
@@ -13377,7 +13614,25 @@ angular.module('app.controllers', ['ngCookies'])
               var abils = arrs.abilities;
               var abilsToAdd = abils.toWrite;
 
-//              console.log(arrs);
+                _.each(abils.exists, function (abil) {
+                    var b = _.find(hero.abilities, function (heroAbil) {
+                        return (abil.id == heroAbil.id);
+                    });
+
+                    if(b && b.orderNum !== abil.orderNum) {
+                        arrs.abilities.toWrite.push(b);
+                    }
+                });
+
+                _.each(tals.exists, function (tal) {
+                    var b = _.find(hero.talents, function (heroTal) {
+                        return (tal.id == heroTal.id);
+                    });
+
+                    if(b && b.orderNum !== tal.orderNum) {
+                        arrs.talents.toWrite.push(b);
+                    }
+                });
 
               delete hero.abilities;
               delete hero.talents;
@@ -13632,7 +13887,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.talentPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.talentPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateTalents(page, perpage, $scope.search, function (err, count) {
@@ -13794,7 +14049,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.mapPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.mapPagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateMaps(page, perpage, $scope.search, function (err, count) {
@@ -13947,16 +14202,14 @@ angular.module('app.controllers', ['ngCookies'])
                     var pattern = '/.*'+search+'.*/i';
                     options.filter.where = {
                         or: [
-                            { email: { regexp: pattern } },
-                            { username: { regexp: pattern } },
-                            { twitchID: { regexp: pattern } }
+                            { name: { regexp: pattern } },
+                            { description: { regexp: pattern } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { email: { regexp: pattern } },
-                            { username: { regexp: pattern } },
-                            { twitchID: { regexp: pattern } }
+                            { name: { regexp: pattern } },
+                            { description: { regexp: pattern } }
                         ]
                     }
                 }
@@ -13975,7 +14228,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.guidePagination = AjaxPagination.new($scope.perpage, $scope.total,
+            $scope.guidePagination = AjaxPagination.new(paginationParams,
                 function (page, perpage) {
                     var d = $q.defer();
                     updateGuides(page, perpage, $scope.search, function (err, count) {
@@ -13989,7 +14242,6 @@ angular.module('app.controllers', ['ngCookies'])
             // edit guide
             $scope.editGuide = function (guide) {
 //                console.log(guide);
-
 
                 if (guide.guideType === 'hero') {
                     return $state.go('app.admin.hots.guides.edit.hero', { guideID: guide.id });
@@ -14008,17 +14260,29 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminHOTSGuideService.deleteGuide(guide._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.guides.indexOf(guide);
-                                        if (index !== -1) {
-                                            $scope.guides.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: guide.name + ' deleted successfully.'
-                                        };
+
+                                Guide.deleteById({
+                                    id: guide.id
+                                })
+                                .$promise
+                                .then(function (guideDeleted) {
+                                    console.log('guideDeleted:', guideDeleted);
+                                    var index = $scope.guides.indexOf(guide);
+                                    if (index !== -1) {
+                                        $scope.guides.splice(index, 1);
                                     }
+
+                                    AlertService.setSuccess({
+                                        show: true,
+                                        msg: guide.name + ' deleted successfully',
+                                    });
+                                })
+                                .catch(function (err) {
+                                    AlertService.setError({
+                                        show: true,
+                                        msg: 'Unable to delete ' + guide.name,
+                                        lbErr: err
+                                    });
                                 });
                             }
                         },
@@ -14035,8 +14299,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService) {
+    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService', 'Vote',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService, Vote) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
 
@@ -14295,6 +14559,24 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function (seriesCB) {
+                          var freeVote = {
+                              direction: 1,
+                              createdDate: new Date().toISOString(),
+                              authorId: User.getCurrentId()
+                          };
+
+                          Guide.votes.create({
+                              id: guideData.id
+                          }, freeVote)
+                          .$promise
+                          .then(function (voteCreated) {
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
                         async.each(cleanGuide.maps, function(map, mapCB) {
 //                          console.log('map.id:', map.id);
 //                          console.log('guideData:', guideData);
@@ -14450,24 +14732,24 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
 
-            // save guide
-            $scope.saveGuide = function () {
-                if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
-                    return false;
-                }
-
-                AdminHOTSGuideService.addGuide($scope.guide).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        $scope.app.settings.guide = null;
-                        AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been added successfully.' });
-                        $state.go('app.admin.hots.guides.list');
-                    }
-                });
-            };
+//            // save guide
+//            $scope.saveGuide = function () {
+//                if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
+//                    return false;
+//                }
+//
+//                AdminHOTSGuideService.addGuide($scope.guide).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    } else {
+//                        $scope.app.settings.guide = null;
+//                        AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been added successfully.' });
+//                        $state.go('app.admin.hots.guides.list');
+//                    }
+//                });
+//            };
         }
     ])
     .controller('AdminHOTSGuideEditStep1Ctrl', ['$scope', 'guide',
@@ -14980,8 +15262,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService',
-        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService) {
+    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService', 'StateParamHelper', 'filterParams',
+        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService, StateParamHelper, filterParams) {
 
             // data
             $scope.heroes = dataHeroes;
@@ -14990,13 +15272,17 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.guidesCommunity = dataGuidesCommunity;
             $scope.guidesFeatured = dataGuidesFeatured;
 
+//            console.log('filterParams:', filterParams);
+
             $scope.filters = {
-                roles: [],
-                universes: [],
-                search: '',
-                heroes: [],
-                map: undefined
+                roles: angular.copy(filterParams.roles),
+                universes: angular.copy(filterParams.universes),
+                search: angular.copy(filterParams.search),
+                heroes: angular.copy(filterParams.heroes),
+                map: angular.copy(filterParams.map)
             };
+
+//            console.log('$scope.filters.map:', $scope.filters.map);
 
             // filtering
             function hasFilterRole (role) {
@@ -15035,114 +15321,218 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             };
 
+            $scope.searchGuides = function(string) {
+                doQuery();
+            };
+
             var initializing = true;
-            $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            $scope.$watch(function(){
+                var watchObj = {
+                    roles: $scope.filters.roles,
+                    universes: $scope.filters.universes,
+                    heroes: $scope.filters.heroes,
+                    map: $scope.filters.map
+                };
+                return watchObj;
+            }, function (value) {
+                doQuery();
+            }, true);
+
+            function doQuery() {
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
                     });
                 } else {
+                    $scope.initializing = true;
+
+                    StateParamHelper.updateStateParams({
+                        r: $scope.filters.roles,
+                        u: $scope.filters.universes,
+                        h: !_.isEmpty($scope.filters.heroes) ? $scope.filters.heroes[0].name : [],
+                        m: $scope.filters.map ? $scope.filters.map.name : '',
+                        s: $scope.filters.search
+                    });
+
 //                    initializing = true;
                     // article filters
-                    var articleFilters = [];
-                    for (var i = 0; i < $scope.heroes.length; i++) {
-                        if (!isFiltered($scope.heroes[i])) {
-                            articleFilters.push($scope.heroes[i].name);
-                        }
-                    }
+//                    var articleFilters = [];
+//                    for (var i = 0; i < $scope.heroes.length; i++) {
+//                        if (!isFiltered($scope.heroes[i])) {
+//                            articleFilters.push($scope.heroes[i].name);
+//                        }
+//                    }
 
                      if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                         async.parallel([
-                            function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesFeatured = guides;
+                            function (paraCB) {
+                                HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
+
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.articles = articles;
+                                    return paraCB();
                                 });
                             },
-                            function () {
-                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesCommunity = guides;
+                            function (paraCB) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, 1, function(err, guides) {
+
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
+                                });
+                            },
+                            function (paraCB) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, 1, function(err, guides) {
+
+                                    $scope.initializing = false;
+                                    initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesCommunity = guides;
+                                    return paraCB();
                                 });
                             }
                         ]);
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
                         async.parallel([
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
+
+                                    initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
                                     $scope.articles = articles;
-                                    initializing = false;
+                                    return paraCB();
                                 });
                             },
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, 1, function (err, guides) {
-                                    $scope.guidesFeatured = guides;
+
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
                                 });
                             },
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, 1, function (err, guides) {
-                                    $scope.guidesCommunity = guides;
+
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesCommunity = guides;
+                                    return paraCB();
                                 });
 
                             }
                         ])
                     } else if ($scope.filters.search != '') {
-//                        console.log("search");
                         async.parallel([
-                            function () {
-                                HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesFeatured = guides;
+                            function (paraCB) {
+                                HOTSGuideQueryService.getArticles($scope.filters, true, 6, function(err, articles) {
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.articles = articles;
+                                    return paraCB();
                                 });
                             },
-                            function () {
-                                HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesCommunity = guides;
+                            function (paraCB) {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
+                                });
+                            },
+                            function (paraCB) {
+                                HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
+                                    initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesCommunity = guides;
+                                    return paraCB();
                                 });
                             }
                         ]);
                     } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
                         async.parallel([
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getMapGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesFeatured = guides;
+
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
                                 });
                             },
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getMapGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesCommunity = guides;
+
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesCommunity = guides;
+                                    return paraCB();
                                 });
                             }
                         ]);
                     } else {
                         async.parallel([
-                            function () {
+                            function (paraCB) {
                                HOTSGuideQueryService.getArticles($scope.filters, true, 6, function (err, articles) {
-                                   $scope.articles = articles;
+
                                    initializing = false;
+                                   $scope.initializing = false;
+
+                                   if (err) return paraCB(err);
+                                   $scope.articles = articles;
+                                   return paraCB();
                                });
                             },
-                            function () {
+                            function (paraCB) {
                                 HOTSGuideQueryService.getGuides($scope.filters, true, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesFeatured = guides;
+
                                     initializing = false;
+                                    $scope.initializing = false;
+
+                                    if (err) return paraCB(err);
+                                    $scope.guidesFeatured = guides;
+                                    return paraCB();
                                 });
                             },
-                            function () {
+                            function (paraCB) {
                                HOTSGuideQueryService.getGuides($scope.filters, false, $scope.filters.search, 10, 1, function(err, guides) {
-                                    $scope.guidesCommunity = guides;
-                                    initializing = false;
+
+                                   initializing = false;
+                                   $scope.initializing = false;
+
+                                   if (err) return paraCB(err);
+                                   $scope.guidesCommunity = guides;
+                                   return paraCB();
                                 });
                             }
                         ]);
                     }
                 }
-            }, true);
+            }
 
             // guides
             $scope.getGuideCurrentHero = function (guide) {
@@ -15210,8 +15600,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS',
-        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS) {
+    .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService', 'HOTS', 'StateParamHelper', 'paginationParams', 'Util',
+        function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService, HOTS, StateParamHelper, paginationParams, Util) {
 
             $scope.tempostormGuides = dataTempostormGuides;
 //            console.log('dataTempostormGuides:', dataTempostormGuides);
@@ -15230,16 +15620,29 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hotsTiers = HOTS.tiers;
 
             $scope.filters = {
-                roles: [],
-                universes: [],
-                search: '',
-                heroes: [],
-                map: undefined
+                roles: angular.copy(paginationParams.guideFilters.roles) || [],
+                universes: angular.copy(paginationParams.guideFilters.universes) || [],
+                search: angular.copy(paginationParams.guideFilters.search) || '',
+                heroes: angular.copy(paginationParams.guideFilters.heroes) || [],
+                map: angular.copy(paginationParams.guideFilters.map) || undefined
             };
+
             var initializing = true;
 
             function doQuery (fnCallback) {
               initializing = true;
+              $scope.initializing = true;
+
+              StateParamHelper.updateStateParams({
+                  tsp: 1,
+                  comp: 1,
+                  r: $scope.filters.roles,
+                  u: $scope.filters.universes,
+                  h: !_.isEmpty($scope.filters.heroes) ? $scope.filters.heroes[0].name : [],
+                  m: $scope.filters.map ? $scope.filters.map.name : '',
+                  s: $scope.filters.search
+              });
+
               // generate filters
               var guideFilters = [];
               for (var i = 0; i < $scope.filters.heroes.length; i++) {
@@ -15252,14 +15655,14 @@ angular.module('app.controllers', ['ngCookies'])
                if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetHeroMapGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides) {
+                    doGetTopGuide($scope.filters, function(err, guide) {
                       if (err) return seriesCallback(err);
-                      $scope.topGuides = guides;
+                      $scope.topGuides = guide;
                       initializing = false;
                       return seriesCallback();
                     });
                   }, function (seriesCallback) {
-                    doGetHeroMapGuides(1, 4, $scope.search, $scope.filters, true, function(err, guides, count) {
+                    doGetHeroMapGuides(1, 4, $scope.filters, true, function(err, guides, count) {
 
                       if (err) return seriesCallback(err);
                       $scope.tempostormGuides = guides;
@@ -15269,7 +15672,7 @@ angular.module('app.controllers', ['ngCookies'])
                       return seriesCallback();
                     });
                   }, function (seriesCallback) {
-                    doGetHeroMapGuides(1, 10, $scope.search, $scope.filters, false, function(err, guides, count) {
+                    doGetHeroMapGuides(1, 10, $scope.filters, false, function(err, guides, count) {
 
                       if (err) return seriesCallback(err);
                       $scope.communityGuides = guides;
@@ -15283,10 +15686,9 @@ angular.module('app.controllers', ['ngCookies'])
               } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetHeroGuides(1, 1, $scope.search, $scope.filters, null, function (err, guides) {
-
+                    doGetTopGuide($scope.filters, function(err, guide) {
                       if (err) return seriesCallback(err);
-                      $scope.topGuides = guides;
+                      $scope.topGuides = guide;
                       initializing = false;
                       return seriesCallback();
                     });
@@ -15343,10 +15745,9 @@ angular.module('app.controllers', ['ngCookies'])
               } else {
                 async.parallel([
                   function (seriesCallback) {
-                    doGetGuides(1, 1, $scope.search, $scope.filters, null, function(err, guides, count) {
-
+                    doGetTopGuide($scope.filters, function(err, guide) {
                       if (err) return seriesCallback(err);
-                      $scope.topGuides = guides;
+                      $scope.topGuides = guide;
                       initializing = false;
                       return seriesCallback();
                     });
@@ -15376,7 +15777,91 @@ angular.module('app.controllers', ['ngCookies'])
               }
             }
 
-            function doGetHeroMapGuides (page, perpage, search, filters, isFeatured, callback) {
+            function doGetTopGuide (filters, callback) {
+                HOTSGuideQueryService.topGuide($scope.filters, function (err, guide) {
+                    if (_.isNull(guide.id) || _.isUndefined(guide.id))
+                        return callback(err, null);
+
+                    Guide.findById({
+                        id: guide.id,
+                        filter: {
+                            fields: [
+                                "name",
+                                "authorId",
+                                "slug",
+                                "voteScore",
+                                "guideType",
+                                "premium",
+                                "id",
+                                "talentTiers",
+                                "createdDate"
+                            ],
+                            include: [
+                                {
+                                  relation: "author",
+                                  scope: {
+                                    fields: ['username']
+                                  }
+                                },
+                                {
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          fields: ['name', 'className'],
+                                            include: [
+                                                {
+                                                    relation: 'talents'
+                                                }
+                                            ]
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: {
+                                      relation: 'talent',
+                                      scope: {
+                                        fields: {
+                                          name: true,
+                                          className: true
+                                        }
+                                      }
+                                    },
+                                  }
+                                },
+                                {
+                                    relation: 'votes',
+                                    scope: {
+                                        fields: {
+                                            id: true,
+                                            direction: true
+                                        }
+                                    }
+                                }
+                              ]
+                        }
+                    })
+                    .$promise
+                    .then(function (data) {
+
+                        data.voteScore = Util.tally(data.votes, 'direction');
+
+                        var dataArr = [];
+                            dataArr.push(data)
+
+                        initializing = false;
+                        return callback(err, dataArr);
+                    })
+                });
+            }
+
+            function doGetHeroMapGuides (page, perpage, filters, isFeatured, callback) {
               HOTSGuideQueryService.getHeroMapGuides(filters, isFeatured, perpage, page, function (err, guides, count) {
 
                   initializing = false;
@@ -15406,13 +15891,40 @@ angular.module('app.controllers', ['ngCookies'])
                 initializing = false;
                 return callback(err, guides, count);
               });
-            }
+            };
 
-            $scope.$watch(function() { return $scope.filters; }, function (value) {
+            $scope.searchGuides = function(string) {
+                if (angular.isString(string)) {
+                    $scope.filters.search = string;
+                }
+                if (initializing) {
+                  $timeout(function () {
+                      initializing = false
+                  });
+                } else {
+                  doQuery(function() {
+                      $scope.initializing = false;
+                  });
+                }
+            };
+
+            $scope.$watch(function() {
+                var watchObj = {
+                    roles: $scope.filters.roles,
+                    universes: $scope.filters.universes,
+                    heroes: $scope.filters.heroes,
+                    map: $scope.filters.map
+                };
+                return watchObj;
+            }, function (value) {
               if (initializing) {
-                $timeout(function () { initializing = false });
+                $timeout(function () {
+                    initializing = false;
+                });
               } else {
-                doQuery();
+                doQuery(function() {
+                    $scope.initializing = false;
+                });
               }
             }, true);
 
@@ -15530,8 +16042,15 @@ angular.module('app.controllers', ['ngCookies'])
 //            });
 //        }
 //            console.log('tempostormGuideCount:', tempostormGuideCount);
-            $scope.tempostormPagination = AjaxPagination.new(4, tempostormGuideCount.count,
+//            console.log('paginationParams.tsParams:', paginationParams.tsParams);
+            $scope.tempostormPagination = AjaxPagination.new(paginationParams.tsParams,
                 function (page, perpage) {
+
+                    StateParamHelper.updateStateParams({
+                        tsp: $scope.tempostormPagination.page,
+                        s: $scope.filters.search
+                    });
+
                     var d = $q.defer();
 
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
@@ -15569,8 +16088,14 @@ angular.module('app.controllers', ['ngCookies'])
             );
 
 //            console.log('communityGuideCount:', communityGuideCount);
-            $scope.communityPagination = AjaxPagination.new(10, communityGuideCount.count,
+//            console.log('paginationParams.comParams:', paginationParams.comParams);
+            $scope.communityPagination = AjaxPagination.new(paginationParams.comParams,
                 function (page, perpage) {
+
+                    StateParamHelper.updateStateParams({
+                        comp: $scope.communityPagination.page,
+                        s: $scope.filters.search
+                    });
                     var d = $q.defer();
 
                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
@@ -15622,6 +16147,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles', 'EventService',
         function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles, EventService) {
+
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 if ($scope.guide.premium.isPremium) {
                     User.isInRoles({
@@ -15793,11 +16319,10 @@ angular.module('app.controllers', ['ngCookies'])
                       val.talent.name = "Missing Talent"
                       val.talent.description = "Seems like this talent has been removed."
                   };
-                  console.log(val);
                   return (val.guideHeroId === hero.id);
               });
 
-                console.log(heroTals);
+//                console.log(heroTals);
 
               out = heroTals;
 
@@ -15867,10 +16392,33 @@ angular.module('app.controllers', ['ngCookies'])
 
             // get premium
             $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
+                if (User.isAuthenticated()) {
+                    // if currentUser is admin/contentProvider/subscribed, do nothing
+                    User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$admin', '$contentProvider', '$premium']
+                    })
+                    .$promise
+                    .then(function (userRoles) {
+                        
+                        if (userRoles.isInRoles.$premium
+                            || userRoles.isInRoles.$admin 
+                            || userRoles.isInRoles.$contentProvider) {
+                            return;
+                        } else {
+                            
+                            User.getCurrent()
+                            .$promise
+                            .then(function (currentUser) {
+                                $state.transitionTo('app.profile.edit.premium', { 
+                                    username: currentUser.username, 
+                                    plan: plan 
+                                });
+                            });
+
+                        }
+                    });
+                    
                 } else {
                     LoginModalService.showModal('login', function () {
                         $scope.getPremium(plan);
@@ -16144,6 +16692,24 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                       },
                       function (seriesCB) {
+                          var freeVote = {
+                              direction: 1,
+                              createdDate: new Date().toISOString(),
+                              authorId: User.getCurrentId()
+                          };
+
+                          Guide.votes.create({
+                              id: guideData.id
+                          }, freeVote)
+                          .$promise
+                          .then(function (voteCreated) {
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
                         async.each(cleanGuide.maps, function(map, mapCB) {
 //                          console.log('map.id:', map.id);
 //                          console.log('guideData:', guideData);
@@ -16206,8 +16772,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
           }
     ])
-    .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util', 'userRoles', 'EventService', 'AlertService',
-        function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util, userRoles, EventService, AlertService) {
+    .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util', 'userRoles', 'EventService', 'AlertService', 'Vote',
+        function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util, userRoles, EventService, AlertService, Vote) {
 
 			$scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -16369,8 +16935,27 @@ angular.module('app.controllers', ['ngCookies'])
                         .$promise
                         .then(function (mapLinkData) {
 //                          console.log('mapLinkData:', mapLinkData);
-                          $scope.app.settings.guide = null;
-                          $state.go('app.hots.guides.guide', { slug: guideData.slug });
+                          Vote.create({
+                              direction: 1,
+                              createdDate: new Date().toISOString(),
+                              authorId: User.getCurrentId(),
+                              guideId: guideData.id
+                          })
+                          .$promise
+                          .then(function (voteCreated) {
+                              $scope.app.settings.guide = null;
+                              $state.go('app.hots.guides.guide', { slug: guideData.slug });
+                          })
+                          .catch(function (err) {
+                              $window.scrollTo(0, 0);
+                              AlertService.setError({
+                                show: true,
+                                msg: 'Unable to Save Guide',
+                                lbErr: err
+                              });
+                              console.log("Creating the guide - map link failed:", err);
+                          });
+
                         })
                         .catch(function (err) {
                             $window.scrollTo(0, 0);
@@ -17717,33 +18302,33 @@ angular.module('app.controllers', ['ngCookies'])
 
                     OverwatchHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
                     .then(function (abilityValue) {
-						$scope.fetching = false;
+                        $scope.fetching = false;
                         AlertService.setSuccess({
-							persist: true,
-							show: false,
-							msg: $scope.hero.heroName + ' has been added successfully.'
-						});
-						$window.scrollTo(0, 0);
+                          persist: true,
+                          show: false,
+                          msg: $scope.hero.heroName + ' has been added successfully.'
+                        });
+                        $window.scrollTo(0, 0);
                         $state.go('app.admin.overwatch.heroes.list');
 
                     })
                     .catch(function (err) {
-						$scope.fetching = false;
+                        $scope.fetching = false;
                         AlertService.setError({
-							show: true,
-							msg: 'Unable to create Hero',
-							lbErr: err
-						});
+                          show: true,
+                          msg: 'Unable to create Hero',
+                          lbErr: err
+                        });
                         $window.scrollTo(0,0);
                     });
                 })
                 .catch(function (err) {
-					$scope.fetching = false;
-					AlertService.setError({
-						show: true,
-						msg: 'Unable to create Hero',
-						lbErr: err
-					});
+                      $scope.fetching = false;
+                      AlertService.setError({
+                        show: true,
+                        msg: 'Unable to create Hero',
+                        lbErr: err
+                      });
                     $window.scrollTo(0,0);
                 });
             };
@@ -17820,19 +18405,19 @@ angular.module('app.controllers', ['ngCookies'])
 
                                 OverwatchHero.overwatchAbilities.destroyById({ id: ability.heroId, fk: ability.id }).$promise
                                 .then(function() {
-									AlertService.setSuccess({
-										show: false,
-										persist: true,
-										msg: ability.name + ' deleted successfully.'
-									});
-									$window.scrollTo(0, 0);
-								})
+                                  AlertService.setSuccess({
+                                    show: false,
+                                    persist: true,
+                                    msg: ability.name + ' deleted successfully.'
+                                  });
+                                  $window.scrollTo(0, 0);
+                                })
                                 .catch(function (err) {
                                     AlertService.setError({
-										show: true,
-										msg: 'An error occured while deleting ' + ability.name,
-										lbErr: err
-									});
+                                        show: true,
+                                        msg: 'An error occured while deleting ' + ability.name,
+                                        lbErr: err
+                                      });
                                     $window.scrollTo(0,0);
                                 });
                             }
@@ -17880,33 +18465,33 @@ angular.module('app.controllers', ['ngCookies'])
                             return eachCallback(httpResponse);
                         });
                     }, function (err) {
-						$scope.fetching = false;
+						            $scope.fetching = false;
                         if (err) {
                             $window.scrollTo(0,0);
                             return AlertService.setError({
-								show: true,
-								msg: 'Could not update ' + $scope.hero.heroName,
-								lbErr: err
-							});
+                                show: true,
+                                msg: 'Could not update ' + $scope.hero.heroName,
+                                lbErr: err
+                              });
                         }
-						$window.scrollTo(0, 0);
+                        $window.scrollTo(0, 0);
                         AlertService.setSuccess({
-							persist: true,
-							show: false,
-							msg: $scope.hero.heroName + ' has been updated successfully.'
-						});
+                          persist: true,
+                          show: false,
+                          msg: $scope.hero.heroName + ' has been updated successfully.'
+                        });
                         return $state.go('app.admin.overwatch.heroes.list');
                     });
 
                 })
                 .catch(function (err) {
-					$scope.fetching = false;
-					$window.scrollTo(0,0);
-					return AlertService.setError({
-						show: true,
-						msg: 'Could not update ' + $scope.hero.heroName,
-						lbErr: err
-					});
+                  $scope.fetching = false;
+                  $window.scrollTo(0,0);
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Could not update ' + $scope.hero.heroName,
+                    lbErr: err
+                  });
                 });
             }
         }

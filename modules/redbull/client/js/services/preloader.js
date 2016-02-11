@@ -1,5 +1,5 @@
 angular.module('redbull.services')
-.factory('Preloader', ['$q', '$rootScope', 
+.factory('Preloader', ['$q', '$rootScope',
     function( $q, $rootScope ) {
         // I manage the preloading of file objects. Accepts an array of file URLs.
         function Preloader( fileLocations ) {
@@ -97,7 +97,7 @@ angular.module('redbull.services')
                 });
                 // If all of the files have loaded, we can resolve the deferred
                 // value that we returned to the calling context.
-                if ( this.loadCount >= (this.fileCount - 3) ) {
+                if ( this.loadCount >= (this.fileCount) ) {
                     this.state = this.states.RESOLVED;
                     this.deferred.resolve( this.fileLocations );
                 }
@@ -106,14 +106,14 @@ angular.module('redbull.services')
             isImage: function ( fileLocation ) {
                 var ext = fileLocation.split('.').pop(),
                     allowedExts = ['jpeg', 'jpg', 'png', 'gif'];
-                
+
                 return ( allowedExts.indexOf(ext) !== -1 );
             },
             // I check if the file being loaded is an audio clip
             isAudio: function ( fileLocation ) {
                 var ext = fileLocation.split('.').pop(),
                     allowedExts = ['ogg', 'mp3'];
-                
+
                 return ( allowedExts.indexOf(ext) !== -1 );
             },
             // I load the given file location and then wire the load / error
@@ -165,7 +165,7 @@ angular.module('redbull.services')
                 } else {
                     var file = $( new Audio() )
                         .prop( "src", fileLocation );
-                    
+
                     file[0].addEventListener('canplaythrough', fileLoaded, false);
                     file[0].addEventListener('error', fileError, false);
                 }

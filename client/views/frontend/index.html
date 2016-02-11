@@ -33,6 +33,7 @@
                                         <ul class="col-xs-12 col-md-4">
                                             <a class="game-head-link" ui-sref="app.hs.home" ng-class="{active:$state.includes('app.hs.home')}" class="dropdown-header">Hearthstone</a>
                                             <li class="sub">
+                                                <a ui-sref="app.hs.redbull.home" class="hidden-xs" ng-class="{active:$state.includes('app.hs.redbull.home')}">Sealed Pack Generator</a>
                                                 <a ui-sref="app.hs.snapshot.redirect" ng-class="{active:$state.includes('app.hs.snapshot')}">Meta Snapshot</a>
                                                 <a ui-sref="app.hs.decks.list" ng-class="{active:$state.includes('app.hs.decks')}">Decks</a>
                                                 <a ui-sref="app.hs.deckBuilder.class" class="hidden-xs" ng-class="{active:$state.includes('app.hs.deckBuilder')}">Deck Builder</a>
@@ -76,13 +77,17 @@
                                     </a>
                                     <ul class="dropdown-menu no-border-radius no-padding">
                                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{user.username}}">Profile</a></li>
-                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}"
+                                          ng-show="currentRoles.isAdmin">
+                                          <a ui-sref="app.admin.dashboard">Admin</a>
+                                        </li>
                                       <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
                                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                                     </ul>
                                 </li>
                             </span>
                         </li>
+
                     </ul>
 
                 </div>
@@ -99,8 +104,12 @@
                     </a>
                     <ul class="dropdown-menu no-border-radius no-padding dropdown-user-login">
                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{currentUser.username}}">Profile</a></li>
-                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
+                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentRoles.isAdmin">
+                        <a ui-sref="app.admin.dashboard">Admin</a>
+                      </li>
+                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin && !currentRoles.isAdmin">
+                        <a ui-sref="app.admin.dashboard">Redbull Admin</a>
+                      </li>
                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                     </ul>
                 </li>
@@ -120,5 +129,5 @@
 
 <!-- footer-ad -->
 
-<footer-redbull ng-if="!$state.includes('app.admin') && !$state.includes('app.hs.redbull') && !$state.includes('app.hs.draft')"></footer-redbull>
+<!--<footer-redbull ng-if="!$state.includes('app.admin') && !$state.includes('app.hs.redbull') && !$state.includes('app.hs.draft')"></footer-redbull>-->
 <!-- / footer-ad -->

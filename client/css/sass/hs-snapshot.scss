@@ -92,6 +92,17 @@
     .bg-override { background-size: cover!important; }
 }
 
+.snapshot-btn {
+    position: relative;
+    
+    .progress {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+    }
+}
 
 .heading { position:relative; }
 
@@ -294,7 +305,7 @@
 // 3... Tech
 //*************************************
 
-
+.tier-body .tech-card .tech-card-body:hover { cursor: pointer; }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech {}
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-heading { background: rgba(128, 128, 128, .5); padding: 4px 0px 4px 10px; color: #FEFEFE; border: 1px solid black; border-top: 0px; height: 30px }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card { position: relative; }

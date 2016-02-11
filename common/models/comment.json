@@ -9,12 +9,18 @@
   "properties": {
     "text": {
       "type": "string",
-      "validators": ["spam"]
+      "validators": [
+        "spam"
+      ]
     },
-    "votes": [
-      "object"
-    ],
-    "oldReplies": {},
+    "votes": {
+      "type": [
+        "object"
+      ]
+    },
+    "oldReplies": {
+      "type": {}
+    },
     "createdDate": {
       "type": "date",
       "required": true

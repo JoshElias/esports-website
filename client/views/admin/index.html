@@ -1,7 +1,7 @@
 <!-- side nav -->
 <div ui-admin-nav class="admin-side-nav">
     <ul class="nav">
-        <div class="redbull-lockout" ng-if="!currentUser.isRedbullAdmin">
+        <div class="redbull-lockout" ng-if="!currentUser.isRedbullAdmin || currentRoles.isAdmin">
         <li ng-class="{active:$state.includes('app.admin.dashboard')}">
             <a ui-sref="app.admin.dashboard">
                 <i class="fa fa-tachometer m-r-sm"></i>

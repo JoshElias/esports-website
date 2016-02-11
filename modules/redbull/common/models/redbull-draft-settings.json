@@ -32,32 +32,51 @@
   },
   "validations": [],
   "relations": {},
-  "acls": [{
-    "principalType": "ROLE",
-    "principalId": "$everyone",
-    "permission": "DENY"
-  },
+  "acls": [
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "DENY"
+    },
+
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY",
+      "property": "find"
     },
     {
+      "accessType": "EXECUTE",
       "principalType": "ROLE",
       "principalId": "$admin",
       "permission": "ALLOW",
-      "accessType": "WRITE"
+      "property": "find"
     },
     {
+      "accessType": "EXECUTE",
       "principalType": "ROLE",
       "principalId": "$redbullAdmin",
       "permission": "ALLOW",
-      "accessType": "WRITE"
+      "property": "find"
+    },
+
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
-      "principalId": "$owner",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$redbullAdmin",
       "permission": "ALLOW",
       "accessType": "WRITE"
     }],
