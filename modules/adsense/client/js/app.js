@@ -1,16 +1,12 @@
 angular.module('tsAdSense', [])
-.config(function () {
-    var moduleTpl = (tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/';
-    
-})
+.value('moduleTpl', (tpl !== './') ? tpl + 'views/adsense/client/views/' : 'dist/views/adsense/client/views/')
 .controller('tsAdCtrl', ['$scope', '$state', '$timeout', '$window', function ($scope, $state, $timeout, $window) {
     var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
     var isAlreadyLoaded = !!document.getElementById("adCode");
-
+    
     $scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
     $scope.adSlot = $scope.adSlot || "1587568680";
     $scope.region = $state.current.name;
-
 
     if (!isAlreadyLoaded) {
         var s = document.createElement('script');
@@ -31,7 +27,7 @@ angular.module('tsAdSense', [])
         $window.adsbygoogle.push({});
     });
 }])
-.directive('tsAdDouble', function () {
+.directive('tsAdDouble', ['moduleTpl', function (moduleTpl) {
     return {
         restrict: 'E',
         replace: true,
@@ -42,8 +38,8 @@ angular.module('tsAdSense', [])
             region: '@',
             structure: '@'
         },
-        templateUrl: 'views/adsense/client/views/directives/ad.double.html',
+        templateUrl: moduleTpl + 'directives/ad.double.html',
         controller: 'tsAdCtrl'
     }
-})
+}])
 ;
