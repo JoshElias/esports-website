@@ -9,6 +9,7 @@ var app = angular.module('app', [
     'angularMoment',
     'angularPayments',
     'youtube-embed',
+    'tsAdSense',
     'dndLists',
     'ngCookies',
     'ngStorage',
