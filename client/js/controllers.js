@@ -5755,7 +5755,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hotsMembers = hotsTeam;
             $scope.wowMembers = wowTeam;
             $scope.csMembers = csTeam;
-            console.log('$scope.csMembers:', $scope.csMembers);
             $scope.fgcMembers = fgcTeam;
             $scope.fifaMembers = fifaTeam;
 

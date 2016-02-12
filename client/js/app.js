@@ -6640,7 +6640,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (teamMembers) {
-                                    console.log('teamMembers:', teamMembers);
                                     var teamMemberObj = {};
                                     for (var key in teamMembers) {
                                         var teamMember = teamMembers[key];
@@ -6648,11 +6647,8 @@ var app = angular.module('app', [
                                         if(typeof teamMemberObj[teamMember.game] === "undefined") {
                                             teamMemberObj[teamMember.game] = [];
                                         }
-
                                         teamMemberObj[teamMember.game].push(teamMember);
                                     }
-
-                                    console.log('teamMemberObj:', teamMemberObj);
 
                                     return teamMemberObj;
 
