@@ -1,5 +1,10 @@
 {
   "style.min.css": "style.min.72f83840.css",
   "vendor.min.css": "vendor.min.ae26999c.css",
-  "modules.min.css": "modules.min.7f6323cf.css"
+  "modules.min.css": "modules.min.39a0b392.css",
+  "angular.min.js": "angular.min.5bcabd93.js",
+  "app.min.js": "app.min.04ff8931.js",
+  "vendor.min.js": "vendor.min.4682e0de.js",
+  "modules.min.js": "modules.min.0b952c1a.js",
+  "lb-services.min.js": "lb-services.min.62079960.js"
 }
