@@ -1,6 +1,3 @@
-@import 'ts-colors.scss';
-@import 'ts-mixins.scss';
-
 // Description: 
 
 //*************************************
@@ -52,15 +49,7 @@
     padding-bottom: 35px;
 }
 
-.plg-long {
- 
-    padding-top: 15px;
-    padding-bottom: 15px;
-    
-}
-
 .fullwidth-plg-div {
-    margin: 15px 0px;
     width: 100%;
 }
 
@@ -75,26 +64,79 @@
 }
 
 //*************************************
+// 3.1. DEFAULT plg
+//*************************************
+
+.default {
+    
+    .plg-long {
+ 
+        padding-top: 15px;
+        padding-bottom: 15px;
+        @include hs-snapshot-background;
+        
+        &.plg-dbl {
+            @media (max-width: 768px) {
+                padding-left: 15px;
+                padding-right: 15px;
+
+            }
+        }
+
+    //    .ad-wrap {
+    //        .adsbygoogle {
+    //            max-height: 122px;
+    //            text-align: center;
+    //        }
+    //    }
+    }
+    
+}
+
+//*************************************
+// 3.2. HSSNAPSHOT plg
+//*************************************
+
+.hs-snapshot {
+    
+    .plg-long {
+ 
+        padding-top: 15px;
+        padding-bottom: 15px;
+
+        &.plg-dbl {
+            @media (max-width: 768px) {
+                padding-left: 15px;
+                padding-right: 15px;
+
+            }
+        }
+
+    }
+    
+}
+
+//*************************************
 // ---- plg standin divs ----
 //*************************************
 
 .plg-md-rt {
     width: 300px;
     height: 250px;
-    background-color: $hots-purple;
+    background-color: rgba(137, 104, 173, 1);
     margin: auto;
 }
 
 .plg-lg-rt {
     width: 300px;
     height: 280px;
-    background-color: $hots-purple;
+    background-color: rgba(137, 104, 173, 1);
     margin: auto;
 }
 
 .plg-leader {
     width: 728px;
     height: 90px;
-    background-color: $hots-purple;
+    background-color: rgba(137, 104, 173, 1);
     margin: auto;
 }

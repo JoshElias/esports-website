@@ -1,11 +1,12 @@
 angular.module('tsAdSense', [])
 .value('moduleTpl', (tpl !== './') ? tpl + 'views/adsense/client/views/' : 'dist/views/adsense/client/views/')
-.controller('tsAdCtrl', ['$scope', '$state', '$timeout', '$window', function ($scope, $state, $timeout, $window) {
+.controller('tsAdCtrl', ['$scope', '$state', '$window', function ($scope, $state, $window) {
     var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
     var isAlreadyLoaded = !!document.getElementById("adCode");
     
     $scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
-    $scope.adSlot = $scope.adSlot || "1587568680";
+    $scope.adSlot = $scope.adSlot || "7575226683";
+    $scope.theme = $state.theme || 'default';
     $scope.region = $state.current.name;
 
     if (!isAlreadyLoaded) {
@@ -18,16 +19,24 @@ angular.module('tsAdSense', [])
 
         isAlreadyLoaded = true;
     }
-
-    $timeout(function(){
-        if(!$window.adsbygoogle) {
-            $window.adsbygoogle = [];
-        }
-
-        $window.adsbygoogle.push({});
-    });
 }])
-.directive('tsAdDouble', ['moduleTpl', function (moduleTpl) {
+.directive('ad', ['moduleTpl', '$timeout', '$window', function (moduleTpl, $timeout, $window) {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: moduleTpl + 'directives/ad.html',
+        controller: function () {
+            $timeout(function() {
+                if(!$window.adsbygoogle) {
+                    $window.adsbygoogle = [];
+                }
+
+                $window.adsbygoogle.push({});
+            }); 
+        }
+    }
+}])
+.directive('tsAd', ['moduleTpl', '$compile', '$timeout', '$window', function (moduleTpl, $compile, $timeout, $window) {
     return {
         restrict: 'E',
         replace: true,
@@ -36,9 +45,14 @@ angular.module('tsAdSense', [])
             adSlot : '@',
             inlineStyle : '@',
             region: '@',
-            structure: '@'
+            structure: '@',
+            theme: '@'
         },
-        templateUrl: moduleTpl + 'directives/ad.double.html',
+        templateUrl: function (scope, attrs) {
+            var tmp = attrs.structure || attrs.theme;
+            
+            return moduleTpl + 'directives/ad.' + tmp + '.html'
+        },
         controller: 'tsAdCtrl'
     }
 }])
