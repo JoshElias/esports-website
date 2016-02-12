@@ -3756,6 +3756,21 @@ var app = angular.module('app', [
                                     return tm;
                                 });
                             }],
+                            csTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'cs',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    return tm;
+                                });
+                            }],
                             fifaTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
                                     filter: {
