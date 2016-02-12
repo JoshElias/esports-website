@@ -230,7 +230,7 @@ $color: $ts-blue;
              @media screen and (max-width: 1199px) {
                     
                     background-position: calc(50% - 3px);
-                    -webkit-background-position: calc(50% - 3px);
+                    background-position: -webkit-calc(50% - 3px);
                 }
                 
             
@@ -248,7 +248,7 @@ $color: $ts-blue;
                 @media screen and (max-width: 1199px) {
                     
                     background-position: calc(50% - 18px);
-                    -webkit-background-position: calc(50% - 18px);
+                    background-position: -webkit-calc(50% - 18px);
                 }
                 
                 
@@ -302,6 +302,8 @@ $color: $ts-blue;
                     position: absolute;
                     top: calc(50% - 45px);
                     right: calc(50% - 32px);
+                    top: -webkit-calc(50% - 45px);
+                    right: -webkit-calc(50% - 32px);
                     z-index: 99;
                     opacity: 0.0;
 
@@ -315,8 +317,10 @@ $color: $ts-blue;
                     position: absolute;
                     top: 34%;
                     right: calc(50% - 69.5px);
-                    -webkit-right: calc(50% - 69.5px);
+                    right: -webkit-calc(50% - 69.5px);
                     transition: all 0.5s ease-in-out;
+                    -ms-transition: all 0.5s ease-in-out;
+                    -webkit-transition: all 0.5s ease-in-out;
                     width: 137px;
                     height: 187px;
                     cursor: pointer;
@@ -403,15 +407,18 @@ $color: $ts-blue;
                 .three-transform {
 
                     right: calc(64% - 69.5px);
-                    -webkit-right: calc(64% - 69.5px);
+                    right: -webkit-calc(64% - 69.5px);
+                    right: -ms-calc(64% - 69.5px);
                     top: 33%;
                     transform: rotate(-20deg);
                     -webkit-transform: rotate(-20deg);
+                    -ms-transform: rotate(-20deg);
                     
 
                     img {
                         -webkit-transform: scale(0.85) !important;
                         transform: scale(0.85) !important;
+                        -ms-transform: scale(0.85) !important;
                     }
                 }
             }
@@ -430,6 +437,8 @@ $color: $ts-blue;
                             transition: all 4s;
                             -webkit-transform: rotate(360deg);
                             -webkit-transition: all 4s;
+                            -ms-transform: rotate(360deg);
+                            -ms-transition: all 4s;
                         }
                         
                         &.pack-two {
@@ -440,6 +449,8 @@ $color: $ts-blue;
                             transition: all 2s;
                             -webkit-transform: rotate(-160deg);
                             -webkit-transition: all 2s;
+                            -ms-transform: rotate(-160deg);
+                            -ms-transition: all 2s;
                         }
                         
                         &.pack-three {
@@ -450,6 +461,8 @@ $color: $ts-blue;
                             transition: all 3s;
                             -webkit-transform: rotate(-560deg);
                             -webkit-transition: all 3s;
+                            -ms-transform: rotate(-560deg);
+                            -ms-transition: all 3s;
                         
                         }
                         
