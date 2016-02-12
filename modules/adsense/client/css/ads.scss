@@ -106,8 +106,6 @@
         }
         
         &.plg-single {
-            margin: 0px 0px 20px 0px;
-            
             @media (max-width: 768px) {
                 padding-left: 15px;
                 padding-right: 15px;
@@ -119,6 +117,7 @@
         padding-top: 35px;
         padding-bottom: 35px;
     }
+    
 }
 
 //*************************************
