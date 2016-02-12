@@ -803,6 +803,7 @@ angular.module('app.directives', ['ui.load'])
                         });
                     });
                 } else if ($attrs.theme === 'multi' && votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
+                    bootbox.alert("You can't vote for your own content.");
                     return false;
                 } else {
                     
