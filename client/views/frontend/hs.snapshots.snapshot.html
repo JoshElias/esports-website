@@ -20,25 +20,13 @@
             
             <!-- first fullwidth plg -->
             
-            <div class="row fullwidth-plg-div clearfix hidden-sm hidden-xs">
-                <div class="col-xs-12 hs-plg plg-long">
-                    <div class="plg-leader"></div>
-                </div>
-            </div>
+            <ts-ad structure="single" theme="hs-snapshot"></ts-ad>
             
             <!-- first fullwidth plg ends -->
             
             <div class="row no-pad clearfix">
 
                 <div class="col-xs-12 col-lg-push-8 col-lg-4 rightSide clearfix m-b-md">
-                    
-                    <!-- sidebar plg -->
-                    
-                    <div class="hs-plg plg-sidebar plg-div m-b-md hidden-md ">
-                        <div class="plg-md-rt"><p></p></div>
-                    </div>
-                    
-                    <!-- sidebar plg ends-->
                     
                     <div class="sideTier" ng-repeat="tier in deckTiers | orderBy: 'tier'">
                         <button ng-click="show[tier.tier] = !show[tier.tier]" class="btn-block sideTier" role="button" data-toggle="collapse" href="#collapseSideTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseSideTier{{tier.tier}}">
@@ -63,6 +51,12 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- sidebar plg -->
+                    
+                    <ts-ad structure="sidebar" theme="hs-snapshot"></ts-ad>
+                    
+                    <!-- sidebar plg ends-->
                 </div>
 
                 <div class="col-xs-12 col-lg-pull-4 col-lg-8 leftSide m-b-md">

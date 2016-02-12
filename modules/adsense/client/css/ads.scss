@@ -18,6 +18,14 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+@mixin ts-div {
+    outline: 1px solid rgba(255,255,255,.2);
+    outline-offset: -2px;
+    border: 1px solid rgba(0,0,0,1);
+    background-color: rgba(19,18,19,.7); 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75);
+}
+
 //*************************************
 // 2... section specific styles
 //*************************************
@@ -44,11 +52,6 @@
 //*************************************
 
 
-.plg-sidebar {
-    padding-top: 35px;
-    padding-bottom: 35px;
-}
-
 .fullwidth-plg-div {
     width: 100%;
 }
@@ -68,12 +71,10 @@
 //*************************************
 
 .default {
-    
     .plg-long {
- 
         padding-top: 15px;
         padding-bottom: 15px;
-        @include hs-snapshot-background;
+        @include ts-div;
         
         &.plg-dbl {
             @media (max-width: 768px) {
@@ -82,15 +83,7 @@
 
             }
         }
-
-    //    .ad-wrap {
-    //        .adsbygoogle {
-    //            max-height: 122px;
-    //            text-align: center;
-    //        }
-    //    }
     }
-    
 }
 
 //*************************************
@@ -98,12 +91,12 @@
 //*************************************
 
 .hs-snapshot {
+    @include hs-snapshot-background;
     
     .plg-long {
- 
         padding-top: 15px;
         padding-bottom: 15px;
-
+        
         &.plg-dbl {
             @media (max-width: 768px) {
                 padding-left: 15px;
@@ -111,9 +104,21 @@
 
             }
         }
-
+        
+        &.plg-single {
+            margin: 0px 0px 20px 0px;
+            
+            @media (max-width: 768px) {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
     }
     
+    .plg-sidebar {
+        padding-top: 35px;
+        padding-bottom: 35px;
+    }
 }
 
 //*************************************
