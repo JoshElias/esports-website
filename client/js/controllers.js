@@ -1570,9 +1570,9 @@ angular.module('app.controllers', ['ngCookies'])
 //            $scope.cardImg = ($scope.card.photoNames.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'img/blank.png';
 //            $scope.deckImg = ($scope.card.photoNames.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.small : $scope.app.cdn + 'img/blank.png';
 //            $scope.cardImg = $scope.deckImg = 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
-
-            $scope.cardImg = ($scope.card.photoNames.large.length || $scope.card.photoNames.medium.length) ? 'https://staging-cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
-            $scope.deckImg = ($scope.card.photoNames.small.length) ? 'https://staging-cdn-tempostorm.netdna-ssl.com/decks/' + $scope.card.photoNames.small : $scope.app.cdn + 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            
+            $scope.cardImg = ($scope.card.photoNames.large.length || $scope.card.photoNames.medium.length) ? '//cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.large : $scope.app.cdn + '//cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            $scope.deckImg = ($scope.card.photoNames.small.length) ? '//cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.small : $scope.app.cdn + '//cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
             // card upload
             $scope.cardUpload = function ($files) {
@@ -6658,21 +6658,24 @@ angular.module('app.controllers', ['ngCookies'])
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
                 }
 
@@ -6732,7 +6735,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
+            $scope.classPagination = AjaxPagination.new({ perpage: 15, total: classCardsCount.count },
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -6744,7 +6747,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
+            $scope.neutralPagination = AjaxPagination.new({ perpage: 15, total: neutralCardsCount.count },
                 function (page, perpage) {
 
                     var d = $q.defer();
@@ -7441,21 +7444,24 @@ angular.module('app.controllers', ['ngCookies'])
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
                 }
 
@@ -7515,7 +7521,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
+            $scope.classPagination = AjaxPagination.new({ perpage: 15, total: classCardsCount.count },
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -7527,7 +7533,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
+            $scope.neutralPagination = AjaxPagination.new({ perpage: 15, total: neutralCardsCount.count },
                 function (page, perpage) {
 
                     var d = $q.defer();
@@ -9544,21 +9550,24 @@ angular.module('app.controllers', ['ngCookies'])
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern} }
                     ]
                 }
 
@@ -10332,21 +10341,24 @@ angular.module('app.controllers', ['ngCookies'])
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
                 }
 
