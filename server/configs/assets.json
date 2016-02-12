@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
   "angular.min.js": "angular.min.5bcabd93.js",
   "app.min.js": "app.min.49743acc.js",
+=======
+  "angular.min.js": "angular.min.7acda47b.js",
+  "app.min.js": "app.min.b93d1da4.js",
+>>>>>>> 18bd7684022ec49fd4788d5f0360b39d5c0d7c35
   "vendor.min.js": "vendor.min.4682e0de.js",
   "modules.min.js": "modules.min.0b952c1a.js",
   "lb-services.min.js": "lb-services.min.62079960.js",

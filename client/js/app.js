@@ -3756,6 +3756,21 @@ var app = angular.module('app', [
                                     return tm;
                                 });
                             }],
+                            csTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'cs',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    return tm;
+                                });
+                            }],
                             fifaTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
                                     filter: {
@@ -6625,7 +6640,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (teamMembers) {
-                                    console.log('teamMembers:', teamMembers);
                                     var teamMemberObj = {};
                                     for (var key in teamMembers) {
                                         var teamMember = teamMembers[key];
@@ -6633,11 +6647,8 @@ var app = angular.module('app', [
                                         if(typeof teamMemberObj[teamMember.game] === "undefined") {
                                             teamMemberObj[teamMember.game] = [];
                                         }
-
                                         teamMemberObj[teamMember.game].push(teamMember);
                                     }
-
-                                    console.log('teamMemberObj:', teamMemberObj);
 
                                     return teamMemberObj;
 

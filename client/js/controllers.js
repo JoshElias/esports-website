@@ -5748,12 +5748,13 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam',
-        function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, hsTeam, hotsTeam, wowTeam, fgcTeam, fifaTeam) {
+    .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam', 'csTeam',
+        function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, hsTeam, hotsTeam, wowTeam, fgcTeam, fifaTeam, csTeam) {
 
             $scope.hsMembers = hsTeam;
             $scope.hotsMembers = hotsTeam;
             $scope.wowMembers = wowTeam;
+            $scope.csMembers = csTeam;
             $scope.fgcMembers = fgcTeam;
             $scope.fifaMembers = fifaTeam;
 
