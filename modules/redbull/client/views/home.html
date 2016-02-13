@@ -29,7 +29,7 @@
                 <div class="m-t-xl pack-button tourney-button override ">Coming Soon</div>
 -->
             </div>
-            <div class="hidden-xs  col-md-12 col-lg-7 card-div " ng-mouseover="packTrigger=true" ng-mouseout="packTrigger=false" >
+            <div class="hidden-xs  col-md-12 col-lg-7 card-div " >
                 <div class="bg-glow glow-pulse" ng-class="{'speed-pulse': isDraftLoading()}"></div>
                     <span ng-class="{'loading-builder': isDraftLoading()}">
                         <div class="card-packs-container" ng-click="draftLoadingToggle()" ng-disabled="isDraftLoading()">
@@ -43,7 +43,7 @@
                                 <img src="./dist/img/modules/redbull/client/img/home/gvg-pack.png" >
 
                             </div>
-                            <div class="pack-one card-pack">
+                            <div class="pack-one card-pack" ng-mouseover="packTrigger=true" ng-mouseout="packTrigger=false">
                                 <div class="display-none" ng-class="{'glow-div':packTrigger}"></div>
                                 <img src="./dist/img/modules/redbull/client/img/home/classic-pack.png">
 
