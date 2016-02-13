@@ -25,13 +25,7 @@
         
             <!-- first fullwidth plg -->
             
-            <div class="row fullwidth-plg-div clearfix hidden-sm hidden-xs">
-                <div class="col-xs-12 plg-long">
-                    <div class="plg-leader">
-                        <ts-ad structure="single"></ts-ad>
-                    </div>
-                </div>
-            </div>
+            <ts-ad class="m-r-lg m-l-lg m-t-md text-center" structure="double"></ts-ad>
             
             <!-- first fullwidth plg ends -->
         
@@ -92,16 +86,6 @@
             
             <div class="m-b-md article-right col-lg-4">
                 
-                                    <!-- sidebar plg -->
-                    
-                    <div class="plg-sidebar plg-div m-b-md hidden-md ">
-                        <div class="plg-md-rt img-responsive">
-                            <ts-ad structure="sidebar"></ts-ad>
-                        </div>
-                    </div>
-                    
-                    <!-- sidebar plg ends-->
-                
                 <div ng-if="article.deck" class="article-deck" db-deck deck="article.deck"></div>
                 
                 <!-- article related -->
@@ -129,7 +113,11 @@
                 <!-- / G2A -->
                 
                 
-                
+                <!-- sidebar plg -->
+
+                <ts-ad structure="sidebar"></ts-ad>
+
+                <!-- sidebar plg ends-->
                 
             </div>
             
