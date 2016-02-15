@@ -1,16 +1,17 @@
-<div class="container-fluid tourney-home">
+<div class="container-fluid generator-home">
     
     
-    <div class="row top-section">
-        <div class="bran-box hidden-md hidden-sm hidden-xs"><img src="https://staging-cdn-tempostorm.netdna-ssl.com/img/modules/redbull/client/img/home/bran-right-edge.png"></div>
+    <div class="row top-section m-b-xl">
+<!--        <div class="bran-box hidden-md hidden-sm hidden-xs"><img src="https://staging-cdn-tempostorm.netdna-ssl.com/img/modules/redbull/client/img/home/bran-right-edge.png"></div>-->
         <div class="container">
-            <div class="col-md-12 col-lg-9">
+            <div class="col-md-12 col-lg-5 m-t-xl">
     <!--            <button class="btn btn-blue btn-block" ng-click="playerLogin()">Player Login</button>-->
-                <h2>Introducing the</h2>
+                <h2>Welcome to the</h2>
                 <h1 class="blue-title">Tempo Storm</h1>
                 <h3 class="m-b-xl">Sealed Deck Generator</h3>
-                <p class="m-b-xl"><strong>Tempo Storm</strong> has partnered with <strong>Red Bull</strong> and <strong>Honda</strong> to bring you a first of its kind tool; the Tempo Storm Sealed Deck Generator. This new tool provides you with the ability to open packs and craft unique decks in a way never before possible!</p>
+                <p class="m-b-xl">Tempo Storm presents an entirely new way to play Hearthstone! Open up a bunch of packs, and build three decks from the cards you open before the timer runs out! Play for fun, put some gold on the line or host a tournament with your local Hearthstone community!</p>
                 
+<!--
                 <button class="m-t-xl hidden-xs pack-button tourney-button btn-blue" ng-click="draftLoadingToggle()" ng-disabled="isDraftLoading()">
                     
                     <span ng-if="!isDraftLoading()">Open packs now!</span>
@@ -18,20 +19,50 @@
                     <i class="fa fa-refresh fa-spin" ng-if="isDraftLoading()"></i>
                 
                 </button>
+-->
                 
                 
                 
                 
-                <div class="m-t-xl hidden-sm hidden-md hidden-lg hidden-xl pack-button tourney-button override ">Not Available on Mobile</div>
+<!--                <div class="m-t-xl hidden-sm hidden-md hidden-lg hidden-xl pack-button tourney-button override ">Not Available on Mobile</div>-->
 <!--
                 <div class="m-t-xl pack-button tourney-button override ">Coming Soon</div>
 -->
             </div>
-            <div class="hidden-md col-lg-3">
+            <div class="hidden-xs  col-md-12 col-lg-7 card-div " >
+                <div class="bg-glow glow-pulse" ng-class="{'speed-pulse': isDraftLoading()}"></div>
+                    <span ng-class="{'loading-builder': isDraftLoading()}">
+                        <div class="card-packs-container" ng-click="draftLoadingToggle()" ng-disabled="isDraftLoading()">
+                            <div class="pack-three card-pack" ng-class="{'three-transform':packTrigger}">
+                                <div class="display-none" ng-class="{'three':packTrigger, 'glow-div':packTrigger}"></div>
+                                <img src="https://cdn-tempostorm.netdna-ssl.com/img/modules/redbull/client/img/home/tgt-pack.png" >
+                            </div>
+
+                            <div class="pack-two card-pack" ng-class="{'two-transform':packTrigger}">
+                                <div class="display-none" ng-class="{'two':packTrigger, 'glow-div':packTrigger}"></div>
+                                <img src="https://cdn-tempostorm.netdna-ssl.com/img/modules/redbull/client/img/home/gvg-pack.png" >
+
+                            </div>
+                            <div class="pack-one card-pack" ng-mouseover="packTrigger=true" ng-mouseout="packTrigger=false">
+                                <div class="display-none" ng-class="{'glow-div':packTrigger}"></div>
+                                <img src="https://cdn-tempostorm.netdna-ssl.com/img/modules/redbull/client/img/home/classic-pack.png">
+
+                            </div>
+                            <i class="fa fa-refresh fa-spin" ng-class="{'opac-change': isDraftLoading()}"></i>
+                        </div>
+                    </span>
+                
+                
+            </div>
+            <div class="hidden-sm hidden-md hidden-lg hidden-xl mobile-warning m-t-xl m-b-xl">
+            
+                <h2>Sealed tool Not available on Mobile</h2>
+                
                 
             </div>
         </div>
     </div>
+<!--
     <div class="row mid-section">
         <div class="container">
             <div class="col-sm-12 col-md-6 logo-section">
@@ -68,4 +99,5 @@
             <div class="col-lg-4"></div>
         </div>
     </div>
+-->
 </div>

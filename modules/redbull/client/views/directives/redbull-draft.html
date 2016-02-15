@@ -62,7 +62,7 @@
              ng-class="{'flipped-left': card.flipped === 'left', 'flipped-right': card.flipped === 'right'}">
             <div class="card-glow {{expansionToClass(card.expansion)}} {{card.rarity.toLowerCase()}}"></div>
             <div class="card-front">
-                <img ng-src="http://cdn.tempostorm.netdna-cdn.com/cards/{{card.photoNames.large}}" />
+                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" />
             </div>
             <div class="card-back {{expansionToClass(card.expansion)}}"></div>
         </div>
@@ -102,7 +102,7 @@
                 <div class="card-pool-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.qty > 1, legendary: card.card.rarity === 'Legendary'}"
                      ng-repeat="card in sortedPool() track by card.card.id"
                      data-card-id="card.card.id"
-                     data-tooltip-img="'http://cdn.tempostorm.netdna-cdn.com/cards/' + card.card.photoNames.large"
+                     data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
                      data-tooltip-pos="left" pool-card>
                     <div class="card-pool-card-mana">{{card.card.cost}}</div>
                     <div class="card-pool-card-qty" ng-if="card.qty > 1">{{card.qty}}</div>
@@ -110,7 +110,7 @@
                         <i class="fa fa-star"></i>
                     </div>
                     <div class="card-pool-card-photo">
-                        <img ng-src="http://cdn.tempostorm.netdna-cdn.com/cards/{{card.card.photoNames.small}}" alt="card.card.name">
+                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" alt="card.card.name">
                     </div>
                     <div class="card-pool-card-name">{{card.card.name}}</div>
                 </div>

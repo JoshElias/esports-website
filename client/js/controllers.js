@@ -1016,15 +1016,118 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('ProfileArticlesCtrl', ['$scope', 'articles',
-        function ($scope, articles) {
+    .controller('ProfileArticlesCtrl', ['$scope', 'articles', 'EventService', 'Util', 'User', 'userProfile', 'Article',
+        function ($scope, articles, EventService, Util, User, userProfile, Article) {
             $scope.articles = articles;
+            
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                refreshArticles();
+            });
+
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                refreshArticles();
+            });
+            
+            function getWhere() {
+                var where = {
+                    authorId: userProfile.id
+                };
+
+                if (User.getCurrentId() !== userProfile.id) {
+                    where.isActive = true;
+                }
+                
+                return where;
+            }
+            
+            function refreshArticles() {
+                Article.find({
+                    filter: {
+                        order: 'createdDate DESC',
+                        where: getWhere(),
+                        include: [
+                            {
+                                relation: 'author',
+                                scope: {
+                                    fields: {
+                                        id: true,
+                                        username: true
+                                    }
+                                }
+                            },
+                            {
+                                relation: 'votes',
+                            }
+                        ]
+                    }
+                })
+                .$promise
+                .then(function (articles) {
+                    _.each(articles, function(article) {
+                        article.voteScore = Util.tally(article.votes, 'direction');
+                    });
+
+                    $scope.articles = articles;
+                })
+                .catch(function (err) {
+                    console.log('err:', err);
+                });
+            }
+            
         }
     ])
-    .controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'Deck', 'decks',
-        function ($scope, $state, bootbox, Deck, decks) {
+    .controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'Deck', 'decks', 'EventService', 'Util', 'userProfile', 'User',
+        function ($scope, $state, bootbox, Deck, decks, EventService, Util, userProfile, User) {
             $scope.decks = decks;
+            
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                refreshDecks();
+            });
 
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                refreshDecks();
+            });
+            
+            function getWhere() {
+                var where = {
+                    authorId: userProfile.id
+                };
+
+                if (User.getCurrentId() !== userProfile.id) {
+                    where.isPublic = true;
+                }
+                
+                return where;
+            }
+            
+            function refreshDecks() {
+                Deck.find({
+                    filter: {
+                        order: "createdDate DESC",
+                        where: getWhere(),
+                        include: [
+                            {
+                                relation: 'author'
+                            },
+                            {
+                                relation: 'votes'
+                            }
+                        ]
+                    }
+                })
+                .$promise
+                .then(function (decks) {
+                    _.each(decks, function(deck) {
+                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                    });
+
+                    $scope.decks = decks;
+                })
+                .catch(function (err) {
+                    console.log('err:', err);
+                });
+            }
+            
             //is premium
             $scope.isPremium = function (guide) {
                 if (!guide.premium || !guide.premium.isPremium) { return false; }
@@ -1068,6 +1171,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     var indexToDel = $scope.decks.indexOf(deck);
                                     if (indexToDel !== -1) {
                                         $scope.decks.splice(indexToDel, 1);
+                                        $scope.$parent.deckCount--;
                                     }
                                 })
                                 .catch(function (err) {
@@ -1088,9 +1192,85 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'guides', 'Guide',
-        function ($scope, $state, bootbox, HOTSGuideService, guides, Guide) {
+    .controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'guides', 'Guide', 'EventService', 'User', 'userProfile', 'Util',
+        function ($scope, $state, bootbox, HOTSGuideService, guides, Guide, EventService, User, userProfile, Util) {
+            
             $scope.guides = guides;
+            
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                refreshGuides();
+            });
+
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                refreshGuides();
+            });
+            
+            function getWhere() {
+                var where = {
+                    authorId: userProfile.id
+                };
+
+                if (User.getCurrentId() !== userProfile.id) {
+                    where.isPublic = true;
+                }
+                return where;
+            }
+            function refreshGuides() {
+                Guide.find({
+                    filter: {
+                        order: "createdDate DESC",
+                        where: getWhere(),
+                        include: [
+                            {
+                                relation: 'author'
+                            },
+                            {
+                                relation: 'guideHeroes',
+                                scope: {
+                                    include: [
+                                        {
+                                            relation: 'hero',
+                                            scope: {
+                                                include: [
+                                                    {
+                                                        relation: 'talents'
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                relation: 'guideTalents',
+                                scope: {
+                                    include: [
+                                        {
+                                            relation: 'talent'
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                relation: 'maps'
+                            },
+                            {
+                                relation: 'votes'
+                            }
+                        ]
+                    }
+                }).$promise
+                .then(function (guides) {
+                    _.each(guides, function(guide) {
+                        guide.voteScore = Util.tally(guide.votes, 'direction');
+                    });
+
+                    $scope.guides = guides;
+                })
+                .catch(function (err) {
+                    console.log('err:', err);
+                });
+            }
             // guides
             $scope.getGuideCurrentHero = function (guide) {
                 return (guide.currentHero) ? guide.currentHero : guide.guideHeroes[0];
@@ -1215,20 +1395,9 @@ angular.module('app.controllers', ['ngCookies'])
                                     var index = $scope.guides.indexOf(guide);
                                     if (index !== -1) {
                                         $scope.guides.splice(index, 1);
+                                        $scope.$parent.guideCount--;
                                     }
                                 });
-//                                HOTSGuideService.guideDelete(guide._id).success(function (data) {
-//                                    if (data.success) {
-//                                        var index = $scope.guides.indexOf(guide);
-//                                        if (index !== -1) {
-//                                            $scope.guides.splice(index, 1);
-//                                        }
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: 'guide "' + guide.name + '" deleted successfully.'
-//                                        };
-//                                    }
-//                                });
                             }
                         },
                         cancel: {
@@ -1401,9 +1570,9 @@ angular.module('app.controllers', ['ngCookies'])
 //            $scope.cardImg = ($scope.card.photoNames.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'img/blank.png';
 //            $scope.deckImg = ($scope.card.photoNames.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.small : $scope.app.cdn + 'img/blank.png';
 //            $scope.cardImg = $scope.deckImg = 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
-
-            $scope.cardImg = ($scope.card.photoNames.large.length || $scope.card.photoNames.medium.length) ? 'https://staging-cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
-            $scope.deckImg = ($scope.card.photoNames.small.length) ? 'https://staging-cdn-tempostorm.netdna-ssl.com/decks/' + $scope.card.photoNames.small : $scope.app.cdn + 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            
+            $scope.cardImg = ($scope.card.photoNames.large.length || $scope.card.photoNames.medium.length) ? '//cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.large : $scope.app.cdn + '//cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            $scope.deckImg = ($scope.card.photoNames.small.length) ? '//cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.small : $scope.app.cdn + '//cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
             // card upload
             $scope.cardUpload = function ($files) {
@@ -2524,37 +2693,37 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.removeRelatedArticle = function (a) {
                 // removing related articles
-				// remove from toCreate
-				// push to toDelete if it exist in db
+                // remove from toCreate
+                // push to toDelete if it exist in db
 
-				angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
-					if (toCrArticle.id === a.id) {
-						relatedArticleChanges.toCreate.splice(index, 1);
-						return;
-					}
-				});
+                angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
+                  if (toCrArticle.id === a.id) {
+                    relatedArticleChanges.toCreate.splice(index, 1);
+                    return;
+                  }
+                });
 
-				ArticleArticle.find({
-					filter: {
-						where: {
-							childArticleId: a.id,
-							parentArticleId: $scope.article.id
-						}
-					}
-				}).$promise
-				.then(function (relatedArticle) {
-					// related article exist in db
-					if (relatedArticle.length !== 0) {
-						relatedArticleChanges.toDelete.push(a);
-					}
-				});
+                ArticleArticle.find({
+                  filter: {
+                    where: {
+                      childArticleId: a.id,
+                      parentArticleId: $scope.article.id
+                    }
+                  }
+                }).$promise
+                .then(function (relatedArticle) {
+                  // related article exist in db
+                  if (relatedArticle.length !== 0) {
+                    relatedArticleChanges.toDelete.push(a);
+                  }
+                });
 
-				angular.forEach($scope.article.related, function(relArticle, index) {
-					if (relArticle.id === a.id) {
-						$scope.article.related.splice(index, 1);
-						return;
-					}
-				});
+                angular.forEach($scope.article.related, function(relArticle, index) {
+                  if (relArticle.id === a.id) {
+                    $scope.article.related.splice(index, 1);
+                    return;
+                  }
+                });
             }
 
             $scope.closeBox = function () {
@@ -2702,128 +2871,132 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             };
 
-            $scope.articleImg = getImage();
+        $scope.articleImg = getImage();
 
-            function getImage () {
-                $scope.imgPath = 'articles/';
-                if (!$scope.article.photoNames) {
-                    return 'img/blank.png';
-                }
-				var URL = (tpl === './') ? cdn2 : tpl;
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
-            };
+        function getImage () {
+            $scope.imgPath = 'articles/';
+            if (!$scope.article.photoNames) {
+                return 'img/blank.png';
+            }
+            var URL = (tpl === './') ? cdn2 : tpl;
+            return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.article.photoNames.small;
+        };
+            
+            
+//        console.log('article:', article);
+        $scope.editArticle = function (article) {
+            $scope.fetching = true;
 
-            $scope.editArticle = function (article) {
-                $scope.fetching = true;
+				    // unlink guides/decks depending on what type of guide
+				    if (article.articleType[0] !== 'hs') {
+                article['deck'] = null;
+                article['deckId'] = null;
+				    }
 
-				// unlink guides/decks depending on what type of guide
-				if (article.articleType[0] !== 'hs') {
-					article['deck'] = null;
-					article['deckId'] = null;
-				}
+				    if (article.articleType[0] !== 'hots') {
+                article['guide'] = null;
+                article['guideId'] = null;
+				    }
 
-				if (article.articleType[0] !== 'hots') {
-					article['guide'] = null;
-					article['guideId'] = null;
-				}
+            async.parallel([
+              function (paraCB) {
+                  Article.prototype$updateAttributes({
+                      id: article.id
+                  }, article)
+                  .$promise
+                  .then(function (articleUpdated) {
+                      return paraCB();
+                  })
+                  .catch(function (err) {
+                      return paraCB(err);
+                  });
+              },
+              function(paraCB) {
 
-				async.parallel([
-					function (paraCB) {
-						Article.upsert(article)
-						.$promise
-						.then(function (articleUpserted) {
-							return paraCB();
-						})
-						.catch(function (err) {
-							return paraCB(err);
-						});
-					},
-					function(paraCB){
+                async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
 
-						async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
+                  async.waterfall([
+                    function (wateryCB) {
+                      ArticleArticle.findOne({
+                        filter: {
+                          where: {
+                            childArticleId: relatedToDelete.id,
+                            parentArticleId: article.id
+                          }
+                        }
+                      }).$promise
+                      .then(function (articleFound) {
+                        return wateryCB(null, articleFound);
+                      })
+                      .catch(function (err) {
+                        return wateryCB(err);
+                      });
+                    },
+                    function (articleFound, wateryCB) {
+                      ArticleArticle.destroyById({
+                        id: articleFound.id
+                      }).$promise
+                      .then(function (relArticleDestroyed) {
+                        return wateryCB();
+                      })
+                      .catch(function (err) {
+                        return wateryCB(err);
+                      });
+                    }
+                  ], function(err) {
+                    if (err) {
+                      return relatedToDeleteCB(err);
+                    }
+                    return relatedToDeleteCB();
+                  });
 
-							async.waterfall([
-								function (wateryCB) {
-									ArticleArticle.findOne({
-										filter: {
-											where: {
-												childArticleId: relatedToDelete.id,
-												parentArticleId: article.id
-											}
-										}
-									}).$promise
-									.then(function (articleFound) {
-										return wateryCB(null, articleFound);
-									})
-									.catch(function (err) {
-										return wateryCB(err);
-									});
-								},
-								function (articleFound, wateryCB) {
-									ArticleArticle.destroyById({
-										id: articleFound.id
-									}).$promise
-									.then(function (relArticleDestroyed) {
-										return wateryCB();
-									})
-									.catch(function (err) {
-										return wateryCB(err);
-									});
-								}
-							], function(err) {
-								if (err) {
-									return relatedToDeleteCB(err);
-								}
-								return relatedToDeleteCB();
-							});
-
-						}, function(err) {
-							if (err) {
-								return paraCB(err);
-							}
-							return paraCB();
-						});
-					},
-					function(paraCB) {
-						async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
-							var articleArticle = {
-								parentArticleId: article.id,
-								childArticleId: relatedArticle.id
-							};
-							ArticleArticle.create(articleArticle)
-							.$promise
-							.then(function (relatedArticleCreated) {
-								return relatedCreateCB();
-							})
-							.catch(function (err) {
-								return relatedCreateCB(err);
-							});
-						}, function (err) {
-							if (err) {
-								return paraCB(err);
-							}
-							return paraCB();
-						});
-					}
-				], function(err) {
-					$scope.fetching = false;
-					$window.scrollTo(0, 0);
-					if (err) {
-						console.log('async para err: ', err);
-						return AlertService.setError({
-							show: true,
-							msg: article.title + ' could not be updated',
-							lbErr: err
-						});
-					}
-					AlertService.setSuccess({
-						show: false,
-						persist: true,
-						msg: article.title + ' updated successfully',
-					});
-					$state.transitionTo('app.admin.articles.list');
-				});
-      };
+                }, function(err) {
+                  if (err) {
+                    return paraCB(err);
+                  }
+                  return paraCB();
+                });
+              },
+              function(paraCB) {
+                async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
+                  var articleArticle = {
+                    parentArticleId: article.id,
+                    childArticleId: relatedArticle.id
+                  };
+                  ArticleArticle.create(articleArticle)
+                  .$promise
+                  .then(function (relatedArticleCreated) {
+                    return relatedCreateCB();
+                  })
+                  .catch(function (err) {
+                    return relatedCreateCB(err);
+                  });
+                }, function (err) {
+                  if (err) {
+                    return paraCB(err);
+                  }
+                  return paraCB();
+                });
+              }
+            ], function(err) {
+              $scope.fetching = false;
+              $window.scrollTo(0, 0);
+              if (err) {
+                console.log('async para err: ', err);
+                return AlertService.setError({
+                  show: true,
+                  msg: article.title + ' could not be updated',
+                  lbErr: err
+                });
+              }
+              AlertService.setSuccess({
+                show: false,
+                persist: true,
+                msg: article.title + ' updated successfully',
+              });
+              $state.transitionTo('app.admin.articles.list');
+            });
+          };
 
 //          $scope.getNames = function () {
 //              AdminArticleService.getNames($scope.article).success(function (data) {
@@ -2868,7 +3041,8 @@ angular.module('app.controllers', ['ngCookies'])
                     order: paginationParams.options.filter.order,
                     skip: ((page*perpage)-perpage),
                     limit: perpage,
-                    where: {}
+                    where: {},
+                    include: ['author']
                   }
                 };
 
@@ -5574,12 +5748,13 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam',
-        function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, hsTeam, hotsTeam, wowTeam, fgcTeam, fifaTeam) {
+    .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam', 'csTeam',
+        function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, hsTeam, hotsTeam, wowTeam, fgcTeam, fifaTeam, csTeam) {
 
             $scope.hsMembers = hsTeam;
             $scope.hotsMembers = hotsTeam;
             $scope.wowMembers = wowTeam;
+            $scope.csMembers = csTeam;
             $scope.fgcMembers = fgcTeam;
             $scope.fifaMembers = fifaTeam;
 
@@ -6484,21 +6659,24 @@ angular.module('app.controllers', ['ngCookies'])
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
                 }
 
@@ -6558,7 +6736,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
+            $scope.classPagination = AjaxPagination.new({ perpage: 15, total: classCardsCount.count },
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -6570,7 +6748,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
+            $scope.neutralPagination = AjaxPagination.new({ perpage: 15, total: neutralCardsCount.count },
                 function (page, perpage) {
 
                     var d = $q.defer();
@@ -7267,21 +7445,24 @@ angular.module('app.controllers', ['ngCookies'])
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
                 }
 
@@ -7341,7 +7522,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
+            $scope.classPagination = AjaxPagination.new({ perpage: 15, total: classCardsCount.count },
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -7353,7 +7534,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
+            $scope.neutralPagination = AjaxPagination.new({ perpage: 15, total: neutralCardsCount.count },
                 function (page, perpage) {
 
                     var d = $q.defer();
@@ -9370,21 +9551,24 @@ angular.module('app.controllers', ['ngCookies'])
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern} }
                     ]
                 }
 
@@ -9727,7 +9911,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             function saveDeck(deck) {
-
+                
                 deck.votes = [
                     {
                         userID: User.getCurrentId(),
@@ -10158,21 +10342,24 @@ angular.module('app.controllers', ['ngCookies'])
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsClass.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
                         { name: { regexp: pattern } },
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
-                        { cardType: { regexp: pattern } }
+                        { cardType: { regexp: pattern } },
+                        { race: { regexp: pattern } }
                     ]
                 }
 
@@ -14289,6 +14476,7 @@ angular.module('app.controllers', ['ngCookies'])
                                         lbErr: err
                                     });
                                 });
+                                
                             }
                         },
                         cancel: {
@@ -14522,90 +14710,103 @@ angular.module('app.controllers', ['ngCookies'])
 
 //                console.log('saving stripped:', stripped);
 //                console.log('$scope.guide:', $scope.guide);
-                  Guide.create({}, stripped)
-                .$promise
-                .then(function (guideData) {
-//                  console.log('guideData:', guideData);
-//                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-
-                  Guide.guideHeroes.createMany({
-                    id: guideData.id
-                  }, cleanGuide.guideHeroes)
-                  .$promise
-                  .then(function (guideHeroData) {
-                    var tals = [];
-
-                    _.each(guideHeroData, function(eachVal) {
-                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                        return filterVal.heroId === eachVal.heroId;
-                      });
-
-                      _.each(heroTals, function (innerEachVal, index, list) {
-                        innerEachVal.guideId = guideData.id;
-                        innerEachVal.guideHeroId = eachVal.id;
-                      });
-
-                      tals.push(heroTals);
-                    });
-
-//                    console.log('tals:', tals);
-                    async.series([
-                      function (seriesCB) {
-                        Guide.guideTalents.createMany({
-                          id: guideData.id
-                        }, tals)
-                        .$promise
-                        .then(function (guideTalentData) {
+                  
+                 var guideCreated;
+                var tals = [];
+                async.series([
+                  function (seriesCB) {
+                      Guide.create(stripped)
+                      .$promise
+                      .then(function (createdGuide) {
+                          guideCreated = createdGuide;
                           return seriesCB();
-                        })
-                        .catch(function (err) {
-                          console.log('guide talent err', err);
+                      })
+                      .catch(function (err) {
                           return seriesCB(err);
-                        });
-                      },
-                      function (seriesCB) {
-                          var freeVote = {
-                              direction: 1,
-                              createdDate: new Date().toISOString(),
-                              authorId: User.getCurrentId()
-                          };
+                      });
+                  },
+                  function (seriesCB) {
+                      Guide.guideHeroes.createMany({
+                          id: guideCreated.id
+                      }, cleanGuide.guideHeroes)
+                      .$promise
+                      .then(function (guideHeroData) {
 
-                          Guide.votes.create({
-                              id: guideData.id
-                          }, freeVote)
-                          .$promise
-                          .then(function (voteCreated) {
-                              return seriesCB();
-                          })
-                          .catch(function (err) {
-                              return seriesCB(err);
+                          _.each(guideHeroData, function(eachVal) {
+                            var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                              return filterVal.heroId === eachVal.heroId;
+                            });
+
+                              _.each(heroTals, function (innerEachVal, index, list) {
+                                innerEachVal.guideId = guideCreated.id;
+                                innerEachVal.guideHeroId = eachVal.id;
+                              });
+                              tals.push(heroTals);
                           });
-                      },
-                      function (seriesCB) {
-                        async.each(cleanGuide.maps, function(map, mapCB) {
+
+                          return seriesCB();
+                      })
+                      .catch(function (err) {
+                          return seriesCB(err);
+                      });
+                  },
+                  function (seriesCB) {
+                    Guide.guideTalents.createMany({
+                      id: guideCreated.id
+                    }, tals)
+                    .$promise
+                    .then(function (guideTalentData) {
+                      return seriesCB();
+                    })
+                    .catch(function (err) {
+                      console.log('guide talent err', err);
+                      return seriesCB(err);
+                    });
+                  },
+                  function (seriesCB) {
+                      var freeVote = {
+                          direction: 1,
+                          createdDate: new Date().toISOString(),
+                          authorId: User.getCurrentId()
+                      };
+
+                      Guide.votes.create({
+                          id: guideCreated.id
+                      }, freeVote)
+                      .$promise
+                      .then(function (voteCreated) {
+                          return seriesCB();
+                      })
+                      .catch(function (err) {
+                          return seriesCB(err);
+                      });
+                  },
+                  function (seriesCB) {
+                    async.each(cleanGuide.maps, function(map, mapCB) {
 //                          console.log('map.id:', map.id);
 //                          console.log('guideData:', guideData);
-                          Guide.maps.link({
-                            id: guideData.id,
-                            fk: map.id
-                          }, null).$promise
-                          .then(function (mapLinkData) {
+                      Guide.maps.link({
+                        id: guideCreated.id,
+                        fk: map.id
+                      }, null)
+                      .$promise
+                      .then(function (mapLinkData) {
 //                            console.log('mapLinkData:', mapLinkData);
-                            return mapCB();
-                          })
-                          .catch(function (err) {
-                            console.log('map link err:', err);
-                            return mapCB(err);
-                          });
-                        }, function (err, results) {
-                          if (err) {
-                            return seriesCB(err);
-                          }
-                          return seriesCB();
-                        });
-
+                        return mapCB();
+                      })
+                      .catch(function (err) {
+                        console.log('map link err:', err);
+                        return mapCB(err);
+                      });
+                    }, function (err, results) {
+                      if (err) {
+                        return seriesCB(err);
                       }
-                    ], function (err, results) {
+                      return seriesCB();
+                    });
+
+                  }], function (err, results) {
+                      $scope.fetching = false;
                       if (err) {
                         $window.scrollTo(0, 0);
                         AlertService.setError({
@@ -14616,28 +14817,7 @@ angular.module('app.controllers', ['ngCookies'])
                         return console.log('series err:', err);
                       }
                       $scope.app.settings.guide = null;
-                      $state.go('app.hots.guides.guide', { slug: guideData.slug });
-                    });
-
-                  })
-                  .catch(function (err) {
-                    $window.scrollTo(0, 0);
-                    AlertService.setError({
-                      show: true,
-                      lbErr: err,
-                      msg: 'Unable to Save Guide'
-                    });
-                    console.log('guide hero err', err);
-                  });
-                })
-                .catch(function (err) {
-                    $window.scrollTo(0, 0);
-                    AlertService.setError({
-                      show: true,
-                      lbErr: err,
-                      msg: 'Unable to Save Guide'
-                    });
-                  console.log('guide err', err);
+                      $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
                 });
 
               }
@@ -16437,28 +16617,25 @@ angular.module('app.controllers', ['ngCookies'])
 
 			      $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
-
+            
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                if ($scope.guide.premium.isPremium) {
-                    location.reload();
-                }
 
-                // Check if user is admin or contentProvider
-//                User.isInRoles({
-//                    uid: User.getCurrentId(),
-//                    roleNames: ['$admin', '$contentProvider']
-//                })
-//                .$promise
-//                .then(function (userRoles) {
-////                    console.log('userRoles: ', userRoles);
-//                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
-//                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
-//                    return userRoles;
-//                })
-//                .catch(function (roleErr) {
-//                    console.log('roleErr: ', roleErr);
-//                });
+//                 Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
             });
 
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
@@ -16608,6 +16785,7 @@ angular.module('app.controllers', ['ngCookies'])
                   $scope.saveGuide();
                 });
               } else {
+                $scope.fetching = true;
                 var cleanGuide = angular.copy($scope.guide);
                 cleanGuide.slug = Util.slugify(cleanGuide.name);
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
@@ -16643,102 +16821,103 @@ angular.module('app.controllers', ['ngCookies'])
                 });
 
                 cleanGuide.guideTalents = _.flatten(temp);
-
-                stripped.votes = [
-                  {
-                    userId: User.getCurrentId(),
-                    direction: 1
-                  }
-                ];
-
-                stripped.voteScore = 1;
-
-//                console.log('before save:', stripped);
-//                console.log('$scope.guide:', $scope.guide);
-                  Guide.create({}, stripped)
-                .$promise
-                .then(function (guideData) {
-//                  console.log('guideData:', guideData);
-//                  console.log('$scope.guide.guideHeroes:', $scope.guide.guideHeroes);
-
-                  Guide.guideHeroes.createMany({
-                    id: guideData.id
-                  }, cleanGuide.guideHeroes)
-                  .$promise
-                  .then(function (guideHeroData) {
-                    var tals = [];
-
-                    _.each(guideHeroData, function(eachVal) {
-                      var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                        return filterVal.heroId === eachVal.heroId;
-                      });
-
-                      _.each(heroTals, function (innerEachVal, index, list) {
-                        innerEachVal.guideId = guideData.id;
-                        innerEachVal.guideHeroId = eachVal.id;
-                      });
-
-                      tals.push(heroTals);
-                    });
-
-//                    console.log('tals:', tals);
-                    async.series([
-                      function (seriesCB) {
-                        Guide.guideTalents.createMany({
-                          id: guideData.id
-                        }, tals)
-                        .$promise
-                        .then(function (guideTalentData) {
+                  
+                var guideCreated;
+                var tals = [];
+                async.series([
+                  function (seriesCB) {
+                      Guide.create(stripped)
+                      .$promise
+                      .then(function (createdGuide) {
+                          guideCreated = createdGuide;
                           return seriesCB();
-                        })
-                        .catch(function (err) {
-                          console.log('guide talent err', err);
+                      })
+                      .catch(function (err) {
                           return seriesCB(err);
-                        });
-                      },
-                      function (seriesCB) {
-                          var freeVote = {
-                              direction: 1,
-                              createdDate: new Date().toISOString(),
-                              authorId: User.getCurrentId()
-                          };
+                      });
+                  },
+                  function (seriesCB) {
+                      Guide.guideHeroes.createMany({
+                          id: guideCreated.id
+                      }, cleanGuide.guideHeroes)
+                      .$promise
+                      .then(function (guideHeroData) {
 
-                          Guide.votes.create({
-                              id: guideData.id
-                          }, freeVote)
-                          .$promise
-                          .then(function (voteCreated) {
-                              return seriesCB();
-                          })
-                          .catch(function (err) {
-                              return seriesCB(err);
+                          _.each(guideHeroData, function(eachVal) {
+                            var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                              return filterVal.heroId === eachVal.heroId;
+                            });
+
+                              _.each(heroTals, function (innerEachVal, index, list) {
+                                innerEachVal.guideId = guideCreated.id;
+                                innerEachVal.guideHeroId = eachVal.id;
+                              });
+                              tals.push(heroTals);
                           });
-                      },
-                      function (seriesCB) {
-                        async.each(cleanGuide.maps, function(map, mapCB) {
+
+                          return seriesCB();
+                      })
+                      .catch(function (err) {
+                          return seriesCB(err);
+                      });
+                  },
+                  function (seriesCB) {
+                    Guide.guideTalents.createMany({
+                      id: guideCreated.id
+                    }, tals)
+                    .$promise
+                    .then(function (guideTalentData) {
+                      return seriesCB();
+                    })
+                    .catch(function (err) {
+                      console.log('guide talent err', err);
+                      return seriesCB(err);
+                    });
+                  },
+                  function (seriesCB) {
+                      var freeVote = {
+                          direction: 1,
+                          createdDate: new Date().toISOString(),
+                          authorId: User.getCurrentId()
+                      };
+
+                      Guide.votes.create({
+                          id: guideCreated.id
+                      }, freeVote)
+                      .$promise
+                      .then(function (voteCreated) {
+                          return seriesCB();
+                      })
+                      .catch(function (err) {
+                          return seriesCB(err);
+                      });
+                  },
+                  function (seriesCB) {
+                    async.each(cleanGuide.maps, function(map, mapCB) {
 //                          console.log('map.id:', map.id);
 //                          console.log('guideData:', guideData);
-                          Guide.maps.link({
-                            id: guideData.id,
-                            fk: map.id
-                          }, null).$promise
-                          .then(function (mapLinkData) {
+                      Guide.maps.link({
+                        id: guideCreated.id,
+                        fk: map.id
+                      }, null)
+                      .$promise
+                      .then(function (mapLinkData) {
 //                            console.log('mapLinkData:', mapLinkData);
-                            return mapCB();
-                          })
-                          .catch(function (err) {
-                            console.log('map link err:', err);
-                            return mapCB(err);
-                          });
-                        }, function (err, results) {
-                          if (err) {
-                            return seriesCB(err);
-                          }
-                          return seriesCB();
-                        });
-
+                        return mapCB();
+                      })
+                      .catch(function (err) {
+                        console.log('map link err:', err);
+                        return mapCB(err);
+                      });
+                    }, function (err, results) {
+                      if (err) {
+                        return seriesCB(err);
                       }
-                    ], function (err, results) {
+                      return seriesCB();
+                    });
+
+                  }], function (err, results) {
+                      $scope.fetching = false;
                       if (err) {
                         $window.scrollTo(0, 0);
                         AlertService.setError({
@@ -16749,28 +16928,7 @@ angular.module('app.controllers', ['ngCookies'])
                         return console.log('series err:', err);
                       }
                       $scope.app.settings.guide = null;
-                      $state.go('app.hots.guides.guide', { slug: guideData.slug });
-                    });
-
-                  })
-                  .catch(function (err) {
-                    $window.scrollTo(0, 0);
-                    AlertService.setError({
-                      show: true,
-                      lbErr: err,
-                      msg: 'Unable to Save Guide'
-                    });
-                    console.log('guide hero err', err);
-                  });
-                })
-                .catch(function (err) {
-                    $window.scrollTo(0, 0);
-                    AlertService.setError({
-                      show: true,
-                      lbErr: err,
-                      msg: 'Unable to Save Guide'
-                    });
-                  console.log('guide err', err);
+                      $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
                 });
 
               }
@@ -16785,25 +16943,25 @@ angular.module('app.controllers', ['ngCookies'])
 
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                if ($scope.guide.premium.isPremium) {
-                    location.reload();
-                }
+//                if ($scope.guide.premium.isPremium) {
+//                    location.reload();
+//                }
 
                 // Check if user is admin or contentProvider
-//                User.isInRoles({
-//                    uid: User.getCurrentId(),
-//                    roleNames: ['$admin', '$contentProvider']
-//                })
-//                .$promise
-//                .then(function (userRoles) {
-////                    console.log('userRoles: ', userRoles);
-//                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
-//                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
-//                    return userRoles;
-//                })
-//                .catch(function (roleErr) {
-//                    console.log('roleErr: ', roleErr);
-//                });
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
             });
 
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
@@ -16916,6 +17074,8 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.saveGuide();
                     });
                 } else {
+                    $scope.fetching = true;
+                    
                     $scope.guide.slug = Util.slugify($scope.guide.name);
 //                    $scope.authorId = LoopBackAuth.currentUserId;
 
@@ -16928,59 +17088,114 @@ angular.module('app.controllers', ['ngCookies'])
 
                     $scope.guide.voteScore = 1;
 //                    console.log('saving $scope.guide:', $scope.guide);
-
-                    Guide.create({}, $scope.guide)
-                    .$promise
-                    .then(function (guideData) {
-
-                        Guide.maps.link({
-                            id: guideData.id,
-                            fk: $scope.guide.maps[0].id
-                        }, null)
-                        .$promise
-                        .then(function (mapLinkData) {
-//                          console.log('mapLinkData:', mapLinkData);
-                          Vote.create({
-                              direction: 1,
-                              createdDate: new Date().toISOString(),
-                              authorId: User.getCurrentId(),
-                              guideId: guideData.id
-                          })
-                          .$promise
-                          .then(function (voteCreated) {
-                              $scope.app.settings.guide = null;
-                              $state.go('app.hots.guides.guide', { slug: guideData.slug });
-                          })
-                          .catch(function (err) {
-                              $window.scrollTo(0, 0);
-                              AlertService.setError({
+                    
+                    var guideCreated;
+                    async.waterfall([
+                        function (waterCB) {
+                            Guide.create($scope.guide)
+                            .$promise
+                            .then(function (createdGuide) {
+                                guideCreated = createdGuide;
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        },
+                        function(waterCB) {
+                            Guide.maps.link({
+                                id: guideCreated.id,
+                                fk: $scope.maps[0].id
+                            }, null)
+                            .$promise
+                            .then(function (mapLinkData) {
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        },
+                        function (waterCB) {
+                            Vote.create({
+                                direction: 1,
+                                createdDate: new Date().toISOString(),
+                                authorId: User.getCurrentId(),
+                                guideId: guideCreated.id
+                            })
+                            .$promise
+                            .then(function (voteCreated) {
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        }
+                    ], function (err) {
+                        $window.scrollTo(0, 0);
+                        $scope.fetching = true;
+                        if (err) {
+                            return AlertService.setError({
                                 show: true,
                                 msg: 'Unable to Save Guide',
                                 lbErr: err
-                              });
-                              console.log("Creating the guide - map link failed:", err);
-                          });
-
-                        })
-                        .catch(function (err) {
-                            $window.scrollTo(0, 0);
-                            AlertService.setError({
-                              show: true,
-                              msg: 'Unable to Save Guide',
-                              lbErr: err
                             });
-                            console.log("Creating the guide - map link failed:", err);
-                        })
-                    })
-                    .catch(function (err) {
-                        $window.scrollTo(0, 0);
-                        AlertService.setError({
-                          show: true,
-                          msg: 'Unable to Save Guide',
-                          lbErr: err
-                        });
-                        console.log("Creating the guide failed:", err);
-                    })
+                        }
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
+                    });
+
+//                    Guide.create({}, $scope.guide)
+//                    .$promise
+//                    .then(function (guideData) {
+//
+//                        Guide.maps.link({
+//                            id: guideData.id,
+//                            fk: $scope.guide.maps[0].id
+//                        }, null)
+//                        .$promise
+//                        .then(function (mapLinkData) {
+////                          console.log('mapLinkData:', mapLinkData);
+//                          Vote.create({
+//                              direction: 1,
+//                              createdDate: new Date().toISOString(),
+//                              authorId: User.getCurrentId(),
+//                              guideId: guideData.id
+//                          })
+//                          .$promise
+//                          .then(function (voteCreated) {
+//                              $scope.app.settings.guide = null;
+//                              $state.go('app.hots.guides.guide', { slug: guideData.slug });
+//                          })
+//                          .catch(function (err) {
+//                              $window.scrollTo(0, 0);
+//                              AlertService.setError({
+//                                show: true,
+//                                msg: 'Unable to Save Guide',
+//                                lbErr: err
+//                              });
+//                              console.log("Creating the guide - map link failed:", err);
+//                          });
+//
+//                        })
+//                        .catch(function (err) {
+//                            $window.scrollTo(0, 0);
+//                            AlertService.setError({
+//                              show: true,
+//                              msg: 'Unable to Save Guide',
+//                              lbErr: err
+//                            });
+//                            console.log("Creating the guide - map link failed:", err);
+//                        })
+//                    })
+//                    .catch(function (err) {
+//                        $window.scrollTo(0, 0);
+//                        AlertService.setError({
+//                          show: true,
+//                          msg: 'Unable to Save Guide',
+//                          lbErr: err
+//                        });
+//                        console.log("Creating the guide failed:", err);
+//                    })
                 }
             };
         }
@@ -17166,6 +17381,7 @@ angular.module('app.controllers', ['ngCookies'])
                   return $scope.updateGuide();
                 });
               } else {
+                $scope.fetching = true;
                 var guideCopy = angular.copy($scope.guide);
                 guideCopy.slug = Util.slugify(guideCopy.name);
                 guideCopy.guideHeroes = _.map(guideCopy.heroes, function (val) { return { heroId: val.hero.id } });
@@ -17331,7 +17547,6 @@ angular.module('app.controllers', ['ngCookies'])
                         });
 
                       },
-
                       function(seriesCB) {
 
                         async.each(guideCopy.maps, function(map, mapCB) {
@@ -17365,6 +17580,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                   }
                 ], function(err, results) {
+                  $scope.fetching = false;
                   if (err) {
                     $window.scrollTo(0, 0);
                     AlertService.setError({
@@ -17519,6 +17735,7 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 } else {
                     $scope.guide.slug = Util.slugify($scope.guide.name);
+                    $scope.fetching = true;
 
                     async.parallel([
                         function(paraCB){
@@ -17557,6 +17774,7 @@ angular.module('app.controllers', ['ngCookies'])
                             });
                         }
                     ], function(err, results) {
+                        $scope.fetching = false;
                         if (err) {
                             $window.scrollTo(0, 0);
                             AlertService.setError({
