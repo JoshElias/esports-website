@@ -14,6 +14,8 @@
 // 1... general styles
 //*************************************
 
+.ts-content { padding-top: 15px; }
+
 .hs-styles {  //hearthstone styles wrapper
 
     /* hs - home */
@@ -21,7 +23,7 @@
     .hs-home-logo { margin: 60px auto; }
 
     /* hs - content */
-    .hs-content { margin-right: -10px; padding-top: 80px; }
+    .hs-content { margin-right: -10px; padding-top: 0px; }
     .hs-content > .row { margin: 0 auto; max-width: 1448px; }
     .hs-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
     .hs-content h3.sub-title { font-size: 14px; color: #d3eefa; }

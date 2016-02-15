@@ -39,14 +39,6 @@
             <div class="db-builder row clearfix">
                 <!-- db-right -->
                 <div class="col-md-push-9 col-md-3">
-                    
-                    <!-- sidebar plg -->
-                    
-                    <div class="ts-plg plg-sidebar plg-div m-b-md hidden-md ">
-                        <div class="plg-md-rt img-responsive"><p></p></div>
-                    </div>
-                    
-                    <!-- sidebar plg ends-->
                         
                     <div class="db-search">
                         <form class="ng-pristine ng-valid">
@@ -171,6 +163,11 @@
                         <span ng-if="!deckSubmitting">SUBMIT</span>
                         <span ng-if="deckSubmitting">SUBMITTING <i class="fa fa-spinner fa-pulse"></i></span>
                     </button>
+                    
+                    <!-- sidebar plg -->
+                    <ts-ad class="m-t-md" structure="single"></ts-ad>
+                    <!-- sidebar plg ends-->
+                    
                 </div>
                 <!-- / db-right -->
 
@@ -182,14 +179,9 @@
                         <div class="db-section-title clearfix">
                             
                             <!-- first fullwidth plg -->
-            
-                            <div class="row fullwidth-plg-div clearfix hidden-sm hidden-xs m-t-none">
-                                <div class="col-xs-12 ts-plg plg-long">
-                                    <div class="plg-leader img-responsive"></div>
-                                </div>
-                            </div>
-
+                            <ts-ad structure="single"></ts-ad>
                             <!-- first fullwidth plg ends -->
+                            
                             <div class="row">
                                 <div class="col-md-2">
                                     <h1>CLASS</h1>
@@ -332,7 +324,13 @@
                                     </div>
                                     <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>
                                 </div>
+                                
+                                <!-- ad -->
+                                <ts-ad class="m-t-md" structure="single"></ts-ad>
+                                <!-- ad -->
+                                
                             </div>
+                            
                         </div><!-- / db-cards -->
                     </div>
                     </div>
