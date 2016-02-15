@@ -802,41 +802,6 @@ module.exports = function(RedbullDeck) {
         }
     }
 
-    function saveDecks(draftJSON) {
-        return function (decks, finalCb) {
-
-            // parent data
-            var isOfficial = draftJSON.isOfficial;
-            var redbullDraftId = draftJSON.id;
-            var authorId = draftJSON.authorId;
-
-            var savedDecks = [];
-
-            return async.eachSeries(decks, function (deck, deckCb) {
-
-                // Slap on parentData to the deck
-                deck.isOfficial = isOfficial;
-                deck.redbullDraftId = redbullDraftId;
-                deck.authorId = authorId;
-
-                return RedbullDeck.create(deck, function (err, newDeck) {
-                    if (err) return deckCb(err);
-
-                    savedDecks.push(newDeck);
-                    return async.eachSeries(deck.deckCards, function (deckCard, deckCardCb) {
-
-                        delete deckCard.card;
-                        return newDeck.deckCards.create(deckCard, function(err, newDeckCard) {
-                            return deckCardCb(err);
-                        });
-                    }, deckCb);
-                });
-            }, function (err) {
-                return finalCb(err, savedDecks);
-            });
-        }
-    }
-
     function refreshDraftState(draft, currentTime) {
         return function (createdDecks, finalCb) {
 
