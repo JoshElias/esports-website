@@ -892,6 +892,7 @@ module.exports = function(RedbullDeck) {
                         return seriesCb(err);
                     });
                 },
+                /*
                 // Delete the draft's packs
                 function(seriesCb) {
                     return RedbullPack.destroyAll({redbullDraftId: draftJSON.id}, function(err) {
@@ -904,6 +905,7 @@ module.exports = function(RedbullDeck) {
                         return seriesCb(err);
                     });
                 }
+                */
 
             // Finish and pass along the created DeckIds from the previous step
             ], function(err) {
