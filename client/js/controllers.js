@@ -6680,23 +6680,19 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
 
-                if (mechanics.length == 1) {
-                    options.filter.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsClass.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsNeutral.where.mechanics = {
-                        inq: mechanics
-                    }
-                } else if (mechanics.length > 1) {
-                    options.filter.where.mechanics = mechanics
-                    countOptionsClass.where.mechanics = mechanics
-                    countOptionsNeutral.where.mechanics = mechanics
+                if (mechanics.length > 0) {
+                    options.filter.where.and      = buildMechanicQuery(mechanics);
+                    countOptionsClass.where.and   = buildMechanicQuery(mechanics);
+                    countOptionsNeutral.where.and = buildMechanicQuery(mechanics);
                 }
+                
+                function buildMechanicQuery(mechanics) {
+                    var newArr = [];
+                    _.each(mechanics, function(mechanic) {
+                        newArr.push({ mechanics: mechanic })
+                    });
+                    return newArr;
+                };
 
                 if (mana != 'all' && mana != '7+') {
                     options.filter.where.cost = mana;
@@ -7466,23 +7462,19 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
 
-                if (mechanics.length == 1) {
-                    options.filter.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsClass.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsNeutral.where.mechanics = {
-                        inq: mechanics
-                    }
-                } else if (mechanics.length > 1) {
-                    options.filter.where.mechanics = mechanics
-                    countOptionsClass.where.mechanics = mechanics
-                    countOptionsNeutral.where.mechanics = mechanics
+                if (mechanics.length > 0) {
+                    options.filter.where.and      = buildMechanicQuery(mechanics);
+                    countOptionsClass.where.and   = buildMechanicQuery(mechanics);
+                    countOptionsNeutral.where.and = buildMechanicQuery(mechanics);
                 }
+                
+                function buildMechanicQuery(mechanics) {
+                    var newArr = [];
+                    _.each(mechanics, function(mechanic) {
+                        newArr.push({ mechanics: mechanic })
+                    });
+                    return newArr;
+                };
 
                 if (mana != 'all' && mana != '7+') {
                     options.filter.where.cost = mana;
@@ -9571,24 +9563,20 @@ angular.module('app.controllers', ['ngCookies'])
                         { race: { regexp: pattern} }
                     ]
                 }
-
-                if (mechanics.length == 1) {
-                    options.filter.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsClass.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsNeutral.where.mechanics = {
-                        inq: mechanics
-                    }
-                } else if (mechanics.length > 1) {
-                    options.filter.where.mechanics = mechanics
-                    countOptionsClass.where.mechanics = mechanics
-                    countOptionsNeutral.where.mechanics = mechanics
+                
+                if (mechanics.length > 0) {
+                    options.filter.where.and      = buildMechanicQuery(mechanics);
+                    countOptionsClass.where.and   = buildMechanicQuery(mechanics);
+                    countOptionsNeutral.where.and = buildMechanicQuery(mechanics);
                 }
+                
+                function buildMechanicQuery(mechanics) {
+                    var newArr = [];
+                    _.each(mechanics, function(mechanic) {
+                        newArr.push({ mechanics: mechanic })
+                    });
+                    return newArr;
+                };
 
                 if (mana != 'all' && mana != '7+') {
                     options.filter.where.cost = mana;
@@ -10363,23 +10351,19 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
 
-                if (mechanics.length == 1) {
-                    options.filter.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsClass.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsNeutral.where.mechanics = {
-                        inq: mechanics
-                    }
-                } else if (mechanics.length > 1) {
-                    options.filter.where.mechanics = mechanics
-                    countOptionsClass.where.mechanics = mechanics
-                    countOptionsNeutral.where.mechanics = mechanics
+                if (mechanics.length > 0) {
+                    options.filter.where.and      = buildMechanicQuery(mechanics);
+                    countOptionsClass.where.and   = buildMechanicQuery(mechanics);
+                    countOptionsNeutral.where.and = buildMechanicQuery(mechanics);
                 }
+                
+                function buildMechanicQuery(mechanics) {
+                    var newArr = [];
+                    _.each(mechanics, function(mechanic) {
+                        newArr.push({ mechanics: mechanic })
+                    });
+                    return newArr;
+                };
 
                 if (mana != 'all' && mana != '7+') {
                     options.filter.where.cost = mana;
