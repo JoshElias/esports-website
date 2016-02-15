@@ -1,4 +1,6 @@
 @import 'ts-colors.scss';
+@import 'ts-mixins.scss';
+
 
 //*************************************
     // 2... guides
@@ -131,7 +133,7 @@
         }
         
         &.matchup-section {
-            padding: 9px;
+            padding: 14px;
         }
 
     }
@@ -247,10 +249,27 @@
     .guide-content-title { text-transform: uppercase; }
 
     .guide-matchups {
+        
+        @include ts-div-styles;
+//        padding-top: 5px;
+//        padding-bottom: 5px;
+        
+//        @media screen and (min-width: 992px) {
+//            &.row [class*="col-"]{
+//                margin-bottom: -99999px;
+//                padding-bottom: 99999px;
+//                background-color: rgba(19, 18, 19, 0.7);
+//            }
+//
+//            &.row{
+//                overflow: hidden; 
+//            }
+//        
+//        }
+
     
         div {
-            padding-right: 5px;
-            padding-left: 5px;
+            padding: 5px;
         }
         h4 {
             text-align: center;
