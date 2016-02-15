@@ -24,11 +24,21 @@ module.exports = function(RedbullPack) {
             },
             // Get all cards that can be put into a deck
             function (seriesCb) {
-                Card.find({where:{deckable: true, isActive: true}}, seriesCb);
+                Card.find({
+                    where: {
+                        deckable: true,
+                        isActive: true
+                    },
+                    fields: {
+                        id: true,
+                        rarity: true,
+                        expansion:true
+                    }
+                }, seriesCb);
             },
             // Organize cards into expansion
             function (cards, seriesCb) {
-                
+
                 // Declare vars outside of for loop
                 var cardIndex = cards.length;
                 var sortedCards = {};
@@ -75,8 +85,8 @@ module.exports = function(RedbullPack) {
         function generatePacks(sortedPacks, expansions, finalCb) {
             var clientResult = {};
 
-            // Generate packs for each expansion
-            async.eachSeries(expansions, function (expansion, expansionCb) {
+            // Generate packs for each expansion\
+            async.each(expansions, function (expansion, expansionCb) {
                 var expansionJSON = expansion.toJSON();
                 clientResult[expansionJSON.name] = expansionJSON;
                 clientResult[expansionJSON.name].packs = [];
@@ -129,8 +139,7 @@ module.exports = function(RedbullPack) {
                 newPackJSON.className = expansion.className;
                 newPackJSON.expansionName = expansion.name;
 
-                // Each roll should correspond to a card
-                async.forEachOfSeries(packRolls, function (packRollVal, packRollKey, packRollCb) {
+                function createPackCard(packRollVal, packRollKey, packCardCb) {
                     var rolledCard = getCardFromRoll(packRollVal, rarityChances, cards);
 
                     newPack.packCards.create({
@@ -139,13 +148,18 @@ module.exports = function(RedbullPack) {
                         redbullExpansionId: expansion.id,
                         redbullDraftId: draft.id
                     }, function (err, newPackCard) {
-                        if (err) return packRollCb(err);
+                        if (err) return packCardCb(err);
 
                         // Add order number just in case the client needs to re-order
                         rolledCard.orderNum = newPackCard.orderNum;
                         newPackJSON.cards.push(rolledCard);
-                        return packRollCb();
+                        return packCardCb();
                     });
+                }
+
+                // Each roll should correspond to a card
+                return async.forEachOf(packRolls, function (packRollVal, packRollKey, packRollCb) {
+                    return createPackCard(packRollVal, packRollKey, packRollCb);
                 }, function (err) {
                     return finalCb(err, newPackJSON);
                 });

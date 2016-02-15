@@ -146,7 +146,8 @@ module.exports = function(RedbullDeck) {
                 validateDecks(draftJSON, clientDecks, clientOptions, currentTime),
                 normalizeDecks(draftJSON),
                 saveDecks(draftJSON),
-                refreshDraftState(draft, currentTime)
+                refreshDraftState(draft, currentTime),
+                archiveDraft(draftJSON)
             ],
             finalCb
         );
@@ -801,6 +802,41 @@ module.exports = function(RedbullDeck) {
         }
     }
 
+    function saveDecks(draftJSON) {
+        return function (decks, finalCb) {
+
+            // parent data
+            var isOfficial = draftJSON.isOfficial;
+            var redbullDraftId = draftJSON.id;
+            var authorId = draftJSON.authorId;
+
+            var savedDecks = [];
+
+            return async.eachSeries(decks, function (deck, deckCb) {
+
+                // Slap on parentData to the deck
+                deck.isOfficial = isOfficial;
+                deck.redbullDraftId = redbullDraftId;
+                deck.authorId = authorId;
+
+                return RedbullDeck.create(deck, function (err, newDeck) {
+                    if (err) return deckCb(err);
+
+                    savedDecks.push(newDeck);
+                    return async.eachSeries(deck.deckCards, function (deckCard, deckCardCb) {
+
+                        delete deckCard.card;
+                        return newDeck.deckCards.create(deckCard, function(err, newDeckCard) {
+                            return deckCardCb(err);
+                        });
+                    }, deckCb);
+                });
+            }, function (err) {
+                return finalCb(err, savedDecks);
+            });
+        }
+    }
+
     function refreshDraftState(draft, currentTime) {
         return function (createdDecks, finalCb) {
 
@@ -819,4 +855,60 @@ module.exports = function(RedbullDeck) {
             });
         }
     }
-}
+
+    function archiveDraft(draftJSON) {
+        return function (createdDeckIds, finalCb) {
+
+            var ArchivedDraftCard = RedbullDeck.app.models.archivedDraftCard;
+            var RedbullPack = RedbullDeck.app.models.redbullPack;
+            var RedbullPackCard = RedbullDeck.app.models.redbullPackCard;
+
+            async.waterfall([
+
+                // Generate and save archivedDraftCards
+                function(seriesCb) {
+
+                    // Associate each new archivedDraftCard by id
+                    var archivedDraftCardObj = {};
+                    var cardIndex = draftJSON.cards.length;
+                    var currCard;
+                    while(cardIndex--) {
+                        currCard = draftJSON.cards[cardIndex];
+                        if(!archivedDraftCardObj[currCard.id]) {
+                            archivedDraftCardObj[currCard.id] = {
+                                cardId: currCard.id,
+                                redbullDraftId: draftJSON.id,
+                                cardQuantity: 0
+                            }
+                        }
+                        archivedDraftCardObj[currCard.id].cardQuantity++;
+                    }
+
+                    var archivedDraftCards = _.map(archivedDraftCardObj, function(archivedDraftCard) {
+                        return archivedDraftCard;
+                    });
+
+                    return ArchivedDraftCard.create(archivedDraftCards, function(err) {
+                        return seriesCb(err);
+                    });
+                },
+                // Delete the draft's packs
+                function(seriesCb) {
+                    return RedbullPack.destroyAll({redbullDraftId: draftJSON.id}, function(err) {
+                        return seriesCb(err);
+                    });
+                },
+                // Delete the draft's card packs
+                function(seriesCb) {
+                    return RedbullPackCard.destroyAll({redbullDraftId: draftJSON.id}, function(err) {
+                        return seriesCb(err);
+                    });
+                }
+
+            // Finish and pass along the created DeckIds from the previous step
+            ], function(err) {
+                return finalCb(err, createdDeckIds);
+            });
+        }
+    }
+};
