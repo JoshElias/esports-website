@@ -28,11 +28,6 @@ module.exports = function(RedbullPack) {
                     where: {
                         deckable: true,
                         isActive: true
-                    },
-                    fields: {
-                        id: true,
-                        rarity: true,
-                        expansion:true
                     }
                 }, seriesCb);
             },
