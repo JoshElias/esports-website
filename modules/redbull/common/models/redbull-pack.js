@@ -32,7 +32,8 @@ module.exports = function(RedbullPack) {
                     fields: {
                         id: true,
                         rarity: true,
-                        expansion:true
+                        expansion: true,
+                        photoNames: true
                     }
                 }, seriesCb);
             },
