@@ -11,7 +11,7 @@
 <div class="bg-override team-page container-fluid">
     <div class="container-fluid-max">
         <div class="teams">
-            <div class="row">
+            <div class="row" ng-if="hsMembers.length">
                 <div class="team col-lg-12 m-b-lg">
                     <a id="hs" class="anchor"></a>
                     <h1>HEARTHSTONE</h1>
@@ -40,8 +40,8 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="row">
+
+            <div class="row" ng-if="hotsMembers.length">
                 <div class="team col-lg-12 m-b-lg">
                     <a id="hots" class="anchor"></a>
                     <h1>HEROES OF THE STORM</h1>
@@ -70,8 +70,8 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="row">
+
+            <div class="row" ng-if="wowMembers.length">
                 <div class="team col-lg-12 m-b-lg">
                     <a id="wow" class="anchor"></a>
                     <h1>WORLD OF WARCRAFT: ARENA</h1>
@@ -100,8 +100,8 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="row">
+
+            <div class="row" ng-if="csMembers.length">
                 <div class="team col-lg-12 m-b-lg">
                     <a id="cs" class="anchor"></a>
                     <h1>Counter Strike: GO</h1>
@@ -130,8 +130,8 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="row">
+
+            <div class="row" ng-if="fgcMembers.length">
                 <div class="team col-lg-12 m-b-lg">
                     <a id="fgc" class="anchor"></a>
                     <h1>FGC</h1>
