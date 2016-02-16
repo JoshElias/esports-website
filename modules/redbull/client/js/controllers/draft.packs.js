@@ -2,7 +2,6 @@ angular.module('redbull.controllers')
 .controller('DraftPacksCtrl', [
     '$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft',
     function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draftSettings, draft){
-    if (draft.hasOpenedPacks) { return $state.go('^.build'); }
 
     if (!$localStorage.draftId && !draft.isOfficial) {
         $localStorage.draftId = draft.id;
