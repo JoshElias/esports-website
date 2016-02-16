@@ -14,7 +14,6 @@ module.exports = function(User) {
     var DEFAULT_MAX_TTL = 31556926; // 1 year in seconds
 
 
-    
     var noUserErr = new Error('unable to find user');
     noUserErr.statusCode = 404;
     noUserErr.code = 'USER_NOT_FOUND';
