@@ -16,6 +16,7 @@
 
 <!-- decks start -->
 <div class="container-fluid hs-bg">
+        
     <div class="container-fluid container-fluid-max">
     
         <!-- tempostorm decks -->
@@ -57,6 +58,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="hs-list-ts-decks-wrapper">
             <div class="hs-list-ts-decks">
                 <ul class="hs-decks row no-pad" ng-if="tempostormDecks.length">
@@ -84,10 +86,7 @@
         <!-- / tempostorm decks -->
         
         <!-- first fullwidth plg -->
-
-        
-        <ts-ad class="text-center" structure="double"></ts-ad>
-
+        <ts-ad class="container-fluid text-center" structure="double"></ts-ad>
         <!-- first fullwidth plg ends -->
         
         <!-- community decks -->
@@ -184,11 +183,14 @@
             <p class="darkbox white p-md" ng-if="!communityDecks.length">There are no decks for the filtering above.</p>
             <!-- / decks -->
 
+            <!-- adsense -->
+            <ts-ad class="m-b-sm text-center container-fluid" structure="single"></ts-ad>
+            <!-- /adsense -->
+            
             <!-- page flipping -->
             <div pagination="communityPagination" class="default"></div>
             <!-- / page flipping -->
             
-            <ts-ad class="m-b-md text-center container" structure="single"></ts-ad>
         </div>
         <!-- / community decks -->
     </div>
