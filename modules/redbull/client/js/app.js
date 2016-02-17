@@ -209,7 +209,7 @@ var redbull = angular.module('app.redbull', [
                                     fields: ['id', 'hasDecksConstructed'],
                                     include: [
                                         {
-                                            relation: 'cards',
+                                            relation: 'archivedCards',
                                             scope: {
                                                 fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
                                                 order: ['cost ASC', 'name ASC']

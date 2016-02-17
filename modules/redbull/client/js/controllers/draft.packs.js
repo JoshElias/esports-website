@@ -31,7 +31,15 @@ angular.module('redbull.controllers')
             'The Grand Tournament': 5,
             'League of Explorers': 6
         };
-        var newPacks = {};
+        var newPacks = {
+            'Soulbound' : undefined,
+            'Basic': undefined,
+            'Naxxramas': undefined,
+            'Goblins Vs. Gnomes': undefined,
+            'Blackrock Mountain': undefined,
+            'The Grand Tournament': undefined,
+            'League of Explorers': undefined
+        };
 
         _.each(packs, function (pack) {
             var expansion;
@@ -45,7 +53,7 @@ angular.module('redbull.controllers')
                 cards.push(packCard.card);
             });
 
-            if (!newPacks[expansion.name]) {
+            if (newPacks[expansion.name] === undefined) {
                 newPacks[expansion.name] = {
                     name: expansion.name,
                     className: expansion.className,
