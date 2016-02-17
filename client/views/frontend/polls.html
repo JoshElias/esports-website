@@ -21,6 +21,7 @@
                         <div class="past-polls-title clearfix">
                             <h3 class="pull-left">PAST POLLS</h3>
                         </div>
+                        
                         <ul class="past-polls-content">
                             <li ng-repeat="poll in pollsSide">
                                 <a href="#" ng-click="show.past = !show.past">
@@ -43,7 +44,12 @@
                         </ul>
                     </div>
                 </div>
-                <!-- / deck -->
+                <!-- / deck -->    
+                
+                <!-- adsense -->
+                <ts-ad class="text-center m-l-md m-r-md" structure="sidebar"></ts-ad>
+                <!-- / adsense -->
+                
             </div>
             <!-- / article right -->
 
@@ -53,6 +59,10 @@
                 <div class="no-polls darkbox" ng-if="!pollsMain.length">
                     <p>There are currently no active polls.</p>
                 </div>
+                
+                <!-- adsense -->
+                <ts-ad class="text-center container-fluid m-r-md" structure="sidebar"></ts-ad>
+                <!-- / adsense -->
 
                 <div ng-repeat="poll in pollsMain | orderBy: '-createdDate'">
                     <div class="poll" ng-class="{ 'poll-img' : poll.pollType == 'img'}" ng-if="poll.pollType == 'img' && !isDoneVoting(poll.id)">
@@ -148,8 +158,12 @@
                                 </div>
                             </div>
                         </div>
+                <!-- adsense -->
+                <ts-ad class="text-center container-fluid m-r-md" structure="sidebar"></ts-ad>
+                <!-- / adsense -->
                     </div>
                 </div>
+                
 
             </div>
             <!-- / article left -->
