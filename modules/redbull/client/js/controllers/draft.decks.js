@@ -19,7 +19,9 @@ angular.module('redbull.controllers')
         
         
         // set cards
-        var allCards = getCards(draftCards);
+        var allCards = getCards(_.sortBy(draftCards, function (card) {
+            return [card.card.cost, card.card.name].join("_");
+        }));
 
         function getCards (cards) {
             var out = [];
