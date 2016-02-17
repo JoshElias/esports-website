@@ -5,10 +5,11 @@ angular.module('tsAdSense', [])
     var isAlreadyLoaded = !!document.getElementById("adCode");
     var role = undefined;
     
-    $scope.showAds = true;
+    $scope.showAds = false;
     $scope.adBlock = window.canShowAds;
     
     function checkPremium () {
+        
         if (User.isAuthenticated() && !role) {
             User.isInRoles({
                 uid: User.getCurrentId(),
@@ -18,20 +19,20 @@ angular.module('tsAdSense', [])
             .then(function (data) {
                 role = data.isInRoles.$premium;
                 
+                var s = document.getElementById('adCode');
+                var eLength = e.length;
+                
                 if (!role) {
                     $scope.showAds = true;
+                    console.log(e);
                     return doLoadAds();
                 }
                 
-                var s = document.getElementById('adCode');
-                if (isAlreadyLoaded && (!_.isNull(s) || !_.isUndefined(s))) {
+                if (isAlreadyLoaded && s !== null && s !== undefined) {
                     s.parentNode.removeChild(s);
                     isAlreadyLoaded = false;
                 }
                 
-                var e = document.getElementsByClassName("ad");
-                var eLength = e.length;
-                console.log(e);
                 for (var i = 0; i < eLength; i++) {
                     e[0].parentNode.removeChild(e[0]);
                 }
@@ -50,6 +51,12 @@ angular.module('tsAdSense', [])
         $scope.adSlot = $scope.adSlot || "7575226683";
         $scope.theme = $state.theme || 'default';
         $scope.region = $state.current.name;
+        var e = $(".ad");
+        
+//        for (var i = 0; i < e.length; i++) {
+//            console.log(e[i]);
+//            $(e[i]).removeClass('hidden');
+//        }
         
         if (!isAlreadyLoaded) {
             var s = document.createElement('script');
@@ -72,15 +79,29 @@ angular.module('tsAdSense', [])
         restrict: 'E',
         replace: true,
         templateUrl: moduleTpl + 'directives/ad.html',
-        controller: function () {
-            $timeout(function() {
-                if(!$window.adsbygoogle) {
-                    $window.adsbygoogle = [];
+        controller: ['$scope', function ($scope) {
+            var adIter = 0;
+            var adIterMax = 10;
+            
+            if(!$window.adsbygoogle) {
+                $window.adsbygoogle = [];
+            }
+            
+            function pushAd () {
+                if (adIter < adIterMax) {
+                    $timeout(function () {
+                        try {
+                            $window.adsbygoogle.push({});
+                        } catch (e) {
+                            adIter++;
+                            return pushAd();
+                        }
+                    }, 500);
                 }
-
-                $window.adsbygoogle.push({});
-            }); 
-        }
+            } 
+            
+            pushAd();
+        }]
     }
 }])
 .directive('tsAd', ['moduleTpl', '$compile', '$timeout', '$window', function (moduleTpl, $compile, $timeout, $window) {

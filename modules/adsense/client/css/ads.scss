@@ -72,6 +72,7 @@
     .plg-long {
         padding-top: 15px;
         padding-bottom: 15px;
+        
         @include ts-div;
         
         &.plg-dbl {
@@ -87,6 +88,11 @@
         padding-top: 25px;
         padding-bottom: 25px;
         @include ts-div;
+    }
+    
+    .programmers {
+        height: 125px;
+        width: 100%;
     }
 }
 
