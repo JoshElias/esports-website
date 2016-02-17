@@ -1,6 +1,6 @@
 var utils = require("../../lib/utils");
 var validator = require("../../lib/validator/validator");
-var scope = require("../../../lib/scope");
+var scope = require("../../lib/scope");
 
 module.exports = function(server) {
 
