@@ -60,8 +60,6 @@
     width: 100%;
 }
 
-
-
 .article-plg-fix {
     width: 98.7%;
 }
@@ -83,6 +81,12 @@
 
             }
         }
+    }
+    
+    .plg-sidebar {
+        padding-top: 25px;
+        padding-bottom: 25px;
+        @include ts-div;
     }
 }
 
