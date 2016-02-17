@@ -7422,6 +7422,18 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
+                        fields: {
+                            artist: false,
+                            attack: false,
+                            durability: false,
+                            expansion: false,
+                            flavor: false,
+                            health: false,
+                            isActive: false,
+                            race: false,
+                            text: false,
+                            deckable: false
+                        },
                         order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
@@ -9357,6 +9369,9 @@ angular.module('app.controllers', ['ngCookies'])
         function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService, Vote) {
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+            
+            console.log('classCardsList:', classCardsList);
+            console.log('neutralCardsList:', neutralCardsList);
 
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -9524,6 +9539,18 @@ angular.module('app.controllers', ['ngCookies'])
 
                 var options = {
                     filter: {
+                        fields: {
+                            artist: false,
+                            attack: false,
+                            durability: false,
+                            expansion: false,
+                            flavor: false,
+                            health: false,
+                            isActive: false,
+                            race: false,
+                            text: false,
+                            deckable: false
+                        },
                         where: {
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
@@ -10161,9 +10188,9 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
-//            console.log('deckCardMulligans:', deckCardMulligans);
+    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
+            console.log('deck:', deck);
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
 
@@ -10285,7 +10312,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return classCards;
             }
 
-            $scope.className = deckCardMulligans.playerClass;
+            $scope.className = deck.playerClass;
 
             // filters
             $scope.filters = {
@@ -10524,8 +10551,8 @@ angular.module('app.controllers', ['ngCookies'])
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
 
-//            console.log('deckCardMulligans:', deckCardMulligans);
-            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deckCardMulligans.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deckCardMulligans);
+//            console.log('deck:', deck);
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deck.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deck);
 //            console.log('$scope.deck:', $scope.deck);
 
             $scope.$watch('deck', function() {
@@ -12094,6 +12121,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User', 'DeckBuilder',
         function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User, DeckBuilder) {
+            console.log('hiyea');
 
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
