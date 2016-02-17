@@ -1,5 +1,5 @@
 {
-  "name": "deckCard",
+  "name": "tournamentDeckCard",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -8,14 +8,14 @@
   },
   "properties": {
     "cardId": {
-        "required": true
+      "required": true
     },
-    "deckId": {
-        "required": true
+    "redbullDeckId": {
+      "required": true
     },
     "cardQuantity": {
-        "required": true,
-        "type": "number"
+      "required": true,
+      "type": "number"
     }
   },
   "validations": [],
@@ -27,8 +27,8 @@
     },
     "deck": {
       "type": "belongsTo",
-      "model": "deck",
-      "foreignKey": "deckId"
+      "model": "redbullDeck",
+      "foreignKey": "redbullDeckId"
     }
   },
   "acls": [
