@@ -1,5 +1,5 @@
 {
-  "name": "deckCard",
+  "name": "tournamentDeckCard",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
