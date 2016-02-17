@@ -6,6 +6,7 @@ angular.module('tsAdSense', [])
     var role = undefined;
     
     $scope.showAds = true;
+    $scope.adBlock = window.canShowAds;
     
     function checkPremium () {
         if (User.isAuthenticated() && !role) {
