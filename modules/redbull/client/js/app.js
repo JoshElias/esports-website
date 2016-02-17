@@ -211,8 +211,14 @@ var redbull = angular.module('app.redbull', [
                                         {
                                             relation: 'archivedCards',
                                             scope: {
-                                                fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
-                                                order: ['cost ASC', 'name ASC']
+                                                fields: ['cardId', 'cardQuantity'],
+                                                include: [{
+                                                    relation: 'card',
+                                                    scope: {
+                                                        fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
+                                                        order: ['cost ASC', 'name ASC']
+                                                    }
+                                                }]
                                             }
                                         },
                                         {
@@ -240,7 +246,7 @@ var redbull = angular.module('app.redbull', [
                             });
                         }],
                         draftCards: ['draft', function (draft) {
-                            return draft.cards;
+                            return draft.archivedCards;
                         }],
                         draftDecks: ['draft', 'RedbullDeck', function (draft, RedbullDeck) {
                             var deckIds = [];

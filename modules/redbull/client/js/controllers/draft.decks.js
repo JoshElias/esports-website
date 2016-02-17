@@ -21,28 +21,14 @@ angular.module('redbull.controllers')
         // set cards
         var allCards = getCards(draftCards);
 
-        function cardIndex (card, cards) {
-            for (var i = 0; i < cards.length; i++) {
-                if (cards[i].card.id === card.id) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-    
         function getCards (cards) {
             var out = [];
             if (!cards.length) { return out; }
             for (var i = 0; i < cards.length; i++) {
-                var index = cardIndex(cards[i], out);
-                if (index !== -1) {
-                    out[index].qty++;
-                } else {
-                    out.push({
-                        qty: 1,
-                        card: cards[i]
-                    });
-                }
+                out.push({
+                    qty: cards[i].cardQuantity,
+                    card: cards[i].card
+                });
             }
             return out;
         }

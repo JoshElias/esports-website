@@ -15,7 +15,7 @@
   },
   "validations": [],
   "relations": {
-    "author": {
+    "card": {
       "type": "belongsTo",
       "model": "card",
       "foreignKey": "cardId"
