@@ -30,7 +30,7 @@
     },
     "deckCards": {
       "type": "hasMany",
-      "model": "deckCard",
+      "model": "tournamentDeckCard",
       "foreignKey": "redbullDeckId",
       "isChild": true
     },
@@ -38,7 +38,7 @@
       "type": "hasMany",
       "model": "card",
       "foreignKey": "redbullDeckId",
-      "through": "deckCard"
+      "through": "tournamentDeckCard"
     },
     "draft": {
       "type": "belongsTo",
