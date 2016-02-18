@@ -16,8 +16,7 @@ module.exports = function(server) {
         var model = cleanModels[key];
 
         model.observe("before save", validator.validate);
-        model.beforeRemote("**", scope.addMaxScope);
-        //model.observe("after save", utils.saveChildren);
+        model.beforeRemote("find", scope.addMaxScope);
         model.observe('before delete', utils.destroyRelations);
     }
 };
