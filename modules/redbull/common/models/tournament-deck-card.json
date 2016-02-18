@@ -1,5 +1,5 @@
 {
-  "name": "archivedDraftCard",
+  "name": "tournamentDeckCard",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,23 +7,28 @@
     "validateUpsert": true
   },
   "properties": {
-    "cardId": {},
-    "redbullDraftId": {},
+    "cardId": {
+      "required": true
+    },
+    "redbullDeckId": {
+      "required": true
+    },
     "cardQuantity": {
+      "required": true,
       "type": "number"
     }
   },
   "validations": [],
   "relations": {
-    "author": {
+    "card": {
       "type": "belongsTo",
       "model": "card",
       "foreignKey": "cardId"
     },
-    "draft": {
+    "deck": {
       "type": "belongsTo",
-      "model": "redbullDraft",
-      "foreignKey": "redbullDraftId"
+      "model": "redbullDeck",
+      "foreignKey": "redbullDeckId"
     }
   },
   "acls": [
@@ -33,20 +38,28 @@
       "permission": "DENY"
     },
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "accessType": "READ"
+      "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
       "permission": "ALLOW"
     },
     {
+      "accessType": "WRITE",
       "principalType": "ROLE",
-      "principalId": "$redbullAdmin",
+      "principalId": "$owner",
       "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
     }
   ],
   "methods": {}

@@ -777,7 +777,7 @@ module.exports = function(RedbullDeck) {
 
             var savedDecks = [];
 
-            return async.eachSeries(decks, function (deck, deckCb) {
+            return async.each(decks, function (deck, deckCb) {
 
                 // Slap on parentData to the deck
                 deck.isOfficial = isOfficial;
@@ -788,7 +788,7 @@ module.exports = function(RedbullDeck) {
                     if (err) return deckCb(err);
 
                     savedDecks.push(newDeck);
-                    return async.eachSeries(deck.deckCards, function (deckCard, deckCardCb) {
+                    return async.each(deck.deckCards, function (deckCard, deckCardCb) {
 
                         delete deckCard.card;
                         return newDeck.deckCards.create(deckCard, function(err, newDeckCard) {

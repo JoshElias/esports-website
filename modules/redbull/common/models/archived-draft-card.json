@@ -1,5 +1,5 @@
 {
-  "name": "deckCard",
+  "name": "archivedDraftCard",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,15 +7,10 @@
     "validateUpsert": true
   },
   "properties": {
-    "cardId": {
-        "required": true
-    },
-    "deckId": {
-        "required": true
-    },
+    "cardId": {},
+    "redbullDraftId": {},
     "cardQuantity": {
-        "required": true,
-        "type": "number"
+      "type": "number"
     }
   },
   "validations": [],
@@ -25,10 +20,10 @@
       "model": "card",
       "foreignKey": "cardId"
     },
-    "deck": {
+    "draft": {
       "type": "belongsTo",
-      "model": "deck",
-      "foreignKey": "deckId"
+      "model": "redbullDraft",
+      "foreignKey": "redbullDraftId"
     }
   },
   "acls": [
@@ -38,28 +33,20 @@
       "permission": "DENY"
     },
     {
-      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW"
+      "permission": "ALLOW",
+      "accessType": "READ"
     },
     {
-      "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
       "permission": "ALLOW"
     },
     {
-      "accessType": "WRITE",
       "principalType": "ROLE",
-      "principalId": "$owner",
+      "principalId": "$redbullAdmin",
       "permission": "ALLOW"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$everyone",
-      "permission": "ALLOW",
-      "property": "create"
     }
   ],
   "methods": {}
