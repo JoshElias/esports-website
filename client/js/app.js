@@ -2471,7 +2471,6 @@ var app = angular.module('app', [
                                       });
 //
                                   } else {
-
                                       HOTSGuideQueryService.getGuides(paginationParams.guideFilters, false,  paginationParams.guideFilters.search, paginationParams.comParams.perpage, paginationParams.comParams.page, function(err, data, count) {
                                           if (err) {
                                               return d.reject(err);
