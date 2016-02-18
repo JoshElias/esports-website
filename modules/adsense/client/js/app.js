@@ -14,6 +14,7 @@ angular.module('tsAdSense', [])
 .controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', function ($scope, $state, $window, User, EventService, $timeout) {
     var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
     var isAlreadyLoaded = !!document.getElementById("adCode");
+    var e = $(".ad");
     var role = undefined;
     
     $scope.showAds = false;
@@ -56,16 +57,12 @@ angular.module('tsAdSense', [])
     }
     
     function doLoadAds () {
-        console.log($scope);
         $scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
         $scope.adSlot = $scope.adSlot || "7575226683";
         $scope.theme = $state.theme || 'default';
         $scope.region = $state.current.name;
-        $scope.w = (!_.isUndefined($scope.w)) ? $scope.w + 'px' : '100%';
-        $scope.h = (!_.isUndefined($scope.h)) ? $scope.h + 'px' : '100%';
-        var e = $(".ad");
-        
-        
+        $scope.w = (!_.isUndefined($scope.w)) ? $scope.w  : '100%';
+        $scope.h = (!_.isUndefined($scope.h)) ? $scope.h  : '100%';
         
         $timeout(function () {
             for (var i = 0; i < e.length; i++) {
@@ -127,6 +124,7 @@ angular.module('tsAdSense', [])
             $timeout(function () {
                 console.log(attrs);
                 if (attrs.adSlot === "7575226683") {
+                    console.log(el[0]);
                     $(el[0]).attr('data-ad-format', 'auto')
                 }
             })
