@@ -22,7 +22,7 @@
                 <div class="input-group">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-green" ng-show="!article.author" ng-click="openAuthors()">Add Author</button>
-                        <button type="button" class="btn btn-danger" ng-show="article.author" ng-click="setAuthor(undefined)"><i class="fa fa-close"></i></button>
+                        <button type="button" class="btn btn-danger" ng-show="article.author" ng-click="setAuthor(null)"><i class="fa fa-close"></i></button>
                         <button type="button" class="btn btn-blue" ng-show="article.author" ng-click="openAuthors()"><i class="fa fa-exchange"></i></button>
                     </span>
                     <input type="text" id="deck" name="deck" class="form-control" ng-model="article.author.username" readonly required>

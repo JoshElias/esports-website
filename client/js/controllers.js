@@ -1864,6 +1864,7 @@ angular.module('app.controllers', ['ngCookies'])
             d.setMonth(d.getMonth()+1);
             var defaultArticle = {
                     author: LoopBackAuth.currentUserData,
+                    authorId: LoopBackAuth.currentUserId,
                     title : '',
                     createdDate: d,
                     slug: {
@@ -2036,7 +2037,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.setAuthor = function (user) {
-				        $scope.article.authorId = (user) ? user.id : null;
+				        $scope.article.authorId = (user && user.id) ? user.id : null;
                 $scope.article.author = (user) ? user : null;
                 $scope.search = '';
                 if (itemAddBox) {
@@ -2334,6 +2335,8 @@ angular.module('app.controllers', ['ngCookies'])
 					};
 					relatedArticleArticle.push(articleArticle);
 				});
+        
+        delete cleanArticle.related;
 
 				async.waterfall([
 					function (wateryCB) {
@@ -2348,11 +2351,11 @@ angular.module('app.controllers', ['ngCookies'])
 					},
 					function (articleCreated, wateryCB) {
 						// add parentId from created article
-						angular.forEach(cleanArticle.related, function(articleArticle) {
+						angular.forEach(relatedArticleArticle, function(articleArticle) {
 							articleArticle.parentArticleId = articleCreated.id;
 						});
 
-						ArticleArticle.createMany(cleanArticle.related)
+						ArticleArticle.createMany(relatedArticleArticle)
 						.$promise
 						.then(function (relatedArticles) {
 							return wateryCB(null);
@@ -2926,8 +2929,6 @@ angular.module('app.controllers', ['ngCookies'])
                 cleanArticle['guide'] = null;
                 cleanArticle['guideId'] = null;
 				    }
-            
-            console.log('relatedArticleChanges:', relatedArticleChanges);
 
             async.parallel([
               function (paraCB) {
