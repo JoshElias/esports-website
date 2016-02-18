@@ -1045,18 +1045,31 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         order: 'createdDate DESC',
                         where: getWhere(),
+                        fields: {
+                            id: true,
+                            name: true,
+                            authorId: true,
+                            createdDate: true,
+                            description: true,
+                            premium: true,
+                            photoNames: true,
+                            slug: true,
+                            themeName: true,
+                            title: true,
+                            articleType: true
+                        },
                         include: [
                             {
                                 relation: 'author',
                                 scope: {
-                                    fields: {
-                                        id: true,
-                                        username: true
-                                    }
+                                    fields: ['id', 'username']
                                 }
                             },
                             {
                                 relation: 'votes',
+                                scope: {
+                                    fields: ['id', 'authorId', 'direction']
+                                }
                             }
                         ]
                     }
@@ -1105,12 +1118,33 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         order: "createdDate DESC",
                         where: getWhere(),
+                        fields: {
+                            id: true,
+                            name: true,
+                            createdDate: true,
+                            authorId: true,
+                            playerClass: true,
+                            heroName: true,
+                            slug: true
+                        },
                         include: [
                             {
-                                relation: 'author'
+                                relation: 'author',
+                                scope: {
+                                    fields: {
+                                        username: true
+                                    }
+                                }
                             },
                             {
-                                relation: 'votes'
+                                relation: 'votes',
+                                scope: {
+                                    fields: {
+                                        id: true,
+                                        authorId: true,
+                                        direction: true
+                                    }
+                                }
                             }
                         ]
                     }
@@ -1220,9 +1254,21 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         order: "createdDate DESC",
                         where: getWhere(),
+                        fields: {
+                            id: true,
+                            name: true,
+                            createdDate: true,
+                            premium: true,
+                            authorId: true,
+                            guideType: true,
+                            slug: true
+                        },
                         include: [
                             {
-                                relation: 'author'
+                                relation: 'author',
+                                scope: {
+                                    fields: ['id', 'username']
+                                }
                             },
                             {
                                 relation: 'guideHeroes',
@@ -1231,11 +1277,7 @@ angular.module('app.controllers', ['ngCookies'])
                                         {
                                             relation: 'hero',
                                             scope: {
-                                                include: [
-                                                    {
-                                                        relation: 'talents'
-                                                    }
-                                                ]
+                                                fields: ['className', 'name', 'title'],
                                             }
                                         }
                                     ]
@@ -1246,16 +1288,25 @@ angular.module('app.controllers', ['ngCookies'])
                                 scope: {
                                     include: [
                                         {
-                                            relation: 'talent'
+                                            relation: 'talent',
+                                            scope: {
+                                                fields: ['className', 'name']
+                                            }
                                         }
                                     ]
                                 }
                             },
                             {
-                                relation: 'maps'
+                                relation: 'maps',
+                                scope: {
+                                    fields: ['className']
+                                }
                             },
                             {
-                                relation: 'votes'
+                                relation: 'votes',
+                                scope: {
+                                    fields: ['authorId', 'direction']
+                                }
                             }
                         ]
                     }
@@ -7418,6 +7469,18 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
+                        fields: {
+                            artist: false,
+                            attack: false,
+                            durability: false,
+                            expansion: false,
+                            flavor: false,
+                            health: false,
+                            isActive: false,
+                            race: false,
+                            text: false,
+                            deckable: false
+                        },
                         order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
@@ -9516,6 +9579,18 @@ angular.module('app.controllers', ['ngCookies'])
 
                 var options = {
                     filter: {
+                        fields: {
+                            artist: false,
+                            attack: false,
+                            durability: false,
+                            expansion: false,
+                            flavor: false,
+                            health: false,
+                            isActive: false,
+                            race: false,
+                            text: false,
+                            deckable: false
+                        },
                         where: {
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
@@ -10307,6 +10382,18 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
+                        fields: {
+                            artist: false,
+                            attack: false,
+                            durability: false,
+                            expansion: false,
+                            flavor: false,
+                            health: false,
+                            isActive: false,
+                            race: false,
+                            text: false,
+                            deckable: false
+                        },
                         order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
@@ -10384,7 +10471,6 @@ angular.module('app.controllers', ['ngCookies'])
                                 Card.find(options)
                                     .$promise
                                     .then(function (data) {
-
                                         $scope.classPagination.total = classCount.count;
                                         $scope.classPagination.page = page;
                                         $scope.neutralPagination.total = neutralCount.count;
@@ -10751,9 +10837,6 @@ angular.module('app.controllers', ['ngCookies'])
                 delete mulligan.mulligansWithoutCoin;
 
               });
-
-//              console.log('deck before update:', deck);
-//              console.log('WOOOOOOOOOOORK');
 
                 async.series([
                     function (seriesCallback) {
@@ -12078,6 +12161,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User', 'DeckBuilder',
         function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User, DeckBuilder) {
+//            console.log('deckWithMulligans:', deckWithMulligans);
 
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
@@ -12109,7 +12193,6 @@ angular.module('app.controllers', ['ngCookies'])
                                     heroName: true,
                                     authorId: true,
                                     deckType: true,
-                                    viewCount: true,
                                     isPublic: true,
                                     votes: true,
                                     voteScore: true,
@@ -12122,23 +12205,38 @@ angular.module('app.controllers', ['ngCookies'])
                                     {
                                         relation: "cards",
                                         scope: {
-                                            include: ['card']
+                                            include: {
+                                                relation: 'card',
+                                                scope: {
+                                                    fields: ['id', 'name', 'cardType', 'cost', 'dust', 'photoNames']
+                                                }
+                                            }
                                         }
                                     },
                                     {
-                                        relation: "mulligans",
+                                        relation: 'mulligans',
                                         scope: {
                                             include: [
                                                 {
                                                     relation: 'mulligansWithCoin',
                                                     scope: {
-                                                        include: 'card'
+                                                        include: {
+                                                            relation: 'card',
+                                                            scope: {
+                                                                fields: ['id', 'name', 'cardType', 'cost', 'photoNames']
+                                                            }
+                                                        }
                                                     }
                                                 },
                                                 {
                                                     relation: 'mulligansWithoutCoin',
                                                     scope: {
-                                                        include: 'card'
+                                                        include: {
+                                                            relation: 'card',
+                                                            scope: {
+                                                                fields: ['id', 'name', 'cardType', 'cost', 'photoNames']
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             ]
@@ -12147,29 +12245,39 @@ angular.module('app.controllers', ['ngCookies'])
                                     {
                                         relation: "comments",
                                         scope: {
-                                            include: ['author']
+                                            fields: ['id', 'votes', 'authorId', 'createdDate', 'text'],
+                                            include: {
+                                                relation: 'author',
+                                                scope: {
+                                                    fields: ['id', 'username']
+                                                }
+                                            }
                                         }
                                     },
                                     {
                                         relation: "author",
                                         scope: {
-                                            fields: [
-                                              'id',
-                                              'email',
-                                              'username',
-                                              'social',
-                                              'subscription'
-                                            ]
+                                            fields: ['id', 'username']
                                         }
                                     },
                                     {
-                                        relation: "matchups"
+                                        relation: "matchups",
+                                        scope: {
+                                            fields: ['forChance', 'deckName', 'className']
+                                        }
+                                    },
+                                    {
+                                        relation: "votes",
+                                        scope: {
+                                            fields: ['id', 'direction', 'authorId']
+                                        }
                                     }
                                 ]
                             }
                         })
                         .$promise
                         .then(function (data) {
+                            console.log('data:', data);
                             $scope.deck = DeckBuilder.new(data.playerClass, data);
 
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
