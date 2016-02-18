@@ -5053,7 +5053,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
                                     return data;
                                 })
                                 .catch(function (err) {
@@ -5178,7 +5177,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (classCards) {
-                                    console.log('classCards:', classCards);
                                     return classCards;
                                 });
                             }],
