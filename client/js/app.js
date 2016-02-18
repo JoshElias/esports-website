@@ -2921,7 +2921,13 @@ var app = angular.module('app', [
                               return d.promise;
                             }],
                             dataMaps: ['Map', function (Map) {
-                                return Map.find({}).$promise;
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
