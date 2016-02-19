@@ -4,8 +4,11 @@ angular.module('tsAdSense', [])
         function ($rootScope, $window) {
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
                 
-                
-                
+//              Object.keys($window).filter(function(k) { return k.indexOf('google') >= 0 }).forEach(
+//                function(key) {
+//                  delete($window[key]);
+//                }
+//              );
             });
         }
     ]
@@ -44,7 +47,7 @@ angular.module('tsAdSense', [])
                 }
                 
                 for (var i = 0; i < eLength; i++) {
-                    e[0].parentNode.removeChild(e[0]);
+                    $(e[i]).remove();
                 }
                 
                 $scope.showAds = false;
@@ -61,14 +64,14 @@ angular.module('tsAdSense', [])
         $scope.adSlot = $scope.adSlot || "7575226683";
         $scope.theme = $state.theme || 'default';
         $scope.region = $state.current.name;
-        $scope.w = (!_.isUndefined($scope.w)) ? $scope.w  : '100%';
-        $scope.h = (!_.isUndefined($scope.h)) ? $scope.h  : '100%';
+        $scope.w = (!_.isUndefined($scope.w)) ? $scope.w : '100%';
+        $scope.h = (!_.isUndefined($scope.h)) ? $scope.h : '100%';
         
         $timeout(function () {
             for (var i = 0; i < e.length; i++) {
                 $(e[i]).removeClass('hidden');
             }
-        })
+        });
         
         
         if (!isAlreadyLoaded) {
@@ -80,7 +83,7 @@ angular.module('tsAdSense', [])
             document.body.appendChild(s);
 
             isAlreadyLoaded = true;
-        } 
+        }
     }
     
     EventService.registerListener(EventService.EVENT_LOGIN, checkPremium);
@@ -107,24 +110,28 @@ angular.module('tsAdSense', [])
                             $window.adsbygoogle.push({});
                         } catch (e) {
                             adIter++;
-                            console.error(e.message);
-                            console.error("Retrying");
                             return pushAd();
                         }
                     }, 500);
                 } else {
-                    console.log('timed out');
+                    var parent = $scope.el[0].parentNode;
+                    
+                    while (!!parent['parentNode']) {
+                        parent = parent['parentNode'];
+                    }
+                    
+                    $(parent).remove();
                 }
             } 
             
             pushAd();
         }],
         link: function (scope, el, attrs) {
-//            $(el[0]).attr();
+            scope.el = el;
+            scope.attrs = attrs;
+            
             $timeout(function () {
-                console.log(attrs);
                 if (attrs.adSlot === "7575226683") {
-                    console.log(el[0]);
                     $(el[0]).attr('data-ad-format', 'auto')
                 }
             })
