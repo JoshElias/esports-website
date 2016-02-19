@@ -30,7 +30,6 @@
       "type": {}
     },
     "slug": {
-      "type": {
         "url": {
           "type": "string",
           "validators": [
@@ -40,7 +39,6 @@
         "linked": {
           "type": "boolean"
         }
-      }
     },
     "oldPosts": {
       "type": [

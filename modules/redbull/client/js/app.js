@@ -74,7 +74,7 @@ var redbull = angular.module('app.redbull', [
                         draftSettings: ['RedbullDraftSettings', function (RedbullDraftSettings) {
                             return RedbullDraftSettings.findOne().$promise;
                         }],
-                        draft: ['$localStorage', 'RedbullDraft', '$q', function ($localStorage, RedbullDraft, $q) {
+                        draft: ['$localStorage', '$state', 'RedbullDraft', '$q', function ($localStorage, $state, RedbullDraft, $q) {
                             var d = $q.defer();
                             if ($localStorage.draftId) {
                                 RedbullDraft.findOne({
@@ -105,17 +105,21 @@ var redbull = angular.module('app.redbull', [
                                         }
                                     }
                                 }).$promise.then(function (data) {
-                                    return d.resolve(data);
-                                }).catch(function (response) {
-                                    console.error(response);
-                                    if (response.status === 404) {
+                                    if (data.hasOpenedPacks) {
+                                        $state.go('app.hs.draft.build');
+                                        return $q.reject();
+                                    } else {
+                                        return d.resolve(data);
+                                    }
+                                }).catch(function (findResponse) {
+                                    if (findResponse && findResponse.status === 404) {
                                         RedbullDraft.create().$promise
                                         .then(function (data) {
                                             $localStorage.draftId = data.id;
                                             $localStorage.draftDecks = [];
                                             d.resolve(data);
-                                        }).catch(function (response) {
-                                            console.error(response);
+                                        }).catch(function (createResponse) {
+                                            console.error(createResponse);
                                         });
                                     }
                                 });
@@ -205,10 +209,15 @@ var redbull = angular.module('app.redbull', [
                                     fields: ['id', 'hasDecksConstructed'],
                                     include: [
                                         {
-                                            relation: 'cards',
+                                            relation: 'archivedCards',
                                             scope: {
-                                                fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text'],
-                                                order: ['cost ASC', 'name ASC']
+                                                fields: ['cardId', 'cardQuantity'],
+                                                include: [{
+                                                    relation: 'card',
+                                                    scope: {
+                                                        fields: ['cardType', 'cost', 'expansion', 'mechanics', 'name', 'photoNames', 'playerClass', 'race', 'rarity', 'text']
+                                                    }
+                                                }]
                                             }
                                         },
                                         {
@@ -236,7 +245,7 @@ var redbull = angular.module('app.redbull', [
                             });
                         }],
                         draftCards: ['draft', function (draft) {
-                            return draft.cards;
+                            return draft.archivedCards;
                         }],
                         draftDecks: ['draft', 'RedbullDeck', function (draft, RedbullDeck) {
                             var deckIds = [];
@@ -319,7 +328,12 @@ var redbull = angular.module('app.redbull', [
                                     }
                                 }
                             }).$promise.then(function (data) {
-                                return d.resolve(data);
+                                if (data.hasOpenedPacks) {
+                                    $state.go('app.hs.redbull.draft.build');
+                                    return $q.reject();
+                                } else {
+                                    return d.resolve(data);
+                                }
                             }).catch(function (response) {
                                 if (response.status === 404) {
                                     RedbullDraft.create({ isOfficial: true }).$promise

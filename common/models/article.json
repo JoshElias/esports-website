@@ -12,7 +12,6 @@
       "required": true
     },
     "slug": {
-      "type": {
         "url": {
           "type": "string",
           "validators": [
@@ -22,7 +21,6 @@
         "linked": {
           "type": "boolean"
         }
-      }
     },
     "description": {
       "type": "string"

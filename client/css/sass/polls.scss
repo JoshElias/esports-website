@@ -49,7 +49,7 @@
 .poll-txt .poll-item-txt-wrapper a:hover { text-decoration: none; color: #2568AF; }
 
 .poll-txt .poll-item-txt { position: relative; border: 1px solid #2568AF; background: rgba(0,0,0,.4); }
-.poll-txt .poll-item-txt:hover { background: #2568AF; border: 1px solid white } 
+.poll-txt .poll-item-txt:hover { background: #2568AF;  } 
 .poll-txt .poll-item-txt.active { background: #2568AF; }
 
 .poll-txt .poll-item-txt i { position: absolute; top: 10px; left: 10px; font-size: 20px; color: #2568AF; }
@@ -166,6 +166,7 @@
     height: auto; 
     margin: 0px 6px 20px 6px; 
     padding:0px;
+    margin-top: 20px;
 }
 .poll-img .poll-item-img-wrapper a,
 .poll-img .poll-item-img-wrapper a:active,
@@ -182,7 +183,9 @@
     outline: none;
 }
 .poll-img .poll-item-img-wrapper img { 
-    margin-top: 20px;
+    
+    position: relative;
+    top: 0px;
     margin-bottom: 5px;
     border: 1px solid #FFF; 
     height: 140px; 
@@ -190,20 +193,32 @@
     float:left; 
     -webkit-transition: ease-in-out;
     transition-timing-function:ease-in-out;
-    transition: margin-top .5s, margin-bottom .5s, -webkit-box-shadow .5s, -moz-box-shadow .5s, box-shadow .5s, transform .5s, border 1s;
+    transition: top .5s, bottom .5s, -webkit-box-shadow .5s, -moz-box-shadow .5s, box-shadow .5s, transform .5s, border 1s;
 }
-.poll-img .poll-item-img-wrapper img.active { 
+.poll-img .poll-item-img-wrapper a img.active { 
      border: 1px solid #CB882D; 
  }
-.poll-img .poll-item-img-wrapper a:hover img { 
-    margin-top: 0px;
-    margin-bottom: 25px;
-    -webkit-box-shadow: 0px 15px 10px -2px rgba(0,0,0,0.71);
-    -moz-box-shadow: 0px 15px 10px -2px rgba(0,0,0,0.71);
-    box-shadow: 0px 15px 10px -2px rgba(0,0,0,0.71);
-}
-.poll-img .poll-item-img-wrapper a:hover i { 
-    top: 0px;
+
+@media screen and (min-width: 767px) {
+    
+    .poll-img .poll-item-img-wrapper a:hover img { 
+
+    //--------------------This is the Problem---------------------    
+
+        top: -25px;
+
+        -webkit-box-shadow: 0px 15px 10px -2px rgba(0,0,0,0.71);
+        -moz-box-shadow: 0px 15px 10px -2px rgba(0,0,0,0.71);
+        box-shadow: 0px 15px 10px -2px rgba(0,0,0,0.71);
+        transition: top .5s, -webkit-box-shadow .5s, -moz-box-shadow .5s, box-shadow .5s ease-in-out;
+        -webkit-transition:  top .5s, -webkit-box-shadow .5s, -moz-box-shadow .5s, box-shadow .5s ease-in-out;
+        transition-timing-function: ease-in-out;
+
+    }
+    .poll-img .poll-item-img-wrapper a:hover i { 
+        top: 0px;
+    }
+
 }
 
 .poll-img .poll-item-img-button {
