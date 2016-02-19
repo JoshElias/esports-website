@@ -10245,6 +10245,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ], function(err) {
                     $scope.deckSubmitting = false;
+                    $window.scrollTo(0, 0);
                     if (err) {
                         console.log('waterfall err:', err);
                         return AlertService.setError({
