@@ -37,15 +37,20 @@
         <div class="db-builder row clearfix">
             <!-- db-right -->
             <div class="col-md-push-9 col-md-3">
+                
                 <div class="db-search">
-                    <form novalidate>
-                        <input type="text" class="input-sm input-dark" 
-                               placeholder="Search..." ng-model="filters.search">
-                        <button ng-click="search()" type="submit" class="search-charm" style="border: 0px;">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </form>
-                </div>
+                        <form class="ng-pristine ng-valid">
+                            <div class="input-group">
+                                <input type="text" name="search" class="input-sm input-dark form-control ng-pristine ng-valid ng-touched" placeholder="Search..." ng-model="filters.search" style=""> 
+                                <span class="input-group-btn">
+                                    <button ng-click="search()" type="submit" class="btn btn-blue btn-sm">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                
                 <div class="db-mana-curve m-b-md">
                     <div class="db-mana-curve-title">
                         MANA CURVE

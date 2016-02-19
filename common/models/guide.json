@@ -168,6 +168,18 @@
       "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__edit__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__guideHeroes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__guideTalents"
     }
   ],
   "methods": {}
