@@ -11,7 +11,7 @@ module.exports = function(Guide) {
     });
 
 //    Guide.observe("before save", utils.generateSlug("name"));
-
+    
     
     var fieldFilter = {
         fieldNames: ["allowComments", "description", "chapters",

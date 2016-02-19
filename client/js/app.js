@@ -2882,7 +2882,10 @@ var app = angular.module('app', [
                                             isActive: true
                                         }
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                });
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({
@@ -3105,28 +3108,31 @@ var app = angular.module('app', [
                                 }).$promise;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                              return Hero.find({
-                                filter: {
-                                  fields: {
-                                    where: {
-                                        isActive: true
-                                    },
-                                    oldTalents: false,
-                                    oldAbilities: false,
-                                    price: false,
-                                    title: false,
-                                    manaType: false,
-                                    characters: false
-                                  }
-                                }
-                              }).$promise;
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: {
+                                            oldTalents: false,
+                                            oldAbilities: false,
+                                            price: false,
+                                            title: false,
+                                            manaType: false,
+                                            characters: false
+                                        }
+                                    }
+                                }).$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                });
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({
                                     filter: {
                                         where: {
                                             isActive: true
-                                        },
+                                        }
                                     }
                                 }).$promise;
                             }]
@@ -3751,6 +3757,21 @@ var app = angular.module('app', [
                                     return tm;
                                 });
                             }],
+                            csTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'cs',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    return tm;
+                                });
+                            }],
                             fifaTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
                                     filter: {
@@ -4034,75 +4055,46 @@ var app = angular.module('app', [
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
                             articles: ['userProfile', 'User', 'Util', 'Article', function (userProfile, User, Util, Article) {
-                                if (User.getCurrentId() === userProfile.id) {
-                                    return Article.find({
-                                        filter: {
-                                            where: {
-                                                authorId: userProfile.id
-                                            },
-                                            include: [
-                                                {
-                                                    relation: 'author',
-                                                    scope: {
-                                                        fields: {
-                                                            id: true,
-                                                            username: true
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    relation: 'votes',
-                                                }
-                                            ]
-                                        }
-                                    })
-                                    .$promise
-                                    .then(function (articles) {
-                                        _.each(articles, function(article) {
-                                            article.voteScore = Util.tally(article.votes, 'direction');
-                                        });
-
-                                        return articles;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('err:', err);
-                                    });
-                                } else {
-                                    return Article.find({
-                                        filter: {
-                                            where: {
-                                                isActive: true,
-                                                authorId: userProfile.id
-                                            },
-                                            include: [
-                                                {
-                                                    relation: 'author',
-                                                    scope: {
-                                                        fields: {
-                                                            id: true,
-                                                            username: true
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    relation: 'votes',
-                                                }
-                                            ]
-                                        }
-                                    })
-                                    .$promise
-                                    .then(function (articles) {
-                                        _.each(articles, function(article) {
-                                            article.voteScore = Util.tally(article.votes, 'direction');
-                                        });
-
-                                        return articles;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('err:', err);
-                                    });
+                                
+                                var where = {
+                                    authorId: userProfile.id
+                                };
+                                
+                                if (User.getCurrentId() !== userProfile.id) {
+                                    where.isActive = true;
                                 }
                                 
+                                return Article.find({
+                                    filter: {
+                                        order: 'createdDate DESC',
+                                        where: where,
+                                        include: [
+                                            {
+                                                relation: 'author',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        username: true
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                relation: 'votes',
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (articles) {
+                                    _.each(articles, function(article) {
+                                        article.voteScore = Util.tally(article.votes, 'direction');
+                                    });
+
+                                    return articles;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
                                 
                             }]
                         }
@@ -4117,64 +4109,39 @@ var app = angular.module('app', [
                         controller: 'ProfileDecksCtrl',
                         resolve: {
                             decks: ['User', 'userProfile', 'Util', 'Deck', 'AuthenticationService', function (User, userProfile, Util, Deck, AuthenticationService) {
-                                if (User.getCurrentId() === userProfile.id) {
-                                    return Deck.find({
-                                        filter: {
-                                            order: "createdDate DESC",
-                                            where: {
-                                                authorId: userProfile.id
-                                            },
-                                            include: [
-                                                {
-                                                    relation: 'author'
-                                                },
-                                                {
-                                                    relation: 'votes'
-                                                }
-                                            ]
-                                        }
-                                    })
-                                    .$promise
-                                    .then(function (decks) {
-                                        _.each(decks, function(deck) {
-                                            deck.voteScore = Util.tally(deck.votes, 'direction');
-                                        });
-                                        
-                                        return decks;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('err:', err);
-                                    });
-                                } else {
-                                    return Deck.find({
-                                        filter: {
-                                            order: "createdDate DESC",
-                                            where: {
-                                                isPublic: true,
-                                                authorId: userProfile.id
-                                            },
-                                            include: [
-                                                {
-                                                    relation: 'author'
-                                                },
-                                                {
-                                                    relation: 'votes'
-                                                }
-                                            ]
-                                        }
-                                    })
-                                    .$promise
-                                    .then(function (decks) {
-                                        _.each(decks, function(deck) {
-                                            deck.voteScore = Util.tally(deck.votes, 'direction');
-                                        });
-                                        
-                                        return decks;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('err:', err);
-                                    });
+                                var where = {
+                                    authorId: userProfile.id
+                                };
+                                
+                                if (User.getCurrentId() !== userProfile.id) {
+                                    where.isPublic = true;
                                 }
+                                
+                                return Deck.find({
+                                    filter: {
+                                        order: "createdDate DESC",
+                                        where: where,
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            },
+                                            {
+                                                relation: 'votes'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (decks) {
+                                    _.each(decks, function(deck) {
+                                        deck.voteScore = Util.tally(deck.votes, 'direction');
+                                    });
+
+                                    return decks;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
 
                             }]
                         }
@@ -4189,122 +4156,69 @@ var app = angular.module('app', [
                         controller: 'ProfileGuidesCtrl',
                         resolve: {
                             guides: ['userProfile', 'Guide', 'Util', 'AuthenticationService', 'User', function (userProfile, Guide, Util, AuthenticationService, User) {
-                                if (User.getCurrentId() === userProfile.id) {
-                                    return Guide.find({
-                                        filter: {
-                                            order: "createdDate DESC",
-                                            where: {
-                                                authorId: userProfile.id
-                                            },
-                                            include: [
-                                                {
-                                                    relation: 'author'
-                                                },
-                                                {
-                                                    relation: 'guideHeroes',
-                                                    scope: {
-                                                        include: [
-                                                            {
-                                                                relation: 'hero',
-                                                                scope: {
-                                                                    include: [
-                                                                        {
-                                                                            relation: 'talents'
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            }
-                                                        ]
-                                                    }
-                                                },
-                                                {
-                                                    relation: 'guideTalents',
-                                                    scope: {
-                                                        include: [
-                                                            {
-                                                                relation: 'talent'
-                                                            }
-                                                        ]
-                                                    }
-                                                },
-                                                {
-                                                    relation: 'maps'
-                                                },
-                                                {
-                                                    relation: 'votes'
-                                                }
-                                            ]
-                                        }
-                                    }).$promise
-                                    .then(function (guides) {
-                                        _.each(guides, function(guide) {
-                                            guide.voteScore = Util.tally(guide.votes, 'direction');
-                                        });
-
-                                        return guides;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('err:', err);
-                                    });
-                                } else {
-                                    return Guide.find({
-                                        filter: {
-                                            order: "createdDate DESC",
-                                            where: {
-                                                isPublic: true,
-                                                authorId: userProfile.id
-                                            },
-                                            include: [
-                                                {
-                                                    relation: 'author'
-                                                },
-                                                {
-                                                    relation: 'guideHeroes',
-                                                    scope: {
-                                                        include: [
-                                                            {
-                                                                relation: 'hero',
-                                                                scope: {
-                                                                    include: [
-                                                                        {
-                                                                            relation: 'talents'
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            }
-                                                        ]
-                                                    }
-                                                },
-                                                {
-                                                    relation: 'guideTalents',
-                                                    scope: {
-                                                        include: [
-                                                            {
-                                                                relation: 'talent'
-                                                            }
-                                                        ]
-                                                    }
-                                                },
-                                                {
-                                                    relation: 'maps'
-                                                },
-                                                {
-                                                    relation: 'votes'
-                                                }
-                                            ]
-                                        }
-                                    }).$promise
-                                    .then(function (guides) {
-                                        _.each(guides, function(guide) {
-                                            guide.voteScore = Util.tally(guide.votes, 'direction');
-                                        });
-
-                                        return guides;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('err:', err);
-                                    });
+                                
+                                var where = {
+                                    authorId: userProfile.id
+                                };
+                                
+                                if (User.getCurrentId() !== userProfile.id) {
+                                    where.isPublic = true;
                                 }
+                                
+                                return Guide.find({
+                                    filter: {
+                                        order: "createdDate DESC",
+                                        where: where,
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            },
+                                            {
+                                                relation: 'guideHeroes',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'guideTalents',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'talent'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'maps'
+                                            },
+                                            {
+                                                relation: 'votes'
+                                            }
+                                        ]
+                                    }
+                                }).$promise
+                                .then(function (guides) {
+                                    _.each(guides, function(guide) {
+                                        guide.voteScore = Util.tally(guide.votes, 'direction');
+                                    });
+
+                                    return guides;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
                                 
                             }]
                         }
@@ -5529,6 +5443,7 @@ var app = angular.module('app', [
                                     total: 0,
                                     options: {
                                         filter: {
+                                            order: 'createdDate DESC',
                                             fields: {
 //                                                id: true,
 //                                                username: true
@@ -5693,13 +5608,17 @@ var app = angular.module('app', [
                                 }
                             }],
                             dataHeroes: ['Hero', function (Hero) {
+                                console.log('heeeeeere');
                                 return Hero.find({
                                     filter: {
                                         where: {
                                             isActive: true
                                         }
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                });
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({
@@ -6722,7 +6641,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (teamMembers) {
-                                    console.log('teamMembers:', teamMembers);
                                     var teamMemberObj = {};
                                     for (var key in teamMembers) {
                                         var teamMember = teamMembers[key];
@@ -6730,11 +6648,8 @@ var app = angular.module('app', [
                                         if(typeof teamMemberObj[teamMember.game] === "undefined") {
                                             teamMemberObj[teamMember.game] = [];
                                         }
-
                                         teamMemberObj[teamMember.game].push(teamMember);
                                     }
-
-                                    console.log('teamMemberObj:', teamMemberObj);
 
                                     return teamMemberObj;
 

@@ -28,8 +28,7 @@
       "required": true
     },
     "text": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "flavor": {
       "type": "string"
@@ -38,8 +37,7 @@
       "type": "string"
     },
     "attack": {
-      "type": "number",
-      "required": true
+      "type": "number"
     },
     "health": {
       "type": "number"

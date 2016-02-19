@@ -803,6 +803,7 @@ angular.module('app.directives', ['ui.load'])
                         });
                     });
                 } else if ($attrs.theme === 'multi' && votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
+                    bootbox.alert("You can't vote for your own content.");
                     return false;
                 } else {
                     
@@ -1750,6 +1751,16 @@ angular.module('app.directives', ['ui.load'])
             scope.getNumber = function (x) {
                 return Util.numberWithCommas(x);
             }
+            
+            function checkPre (str) {
+                var https = str.slice(0, 5) === "https";
+                var sub = str.substr(5);
+                
+                if (!https)
+                    return "https:" + sub;
+                
+                return str;
+            }
 
             Twitchfeeds.find({})
             .$promise
@@ -1757,11 +1768,11 @@ angular.module('app.directives', ['ui.load'])
                 data = data[0].feed;
 
                 for (var i = 0; i < data.length; i++) {
-                    var log = data[i].screenshotUrl;
-                    var sub = log.substr(4);
-                    var im = "https" + sub;
+                    var scr = data[i].screenshotUrl;
+                    
+                    scr = checkPre(scr);
 
-                    data[i].screenshotUrl = im;
+                    data[i].screenshotUrl = scr;
                     data[i].viewerCount = +data[i].viewerCount;
                 }
                 scope.streamWheel = true;
