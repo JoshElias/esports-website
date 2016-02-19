@@ -299,7 +299,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('commentSection', ['$sce', 'VoteService', 'LoginModalService', 'Comment', 'LoopBackAuth', function ($sce, VoteService, LoginModalService, Comment, LoopBackAuth) {
+.directive('commentSection', ['$sce', 'VoteService', 'LoginModalService', 'Comment', 'LoopBackAuth', '$timeout', function ($sce, VoteService, LoginModalService, Comment, LoopBackAuth, $timeout) {
     return {
         restrict: "E",
         templateUrl: tpl + 'views/frontend/directives/comments/commentSection.html',
@@ -324,16 +324,18 @@ angular.module('app.directives', ['ui.load'])
                 return userEmail;
             }
 
-            $scope.commentPost = function () {
+            $scope.commentPost = function (c) {
+                $scope.posting = true; 
+                
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
-                        $scope.commentPost();
+                        $scope.commentPost(c);
                     });
                 } else {
                     $scope.service.comments.create({
                         id: $scope.commentable.id
                     }, {
-                        text: $scope.comment,
+                        text: c,
                         authorId: LoopBackAuth.currentUserId,
                         createdDate: new Date(),
                         votes: [
@@ -347,11 +349,17 @@ angular.module('app.directives', ['ui.load'])
                     .$promise
                     .then(function (com) {
                         com.author = LoopBackAuth.currentUserData;
+                        
                         $scope.commentable.comments.push(com);
                         $scope.comment = '';
+                        commentSuccess();
                         updateCommentVotes();
-                    }, function (err, a) {
-                        console.log("failed!", err, a);
+                    })
+                    .catch(function (e) {
+                        console.log("post failed!", e);
+                    })
+                    .finally(function () {
+                        $scope.posting = false;
                     });
                 }
             };
@@ -362,7 +370,15 @@ angular.module('app.directives', ['ui.load'])
 
                 return voteScore;
             }
-
+            
+            function commentSuccess () {
+                $scope.commentSuccess = true;
+                
+                $timeout(function () {
+                    $scope.commentSuccess = false;
+                }, 5000);
+            }
+            
             updateCommentVotes();
             function updateCommentVotes() {
                 $scope.commentable.comments.forEach(checkVotes);

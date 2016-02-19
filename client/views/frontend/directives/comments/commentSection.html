@@ -2,7 +2,7 @@
     <h3 class="pull-left">COMMENTS</h3>
 </div>
 
-<div class="comment-add m-b-sm" ng-class="{ 'active': addAreaFocus }">
+<div class="comment-add m-b-sm" ng-class="{ 'active': addAreaFocus }" ng-if="!commentSuccess">
     <div class="row">
         <div class="col-xs-1 wrapper-none">
             <div class="avatar"><img gravatar-src="getCurrentEmail()" alt=""></div>
@@ -15,9 +15,17 @@
                 </div>
                 
                 <div class="post col-xs-2">
-                    <button ng-click="commentPost()" ng-disabled="!comment.length">POST</button>
+                    <button ng-click="commentPost(comment)" ng-disabled="!comment.length || posting">POST <i ng-if="posting" class="fa fa-spinner fa-spin"></i></button>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="comments m-b-sm" ng-class="{ 'comment-fade': commentSuccess }" ng-if="commentSuccess">
+    <div class="comment thanks-comment">
+        <div class="comment-panel">
+            <p>Your comment has been successfully posted!</p>
         </div>
     </div>
 </div>
