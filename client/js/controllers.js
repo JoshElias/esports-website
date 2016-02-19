@@ -485,13 +485,10 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService', 'isPremium',
-        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService, isPremium) {
-
-            var plan = user.subscription.plan || 'tempostorm_quarterly';
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService', 'isPremium', '$stateParams',
+        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService, isPremium, $stateParams) {
 
             $scope.user = user;
-            $scope.plan = user.subscription && user.subscription.plan ? user.subscription.plan : 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
             $scope.isPremium = isPremium;
@@ -852,6 +849,14 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
 //    }
 //])
+.controller('ProfileSubscriptionCtrl', ['$scope', 'resolvePlan', '$stateParams', function($scope, resolvePlan, $stateParams) {
+    if ($stateParams.plan) {
+        $scope.$parent.plan = resolvePlan;
+    } else {
+        $stateParams.plan = 'tempostorm_quarterly';
+        $scope.$parent.plan = 'tempostorm_quarterly';
+    }
+}])
 .controller('ProfileActivityCtrl', ['$scope', '$sce', '$filter', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth', 'Deck', 'Guide',
     function ($scope, $sce, $filter, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth, Deck, Guide) {
 
@@ -16465,6 +16470,7 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (userRoles) {
+                        $window.scrollTo(0, 0);
                         Guide.findById({
                             id: $scope.guide.id,
                             filter: {

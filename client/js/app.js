@@ -549,7 +549,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-//                                        console.log("roles", userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -4452,7 +4451,17 @@ var app = angular.module('app', [
                 url: '/premium?plan',
                 views: {
                     editProfile: {
-                        templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
+                        templateUrl: tpl + 'views/frontend/profile.edit.premium.html',
+                        controller: 'ProfileSubscriptionCtrl',
+                        resolve: {
+                            resolvePlan: ['$stateParams', function($stateParams) {
+                                if ($stateParams.plan) {
+                                    return $stateParams.plan;
+                                } else {
+                                    return false;
+                                }
+                            }]
+                        }
                     }
                 },
                 access: { auth: true },
