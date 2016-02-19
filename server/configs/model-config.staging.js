@@ -250,6 +250,14 @@ module.exports = {
         "dataSource": "tournament-mongo",
         "public": true
     },
+    "archivedDraftCard": {
+      "dataSource": "tournament-mongo",
+      "public": true
+    },
+    "tournamentDeckCard": {
+      "dataSource": "tournament-mongo",
+      "public": true
+    },
     "spamRegex": {
         "dataSource": "mongodb",
         "public": true

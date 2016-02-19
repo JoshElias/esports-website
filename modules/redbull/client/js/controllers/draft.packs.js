@@ -2,7 +2,6 @@ angular.module('redbull.controllers')
 .controller('DraftPacksCtrl', [
     '$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft',
     function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draftSettings, draft){
-    if (draft.hasOpenedPacks) { return $state.go('^.build'); }
 
     if (!$localStorage.draftId && !draft.isOfficial) {
         $localStorage.draftId = draft.id;
@@ -32,7 +31,15 @@ angular.module('redbull.controllers')
             'The Grand Tournament': 5,
             'League of Explorers': 6
         };
-        var newPacks = {};
+        var newPacks = {
+            'Soulbound' : undefined,
+            'Basic': undefined,
+            'Naxxramas': undefined,
+            'Goblins Vs. Gnomes': undefined,
+            'Blackrock Mountain': undefined,
+            'The Grand Tournament': undefined,
+            'League of Explorers': undefined
+        };
 
         _.each(packs, function (pack) {
             var expansion;
@@ -46,7 +53,7 @@ angular.module('redbull.controllers')
                 cards.push(packCard.card);
             });
 
-            if (!newPacks[expansion.name]) {
+            if (newPacks[expansion.name] === undefined) {
                 newPacks[expansion.name] = {
                     name: expansion.name,
                     className: expansion.className,

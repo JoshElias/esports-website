@@ -1863,6 +1863,7 @@ angular.module('app.controllers', ['ngCookies'])
             d.setMonth(d.getMonth()+1);
             var defaultArticle = {
                     author: LoopBackAuth.currentUserData,
+                    authorId: LoopBackAuth.currentUserId,
                     title : '',
                     createdDate: d,
                     slug: {
@@ -2035,7 +2036,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.setAuthor = function (user) {
-				        $scope.article.authorId = (user) ? user : null;
+				        $scope.article.authorId = (user && user.id) ? user.id : null;
                 $scope.article.author = (user) ? user : null;
                 $scope.search = '';
                 if (itemAddBox) {
@@ -2280,56 +2281,61 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
 
-            $scope.addArticle = function (article) {
+        $scope.addArticle = function (article) {
             $scope.fetching = true;
+            
+            var cleanArticle = angular.copy(article);
+            
+            cleanArticle = Util.cleanObj(cleanArticle, [
+                'articleType',
+                'authorId',
+                'content',
+                'deckId',
+                'description',
+                'guideId',
+                'id',
+                'isActive',
+                'isFeatured',
+                'photoNames',
+                'premium',
+                'slug',
+                'themeName',
+                'title',
+                'related'
+            ]);
+            
+            if (cleanArticle.guide) {
+                delete cleanArticle.guide;
+            }
+            
+            if (cleanArticle.deck) {
+                delete cleanArticle.deck;
+            }
 
 				// unlink guides/decks depending on what type of guide
-				if (article.articleType[0] !== 'hs') {
-					article['deck'] = undefined;
-					article['deckId'] = undefined;
+				if (cleanArticle.articleType[0] !== 'hs') {
+					cleanArticle['deck'] = undefined;
+					cleanArticle['deckId'] = undefined;
 				}
 
-				if (article.articleType[0] !== 'hots') {
-					article['guide'] = undefined;
-					article['guideId'] = undefined;
+				if (cleanArticle.articleType[0] !== 'hots') {
+					cleanArticle['guide'] = undefined;
+					cleanArticle['guideId'] = undefined;
 				}
 
 				var d = new Date().toISOString();
-				article.createdDate = d;
+				cleanArticle.createdDate = d;
 
 				// create model for articleArticle
 				var relatedArticleArticle = [];
-				angular.forEach(article.related, function(relatedArticle) {
+				angular.forEach(cleanArticle.related, function(relatedArticle) {
 					var articleArticle = {
 						childArticleId: relatedArticle.id
 					};
 					relatedArticleArticle.push(articleArticle);
 				});
-
-				var cleanArticle = {
-					title: article.title,
-					slug: article.slug,
-					description: article.description,
-					content: article.content,
-					photoNames: article.photoNames,
-					classTags: article.classTags,
-					themeName: article.themeName,
-					viewCount: 0,
-					votes: [{
-						userId: article.author ? article.author.id : null,
-						direction: 1
-					}],
-					voteScore: 1,
-					isFeatured: article.isFeatured,
-					createdDate: d,
-					premium: article.premium,
-					articleType: article.articleType,
-					isActive: article.isActive,
-					deckId: article.deck ? article.deck.id : null,
-					guideId: article.guide ? article.guide.id : null,
-					authorId: article.author ? article.author.id : null,
-					related: relatedArticleArticle
-				};
+        
+        delete cleanArticle.related;
 
 				async.waterfall([
 					function (wateryCB) {
@@ -2344,11 +2350,11 @@ angular.module('app.controllers', ['ngCookies'])
 					},
 					function (articleCreated, wateryCB) {
 						// add parentId from created article
-						angular.forEach(cleanArticle.related, function(articleArticle) {
+						angular.forEach(relatedArticleArticle, function(articleArticle) {
 							articleArticle.parentArticleId = articleCreated.id;
 						});
 
-						ArticleArticle.createMany(cleanArticle.related)
+						ArticleArticle.createMany(relatedArticleArticle)
 						.$promise
 						.then(function (relatedArticles) {
 							return wateryCB(null);
@@ -2537,7 +2543,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.setAuthor = function (user) {
-				      $scope.article.authorId = (user) ? user : null;
+				      $scope.article.authorId = (user) ? user.id : null;
                 $scope.article.author = (user) ? user : null;
                 $scope.search = '';
                 if (itemAddBox) {
@@ -2694,7 +2700,6 @@ angular.module('app.controllers', ['ngCookies'])
                 // removing related articles
                 // remove from toCreate
                 // push to toDelete if it exist in db
-
                 angular.forEach(relatedArticleChanges.toCreate, function(toCrArticle, index) {
                   if (toCrArticle.id === a.id) {
                     relatedArticleChanges.toCreate.splice(index, 1);
@@ -2885,23 +2890,50 @@ angular.module('app.controllers', ['ngCookies'])
 //        console.log('article:', article);
         $scope.editArticle = function (article) {
             $scope.fetching = true;
+            
+            var cleanArticle = angular.copy(article);
+            
+            cleanArticle = Util.cleanObj(cleanArticle, [
+                'articleType',
+                'authorId',
+                'content',
+                'deckId',
+                'description',
+                'guideId',
+                'id',
+                'isActive',
+                'isFeatured',
+                'photoNames',
+                'premium',
+                'slug',
+                'themeName',
+                'title'
+            ]);
+            
+            if (cleanArticle.guide) {
+                delete cleanArticle.guide;
+            }
+            
+            if (cleanArticle.deck) {
+                delete cleanArticle.deck;
+            }
 
 				    // unlink guides/decks depending on what type of guide
-				    if (article.articleType[0] !== 'hs') {
-                article['deck'] = null;
-                article['deckId'] = null;
+				    if (cleanArticle.articleType[0] !== 'hs') {
+                cleanArticle['deck'] = null;
+                cleanArticle['deckId'] = null;
 				    }
 
-				    if (article.articleType[0] !== 'hots') {
-                article['guide'] = null;
-                article['guideId'] = null;
+				    if (cleanArticle.articleType[0] !== 'hots') {
+                cleanArticle['guide'] = null;
+                cleanArticle['guideId'] = null;
 				    }
 
             async.parallel([
               function (paraCB) {
                   Article.prototype$updateAttributes({
-                      id: article.id
-                  }, article)
+                      id: cleanArticle.id
+                  }, cleanArticle)
                   .$promise
                   .then(function (articleUpdated) {
                       return paraCB();
@@ -2920,7 +2952,7 @@ angular.module('app.controllers', ['ngCookies'])
                         filter: {
                           where: {
                             childArticleId: relatedToDelete.id,
-                            parentArticleId: article.id
+                            parentArticleId: cleanArticle.id
                           }
                         }
                       }).$promise
@@ -2959,7 +2991,7 @@ angular.module('app.controllers', ['ngCookies'])
               function(paraCB) {
                 async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
                   var articleArticle = {
-                    parentArticleId: article.id,
+                    parentArticleId: cleanArticle.id,
                     childArticleId: relatedArticle.id
                   };
                   ArticleArticle.create(articleArticle)
@@ -2991,7 +3023,7 @@ angular.module('app.controllers', ['ngCookies'])
               AlertService.setSuccess({
                 show: false,
                 persist: true,
-                msg: article.title + ' updated successfully',
+                msg: cleanArticle.title + ' updated successfully',
               });
               $state.transitionTo('app.admin.articles.list');
             });
