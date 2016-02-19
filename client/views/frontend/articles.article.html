@@ -87,7 +87,8 @@
                 <div ng-if="article.deck" class="article-deck" db-deck deck="article.deck"></div>
                 
                 <!-- article related -->
-                <div class="article-related" ng-if="article.relatedArticles && article.relatedArticles.length && relatedActive()">
+    
+                <div class="article-related row" ng-if="article.relatedArticles && article.relatedArticles.length && relatedActive()">
                     <h3>RELATED ARTICLES</h3>
                     <div class="related" ng-repeat="item in article.relatedArticles | orderBy: '-createdDate'" ng-if="item.isActive">
                         <a href="./articles/{{item.slug.url}}" title="{{item.title}}">
@@ -102,19 +103,24 @@
                 </div>
                 <!-- / article related -->
                 
+                <div class="row">
                 
-                <!--  G2A  -->
-                
-                <div class="g2a-square">
-                    <a href="https://www.g2a.com/r/tempo-storm"><img src="https://cdn-tempostorm.netdna-ssl.com/img/g2a-tempo.png" alt="G2A"></a>
-                </div>                
-                <!-- / G2A -->
-                
-                <!-- sidebar plg -->
+                    <!--  G2A  -->
 
-                <ts-ad h="280" w="336" ad-slot="6724228680" structure="sidebar"></ts-ad>
+                    <div class="g2a-square col-lg-12 col-sm-6">
+                        <a href="https://www.g2a.com/r/tempo-storm"><img src="https://cdn-tempostorm.netdna-ssl.com/img/g2a-tempo.png" alt="G2A"></a>
+                    </div>                
+                    <!-- / G2A -->
 
-                <!-- sidebar plg ends-->
+
+                    <!-- sidebar plg -->
+                    <div class="col=lg-12 col-sm-6">
+                    <ts-ad h="280" w="336" ad-slot="6724228680" structure="sidebar" theme="clear-plg"></ts-ad>
+                    </div>
+                    
+                    <!-- sidebar plg ends-->
+                
+                </div>
                 
             </div>
             

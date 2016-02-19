@@ -88,6 +88,7 @@
         padding-top: 25px;
         padding-bottom: 25px;
         @include ts-div;
+       
     }
     
     .programmers {
@@ -128,6 +129,41 @@
         padding-bottom: 35px;
     }
     
+}
+
+//*************************************
+// 3.3. Clear plg
+//*************************************
+
+.clear-plg { 
+    .plg-long {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        
+       // @include ts-div;
+        
+        &.plg-dbl {
+            @media (max-width: 768px) {
+                padding-left: 15px;
+                padding-right: 15px;
+
+            }
+        }
+    }
+    
+    .plg-sidebar {
+        padding-top: 25px;
+        padding-bottom: 25px;
+      //  @include ts-div;
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+    
+    .programmers {
+        height: 125px;
+        width: 100%;
+    }
+
 }
 
 //*************************************
