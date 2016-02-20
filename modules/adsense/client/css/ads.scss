@@ -77,10 +77,18 @@
         
         &.plg-dbl {
             @media (max-width: 768px) {
-                padding-left: 15px;
-                padding-right: 15px;
+//                padding-left: 15px;
+//                padding-right: 15px;
 
             }
+            
+            .ad-wrap:first-of-type {
+                @media (max-width: 1199px) {
+                    margin-bottom: 15px;
+                }
+            }
+            
+            
         }
     }
     
