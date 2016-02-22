@@ -1,7 +1,7 @@
 module.exports = {
 	"mongodb": {
 		"name": "mongodb",
-		"connector": "mongodb",
+		"connector": "loopback-connector-mongodb",
 		"host": "54.68.67.60",
 		"database": "tempostorm",
 		"port": 27017,
@@ -14,7 +14,7 @@ module.exports = {
 	},
 	"tournament-mongo": {
 		"name": "tournament-mongo",
-		"connector": "mongodb",
+		"connector": "loopback-connector-mongodb",
 		"host": "54.68.67.60",
 		"database": "tournament",
 		"port": 27017,
