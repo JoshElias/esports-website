@@ -13,8 +13,8 @@ module.exports = {
 		"allowExtendedOperators": true
 	},
 	"tournament-mongo": {
-		"name": "mongodb",
-		"connector": "tournament-mongo",
+		"name": "tournament-mongo",
+		"connector": "mongodb",
 		"host": "54.68.67.60",
 		"database": "tournament",
 		"port": 27017,
