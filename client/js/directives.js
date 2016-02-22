@@ -34,7 +34,7 @@ angular.module('app.directives', ['ui.load'])
 .directive('hsCard', ['$compile', function ($compile) {
     return {
         restrict: 'A',
-		scope: {
+		    scope: {
             tooltipImg: '='
         },
         link: function (scope, el, attr) {
@@ -1000,6 +1000,10 @@ angular.module('app.directives', ['ui.load'])
                 style: false,
                 className: 'hots-talent-tooltip'
             });
+            
+            scope.$on('$destroy', function () {
+                $('.hots-talent-tooltip').remove();
+            });
         }
     };
 }])
@@ -1016,6 +1020,10 @@ angular.module('app.directives', ['ui.load'])
                 style: false,
                 className: 'hots-hero-tooltip'
             });
+
+            scope.$on('$destroy', function () {
+                $('.hots-hero-tooltip').remove();
+            });
         }
     };
 }])
@@ -1031,6 +1039,10 @@ angular.module('app.directives', ['ui.load'])
                 content: $compile('<div map-modal></div>')(scope),
                 style: false,
                 className: 'hots-map-tooltip'
+            });
+            
+            scope.$on('$destroy', function () {
+                $('.hots-map-tooltip').remove();
             });
         }
     };
