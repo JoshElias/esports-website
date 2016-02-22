@@ -1,12 +1,6 @@
 module.exports = {
 	"mongodb": {
-<<<<<<< Updated upstream
 	    "host": "mongodb://54.68.67.60:27017/tempostorm",
-	    "port": 27017,
-=======
-		"url": 'mongodb://54.68.67.60:27017/tempostorm',
->>>>>>> Stashed changes
-	    "database": "tempostorm",
 	    "name": "mongodb",
 	    "connector": "mongodb",
 	    "server": {
@@ -17,14 +11,7 @@ module.exports = {
 	    "allowExtendedOperators": true
 	},
 	"tournament-mongo": {
-<<<<<<< Updated upstream
 		"host": "mongodb://54.68.67.60:27017/tournament",
-		"port": 27017,
-		"database": "tempostorm",
-=======
-		"url": 'mongodb://54.68.67.60:27017/tournament',
-		"database": "tournament",
->>>>>>> Stashed changes
 		"name": "mongodb",
 		"connector": "mongodb",
 		"server": {
