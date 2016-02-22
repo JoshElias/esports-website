@@ -1,30 +1,24 @@
 module.exports = {
-	"mongodb": {
-		"name": "mongodb",
-		"connector": "loopback-connector-mongodb",
-		"host": "54.68.67.60",
-		"database": "tempostorm",
-		"port": 27017,
-		"server": {
-			"auto_reconnect": true,
-			"reconnectTries": 100,
-			"reconnectInterval": 1000
-		},
-		"allowExtendedOperators": true
-	},
-	"tournament-mongo": {
-		"name": "tournament-mongo",
-		"connector": "loopback-connector-mongodb",
-		"host": "54.68.67.60",
-		"database": "tournament",
-		"port": 27017,
-		"server": {
-			"auto_reconnect": true,
-			"reconnectTries": 100,
-			"reconnectInterval": 1000
-		},
-		"allowExtendedOperators": true
-	},
+    "mongodb": {
+        "url": 'mongodb://54.68.67.60:27017/tempostorm',
+        "connector": "loopback-connector-mongodb",
+        "server": {
+            "auto_reconnect": true,
+            "reconnectTries": 100,
+            "reconnectInterval": 1000
+        },
+        "allowExtendedOperators": true
+    },
+    "tournament-mongo": {
+        "url": 'mongodb://54.68.67.60:27017/tournament',
+        "connector": "loopback-connector-mongodb",
+        "server": {
+            "auto_reconnect": true,
+            "reconnectTries": 100,
+            "reconnectInterval": 1000
+        },
+        "allowExtendedOperators": true
+    },
 	"mandrill": {
 	    "name": "mandrill",
 	    "connector": "loopback-connector-mandrill",
