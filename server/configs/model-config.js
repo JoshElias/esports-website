@@ -7,6 +7,7 @@ module.exports = {
       "./../models",
       "../../node_modules/loopback-component-passport/lib/models",
       "../../modules/redbull/common/models"
+      "../../modules/hotsSnapshot/common/models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -267,6 +268,22 @@ module.exports = {
         "public": true
     },
     "twitchfeeds": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "hotsSnapshot": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "heroTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "hotsSnapshotAuthor": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "tierGuide": {
         "dataSource": "mongodb",
         "public": true
     }

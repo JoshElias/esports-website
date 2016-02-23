@@ -5725,6 +5725,12 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
+    .controller('AdminHOTSSnapshotListCtrl', ['$scope', function ($scope) {
+        console.log('were in');
+    }])
+    .controller('AdminHOTSSnapshotAddCtrl', ['$scope', function ($scope) {
+        console.log('were in add');
+    }])
     .controller('AdminTeamListCtrl', ['$scope', '$window', 'TeamMember', 'teamMembers', 'AlertService',
         function ($scope, $window, TeamMember, teamMembers, AlertService) {
 

@@ -25,7 +25,7 @@ var app = angular.module('app', [
     'app.directives',
     'app.animations',
     'app.redbull',
-    'hotsModule',
+    'hotsSnapshot',
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
@@ -3254,24 +3254,6 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Talent Calculator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
             })
-            .state('app.hots.snapshot', {
-                abstract: 'true',
-                url: '/meta-snapshot',
-                views: {
-                    hots: {
-                        templateUrl: tpl + 'views/frontend/hots.snapshots.html'
-                    }
-                }
-            })
-            .state('app.hots.snapshot.snapshot', {
-                url: '/test',
-                views: {
-                    hotsSnapshots: {
-                        templateUrl: tpl + 'views/frontend/hots.snapshots.snapshot.html',
-//                        controller: 'SnapshotCtrl',
-                    }
-                }
-            })
             .state('app.forum', {
                 abstract: true,
                 url: 'forum',
@@ -5825,6 +5807,35 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.hots.snapshots', {
+                abstract: true,
+                url: '/snapshots',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/admin/hots.snapshot.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.hots.snapshots.list', {
+                url: '',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/hots.snapshot.list.html',
+                        controller: 'AdminHOTSSnapshotListCtrl'
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.add', {
+                url: '/add',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/hots.snapshot.add.html',
+                        controller: 'AdminHOTSSnapshotAddCtrl'
+                    }
+                }
             })
             .state('app.admin.forum', {
                 abstract: true,
