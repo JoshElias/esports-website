@@ -28,6 +28,7 @@
     "knox": "*",
     "loopback": "^2.27.0",
     "loopback-boot": "*",
+    "loopback-component-explorer": "^2.3.0",
     "loopback-component-passport": "^2.0.0",
     "loopback-component-storage": "^1.7.0",
     "loopback-connector-mandrill": "git://github.com/JoshElias/loopback-connector-mandrill.git",
