@@ -1,5 +1,4 @@
 module.exports = function mountLoopBackExplorer(server) {
-  /*
     if(process.env.NODE_ENV === "production") {
       return;   
     }
@@ -26,5 +25,4 @@ module.exports = function mountLoopBackExplorer(server) {
     var explorerPath = explorerApp.mountpath || explorerApp.route;
     console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
   });
-  */
 };

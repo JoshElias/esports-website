@@ -1,9 +1,8 @@
 module.exports = {
-
     "mongodb": {
         "name": "mongodb",
         "connector": "mongodb",
-        "url": 'mongodb://54.68.67.60:27017/tournament',
+        "url": 'mongodb://54.68.67.60:27017/tempostorm',
         "server": {
             "auto_reconnect": true,
             "reconnectTries": 100,
