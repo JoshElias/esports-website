@@ -1,19 +1,20 @@
 <div class="login-form row">
-    <div class="login-form-oauth col-sm-12 wrapper-none">
-        <a href="#" class="btn btn-block btn-twitch" ng-click="twitchLogin()"><i class="fa fa-twitch"></i>Log in with Twitch</a>
-        <a href="#" class="btn btn-block btn-bnet" ng-click="bnetLogin()"><img src="../img/BattleNet_white.png" class="bat-net-img"> Battle.net Login</a>
+    <div class="login-form-header">
+    
     </div>
-    <div class="or">
-        or
+    <div class="login-form-auth col-sm-12 wrapper-none">
+        <a href="#" class="btn  btn-twitch" ng-click="twitchLogin()"><i class="fa fa-twitch"></i>SIGN IN <br>Twitch</a>
+        <a href="#" class="btn  btn-bnet" ng-click="bnetLogin()"><img src="../img/BattleNet_white.png" class="bat-net-img">SIGN IN <br>Battlenet</a>
     </div>
+    
     <div class="login-form-email col-sm-12 wrapper-none">
         <form class="form-horizontal form-modal" role="form" name="loginForm">
         <div class="form-group m-b-sm">
-            <input type="email" class="form-control input-dark login-email" id="email" name="email" placeholder="Email Address" ng-model="loginInfo.email" required>
+            <input type="email" class="form-control  login-email" id="email" name="email" placeholder="Email Address" ng-model="loginInfo.email" required>
             <div class="login-charm">@</div>
         </div>
         <div class="form-group">
-            <input type="password" class="form-control input-dark login-email" id="password" name="password" placeholder="Password" ng-model="loginInfo.password" required>
+            <input type="password" class="form-control  login-email" id="password" name="password" placeholder="Password" ng-model="loginInfo.password" required>
             <div class="login-charm lock"><i class="fa fa-lock"></i></div>
         </div>
 
