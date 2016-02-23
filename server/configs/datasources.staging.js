@@ -3,9 +3,7 @@ module.exports = {
     "mongodb": {
         "name": "mongodb",
         "connector": "mongodb",
-        "host": "54.68.67.60",
-        "database": "tempostorm",
-        "port": 27017,
+        "url": 'mongodb://54.68.67.60:27017/tournament',
         "server": {
             "auto_reconnect": true,
             "reconnectTries": 100,
@@ -15,9 +13,7 @@ module.exports = {
     "tournament-mongo": {
         "name": "tournament-mongo",
         "connector": "mongodb",
-        "host": "54.68.67.60",
-        "database": "tournament",
-        "port": 27017,
+        "url": 'mongodb://54.68.67.60:27017/tournament',
         "server": {
             "auto_reconnect": true,
             "reconnectTries": 100,
