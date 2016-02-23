@@ -3749,5 +3749,244 @@ angular.module('app.services', [])
         };
         return factory;
     }
-]);
+])
+.factory('HearthstoneSnapshotBuilder', ['$sce', '$http', '$q', '$timeout', 'User', 'Hearthstone', function ($sce, $http, $q, $timeout, User, Hearthstone) {
+    var snapshot = {};
+    var defaultSnap = {
+        snapNum : 1,
+        title : "",
+        authors : [],
+        slug : {
+            url : "",
+            linked : true,
+        },
+        content : {
+            intro : "",
+            thoughts : ""
+        },
+        matches : [],
+        tiers: [],
+        photoNames: {
+            large: "",
+            medium: "",
+            small: "",
+            square: ""
+        },
+        votes: 0,
+        active : false
+    };
+    var defaultAuthor = {
+        id: null,
+        user: undefined,
+        description: "",
+        klass: []
+    };
+    var defaultTier = {
+        tier : 1,
+        decks : []
+    };
+    var defaultTierDeck = {
+        name: "",
+        explanation : "",
+        weeklyNotes : "",
+        deck : undefined,
+        ranks : [0,0,0,0,0,0,0,0,0,0,0,0,0],
+        deckTech : []
+    };
+    var defaultDeckMatch = {
+        forDeck : undefined,
+        againstDeck : undefined,
+        forChance : 0,
+        againstChance : 0
+    };
+    var defaultDeckTech = {
+        title : "",
+        cardTech : [],
+        orderNum : 1
+    };
+    var defaultTechCards = {
+        card : undefined,
+        toss : false,
+        orderNum : 1
+    };
+    
+    snapshot.new = function (data) {
+        // start with default snapshot
+        var sb = angular.copy(defaultSnap);
+
+        // init
+        sb.init = function(data) {
+            // if we have data, load it
+            if (data) {
+                sb.load(data);
+            }
+        };
+        
+        sb.load = function (data) {
+            
+        };
+        
+        // load latest snapshot and increment snapshot number / shift trends
+        sb.loadPrevious = function () {
+            
+        };
+        
+        // add author
+        sb.authorAdd = function (user) {
+            var newAuthor = angular.copy(defaultAuthor);
+            newAuthor.user = user;
+            sb.authors.push(newAuthor);
+        };
+        
+        // delete author
+        sb.authorDelete = function (author) {
+            var index = sb.authors.indexOf(author);
+            if (index !== -1) {
+                sb.authors.splice(index, 1);
+                // TODO: CRUDMAN REMOVE AUTHOR
+            }
+        };
+        
+        // add tier
+        sb.tierAdd = function () {
+            var newTier = angular.copy(defaultTier);
+            newTier.tier = sb.tiers.length + 1;
+            db.tiers.push(newTier);
+        };
+        
+        // delete tier
+        sb.tierDelete = function (tier) {
+            var index = sb.tiers.indexOf(tier);
+            if (index !== -1) {
+                sb.tierDeleteAllDecks(tier);
+                sb.tiers.splice(index, 1);
+                // TODO: CRUDMAN DELETE TIER
+            }
+        };
+        
+        // delete all decks in a tier
+        sb.tierDeleteAllDecks = function (tier) {
+            if (!tier || !tier.decks || !tier.decks.length) { return false; }
+            for (var i = 0; i < tier.decks.length; i++) {
+                db.deckDelete(tier, tier.decks[i]);
+            }
+        };
+        
+        // add deck
+        sb.deckAdd = function (tier, deck) {
+            var newDeck = angular.copy(defaultTierDeck);
+            newDeck.name = deck.name;
+            newDeck.deck = deck.deck;
+            tier.decks.push(newDeck);
+            if (tier.tier <= 2) {
+                sb.matchupsAdd(newDeck);
+            }
+        };
+        
+        // delete deck
+        sb.deckDelete = function (tier, deck) {
+            var index = tier.decks.indexOf(deck);
+            if (index !== -1) {
+                sb.deckDeleteAllTechs(deck);
+                sb.matchupsDelete(deck);
+                tier.splice(index, 1);
+                // TODO: CRUDMAN DELETE DECK
+            }
+        };
+        
+        // delete all deck techs in a deck
+        sb.deckDeleteAllTechs = function (deck) {
+            if (!deck || !deck.deckTech || !deck.deckTech.length) { return false; }
+            for (var i = 0; i < deck.deckTech.length; i++) {
+                sb.deckTechDelete(deck, deck.deckTech[i]);
+            }
+        };
+        
+        // add deck tech
+        sb.deckTechAdd = function (deck) {
+            var newDeckTech = angular.copy(defaultDeckTech);
+            deck.deckTech.push(newDeckTech);
+        };
+        
+        // delete deck tech
+        sb.deckTechDelete = function (deck, deckTech) {
+            var index = deck.deckTech.indexOf(deckTech);
+            if (index !== -1) {
+                sb.deckDeleteAllTechCards(deckTech);
+                deck.deckTech.splice(index, 1);
+                // TODO: CRUDMAN DELETE DECKTECH
+            }
+        };
+        
+        // add deck tech card
+        sb.deckTechCardAdd = function (deckTech, card) {
+            var newDeckTechCard = angular.copy(defaultTechCards);
+            newDeckTechCard.card = card.card;
+            newDeckTechCard.toss = card.toss;
+            deckTech.push(newDeckTechCard);
+        };
+        
+        // delete deck tech card
+        sb.deckTechCardDelete = function (deckTech, card) {
+            var index = deckTech.indexOf(card);
+            if (index !== -1) {
+                deckTech.splice(index, 1);
+                // TODO: CRUDMAN DELETE DECKTECH CARD
+            }
+        };
+
+        // return decks that need matchups
+        sb.matchupDecks = function () {
+            var decks = [];
+            var maxTiers = (sb.tiers.length > 2) ? 2 : sb.tiers.length;
+            
+            for (var i = 0; i < maxTiers; i++) {
+                for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                    decks.push(sb.tiers[i].decks[j]);
+                }
+            }
+            
+            return decks;
+        };
+
+        // add matchups to each deck for deck
+        sb.matchupsAdd = function (deck) {
+            var matchupDecks = sb.matchupDecks();
+            
+            for (var i = 0; i < matchupDecks.length; i++) {
+                var newMatchup = angular.copy(defaultDeckMatch);
+                newMatchup.forDeck = deck;
+                newMatchup.againstDeck = matchupDecks[i];
+                if (deck.id === matchupDecks[i].id) {
+                    newMatchup.forChance = 50;
+                    newMatchup.againstChance = 50;
+                }
+                sb.matchups.push(newMatchup);
+            }
+        };
+        
+        // delete matchups from each deck for deck
+        sb.matchupsDelete = function (deck) {
+            for (var i = sb.matchups.length - 1; i >= 0; i--) {
+                if (sb.matchups[i].forDeck.id === deck.id || sb.matchups[i].againstDeck.id === deck.id) {
+                    sb.matchups.splice(i, 1);
+                }
+            }
+        };
+        
+        // save snapshot
+        sb.save = function () {
+            
+        };
+        
+        // run init
+        sb.init(data);
+        
+        // return instance
+        return sb;
+    };
+    
+    // return service
+    return snapshot;
+}])
 ;
