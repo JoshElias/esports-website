@@ -25,6 +25,7 @@ var app = angular.module('app', [
     'app.directives',
     'app.animations',
     'app.redbull',
+    'hotsModule',
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
