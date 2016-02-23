@@ -1,5 +1,5 @@
 {
-  "name": "teamMember",
+  "name": "team",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,40 +7,31 @@
     "validateUpsert": true
   },
   "properties": {
-    "screenName": {
-      "type": "string"
-    },
-    "fullName": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "social": {
-      "type": "object"
-    },
-    "photoName": {
-      "type": "string"
-    },
-    "game": {
-      "type": "string"
-    },
-    "orderNum": {
+    "__v": {
       "type": "number"
+    },
+    "gameName": {
+      "type": "string"
     },
     "isActive": {
       "type": "boolean"
     },
-    "teamId": {
+    "gameId": {
       "type": {}
     }
   },
   "validations": [],
   "relations": {
-    "team": {
+    "game": {
       "type": "belongsTo",
-      "model": "team",
-      "foreignKey": "teamId"
+      "model": "game",
+      "foreignKey": "gameId"
+    },
+    "teamMembers": {
+      "type": "hasMany",
+      "model": "teamMember",
+      "foreignKey": "teamId",
+      "isChild": true
     }
   },
   "acls": [

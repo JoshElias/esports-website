@@ -6622,55 +6622,71 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            teamMembers: ['TeamMember', function (TeamMember) {
-                                var gameTypes = ['hs', 'hots', 'fifa', 'wow', 'cs', 'fgc' ]
-                                var gameTypeFilter = _.map(gameTypes, function (gameType) {
-                                    return {game: gameType}
-                                })
-
-                                return TeamMember.find({
+                            teamInfo: ['Team', function (Team) {
+                                return Team.find({
                                     filter: {
-                                        where: {
-                                            game: {
-                                                inq: gameTypes
+                                        include: [
+                                            {
+                                                relation: 'teamMembers'
+                                            },
+                                            {
+                                                relation: 'game'
                                             }
-                                        }
+                                        ]
                                     }
                                 })
                                 .$promise
-                                .then(function (teamMembers) {
-                                    var teamMemberObj = {};
-                                    for (var key in teamMembers) {
-                                        var teamMember = teamMembers[key];
-
-                                        if(typeof teamMemberObj[teamMember.game] === "undefined") {
-                                            teamMemberObj[teamMember.game] = [];
-                                        }
-                                        teamMemberObj[teamMember.game].push(teamMember);
-                                    }
-
-                                    return teamMemberObj;
-
-                                  /* async.each(t, function (tm, eachCb) {
-                                        if (typeof tm.isActive === 'string') {
-                                            console.log('IT\'S A STRING');
-                                            tm.isActive = true;
-
-                                            TeamMember.update({
-                                                where: {
-                                                    id: tm.id
-                                                }
-                                            }, tm)
-                                            .$promise
-                                            .then(function (data) {
-                                                console.log(data);
-                                                return eachCb();
-                                            })
-                                        } else {
-                                            return eachCb();
-                                        }
-                                    });*/
-                               })
+                                .then(function (teamInfo) {
+                                    return teamInfo;
+                                });
+//                                var gameTypes = ['hs', 'hots', 'fifa', 'wow', 'cs', 'fgc' ]
+//                                var gameTypeFilter = _.map(gameTypes, function (gameType) {
+//                                    return {game: gameType}
+//                                })
+//
+//                                return TeamMember.find({
+//                                    filter: {
+//                                        where: {
+//                                            game: {
+//                                                inq: gameTypes
+//                                            }
+//                                        }
+//                                    }
+//                                })
+//                                .$promise
+//                                .then(function (teamMembers) {
+//                                    var teamMemberObj = {};
+//                                    for (var key in teamMembers) {
+//                                        var teamMember = teamMembers[key];
+//
+//                                        if(typeof teamMemberObj[teamMember.game] === "undefined") {
+//                                            teamMemberObj[teamMember.game] = [];
+//                                        }
+//                                        teamMemberObj[teamMember.game].push(teamMember);
+//                                    }
+//
+//                                    return teamMemberObj;
+//
+//                                  /* async.each(t, function (tm, eachCb) {
+//                                        if (typeof tm.isActive === 'string') {
+//                                            console.log('IT\'S A STRING');
+//                                            tm.isActive = true;
+//
+//                                            TeamMember.update({
+//                                                where: {
+//                                                    id: tm.id
+//                                                }
+//                                            }, tm)
+//                                            .$promise
+//                                            .then(function (data) {
+//                                                console.log(data);
+//                                                return eachCb();
+//                                            })
+//                                        } else {
+//                                            return eachCb();
+//                                        }
+//                                    });*/
+//                               })
                             }],
 
 
@@ -6783,21 +6799,109 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.admin.teams.add', {
-                url: '/add',
+            .state('app.admin.teams.add-team', {
+                url: '/add-team',
                 views: {
                     teamMembers: {
-                        templateUrl: tpl + 'views/admin/teams.add.html',
-                        controller: 'AdminTeamAddCtrl'
+                        templateUrl: tpl + 'views/admin/teams.add-team.html',
+                        controller: 'AdminTeamAddCtrl',
+                        resolve: {
+                            games: ['Game', function (Game) {
+                                return Game.find({
+                                    filter: {
+                                        fields: ['id', 'name']
+                                    }
+                                })
+                                .$promise
+                                .then(function (games) {
+                                    return games;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
+                            }]
+                        }
                     }
                 }
             })
-            .state('app.admin.teams.edit', {
-                url: '/:memberID',
+            .state('app.admin.teams.edit-team', {
+                url: '/edit-team/:teamId',
                 views: {
                     teamMembers: {
-                        templateUrl: tpl + 'views/admin/teams.edit.html',
+                        templateUrl: tpl + 'views/admin/teams.edit-team.html',
                         controller: 'AdminTeamEditCtrl',
+                        resolve: {
+                            games: ['Game', function (Game) {
+                                return Game.find()
+                                .$promise
+                                .then(function (games) {
+                                    return games;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                    return throw404();
+                                });
+                            }],
+                            team: ['Team', '$stateParams', function (Team, $stateParams) {
+                                return Team.findById({
+                                    id: $stateParams.teamId,
+                                    filter: {
+                                        include: [
+                                            {
+                                                relation: 'game'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (team) {
+                                    return team;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                    return throw404();
+                                });
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.admin.teams.add-team-member', {
+                url: '/add-team-member',
+                views: {
+                    teamMembers: {
+                        templateUrl: tpl + 'views/admin/teams.add-member.html',
+                        controller: 'AdminTeamMemberAddCtrl',
+                        resolve: {
+                            teams: ['Team', function (Team) {
+                                return Team.find({
+                                    filter: {
+                                        include: [
+                                            {
+                                                relation: 'game'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (teams) {
+                                    return teams;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                    return throw404();
+                                });
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.admin.teams.edit-team-member', {
+                url: '/edit-team-member/:memberID',
+                views: {
+                    teamMembers: {
+                        templateUrl: tpl + 'views/admin/teams.edit-member.html',
+                        controller: 'AdminTeamMemberEditCtrl',
                         resolve: {
                             member: ['$stateParams', 'TeamMember', function ($stateParams, TeamMember) {
                                 var memberID = $stateParams.memberID;
