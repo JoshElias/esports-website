@@ -1,5 +1,6 @@
 {
-  "name": "teamMember",
+  "name": "hsClass",
+  "plural": "hsClasses",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,40 +8,20 @@
     "validateUpsert": true
   },
   "properties": {
-    "screenName": {
-      "type": "string"
+    "playerClass": {
+      "type": "string",
+      "required": true
     },
-    "fullName": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "social": {
-      "type": "object"
-    },
-    "photoName": {
-      "type": "string"
-    },
-    "game": {
-      "type": "string"
-    },
-    "orderNum": {
-      "type": "number"
-    },
-    "isActive": {
-      "type": "boolean"
-    },
-    "teamId": {
+    "gameId": {
       "type": {}
     }
   },
   "validations": [],
   "relations": {
-    "team": {
+    "game": {
       "type": "belongsTo",
-      "model": "team",
-      "foreignKey": "teamId"
+      "model": "game",
+      "foreignKey": "gameId"
     }
   },
   "acls": [
@@ -59,12 +40,6 @@
       "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW"
-    },
-    {
-      "accessType": "WRITE",
-      "principalType": "ROLE",
-      "principalId": "$owner",
       "permission": "ALLOW"
     }
   ],

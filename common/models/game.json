@@ -1,5 +1,5 @@
 {
-  "name": "teamMember",
+  "name": "game",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,40 +7,30 @@
     "validateUpsert": true
   },
   "properties": {
-    "screenName": {
-      "type": "string"
-    },
-    "fullName": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "social": {
-      "type": "object"
-    },
-    "photoName": {
-      "type": "string"
-    },
-    "game": {
-      "type": "string"
-    },
-    "orderNum": {
+    "__v": {
       "type": "number"
+    },
+    "name": {
+      "type": "string",
+      "required": true
     },
     "isActive": {
       "type": "boolean"
-    },
-    "teamId": {
-      "type": {}
     }
   },
   "validations": [],
   "relations": {
-    "team": {
-      "type": "belongsTo",
+    "teams": {
+      "type": "hasMany",
       "model": "team",
-      "foreignKey": "teamId"
+      "foreignKey": "gameId",
+      "isChild": true
+    },
+    "hsClasses": {
+      "type": "hasMany",
+      "model": "hsClass",
+      "foreignKey": "gameId",
+      "isChild": true
     }
   },
   "acls": [
@@ -59,12 +49,6 @@
       "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW"
-    },
-    {
-      "accessType": "WRITE",
-      "principalType": "ROLE",
-      "principalId": "$owner",
       "permission": "ALLOW"
     }
   ],
