@@ -1,3 +1,6 @@
+@import 'ts-colors.scss';
+@import 'ts-mixins.scss';
+
 //*************************************
 // 19... login/signup
 //*************************************
@@ -23,13 +26,7 @@
 .page .user-form .form-group input { color: white; margin-bottom: 0px;}
 .page .user-form .form-group .form-control { border: none; }
 .page .user-form .form-group .form-control:focus { border: none; box-shadow: none; }
-.page .user-form .form-group .login-charm {   
-    position:absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 18px; 
-    color: white;
-}
+
 .page .user-form .or { text-align: center; line-height: 3; font-weight: bold; }
 .page .user-form .remember-me .fa-square-o {
     margin-top: 7px;
@@ -113,32 +110,8 @@
 .login-modal .modal-content .modal-body .login-password {
     background: none !important;
 }
-.login-modal .modal-content .modal-body .login-charm {
-    position:absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 18px;
-}
-.login-modal .modal-content .modal-body .login-charm.lock {
-    right: 17px;
-}
-.login-modal .modal-content .modal-body .remember-me .fa-square-o {
-    margin-top: 7px;
-    font-size: 1.5em;
-}
-.login-modal .modal-content .modal-body .remember-me .fa-check {
-    font-size: .8em;
-}
-.login-modal .modal-content .modal-body .remember-me .remember-me-i:hover,
-.login-modal .modal-content .modal-body .remember-me .remember-me-i:focus,
-.login-modal .modal-content .modal-body .remember-me .remember-me-i {
-    color: white;
-    text-decoration: none;
-}
-.login-modal .modal-content .modal-body .remember-me .forgot-password {
-    line-height: 2.5;
-    margin: 0;
-}
+
+
 
 .login-modal .sign-up {
     width: 100%;
@@ -163,7 +136,31 @@
         }
         .modal-body {
             padding: 0px;
+        }
         
+        .remeber-me {
+            
+            font-size: 12px !important;
+            
+            .fa-square-o {
+                margin-top: 9px;
+                font-size: 1em;
+            }
+            .fa-check {
+                font-size: .8em;
+            }
+            
+            
+            .remember-me-i:hover,
+            .remember-me-i:focus,
+            .remember-me-i {
+                color: white;
+                text-decoration: none;
+            }
+            .forgot-password {
+                line-height: 2.5;
+                margin: 0;
+            }
         }
     }
 }
@@ -175,6 +172,28 @@
         background-image: url(../img/login-bg.jpg);
         height: 170px;
         width: 100%;
+        padding-top: 25px;
+        text-shadow: 1px 1px 1px rgba($black, .75);
+        
+        h1 {
+            margin-top: 23px;
+            font-size: 20px;
+            
+        }
+        
+        .key-border {
+            border: 2px white solid;
+            border-radius: 50% 50%;
+            height: 72px;
+            width: 72px;
+            margin: 0px auto;
+            padding-top: 13px;
+            box-shadow: 1px 1px 1px rgba($black, .75);
+            
+            i {
+                font-size: 38px;
+            }
+        }
     }
     .login-form-auth {
         max-height: 40px;
@@ -248,12 +267,69 @@
     
   
     .login-form-email {
+        
+        .form-modal { 
+            input {
+                padding: 12px 12px 12px 40px !important;
+                //background-color: aqua !important;
+            }
+        }
+        
+        .btn-group {
+            width: 280px;
+            margin-left: 40px;
+            margin-right: 40px;
+            margin-bottom: 20px;
+            
+            
+            button {
+                width: 130px;
+                height: 40px;
+                border-radius: 0px;
+                background-color: rgba(255,255,255,0.05);
+                font-size: 12px;
+                transition: .3s ease-in-out;
+                
+                &:hover,
+                &:focus {
+                    background-color: $ts-blue;
+                    transition: .3s ease-in-out;
+                }
+                
+                &:active {
+                    background-color: rgba(255,255,255,0.05);
+                }
+                
+                &:first-of-type {
+                    margin-right: 20px;
+                }
+                
+            }
+        }
+        
         .form-group { 
             position: relative;
             border: 0px solid black;
             margin-bottom: 20px;
             width: 280px;
-            background-color: rgba(255,255,255,0.05);
+            margin-left: 40px !important;
+            margin-right: 40px !important;
+            font-size: 10px;
+           // background-color: rgba(255,255,255,0.05);
+            
+            .login-charm {   
+                position:absolute;
+                top: 10px;
+                left: 15px;
+                font-size: 18px; 
+                color: white;
+            }
+            
+            .form-control {
+                background-color: rgba(255,255,255,0.05);
+                width: 100%;
+            }
+            
         }
     }
 }
