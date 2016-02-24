@@ -5824,7 +5824,21 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/hots.snapshot.list.html',
-                        controller: 'AdminHOTSSnapshotListCtrl'
+                        controller: 'AdminHOTSSnapshotListCtrl',
+                        resolve: {
+                            hotsSnapshots: ['HotsSnapshot', function (HotsSnapshot) {
+                                return HotsSnapshot.find({
+                                    filter: {
+                                        order: "snapNum DESC"
+                                    }
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                    return data;
+                                })
+                            }]
+                        }
                     }
                 }
             })
@@ -5834,6 +5848,28 @@ var app = angular.module('app', [
                     snapshots: {
                         templateUrl: tpl + 'views/admin/hots.snapshot.add.html',
                         controller: 'AdminHOTSSnapshotAddCtrl'
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.edit', {
+                url: '/edit/:snapshotId',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/hots.snapshot.edit.html',
+                        controller: 'AdminHOTSSnapshotEditCtrl',
+                        resolve: {
+                            hotsSnapshot: ['HotsSnapshot', function (HotsSnapshot) {
+                                console.log('resolving');
+                                
+                                return HotsSnapshot.findById({
+                                    id: snapshotId
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    return data;
+                                })
+                            }]
+                        }
                     }
                 }
             })

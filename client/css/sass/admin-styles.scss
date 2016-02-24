@@ -52,7 +52,7 @@
 }
 
 //*************************************
-// 2... admin meta snapshot
+// 2... admin meta snapshot HS
 //*************************************
 
 .button-block {}
@@ -119,6 +119,20 @@ textarea[name=thoughts] {
     line-height: 1.75
 }
 
+//*************************************
+// 2.1. admin meta snapshot HOTS
+//*************************************
+
+.tier-list {
+    list-style-type: none;
+    padding: 0;
+    
+    
+    .tier-list-head {
+        font-weight: bold;
+        border-bottom: solid 2px black;
+    }
+}
 
 //*************************************
 // 4... admin banner

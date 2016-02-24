@@ -5725,11 +5725,16 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSSnapshotListCtrl', ['$scope', function ($scope) {
+    .controller('AdminHOTSSnapshotListCtrl', ['$scope', 'hotsSnapshots', function ($scope, hotsSnapshots) {
+        $scope.snapshots = hotsSnapshots;
+        console.log(hotsSnapshots);
         console.log('were in');
     }])
     .controller('AdminHOTSSnapshotAddCtrl', ['$scope', function ($scope) {
         console.log('were in add');
+    }])
+    .controller('AdminHOTSSnapshotEditCtrl', ['$scope', 'hotsSnapshot', function ($scope, hotsSnapshot) {
+        console.log('were in edit');
     }])
     .controller('AdminTeamListCtrl', ['$scope', '$window', 'TeamMember', 'teamMembers', 'AlertService',
         function ($scope, $window, TeamMember, teamMembers, AlertService) {

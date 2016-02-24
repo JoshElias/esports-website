@@ -18,7 +18,7 @@
         </div>
 -->
         <div class="pull-left">
-            <form class="form-inline" ng-submit="searchMaps()" novalidate>
+            <form class="form-inline" ng-submit="searchSnapshots()" novalidate>
                 <div class="form-group">
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
@@ -35,17 +35,17 @@
         </div>
     </div>
     <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="map in maps">
-            <span>{{map.name}}</span>
+        <div class="list-group-item admin-list-item clearfix" ng-repeat="snapshot in snapshots">
+            <span>{{snapshot.snapNum}} - {{snapshot.subtitle}}</span>
             <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.hots.maps.edit({ mapID: map.id })" class="btn btn-default">Edit</a>
-                <button class="btn btn-danger" ng-click="deleteMap(map)">Delete</button>
+                <a ui-sref="app.admin.hots.snapshots.edit({ snapshotId: snapshot.id })" class="btn btn-default">Edit</a>
+                <button class="btn btn-danger" ng-click="deleteSnapshot(snapshot)">Delete</button>
             </div>
         </div>
-        <div class="list-group-item" ng-show="!maps.length">
-            There are no maps yet.
+        <div class="list-group-item" ng-show="!snapshots.length">
+            There are no snapshots yet.
         </div>
-        <div class="list-group-item b-t-none" ng-show="maps.length && filtered && !filtered.length">
+        <div class="list-group-item b-t-none" ng-show="snapshots.length && filtered && !filtered.length">
             That search returned no results.
         </div>
     </div>
