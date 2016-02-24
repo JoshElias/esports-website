@@ -3750,8 +3750,9 @@ angular.module('app.services', [])
         return factory;
     }
 ])
-.factory('HearthstoneSnapshotBuilder', ['$sce', '$http', '$q', '$timeout', 'User', 'Hearthstone', function ($sce, $http, $q, $timeout, User, Hearthstone) {
+.factory('HearthstoneSnapshotBuilder', ['$sce', '$http', '$q', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', function ($sce, $http, $q, $timeout, bootbox, User, Util, Hearthstone) {
     var snapshot = {};
+    var maxTrends = 12;
     var defaultSnap = {
         snapNum : 1,
         title : "",
@@ -3823,12 +3824,65 @@ angular.module('app.services', [])
         };
         
         sb.load = function (data) {
+            sb.authors = data.authors;
+            sb.content = data.content;
+            sb.createdDate = data.createdDate;
+            sb.matchups = data.deckMatchups;
+            sb.id = data.id;
+            sb.isActive = data.isActive;
+            sb.photoNames = data.photoNames;
+            sb.slug = data.slug;
+            sb.snapNum = data.snapNum;
+            sb.tiers = data.tiers;
+            sb.title = data.title;
             
+            sb.tiers = sb.generateTiers(data.deckTiers);
         };
         
         // load latest snapshot and increment snapshot number / shift trends
         sb.loadPrevious = function () {
             
+        };
+        
+        // generate tiers from deckTiers data
+        sb.generateTiers = function (deckTiers) {
+            var tiers = [];
+            
+            // sort decks
+            deckTiers.sort(function(a,b) {
+                return (a.ranks[0] - b.ranks[0])
+            });
+            
+            // tiers
+            _.each(deckTiers, function (deck) {
+                if (tiers[deck.tier - 1] === undefined) {
+                    tiers[deck.tier - 1] = {
+                        tier: deck.tier,
+                        decks: []
+                    };
+                }
+
+                tiers[deck.tier - 1].decks.push(deck);
+            });
+            
+            return tiers;
+        };
+        
+        // set slug
+        sb.setSlug = function () {
+            if (!sb.slug.linked) { return false; }
+            sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
+        };
+        
+        // toggle if slug is linked to title
+        sb.slugToggleLink = function () {
+            sb.slug.linked = !sb.slug.linked;
+            sb.setSlug();
+        };
+        
+        // trends array for decks
+        sb.getTrends = function () {
+            return new Array(maxTrends);
         };
         
         // add author
@@ -3847,11 +3901,24 @@ angular.module('app.services', [])
             }
         };
         
+        // re-numbering for tiers
+        sb.tierNumbering = function () {
+            var sortedTiers = sb.tiers.sort(function (a, b) {
+                return a.tier - b.tier;
+            });
+            
+            for (var i = 0; i < sortedTiers.length; i++) {
+                sortedTiers.tier = i + 1;
+            }
+            
+            // sb.tiers = sortedTiers;
+        };
+        
         // add tier
         sb.tierAdd = function () {
             var newTier = angular.copy(defaultTier);
             newTier.tier = sb.tiers.length + 1;
-            db.tiers.push(newTier);
+            sb.tiers.push(newTier);
         };
         
         // delete tier
@@ -3860,6 +3927,7 @@ angular.module('app.services', [])
             if (index !== -1) {
                 sb.tierDeleteAllDecks(tier);
                 sb.tiers.splice(index, 1);
+                sb.tierNumbering();
                 // TODO: CRUDMAN DELETE TIER
             }
         };
@@ -3868,7 +3936,7 @@ angular.module('app.services', [])
         sb.tierDeleteAllDecks = function (tier) {
             if (!tier || !tier.decks || !tier.decks.length) { return false; }
             for (var i = 0; i < tier.decks.length; i++) {
-                db.deckDelete(tier, tier.decks[i]);
+                sb.deckDelete(tier, tier.decks[i]);
             }
         };
         
@@ -3972,6 +4040,55 @@ angular.module('app.services', [])
                     sb.matchups.splice(i, 1);
                 }
             }
+        };
+        
+        // update for chance when updating against chance on a matchup
+        sb.matchupChangeAgainstChance = function (matchup) {
+            matchup.forChance = (100 - matchup.againstChance);
+        }
+        
+        // update against chance when updating for chance on a matchup
+        sb.matchupChangeForChance = function (matchup) {
+            matchup.againstChance = (100 - matchup.forChance);
+        }
+        
+        // prompt for author delete
+        sb.authorDeletePrompt = function (author) {
+            var box = bootbox.dialog({
+                title: "Remove Author?",
+                message: "Are you sure you want to remove the author <strong>" + author.user.username + "</strong>?",
+                buttons: {
+                    confirm: {
+                        label: "Delete",
+                        className: "btn-danger",
+                        callback: function () {
+                            $timeout(function () {
+                                sb.authorDelete(author);
+                                box.modal('hide');
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: "Cancel",
+                        className: "btn-default pull-left",
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                },
+                show: false
+            });
+            box.modal('show');
+        };
+        
+        // prompt for tier delete
+        sb.tierDeletePrompt = function (tier) {
+            
+        };
+        
+        // prompt for deck delete
+        sb.deckDeletePrompt = function (deck) {
+            
         };
         
         // save snapshot

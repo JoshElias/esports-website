@@ -6491,10 +6491,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hs.snapshots.edit.html',
                         controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
-//                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
-//                                var snapshotID = $stateParams.snapshotID;
-//                                return AdminSnapshotService.getSnapshot(snapshotID);
-//                            }]
                             snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
                                 var snapshotID = $stateParams.snapshotID;
                                 return Snapshot.findOne({
@@ -6503,7 +6499,7 @@ var app = angular.module('app', [
                                             id: snapshotID
                                         },
                                         fields: {
-//                                            tiers: false
+                                            tiers: false
                                         },
                                         include: [
                                             {
@@ -6568,37 +6564,7 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function (snapshot) {
-
-                                    snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
-
-                                    //BUILD TIERS//
-                                    snapshot.tiers = [];
-                                    _.each(snapshot.deckTiers, function (deck) {
-                                        if (snapshot.tiers[deck.tier-1] === undefined) {
-                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
-                                        }
-
-                                        snapshot.tiers[deck.tier-1].decks.push(deck);
-                                    });
-                                    snapshot.tiers = _.filter(snapshot.tiers, function (tier) { return tier; });
-
-                                    var deckNum = 0;
-                                    _.each(snapshot.tiers, function (tier, tIndex) {
-                                        tier.tier = tIndex+1
-                                        _.each(tier.decks, function(deck, dIndex) {
-                                            deck.tier = tIndex+1;
-                                            deck.ranks[0] = ++deckNum;
-                                        })
-                                    })
-                                    //BUILD TIERS//
-
-                                    //BUILD MATCHES//
-                                    snapshot.matches = snapshot.deckMatchups;
-
-                                    return snapshot;
-                                });
+                                .$promise;
                             }]
                         }
                     }
