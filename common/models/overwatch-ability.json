@@ -26,7 +26,7 @@
     },
     "heroId": {
       "required": true
-    },
+    }
   },
   "validations": [],
   "relations": {
