@@ -11,30 +11,18 @@
     "activityType": {
       "type": "string"
     },
-    "authorId": {
-      "type": {}
-    },
     "createdDate": {
       "type": "date"
     },
     "isActive": {
       "type": "boolean"
     },
-    "articleId": {
-      "type": {}
-    },
-    "deckId": {
-      "type": {}
-    },
-    "snapshotId": {
-      "type": {}
-    },
-    "forumPostId": {
-      "type": {}
-    },
-    "guideId": {
-      "type": {}
-    }
+    "authorId": {},
+    "articleId": {},
+    "deckId": {},
+    "snapshotId": {},
+    "forumPostId": {},
+    "guideId": {}
   },
   "validations": [],
   "relations": {

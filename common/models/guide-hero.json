@@ -8,12 +8,8 @@
     "validateUpsert": true
   },
   "properties": {
-    "guideId": {
-      "type": {}
-    },
-    "heroId": {
-      "type": {}
-    }
+    "guideId": {},
+    "heroId": {}
   },
   "validations": [],
   "relations": {

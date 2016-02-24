@@ -26,9 +26,6 @@
         "spam"
       ]
     },
-    "forumCategoryId": {
-      "type": {}
-    },
     "slug": {
         "url": {
           "type": "string",
@@ -40,11 +37,7 @@
           "type": "boolean"
         }
     },
-    "oldPosts": {
-      "type": [
-        "string"
-      ]
-    }
+    "forumCategoryId": {}
   },
   "validations": [],
   "relations": {

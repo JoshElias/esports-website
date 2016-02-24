@@ -7,16 +7,7 @@
   "options": {
     "validateUpsert": true
   },
-  "hidden": [
-    "password"
-  ],
   "properties": {
-    "email": {
-      "type": "string"
-    },
-    "password": {
-      "type": "string"
-    },
     "isActive": {
       "type": "boolean",
       "default": false
@@ -58,13 +49,13 @@
     "__v": {
       "type": "number"
     },
-    "twitchID": {
-      "type": "string"
-    },
     "social": {
       "type": "object"
     }
   },
+  "hidden": [
+    "password"
+  ],
   "validations": [],
   "relations": {
     "activities": {

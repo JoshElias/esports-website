@@ -3728,6 +3728,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                 Deck.find({
                     filter: {
+                        order: 'createdDate DESC',
                         limit: 10,
                         where: where
                     }
@@ -4828,6 +4829,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                 Deck.find({
                     filter: {
+                        order: 'createdDate DESC',
                         limit: 10,
                         where: where
                     }

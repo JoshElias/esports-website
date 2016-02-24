@@ -61,11 +61,6 @@
       "type": "string",
       "required": true
     },
-    "deckIds": {
-      "type": [
-        "string"
-      ]
-    },
     "deckable": {
       "type": "boolean"
     },
