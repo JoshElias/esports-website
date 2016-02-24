@@ -1,6 +1,8 @@
 var utils = require("../../lib/utils");
 var validator = require("../../lib/validator/validator");
 var scope = require("../../lib/scope");
+var relation = require("../../lib/relation");
+
 
 module.exports = function(server) {
 
@@ -17,6 +19,6 @@ module.exports = function(server) {
 
         model.observe("before save", validator.validate);
         model.beforeRemote("find", scope.addMaxScope);
-        model.observe('before delete', utils.destroyRelations);
+        model.observe('before delete', relation.destroyChildren);
     }
 };
