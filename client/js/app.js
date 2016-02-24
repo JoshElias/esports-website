@@ -563,11 +563,6 @@ var app = angular.module('app', [
 
                                 return Article.findOne({
                                     filter: {
-                                        fields: {
-                                          oldComments: false,
-                                          oldRelatedArticles: false,
-                                          isActive: false,
-                                        },
                                         where: {
                                             "slug.url": slug
                                         },
