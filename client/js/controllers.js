@@ -5849,7 +5849,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTeamAddCtrl', ['$scope', '$window', '$state', 'games', 'Game', 'Team', 'AlertService', function ($scope, $window, $state, games, Game, Team, AlertService) {
+    .controller('AdminTeamAddCtrl', ['$scope', '$window', '$state', 'gameOptions', 'Game', 'Team', 'AlertService', function ($scope, $window, $state, gameOptions, Game, Team, AlertService) {
         // default category
         var defaultTeam = {
             gameId: '',
@@ -5861,19 +5861,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.newTeam = _.clone(defaultTeam);
         
         // game options
-        $scope.gameOptions = buildGameOptions(games);
-        
-        function buildGameOptions(games) {
-            var out = [];
-            _.each(games, function(game) {
-                var obj = {
-                    id: game.id,
-                    name: game.name
-                };
-                out.push(obj);
-            });
-            return out;
-        };
+        $scope.gameOptions = gameOptions;
         // active options
         $scope.teamActive = [
             { name: 'Yes', value: true },
@@ -5909,24 +5897,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
     }])
-    .controller('AdminTeamEditCtrl', ['$scope', '$window', '$state', 'AlertService', 'team', 'games', 'Team', function ($scope, $window, $state, AlertService, team, games, Team) {
+    .controller('AdminTeamEditCtrl', ['$scope', '$window', '$state', 'AlertService', 'team', 'gameOptions', 'Team', function ($scope, $window, $state, AlertService, team, gameOptions, Team) {
         
         $scope.team = team;
-        
         // game options
-        $scope.gameOptions = buildGameOptions(games);
-        
-        function buildGameOptions(games) {
-            var out = [];
-            _.each(games, function(game) {
-                var obj = {
-                    id: game.id,
-                    name: game.name
-                };
-                out.push(obj);
-            });
-            return out;
-        };
+        $scope.gameOptions = gameOptions;
         // active options
         $scope.teamActive = [
             { name: 'Yes', value: true },
@@ -6013,24 +5988,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminTeamMemberAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService', 'teams', 'Team',
-        function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService, teams, Team) {
+    .controller('AdminTeamMemberAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService', 'teamOptions', 'Team',
+        function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService, teamOptions, Team) {
             
-            $scope.teamOptions = buildTeamOptions(teams);
-            
-            function buildTeamOptions (teams) {
-                var out = [];
-                _.each(teams, function (team) {
-                    var teamName = !_.isEmpty(team.name) ? ' ' + team.name : '',
-                        gameName = team.game.name + teamName,
-                        obj = {
-                            teamId: team.id,
-                            game: gameName
-                        };
-                    out.push(obj);
-                });
-                return out;
-            };
+            $scope.teamOptions = teamOptions;
             
             var defaultMember = {
                 teamId: $scope.teamOptions[0].teamId,
@@ -6119,24 +6080,10 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTeamMemberEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image', 'teams',
-        function ($scope, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image, teams) {
+    .controller('AdminTeamMemberEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image', 'teamOptions',
+        function ($scope, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image, teamOptions) {
             
-            $scope.teamOptions = buildTeamOptions(teams);
-            
-            function buildTeamOptions (teams) {
-                var out = [];
-                _.each(teams, function (team) {
-                    var teamName = !_.isEmpty(team.name) ? ' ' + team.name : '',
-                        gameName = team.game.name + teamName,
-                        obj = {
-                            teamId: team.id,
-                            game: gameName
-                        };
-                    out.push(obj);
-                });
-                return out;
-            };
+            $scope.teamOptions = teamOptions;
             
             $scope.member = member;
             $scope.memberImg = $scope.member.photoName.length > 0 ? 'https://staging-cdn-tempostorm.netdna-ssl.com/team/' + $scope.member.photoName : 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
@@ -6383,11 +6330,11 @@ angular.module('app.controllers', ['ngCookies'])
                 .then(function(data) {
                     $scope.fetching = false;
                     $state.go('app.admin.vod.list');
-					AlertService.setSuccess({
-						persist: true,
-						show: true,
-						msg: vod.subtitle + ' updated successfully'
-					});
+                    AlertService.setSuccess({
+                      persist: true,
+                      show: true,
+                      msg: vod.subtitle + ' updated successfully'
+                    });
                 })
                 .catch(function(err) {
                     $scope.fetching = false;
@@ -6522,133 +6469,6 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 box.modal('show');
             }
-
-            // Destroy Deck and All Relations
-//            function deleteDeck(deck) {
-//                console.log('deck to del: ', deck);
-//
-//                async.series([
-//                    function (seriesCallback) {
-//                        // 1. destroy Matchups
-//                        Deck.matchups.destroyAll({
-//                            id: deck.id
-//                        })
-//                        .$promise
-//                        .then(function (matchupsDestroyed) {
-//                            console.log('matchupsDestroyed: ', matchupsDestroyed);
-//                            seriesCallback();
-//                        })
-//                        .catch(function (err) {
-//                            console.log('matchupDestroy err: ', err);
-//                            seriesCallback(err);
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        // 2. destroy Cards With/Without Coin & Mulligan
-//                        async.each(deck.mulligans, function (mulligan, mulliganCB) {
-//                            console.log('current mulligan: ', mulligan);
-//
-//                            // Destroy mulligansWithCoin
-//                            Mulligan.mulligansWithCoin.destroyAll({
-//                                id: mulligan.id
-//                            })
-//                            .$promise
-//                            .then(function (cardWithCoinDestroyed) {
-//                                console.log('cardWithCoinDestroyed: ', cardWithCoinDestroyed);
-//                            })
-//                            .catch(function (err) {
-//                                console.log('cardWithCoin.DestroyAll err: ', err);
-//                                mulliganCB(err);
-//                            });
-//
-//                            // Destroy mulligansWithoutCoin
-//                            Mulligan.mulligansWithoutCoin.destroyAll({
-//                                id: mulligan.id
-//                            })
-//                            .$promise
-//                            .then(function (cardWithoutCoinDestroyed) {
-//                                console.log('cardWithoutCoinDestroyed: ', cardWithoutCoinDestroyed);
-//                            })
-//                            .catch(function (err) {
-//                                console.log('cardWithoutCoin.DestroyAll err: ', err);
-//                                mulliganCB(err);
-//                            });
-//
-//                            // Destroy Current Mulligan
-//                            Mulligan.destroyById({
-//                                id: mulligan.id
-//                            })
-//                            .$promise
-//                            .then(function (mulliganDestroyed) {
-//                                console.log('mulliganDestroyed: ', mulliganDestroyed);
-//                            })
-//                            .catch(function (err) {
-//                                console.log('Mulligan.destroyById err: ', err);
-//                                mulliganCB(err);
-//                            });
-//
-//                            // goto next mulligan
-//                            mulliganCB();
-//                        }, function(err) {
-//                            if (err) {
-//                                console.log('async mulligan err: ', err);
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback();
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        // 3. destroy Comments
-//                        Deck.comments.destroyAll({
-//                            id: deck.id
-//                        })
-//                        .$promise
-//                        .then(function (allCommentsDestroyed) {
-//                            console.log('Deck.comments.destroyAll success: ', allCommentsDestroyed);
-//                            seriesCallback();
-//                        })
-//                        .catch(function (err) {
-//                            console.log('Deck.comments.destroyAll err: ', err);
-//                            seriesCallback(err);
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        // 4. destroy DeckCards
-//                        Deck.cards.destroyAll({
-//                            id: deck.id
-//                        })
-//                        .$promise
-//                        .then(function (allDeckCardsDestroyed) {
-//                            console.log('Deck.cards.destroyAll success: ', allDeckCardsDestroyed);
-//                            seriesCallback();
-//                        })
-//                        .catch(function (err) {
-//                            console.log('Deck.cards.destroyAll err: ', err);
-//                            seriesCallback(err);
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        // 5. destroy Deck
-//                        Deck.destroyById({
-//                            id: deck.id
-//                        })
-//                        .$promise
-//                        .then(function (deckDestroyed) {
-//                            console.log('Deck.destroyById success: ', deckDestroyed);
-//                            seriesCallback();
-//                        })
-//                        .catch(function (err) {
-//                            console.log('Deck.destroyById err: ', err);
-//                        });
-//                    }
-//                ], function(err) {
-//                    if (err) {
-//                        console.log('Series Err: ', err);
-//                    }
-//                    console.log('All Done!');
-//                });
-//
-//            }
         }
     ])
     .controller('AdminDeckBuilderClassCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone) {
