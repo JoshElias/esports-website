@@ -112,7 +112,6 @@
 }
 
 
-
 .login-modal .sign-up {
     width: 100%;
 }
@@ -126,54 +125,41 @@
             border-radius: 0;
             //background-color: rgba(31,31,31,.9);
         
-            background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
-            background: -webkit-linear-gradient(left, black 50%, black 95%); /* For Safari 5.1 to 6.0 */
-            background: -o-linear-gradient(left, black 50%, black 95%); /* For Opera 11.1 to 12.0 */
-            background: -moz-linear-gradient(left, black 50%, black 95%); /* For Firefox 3.6 to 15 */
-            background: linear-gradient(left, black 50%, black 95%); /* Standard syntax */
+            //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
+           background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.45), rgba($gradient-grey,0.90)); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.45)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
         .modal-header {
             display: none;
         }
         .modal-body {
             padding: 0px;
-        }
-        
-        .remeber-me {
+            margin-top: 80px;
             
-            font-size: 12px !important;
-            
-            .fa-square-o {
-                margin-top: 9px;
-                font-size: 1em;
-            }
-            .fa-check {
-                font-size: .8em;
-            }
-            
-            
-            .remember-me-i:hover,
-            .remember-me-i:focus,
-            .remember-me-i {
-                color: white;
-                text-decoration: none;
-            }
-            .forgot-password {
-                line-height: 2.5;
-                margin: 0;
+            .form-group {
+                background-color: rgba($white, 0.04);
+                border: 0px solid black;        
             }
         }
     }
 }
 
+
+
 //general styles that affect both the modal content and /login
 
 .login-form {
+    
     .login-form-header {
         background-image: url(../img/login-bg.jpg);
         height: 170px;
         width: 100%;
         padding-top: 25px;
         text-shadow: 1px 1px 1px rgba($black, .75);
+        text-align: center;
         
         h1 {
             margin-top: 23px;
@@ -202,14 +188,14 @@
         .btn-twitch { 
             position: relative; 
            
-            padding: 3px 5px; 
+            padding: 8px 10px; 
             
             color: #FFF !important; 
             background: #6441a5; 
             border-radius: 0; 
             text-align: left; 
             font-size: 12px; 
-            height: 40px;
+            height: 50px;
             width: 50%;
             float: left;
             display: block;
@@ -218,32 +204,35 @@
                 &:hover,
                 &:active {
                     color: rgba(255,255,255,0.5) !important;
+                    i {
+                        color: #fff !important;
+                    }
                 }
             }
             
             i {    
                 position: absolute; 
                 right: 15px;
-                top: 9px;
+                top: 13px;
                 font-size: 24px;
                 
                 &:hover,
                 &:active {
-                    color: #fff !important;
+                    //color: #fff !important;
                 }
             }
         }
         
         .btn-bnet { 
             position: relative; 
-            padding: 3px 5px; 
+            padding: 8px 10px; 
  
             color: #FFF !important; 
             background: #22324B; 
             border-radius: 0; 
             text-align: right; 
             font-size: 12px; 
-            height: 40px;
+            height: 50px;
             width: 50%;
             float: left;
             display: block;
@@ -257,7 +246,7 @@
         
         .bat-net-img {
             position: absolute;
-            top: 9px;
+            top: 13px;
             left: 13px;
             width: 24px;
             height: auto;
@@ -270,8 +259,13 @@
         
         .form-modal { 
             input {
-                padding: 12px 12px 12px 40px !important;
+                padding: 12px 12px 12px 50px !important;
                 //background-color: aqua !important;
+                font-size: 12px;
+            }
+            
+            button {
+                margin-top: 0px !important;
             }
         }
         
@@ -288,12 +282,14 @@
                 border-radius: 0px;
                 background-color: rgba(255,255,255,0.05);
                 font-size: 12px;
-                transition: .3s ease-in-out;
+                transition: .5s ease-in-out;
+                color: $dark-font;
                 
                 &:hover,
                 &:focus {
                     background-color: $ts-blue;
-                    transition: .3s ease-in-out;
+                    transition: .5s ease-in-out;
+                    color: $white;
                 }
                 
                 &:active {
@@ -315,21 +311,99 @@
             margin-left: 40px !important;
             margin-right: 40px !important;
             font-size: 10px;
-           // background-color: rgba(255,255,255,0.05);
+            //background-color: rgba(255,255,255,0.05);
+            color: $dark-font;
             
             .login-charm {   
                 position:absolute;
                 top: 10px;
                 left: 15px;
-                font-size: 18px; 
-                color: white;
+                font-size: 12px; 
+                color: $light-font;
             }
             
             .form-control {
                 background-color: rgba(255,255,255,0.05);
                 width: 100%;
+            }  
+        }
+    }
+    
+    .remember-me {
+
+        font-size: 12px !important;
+        padding: 0 40px;
+        height: 20px;
+        position: relative;
+
+        .fa-stack {
+            left: -10px;
+            color: $light-font;
+
+            .fa-square-o {
+                margin-top: 3px !important;
+                font-size: 1em !important;
+                color: $light-font;
             }
+
+            .fa-check {
+                font-size: .8em;
+                margin-top: -4px !important;
+                color: $light-font;
+            }
+        }
+
+        .remember-text {
+            top: 2px;
+            position: absolute;
+            left: 65px;
+            color: $light-font;
+        }    
+        
+        .remember-me-i {
+            color: $light-font;
             
+            &:hover,
+            &:focus{
+                color: $ts-blue;
+                text-decoration: none;
+            }   
+        }
+        
+        .forgot-password {
+            line-height: 20px !important;
+            margin: 0;
+
+            a {
+                font-weight: 100;
+                color: $dark-font;
+
+                &:hover,
+                &:focus {
+                    font-weight: bold;
+                    color: $light-font;
+                }
+            }
+        }
+    }
+    
+    .sign-up {
+        font-size: 12px;
+        color: $light-font;
+        padding-left: 40px;
+        padding-right: 40px;
+        margin-top: 50px;
+        margin-bottom: 40px;
+        height: 50px;
+        
+        a {
+            color: $dark-font;
+            
+            &:hover,
+            &:focus {
+                color: $light-font;
+                font-weight: bold;
+            }
         }
     }
 }

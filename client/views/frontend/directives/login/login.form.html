@@ -5,14 +5,14 @@
     </div>
     <div class="login-form-auth col-sm-12 wrapper-none">
         <a href="#" class="btn  btn-twitch" ng-click="twitchLogin()"><i class="fa fa-twitch"></i>SIGN IN <br>Twitch</a>
-        <a href="#" class="btn  btn-bnet" ng-click="bnetLogin()"><img src="../img/BattleNet_white.png" class="bat-net-img">SIGN IN <br>Battlenet</a>
+        <a href="#" class="btn  btn-bnet" ng-click="bnetLogin()"><img src="../img/BattleNet_white.png" class="bat-net-img">SIGN IN<br> Battlenet</a>
     </div>
     
     <div class="login-form-email col-sm-12 wrapper-none">
         <form class="form-horizontal form-modal" role="form" name="loginForm">
         <div class="form-group m-b-sm">
             <div class="login-charm"><i class="fa fa-user"></i></div>
-            <input type="email" class="form-control  login-email" id="email" name="email" placeholder="Email Address" ng-model="loginInfo.email" required>
+            <input type="email" class="form-control  login-email" id="email" name="email" placeholder="E-mail" ng-model="loginInfo.email" required>
             
         </div>
         <div class="form-group">
@@ -27,13 +27,13 @@
         </div>
 
         <div class="remember-me">
-            <span class="fa-stack fa-lg">
+            <span class="fa-stack fa-lg pull-left">
                 <a class="remember-me-i" href="#" ng-click="remember = !remember">
                     <i class="fa fa-square-o fa-stack-2x"></i>
                     <i ng-if="remember" class="fa fa-check fa-stack-1x"></i>
                 </a>
             </span>
-            Remember Me
+            <span class="remember-text">Remember me</span>
             <p class="forgot-password pull-right">
                 <a href="https://tempostorm.com/forgot-password" ng-if="setState" ng-click="setState('forgot'); setTitle('Forgot Password')">Forgot Password?</a>
                 <a ui-sref="app.forgotPassword" ng-if="!setState">Forgot Password?</a>
