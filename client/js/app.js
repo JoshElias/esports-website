@@ -629,6 +629,7 @@ var app = angular.module('app', [
                                     return data;
                                 })
                                 .catch(function (err) {
+                                    console.log('err:', err);
                                     if (err.status === 404) {
                                         return throw404($state);
                                     }
