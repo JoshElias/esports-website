@@ -32,7 +32,8 @@
 
 <div class="comments m-b-sm">
     
-    <div class="comment no-comments" ng-if="!commentable.comments || !commentable.comments.length">
+    <div class="comment no-comments" 
+         ng-if="(!commentable.comments || !commentable.comments.length) && commentable.isCommentable">
         <div class="comment-panel">
             <p>There are currently no comments.</p>
         </div>
