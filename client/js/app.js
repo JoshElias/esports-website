@@ -6492,10 +6492,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hs.snapshots.edit.html',
                         controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
-//                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
-//                                var snapshotID = $stateParams.snapshotID;
-//                                return AdminSnapshotService.getSnapshot(snapshotID);
-//                            }]
                             snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
                                 var snapshotID = $stateParams.snapshotID;
                                 return Snapshot.findOne({
@@ -6614,7 +6610,9 @@ var app = angular.module('app', [
                     admin: {
                         templateUrl: tpl + 'views/admin/teams.html'
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.list', {
                 url: '',
@@ -6624,6 +6622,8 @@ var app = angular.module('app', [
                         controller: 'AdminTeamListCtrl',
                         resolve: {
                             teamInfo: ['Team', function (Team) {
+                                console.log(Team);
+                                console.log('resolve team info');
                                 return Team.find({
                                     filter: {
                                         fields: ['id', 'name', 'gameId'],
@@ -6650,7 +6650,9 @@ var app = angular.module('app', [
                             }],
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.add-team', {
                 url: '/add-team',
@@ -6659,7 +6661,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.add-team.html',
                         controller: 'AdminTeamAddCtrl',
                         resolve: {
-                            games: ['Game', function (Game) {
+                            gameOptions: ['Game', function (Game) {
                                 return Game.find({
                                     filter: {
                                         fields: ['id', 'name']
@@ -6667,7 +6669,13 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (games) {
-                                    return games;
+                                    var gameOptions = _.map(games, function (game) {
+                                        return {
+                                            id: game.id,
+                                            name: game.name
+                                        };
+                                    });
+                                    return gameOptions;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
@@ -6675,7 +6683,9 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.edit-team', {
                 url: '/edit-team/:teamId',
@@ -6684,7 +6694,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.edit-team.html',
                         controller: 'AdminTeamEditCtrl',
                         resolve: {
-                            games: ['Game', function (Game) {
+                            gameOptions: ['Game', function (Game) {
                                 return Game.find({
                                     filter: {
                                         fields: ['id', 'name']
@@ -6692,11 +6702,16 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (games) {
-                                    return games;
+                                    var gameOptions = _.map(games, function (game) {
+                                        return {
+                                            id: game.id,
+                                            name: game.name
+                                        };
+                                    });
+                                    return gameOptions;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
-                                    return throw404();
                                 });
                             }],
                             team: ['Team', '$stateParams', function (Team, $stateParams) {
@@ -6719,12 +6734,13 @@ var app = angular.module('app', [
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
-                                    return throw404();
                                 });
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.add-team-member', {
                 url: '/add-team-member',
@@ -6733,7 +6749,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.add-member.html',
                         controller: 'AdminTeamMemberAddCtrl',
                         resolve: {
-                            teams: ['Team', function (Team) {
+                            teamOptions: ['Team', function (Team) {
                                 return Team.find({
                                     filter: {
                                         fields: ['id', 'name', 'gameId'],
@@ -6749,16 +6765,25 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (teams) {
-                                    return teams;
+                                    var teamOptions = _.map(teams, function (team) {
+                                        var teamName = team.name ? ' ' + team.name : '',
+                                            gameName = team.game.name + teamName;
+                                        return {
+                                            teamId: team.id,
+                                            game: gameName
+                                        };
+                                    });
+                                    return teamOptions;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
-                                    return throw404();
                                 });
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.edit-team-member', {
                 url: '/edit-team-member/:memberID',
@@ -6767,7 +6792,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.edit-member.html',
                         controller: 'AdminTeamMemberEditCtrl',
                         resolve: {
-                            teams: ['Team', function (Team) {
+                            teamOptions: ['Team', function (Team) {
                                 return Team.find({
                                     filter: {
                                         fields: ['id', 'gameId', 'name'],
@@ -6782,11 +6807,18 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (teams) {
-                                    return teams;
+                                    var teamOptions = _.map(teams, function (team) {
+                                        var teamName = team.name ? ' ' + team.name : '',
+                                            gameName = team.game.name + teamName;
+                                        return {
+                                            teamId: team.id,
+                                            game: gameName
+                                        };
+                                    });
+                                    return teamOptions;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
-                                    return throw404();
                                 });
                             }],
                             member: ['$stateParams', 'TeamMember', function ($stateParams, TeamMember) {
@@ -6803,7 +6835,9 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
