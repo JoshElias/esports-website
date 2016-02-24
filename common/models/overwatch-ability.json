@@ -20,15 +20,13 @@
       "type": "string",
       "required": true
     },
-    "heroId": {
-      "type": {
-        "required": true
-      }
-    },
     "orderNum": {
       "type": "number",
       "required": true
-    }
+    },
+    "heroId": {
+      "required": true
+    },
   },
   "validations": [],
   "relations": {

@@ -52,24 +52,6 @@
     "content": {
       "type": "array"
     },
-    "authorId": {
-      "type": {}
-    },
-    "oldMaps": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldComments": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldHeroes": {
-      "type": [
-        "object"
-      ]
-    },
     "talentTiers": {
       "type": "object"
     },
@@ -77,7 +59,8 @@
       "type": [
         "string"
       ]
-    }
+    },
+    "authorId": {}
   },
   "validations": [],
   "relations": {

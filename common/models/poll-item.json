@@ -20,9 +20,7 @@
     "orderNum": {
       "type": "number"
     },
-    "pollId": {
-      "type": {}
-    }
+    "pollId": {}
   },
   "validations": [],
   "relations": {

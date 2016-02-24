@@ -19,17 +19,13 @@
     "tier": {
       "type": "number"
     },
-    "deckId": {
-      "type": {}
-    },
-    "snapshotId": {
-      "type": {}
-    },
     "ranks": {
       "type": [
         "number"
       ]
-    }
+    },
+    "deckId": {},
+    "snapshotId": {},
   },
   "validations": [],
   "relations": {
