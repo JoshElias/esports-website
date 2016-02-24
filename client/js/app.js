@@ -6618,8 +6618,6 @@ var app = angular.module('app', [
                         controller: 'AdminTeamListCtrl',
                         resolve: {
                             teamInfo: ['Team', function (Team) {
-                                console.log(Team);
-                                console.log('resolve team info');
                                 return Team.find({
                                     filter: {
                                         fields: ['id', 'name', 'gameId'],
