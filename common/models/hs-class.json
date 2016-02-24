@@ -1,5 +1,6 @@
 {
-  "name": "game",
+  "name": "hsClass",
+  "plural": "hsClasses",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,30 +8,20 @@
     "validateUpsert": true
   },
   "properties": {
-    "__v": {
-      "type": "number"
-    },
-    "name": {
+    "playerClass": {
       "type": "string",
       "required": true
     },
-    "isActive": {
-      "type": "boolean"
+    "gameId": {
+      "type": {}
     }
   },
   "validations": [],
   "relations": {
-    "teams": {
-      "type": "hasMany",
-      "model": "team",
-      "foreignKey": "gameId",
-      "isChild": true
-    },
-    "hsClasses": {
-      "type": "hasMany",
-      "model": "hsClass",
-      "foreignKey": "gameId",
-      "isChild": true
+    "game": {
+      "type": "belongsTo",
+      "model": "game",
+      "foreignKey": "gameId"
     }
   },
   "acls": [

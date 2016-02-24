@@ -18,7 +18,9 @@
     <div class="panel-heading clearfix">
         <div class="row">
             <div class="col-sm-6 admin-list-heading">
-                <h4 class="m-t-sm"><strong>{{team.game.name}} {{team.name}} Members</strong></h4>
+                <h4 class="m-t-sm">
+                    <strong>{{team.game.name}} <span ng-if="team.name">- {{team.name}}</span> Members</strong>
+                </h4>
             </div>
             <div class="col-sm-6">
                 <div class="pull-right btn-toolbar">

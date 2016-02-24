@@ -10,7 +10,7 @@
     "__v": {
       "type": "number"
     },
-    "gameName": {
+    "name": {
       "type": "string"
     },
     "isActive": {
@@ -50,12 +50,6 @@
       "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW"
-    },
-    {
-      "accessType": "WRITE",
-      "principalType": "ROLE",
-      "principalId": "$owner",
       "permission": "ALLOW"
     }
   ],

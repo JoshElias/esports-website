@@ -5750,7 +5750,7 @@ angular.module('app.controllers', ['ngCookies'])
                     teamName = !_.isEmpty(team.name) ? team.name : '',
                     box = bootbox.dialog({
                     title: 'Delete team: ' + gameName + teamName + '?',
-                    message: 'Are you sure you want to delete the team <strong>' + gameName + teamName + '</strong>?',
+                    message: 'Are you sure you want to delete the team <strong>' + gameName + teamName + '</strong> including it\'s roster?',
                     buttons: {
                         delete: {
                             label: 'Delete',
@@ -6014,11 +6014,27 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminTeamMemberAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService', 'teams',
-        function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService, teams) {
+    .controller('AdminTeamMemberAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService', 'teams', 'Team',
+        function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService, teams, Team) {
+            
+            $scope.teamOptions = buildTeamOptions(teams);
+            
+            function buildTeamOptions (teams) {
+                var out = [];
+                _.each(teams, function (team) {
+                    var teamName = !_.isEmpty(team.name) ? ' ' + team.name : '',
+                        gameName = team.game.name + teamName,
+                        obj = {
+                            teamId: team.id,
+                            game: gameName
+                        };
+                    out.push(obj);
+                });
+                return out;
+            };
             
             var defaultMember = {
-                game: '',
+                teamId: $scope.teamOptions[0].teamId,
                 screenName: '',
                 fullName: '',
                 description: '',
@@ -6035,23 +6051,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.member = angular.copy(defaultMember);
-            
-            $scope.teamOptions = buildTeamOptions(teams);
-            
-            function buildTeamOptions (teams) {
-                var out = [];
-                _.each(teams, function (team) {
-                    var teamName = !_.isEmpty(team.name) ? ' ' + team.name : '',
-                        gameName = team.game.name + teamName,
-                        obj = {
-                            teamId: team.id,
-                            game: gameName
-                        };
-                    out.push(obj);
-                });
-                console.log('out:', out);
-                return out;
-            };
 
             // photo upload
             $scope.photoUpload = function ($files) {
@@ -6092,31 +6091,54 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // save member
-            $scope.saveMember = function () {
-				        $scope.fetching = true;
-                TeamMember.create({}, $scope.member).$promise.then(function (data) {
-                   $scope.fetching = false;
-                   $state.go('app.admin.teams.list');
-                   AlertService.setSuccess({
-                     show: false,
-                     persist: true,
-                     msg: $scope.member.screenName + ' created successfully'
-                   });
-               })
-               .catch(function(err){
-				            $scope.fetching = false;
-                    $window.scrollTo(0,0);
-                    AlertService.setError({
-                    show: true,
-                    msg: $scope.member.screenName + ' could not be created.',
-                    lbErr: err
-                  });
+            $scope.saveMember = function (newMember) {
+                $scope.fetching = true;
+                Team.teamMembers.create({
+                    id: newMember.teamId
+                }, newMember)
+                .$promise
+                .then(function (teams) {
+                    $scope.fetching = false;
+                    $window.scrollTo(0, 0);
+                    AlertService.setSuccess({
+                        show: true,
+                        persist: true,
+                        msg: newMember.screenName + ' added successfully'
+                    });
+                    return $state.transitionTo('app.admin.teams.list');
+                })
+                .catch(function (err) {
+                    console.log('err:', err);
+                    $window.scrollTo(0, 0);
+                    $scope.fetching = false;
+                    return AlertService.setError({
+                        show: true,
+                        msg: 'Unable to Add Team Member',
+                        lbErr: err
+                    });
                 });
             };
         }
     ])
-    .controller('AdminTeamMemberEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image',
-        function ($scope, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image) {
+    .controller('AdminTeamMemberEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image', 'teams',
+        function ($scope, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image, teams) {
+            
+            $scope.teamOptions = buildTeamOptions(teams);
+            
+            function buildTeamOptions (teams) {
+                var out = [];
+                _.each(teams, function (team) {
+                    var teamName = !_.isEmpty(team.name) ? ' ' + team.name : '',
+                        gameName = team.game.name + teamName,
+                        obj = {
+                            teamId: team.id,
+                            game: gameName
+                        };
+                    out.push(obj);
+                });
+                return out;
+            };
+            
             $scope.member = member;
             $scope.memberImg = $scope.member.photoName.length > 0 ? 'https://staging-cdn-tempostorm.netdna-ssl.com/team/' + $scope.member.photoName : 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
@@ -6163,21 +6185,21 @@ angular.module('app.controllers', ['ngCookies'])
                  .then(function (userUpdated) {
                      $scope.fetching = false;
                      $window.scrollTo(0, 0);
+                     AlertService.setSuccess({
+                       persist: true,
+                       show: false,
+                       msg: userUpdated.screenName + ' updated successfully'
+                     });
                      $state.go('app.admin.teams.list');
-					 AlertService.setSuccess({
-						 persist: true,
-						 show: false,
-						 msg: userUpdated.screenName + ' updated successfully'
-					 });
                  })
                  .catch(function (err) {
-					 $window.scrollTo(0,0);
-					 $scope.fetching = false;
-					 AlertService.setError({
-						 show: true,
-						 msg: 'Unable to update User',
-						 lbErr: err
-					 });
+                     $window.scrollTo(0,0);
+                     $scope.fetching = false;
+                     AlertService.setError({
+                       show: true,
+                       msg: 'Unable to update User',
+                       lbErr: err
+                     });
                  });
             };
         }
