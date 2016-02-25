@@ -1858,6 +1858,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminArticleAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'heroes', 'LoopBackAuth', 'Guide', 'Article', 'User', 'Hero', 'Deck', 'ArticleArticle',
         function ($scope, $upload, $state, $window, $compile, bootbox, Hearthstone, Util, AlertService, heroes, LoopBackAuth, Guide, Article, User, Hero, Deck, ArticleArticle) {
+            
             // default article
             var d = new Date();
             d.setMonth(d.getMonth()+1);
@@ -1889,7 +1890,8 @@ angular.module('app.controllers', ['ngCookies'])
                         expiryDate: d
                     },
                     articleType: [],
-                    isActive: true
+                    isActive: true,
+                    isCommentable: true
                 },
                 deckID,
                 itemAddBox;
@@ -2206,7 +2208,8 @@ angular.module('app.controllers', ['ngCookies'])
             // select options
             $scope.articleFeatured =
                 $scope.articlePremium =
-                    $scope.articleActive = [
+                    $scope.articleActive = 
+                        $scope.commentableOptions = [
                         { name: 'Yes', value: true },
                         { name: 'No', value: false }
                     ];
@@ -2301,7 +2304,8 @@ angular.module('app.controllers', ['ngCookies'])
                 'slug',
                 'themeName',
                 'title',
-                'related'
+                'related',
+                'isCommentable'
             ]);
             
             if (cleanArticle.guide) {
@@ -2383,12 +2387,12 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminArticleEditCtrl', ['$scope', '$q', '$timeout', '$upload', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article', 'User', 'ArticleArticle', 'heroes',
+    .controller('AdminArticleEditCtrl', ['$scope', '$q', '$timeout', '$upload', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article', 'User', 'ArticleArticle', 'heroes', 
         function ($scope, $q, $timeout, $upload, $state, $window, $compile, $filter, bootbox, Hearthstone, Util, AlertService, Article, Deck, Guide, article, User, ArticleArticle, heroes) {
             var itemAddBox,
                 deckID,
                 heroes = heroes;
-
+            
             // load article
             $scope.article = article;
 
@@ -2807,7 +2811,8 @@ angular.module('app.controllers', ['ngCookies'])
             // select options
             $scope.articleFeatured =
                 $scope.articlePremium =
-                    $scope.articleActive = [
+                    $scope.articleActive = 
+                        $scope.commentableOptions = [
                         { name: 'Yes', value: true },
                         { name: 'No', value: false }
                     ];
@@ -2907,7 +2912,8 @@ angular.module('app.controllers', ['ngCookies'])
                 'premium',
                 'slug',
                 'themeName',
-                'title'
+                'title',
+                'isCommentable'
             ]);
             
             if (cleanArticle.guide) {
