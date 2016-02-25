@@ -7,6 +7,10 @@
   "options": {
     "validateUpsert": true
   },
+  "customOptions" : {
+    "validate": true,
+    "destroyChildren": true
+  },
   "properties": {
     "against": {
       "type": "object"

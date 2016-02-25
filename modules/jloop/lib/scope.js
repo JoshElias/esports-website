@@ -1,4 +1,4 @@
-var app = require('../server/server');
+var app = require('../../../server/server');
 
 
 var DEFAULT_MAX_LIMIT = 100;

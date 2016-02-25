@@ -1,5 +1,5 @@
 var async = require("async");
-var utils = require("./../../lib/utils");
+var utils = require("./../../../../lib/utils");
 
 module.exports = function(server) {
     var RedbullDraftSettings = server.models.redbullDraftSettings;
