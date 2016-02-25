@@ -14,14 +14,33 @@
 .page .login-form,
 .page .signup-form,
 .page .forgot-form,
-.page .verify-form { text-align: center; margin: 0 auto; max-width: 360px; height:450px; }
+.page .verify-form { 
+    text-align: center; 
+    margin: 0 auto; 
+    max-width: 360px; 
+    height:592px; 
+    background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.45), rgba($gradient-grey,0.90)); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.45)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
 
-.page .user-form { color: white; padding: 65px 0px; background: rgba(0,0,0,.6) }
+}
+
+.page .user-form { 
+    color: white; 
+    padding: 65px 0px; 
+    background: rgba(0,0,0,.6) 
+}
+
 .page .user-form .form-group { 
     position: relative;
-    border: 1px solid #fbfbfb;
-        margin-bottom: 10px;
+    border: 0px solid #fbfbfb;
+    margin-bottom: 20px;
+    color: $dark-font;
 }
+
 //.page .user-form .login-email { width:85%; background: none; }
 .page .user-form .form-group input { color: white; margin-bottom: 0px;}
 .page .user-form .form-group .form-control { border: none; }
@@ -126,22 +145,23 @@
             //background-color: rgba(31,31,31,.9);
         
             //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
-           background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.45), rgba($gradient-grey,0.90)); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.45)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
-    background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
+            background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.45), rgba($gradient-grey,0.90)); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.45)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
         .modal-header {
             display: none;
         }
         .modal-body {
             padding: 0px;
-            margin-top: 80px;
+//            margin-top: 80px;
             
             .form-group {
                 background-color: rgba($white, 0.04);
-                border: 0px solid black;        
+                border: 0px solid black; 
+                margin-bottom: 20px;
             }
         }
     }
@@ -151,7 +171,94 @@
 
 //general styles that affect both the modal content and /login
 
-.login-form {
+.forgot-form,
+.login-modal .forgot-form {
+    
+    .reset-text {
+        color: $light-font;
+        font-size: 12px;
+        padding-left: 40px;
+        padding-right: 40px;
+        margin-bottom: 40px;
+    }
+    
+    .form-modal {
+
+        input {
+            padding: 12px 12px 12px 50px !important;
+            font-size: 12px;
+        }
+
+        button {
+            margin-top: 0px !important;
+        }
+        
+        .form-group { 
+            position: relative;
+            border: 0px solid black;
+            margin-bottom: 20px;
+            width: 280px;
+            margin-left: 40px !important;
+            margin-right: 40px !important;
+            font-size: 10px;
+            //background-color: rgba(255,255,255,0.05);
+            color: $dark-font;
+
+            .login-charm {   
+                position:absolute;
+                top: 10px;
+                left: 15px;
+                font-size: 12px; 
+                color: $light-font;
+            }
+
+            .form-control {
+                background-color: rgba(255,255,255,0.08);
+                width: 100%;
+            }  
+        }
+    }
+}
+
+
+.login-modal .signup-form,
+.signup-form,
+.login-modal .forgot-form,
+.forgot-form {
+    .login-form-header {
+        margin-bottom: 40px;    
+    }
+    
+    button[type=submit] {
+        width: 130px;
+        height: 40px;
+        border-radius: 0px;
+        background-color: rgba($ts-blue, 0.7);
+        font-size: 12px;
+        transition: .5s ease-in-out;
+        color: $light-font;
+        margin: 0 auto;
+        display: block;
+
+        &:hover,
+        &:focus {
+            background-color: $ts-blue;
+            transition: .5s ease-in-out;
+            color: $white;
+        }
+
+        &:active {
+           // background-color: rgba(255,255,255,0.05);
+        }
+        
+    }
+}
+
+.login-form,
+.login-modal .signup-form,
+.signup-form,
+.forgot-form,
+.login-modal .forgot-form {
     
     .login-form-header {
         background-image: url(../img/login-bg.jpg);
@@ -182,8 +289,10 @@
         }
     }
     .login-form-auth {
-        max-height: 40px;
+        //max-height: 40px;
         margin-bottom: 40px;
+        min-width: 100%;
+        float: left;
         
         .btn-twitch { 
             position: relative; 
@@ -275,15 +384,18 @@
             margin-right: 40px;
             margin-bottom: 20px;
             
+            .btn-login {
+                background-color: rgba($ts-blue, 0.7);
+            }
             
             button {
                 width: 130px;
                 height: 40px;
                 border-radius: 0px;
-                background-color: rgba(255,255,255,0.05);
+                background-color: rgba(255,255,255,0.08);
                 font-size: 12px;
                 transition: .5s ease-in-out;
-                color: $dark-font;
+                color: $light-font;
                 
                 &:hover,
                 &:focus {
@@ -323,7 +435,7 @@
             }
             
             .form-control {
-                background-color: rgba(255,255,255,0.05);
+                background-color: rgba(255,255,255,0.08);
                 width: 100%;
             }  
         }
