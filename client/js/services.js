@@ -3892,9 +3892,25 @@ angular.module('app.services', [])
             sb.authors.push(newAuthor);
         };
         
+        // check if user is already an author on snapshot
+        sb.authorExistsById = function (authorId) {
+            for (var i = 0; i < sb.authors.length; i++) {
+                if (sb.authors[i].user.id === authorId) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
         // delete author
-        sb.authorDelete = function (author) {
-            var index = sb.authors.indexOf(author);
+        sb.authorDeleteById = function (authorId) {
+            var index = -1;
+            for (var i = 0; i < sb.authors.length; i++) {
+                if (sb.authors[i].user.id === authorId) {
+                    index = i;
+                    break;
+                }
+            }
             if (index !== -1) {
                 sb.authors.splice(index, 1);
                 // TODO: CRUDMAN REMOVE AUTHOR
@@ -4131,9 +4147,13 @@ angular.module('app.services', [])
         
         sb.authorAddPrompt = function () {
             var newScope = $rootScope.$new(true);
+            newScope.authorAdd = sb.authorAdd;
+            newScope.authorExistsById = sb.authorExistsById;
+            newScope.authorDeleteById = sb.authorDeleteById;
+            
             var box = bootbox.dialog({
                 title: "Add Author",
-                message: $compile("<div snapshot-add-author></div>")(newScope),
+                message: $compile('<div snapshot-add-author></div>')(newScope),
                 show: false
             });
             box.modal('show');
@@ -4150,7 +4170,7 @@ angular.module('app.services', [])
                         className: "btn-danger",
                         callback: function () {
                             $timeout(function () {
-                                sb.authorDelete(author);
+                                sb.authorDeleteById(author.user.id);
                                 box.modal('hide');
                             });
                         }

@@ -34,7 +34,7 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
-                            <li ng-repeat="author in snapshot.authors" class="list-group-item admin-list-item">
+                            <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item admin-list-item">
                                 {{author.user.username}}<div class="btn-group pull-right"><button class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}"><i class="fa fa-edit"></i></button><button class="btn btn-danger btn-xs" ng-click="snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                 <div class="collapse clearfix" id="{{author.user.id}}">
                                     <div class="form-group m-t-md">

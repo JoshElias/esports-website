@@ -1198,9 +1198,49 @@ angular.module('app.directives', ['ui.load'])
     };
   }
 ])
-.directive('snapshotAddAuthor', [function () {
+.directive('snapshotAddAuthor', ['User', function (User) {
     return {
-        templateUrl: tpl + "views/admin/hs.snapshot.add.author.html"
+        templateUrl: tpl + "views/admin/hs.snapshot.add.author.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.authors = [];
+            
+            getAuthors();
+            
+            function getAuthors () {
+                $scope.loading = true;
+                
+                var where = {
+                    isProvider: true
+                }
+
+                var pattern = '/.*'+$scope.search+'.*/i';
+
+                if(!_.isEmpty($scope.search)) {
+                    where['$or'] = {
+                        username: {
+                            regexp: pattern
+                        },
+                        email: {
+                            regexp: pattern
+                        }
+                    };
+                }
+
+                User.find({
+                    filter: {
+                        where: where,
+                        limit: 10,
+                        order: 'username ASC'
+                    }
+                })
+                .$promise
+                .then(function (data) {
+                    $scope.authors = data;
+                    $scope.loading = false;
+                });
+            }
+        }]
     };
 }])
 .directive('snapshotAddDeck', [function () {
