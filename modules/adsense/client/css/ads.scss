@@ -70,8 +70,7 @@
 
 .default {
     .plg-long {
-        padding-top: 15px;
-        padding-bottom: 15px;
+        padding: 15px;
         
         @include ts-div;
         
@@ -113,8 +112,7 @@
     @include hs-snapshot-background;
     
     .plg-long {
-        padding-top: 15px;
-        padding-bottom: 15px;
+        padding: 15px;
         
         &.plg-dbl {
             @media (max-width: 768px) {
