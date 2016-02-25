@@ -311,8 +311,6 @@ angular.module('app.directives', ['ui.load'])
             //TODO: FIX COMMENTING
             $scope.commentable;
             $scope.service;
-            //$scope.commentable.isCommentable = $scope.commentable.isCommentable || true;
-            console.log($scope.commentable);
 
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
