@@ -1551,7 +1551,8 @@ var app = angular.module('app', [
                                             content: true,
                                             slug: true,
                                             photoNames: true,
-                                            createdDate: true
+                                            createdDate: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
