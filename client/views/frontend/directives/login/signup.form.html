@@ -24,7 +24,10 @@
                 <input type="password" class="form-control  login-email" id="cpassword" placeholder="Confirm Password" ng-model="signup.cpassword" required>
                 <div class="login-charm lock"><i class="fa fa-lock"></i></div>
             </div>
-            <button type="submit" class="btn" ng-disabled="signupForm.$invalid" ng-click="signup(signup.email, signup.username, signup.password, signup.cpassword)">Signup</button>
+            <div class="btn-group">
+            <button type="submit" class="btn btn-login" ng-disabled="signupForm.$invalid" ng-click="signup(signup.email, signup.username, signup.password, signup.cpassword)">Signup</button>
+            <button class="btn" ng-click="closeModal()">Cancel</button>
+            </div>
             </form>
             <div class="sign-up m-t-md"><span class="pull-left">Already have an account?</span>
                 <a href="https://tempostorm.com/login" ng-if="setState" ng-click="setState('login'); setTitle('User Login')" class="pull-right">Login</a>
