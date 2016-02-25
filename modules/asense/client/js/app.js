@@ -13,7 +13,7 @@ angular.module('tsAdSense', [])
         }
     ]
 )
-.value('moduleTpl', (tpl !== './') ? tpl + 'views/adsense/client/views/' : 'dist/views/adsense/client/views/')
+.value('moduleTpl', (tpl !== './') ? tpl + 'views/asense/client/views/' : 'dist/views/asense/client/views/')
 .controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', function ($scope, $state, $window, User, EventService, $timeout) {
     var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
     var isAlreadyLoaded = !!document.getElementById("adCode");
@@ -94,7 +94,7 @@ angular.module('tsAdSense', [])
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: moduleTpl + 'directives/ad.html',
+        templateUrl: moduleTpl + 'directives/a.html',
         controller: ['$scope', function ($scope) {
             var adIter = 0;
             var adIterMax = 10;
@@ -155,7 +155,7 @@ angular.module('tsAdSense', [])
         templateUrl: function (scope, attrs) {
             var tmp = attrs.structure || attrs.theme;
             
-            return moduleTpl + 'directives/ad.' + tmp + '.html';
+            return moduleTpl + 'directives/a.' + tmp + '.html';
         },
         controller: 'tsAdCtrl'
     }
