@@ -562,11 +562,6 @@ var app = angular.module('app', [
 
                                 return Article.findOne({
                                     filter: {
-                                        fields: {
-                                          oldComments: false,
-                                          oldRelatedArticles: false,
-                                          isActive: false,
-                                        },
                                         where: {
                                             "slug.url": slug
                                         },
@@ -634,6 +629,7 @@ var app = angular.module('app', [
                                     return data;
                                 })
                                 .catch(function (err) {
+                                    console.log('err:', err);
                                     if (err.status === 404) {
                                         return throw404($state);
                                     }
@@ -4501,22 +4497,7 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-                            }]
-//                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
-//                                return AdminDeckService.getDecks(1, 10, '');
-//                            }],
-//                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-//                                return AdminHOTSGuideService.getGuides(1, 10, '');
-//                            }],
-//                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
-//                                return AdminArticleService.getArticles(1, 10, '');
-//                            }],
-//                            dataProviders: ['AdminUserService', function (AdminUserService) {
-//                                return AdminUserService.getProviders();
-//                            }],
-//                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-//                                return AdminHeroService.getAllHeroes();
-//                            }]
+                            }],
                         }
                     }
                 },
@@ -4566,25 +4547,7 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-                            }]
-//                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
-//                                var page = 1,
-//                                    perpage = 10,
-//                                    search = '';
-//                                return AdminDeckService.getDecks(page, perpage, search);
-//                            }],
-//                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-//                                return AdminHOTSGuideService.getAllGuides();
-//                            }],
-//                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
-//                                return AdminArticleService.getAllArticles();
-//                            }],
-//                            dataProviders: ['AdminUserService', function (AdminUserService) {
-//                                return AdminUserService.getProviders();
-//                            }],
-//                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-//                                return AdminHeroService.getAllHeroes();
-//                            }]
+                            }],
                         }
                     }
                 },
@@ -6491,10 +6454,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hs.snapshots.edit.html',
                         controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
-//                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
-//                                var snapshotID = $stateParams.snapshotID;
-//                                return AdminSnapshotService.getSnapshot(snapshotID);
-//                            }]
                             snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
                                 var snapshotID = $stateParams.snapshotID;
                                 return Snapshot.findOne({

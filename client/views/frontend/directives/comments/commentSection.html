@@ -2,7 +2,7 @@
     <h3 class="pull-left">COMMENTS</h3>
 </div>
 
-<div class="comment-add m-b-sm" ng-class="{ 'active': addAreaFocus }">
+<div ng-show="commentable.isCommentable" class="comment-add m-b-sm" ng-class="{ 'active': addAreaFocus }">
     <div class="row">
         <div class="col-xs-1 wrapper-none">
             <div class="avatar"><img gravatar-src="getCurrentEmail()" alt=""></div>
@@ -23,12 +23,21 @@
 </div>
 
 <div class="comments m-b-sm">
-    <div class="comment no-comments" ng-if="!commentable.comments || !commentable.comments.length">
+    
+    <div class="comment no-comments" 
+         ng-if="(!commentable.comments || !commentable.comments.length) && commentable.isCommentable">
         <div class="comment-panel">
             <p>There are currently no comments.</p>
         </div>
     </div>
-    <div class="comment m-b-sm" ng-repeat="comment in commentable.comments | orderBy: '-createdDate'">
+    
+    <div class="comment no-comments" ng-if="!commentable.isCommentable">
+        <div class="comment-panel">
+            <p>Comments have been disabled.</p>
+        </div>
+    </div>
+    
+    <div ng-if="commentable.isCommentable" class="comment m-b-sm" ng-repeat="comment in commentable.comments | orderBy: '-createdDate'">
         <div class="comment-panel row">
             <div class="col-xs-1 avatar-wrapper">
                 <div class="avatar"><img gravatar-src="comment.author.email" alt=""></div>
