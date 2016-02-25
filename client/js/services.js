@@ -4152,9 +4152,10 @@ angular.module('app.services', [])
             newScope.authorDeleteById = sb.authorDeleteById;
             
             var box = bootbox.dialog({
-                title: "Add Author",
+                title: "Author",
                 message: $compile('<div snapshot-add-author></div>')(newScope),
-                show: false
+                show: false,
+                className: 'modal-admin'
             });
             box.modal('show');
         };
