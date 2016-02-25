@@ -55,6 +55,10 @@
       "type": [
         "string"
       ]
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
     }
   },
   "validations": [],

@@ -1503,6 +1503,7 @@ angular.module('app.services', [])
             description: data.description || '',
             chapters: data.chapters || [],
             deckType: data.deckType || 'None',
+            isCommentable: data.isCommentable || true,
             gameModeType: data.gameModeType || 'constructed',
             basic: data.basic || false,
             matchups: data.matchups || [],

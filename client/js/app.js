@@ -1079,6 +1079,7 @@ var app = angular.module('app', [
                                             youtubeId: true,
                                             gameModeType: true,
                                             isActive: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
@@ -2641,7 +2642,7 @@ var app = angular.module('app', [
                                             oldMaps: false,
                                             oldComments: false,
                                             oldHeroes: false
-                                          },
+                                         },
                                         include: [
                                           {
                                             relation: 'author'
