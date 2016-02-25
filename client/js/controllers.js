@@ -3367,41 +3367,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
             };
 
-            $scope.updateDND = function (list, index, d) {
-                list.splice(index, 1);
-                for (var i = 0; i < list.length; i++) {
-                    list[i].orderNum = i + 1;
-                }
-                updateMatchesDND(d);
-
-                doUpdateMatches(function () {
-                    $scope.selectedDecks = [];
-                    $scope.removedDecks = [];
-                    $scope.deckRanks();
-                }, false);
-            }
-
-            function updateMatchesDND (d) {
-                var tierLength = $scope.snapshot.tiers.length;
-                var maxTierLength = (tierLength > 2) ? 2 : tierLength;
-
-                for (var i = 0; i < maxTierLength; i++) {
-                    for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-                        if ($scope.snapshot.tiers[i].decks[j].deck.id == d.deck.id) {
-                            for (var k = 0; k < $scope.snapshot.matches.length; k++) {
-                                if ($scope.snapshot.matches[k].forDeck.id == d.deck.id || $scope.snapshot.matches[k].againstDeck.id == d.deck.id) {
-                                    return;
-                                }
-                            }
-                            $scope.selectedDecks.push(d);
-                            $scope.tier = $scope.snapshot.tiers[i].tier;
-                            return;
-                        }
-                    }
-                }
-                removeMatch(d.deck);
-            }
-
             /* GET METHODS */
             function getDecks (callback) {
                 var where = {};
