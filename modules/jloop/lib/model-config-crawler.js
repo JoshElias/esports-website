@@ -5,8 +5,7 @@ var _ = require('underscore');
 var customValidators = require("./customValidators");
 
 
-
-function crawl(ctx, finalCb) {
+function crawl(ctx, options, finalCb) {
     var loopbackContext = loopback.getCurrentContext();
     if (!loopbackContext || !loopbackContext.active || !loopbackContext.active.http) {
         return finalCb();
@@ -22,14 +21,14 @@ function crawl(ctx, finalCb) {
         instance: ctx.instance,
         //clientData: ctx.data || ctx.instance,
         currentInstance: ctx.currentInstance,
-
-
-        report: {
-            passed: true,
-            elements: {},
-            errors: {}
-        }
     };
+
+    // Attach ctx specific vars to state obj
+    if(options && typeof options.stateVars === "object") {
+        for(var key in options.stateVars) {
+            parentState[key] = options.stateVars[key];
+        }
+    }
 
     crawlObject(parentState, function(err, validationState) {
         if(err) return finalCb(err);
@@ -56,9 +55,6 @@ function buildNextState(value, key, previousState) {
     nextValidationState.key = key;
     nextValidationState.modelConfig = value;
     nextValidationState.modelName = previousState.modelName;
-    nextValidationState.report = {
-        passed: true
-    };
 
     // Build new data points for instance and data
     nextValidationState.data = (typeof previousState.data === "undefined")
@@ -72,6 +68,10 @@ function buildNextState(value, key, previousState) {
     // Build new root key
     var rootKeyPrefix = (previousState.rootKey.length < 1) ? "" : previousState.rootKey + ".";
     nextValidationState.rootKey = rootKeyPrefix + key;
+
+    nextValidationState.report = {
+        passed: true
+    };
 
     // Build report appropriate for data type
     if (typeof nextValidationState.clientData === "object") {

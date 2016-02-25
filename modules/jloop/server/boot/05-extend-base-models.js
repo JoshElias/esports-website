@@ -1,5 +1,5 @@
 var utils = require("../../../../lib/utils");
-var validator = require("../../../../lib/validator/validator");
+var validator = require(".././validator");
 var scope = require("../../lib/scope");
 var relation = require("../../lib/relation");
 
