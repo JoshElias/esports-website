@@ -1,8 +1,6 @@
 module.exports = {
 	"mongodb": {
-	    "host": "54.68.67.60",
-	    "port": 27017,
-	    "database": "tempostorm",
+        "url": "mongodb://54.68.67.60:27017/tempostorm",
 	    "name": "mongodb",
 	    "connector": "mongodb",
 	    "server": {
@@ -13,9 +11,7 @@ module.exports = {
 	    "allowExtendedOperators": true
 	},
 	"tournament-mongo": {
-	    "host": "54.68.67.60",
-	    "port": 27017,
-	    "database": "tournament",
+	    "url": "mongodb://54.68.67.60:27017/tournament",
 	    "name": "mongodb",
 	    "connector": "mongodb",
 	    "server": {
