@@ -4085,6 +4085,16 @@ angular.module('app.services', [])
             }
         };
 
+        // toggle deck tech card toss
+        sb.deckTechCardToggleToss = function (card) {
+            card.toss = !card.toss;
+        };
+        
+        // toggle deck tech card both
+        sb.deckTechCardToggleBoth = function (card) {
+            card.both = !card.both;
+        };
+        
         // return decks that need matchups
         sb.matchupDecks = function () {
             var decks = [];
@@ -4144,6 +4154,19 @@ angular.module('app.services', [])
         sb.matchupChangeForChance = function (matchup) {
             matchup.againstChance = (100 - matchup.forChance);
         }
+        
+        // get matchups by deck id
+        sb.getMatchupsByDeckId = function (deckId) {
+            var matchups = [];
+            
+            for (var i = 0; i < sb.matchups.length; i++) {
+                if (sb.matchups[i].forDeck.id === deckId || sb.matchups[i].againstDeck.id === deckId) {
+                    matchups.push(sb.matchups[i]);
+                }
+            }
+            
+            return matchups;
+        };
         
         sb.authorAddPrompt = function () {
             var newScope = $rootScope.$new(true);
