@@ -1,5 +1,5 @@
 module.exports = function(Article) {
-    var utils = require("../../lib/utils");
+    var utils = require(".././utils");
     var async = require('async');
   
 //    var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug('title')];

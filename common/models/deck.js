@@ -1,5 +1,5 @@
 module.exports = function(Deck) {
-    var utils = require("../../lib/utils");
+    var utils = require(".././utils");
     var async = require('async');
 
     var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug('name')];

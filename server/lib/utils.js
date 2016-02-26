@@ -103,10 +103,6 @@ function generateSlug(sourceKey) {
 function filterFields(filters) {
     return function(ctx, finalCb) {
 
-        if(ctx.Model.definition.name !== "article") {
-            return finalCb();
-        }
-
         var loopbackContext = loopback.getCurrentContext();
         if (!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
             return finalCb();

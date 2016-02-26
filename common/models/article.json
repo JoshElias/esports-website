@@ -4,7 +4,8 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "title": {
@@ -26,7 +27,8 @@
       "type": "string"
     },
     "content": {
-      "type": "string"
+      "type": "string",
+      "$acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"]
     },
     "photoNames": {
       "type": "object"

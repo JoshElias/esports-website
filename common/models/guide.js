@@ -1,5 +1,5 @@
 module.exports = function(Guide) {
-    var utils = require("../../lib/utils");
+    var utils = require(".././utils");
     var _ = require('underscore');
     var async = require('async');
 

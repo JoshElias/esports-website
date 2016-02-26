@@ -1,5 +1,5 @@
 module.exports = function(OverwatchHero) {
-    var utils = require("../../lib/utils");
+    var utils = require(".././utils");
 
 
     OverwatchHero.observe("persist", assignOrderNum);

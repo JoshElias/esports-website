@@ -2,7 +2,7 @@ module.exports = function(server) {
     var Role = server.models.Role;
     var User = server.models.user;
     var loopback = require("loopback");
-    var utils = require("../../lib/utils");
+    var utils = require("./utils");
     var async = require("async");
 
 

@@ -1,7 +1,7 @@
-var utils = require("../../../../lib/utils");
+var utils = require("../../.././utils");
 var validator = require(".././validator");
-var scope = require("../../lib/scope");
-var relation = require("../../lib/relation");
+var scope = require("./scope");
+var relation = require("./relation");
 
 
 module.exports = function(server) {

@@ -1,18 +1,36 @@
 var async = require("async");
 var loopback = require('loopback');
-var bootstrap = require("./bootstrap");
-var start = require("./start");
+var boot = require('loopback-boot');
+var jloop = require("../modules/jloop");
 
 var app = module.exports = loopback();
-
 
 async.series([
 
     // Bootstrap the application, configure models, datasources and middleware.
     // Sub-apps like REST API are mounted via boot scripts.
-    bootstrap(app),
+    function(seriesCb) {
+        return jloop.generateBootOptions(function(err, bootOptions) {
+            if(err) return seriesCb(err);
+
+            boot(app, bootOptions);
+            return seriesCb();
+        })
+    },
+
     // Start server
-    start(app, module)
+    function(seriesCb) {
+
+        if (require.main !== module) {
+            return seriesCb();
+        }
+
+        return app.listen(app.get("port"), function() {
+            app.emit('started');
+            console.log('Web server listening at: %s', app.get('url'));
+            return seriesCb();
+        });
+    }
   ],
   function(err) {
     if(err) console.log("err running server:", err);

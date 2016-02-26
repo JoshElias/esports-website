@@ -1,5 +1,5 @@
 module.exports = function(ForumThread) {
-    var utils = require("../../lib/utils");
+    var utils = require(".././utils");
 
 
     ForumThread.observe("before save", utils.generateSlug("title"));

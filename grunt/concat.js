@@ -8,7 +8,7 @@ module.exports = {
             'client/dist/js/vendor.js': [
                 'client/vendor/jquery/dist/jquery.js',
                 'client/vendor/jquery-ui/jquery-ui.js',
-                'client/vendor/bootstrap/dist/js/bootstrap.js',
+                'client/vendor/bootstrap/dist/js/module-bootstrap.js',
                 'client/vendor/moment/min/moment.min.js',
                 'client/vendor/summernote/dist/summernote.js',
                 'client/vendor/bootbox/bootbox.js',
