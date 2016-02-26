@@ -1,0 +1,151 @@
+@import 'ts-colors.scss';
+
+
+@mixin modal-div-styles {
+    //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
+    background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.45), rgba($gradient-grey,0.90)); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.45)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
+    border: 0px solid black;
+    border-radius: 0px;
+    box-shadow: 1px 1px 15px rgba(0,0,0,.75);
+}
+
+.modal-admin {
+
+    .modal-content {
+        @include modal-div-styles;
+        position: relative;
+        
+        .modal-header {
+            background: rgba($white,0.2);
+            border: 0px solid black;
+            height: 70px;
+            
+            .close {
+                margin-top: 5px;
+                margin-right: 10px;
+                font-size: 28px;
+                font-weight: 100;
+                text-shadow: none;
+            }
+                        
+            .modal-title {
+                font-size: 18px;
+                text-transform: uppercase;
+                margin: 8px 50px 0px 15px;
+            }
+        }
+        .modal-body {
+            padding: 0px;
+            
+            .bootbox-body {
+                .search-styles {
+                    
+                    .fa {
+                        color: rgba($white, 0.8);
+                        position: absolute;
+                        top: -42px;
+                        right: 310px;
+                    }
+                
+                }
+                
+                form {
+                    .form-control:focus {
+                        box-shadow: none;
+                        color: #fff;
+                    }
+                    
+                    input::-webkit-input-placeholder {
+                    color: rgba($white, 0.8) !important;
+                    }
+
+                    input:-moz-placeholder { /* Firefox 18- */
+                    color: rgba($white, 0.8) !important;  
+                    }
+
+                    input::-moz-placeholder {  /* Firefox 19+ */
+                    color: rgba($white, 0.8) !important;  
+                    }
+
+                    input:-ms-input-placeholder {  
+                    color: rgba($white, 0.8) !important;  
+                    }
+                    
+                    
+                    input {
+                    
+                        &:placeholder-shown {
+                            color: #fff;
+                        }
+                    }
+                    
+                    .input-sm {
+                        height: 40px;
+                        border-radius: 0px;
+                        border: 0px solid rgba($white, 0.2);
+                        background-color: rgba($white, 0.2);
+                        //color: rgba(white,.95);
+                        font-size: 12px;
+                        position: absolute;
+                        top: -55px;
+                        right: 65px;
+                        width: 45%;
+                        padding-left: 40px;
+                    }
+                }
+                
+                .list-group {
+
+                    li {
+                        list-style-type: none;
+                        border-bottom: 1px solid rgba($white, 0.05);
+                        height: 56px;
+                        padding: 12px;
+                        font-size: 12px;
+                        
+                        &:hover {
+                            background: rgba(255,255,255,0.38);
+background: -moz-linear-gradient(left, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.38)), color-stop(68%, rgba(255,255,255,0.12)), color-stop(100%, rgba(255,255,255,0)));
+background: -webkit-linear-gradient(left, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
+background: -o-linear-gradient(left, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
+background: -ms-linear-gradient(left, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
+background: linear-gradient(to right, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+                        }
+                        
+                        .authour {
+                            margin: 6px 15px;
+                        }
+                        
+                        button {
+                            border-radius: 0px;
+                            -webkit-box-shadow: none;
+                            box-shadow: none;
+                            width: 90px;
+                            height: 32px;
+                        }
+                        
+                        .btn-success {
+                            background-color: rgba($btn-green,0.5) !important;
+                            border: 0px solid black;
+                            background-image: none !important;
+                        }
+                        
+                        .btn-danger {
+                            background-color: rgba($btn-red,0.5) !important;
+                            border: 0px solid black;
+                            background-image: none !important;
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+}
