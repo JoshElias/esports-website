@@ -71,6 +71,7 @@
 .default {
     .plg-long {
         padding: 15px;
+        text-align: center;
         
         @include ts-div;
         
@@ -86,8 +87,10 @@
                     margin-bottom: 15px;
                 }
             }
-            
-            
+        }
+
+        .adblock-img {
+            height: 200px;
         }
     }
     
@@ -96,11 +99,6 @@
         padding-bottom: 25px;
         @include ts-div;
        
-    }
-    
-    .programmers {
-        height: 125px;
-        width: 100%;
     }
 }
 
@@ -113,6 +111,7 @@
     
     .plg-long {
         padding: 15px;
+        text-align: center;
         
         &.plg-dbl {
             @media (max-width: 768px) {
@@ -128,11 +127,20 @@
                 padding-right: 15px;
             }
         }
+
+        .adblock-img {
+          height: 200px;
+        }
     }
     
     .plg-sidebar {
         padding-top: 35px;
         padding-bottom: 35px;
+        text-align: center;
+
+        .adblock-img {
+          height: 200px;
+        }
     }
     
 }

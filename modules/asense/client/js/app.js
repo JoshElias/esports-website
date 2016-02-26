@@ -19,44 +19,44 @@ angular.module('tsAdSense', [])
     var isAlreadyLoaded = !!document.getElementById("adCode");
     var e = $(".ad");
     var role = undefined;
-    
-    $scope.showAds = false;
-    $scope.adBlock = window.canShowAds;
+    var canShowAds = !!window.canshowads;
     
     function checkPremium () {
-        if (User.isAuthenticated() && !role) {
-            User.isInRoles({
-                uid: User.getCurrentId(),
-                roleNames: ['$premium']
-            })
-            .$promise
-            .then(function (data) {
-                role = data.isInRoles.$premium;
-                
-                var s = document.getElementById('adCode');
-                var eLength = e.length;
-                
-                if (!role) {
-                    $scope.showAds = true;
-                    return doLoadAds();
-                }
-                
-                if (isAlreadyLoaded && s !== null && s !== undefined) {
-                    s.parentNode.removeChild(s);
-                    isAlreadyLoaded = false;
-                }
-                
-                for (var i = 0; i < eLength; i++) {
-                    $(e[i]).remove();
-                }
-                
-                $scope.showAds = false;
-            })
-        } else {
-            role = false;
-            $scope.showAds = true;
-            return doLoadAds();
-        }
+        //if (canShowAds) {
+            if (User.isAuthenticated() && !role) {
+                User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$premium']
+                    })
+                    .$promise
+                    .then(function (data) {
+                        role = data.isInRoles.$premium;
+
+                        var s = document.getElementById('adCode');
+                        var eLength = e.length;
+
+                        if (!role) {
+                            $scope.showAds = true;
+                            return doLoadAds();
+                        }
+
+                        if (isAlreadyLoaded && s !== null && s !== undefined) {
+                            s.parentNode.removeChild(s);
+                            isAlreadyLoaded = false;
+                        }
+
+                        for (var i = 0; i < eLength; i++) {
+                            $(e[i]).remove();
+                        }
+
+                        $scope.showAds = false;
+                    })
+            } else {
+                role = false;
+                $scope.showAds = true;
+                return doLoadAds();
+            }
+        //}
     }
     
     function doLoadAds () {
@@ -98,9 +98,14 @@ angular.module('tsAdSense', [])
         controller: ['$scope', function ($scope) {
             var adIter = 0;
             var adIterMax = 10;
-            
+            var canShowAds = !!window.canShowAds;
+
             if(!$window.adsbygoogle) {
                 $window.adsbygoogle = [];
+            }
+
+            $scope.getCanShowAds = function () {
+                return canShowAds;
             }
             
             function pushAd () {
