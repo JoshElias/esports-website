@@ -36,6 +36,7 @@
     .modal-content {
         @include modal-div-styles;
         position: relative;
+        min-height: 700px;
         
         ///temp background due to older design
         
@@ -48,7 +49,7 @@
     background: linear-gradient(to bottom,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* W3C */
         
         .modal-header {
-            background: rgba($white,0.2);
+            background: rgba($white,0.15);
             border: 0px solid black;
             height: 70px;
             
@@ -238,9 +239,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 .modal-admin {
     
     .page-flipper {
-        background: rgba($white,0.2);
+        background: rgba($white,0.15);
         border: 0px solid black;
         height: 70px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        
+        &.page-flipper-top {
+            margin: 0px;
+        }
     
         .btn-group {
             margin: 15px 19%;
@@ -298,4 +307,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
             }
         }
     }
+}
+
+//-----------------------------------
+// 3. ADD Card modal 
+//-----------------------------------
+
+.modal-admin {
+
+    .fa {
+        font-size: 50px;
+        
+    
+    }
+
 }

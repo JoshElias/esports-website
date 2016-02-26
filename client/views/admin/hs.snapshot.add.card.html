@@ -4,7 +4,7 @@
             <input type="text" ng-model="search" class="form-control input-sm pull-right" placeholder="search"><i class="fa fa-search"></i>
         </form>
     </div>
-    <div class="text-center" ng-if="loading">
+    <div class="text-center big-spin" ng-if="loading">
         <i class="fa fa-refresh fa-spin"></i>
     </div>
     <ul class="list-group m-b-none" ng-if="!loading && cards.length">
@@ -19,5 +19,5 @@
             </div>
         </li>
     </ul>
-    <div pagination="pagination" theme="admin" class="modal-admin"></div>
+    <div pagination="pagination" theme="modal-admin" class="modal-admin"></div>
 </div>
