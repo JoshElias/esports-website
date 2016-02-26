@@ -154,6 +154,21 @@ angular.module('app.directives', ['ui.load'])
                     $scope.loginText = loginStatusList[status];
                 }
 
+                function redir (go) {
+                    var goto = go || 'app.home';
+                    $state.go(goto);
+                }
+
+                $scope.cancel = function () {
+                    var isModal = $scope.state;
+
+                    if (!isModal) {
+                        return redir('app.home');
+                    } else {
+                        return $scope.closeModal();
+                    }
+                }
+
                 $scope.login = function login(email, password) {
                     $scope.setLoggingIn(1);
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
@@ -171,8 +186,9 @@ angular.module('app.directives', ['ui.load'])
                               if ($scope.callback) {
                                 $scope.callback(LoopBackAuth);
                               } else if (!$scope.state) {
-                                var goto = $stateParams.redirect || 'app.home';
-                                $state.go(goto);
+                                  var redirect = $stateParams.redirect;
+
+                                  redir(redirect);
                               }
                             }
                         });
@@ -223,7 +239,20 @@ angular.module('app.directives', ['ui.load'])
 //          return (!$scope.setState) ? 'transform:scale(1.06);-webkit-transform:scale(1.06);transform-origin:0 0;-webkit-transform-origin:0 0;' : 'transform:scale(.99);-webkit-transform:scale(.99);transform-origin:0 0;-webkit-transform-origin:0 0;';
 //      }
 
+      function redir (go) {
+          var goto = go || 'app.home';
+          $state.go(goto);
+      }
 
+      $scope.cancel = function () {
+          var isModal = $scope.state;
+
+          if (!isModal) {
+              return redir('app.home');
+          } else {
+              return $scope.closeModal();
+          }
+      }
 
       $scope.verify = {
         email: "",
@@ -258,11 +287,26 @@ angular.module('app.directives', ['ui.load'])
     }
   }
 }])
-.directive('forgotPasswordForm', ['LoginModalService', 'User', 'AlertService', function (LoginModalService, User, AlertService) {
+.directive('forgotPasswordForm', ['LoginModalService', 'User', 'AlertService', '$state', function (LoginModalService, User, AlertService, $state) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/forgot.password.form.html',
         scope: true,
         link: function ($scope, el, attr) {
+
+            function redir (go) {
+                var goto = go || 'app.home';
+                $state.go(goto);
+            }
+
+            $scope.cancel = function () {
+                var isModal = $scope.state;
+
+                if (!isModal) {
+                    return redir('app.home');
+                } else {
+                    return $scope.closeModal();
+                }
+            }
 
             $scope.forgotPassword = function () {
                 User.resetPassword({ email: $scope.forgot.email })
