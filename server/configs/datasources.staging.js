@@ -1,30 +1,24 @@
 module.exports = {
-	"mongodb": {
-	    "host": "54.68.67.60",
-	    "port": 27017,
-	    "database": "tempostorm",
-	    "name": "mongodb",
-	    "connector": "mongodb",
-	    "server": {
-	      "auto_reconnect": true,
-	      "reconnectTries": 100,
-	      "reconnectInterval": 1000
-	    },
-	    "allowExtendedOperators": true
-	},
-	"tournament-mongo": {
-		"host": "54.68.67.60",
-		"port": 27017,
-		"database": "tempostorm",
-		"name": "mongodb",
-		"connector": "mongodb",
-		"server": {
-			"auto_reconnect": true,
-			"reconnectTries": 100,
-			"reconnectInterval": 1000
-		},
-		"allowExtendedOperators": true
-	},
+    "mongodb": {
+        "name": "mongodb",
+        "connector": "mongodb",
+        "url": 'mongodb://54.68.67.60:27017/tempostorm',
+        "server": {
+            "auto_reconnect": true,
+            "reconnectTries": 100,
+            "reconnectInterval": 1000
+        }
+    },
+    "tournament-mongo": {
+        "name": "tournament-mongo",
+        "connector": "mongodb",
+        "url": 'mongodb://54.68.67.60:27017/tournament',
+        "server": {
+            "auto_reconnect": true,
+            "reconnectTries": 100,
+            "reconnectInterval": 1000
+        }
+    },
 	"mandrill": {
 	    "name": "mandrill",
 	    "connector": "loopback-connector-mandrill",
@@ -39,4 +33,4 @@ module.exports = {
         "bucket": "staging-cdn.tempostorm.com",
         "endpoint": "staging-cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com"
     }
-}
+};

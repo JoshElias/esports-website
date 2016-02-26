@@ -96,10 +96,10 @@
 //*************************************
 
 .articles-list { 
-    margin-right: -20px; 
+//    margin-right: -20px; 
 
     .article-wrapper { 
-        margin-right: 20px; 
+        margin: 0px 10px 20px 10px; 
     }
 }
 
@@ -169,12 +169,45 @@
 .article-page .article-related .related { background: rgba(10,10,10,.8); height: 60px; opacity: .8; position: relative; }
 .article-page .article-related .related:nth-child(even) { background: rgba(95,95,95,.2); height: 60px; }
 .article-page .article-related .related:hover { opacity: 1; }
-.article-page .article-related .related p { margin-bottom: 0; width: 200px; position: absolute; left: 108px; text-decoration: none; }
+
+.article-page .article-related .related p { 
+    margin-bottom: 0; 
+    width: 200px; 
+    position: absolute; 
+    left: 108px; 
+    text-decoration: none; 
+
+    @media screen and (max-width: 767px) {
+        position: static;
+        padding-left: 5px;
+        padding-top: 5px;
+        
+        &.votes {
+            display: none;
+        }
+    
+    }
+}
+
+
 .article-page .article-related .related .top { top: 5px; }
 .article-page .article-related .related .bot { bottom: 5px; font-size: 12px; color: #9E9E9E }
 .article-page .article-related .related .votes { top: 5px; right: 28px; font-size: 12px; color: #9E9E9E; left: auto; width: 5px; }
 .article-page .article-related .related a { height: 60px; width: 100%; display:block; }
-.article-page .article-related .related-img { height: 60px; width: 98px; background-size: cover; background-position: center }
+
+
+.article-page .article-related .related-img { 
+    height: 60px; 
+    width: 98px; 
+    background-size: cover; 
+    background-position: center;
+
+    @media screen and (max-width: 767px){
+        display: none;
+    }
+}
+
+
 .article-page .article-related .related-info { height: 60px; width: auto; }
 
 .article-page .article-related .related-title-hearthstone { color: #D27B2C; }

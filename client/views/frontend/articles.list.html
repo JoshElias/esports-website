@@ -46,10 +46,18 @@
                 <!-- / page flipping -->
             </div>
         </div>
+        
+        
+        <!-- first fullwidth plg -->
+
+        <!--<ts-ad class="text-center container-fluid" structure="double"></ts-ad>-->
+
+        <!-- first fullwidth plg ends -->
 
         <!-- articles -->
         <div class="articles-list m-t-lg">
             <!-- article -->
+            
             <div class="row no-pad">
                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="article in articles | orderBy: '-createdDate' track by $index">
                     <div class="article-wrapper m-b-md">
@@ -62,7 +70,9 @@
 
         <p ng-if="!articles.length" class="darkbox white p-md">There are no results for your search.</p>
         <!-- / articles -->
-
+        
+        <!--<ts-ad class="text-center container-fluid m-b-sm" structure="single"></ts-ad>-->
+        
         <!-- page flipping -->
         <div pagination="articlePagination" theme="default" class="default"></div>
         <!-- / page flipping -->

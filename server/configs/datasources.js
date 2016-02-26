@@ -1,10 +1,7 @@
 module.exports = {
 	"mongodb": {
-	    "host": "54.68.67.60",
-	    "port": 27017,
-	    "database": "perfectMigration",
-	    "name": "mongodb",
-	    "connector": "mongodb",
+		"url": 'mongodb://localhost:27017/tempostorm',
+		"connector": "loopback-connector-mongodb",
 	    "server": {
 	      "auto_reconnect": true,
 	      "reconnectTries": 100,

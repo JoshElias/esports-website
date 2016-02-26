@@ -7,15 +7,15 @@
     "validateUpsert": true
   },
   "properties": {
+    "cardQuantity": {
+      "required": true,
+      "type": "number"
+    },
     "cardId": {
-        "required": true
+      "required": true
     },
     "deckId": {
-        "required": true
-    },
-    "cardQuantity": {
-        "required": true,
-        "type": "number"
+      "required": true
     }
   },
   "validations": [],

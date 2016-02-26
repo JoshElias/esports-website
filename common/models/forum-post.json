@@ -32,11 +32,6 @@
     "viewCount": {
       "type": "number"
     },
-    "oldComments": {
-      "type": [
-        "string"
-      ]
-    },
     "slug": {
       "type": "object"
     },
@@ -46,12 +41,8 @@
     "votes": {
       "type": "object"
     },
-    "forumThreadId": {
-      "type": {}
-    },
-    "authorId": {
-      "type": {}
-    }
+    "forumThreadId": {},
+    "authorId": {}
   },
   "validations": [],
   "relations": {

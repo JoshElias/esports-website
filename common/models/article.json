@@ -12,21 +12,24 @@
       "required": true
     },
     "slug": {
-        "url": {
-          "type": "string",
-          "validators": [
-            "unique"
-          ]
-        },
-        "linked": {
-          "type": "boolean"
-        }
+      "url": {
+        "type": "string",
+        "validators": [
+          "unique"
+        ]
+      },
+      "linked": {
+        "type": "boolean"
+      }
     },
     "description": {
       "type": "string"
     },
     "content": {
       "type": "string"
+    },
+    "isCommentable": {
+      "type": "boolean"
     },
     "photoNames": {
       "type": "object"
@@ -56,31 +59,15 @@
         "string"
       ]
     },
-    "oldRelatedArticles": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldComments": {
-      "type": [
-        "string"
-      ]
-    },
     "isActive": {
       "type": "boolean"
-    },
-    "deckId": {
-      "type": {}
-    },
-    "guideId": {
-      "type": {}
     },
     "__v": {
       "type": "number"
     },
-    "authorId": {
-      "type": {}
-    }
+    "deckId": {},
+    "guideId": {},
+    "authorId": {}
   },
   "validations": [],
   "relations": {
