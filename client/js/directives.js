@@ -1281,9 +1281,87 @@ angular.module('app.directives', ['ui.load'])
         }]
     };
 }])
-.directive('snapshotAddDeck', [function () {
+.directive('snapshotAddDeck', ['$q', 'Deck', 'AjaxPagination', function ($q, Deck, AjaxPagination) {
     return {
-        templateUrl: tpl + "views/admin/hs.snapshot.add.deck.html"
+        templateUrl: tpl + "views/admin/hs.snapshot.add.deck.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.decks = [];
+            $scope.deckName = '';
+            $scope.deck = null;
+            
+            // toggle deck
+            $scope.toggleDeck = function (deck) {
+                $scope.deck = ($scope.deck === deck) ? null : deck;
+                console.log(deck);
+            };
+            
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 10;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+            
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateDecks(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+            
+            function updateDecks (page, perpage, search, callback) {
+                $scope.loading = true;
+                
+                var pattern = '/.*'+search+'.*/i';
+                var where = {};
+                
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            name: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'name ASC'
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+                
+                AjaxPagination.update(Deck, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.decks = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateDecks($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateDecks(1, $scope.perpage, $scope.search);
+            };
+        }]
     }
 }])
 .directive('snapshotAddCard', ['$q', 'Card', 'AjaxPagination', function ($q, Card, AjaxPagination) {

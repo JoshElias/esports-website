@@ -4258,6 +4258,36 @@ angular.module('app.services', [])
             box.modal('show');
         };
         
+        // prompt for adding a deck
+        sb.deckAddPrompt = function (tier) {
+            var newScope = $rootScope.$new(true);
+            
+            var box = bootbox.dialog({
+                title: "Cards",
+                message: $compile('<div snapshot-add-deck></div>')(newScope),
+                buttons: {
+                    submit: {
+                        label: 'Add Deck',
+                        className: 'btn-success',
+                        callback: function () {
+                            sb.deckAdd(tier, newScope.deckName, newScope.deck);
+                            box.modal('hide');
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                },
+                show: false,
+                className: 'modal-admin'
+            });
+            box.modal('show');
+        };
+        
         // prompt for deck delete
         sb.deckDeletePrompt = function (tier, deck) {
             var box = bootbox.dialog({
@@ -4329,6 +4359,35 @@ angular.module('app.services', [])
                 message: $compile('<div snapshot-add-card></div>')(newScope),
                 show: false,
                 className: 'modal-admin'
+            });
+            box.modal('show');
+        };
+        
+        // prompt for deck tech card delete
+        sb.deckTechCardDeletePrompt = function (deckTech, card) {
+            var box = bootbox.dialog({
+                title: "Remove Card?",
+                message: "Are you sure you want to remove the card <strong>" + card.card.name + "</strong>?",
+                buttons: {
+                    confirm: {
+                        label: "Delete",
+                        className: "btn-danger",
+                        callback: function () {
+                            $timeout(function () {
+                                sb.deckTechCardDeleteById(deckTech, card.card.id);
+                                box.modal('hide');
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: "Cancel",
+                        className: "btn-default pull-left",
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                },
+                show: false
             });
             box.modal('show');
         };
