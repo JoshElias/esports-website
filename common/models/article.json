@@ -29,7 +29,8 @@
       "type": "string"
     },
     "isCommentable": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": true
     },
     "photoNames": {
       "type": "object"

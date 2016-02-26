@@ -1553,7 +1553,8 @@ var app = angular.module('app', [
                                             content: true,
                                             slug: true,
                                             photoNames: true,
-                                            createdDate: true
+                                            createdDate: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
@@ -2644,7 +2645,7 @@ var app = angular.module('app', [
                                             oldMaps: false,
                                             oldComments: false,
                                             oldHeroes: false
-                                          },
+                                         },
                                         include: [
                                           {
                                             relation: 'author'
