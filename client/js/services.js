@@ -1494,6 +1494,8 @@ angular.module('app.services', [])
     deckBuilder.new = function (playerClass, data) {
         data = data || {};
 
+        console.log(data);
+
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
 
@@ -1507,6 +1509,7 @@ angular.module('app.services', [])
             description: data.description || '',
             chapters: data.chapters || [],
             deckType: data.deckType || 'None',
+            isCommentable: data.isCommentable,
             gameModeType: data.gameModeType || 'constructed',
             basic: data.basic || false,
             matchups: data.matchups || [],

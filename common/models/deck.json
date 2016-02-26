@@ -87,6 +87,10 @@
         "youtubeId"
       ]
     },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
+    },
     "chapters": {
       "type": [
         {

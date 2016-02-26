@@ -38,6 +38,20 @@
     },
     "isActive": {
       "type": "boolean"
+    },
+    "oldAuthors": {
+      "type": [
+        "object"
+      ]
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
     }
   },
   "validations": [],
