@@ -1205,9 +1205,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.loading = false;
             $scope.authors = [];
             
-            getAuthors();
-            
-            function getAuthors () {
+            $scope.getAuthors = function () {
                 $scope.loading = true;
                 
                 var where = {
@@ -1240,6 +1238,8 @@ angular.module('app.directives', ['ui.load'])
                     $scope.loading = false;
                 });
             }
+            $scope.getAuthors();
+            
         }]
     };
 }])
