@@ -11,11 +11,6 @@
     "isActive": {
       "type": "boolean"
     },
-    "oldAbilities": {
-      "type": [
-        "object"
-      ]
-    },
     "characters": {
       "type": [
         "object"
@@ -50,11 +45,6 @@
     },
     "universe": {
       "type": "string"
-    },
-    "oldTalents": {
-      "type": [
-        "object"
-      ]
     },
     "talentTiers": {
       "type": "object"

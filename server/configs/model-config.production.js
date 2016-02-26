@@ -67,6 +67,18 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
+    "game": {
+      "dataSource": "mongodb",
+      "public": true
+    },
+    "hsClass": {
+      "dataSource": "mongodb",
+      "public": true
+    },
+    "team": {
+      "dataSource": "mongodb",
+      "public": true
+    },
     "teamMember": {
         "dataSource": "mongodb",
         "public": true

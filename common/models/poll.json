@@ -28,11 +28,6 @@
     },
     "createdDate": {
       "type": "date"
-    },
-    "oldItems": {
-      "type": [
-        "object"
-      ]
     }
   },
   "validations": [],

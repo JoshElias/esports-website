@@ -55,7 +55,6 @@ angular.module('app.controllers', ['ngCookies'])
         }])
     .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService', 'EventService',
         function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
-
           $scope.currentRoles = {};
 
           // Add 'redbulladmin' to current user if they have role.
@@ -1859,6 +1858,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminArticleAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'heroes', 'LoopBackAuth', 'Guide', 'Article', 'User', 'Hero', 'Deck', 'ArticleArticle',
         function ($scope, $upload, $state, $window, $compile, bootbox, Hearthstone, Util, AlertService, heroes, LoopBackAuth, Guide, Article, User, Hero, Deck, ArticleArticle) {
+            
             // default article
             var d = new Date();
             d.setMonth(d.getMonth()+1);
@@ -1890,7 +1890,8 @@ angular.module('app.controllers', ['ngCookies'])
                         expiryDate: d
                     },
                     articleType: [],
-                    isActive: true
+                    isActive: true,
+                    isCommentable: true
                 },
                 deckID,
                 itemAddBox;
@@ -2207,7 +2208,8 @@ angular.module('app.controllers', ['ngCookies'])
             // select options
             $scope.articleFeatured =
                 $scope.articlePremium =
-                    $scope.articleActive = [
+                    $scope.articleActive = 
+                        $scope.commentableOptions = [
                         { name: 'Yes', value: true },
                         { name: 'No', value: false }
                     ];
@@ -2302,7 +2304,8 @@ angular.module('app.controllers', ['ngCookies'])
                 'slug',
                 'themeName',
                 'title',
-                'related'
+                'related',
+                'isCommentable'
             ]);
             
             if (cleanArticle.guide) {
@@ -2384,12 +2387,12 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminArticleEditCtrl', ['$scope', '$q', '$timeout', '$upload', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article', 'User', 'ArticleArticle', 'heroes',
+    .controller('AdminArticleEditCtrl', ['$scope', '$q', '$timeout', '$upload', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article', 'User', 'ArticleArticle', 'heroes', 
         function ($scope, $q, $timeout, $upload, $state, $window, $compile, $filter, bootbox, Hearthstone, Util, AlertService, Article, Deck, Guide, article, User, ArticleArticle, heroes) {
             var itemAddBox,
                 deckID,
                 heroes = heroes;
-
+            
             // load article
             $scope.article = article;
 
@@ -2808,7 +2811,8 @@ angular.module('app.controllers', ['ngCookies'])
             // select options
             $scope.articleFeatured =
                 $scope.articlePremium =
-                    $scope.articleActive = [
+                    $scope.articleActive = 
+                        $scope.commentableOptions = [
                         { name: 'Yes', value: true },
                         { name: 'No', value: false }
                     ];
@@ -2908,7 +2912,8 @@ angular.module('app.controllers', ['ngCookies'])
                 'premium',
                 'slug',
                 'themeName',
-                'title'
+                'title',
+                'isCommentable'
             ]);
             
             if (cleanArticle.guide) {
@@ -5755,6 +5760,70 @@ angular.module('app.controllers', ['ngCookies'])
                     list[i].orderNum = i + 1;
                 }
             };
+            
+            // delete team
+            $scope.deleteTeam = function (team) {
+                var gameName = team.game.name,
+                    teamName = !_.isEmpty(team.name) ? team.name : '',
+                    box = bootbox.dialog({
+                    title: 'Delete team: ' + gameName + teamName + '?',
+                    message: 'Are you sure you want to delete the team <strong>' + gameName + teamName + '</strong> including it\'s roster?',
+                    buttons: {
+                        delete: {
+                            label: 'Delete',
+                            className: 'btn-danger',
+                            callback: function () {
+                                Team.destroyById({
+                                    id: team.id
+                                })
+                                .$promise
+                                .then(function (teamDeleted) {
+                                    var index = $scope.teamInfo.indexOf(team);
+                                    if (index !== -1) {
+                                        $window.scrollTo(0, 0);
+                                        $scope.teamInfo.splice(index, 1);
+                                        return AlertService.setSuccess({
+                                            show: true,
+                                            msg: gameName + teamName + ' deleted successfully'
+                                        });
+                                    }
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    }
+                });
+                box.modal('show');
+//                console.log('clicked');
+//                $scope.fetching = true;
+//                Team.destroyById({
+//                    id: team.id
+//                })
+//                .$promise
+//                .then(function (teamDeleted) {
+//                    $scope.fetching = false;
+//                    var index = $scope.teamInfo.indexOf(team);
+//                    if (index !== -1) {
+//                        $scope.teamInfo.splice(index, 1);
+//                    }
+//                })
+//                .catch(function (err) {
+//                    console.log('err:', err);
+//                    $scope.fetching = false;
+//                    $window.scrollTo(0, 0);
+//                    return AlertService.setError({
+//                        show: true,
+//                        msg: 'Unable to delete Team',
+//                        lbErr: err
+//                    });
+//                });
+            };
 
             // delete member
             $scope.deleteMember = function deleteMember(member) {
@@ -5766,17 +5835,22 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                TeamMember.destroyById({id:member.id}).$promise.then(function () {
-                                    var teamMembers = $scope.teamMembers[member.game];
-                                    var index = teamMembers.indexOf(member);
-                                    if (index !== -1) {
-                                        AlertService.setSuccess({
-                                            show: true,
-                                            msg: member.screenName + ' deleted successfully'
-                                        });
-                                        $window.scrollTo(0, 0);
-                                        teamMembers.splice(index, 1);
-                                    }
+                                TeamMember.destroyById({
+                                    id:member.id
+                                })
+                                .$promise
+                                .then(function (memberDeleted) {
+                                    _.each($scope.teamInfo, function(team, teamIndex) {
+                                        var index = team.teamMembers.indexOf(member);
+                                        if (index !== -1) {
+                                            $scope.teamInfo[teamIndex].teamMembers.splice(index, 1);
+                                            $window.scrollTo(0, 0);
+                                            return AlertService.setSuccess({
+                                                show: true,
+                                                msg: member.screenName + ' deleted successfully'
+                                            });
+                                        }
+                                    });
                                 });
                             }
                         },
@@ -5793,6 +5867,91 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
+    .controller('AdminTeamAddCtrl', ['$scope', '$window', '$state', 'gameOptions', 'Game', 'Team', 'AlertService', function ($scope, $window, $state, gameOptions, Game, Team, AlertService) {
+        // default category
+        var defaultTeam = {
+            gameId: '',
+            name: '',
+            isActive: true
+        };
+
+        // load category
+        $scope.newTeam = _.clone(defaultTeam);
+        
+        // game options
+        $scope.gameOptions = gameOptions;
+        // active options
+        $scope.teamActive = [
+            { name: 'Yes', value: true },
+            { name: 'No', value: false }
+        ];
+        
+        $scope.addNewTeam = function (newTeam) {
+            $scope.fetching = true;
+            Game.teams.create({
+                id: newTeam.gameId
+            }, newTeam)
+            .$promise
+            .then(function (teamCreated) {
+                $scope.fetching = false;
+                $window.scrollTo(0, 0);
+                AlertService.setSuccess({
+                    show: true,
+                    persist: true,
+                    msg: 'New Team created Successfully'
+                });
+                $state.transitionTo('app.admin.teams.list');
+                
+            })
+            .catch(function (err) {
+                $scope.fetching = false;
+                $window.scrollTo(0, 0);
+                return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to Create Team',
+                    lbErr: err
+                });
+            });
+        };
+        
+    }])
+    .controller('AdminTeamEditCtrl', ['$scope', '$window', '$state', 'AlertService', 'team', 'gameOptions', 'Team', function ($scope, $window, $state, AlertService, team, gameOptions, Team) {
+        
+        $scope.team = team;
+        // game options
+        $scope.gameOptions = gameOptions;
+        // active options
+        $scope.teamActive = [
+            { name: 'Yes', value: true },
+            { name: 'No', value: false }
+        ];
+        
+        $scope.editTeam = function (team) {
+            Team.upsert(team)
+            .$promise
+            .then(function (teamUpserted) {
+                $scope.fetching = false;
+                $window.scrollTo(0, 0);
+                AlertService.setSuccess({
+                    show: true,
+                    persist: true,
+                    msg: team.game.name + (team.name ? team.name : ' Team') + ' updated successfully'
+                });
+                
+                return $state.transitionTo('app.admin.teams.list');
+            })
+            .catch(function (err) {
+                $scope.fetching = false;
+                $window.scrollTo(0, 0);
+                console.log('err:', err);
+                return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to Update Team',
+                    lbErr: err
+                });
+            });
+        };
+    }])
     .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam', 'csTeam',
         function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, hsTeam, hotsTeam, wowTeam, fgcTeam, fifaTeam, csTeam) {
 
@@ -5847,12 +6006,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminTeamAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService',
-        function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService) {
-//removed upload
-
+    .controller('AdminTeamMemberAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService', 'teamOptions', 'Team',
+        function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService, teamOptions, Team) {
+            
+            $scope.teamOptions = teamOptions;
+            
             var defaultMember = {
-                game: '',
+                teamId: $scope.teamOptions[0].teamId,
                 screenName: '',
                 fullName: '',
                 description: '',
@@ -5904,36 +6064,45 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!$scope.member) { return '/img/blank.png'; }
 //				console.log('$scope.path:', $scope.imgPath);
 //				console.log('$scope.member.photoName:', $scope.member.photoName);
-				var URL = (tpl === './') ? cdn2 : tpl;
+				        var URL = (tpl === './') ? cdn2 : tpl;
                 return ($scope.member.photoName && $scope.member.photoName === '') ?  '' : URL + $scope.imgPath + $scope.member.photoName;
             };
 
             // save member
-            $scope.saveMember = function () {
-				$scope.fetching = true;
-                TeamMember.create({}, $scope.member).$promise.then(function (data) {
-                   $scope.fetching = false;
-				   $state.go('app.admin.teams.list');
-				   AlertService.setSuccess({
-					   show: false,
-					   persist: true,
-					   msg: $scope.member.screenName + ' created successfully'
-				   });
-               })
-               .catch(function(err){
-				   $scope.fetching = false;
-                    $window.scrollTo(0,0);
-                    AlertService.setError({
-						show: true,
-						msg: $scope.member.screenName + ' could not be created.',
-						lbErr: err
-					});
+            $scope.saveMember = function (newMember) {
+                $scope.fetching = true;
+                Team.teamMembers.create({
+                    id: newMember.teamId
+                }, newMember)
+                .$promise
+                .then(function (teams) {
+                    $scope.fetching = false;
+                    $window.scrollTo(0, 0);
+                    AlertService.setSuccess({
+                        show: true,
+                        persist: true,
+                        msg: newMember.screenName + ' added successfully'
+                    });
+                    return $state.transitionTo('app.admin.teams.list');
+                })
+                .catch(function (err) {
+                    console.log('err:', err);
+                    $window.scrollTo(0, 0);
+                    $scope.fetching = false;
+                    return AlertService.setError({
+                        show: true,
+                        msg: 'Unable to Add Team Member',
+                        lbErr: err
+                    });
                 });
             };
         }
     ])
-    .controller('AdminTeamEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image',
-        function ($scope, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image) {
+    .controller('AdminTeamMemberEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image', 'teamOptions',
+        function ($scope, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image, teamOptions) {
+            
+            $scope.teamOptions = teamOptions;
+            
             $scope.member = member;
             $scope.memberImg = $scope.member.photoName.length > 0 ? 'https://staging-cdn-tempostorm.netdna-ssl.com/team/' + $scope.member.photoName : 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
@@ -5980,21 +6149,21 @@ angular.module('app.controllers', ['ngCookies'])
                  .then(function (userUpdated) {
                      $scope.fetching = false;
                      $window.scrollTo(0, 0);
+                     AlertService.setSuccess({
+                       persist: true,
+                       show: false,
+                       msg: userUpdated.screenName + ' updated successfully'
+                     });
                      $state.go('app.admin.teams.list');
-					 AlertService.setSuccess({
-						 persist: true,
-						 show: false,
-						 msg: userUpdated.screenName + ' updated successfully'
-					 });
                  })
                  .catch(function (err) {
-					 $window.scrollTo(0,0);
-					 $scope.fetching = false;
-					 AlertService.setError({
-						 show: true,
-						 msg: 'Unable to update User',
-						 lbErr: err
-					 });
+                     $window.scrollTo(0,0);
+                     $scope.fetching = false;
+                     AlertService.setError({
+                       show: true,
+                       msg: 'Unable to update User',
+                       lbErr: err
+                     });
                  });
             };
         }
@@ -6179,11 +6348,11 @@ angular.module('app.controllers', ['ngCookies'])
                 .then(function(data) {
                     $scope.fetching = false;
                     $state.go('app.admin.vod.list');
-					AlertService.setSuccess({
-						persist: true,
-						show: true,
-						msg: vod.subtitle + ' updated successfully'
-					});
+                    AlertService.setSuccess({
+                      persist: true,
+                      show: true,
+                      msg: vod.subtitle + ' updated successfully'
+                    });
                 })
                 .catch(function(err) {
                     $scope.fetching = false;
@@ -6318,133 +6487,6 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 box.modal('show');
             }
-
-            // Destroy Deck and All Relations
-//            function deleteDeck(deck) {
-//                console.log('deck to del: ', deck);
-//
-//                async.series([
-//                    function (seriesCallback) {
-//                        // 1. destroy Matchups
-//                        Deck.matchups.destroyAll({
-//                            id: deck.id
-//                        })
-//                        .$promise
-//                        .then(function (matchupsDestroyed) {
-//                            console.log('matchupsDestroyed: ', matchupsDestroyed);
-//                            seriesCallback();
-//                        })
-//                        .catch(function (err) {
-//                            console.log('matchupDestroy err: ', err);
-//                            seriesCallback(err);
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        // 2. destroy Cards With/Without Coin & Mulligan
-//                        async.each(deck.mulligans, function (mulligan, mulliganCB) {
-//                            console.log('current mulligan: ', mulligan);
-//
-//                            // Destroy mulligansWithCoin
-//                            Mulligan.mulligansWithCoin.destroyAll({
-//                                id: mulligan.id
-//                            })
-//                            .$promise
-//                            .then(function (cardWithCoinDestroyed) {
-//                                console.log('cardWithCoinDestroyed: ', cardWithCoinDestroyed);
-//                            })
-//                            .catch(function (err) {
-//                                console.log('cardWithCoin.DestroyAll err: ', err);
-//                                mulliganCB(err);
-//                            });
-//
-//                            // Destroy mulligansWithoutCoin
-//                            Mulligan.mulligansWithoutCoin.destroyAll({
-//                                id: mulligan.id
-//                            })
-//                            .$promise
-//                            .then(function (cardWithoutCoinDestroyed) {
-//                                console.log('cardWithoutCoinDestroyed: ', cardWithoutCoinDestroyed);
-//                            })
-//                            .catch(function (err) {
-//                                console.log('cardWithoutCoin.DestroyAll err: ', err);
-//                                mulliganCB(err);
-//                            });
-//
-//                            // Destroy Current Mulligan
-//                            Mulligan.destroyById({
-//                                id: mulligan.id
-//                            })
-//                            .$promise
-//                            .then(function (mulliganDestroyed) {
-//                                console.log('mulliganDestroyed: ', mulliganDestroyed);
-//                            })
-//                            .catch(function (err) {
-//                                console.log('Mulligan.destroyById err: ', err);
-//                                mulliganCB(err);
-//                            });
-//
-//                            // goto next mulligan
-//                            mulliganCB();
-//                        }, function(err) {
-//                            if (err) {
-//                                console.log('async mulligan err: ', err);
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback();
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        // 3. destroy Comments
-//                        Deck.comments.destroyAll({
-//                            id: deck.id
-//                        })
-//                        .$promise
-//                        .then(function (allCommentsDestroyed) {
-//                            console.log('Deck.comments.destroyAll success: ', allCommentsDestroyed);
-//                            seriesCallback();
-//                        })
-//                        .catch(function (err) {
-//                            console.log('Deck.comments.destroyAll err: ', err);
-//                            seriesCallback(err);
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        // 4. destroy DeckCards
-//                        Deck.cards.destroyAll({
-//                            id: deck.id
-//                        })
-//                        .$promise
-//                        .then(function (allDeckCardsDestroyed) {
-//                            console.log('Deck.cards.destroyAll success: ', allDeckCardsDestroyed);
-//                            seriesCallback();
-//                        })
-//                        .catch(function (err) {
-//                            console.log('Deck.cards.destroyAll err: ', err);
-//                            seriesCallback(err);
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        // 5. destroy Deck
-//                        Deck.destroyById({
-//                            id: deck.id
-//                        })
-//                        .$promise
-//                        .then(function (deckDestroyed) {
-//                            console.log('Deck.destroyById success: ', deckDestroyed);
-//                            seriesCallback();
-//                        })
-//                        .catch(function (err) {
-//                            console.log('Deck.destroyById err: ', err);
-//                        });
-//                    }
-//                ], function(err) {
-//                    if (err) {
-//                        console.log('Series Err: ', err);
-//                    }
-//                    console.log('All Done!');
-//                });
-//
-//            }
         }
     ])
     .controller('AdminDeckBuilderClassCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone) {

@@ -30,10 +30,19 @@
     },
     "isActive": {
       "type": "boolean"
+    },
+    "teamId": {
+      "type": {}
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "team": {
+      "type": "belongsTo",
+      "model": "team",
+      "foreignKey": "teamId"
+    }
+  },
   "acls": [
     {
       "principalType": "ROLE",

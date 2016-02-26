@@ -1,12 +1,18 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-12 padding-none">
-            <div class="admin-content-title wrapper-lg">
-                <a ui-sref="app.admin.teams.add" class="btn btn-green btn-rounded pull-right">
+            <div class="admin-content-title wrapper-lg text-right">
+                <a ui-sref="app.admin.teams.add-team" 
+                   class="btn btn-green btn-rounded">
+                    <i class="fa fa-plus-circle m-r-xs"></i>
+                    Add Team
+                </a>
+                <a ui-sref="app.admin.teams.add-team-member"
+                   class="btn btn-green btn-rounded">
                     <i class="fa fa-plus-circle m-r-xs"></i>
                     Add Team Member
                 </a>
-                Team Members
+                <h3 class="text-left pull-left">Teams</h3>
             </div>
             <div ui-view="teamMembers" class="wrapper-lg animated"></div>
         </div>

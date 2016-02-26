@@ -14,16 +14,14 @@
       "type": "string"
     },
     "slug": {
-      "type": {
-        "url": {
-          "type": "string",
-          "validators": [
-            "unique"
-          ]
-        },
-        "linked": {
-          "type": "boolean"
-        }
+      "url": {
+        "type": "string",
+        "validators": [
+          "unique"
+        ]
+      },
+      "linked": {
+        "type": "boolean"
       }
     },
     "content": {
@@ -31,11 +29,6 @@
     },
     "tiers": {
       "type": "object"
-    },
-    "oldMatches": {
-      "type": [
-        "object"
-      ]
     },
     "createdDate": {
       "type": "date"
@@ -45,16 +38,6 @@
     },
     "isActive": {
       "type": "boolean"
-    },
-    "oldAuthors": {
-      "type": [
-        "object"
-      ]
-    },
-    "oldComments": {
-      "type": [
-        "string"
-      ]
     }
   },
   "validations": [],

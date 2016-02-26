@@ -81,29 +81,6 @@
     "viewCount": {
       "type": "number"
     },
-    "authorId": {
-      "type": {}
-    },
-    "cardIds": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldComments": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldMulligans": {
-      "type": [
-        "object"
-      ]
-    },
-    "oldCards": {
-      "type": [
-        "object"
-      ]
-    },
     "youtubeId": {
       "type": "string",
       "validators": [
@@ -133,7 +110,8 @@
     },
     "dust": {
       "type": "number"
-    }
+    },
+    "authorId": {}
   },
   "validations": [],
   "relations": {

@@ -7,18 +7,12 @@
     "validateUpsert": true
   },
   "properties": {
-    "guideId": {
-      "type": {}
-    },
-    "heroId": {
-      "type": {}
-    },
-    "talentId": {
-      "type": {}
-    },
     "tier": {
       "type": "number"
-    }
+    },
+    "guideId": {},
+    "heroId": {},
+    "talentId": {}
   },
   "validations": [],
   "relations": {
