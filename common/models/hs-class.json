@@ -1,0 +1,47 @@
+{
+  "name": "hsClass",
+  "plural": "hsClasses",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "playerClass": {
+      "type": "string",
+      "required": true
+    },
+    "gameId": {
+      "type": {}
+    }
+  },
+  "validations": [],
+  "relations": {
+    "game": {
+      "type": "belongsTo",
+      "model": "game",
+      "foreignKey": "gameId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

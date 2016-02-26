@@ -9,6 +9,7 @@ var app = angular.module('app', [
     'angularMoment',
     'angularPayments',
     'youtube-embed',
+//    'tsAdSense',
     'dndLists',
     'ngCookies',
     'ngStorage',
@@ -6572,7 +6573,9 @@ var app = angular.module('app', [
                     admin: {
                         templateUrl: tpl + 'views/admin/teams.html'
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.list', {
                 url: '',
@@ -6581,191 +6584,211 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            teamMembers: ['TeamMember', function (TeamMember) {
-                                var gameTypes = ['hs', 'hots', 'fifa', 'wow', 'cs', 'fgc' ]
-                                var gameTypeFilter = _.map(gameTypes, function (gameType) {
-                                    return {game: gameType}
-                                })
-
-                                return TeamMember.find({
+                            teamInfo: ['Team', function (Team) {
+                                return Team.find({
                                     filter: {
-                                        where: {
-                                            game: {
-                                                inq: gameTypes
+                                        fields: ['id', 'name', 'gameId'],
+                                        include: [
+                                            {
+                                                relation: 'teamMembers',
+                                                scope: {
+                                                    fields: ['id', 'fullName', 'screenName']
+                                                }
+                                            },
+                                            {
+                                                relation: 'game',
+                                                scope: {
+                                                    fields: ['id', 'name']
+                                                }
                                             }
-                                        }
+                                        ]
                                     }
                                 })
                                 .$promise
-                                .then(function (teamMembers) {
-                                    var teamMemberObj = {};
-                                    for (var key in teamMembers) {
-                                        var teamMember = teamMembers[key];
-
-                                        if(typeof teamMemberObj[teamMember.game] === "undefined") {
-                                            teamMemberObj[teamMember.game] = [];
-                                        }
-                                        teamMemberObj[teamMember.game].push(teamMember);
-                                    }
-
-                                    return teamMemberObj;
-
-                                  /* async.each(t, function (tm, eachCb) {
-                                        if (typeof tm.isActive === 'string') {
-                                            console.log('IT\'S A STRING');
-                                            tm.isActive = true;
-
-                                            TeamMember.update({
-                                                where: {
-                                                    id: tm.id
-                                                }
-                                            }, tm)
-                                            .$promise
-                                            .then(function (data) {
-                                                console.log(data);
-                                                return eachCb();
-                                            })
-                                        } else {
-                                            return eachCb();
-                                        }
-                                    });*/
-                               })
+                                .then(function (teamInfo) {
+                                    return teamInfo;
+                                });
                             }],
-
-
-//                            teams: ['TeamMember', function (TeamMember) {
-//                                TeamMember.find({})
-//                                .$promise
-//                                .then(function (t) {
-//                                    async.each(t, function (tm, eachCb) {
-//                                        if (typeof tm.isActive === 'string') {
-//                                            console.log('IT\'S A STRING');
-//                                            tm.isActive = true;
-//
-//                                            TeamMember.update({
-//                                                where: {
-//                                                    id: tm.id
-//                                                }
-//                                            }, tm)
-//                                            .$promise
-//                                            .then(function (data) {
-//                                                console.log(data);
-//                                                return eachCb();
-//                                            })
-//                                        } else {
-//                                            return eachCb();
-//                                        }
-//                                    });
-//                                });
-//                            }],
-//                            hsTeam: ['TeamMember', function (TeamMember) {
-//                                return TeamMember.find({
-//                                    filter: {
-//                                        where: {
-//                                            game: 'hs',
-//                                            isActive: true
-//                                        },
-//                                        order: 'orderNum ASC'
-//                                    }
-//                                })
-//                                .$promise
-//                                .then(function (tm) {
-//                                    console.log(tm);
-//                                    return tm;
-//                                });
-//                            }],
-//                            hotsTeam: ['TeamMember', function (TeamMember) {
-//                                return TeamMember.find({
-//                                    filter: {
-//                                        where: {
-//                                            game: 'hots',
-//                                            isActive: true
-//                                        },
-//                                        order: 'orderNum ASC'
-//                                    }
-//                                })
-//                                .$promise
-//                                .then(function (tm) {
-//                                    console.log(tm);
-//                                    return tm;
-//                                });
-//                            }],
-//                            wowTeam: ['TeamMember', function (TeamMember) {
-//                                return TeamMember.find({
-//                                    filter: {
-//                                        where: {
-//                                            game: 'wow',
-//                                            isActive: true
-//                                        },
-//                                        order: 'orderNum ASC'
-//                                    }
-//                                })
-//                                .$promise
-//                                .then(function (tm) {
-//                                    console.log(tm);
-//                                    return tm;
-//                                });
-//                            }],
-//                            fifaTeam: ['TeamMember', function (TeamMember) {
-//                                return TeamMember.find({
-//                                    filter: {
-//                                        where: {
-//                                            game: 'fifa',
-//                                            isActive: true
-//                                        },
-//                                        order: 'orderNum ASC'
-//                                    }
-//                                })
-//                                .$promise
-//                                .then(function (tm) {
-//                                    console.log(tm);
-//                                    return tm;
-//                                });
-//                            }],
-//                            fgcTeam: ['TeamMember', function (TeamMember) {
-//                                return TeamMember.find({
-//                                    filter: {
-//                                        where: {
-//                                            game: 'fgc',
-//                                            isActive: true
-//                                        },
-//                                        order: 'orderNum ASC'
-//                                    }
-//                                })
-//                                .$promise
-//                                .then(function (tm) {
-//                                    console.log(tm);
-//                                    return tm;
-//                                });
-//                            }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
-            .state('app.admin.teams.add', {
-                url: '/add',
+            .state('app.admin.teams.add-team', {
+                url: '/add-team',
                 views: {
                     teamMembers: {
-                        templateUrl: tpl + 'views/admin/teams.add.html',
-                        controller: 'AdminTeamAddCtrl'
+                        templateUrl: tpl + 'views/admin/teams.add-team.html',
+                        controller: 'AdminTeamAddCtrl',
+                        resolve: {
+                            gameOptions: ['Game', function (Game) {
+                                return Game.find({
+                                    filter: {
+                                        fields: ['id', 'name']
+                                    }
+                                })
+                                .$promise
+                                .then(function (games) {
+                                    var gameOptions = _.map(games, function (game) {
+                                        return {
+                                            id: game.id,
+                                            name: game.name
+                                        };
+                                    });
+                                    return gameOptions;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
+                            }]
+                        }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
-            .state('app.admin.teams.edit', {
-                url: '/:memberID',
+            .state('app.admin.teams.edit-team', {
+                url: '/edit-team/:teamId',
                 views: {
                     teamMembers: {
-                        templateUrl: tpl + 'views/admin/teams.edit.html',
+                        templateUrl: tpl + 'views/admin/teams.edit-team.html',
                         controller: 'AdminTeamEditCtrl',
                         resolve: {
+                            gameOptions: ['Game', function (Game) {
+                                return Game.find({
+                                    filter: {
+                                        fields: ['id', 'name']
+                                    }
+                                })
+                                .$promise
+                                .then(function (games) {
+                                    var gameOptions = _.map(games, function (game) {
+                                        return {
+                                            id: game.id,
+                                            name: game.name
+                                        };
+                                    });
+                                    return gameOptions;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
+                            }],
+                            team: ['Team', '$stateParams', function (Team, $stateParams) {
+                                return Team.findById({
+                                    id: $stateParams.teamId,
+                                    filter: {
+                                        include: [
+                                            {
+                                                relation: 'game',
+                                                scope: {
+                                                    fields: ['id', 'name']
+                                                }
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (team) {
+                                    return team;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.teams.add-team-member', {
+                url: '/add-team-member',
+                views: {
+                    teamMembers: {
+                        templateUrl: tpl + 'views/admin/teams.add-member.html',
+                        controller: 'AdminTeamMemberAddCtrl',
+                        resolve: {
+                            teamOptions: ['Team', function (Team) {
+                                return Team.find({
+                                    filter: {
+                                        fields: ['id', 'name', 'gameId'],
+                                        include: [
+                                            {
+                                                relation: 'game',
+                                                scope: {
+                                                    fields: ['id', 'name']
+                                                }
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (teams) {
+                                    var teamOptions = _.map(teams, function (team) {
+                                        var teamName = team.name ? ' ' + team.name : '',
+                                            gameName = team.game.name + teamName;
+                                        return {
+                                            teamId: team.id,
+                                            game: gameName
+                                        };
+                                    });
+                                    return teamOptions;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.teams.edit-team-member', {
+                url: '/edit-team-member/:memberID',
+                views: {
+                    teamMembers: {
+                        templateUrl: tpl + 'views/admin/teams.edit-member.html',
+                        controller: 'AdminTeamMemberEditCtrl',
+                        resolve: {
+                            teamOptions: ['Team', function (Team) {
+                                return Team.find({
+                                    filter: {
+                                        fields: ['id', 'gameId', 'name'],
+                                        include: [
+                                            {
+                                                relation: 'game',
+                                                scope: {
+                                                    fields: ['id', 'name']
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }).$promise
+                                .then(function (teams) {
+                                    var teamOptions = _.map(teams, function (team) {
+                                        var teamName = team.name ? ' ' + team.name : '',
+                                            gameName = team.game.name + teamName;
+                                        return {
+                                            teamId: team.id,
+                                            game: gameName
+                                        };
+                                    });
+                                    return teamOptions;
+                                })
+                                .catch(function (err) {
+                                    console.log('err:', err);
+                                });
+                            }],
                             member: ['$stateParams', 'TeamMember', function ($stateParams, TeamMember) {
                                 var memberID = $stateParams.memberID;
                                 return TeamMember.findById({
                                     id: memberID,
-                                    filter: {}
                                 })
                                 .$promise
-                                .then(function(teamMember){
+                                .then(function(teamMember) {
                                     return teamMember;
                                 }).catch(function(err){
                                     console.log(err);
@@ -6773,7 +6796,9 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',

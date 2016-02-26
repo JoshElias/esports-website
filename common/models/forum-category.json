@@ -19,11 +19,6 @@
     },
     "__v": {
       "type": "number"
-    },
-    "oldThreads": {
-      "type": [
-        "string"
-      ]
     }
   },
   "validations": [],

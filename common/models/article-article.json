@@ -8,14 +8,10 @@
   },
   "properties": {
     "parentArticleId": {
-      "type": {
-        "required": true
-      }
+      "required": true
     },
     "childArticleId": {
-      "type": {
-        "required": true
-      }
+      "required": true
     }
   },
   "validations": [],

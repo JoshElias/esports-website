@@ -1,0 +1,192 @@
+// Description: 
+
+//*************************************
+
+// 1... mixins
+// 2... section specific styles
+
+
+//*************************************
+
+
+//*************************************
+// 1... mixins
+//*************************************
+
+@mixin hs-snapshot-background {
+    background: linear-gradient(to top, rgba(31, 38, 80, 0.9), rgba(32, 54, 95, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@mixin ts-div {
+    outline: 1px solid rgba(255,255,255,.2);
+    outline-offset: -2px;
+    border: 1px solid rgba(0,0,0,1);
+    background-color: rgba(19,18,19,.7); 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75);
+}
+
+//*************************************
+// 2... section specific styles
+//*************************************
+
+.hs-plg {
+    @include hs-snapshot-background;
+}
+
+.ow-plg {
+
+}
+
+.hots-plg {
+
+}
+
+//.ts-plg {
+//    @include ts-div-styles;
+//
+//}
+
+//*************************************
+// 3... Types of plgs
+//*************************************
+
+
+.fullwidth-plg-div {
+    width: 100%;
+}
+
+.plg-div {
+    width: 100%;
+}
+
+.article-plg-fix {
+    width: 98.7%;
+}
+
+//*************************************
+// 3.1. DEFAULT plg
+//*************************************
+
+.default {
+    .plg-long {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        
+        @include ts-div;
+        
+        &.plg-dbl {
+            @media (max-width: 768px) {
+                padding-left: 15px;
+                padding-right: 15px;
+
+            }
+        }
+    }
+    
+    .plg-sidebar {
+        padding-top: 25px;
+        padding-bottom: 25px;
+        @include ts-div;
+       
+    }
+    
+    .programmers {
+        height: 125px;
+        width: 100%;
+    }
+}
+
+//*************************************
+// 3.2. HSSNAPSHOT plg
+//*************************************
+
+.hs-snapshot {
+    @include hs-snapshot-background;
+    
+    .plg-long {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        
+        &.plg-dbl {
+            @media (max-width: 768px) {
+                padding-left: 15px;
+                padding-right: 15px;
+
+            }
+        }
+        
+        &.plg-single {
+            @media (max-width: 768px) {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+    }
+    
+    .plg-sidebar {
+        padding-top: 35px;
+        padding-bottom: 35px;
+    }
+    
+}
+
+//*************************************
+// 3.3. Clear plg
+//*************************************
+
+.clear-plg { 
+    .plg-long {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        
+       // @include ts-div;
+        
+        &.plg-dbl {
+            @media (max-width: 768px) {
+                padding-left: 15px;
+                padding-right: 15px;
+
+            }
+        }
+    }
+    
+    .plg-sidebar {
+        padding-top: 25px;
+        padding-bottom: 25px;
+      //  @include ts-div;
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+    
+    .programmers {
+        height: 125px;
+        width: 100%;
+    }
+
+}
+
+//*************************************
+// ---- plg standin divs ----
+//*************************************
+
+.plg-md-rt {
+    width: 300px;
+    height: 250px;
+    background-color: rgba(137, 104, 173, 1);
+    margin: auto;
+}
+
+.plg-lg-rt {
+    width: 300px;
+    height: 280px;
+    background-color: rgba(137, 104, 173, 1);
+    margin: auto;
+}
+
+.plg-leader {
+    width: 728px;
+    height: 90px;
+    background-color: rgba(137, 104, 173, 1);
+    margin: auto;
+}

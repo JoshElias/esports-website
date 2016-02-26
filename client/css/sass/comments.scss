@@ -68,7 +68,23 @@
 .comment-votes .vote-count { background: #2766ad; }
 .comment-vote { font-size: 20px!important; text-align: right!important; }
 
-.no-comments { 
+@keyframes comment-fade {
+    0%   {opacity: 1;}
+    25%  {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.comments .thanks-comment {
+    opacity: 1;
+    min-height: 0px;
+    font-size: 18px;
+    font-weight: bold;
+    
+    animation-name: comment-fade;
+    animation-duration: 5s;
+}
+
+.no-comments {
     font-size: 18px;
     font-weight: bold;
 }
