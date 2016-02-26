@@ -1080,6 +1080,7 @@ var app = angular.module('app', [
                                             youtubeId: true,
                                             gameModeType: true,
                                             isActive: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
@@ -1324,7 +1325,8 @@ var app = angular.module('app', [
                                             chapters: true,
                                             youtubeId: true,
                                             gameModeType: true,
-                                            isActive: true
+                                            isActive: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
@@ -4780,7 +4782,8 @@ var app = angular.module('app', [
                                                 chapters: true,
                                                 deckType: true,
                                                 gameModeType: true,
-                                                youtubeId: true
+                                                youtubeId: true,
+                                                isCommentable: true
                                             },
                                             include: [
                                                 {
@@ -4809,15 +4812,15 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'mulligansWithCoin',
-												scope: {
-													include: ['card']
-												}
+                                                scope: {
+                                                  include: ['card']
+                                                }
                                             },
                                             {
                                                 relation: 'mulligansWithoutCoin',
-												scope: {
-
-												}
+                                                scope: {
+                                                  include: ['card']
+                                                }
                                             }
                                         ]
                                     }

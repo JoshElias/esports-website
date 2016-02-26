@@ -6947,10 +6947,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.deck.premium.isPremium;
@@ -7180,12 +7190,13 @@ angular.module('app.controllers', ['ngCookies'])
                     'premium',
                     'voteScore',
                     'votes',
-                    'youtubeId'
+                    'youtubeId',
+                    'isCommentable'
                 ]);
 
 
 
-                console.log('deck before save:', cleanDeck);
+//                console.log('deck before save:', cleanDeck);
 
 
                 // save deck + children (array names were changed to avoid this)
@@ -7776,10 +7787,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            }
 
             $scope.isPremium = function () {
                 var premium = $scope.deck.premium.isPremium;
@@ -10086,8 +10107,6 @@ angular.module('app.controllers', ['ngCookies'])
                     'youtubeId',
                     'isCommentable'
                 ]);
-                
-                console.log('cleanDeck:', cleanDeck);
 
 //                console.log('deck before save:', cleanDeck);
 
@@ -10710,11 +10729,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
-
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
             $scope.isFeatured = function () {
                 var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
