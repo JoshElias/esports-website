@@ -227,9 +227,13 @@ angular.module('app.services', [])
                     message: $compile('<login-modal callback="LoginModalService.callback()"></login-modal>')($rootScope)
                 });
                 box.on('hide.bs.modal', function () {
+                    $(".app").removeClass("backdrop-blur");
                     AlertService.reset();
                 });
+
                 box.modal('show');
+
+                $(".app").addClass("backdrop-blur");
             },
             hideModal: function () {
                 if (box) {
