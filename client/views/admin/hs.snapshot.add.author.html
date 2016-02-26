@@ -4,8 +4,8 @@
             <input type="text" ng-model="search" class="form-control input-sm pull-right" placeholder="search"><i class="fa fa-search"></i>
         </form>
     </div>
-    <div class="text-center" ng-if="loading">
-        <i class="fa fa-refresh fa-spin"></i>
+    <div class="text-center big-spin" ng-if="loading">
+        <i class="fa fa-refresh fa-spin fa-5x"></i>
     </div>
     <ul class="list-group m-b-none" ng-if="!loading && authors.length">
         <li class="clearfix" ng-class="{ active: authorExistsById(author.id) }" ng-repeat="author in authors">

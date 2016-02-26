@@ -314,11 +314,79 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 //-----------------------------------
 
 .modal-admin {
-
-    .fa {
-        font-size: 50px;
-        
     
+    .list-group {
+    
+        .card {
+            img {
+                position: absolute;
+                top: 0;
+                right: 90px;
+                height: 26px;
+                width: auto;
+                opacity: .5;
+                transition: opacity 0.5s ease-in-out;
+            }
+        }
+    }
+    
+    .card-list {
+        
+        li {
+            height: 26px !important;
+            padding: 5px !important;
+            padding-left: 15px;
+
+            button {
+                height: 26px !important;
+                position: absolute !important;
+                right: 0;
+                top: 0;
+                padding: 1px 6px !important;
+            }
+            
+            .btn-success {
+                background-color: rgba($btn-green, 0.35) !important;
+                border: 0px solid black;
+                background-image: none !important;
+
+
+                &:hover {
+                    background-color: rgba($btn-green, 0.5) !important;
+                    color: $white;
+                }
+            }
+
+            .btn-danger {
+                background-color: rgba($btn-red, 0.35) !important;
+                border: 0px solid black;
+                background-image: none !important;
+
+
+                 &:hover {
+                    background-color: rgba($btn-red,0.5) !important;
+                    color: $white;
+                }
+            }
+            
+            &:hover {
+                .card {
+                    img { 
+                        transition: opacity 0.5s ease-in-out;
+                        opacity: 1;
+                    }
+                }
+            
+            }
+        }
+    }
+
+    .big-spin {
+        .fa {
+            
+            margin-top: 38%;
+
+        }
     }
 
 }
