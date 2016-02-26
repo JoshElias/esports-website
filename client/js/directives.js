@@ -1257,8 +1257,6 @@ angular.module('app.directives', ['ui.load'])
                     where: where
                 };
                 
-                console.log(findOptions);
-                
                 AjaxPagination.update(User, findOptions, countOptions, function (err, data, count) {
                     $scope.loading = false;
                     if (err) { return console.error('Pagination error:', err); }
@@ -1278,7 +1276,7 @@ angular.module('app.directives', ['ui.load'])
             // search
             $scope.updateSearch = function () {
                 updateAuthors(1, $scope.perpage, $scope.search);
-            };            
+            };
 
         }]
     };
@@ -1288,9 +1286,84 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + "views/admin/hs.snapshot.add.deck.html"
     }
 }])
-.directive('snapshotAddCard', [function () {
+.directive('snapshotAddCard', ['$q', 'Card', 'AjaxPagination', function ($q, Card, AjaxPagination) {
     return {
-        templateUrl: tpl + "views/admin/hs.snapshot.add.card.html"
+        templateUrl: tpl + "views/admin/hs.snapshot.add.card.html",
+        controller: ['$scope', function ($scope) {
+            console.log($scope.deckTech);
+            
+            $scope.loading = false;
+            $scope.cards = [];
+            
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 10;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+            
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateCards(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+            
+            function updateCards (page, perpage, search, callback) {
+                $scope.loading = true;
+                
+                var pattern = '/.*'+search+'.*/i';
+                var where = {
+                    deckable: true,
+                    isActive: true
+                };
+                
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            name: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'name ASC'
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+                
+                AjaxPagination.update(Card, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.cards = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateCards($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateCards(1, $scope.perpage, $scope.search);
+            };
+        }]
     };
 }])
 .directive("fbLikeButton", [function () {

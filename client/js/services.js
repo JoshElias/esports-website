@@ -4062,29 +4062,45 @@ angular.module('app.services', [])
         
         // delete all deck tech cards in a deck tech
         sb.deckDeleteAllTechCards = function (deckTech) {
-            if (!deckTech || !deckTech.cards || !deckTech.cards.length) { return false; }
-            for (var i = 0; i < deckTech.cards.length; i++) {
-                sb.deckTechCardDelete(deckTech, deckTech.cards[i]);
+            if (!deckTech || !deckTech.cardTech || !deckTech.cardTech.length) { return false; }
+            for (var i = 0; i < deckTech.cardTech.length; i++) {
+                sb.deckTechCardDelete(deckTech, deckTech.cardTech[i]);
             }
         };
         
         // add deck tech card
         sb.deckTechCardAdd = function (deckTech, card) {
+            if (sb.deckTechCardExistsById(deckTech, card.id)) { return false; }
             var newDeckTechCard = angular.copy(defaultTechCards);
-            newDeckTechCard.card = card.card;
-            newDeckTechCard.toss = card.toss;
-            deckTech.push(newDeckTechCard);
+            newDeckTechCard.card = card;
+            deckTech.cardTech.push(newDeckTechCard);
         };
         
         // delete deck tech card
-        sb.deckTechCardDelete = function (deckTech, card) {
-            var index = deckTech.indexOf(card);
+        sb.deckTechCardDeleteById = function (deckTech, cardId) {
+            var index = -1;
+            for (var i = 0; i < deckTech.cardTech.length; i++) {
+                if (deckTech.cardTech[i].card.id === cardId) {
+                    index = i;
+                    break;
+                }
+            }
             if (index !== -1) {
-                deckTech.splice(index, 1);
+                deckTech.cardTech.splice(index, 1);
                 // TODO: CRUDMAN DELETE DECKTECH CARD
             }
         };
-
+        
+        // check if card is in deck techs
+        sb.deckTechCardExistsById = function (deckTech, cardId) {
+            for (var i = 0; i < deckTech.cardTech.length; i++) {
+                if (deckTech.cardTech[i].card.id === cardId) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
         // toggle deck tech card toss
         sb.deckTechCardToggleToss = function (card) {
             card.toss = !card.toss;
@@ -4168,6 +4184,7 @@ angular.module('app.services', [])
             return matchups;
         };
         
+        // prompt for adding / removing authors
         sb.authorAddPrompt = function () {
             var newScope = $rootScope.$new(true);
             newScope.authorAdd = sb.authorAdd;
@@ -4175,7 +4192,7 @@ angular.module('app.services', [])
             newScope.authorDeleteById = sb.authorDeleteById;
             
             var box = bootbox.dialog({
-                title: "Author",
+                title: "Authors",
                 message: $compile('<div snapshot-add-author></div>')(newScope),
                 show: false,
                 className: 'modal-admin'
@@ -4266,6 +4283,52 @@ angular.module('app.services', [])
                     }
                 },
                 show: false
+            });
+            box.modal('show');
+        };
+        
+        // prompt for deck delete
+        sb.deckTechDeletePrompt = function (deck, deckTech) {
+            var box = bootbox.dialog({
+                title: "Remove Deck Tech?",
+                message: "Are you sure you want to remove the deck tech <strong>" + deckTech.title + "</strong>?",
+                buttons: {
+                    confirm: {
+                        label: "Delete",
+                        className: "btn-danger",
+                        callback: function () {
+                            $timeout(function () {
+                                sb.deckTechDelete(deck, deckTech);
+                                box.modal('hide');
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: "Cancel",
+                        className: "btn-default pull-left",
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                },
+                show: false
+            });
+            box.modal('show');
+        };
+        
+        // prompt for adding / removing cards from deck techs
+        sb.deckTechCardAddPrompt = function (deckTech) {
+            var newScope = $rootScope.$new(true);
+            newScope.deckTech = deckTech;
+            newScope.deckTechCardAdd = sb.deckTechCardAdd;
+            newScope.deckTechCardExistsById = sb.deckTechCardExistsById;
+            newScope.deckTechCardDeleteById = sb.deckTechCardDeleteById;
+            
+            var box = bootbox.dialog({
+                title: "Cards",
+                message: $compile('<div snapshot-add-card></div>')(newScope),
+                show: false,
+                className: 'modal-admin'
             });
             box.modal('show');
         };
