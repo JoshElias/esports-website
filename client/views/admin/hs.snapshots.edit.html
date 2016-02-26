@@ -189,7 +189,7 @@
                                                                          <i class="fa" ng-class="{ 'fa-minus': c.toss, 'fa-plus': !c.toss }"></i>
                                                                     </button>
                                                                     {{c.card.name}}
-                                                                    <button class="pull-right cardBtn" ng-click="snapshot.deckTechCardDeleteById(tech, c.card.id)"><i class="fa fa-close"></i></button>
+                                                                    <button class="pull-right cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
                                                                     <button class="pull-right btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
                                                                 </li>
                                                                 <li class="list-group-item">
@@ -250,7 +250,7 @@
                             </ul>
                         </div>
                         <div class="panel-footer">
-                            <button class="btn btn-green btn-rounded" ng-click="openAddBox('deck', tier.tier)"><i class="fa fa-plus"></i> Add deck</button>
+                            <button class="btn btn-green btn-rounded" ng-click="snapshot.deckAddPrompt(tier)"><i class="fa fa-plus"></i> Add deck</button>
                         </div>
                     </div>
                 </div>
