@@ -1517,6 +1517,7 @@ angular.module('app.services', [])
             comments: data.comments || [],
             slug: data.slug || '',
             isFeatured: data.isFeatured || false,
+            isCommentable: data.isCommentable || true,
             isPublic: data.isPublic !== undefined && data.isPublic === false ? false : true,
             voteScore: data.voteScore || 1,
             votes: data.votes || [],
