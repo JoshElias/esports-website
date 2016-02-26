@@ -15,10 +15,23 @@
 }
 
 .modal-admin {
-
+    .modal-dialog {
+        //margin-top: 200px;
+    }
+    
     .modal-content {
         @include modal-div-styles;
         position: relative;
+        
+        ///temp background due to older design
+        
+        //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
+    background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.95), rgba($gradient-grey,0.90)); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.95)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* W3C */
         
         .modal-header {
             background: rgba($white,0.2);
@@ -103,20 +116,59 @@
 
                     li {
                         list-style-type: none;
-                        border-bottom: 1px solid rgba($white, 0.05);
+                        outline: 1px solid rgba($white, 0.05);
+                        border-left: 8px solid transparent;
                         height: 56px;
                         padding: 12px;
                         font-size: 12px;
+                        color: $light-font;
+                        background: rgba(255,255,255,0.0);
+                        position: relative;
+                        transition: 0.5s ease-in-out;
+                        z-index: 1;
+                        
+                        button {
+                            position: relative;
+                            z-index: 5;
+                        }
+                        
+                        &:after {
+                            
+                            position: absolute;
+                              content: '';
+                              top: 0;
+                              left: 0;
+                              width: 100%;
+                              height: 100%;
+                            background: rgba(255,255,255,0.2);
+                            background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+                            background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.2)), color-stop(100%, rgba(255,255,255,0)));
+                            background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+                            background: -o-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+                            background: -ms-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+                            background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+                            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 ); 
+                            transition: opacity 0.5s ease-in-out;
+                            z-index: 2;
+                            opacity: 0;
+                            
+                        }
+                        
+                        &:hover:after {
+                            opacity: 1;
+                        }
                         
                         &:hover {
-                            background: rgba(255,255,255,0.38);
-background: -moz-linear-gradient(left, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
-background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.38)), color-stop(68%, rgba(255,255,255,0.12)), color-stop(100%, rgba(255,255,255,0)));
-background: -webkit-linear-gradient(left, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
-background: -o-linear-gradient(left, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
-background: -ms-linear-gradient(left, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
-background: linear-gradient(to right, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 68%, rgba(255,255,255,0) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+                            
+                           // transition: 2s ease-in-out;
+                            border-left: 8px solid  rgba(255, 255, 255, 0.2);
+                            
+                            
+                        }
+                        
+                        &.active {
+                            border-left: 8px solid $ts-blue !important;
+                            transition: 0.0s ease;
                         }
                         
                         .authour {
@@ -129,18 +181,32 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
                             box-shadow: none;
                             width: 90px;
                             height: 32px;
+                            color: $light-font;
+                            transition: 0.5s ease-in-out;
                         }
                         
                         .btn-success {
-                            background-color: rgba($btn-green,0.5) !important;
+                            background-color: rgba($white,0.12) !important;
                             border: 0px solid black;
                             background-image: none !important;
+                            
+                            
+                            &:hover {
+                                background-color: rgba($btn-green, 0.5) !important;
+                                color: $white;
+                            }
                         }
                         
                         .btn-danger {
-                            background-color: rgba($btn-red,0.5) !important;
+                            background-color: rgba($white,0.12) !important;
                             border: 0px solid black;
                             background-image: none !important;
+                            
+                            
+                             &:hover {
+                                background-color: rgba($btn-red,0.5) !important;
+                                color: $white;
+                            }
                         }
                         
                     }
