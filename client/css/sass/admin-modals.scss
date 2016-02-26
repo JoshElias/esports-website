@@ -1,5 +1,14 @@
 @import 'ts-colors.scss';
 
+//-----------------------------------
+// 0. mixins
+// 1. modal styles
+// 2. Pagination styles
+//-----------------------------------
+
+//-----------------------------------
+// 0. Modal styles
+//-----------------------------------
 
 @mixin modal-div-styles {
     //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
@@ -9,10 +18,15 @@
     background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
     background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
     background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
-    border: 0px solid black;
+    border: 0px solid transparent;
     border-radius: 0px;
-    box-shadow: 1px 1px 15px rgba(0,0,0,.75);
+    box-shadow: 2px 5px 15px rgba(0,0,0,.95);
 }
+
+//-----------------------------------
+// 1. Modal styles
+//-----------------------------------
+
 
 .modal-admin {
     .modal-dialog {
@@ -100,9 +114,8 @@
                     .input-sm {
                         height: 40px;
                         border-radius: 0px;
-                        border: 0px solid rgba($white, 0.2);
+                        border: 0px solid transparent;
                         background-color: rgba($white, 0.2);
-                        //color: rgba(white,.95);
                         font-size: 12px;
                         position: absolute;
                         top: -55px;
@@ -124,7 +137,7 @@
                         color: $light-font;
                         background: rgba(255,255,255,0.0);
                         position: relative;
-                        transition: 0.5s ease-in-out;
+                        transition: 0.2s ease-in-out;
                         z-index: 1;
                         
                         button {
@@ -140,15 +153,17 @@
                               left: 0;
                               width: 100%;
                               height: 100%;
+                            
                             background: rgba(255,255,255,0.2);
-                            background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
-                            background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.2)), color-stop(100%, rgba(255,255,255,0)));
-                            background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
-                            background: -o-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
-                            background: -ms-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
-                            background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
-                            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 ); 
-                            transition: opacity 0.5s ease-in-out;
+background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.2)), color-stop(68%, rgba(255,255,255,0.02)), color-stop(69%, rgba(255,255,255,0.02)));
+background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+background: -o-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+background: -ms-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+                            
+                            transition: opacity 0.2s ease-in-out;
                             z-index: 2;
                             opacity: 0;
                             
@@ -168,7 +183,7 @@
                         
                         &.active {
                             border-left: 8px solid $ts-blue !important;
-                            transition: 0.0s ease;
+                            //transition: 0.0s ease;
                         }
                         
                         .authour {
@@ -182,11 +197,11 @@
                             width: 90px;
                             height: 32px;
                             color: $light-font;
-                            transition: 0.5s ease-in-out;
+                            transition: 0.2s ease-in-out;
                         }
                         
                         .btn-success {
-                            background-color: rgba($white,0.12) !important;
+                            background-color: rgba($btn-green, 0.15) !important;
                             border: 0px solid black;
                             background-image: none !important;
                             
@@ -198,7 +213,7 @@
                         }
                         
                         .btn-danger {
-                            background-color: rgba($white,0.12) !important;
+                            background-color: rgba($btn-red, 0.15) !important;
                             border: 0px solid black;
                             background-image: none !important;
                             
@@ -211,6 +226,75 @@
                         
                     }
                 }
+            }
+        }
+    }
+}
+
+//-----------------------------------
+// 2. Pagination 
+//-----------------------------------
+
+.modal-admin {
+    
+    .page-flipper {
+        background: rgba($white,0.2);
+        border: 0px solid black;
+        height: 70px;
+    
+        .btn-group {
+            margin: 15px 19%;
+            height: 40px;
+            border-radius: 0px;
+            border: 0px solid transparent;
+            background-color: rgba($white, 0.2);
+            font-size: 12px;
+            font-weight: 100;
+            text-align: center;
+        
+            
+            .btn:last-child .inner {
+                border-right: 0px solid transparent !important;
+            }
+            
+            .btn {
+                background: transparent;
+                color: $light-font;
+                //border: 0px solid transparent !important;
+                height: 100%;
+                min-width: 40px;
+                line-height: 40px;
+                font-weight: 100;
+                font-family: inherit !important;
+                
+                &:last-child,
+                &:first-child {
+                    border-radius: 0px !important;
+                }
+                
+                &.active {
+                background-color: transparent;
+                border-bottom: 4px solid rgba($white, 0.55) !important;
+                box-shadow: none;
+                
+                }
+                
+                 &:hover {
+                    background: rgba($black, 0.55);
+                }
+               
+                
+                .inner {
+                    border: 0px solid transparent !important;
+                    border-radius: 0px;
+                    
+                }
+            }
+            
+            .btn-pagination-nav {
+                width: 85px;
+                height: 100%;
+                background-color: rgba($black, 0.2);
             }
         }
     }
