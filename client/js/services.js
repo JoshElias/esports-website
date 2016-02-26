@@ -2215,7 +2215,9 @@ angular.module('app.services', [])
             };
 
             gb.toggleHero = function (hero) {
+                console.log('hero:', hero);
                 if (gb.hasHero(hero)) {
+                    console.log(1);
                     for (var i = 0; i < gb.heroes.length; i++) {
                         if (gb.heroes[i].hero.id === hero.id) {
                             gb.heroes.splice(i, 1);
@@ -2265,6 +2267,7 @@ angular.module('app.services', [])
             //        };
 
             gb.hasHero = function (hero) {
+                console.log(hero);
                 if (!hero) { return false; }
                 for (var i = 0; i < gb.heroes.length; i++) {
                     if (gb.heroes[i].hero.id === hero.id) {
