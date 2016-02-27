@@ -14739,10 +14739,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;
@@ -14798,6 +14808,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'youtubeId',
                             'viewCount',
                             'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) {
@@ -15191,10 +15202,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;
@@ -15251,7 +15272,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'isPublic',
                             'youtubeId',
                             'viewCount',
-                            'voteScore'
+                            'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(guideCopy, keys);
                 var temp = _.map(guideCopy.heroes, function (hero) {
@@ -16861,10 +16883,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;
@@ -16921,6 +16953,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'youtubeId',
                             'viewCount',
                             'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) {
@@ -16939,6 +16972,7 @@ angular.module('app.controllers', ['ngCookies'])
                   
                 var guideCreated;
                 var tals = [];
+                  console.log('stripped:', stripped);
                 async.series([
                   function (seriesCB) {
                       Guide.create(stripped)
@@ -17471,10 +17505,20 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            }
 
             $scope.isFeatured = function () {
                 var featured = $scope.guide.isFeatured;
@@ -17517,7 +17561,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'isPublic',
                             'youtubeId',
                             'viewCount',
-                            'voteScore'
+                            'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(guideCopy, keys);
                 var temp = _.map(guideCopy.heroes, function (hero) {

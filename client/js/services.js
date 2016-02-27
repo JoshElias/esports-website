@@ -2174,8 +2174,9 @@ angular.module('app.services', [])
                     isPremium: false,
                     expiryDate: d
                 },
-                isFeatured: data.featured || false,
-                isPublic:  data.isPublic === false ? false : true,
+                isFeatured: _.isUndefined(data.isFeatured) ? false : data.isFeatured,
+                isPublic:  _.isUndefined(data.isPublic) ? true : data.isPublic,
+                isCommentable: _.isUndefined(data.isCommentable) ? true : data.isCommentable,
                 votes: data.votes || [],
                 voteScore: data.voteScore || 0,
                 viewCount: data.viewCount || 0,
@@ -2271,7 +2272,6 @@ angular.module('app.services', [])
             //        };
 
             gb.hasHero = function (hero) {
-                console.log(hero);
                 if (!hero) { return false; }
                 for (var i = 0; i < gb.heroes.length; i++) {
                     if (gb.heroes[i].hero.id === hero.id) {
