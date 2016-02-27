@@ -36,7 +36,7 @@
     .modal-content {
         @include modal-div-styles;
         position: relative;
-        min-height: 700px;
+        min-height: 600px;
         
         ///temp background due to older design
         
@@ -68,7 +68,7 @@
             }
         }
         .modal-body {
-            padding: 0px;
+            padding: 0px 0px 70px 0px;
             
             .bootbox-body {
                 .search-styles {
@@ -141,7 +141,8 @@
                         transition: 0.2s ease-in-out;
                         z-index: 1;
                         
-                        button {
+                        button,
+                        a {
                             position: relative;
                             z-index: 5;
                         }
@@ -202,25 +203,25 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
                         }
                         
                         .btn-success {
-                            background-color: rgba($btn-green, 0.15) !important;
+                            background-color: rgba($btn-green, 0.15) ;
                             border: 0px solid black;
                             background-image: none !important;
                             
                             
                             &:hover {
-                                background-color: rgba($btn-green, 0.5) !important;
+                                background-color: rgba($btn-green, 0.5) ;
                                 color: $white;
                             }
                         }
                         
                         .btn-danger {
-                            background-color: rgba($btn-red, 0.15) !important;
+                            background-color: rgba($btn-red, 0.15) ;
                             border: 0px solid black;
                             background-image: none !important;
                             
                             
                              &:hover {
-                                background-color: rgba($btn-red,0.5) !important;
+                                background-color: rgba($btn-red,0.5) ;
                                 color: $white;
                             }
                         }
@@ -384,7 +385,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     .big-spin {
         .fa {
             
-            margin-top: 38%;
+            margin-top: 37%;
 
         }
     }
