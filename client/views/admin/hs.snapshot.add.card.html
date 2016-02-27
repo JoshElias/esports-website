@@ -5,9 +5,9 @@
         </form>
     </div>
     <div class="text-center big-spin" ng-if="loading">
-        <i class="fa fa-refresh fa-spin"></i>
+        <i class="fa fa-refresh fa-spin fa-5x"></i>
     </div>
-    <ul class="list-group m-b-none" ng-if="!loading && cards.length">
+    <ul class="list-group m-b-none card-list" ng-if="!loading && cards.length">
         <li class="clearfix" ng-class="{ active: deckTechCardExistsById(deckTech, card.id) }" ng-repeat="card in cards">
             <div class="pull-right m-l-sm">
                 <button type="button" class="btn btn-success" ng-click="deckTechCardAdd(deckTech, card)" ng-if="!deckTechCardExistsById(deckTech, card.id)">Add</button>

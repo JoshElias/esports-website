@@ -1375,7 +1375,7 @@ angular.module('app.directives', ['ui.load'])
             
             // pagination
             $scope.page = 1;
-            $scope.perpage = 10;
+            $scope.perpage = 21;
             var pOptions = {
                 page: $scope.page,
                 perpage: $scope.perpage
