@@ -5,14 +5,13 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "title": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "$validate": ["spam"]
     },
     "isActive": {
       "type": "boolean"

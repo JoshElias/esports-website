@@ -1,6 +1,4 @@
 module.exports = function(OverwatchHero) {
-    var utils = require(".././utils");
-
 
     OverwatchHero.observe("persist", assignOrderNum);
 
@@ -17,7 +15,4 @@ module.exports = function(OverwatchHero) {
             finalCb();
         });
     }
-
-
-    OverwatchHero.validatesFormatOf('youtubeId', {with: utils.youtubeRegex, message: 'Must provide a valid youtubeId'});
 };

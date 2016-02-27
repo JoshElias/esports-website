@@ -5,11 +5,8 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
-  },
-  "customOptions" : {
-    "validate": true,
-    "destroyChildren": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "against": {
@@ -48,9 +45,7 @@
     },
     "description": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "$validate": ["spam"]
     },
     "isFeatured": {
       "type": "boolean"
@@ -58,9 +53,7 @@
     "name": {
       "type": "string",
       "required": true,
-      "validators": [
-        "spam"
-      ]
+      "$validate": ["spam"]
     },
     "heroName": {
       "type": "string"
@@ -78,39 +71,35 @@
     },
     "slug": {
       "type": "string",
-      "validators": [
-        "unique"
-      ]
+      "$validate": ["unique"]
     },
     "viewCount": {
       "type": "number"
     },
     "youtubeId": {
       "type": "string",
-      "validators": [
-        "youtubeId"
-      ]
+      "$validate": ["youtubeId"]
     },
     "chapters": {
       "type": [
         {
           "title": {
             "type": "string",
-            "validators": [
-              "spam"
-            ]
+            "$validate": ["spam"]
           },
           "orderNum": {
             "type": "number"
           },
           "content": {
             "type": "string",
-            "validators": [
-              "spam"
-            ]
+            "$validate": ["spam"]
           }
         }
-      ]
+      ],
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
     },
     "dust": {
       "type": "number"

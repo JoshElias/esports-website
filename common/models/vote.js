@@ -1,4 +1,4 @@
-var utils = require("./.././utils");
+var utils = require("../../server/lib/utils");
 var _ = require("underscore");
 var ObjectID = require("mongodb").ObjectID;
 

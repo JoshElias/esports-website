@@ -5,7 +5,8 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "__v": {
@@ -16,22 +17,16 @@
     },
     "description": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "$validate": ["spam"]
     },
     "title": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "$validate": ["spam"]
     },
     "slug": {
         "url": {
           "type": "string",
-          "validators": [
-            "unique"
-          ]
+          "$validate": ["unique"]
         },
         "linked": {
           "type": "boolean"

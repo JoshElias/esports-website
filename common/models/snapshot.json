@@ -4,7 +4,8 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "snapNum": {
@@ -16,9 +17,7 @@
     "slug": {
       "url": {
         "type": "string",
-        "validators": [
-          "unique"
-        ]
+        "$validate": ["unique"]
       },
       "linked": {
         "type": "boolean"

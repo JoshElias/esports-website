@@ -4,7 +4,8 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "displayDate": {
@@ -17,9 +18,7 @@
     },
     "youtubeId": {
       "type": "string",
-      "validators": [
-        "youtubeId"
-      ]
+      "$validate": ["youtubeId"]
     },
     "subtitle": {
       "type": "string"

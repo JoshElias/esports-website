@@ -2,15 +2,14 @@ var async = require("async");
 var loopback = require("loopback");
 var util = require("util");
 var _ = require('underscore');
-var customValidators = require("./customValidators");
-var modelCrawler = require("./model-config-crawler");
+var validators = require("./validators");
+var requestCrawler = require("./request-crawler");
 
 
 function validate(ctx, finalCb) {
 
     var crawlOptions = {
         optionKey: "$validate",
-        tag: "$validate",
         stateVars: {
             report: {
                 passed: true,
@@ -23,7 +22,7 @@ function validate(ctx, finalCb) {
     crawlOptions.primitiveHandler = primitiveHandler;
     crawlOptions.postHandler = postHandler;
 
-    return modelCrawler.crawl(ctx, crawlOptions, finalCb);
+    return requestCrawler.crawl(ctx, crawlOptions, finalCb);
 }
 
 function newStateHandler(oldState, newState) {
@@ -76,7 +75,7 @@ function runValidators(validatorNames, state, finalCb) {
 
     function runValidator(validatorName, validatorCb) {
 
-        var validator = customValidators[validatorName];
+        var validator = validators[validatorName];
         if(typeof validator !== "function") {
             return finalCb();
         }

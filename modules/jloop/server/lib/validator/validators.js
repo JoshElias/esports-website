@@ -2,7 +2,7 @@ var async = require("async");
 var loopback = require("loopback");
 var _ = require("underscore");
 var utils = require("./../utils");
-var _ = require("underscore");
+
 
 var youtubeRegex = /^[a-zA-Z0-9_-]{11}$/;
 function validateYoutubeId(validationState, youtubeCb) {
@@ -129,10 +129,11 @@ function validateSpam(validationState, validatorCb) {
 }
 
 function validateUnique(validationState, uniqueCb) {
-//    console.log('validationState:', validationState);
+
     var rootKey = validationState.rootKey;
     var Model = validationState.ctx.Model;
     var modelId = "";
+
     // Find the relevant model id if available
     if(typeof validationState.ctx.currentInstance === "object") {
       modelId = validationState.ctx.currentInstance.id;
@@ -152,11 +153,8 @@ function validateUnique(validationState, uniqueCb) {
             where[key] = validationState.ctx.where[key];
         }
     }
-//    console.log('where:', where);
-//    console.log('typeof where:', typeof where.slug);
+
     Model.find({where: where, fields: {id: true }}, function (err, instances) {
-//        console.log('err:', err);
-//        console.log('instances:', instances);
         if (err) return uniqueCb(err);
       
         if (instances.length < 1) {

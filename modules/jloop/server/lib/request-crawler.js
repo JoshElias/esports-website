@@ -7,13 +7,13 @@ var _ = require('underscore');
 function crawl(ctx, options, finalCb) {
 
     // Check if this model has the current feature enabled
-    if(!ctx.Model.definition.customOptions || !ctx.Model.definition.customOptions[options.optionsKey]) {
+    if(!ctx.Model.definition.options || !ctx.Model.definition.options[options.featureKey]) {
         return finalCb();
     }
 
     // Check if the ctx has an active request
     var loopbackContext = loopback.getCurrentContext();
-    if (!loopbackContext || !loopbackContext.active || !loopbackContext.active.http) {
+    if (!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
         return finalCb();
     }
 
@@ -21,6 +21,7 @@ function crawl(ctx, options, finalCb) {
     var parentState = {
         ctx: ctx,
         rootKey: "",
+        propertyName: "",
         modelConfig: ctx.Model.definition.rawProperties,
         modelName: ctx.Model.definition.name,
         data: ctx.data,
@@ -65,6 +66,13 @@ function buildNextState(value, key, oldState, options) {
     var rootKeyPrefix = (oldState.rootKey.length < 1) ? "" : oldState.rootKey + ".";
     newState.rootKey = rootKeyPrefix + key;
 
+    // Save the property name we're crawling
+    if(oldState.propertyName.length < 1) {
+        newState.propertyName = key;
+    } else {
+        newState.propertyName = oldState.propertyName;
+    }
+
     // Handler options for new state
     return options.newStateHandler(newState)
 }
@@ -91,12 +99,12 @@ function crawlObject(state, options, objectCb) {
             var type = newState.modelConfig["type"];
 
             if(typeof type === "string") {
-                return crawlPrimitive(newState, eachCb)
+                return crawlPrimitive(newState, options, eachCb)
             } else {
-                return crawlObject(newState, eachCb);
+                return crawlObject(newState, options, eachCb);
             }
         } else if(typeof value === "string") {
-            return crawlPrimitive(newState, eachCb);
+            return crawlPrimitive(newState, options, eachCb);
         }
 
         // Invalid input
@@ -107,25 +115,30 @@ function crawlObject(state, options, objectCb) {
     });
 }
 
-function crawlArray(state, finalCb) {
+function crawlArray(state, options, finalCb) {
 
     // Iterate over the models config that we're currently on
     async.forEachOf(state.modelConfig, function(value, key, eachCb) {
 
         // Update the validation state with this level of object
-        var nextValidationState = buildNextState(value, key, state);
+        var nextValidationState = buildNextState(value, key, state, options);
 
         var properties = nextValidationState.modelConfig["properties"];
         if(typeof value !== "object" || typeof properties !== "object" ) {
             return eachCb();
         }
 
-        return crawlObject(nextValidationState, eachCb);
+        return crawlObject(nextValidationState, options, eachCb);
 
     }, finalCb);
 }
 
-function crawlPrimitive(state, finalCb) {
+function crawlPrimitive(state, options, finalCb) {
+
+    // Check if the tag for the current function exists
+    if(!state.modelConfig[options.optionKey]) {
+        return finalCb();
+    }
 
     return options.primitiveHandler(state, finalCb);
 }

@@ -5,7 +5,8 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$filter": true
   },
   "properties": {
     "isActive": {
@@ -29,10 +30,16 @@
     },
     "subscription": {
       "type": "object",
-      "default": {}
+      "default": {},
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "isProvider": {
-      "type": "boolean"
+      "type": "boolean",
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "isAdmin": {
       "type": "boolean"
@@ -41,10 +48,16 @@
       "type": "number"
     },
     "lastLoginDate": {
-      "type": "date"
+      "type": "date",
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "resetPasswordCode": {
-      "type": "string"
+      "type": "string",
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "__v": {
       "type": "number"

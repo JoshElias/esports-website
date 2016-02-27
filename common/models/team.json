@@ -1,4 +1,4 @@
-{
+ {
   "name": "team",
   "base": "PersistedModel",
   "strict": true,
@@ -16,9 +16,7 @@
     "isActive": {
       "type": "boolean"
     },
-    "gameId": {
-      "type": {}
-    }
+    "gameId": {}
   },
   "validations": [],
   "relations": {

@@ -1,27 +1,10 @@
 module.exports = function(Guide) {
-    var utils = require(".././utils");
     var _ = require('underscore');
     var async = require('async');
 
-    var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug('name')];
-    Guide.observe("before save", function(ctx, next) {
-        async.each(funcs, function(func, funcCB) {
-            func(ctx, funcCB);
-        }, next);
-    });
 
-//    Guide.observe("before save", utils.generateSlug("name"));
-    
-    
-    var fieldFilter = {
-        fieldNames: ["allowComments", "description", "chapters",
-            "oldCards", "oldComments", "oldMulligans", "content"],
-        acceptedRoles: ["$owner", "$admin", "$premium", "$contentProvider"]
-    };
-    Guide.observe("loaded", utils.filterFields(fieldFilter));
-    
-    
-    Guide.topGuide = function (filters, cb) {
+
+    Gide.topGuide = function (filters, cb) {
         var limit = 10;
         var iter = 1;
         var Vote = Guide.app.models.vote;

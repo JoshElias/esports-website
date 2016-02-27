@@ -34,15 +34,6 @@ module.exports = function(User) {
     });
 
 
-    var filter = {
-        fieldNames: ["subscription", "isProvider", "isAdmin", "lastLoginDate",
-            "resetPasswordCode", "newEmail", "email", "newEmailCode"],
-        acceptedRoles: ["$owner", "$admin"]
-    };
-    User.observe("loaded", utils.filterFields(filter));
-
-
-
     // Handle user registeration
     User.afterRemote("create", function (ctx, user, next) {
         user.verify(ctx, function (err) {

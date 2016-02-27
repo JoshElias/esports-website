@@ -4,7 +4,9 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true,
+    "$filter": true
   },
   "properties": {
     "name": {
@@ -14,22 +16,22 @@
     "slug": {
       "type": "string",
       "required": true,
-      "validators": [
-        "unique"
-      ]
+      "$validate": ["unique"]
     },
     "guideType": {
       "type": "string",
       "required": true
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
     },
     "youtubeId": {
       "type": "string",
-      "validators": [
-        "youtubeId"
-      ]
+      "$validate": ["youtubeId"]
     },
     "createdDate": {
       "type": "date"
@@ -50,7 +52,25 @@
       "type": "object"
     },
     "content": {
-      "type": "array"
+      "type": [
+        {
+          "title": {
+            "type": "string",
+            "$validate": ["spam"]
+          },
+          "orderNum": {
+            "type": "number"
+          },
+          "body": {
+            "type": "string",
+            "$validate": ["spam"]
+          }
+        }
+      ],
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
     },
     "talentTiers": {
       "type": "object"

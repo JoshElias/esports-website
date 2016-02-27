@@ -5,7 +5,8 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "heroName": {
@@ -42,7 +43,8 @@
     },
     "youtubeId": {
       "type": "string",
-      "required": true
+      "required": true,
+      "$validate": ["youtubeId"]
     },
     "className": {
       "type": "string",

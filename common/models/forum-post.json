@@ -16,18 +16,14 @@
     },
     "content": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "$validate": ["spam"]
     },
     "createdDate": {
       "type": "date"
     },
     "title": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "$validate": ["spam"]
     },
     "viewCount": {
       "type": "number"

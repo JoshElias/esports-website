@@ -9,14 +9,10 @@
   },
   "properties": {
     "cardId": {
-      "type": {
-        "required": true
-      }
+      "required": true
     },
     "mulliganId": {
-      "type": {
-        "required": true
-      }
+      "required": true
     }
   },
   "validations": [],

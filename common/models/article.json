@@ -5,7 +5,8 @@
   "idInjection": true,
   "options": {
     "validateUpsert": true,
-    "$validate": true
+    "$validate": true,
+    "$filter": true
   },
   "properties": {
     "title": {
@@ -15,9 +16,7 @@
     "slug": {
       "url": {
         "type": "string",
-        "validators": [
-          "unique"
-        ]
+        "$validate": ["unique"]
       },
       "linked": {
         "type": "boolean"
@@ -28,7 +27,10 @@
     },
     "content": {
       "type": "string",
-      "$acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"]
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
     },
     "photoNames": {
       "type": "object"
