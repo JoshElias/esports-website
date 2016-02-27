@@ -4064,7 +4064,7 @@ angular.module('app.services', [])
         sb.deckDeleteAllTechCards = function (deckTech) {
             if (!deckTech || !deckTech.cardTech || !deckTech.cardTech.length) { return false; }
             for (var i = 0; i < deckTech.cardTech.length; i++) {
-                sb.deckTechCardDelete(deckTech, deckTech.cardTech[i]);
+                sb.deckTechCardDeleteById(deckTech, deckTech.cardTech[i].card.id);
             }
         };
         
@@ -4263,7 +4263,7 @@ angular.module('app.services', [])
             var newScope = $rootScope.$new(true);
             
             var box = bootbox.dialog({
-                title: "Cards",
+                title: "Decks",
                 message: $compile('<div snapshot-add-deck></div>')(newScope),
                 buttons: {
                     submit: {

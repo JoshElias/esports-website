@@ -214,7 +214,7 @@
                                                                 <div class="panel-body">
                                                                     <div class="col-sm-12 wrapper-none">
                                                                         <div class="col-sm-10 pull-right">
-                                                                            <input ng-change="changeForChance(match)" ng-model="match.forChance" type="range" min="0" max="100" step="5">
+                                                                            <input ng-change="snapshot.matchupChangeForChance(match)" ng-model="match.forChance" type="range" min="0" max="100" step="5">
                                                                         </div>
                                                                         <div class="col-sm-2 m-t-sm center-text wrapper-none">
                                                                             <p>% {{match.forChance}}</p>
@@ -232,7 +232,7 @@
                                                                 <div class="panel-body">
                                                                     <div class="col-sm-12 wrapper-none">
                                                                         <div class="col-sm-10 pull-right">
-                                                                            <input ng-change="changeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5">
+                                                                            <input ng-change="snapshot.matchupChangeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5" readonly>
                                                                         </div>
                                                                         <div class="col-sm-2 m-t-sm center-text wrapper-none">
                                                                             <p>% {{match.againstChance}}</p>
