@@ -1,8 +1,9 @@
 <alert-box theme="admin"></alert-box>
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
-    <div class="panel-heading">
-        <h3><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot</h3>
+    <div class="panel-heading clearfix">
+        <h3 class="pull-left"><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot</h3>
+        <button type="button" ng-click="snapshot.loadPrevious()" ng-if="mode === 'add' && !snapshot.loaded" class="btn btn-green btn-rounded btn-sm pull-right">Load Previous</button>
     </div>
     <div class="panel-body">
         <div class="form-group">
@@ -73,16 +74,17 @@
         <div class="form-group">
             <label for="snapshotPhoto" class="col-sm-2 control-label">Snapshot Image</label>
             <div class="col-sm-10">
+                <input type="hidden" id="snapshotPhotoSquare" name="snapshotPhotoSquare" value="" ng-model="snapshot.photoNames.square">
                 <input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photoNames.small">
                 <input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photoNames.medium">
                 <input type="hidden" id="snapshotPhotoLarge" name="snapshotPhotoLarge" value="" ng-model="snapshot.photoNames.large">
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-article">
-                        <div class="upload-drop" ng-show="snapshot.photoNames.large === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img ng-src="{{getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
+                        <div class="upload-drop" ng-show="snapshot.photoNames.large === ''" ng-file-drop="snapshot.photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                        <img ng-src="{{snapshot.getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
                     </div>
                     <div class="btn-toolbar">
-                        <button class="btn btn-default" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">
+                        <button class="btn btn-default" ng-file-select="snapshot.photoUpload($files)" onclick="this.value=null" accept="image/*">
                             <span ng-show="snapshot.photoNames.large === ''">Select image</span>
                             <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
                         </button>

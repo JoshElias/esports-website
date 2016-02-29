@@ -1293,7 +1293,6 @@ angular.module('app.directives', ['ui.load'])
             // toggle deck
             $scope.toggleDeck = function (deck) {
                 $scope.deck = ($scope.deck === deck) ? null : deck;
-                console.log(deck);
             };
             
             // pagination

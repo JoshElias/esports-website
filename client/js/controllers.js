@@ -3323,52 +3323,11 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'HearthstoneSnapshotBuilder', 'snapshot', 
         function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, HearthstoneSnapshotBuilder, snapshot) {
             
-            console.log('Snapshot: ', snapshot);
-            
             // set mode to edit
             $scope.mode = 'edit';
             
             // load snapshot into builder
             $scope.snapshot = HearthstoneSnapshotBuilder.new(snapshot);
-            
-            // photo upload
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var box = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                box.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/images/uploadSnapshot',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.snapshot.photoNames = {
-                            large: data.large,
-                            medium: data.medium,
-                            small: data.small,
-                            square: data.square
-                        };
-						var URL = (tpl === './') ? cdn2 : tpl;
-                        $scope.snapshotImg = URL + data.path + data.small;
-                        box.modal('hide');
-                    });
-                }
-            }
-
-            $scope.getImage = function () {
-				var URL = (tpl === './') ? cdn2 : tpl;
-                if (!$scope.snapshot) { return URL + 'img/blank.png'; }
-                $scope.imgPath = 'snapshots/';
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  URL + 'img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
-            };
 
         }
     ])

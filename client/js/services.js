@@ -3750,688 +3750,827 @@ angular.module('app.services', [])
         return factory;
     }
 ])
-.factory('HearthstoneSnapshotBuilder', ['$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', function ($compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone) {
-    var snapshot = {};
-    var maxTrends = 12;
-    var defaultSnap = {
-        snapNum : 1,
-        title : "",
-        authors : [],
-        slug : {
-            url : "",
-            linked : true,
-        },
-        content : {
-            intro : "",
-            thoughts : ""
-        },
-        matches : [],
-        tiers: [],
-        photoNames: {
-            large: "",
-            medium: "",
-            small: "",
-            square: ""
-        },
-        votes: 0,
-        active : false
-    };
-    var defaultAuthor = {
-        id: null,
-        user: undefined,
-        description: "",
-        klass: []
-    };
-    var defaultTier = {
-        tier : 1,
-        decks : []
-    };
-    var defaultTierDeck = {
-        name: "",
-        explanation : "",
-        weeklyNotes : "",
-        deck : undefined,
-        ranks : [0,0,0,0,0,0,0,0,0,0,0,0,0],
-        deckTech : []
-    };
-    var defaultDeckMatch = {
-        forDeck : undefined,
-        againstDeck : undefined,
-        forChance : 0,
-        againstChance : 0
-    };
-    var defaultDeckTech = {
-        title : "",
-        cardTech : [],
-        orderNum : 1
-    };
-    var defaultTechCards = {
-        card : undefined,
-        toss : false,
-        orderNum : 1
-    };
-    
-    snapshot.new = function (data) {
-        // start with default snapshot
-        var sb = angular.copy(defaultSnap);
+.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Snapshot', 'Util', 'Hearthstone',
+    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Snapshot, Util, Hearthstone) {
+        var snapshot = {};
+        var maxTrends = 12;
+        var defaultSnap = {
+            snapNum: 1,
+            title: "",
+            authors: [],
+            slug: {
+                url: "",
+                linked: true,
+            },
+            content: {
+                intro: "",
+                thoughts: ""
+            },
+            matches: [],
+            tiers: [],
+            photoNames: {
+                large: "",
+                medium: "",
+                small: "",
+                square: ""
+            },
+            votes: 0,
+            active: false,
+            loaded: false
+        };
+        var defaultAuthor = {
+            id: null,
+            user: undefined,
+            description: "",
+            klass: []
+        };
+        var defaultTier = {
+            tier: 1,
+            decks: []
+        };
+        var defaultTierDeck = {
+            name: "",
+            explanation: "",
+            weeklyNotes: "",
+            deck: undefined,
+            ranks: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            deckTech: []
+        };
+        var defaultDeckMatch = {
+            forDeck: undefined,
+            againstDeck: undefined,
+            forChance: 0,
+            againstChance: 0
+        };
+        var defaultDeckTech = {
+            title: "",
+            cardTech: [],
+            orderNum: 1
+        };
+        var defaultTechCards = {
+            card: undefined,
+            toss: false,
+            orderNum: 1
+        };
 
-        // init
-        sb.init = function(data) {
-            // if we have data, load it
-            if (data) {
-                sb.load(data);
-            }
-        };
-        
-        sb.load = function (data) {
-            sb.authors = data.authors;
-            sb.content = data.content;
-            sb.createdDate = data.createdDate;
-            sb.matchups = data.deckMatchups;
-            sb.id = data.id;
-            sb.isActive = data.isActive;
-            sb.photoNames = data.photoNames;
-            sb.slug = data.slug;
-            sb.snapNum = data.snapNum;
-            sb.tiers = data.tiers;
-            sb.title = data.title;
-            
-            sb.tiers = sb.generateTiers(data.deckTiers);
-        };
-        
-        // load latest snapshot and increment snapshot number / shift trends
-        sb.loadPrevious = function () {
-            
-        };
-        
-        // generate tiers from deckTiers data
-        sb.generateTiers = function (deckTiers) {
-            var tiers = [];
-            
-            // sort decks
-            deckTiers.sort(function(a,b) {
-                return (a.ranks[0] - b.ranks[0])
-            });
-            
-            // tiers
-            _.each(deckTiers, function (deck) {
-                if (tiers[deck.tier - 1] === undefined) {
-                    tiers[deck.tier - 1] = {
-                        tier: deck.tier,
-                        decks: []
-                    };
-                }
+        snapshot.new = function (data) {
+            // start with default snapshot
+            var sb = angular.copy(defaultSnap);
 
-                tiers[deck.tier - 1].decks.push(deck);
-            });
-            
-            return tiers;
-        };
-        
-        // set slug
-        sb.setSlug = function () {
-            if (!sb.slug.linked) { return false; }
-            sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
-        };
-        
-        // toggle if slug is linked to title
-        sb.slugToggleLink = function () {
-            sb.slug.linked = !sb.slug.linked;
-            sb.setSlug();
-        };
-        
-        // trends array for decks
-        sb.getTrends = function () {
-            return new Array(maxTrends);
-        };
-        
-        // add author
-        sb.authorAdd = function (user) {
-            var newAuthor = angular.copy(defaultAuthor);
-            newAuthor.user = user;
-            sb.authors.push(newAuthor);
-        };
-        
-        // check if user is already an author on snapshot
-        sb.authorExistsById = function (authorId) {
-            for (var i = 0; i < sb.authors.length; i++) {
-                if (sb.authors[i].user.id === authorId) {
-                    return true;
+            // init
+            sb.init = function(data) {
+                // if we have data, load it
+                if (data) {
+                    sb.load(data);
                 }
-            }
-            return false;
-        };
-        
-        // delete author
-        sb.authorDeleteById = function (authorId) {
-            var index = -1;
-            for (var i = 0; i < sb.authors.length; i++) {
-                if (sb.authors[i].user.id === authorId) {
-                    index = i;
-                    break;
-                }
-            }
-            if (index !== -1) {
-                sb.authors.splice(index, 1);
-                // TODO: CRUDMAN REMOVE AUTHOR
-            }
-        };
-        
-        // add tier
-        sb.tierAdd = function () {
-            var newTier = angular.copy(defaultTier);
-            newTier.tier = sb.tiers.length + 1;
-            sb.tiers.push(newTier);
-        };
-        
-        // delete tier
-        sb.tierDelete = function (tier) {
-            var index = sb.tiers.indexOf(tier);
-            if (index !== -1) {
-                sb.tierDeleteAllDecks(tier);
-                sb.tiers.splice(index, 1);
-                sb.tierUpdateNumbers();
-                // TODO: CRUDMAN DELETE TIER
-            }
-        };
-        
-        sb.tierUpdateNumbers = function () {
-            var tierNum = 1;
-            for (var i = 0; i < sb.tiers.length; i++) {
-                sb.tiers[i].tier = tierNum;
+            };
+
+            sb.load = function (data) {
+                sb.authors = data.authors;
+                sb.content = data.content;
+                sb.createdDate = data.createdDate;
+                sb.matchups = data.deckMatchups;
+                sb.id = data.id;
+                sb.isActive = data.isActive;
+                sb.photoNames = data.photoNames;
+                sb.slug = data.slug;
+                sb.snapNum = data.snapNum;
+                sb.tiers = data.tiers;
+                sb.title = data.title;
+                sb.tiers = sb.generateTiers(data.deckTiers);
                 
-                for (var j = 0; j < sb.tiers[i].decks.length; j++) {
-                    sb.tiers[i].decks[j].tier = tierNum;
-                }
-                
-                tierNum++;
-            }
-        };
-        
-        // delete all decks in a tier
-        sb.tierDeleteAllDecks = function (tier) {
-            if (!tier || !tier.decks || !tier.decks.length) { return false; }
-            for (var i = tier.decks.length; i >= 0; i--) {
-                sb.deckDelete(tier, tier.decks[i]);
-            }
-        };
-        
-        // get a tier deck by deck id
-        sb.getTierDeckByDeckId = function (deckId) {
-            for (var i = 0; i < sb.tiers.length; i++) {
-                for (var j = 0; j < sb.tiers[i].decks.length; j++) {
-                    if (sb.tiers[i].decks[j].deck.id === deckId) {
-                        return sb.tiers[i].decks[j];
+                sb.loaded = true;
+            };
+
+            // load latest snapshot and increment snapshot number / shift trends
+            sb.loadPrevious = function () {
+                Snapshot.findOne({
+                    filter: {
+                        where: {
+                            isActive: true
+                        },
+                        fields: {
+                            tiers: false
+                        },
+                        order: 'createdDate DESC',
+                        include: [
+                            {
+                                relation: "authors",
+                                scope: {
+                                    include: {
+                                        relation: "user",
+                                        scope: {
+                                            fields: ["username"]
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                relation: "deckTiers",
+                                scope: {
+                                    include: [
+                                        {
+                                            relation: "deck",
+                                            scope: {
+                                                fields: ["name"]
+                                            }
+                                        },
+                                        {
+                                            relation: "deckTech",
+                                            scope: {
+                                                include: {
+                                                    relation: "cardTech",
+                                                    scope: {
+                                                        include: {
+                                                            relation: "card",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                relation: "deckMatchups",
+                                scope: {
+                                    include: [
+                                        {
+                                            relation: "forDeck",
+                                            scope: {
+                                                fields: ["name"]
+                                            }
+                                        },
+                                        {
+                                            relation: "againstDeck",
+                                            scope: {
+                                                fields: ["name"]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                })
+                .$promise
+                .then(function (data) {
+                    // TODO: strip ids from old data so new items get created
+                    
+                    // increase snapshot number
+                    data.snapNum++;
+                    
+                    // shift deck ranks one week
+                    for (var i = 0; i < data.deckTiers.length; i++) {
+                        // remove last item
+                        data.deckTiers[i].ranks.pop();
+                        
+                        // duplicate last week's rank to this week
+                        data.deckTiers[i].ranks = [data.deckTiers[i].ranks[0]].concat(data.deckTiers[i].ranks);
+                    }
+                    
+                    // load data
+                    sb.load(data);
+                });
+            };
+
+            // generate tiers from deckTiers data
+            sb.generateTiers = function (deckTiers) {
+                var tiers = [];
+
+                // sort decks
+                deckTiers.sort(function(a,b) {
+                    return (a.ranks[0] - b.ranks[0])
+                });
+
+                // tiers
+                _.each(deckTiers, function (deck) {
+                    if (tiers[deck.tier - 1] === undefined) {
+                        tiers[deck.tier - 1] = {
+                            tier: deck.tier,
+                            decks: []
+                        };
+                    }
+
+                    tiers[deck.tier - 1].decks.push(deck);
+                });
+
+                return tiers;
+            };
+
+            // set slug
+            sb.setSlug = function () {
+                if (!sb.slug.linked) { return false; }
+                sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
+            };
+
+            // toggle if slug is linked to title
+            sb.slugToggleLink = function () {
+                sb.slug.linked = !sb.slug.linked;
+                sb.setSlug();
+            };
+
+            // trends array for decks
+            sb.getTrends = function () {
+                return new Array(maxTrends);
+            };
+
+            // add author
+            sb.authorAdd = function (user) {
+                var newAuthor = angular.copy(defaultAuthor);
+                newAuthor.user = user;
+                sb.authors.push(newAuthor);
+            };
+
+            // check if user is already an author on snapshot
+            sb.authorExistsById = function (authorId) {
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].user.id === authorId) {
+                        return true;
                     }
                 }
-            }
-            
-            return false;
-        };
-        
-        // add deck
-        sb.deckAdd = function (tier, deck) {
-            if (sb.getTierDeckByDeckId(deck.deck.id)) { return false; }
-            var newDeck = angular.copy(defaultTierDeck);
-            newDeck.name = deck.name;
-            newDeck.deck = deck.deck;
-            tier.decks.push(newDeck);
-            sb.decksUpdateCurrentRanks();
-            if (tier.tier <= 2) {
-                sb.matchupsAdd(newDeck);
-            }
-        };
-        
-        // delete deck
-        sb.deckDelete = function (tier, deck) {
-            var index = tier.decks.indexOf(deck);
-            if (index !== -1) {
-                sb.deckDeleteAllTechs(deck);
-                sb.matchupsDelete(deck);
-                tier.decks.splice(index, 1);
+                return false;
+            };
+
+            // delete author
+            sb.authorDeleteById = function (authorId) {
+                var index = -1;
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].user.id === authorId) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index !== -1) {
+                    sb.authors.splice(index, 1);
+                    // TODO: CRUDMAN REMOVE AUTHOR
+                }
+            };
+
+            // add tier
+            sb.tierAdd = function () {
+                var newTier = angular.copy(defaultTier);
+                newTier.tier = sb.tiers.length + 1;
+                sb.tiers.push(newTier);
+            };
+
+            // delete tier
+            sb.tierDelete = function (tier) {
+                var index = sb.tiers.indexOf(tier);
+                if (index !== -1) {
+                    sb.tierDeleteAllDecks(tier);
+                    sb.tiers.splice(index, 1);
+                    sb.tierUpdateNumbers();
+                    // TODO: CRUDMAN DELETE TIER
+                }
+            };
+
+            sb.tierUpdateNumbers = function () {
+                var tierNum = 1;
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    sb.tiers[i].tier = tierNum;
+
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        sb.tiers[i].decks[j].tier = tierNum;
+                    }
+
+                    tierNum++;
+                }
+            };
+
+            // delete all decks in a tier
+            sb.tierDeleteAllDecks = function (tier) {
+                if (!tier || !tier.decks || !tier.decks.length) { return false; }
+                for (var i = tier.decks.length; i >= 0; i--) {
+                    sb.deckDelete(tier, tier.decks[i]);
+                }
+            };
+
+            // get a tier deck by deck id
+            sb.getTierDeckByDeckId = function (deckId) {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        if (sb.tiers[i].decks[j].deck.id === deckId) {
+                            return sb.tiers[i].decks[j];
+                        }
+                    }
+                }
+
+                return false;
+            };
+
+            // add deck
+            sb.deckAdd = function (tier, deckName, deck) {
+                if (sb.getTierDeckByDeckId(deck.id)) { return false; }
+                var newDeck = angular.copy(defaultTierDeck);
+                newDeck.name = deckName;
+                newDeck.deck = deck;
+                tier.decks.push(newDeck);
                 sb.decksUpdateCurrentRanks();
-                // TODO: CRUDMAN DELETE DECK
+                if (tier.tier <= 2) {
+                    sb.matchupsAdd(newDeck);
+                }
+            };
+
+            // delete deck
+            sb.deckDelete = function (tier, deck) {
+                var index = tier.decks.indexOf(deck);
+                if (index !== -1) {
+                    sb.deckDeleteAllTechs(deck);
+                    sb.matchupsDelete(deck);
+                    tier.decks.splice(index, 1);
+                    sb.decksUpdateCurrentRanks();
+                    // TODO: CRUDMAN DELETE DECK
+                }
+            };
+
+            // update tiers for decks
+            sb.decksUpdateTier = function () {
+                var tierNum;
+
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    tierNum = sb.tiers[i].tier;
+
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        sb.tiers[i].decks[j].tier = tierNum;
+                    }
+                }
+            };
+
+            // update order for decks in tiers
+            sb.decksUpdateOrder = function () {
+                var orderNum;
+
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    orderNum = 1;
+
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        sb.tiers[i].decks[j].orderNum = orderNum;
+
+                        orderNum++;
+                    }
+                }
+            };
+
+            // update current ranks for decks
+            sb.decksUpdateCurrentRanks = function () {
+                var rank = 1;
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        // update rank for deck
+                        sb.tiers[i].decks[j].ranks[0] = rank;
+
+                        // inc rank for next deck
+                        rank++;
+                    }
+                }
+            };
+
+            // delete all deck techs in a deck
+            sb.deckDeleteAllTechs = function (deck) {
+                if (!deck || !deck.deckTech || !deck.deckTech.length) { return false; }
+                for (var i = 0; i < deck.deckTech.length; i++) {
+                    sb.deckTechDelete(deck, deck.deckTech[i]);
+                }
+            };
+
+            // add deck tech
+            sb.deckTechAdd = function (deck) {
+                var newDeckTech = angular.copy(defaultDeckTech);
+                deck.deckTech.push(newDeckTech);
+            };
+
+            // delete deck tech
+            sb.deckTechDelete = function (deck, deckTech) {
+                var index = deck.deckTech.indexOf(deckTech);
+                if (index !== -1) {
+                    sb.deckDeleteAllTechCards(deckTech);
+                    deck.deckTech.splice(index, 1);
+                    // TODO: CRUDMAN DELETE DECKTECH
+                }
+            };
+
+            // delete all deck tech cards in a deck tech
+            sb.deckDeleteAllTechCards = function (deckTech) {
+                if (!deckTech || !deckTech.cardTech || !deckTech.cardTech.length) { return false; }
+                for (var i = 0; i < deckTech.cardTech.length; i++) {
+                    sb.deckTechCardDeleteById(deckTech, deckTech.cardTech[i].card.id);
+                }
+            };
+
+            // add deck tech card
+            sb.deckTechCardAdd = function (deckTech, card) {
+                if (sb.deckTechCardExistsById(deckTech, card.id)) { return false; }
+                var newDeckTechCard = angular.copy(defaultTechCards);
+                newDeckTechCard.card = card;
+                deckTech.cardTech.push(newDeckTechCard);
+            };
+
+            // delete deck tech card
+            sb.deckTechCardDeleteById = function (deckTech, cardId) {
+                var index = -1;
+                for (var i = 0; i < deckTech.cardTech.length; i++) {
+                    if (deckTech.cardTech[i].card.id === cardId) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index !== -1) {
+                    deckTech.cardTech.splice(index, 1);
+                    // TODO: CRUDMAN DELETE DECKTECH CARD
+                }
+            };
+
+            // check if card is in deck techs
+            sb.deckTechCardExistsById = function (deckTech, cardId) {
+                for (var i = 0; i < deckTech.cardTech.length; i++) {
+                    if (deckTech.cardTech[i].card.id === cardId) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            // toggle deck tech card toss
+            sb.deckTechCardToggleToss = function (card) {
+                card.toss = !card.toss;
+            };
+
+            // toggle deck tech card both
+            sb.deckTechCardToggleBoth = function (card) {
+                card.both = !card.both;
+            };
+
+            // return decks that need matchups
+            sb.matchupDecks = function () {
+                var decks = [];
+                var maxTiers = (sb.tiers.length > 2) ? 2 : sb.tiers.length;
+
+                for (var i = 0; i < maxTiers; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        decks.push(sb.tiers[i].decks[j]);
+                    }
+                }
+
+                return decks;
+            };
+
+            sb.validMatchups = function () {
+                var n = sb.matchupDecks().length;
+                return ((n / 2 * (2 + (n - 1))) === sb.matchups.length);
+            };
+
+            // add matchups to each deck for deck
+            sb.matchupsAdd = function (deck) {
+                var matchupDecks = sb.matchupDecks();
+
+                for (var i = 0; i < matchupDecks.length; i++) {
+                    var newMatchup = angular.copy(defaultDeckMatch);
+                    newMatchup.forDeck = {
+                        id: deck.deck.id,
+                        name: deck.deck.name
+                    };
+                    newMatchup.againstDeck = {
+                        id: matchupDecks[i].deck.id,
+                        name: matchupDecks[i].deck.name
+                    };
+                    if (deck.deck.id === matchupDecks[i].deck.id) {
+                        newMatchup.forChance = 50;
+                        newMatchup.againstChance = 50;
+                    }
+                    sb.matchups.push(newMatchup);
+                }
+            };
+
+            // delete matchups from each deck for deck
+            sb.matchupsDelete = function (deck) {
+                for (var i = sb.matchups.length - 1; i >= 0; i--) {
+                    if (sb.matchups[i].forDeck.id === deck.deck.id || sb.matchups[i].againstDeck.id === deck.deck.id) {
+                        sb.matchups.splice(i, 1);
+                    }
+                }
+            };
+
+            // update for chance when updating against chance on a matchup
+            sb.matchupChangeAgainstChance = function (matchup) {
+                matchup.forChance = (100 - matchup.againstChance);
             }
-        };
-        
-        // update tiers for decks
-        sb.decksUpdateTier = function () {
-            var tierNum;
-            
-            for (var i = 0; i < sb.tiers.length; i++) {
-                tierNum = sb.tiers[i].tier;
+
+            // update against chance when updating for chance on a matchup
+            sb.matchupChangeForChance = function (matchup) {
+                matchup.againstChance = (100 - matchup.forChance);
+            }
+
+            // get matchups by deck id
+            sb.getMatchupsByDeckId = function (deckId) {
+                var matchups = [];
+
+                for (var i = 0; i < sb.matchups.length; i++) {
+                    if (sb.matchups[i].forDeck.id === deckId || sb.matchups[i].againstDeck.id === deckId) {
+                        matchups.push(sb.matchups[i]);
+                    }
+                }
+
+                return matchups;
+            };
+
+            // photo upload
+            sb.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var newScope = $rootScope.$new(true);
+                newScope.uploading = 0;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')(newScope),
+                    closeButton: false,
+                    animate: false
+                });
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    newScope.upload = $upload.upload({
+                        url: '/api/images/uploadSnapshot',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        newScope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        sb.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
+                        var URL = (tpl === './') ? cdn2 : tpl;
+                        sb.snapshotImg = URL + data.path + data.small;
+                        box.modal('hide');
+                    });
+                }
+            };
+
+            // get snapshot image url
+            sb.getImage = function () {
+                var URL = (tpl === './') ? cdn2 : tpl;
+                var imgPath = 'snapshots/';
+                return (sb.photoNames && sb.photoNames.small === '') ?  URL + 'img/blank.png' : URL + imgPath + sb.photoNames.small;
+            };
+
+            // prompt for adding / removing authors
+            sb.authorAddPrompt = function () {
+                var newScope = $rootScope.$new(true);
+                newScope.authorAdd = sb.authorAdd;
+                newScope.authorExistsById = sb.authorExistsById;
+                newScope.authorDeleteById = sb.authorDeleteById;
+
+                var box = bootbox.dialog({
+                    title: "Authors",
+                    message: $compile('<div snapshot-add-author></div>')(newScope),
+                    show: false,
+                    className: 'modal-admin'
+                });
+                box.modal('show');
+            };
+
+            // prompt for author delete
+            sb.authorDeletePrompt = function (author) {
+                var box = bootbox.dialog({
+                    title: "Remove Author?",
+                    message: "Are you sure you want to remove the author <strong>" + author.user.username + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.authorDeleteById(author.user.id);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // prompt for tier delete
+            sb.tierDeletePrompt = function (tier) {
+                var box = bootbox.dialog({
+                    title: "Remove Tier?",
+                    message: "Are you sure you want to remove the tier <strong>Tier " + tier.tier + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.tierDelete(tier);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // prompt for adding a deck
+            sb.deckAddPrompt = function (tier) {
+                var newScope = $rootScope.$new(true);
                 
-                for (var j = 0; j < sb.tiers[i].decks.length; j++) {
-                    sb.tiers[i].decks[j].tier = tierNum;
-                }
-            }
-        };
-        
-        // update order for decks in tiers
-        sb.decksUpdateOrder = function () {
-            var orderNum;
-            
-            for (var i = 0; i < sb.tiers.length; i++) {
-                orderNum = 1;
-                
-                for (var j = 0; j < sb.tiers[i].decks.length; j++) {
-                    sb.tiers[i].decks[j].orderNum = orderNum;
-                    
-                    orderNum++;
-                }
-            }
-        };
-        
-        // update current ranks for decks
-        sb.decksUpdateCurrentRanks = function () {
-            var rank = 1;
-            for (var i = 0; i < sb.tiers.length; i++) {
-                for (var j = 0; j < sb.tiers[i].decks.length; j++) {
-                    // update rank for deck
-                    sb.tiers[i].decks[j].ranks[0] = rank;
-                    
-                    // inc rank for next deck
-                    rank++;
-                }
-            }
-        };
-        
-        // delete all deck techs in a deck
-        sb.deckDeleteAllTechs = function (deck) {
-            if (!deck || !deck.deckTech || !deck.deckTech.length) { return false; }
-            for (var i = 0; i < deck.deckTech.length; i++) {
-                sb.deckTechDelete(deck, deck.deckTech[i]);
-            }
-        };
-        
-        // add deck tech
-        sb.deckTechAdd = function (deck) {
-            var newDeckTech = angular.copy(defaultDeckTech);
-            deck.deckTech.push(newDeckTech);
-        };
-        
-        // delete deck tech
-        sb.deckTechDelete = function (deck, deckTech) {
-            var index = deck.deckTech.indexOf(deckTech);
-            if (index !== -1) {
-                sb.deckDeleteAllTechCards(deckTech);
-                deck.deckTech.splice(index, 1);
-                // TODO: CRUDMAN DELETE DECKTECH
-            }
-        };
-        
-        // delete all deck tech cards in a deck tech
-        sb.deckDeleteAllTechCards = function (deckTech) {
-            if (!deckTech || !deckTech.cardTech || !deckTech.cardTech.length) { return false; }
-            for (var i = 0; i < deckTech.cardTech.length; i++) {
-                sb.deckTechCardDeleteById(deckTech, deckTech.cardTech[i].card.id);
-            }
-        };
-        
-        // add deck tech card
-        sb.deckTechCardAdd = function (deckTech, card) {
-            if (sb.deckTechCardExistsById(deckTech, card.id)) { return false; }
-            var newDeckTechCard = angular.copy(defaultTechCards);
-            newDeckTechCard.card = card;
-            deckTech.cardTech.push(newDeckTechCard);
-        };
-        
-        // delete deck tech card
-        sb.deckTechCardDeleteById = function (deckTech, cardId) {
-            var index = -1;
-            for (var i = 0; i < deckTech.cardTech.length; i++) {
-                if (deckTech.cardTech[i].card.id === cardId) {
-                    index = i;
-                    break;
-                }
-            }
-            if (index !== -1) {
-                deckTech.cardTech.splice(index, 1);
-                // TODO: CRUDMAN DELETE DECKTECH CARD
-            }
-        };
-        
-        // check if card is in deck techs
-        sb.deckTechCardExistsById = function (deckTech, cardId) {
-            for (var i = 0; i < deckTech.cardTech.length; i++) {
-                if (deckTech.cardTech[i].card.id === cardId) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        
-        // toggle deck tech card toss
-        sb.deckTechCardToggleToss = function (card) {
-            card.toss = !card.toss;
-        };
-        
-        // toggle deck tech card both
-        sb.deckTechCardToggleBoth = function (card) {
-            card.both = !card.both;
-        };
-        
-        // return decks that need matchups
-        sb.matchupDecks = function () {
-            var decks = [];
-            var maxTiers = (sb.tiers.length > 2) ? 2 : sb.tiers.length;
-            
-            for (var i = 0; i < maxTiers; i++) {
-                for (var j = 0; j < sb.tiers[i].decks.length; j++) {
-                    decks.push(sb.tiers[i].decks[j]);
-                }
-            }
-            
-            return decks;
-        };
-        
-        sb.validMatchups = function () {
-            var n = sb.matchupDecks().length;
-            return ((n / 2 * (2 + (n - 1))) === sb.matchups.length);
-        };
-        
-        // add matchups to each deck for deck
-        sb.matchupsAdd = function (deck) {
-            var matchupDecks = sb.matchupDecks();
-            
-            for (var i = 0; i < matchupDecks.length; i++) {
-                var newMatchup = angular.copy(defaultDeckMatch);
-                newMatchup.forDeck = {
-                    id: deck.deck.id,
-                    name: deck.deck.name
-                };
-                newMatchup.againstDeck = {
-                    id: matchupDecks[i].deck.id,
-                    name: matchupDecks[i].deck.name
-                };
-                if (deck.deck.id === matchupDecks[i].deck.id) {
-                    newMatchup.forChance = 50;
-                    newMatchup.againstChance = 50;
-                }
-                sb.matchups.push(newMatchup);
-            }
-        };
-        
-        // delete matchups from each deck for deck
-        sb.matchupsDelete = function (deck) {
-            for (var i = sb.matchups.length - 1; i >= 0; i--) {
-                if (sb.matchups[i].forDeck.id === deck.deck.id || sb.matchups[i].againstDeck.id === deck.deck.id) {
-                    sb.matchups.splice(i, 1);
-                }
-            }
-        };
-        
-        // update for chance when updating against chance on a matchup
-        sb.matchupChangeAgainstChance = function (matchup) {
-            matchup.forChance = (100 - matchup.againstChance);
-        }
-        
-        // update against chance when updating for chance on a matchup
-        sb.matchupChangeForChance = function (matchup) {
-            matchup.againstChance = (100 - matchup.forChance);
-        }
-        
-        // get matchups by deck id
-        sb.getMatchupsByDeckId = function (deckId) {
-            var matchups = [];
-            
-            for (var i = 0; i < sb.matchups.length; i++) {
-                if (sb.matchups[i].forDeck.id === deckId || sb.matchups[i].againstDeck.id === deckId) {
-                    matchups.push(sb.matchups[i]);
-                }
-            }
-            
-            return matchups;
-        };
-        
-        // prompt for adding / removing authors
-        sb.authorAddPrompt = function () {
-            var newScope = $rootScope.$new(true);
-            newScope.authorAdd = sb.authorAdd;
-            newScope.authorExistsById = sb.authorExistsById;
-            newScope.authorDeleteById = sb.authorDeleteById;
-            
-            var box = bootbox.dialog({
-                title: "Authors",
-                message: $compile('<div snapshot-add-author></div>')(newScope),
-                show: false,
-                className: 'modal-admin'
-            });
-            box.modal('show');
-        };
-        
-        // prompt for author delete
-        sb.authorDeletePrompt = function (author) {
-            var box = bootbox.dialog({
-                title: "Remove Author?",
-                message: "Are you sure you want to remove the author <strong>" + author.user.username + "</strong>?",
-                buttons: {
-                    confirm: {
-                        label: "Delete",
-                        className: "btn-danger",
-                        callback: function () {
-                            $timeout(function () {
-                                sb.authorDeleteById(author.user.id);
+                var box = bootbox.dialog({
+                    title: "Decks",
+                    message: $compile('<div snapshot-add-deck></div>')(newScope),
+                    buttons: {
+                        submit: {
+                            label: 'Add Deck',
+                            className: 'btn-success',
+                            callback: function () {
+                                if (!newScope.deck) { return false; }
+                                
+                                $timeout(function () {
+                                    sb.deckAdd(tier, newScope.deck.name, newScope.deck);
+                                });
+                                
                                 box.modal('hide');
-                            });
-                        }
-                    },
-                    cancel: {
-                        label: "Cancel",
-                        className: "btn-default pull-left",
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                },
-                show: false
-            });
-            box.modal('show');
-        };
-        
-        // prompt for tier delete
-        sb.tierDeletePrompt = function (tier) {
-            var box = bootbox.dialog({
-                title: "Remove Tier?",
-                message: "Are you sure you want to remove the tier <strong>Tier " + tier.tier + "</strong>?",
-                buttons: {
-                    confirm: {
-                        label: "Delete",
-                        className: "btn-danger",
-                        callback: function () {
-                            $timeout(function () {
-                                sb.tierDelete(tier);
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
                                 box.modal('hide');
-                            });
+                            }
                         }
                     },
-                    cancel: {
-                        label: "Cancel",
-                        className: "btn-default pull-left",
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                },
-                show: false
-            });
-            box.modal('show');
-        };
-        
-        // prompt for adding a deck
-        sb.deckAddPrompt = function (tier) {
-            var newScope = $rootScope.$new(true);
-            
-            var box = bootbox.dialog({
-                title: "Decks",
-                message: $compile('<div snapshot-add-deck></div>')(newScope),
-                buttons: {
-                    submit: {
-                        label: 'Add Deck',
-                        className: 'btn-success',
-                        callback: function () {
-                            sb.deckAdd(tier, newScope.deckName, newScope.deck);
-                            box.modal('hide');
-                        }
-                    },
-                    cancel: {
-                        label: 'Cancel',
-                        className: 'btn-default pull-left',
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                },
-                show: false,
-                className: 'modal-admin modal-has-footer'
-            });
-            box.modal('show');
-        };
-        
-        // prompt for deck delete
-        sb.deckDeletePrompt = function (tier, deck) {
-            var box = bootbox.dialog({
-                title: "Remove Deck?",
-                message: "Are you sure you want to remove the deck <strong>" + deck.name + "</strong>?",
-                buttons: {
-                    confirm: {
-                        label: "Delete",
-                        className: "btn-danger",
-                        callback: function () {
-                            $timeout(function () {
-                                sb.deckDelete(tier, deck);
+                    show: false,
+                    className: 'modal-admin modal-has-footer'
+                });
+                box.modal('show');
+            };
+
+            // prompt for deck delete
+            sb.deckDeletePrompt = function (tier, deck) {
+                var box = bootbox.dialog({
+                    title: "Remove Deck?",
+                    message: "Are you sure you want to remove the deck <strong>" + deck.name + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.deckDelete(tier, deck);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
                                 box.modal('hide');
-                            });
+                            }
                         }
                     },
-                    cancel: {
-                        label: "Cancel",
-                        className: "btn-default pull-left",
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                },
-                show: false
-            });
-            box.modal('show');
-        };
-        
-        // prompt for deck delete
-        sb.deckTechDeletePrompt = function (deck, deckTech) {
-            var box = bootbox.dialog({
-                title: "Remove Deck Tech?",
-                message: "Are you sure you want to remove the deck tech <strong>" + deckTech.title + "</strong>?",
-                buttons: {
-                    confirm: {
-                        label: "Delete",
-                        className: "btn-danger",
-                        callback: function () {
-                            $timeout(function () {
-                                sb.deckTechDelete(deck, deckTech);
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // prompt for deck delete
+            sb.deckTechDeletePrompt = function (deck, deckTech) {
+                var box = bootbox.dialog({
+                    title: "Remove Deck Tech?",
+                    message: "Are you sure you want to remove the deck tech <strong>" + deckTech.title + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.deckTechDelete(deck, deckTech);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
                                 box.modal('hide');
-                            });
+                            }
                         }
                     },
-                    cancel: {
-                        label: "Cancel",
-                        className: "btn-default pull-left",
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                },
-                show: false
-            });
-            box.modal('show');
-        };
-        
-        // prompt for adding / removing cards from deck techs
-        sb.deckTechCardAddPrompt = function (deckTech) {
-            var newScope = $rootScope.$new(true);
-            newScope.deckTech = deckTech;
-            newScope.deckTechCardAdd = sb.deckTechCardAdd;
-            newScope.deckTechCardExistsById = sb.deckTechCardExistsById;
-            newScope.deckTechCardDeleteById = sb.deckTechCardDeleteById;
-            
-            var box = bootbox.dialog({
-                title: "Cards",
-                message: $compile('<div snapshot-add-card></div>')(newScope),
-                show: false,
-                className: 'modal-admin'
-            });
-            box.modal('show');
-        };
-        
-        // prompt for deck tech card delete
-        sb.deckTechCardDeletePrompt = function (deckTech, card) {
-            var box = bootbox.dialog({
-                title: "Remove Card?",
-                message: "Are you sure you want to remove the card <strong>" + card.card.name + "</strong>?",
-                buttons: {
-                    confirm: {
-                        label: "Delete",
-                        className: "btn-danger",
-                        callback: function () {
-                            $timeout(function () {
-                                sb.deckTechCardDeleteById(deckTech, card.card.id);
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // prompt for adding / removing cards from deck techs
+            sb.deckTechCardAddPrompt = function (deckTech) {
+                var newScope = $rootScope.$new(true);
+                newScope.deckTech = deckTech;
+                newScope.deckTechCardAdd = sb.deckTechCardAdd;
+                newScope.deckTechCardExistsById = sb.deckTechCardExistsById;
+                newScope.deckTechCardDeleteById = sb.deckTechCardDeleteById;
+
+                var box = bootbox.dialog({
+                    title: "Cards",
+                    message: $compile('<div snapshot-add-card></div>')(newScope),
+                    show: false,
+                    className: 'modal-admin'
+                });
+                box.modal('show');
+            };
+
+            // prompt for deck tech card delete
+            sb.deckTechCardDeletePrompt = function (deckTech, card) {
+                var box = bootbox.dialog({
+                    title: "Remove Card?",
+                    message: "Are you sure you want to remove the card <strong>" + card.card.name + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.deckTechCardDeleteById(deckTech, card.card.id);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
                                 box.modal('hide');
-                            });
+                            }
                         }
                     },
-                    cancel: {
-                        label: "Cancel",
-                        className: "btn-default pull-left",
-                        callback: function () {
-                            box.modal('hide');
-                        }
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // deck update after dnd ordering
+            sb.deckUpdateDND = function (decks, index, deck) {
+                var beforeInMatchups = (deck.tier === 1 || deck.tier === 2);
+                var movedDeck;
+                var afterInMatchups;
+
+                // remove old position for deck
+                decks.splice(index, 1);
+
+                // update all decks
+                sb.decksUpdateTier();
+                sb.decksUpdateOrder();
+                sb.decksUpdateCurrentRanks();
+
+                // update matchups for deck if we need to
+                movedDeck = sb.getTierDeckByDeckId(deck.deck.id);
+                afterInMatchups = (movedDeck.tier === 1 || movedDeck.tier === 2);
+
+                if (beforeInMatchups !== afterInMatchups) {
+                    if (afterInMatchups) {
+                        sb.matchupsAdd(movedDeck);
+                    } else {
+                        sb.matchupsDelete(movedDeck);
                     }
-                },
-                show: false
-            });
-            box.modal('show');
-        };
-        
-        // deck update after dnd ordering
-        sb.deckUpdateDND = function (decks, index, deck) {
-            var beforeInMatchups = (deck.tier === 1 || deck.tier === 2);
-            var movedDeck;
-            var afterInMatchups;
-            
-            // remove old position for deck
-            decks.splice(index, 1);
-            
-            // update all decks
-            sb.decksUpdateTier();
-            sb.decksUpdateOrder();
-            sb.decksUpdateCurrentRanks();
-            
-            // update matchups for deck if we need to
-            movedDeck = sb.getTierDeckByDeckId(deck.deck.id);
-            afterInMatchups = (movedDeck.tier === 1 || movedDeck.tier === 2);
-            
-            if (beforeInMatchups !== afterInMatchups) {
-                if (afterInMatchups) {
-                    sb.matchupsAdd(movedDeck);
-                } else {
-                    sb.matchupsDelete(movedDeck);
                 }
-            }
+            };
+
+            // save snapshot
+            sb.save = function () {
+
+            };
+
+            // run init
+            sb.init(data);
+
+            // return instance
+            return sb;
         };
-        
-        // save snapshot
-        sb.save = function () {
-            
-        };
-        
-        // run init
-        sb.init(data);
-        
-        // return instance
-        return sb;
-    };
-    
-    // return service
-    return snapshot;
-}])
+
+        // return service
+        return snapshot;
+    }
+])
 ;
