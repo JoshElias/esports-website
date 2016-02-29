@@ -4195,7 +4195,7 @@ angular.module('app.services', [])
                 title: "Authors",
                 message: $compile('<div snapshot-add-author></div>')(newScope),
                 show: false,
-                className: 'modal-admin'
+                className: 'modal-admin modal-admin-author'
             });
             box.modal('show');
         };
@@ -4283,7 +4283,7 @@ angular.module('app.services', [])
                     }
                 },
                 show: false,
-                className: 'modal-admin modal-has-footer'
+                className: 'modal-admin modal-has-footer modal-admin-decks'
             });
             box.modal('show');
         };
@@ -4358,7 +4358,7 @@ angular.module('app.services', [])
                 title: "Cards",
                 message: $compile('<div snapshot-add-card></div>')(newScope),
                 show: false,
-                className: 'modal-admin'
+                className: 'modal-admin modal-admin-cards'
             });
             box.modal('show');
         };
