@@ -4283,7 +4283,7 @@ angular.module('app.services', [])
                     }
                 },
                 show: false,
-                className: 'modal-admin'
+                className: 'modal-admin modal-has-footer'
             });
             box.modal('show');
         };

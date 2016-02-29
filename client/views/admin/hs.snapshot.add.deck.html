@@ -1,4 +1,4 @@
-<div>
+<div class="add-deck-modal">
     <div class="clearfix">
         <form ng-submit="updateSearch()" class="search-styles">
             <input type="text" ng-model="search" class="form-control input-sm pull-right" placeholder="search"><i class="fa fa-search"></i>
@@ -8,7 +8,7 @@
         <i class="fa fa-refresh fa-spin"></i>
     </div>
     <ul class="list-group m-b-none" ng-if="!loading && decks.length">
-        <li class="clearfix" ng-class="{ active: deck === d }" ng-repeat="d in decks">
+        <li class="clearfix deck-fix" ng-class="{ active: deck === d }" ng-repeat="d in decks">
             <a href="#" ng-click="toggleDeck(d)" class="deck">
                 {{d.name}}
             </a>
