@@ -221,6 +221,7 @@
 @include hots-hero-filters-image (zagara, 46);
 @include hots-hero-filters-image (zeratul, 47);
 @include hots-hero-filters-image (li-ming, 48);
+@include hots-hero-filters-image (xul, 49);
 
 
 
@@ -349,6 +350,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(tyrande);
 @include hots-hero(uther);
 @include hots-hero(valla);
+@include hots-hero(xul);
 @include hots-hero(zagara);
 @include hots-hero(zeratul);
 @include hots-hero(lunara);
@@ -1383,6 +1385,29 @@ This is the template for hots-hero-talents.
     ( class: (bolt-of-the-storm), pos: 15 ) // -450
 ) );
 
+//talents: xul
+
+//@include hots-hero-talents ( xul, (
+//    ( class: (), pos: 0 ), // 0
+//    ( class: (), pos: 1 ), // -30
+//    ( class: (), pos: 2 ), // -60
+//    ( class: (), pos: 3 ), // -90
+//    ( class: (), pos: 4 ), // -120
+//    ( class: (), pos: 5 ), // -150
+//    ( class: (), pos: 6 ), // -180
+//    ( class: (), pos: 7 ), // -210
+//    ( class: (), pos: 8 ), // -240
+//    ( class: (), pos: 9 ), // -270
+//    ( class: (), pos: 10 ), // -300
+//    ( class: (), pos: 11 ), // -330
+//    ( class: (), pos: 12 ), // -360
+//    ( class: (), pos: 13 ), // -390
+//    ( class: (), pos: 14 ), // -420
+//    ( class: (), pos: 15 ), // -450
+//    ( class: (), pos: 16 ), // -480
+//    ( class: (), pos: 17 ), // -510
+//    ( class: (), pos: 18 ) // -540
+//) );
 
 //talents: zagara
 
@@ -1667,6 +1692,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(tyrande, -25, -89, -60, 35);
 @include hots-snapshot-hero(uther, -25, -48, -70, 61);
 @include hots-snapshot-hero(valla, -25, -22, -70, 96);
+//@include hots-snapshot-hero(xul, -25, -22, -70, 96);
 @include hots-snapshot-hero(zagara, -25, -22, -70, 96);
 @include hots-snapshot-hero(zeratul, -25, -5, -70, 96);
 @include hots-snapshot-hero(lunara, -25, -5, -70, 96);
