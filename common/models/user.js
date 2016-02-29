@@ -507,6 +507,8 @@ module.exports = function(User) {
         
         console.log('run each series');
         async.eachSeries(roleNames, function (roleName, eachCb) {
+            
+            console.log('rolename: ', roleName);
 
             if (typeof isInRoles[roleName] !== "undefined") {
                 return eachCb();
@@ -537,6 +539,7 @@ module.exports = function(User) {
                 var modelClass = loopback.getModel(options.modelClass);
                 return Role.isOwner(modelClass, options.modelId, uid, updateIsInRoles);
             }
+            console.log('role name not owner: ', roleName);
 
             // Handle all other roles
             return Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, updateIsInRoles);
