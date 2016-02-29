@@ -4,6 +4,7 @@ module.exports = function(Deck) {
 
     var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug('name')];
     Deck.observe("before save", function(ctx, next) {
+        return next();
         async.each(funcs, function(func, funcCB) {
             func(ctx, funcCB);
         }, next);
@@ -14,7 +15,7 @@ module.exports = function(Deck) {
         fieldNames: ["chapters", "oldCards", "oldComments", "oldMulligans"],
         acceptedRoles: ["$owner", "$admin", "$premium", "$contentProvider"]
     }
-    Deck.observe("loaded", utils.filterFields(fieldFilter));
+//    Deck.observe("loaded", utils.filterFields(fieldFilter));
 
 /*
     var docFilter =  {
