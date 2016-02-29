@@ -2818,8 +2818,6 @@ var app = angular.module('app', [
                                             isActive: true
                                         },
                                         fields: {
-                                            oldTalents: false,
-                                            oldAbilities: false,
                                             price: false,
                                             title: false,
                                             manaType: false,
@@ -2828,6 +2826,7 @@ var app = angular.module('app', [
                                     }
                                   }).$promise
                                   .then(function(heroData) {
+                                    console.log('heroData:', heroData);
                                     return waterCB(null, heroData);
                                   })
                                   .catch(function (err) {
