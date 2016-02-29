@@ -391,3 +391,100 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     }
 
 }
+
+//-----------------------------------
+// 3. ADD Deck Modal 
+//-----------------------------------
+
+// footer fixes
+
+.modal-admin {
+    &.modal-has-footer { 
+        .modal-content {
+            
+            .page-flipper {
+                bottom: 70px;
+            }
+            
+            .modal-body {
+                 padding: 0px 0px 140px 0px;
+            }
+        }
+    }
+    
+    
+        
+    .modal-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 70px;
+        border: 0px solid transparent;
+        background: rgba(255, 255, 255, 0.15);
+        
+        .btn-default,
+        .btn-success {
+            background-image: none;
+            border: 0px solid transparent;
+            border-radius: 0px;
+            box-shadow: none;
+            -webkit-box-shadow: none;
+        }
+        
+        button {
+            //background: rgba(255, 255, 255, 0.15);
+            border: 0px solid transparent;
+            border-radius: 0px;
+            color: $light-font;
+            width: 85px;
+            height: 40px;
+            text-shadow: none;        
+            
+            &.btn-success {
+                background-color: rgba($btn-green, 0.5) ;
+                
+                &:hover {
+                    background-color: rgba($btn-green, 0.65) ;
+                    color: $white;
+                }
+            }
+            
+            &.btn-default {
+                background-color: rgba($ts-blue, 0.5);
+                
+                 &:hover {
+                    background-color: rgba($ts-blue, 0.75);
+                    color: $white;
+                }
+            
+            }
+        }
+    }
+}
+
+//deck list fixes
+
+.modal-admin {
+    .add-deck-modal {
+        .deck-fix {
+            padding: 0px !important;
+            
+            a {
+                display: block;
+                padding: 20px;
+                width: 100%;
+                height: 100%;
+                color: $light-font;
+            }
+            
+            &:hover {
+                
+                a {
+                    color: $white;
+                    //font-weight: bold;
+                }
+                    
+            }
+        }
+    }
+}
