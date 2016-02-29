@@ -2,7 +2,7 @@
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">
-        <h3>Edit a Meta Snapshot</h3>
+        <h3><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot</h3>
     </div>
     <div class="panel-body">
         <div class="form-group">
@@ -269,8 +269,8 @@
     </form>
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg snapshot-btn" ng-disabled="form.$invalid || loading" ng-click="editSnapshot()">
-                Edit Meta Snapshot
+            <button type="submit" class="btn btn-blue btn-lg snapshot-btn" ng-disabled="form.$invalid || loading" ng-click="snapshot.save()">
+                <span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot
             </button>
         </div>
     </div>

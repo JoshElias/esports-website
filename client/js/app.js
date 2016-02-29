@@ -6375,7 +6375,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/hs.snapshots.add.html',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.snapshot.html',
                         controller: 'AdminHearthstoneSnapshotAddCtrl',
                         resolve: {
                             dataPrevious: ['Snapshot', function (Snapshot) {
@@ -6488,7 +6488,7 @@ var app = angular.module('app', [
                 url: '/:snapshotID',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/hs.snapshots.edit.html',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.snapshot.html',
                         controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
                             snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
