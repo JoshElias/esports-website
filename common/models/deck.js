@@ -4,18 +4,16 @@ module.exports = function(Deck) {
 
     var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug('name')];
     Deck.observe("before save", function(ctx, next) {
-        return next();
         async.each(funcs, function(func, funcCB) {
             func(ctx, funcCB);
         }, next);
     });
 
-
     var fieldFilter =  {
         fieldNames: ["chapters", "oldCards", "oldComments", "oldMulligans"],
         acceptedRoles: ["$owner", "$admin", "$premium", "$contentProvider"]
     }
-//    Deck.observe("loaded", utils.filterFields(fieldFilter));
+    Deck.observe("loaded", utils.filterFields(fieldFilter));
 
 /*
     var docFilter =  {
@@ -27,5 +25,5 @@ module.exports = function(Deck) {
     Deck.observe("access", utils.filterDocs(docFilter));
 */
 
-    //Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
+    Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
 };

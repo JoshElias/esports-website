@@ -16875,14 +16875,12 @@ angular.module('app.controllers', ['ngCookies'])
                             'createdDate',
                             'premium',
                             'votes',
-                            'against',
                             'synergy',
                             'content',
                             'isFeatured',
                             'isPublic',
                             'youtubeId',
-                            'viewCount',
-                            'voteScore',
+                            'viewCount'
                            ];
                 var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) {
