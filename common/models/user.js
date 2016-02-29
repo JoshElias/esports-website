@@ -554,9 +554,11 @@ module.exports = function(User) {
             console.log('final callback err: ', err);
             if (err) return cb(err);
 
+            console.log('WE FOUND IT');
             if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
                 loopbackContext.active.http.req.roles[uid] = isInRoles;
             }
+            console.log('KAPPPPPA');
             cb(err, isInRoles);
         });
 
