@@ -16695,7 +16695,9 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-
+                console.log('login event fired');
+                console.log('data:', data);
+                console.log('User.getCurrentId():', User.getCurrentId());
 //                 Check if user is admin or contentProvider
                 User.isInRoles({
                     uid: User.getCurrentId(),
@@ -16703,7 +16705,7 @@ angular.module('app.controllers', ['ngCookies'])
                 })
                 .$promise
                 .then(function (userRoles) {
-//                    console.log('userRoles: ', userRoles);
+                    console.log('userRoles: ', userRoles);
                     $scope.isUserAdmin = userRoles.isInRoles.$admin;
                     $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
                     return userRoles;

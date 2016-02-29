@@ -457,6 +457,7 @@ module.exports = function(User) {
 
 
     User.isInRoles = function(uid, roleNames, options, cb) {
+        console.log('is in roles');
         if (cb === undefined && typeof options === 'function') {
             cb = options;
             options = undefined;
@@ -471,6 +472,7 @@ module.exports = function(User) {
 
         // Check for the roles we already have
         var isInRoles = {};
+        console.log('checking if we already have');
         if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
             if (typeof ctx.active.http.req.roles !== "object") {
                 ctx.active.http.req.roles = {};
@@ -481,7 +483,8 @@ module.exports = function(User) {
                 isInRoles[key] = currentRoles[key];
             }
         }
-
+        
+        console.log('re evaluate isInRoles');
         // Re evaluate isInRole report
         if (Object.keys(isInRoles).length > 0) {
             var all = true;
@@ -501,7 +504,8 @@ module.exports = function(User) {
             isInRoles.all = true;
             isInRoles.none = true;
         }
-
+        
+        console.log('run each series');
         async.eachSeries(roleNames, function (roleName, eachCb) {
 
             if (typeof isInRoles[roleName] !== "undefined") {
@@ -509,6 +513,8 @@ module.exports = function(User) {
             }
 
             function updateIsInRoles(err, isRole) {
+                console.log('update is in roles');
+                console.log('isRole:', isRole);
                 if (err) return eachCb(err);
 
                 if (!isRole && isInRoles.all) {
@@ -537,6 +543,7 @@ module.exports = function(User) {
 
 
         }, function (err) {
+            console.log('final callback err: ', err);
             if (err) return cb(err);
 
             if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
