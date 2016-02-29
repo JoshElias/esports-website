@@ -515,8 +515,8 @@ module.exports = function(User) {
             }
 
             function updateIsInRoles(err, isRole) {
-//                console.log('update is in roles');
-//                console.log('isRole:', isRole);
+                console.log('update is in roles');
+                console.log('isRole:', isRole);
                 if (err) return eachCb(err);
 
                 if (!isRole && isInRoles.all) {
