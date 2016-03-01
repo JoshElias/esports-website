@@ -16868,13 +16868,13 @@ angular.module('app.controllers', ['ngCookies'])
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
 
                 var keys = ['name',
+                            'against',
                             'authorId',
                             'slug',
                             'guideType',
                             'description',
                             'createdDate',
                             'premium',
-                            'votes',
                             'synergy',
                             'content',
                             'isFeatured',
@@ -16908,6 +16908,7 @@ angular.module('app.controllers', ['ngCookies'])
                           return seriesCB();
                       })
                       .catch(function (err) {
+                          console.log("catching guide create error")
                           return seriesCB(err);
                       });
                   },
@@ -16917,19 +16918,19 @@ angular.module('app.controllers', ['ngCookies'])
                       }, cleanGuide.guideHeroes)
                       .$promise
                       .then(function (guideHeroData) {
-
-                          _.each(guideHeroData, function(eachVal) {
-                            var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                              return filterVal.heroId === eachVal.heroId;
-                            });
-
+                          
+                              _.each(guideHeroData, function(eachVal) {
+                                var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                                  return filterVal.heroId === eachVal.heroId;
+                                });
+                                  
                               _.each(heroTals, function (innerEachVal, index, list) {
                                 innerEachVal.guideId = guideCreated.id;
                                 innerEachVal.guideHeroId = eachVal.id;
                               });
+                                  
                               tals.push(heroTals);
                           });
-
                           return seriesCB();
                       })
                       .catch(function (err) {
@@ -16969,15 +16970,13 @@ angular.module('app.controllers', ['ngCookies'])
                   },
                   function (seriesCB) {
                     async.each(cleanGuide.maps, function(map, mapCB) {
-//                          console.log('map.id:', map.id);
-//                          console.log('guideData:', guideData);
+                        
                       Guide.maps.link({
                         id: guideCreated.id,
                         fk: map.id
                       }, null)
                       .$promise
                       .then(function (mapLinkData) {
-//                            console.log('mapLinkData:', mapLinkData);
                         return mapCB();
                       })
                       .catch(function (err) {
@@ -16991,7 +16990,7 @@ angular.module('app.controllers', ['ngCookies'])
                       return seriesCB();
                     });
 
-                  }], function (err, results) {
+                  }], function (err) {
                       $scope.fetching = false;
                       if (err) {
                         $window.scrollTo(0, 0);

@@ -2634,17 +2634,12 @@ var app = angular.module('app', [
                                 }
                             }],
                             guide: ['$state', '$stateParams', 'Guide', 'Util', function ($state, $stateParams, Guide, Util) {
-                                var slug = $stateParams.slug;
+                                var slug = _.clone($stateParams.slug);
                                 return Guide.findOne({
                                     filter: {
                                         where: {
                                             slug: slug,
                                         },
-                                        fields: {
-                                            oldMaps: false,
-                                            oldComments: false,
-                                            oldHeroes: false
-                                         },
                                         include: [
                                           {
                                             relation: 'author'
@@ -2734,7 +2729,10 @@ var app = angular.module('app', [
                                 });
                             }],
                             heroes: ['Hero', 'guide', function(Hero, guide) {
-                                var toLoad = _.union(guide.synergy, guide.against.strong, guide.against.weak);
+                                var synergy = Array.isArray(guide.synergy) ? guide.synergy : [];
+                                var strong = guide.against && Array.isArray(guide.against.strong) ? guide.against.strong : [];
+                                var weak = guide.against && Array.isArray(guide.against.weak) ? guide.against.weak : [];
+                                var toLoad = _.union(synergy, strong, weak);
 
                                 return Hero.find({
                                   filter: {
@@ -2754,10 +2752,21 @@ var app = angular.module('app', [
                                   }
                                 })
                                 .$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                })
+                                .catch(function (err) {
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
+                                });
                             }],
                             maps: ['Map', function(Map) {
                                 return Map.find({})
-                                .$promise;
+                                .$promise
+                                .then(function (maps) {
+                                    return maps;
+                                });
                             }]
                         }
                     }
@@ -3011,8 +3020,6 @@ var app = angular.module('app', [
                                             isActive: true
                                         },
                                         fields: {
-                                            oldTalents: false,
-                                            oldAbilities: false,
                                             price: false,
                                             title: false,
                                             manaType: false,
@@ -3110,8 +3117,6 @@ var app = angular.module('app', [
                                             isActive: true
                                         },
                                         fields: {
-                                            oldTalents: false,
-                                            oldAbilities: false,
                                             price: false,
                                             title: false,
                                             manaType: false,
@@ -5491,8 +5496,6 @@ var app = angular.module('app', [
                                     },
                                     filter: {
                                       fields: {
-                                        oldTalents: false,
-                                        oldAbilities: false,
                                         price: false,
                                         title: false,
                                         manaType: false,
@@ -5707,8 +5710,6 @@ var app = angular.module('app', [
                                         isActive: true
                                       },
                                       fields: {
-                                        oldTalents: false,
-                                        oldAbilities: false,
                                         price: false,
                                         title: false,
                                         manaType: false,
