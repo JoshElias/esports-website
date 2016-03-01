@@ -1,7 +1,6 @@
 angular.module('tsAdSense', [])
 .run(
-    ['$rootScope', '$window',
-        function ($rootScope, $window) {
+    ['$rootScope', '$window', '$timeout', function ($rootScope, $window, '$timeout') {
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
                 var canShowAds = !!window.canshowads;
                 var ai = $('.adblock-img');
