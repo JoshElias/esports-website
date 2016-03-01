@@ -172,7 +172,9 @@ angular.module('tsAdSense', [])
         },
         controller: 'tsAdCtrl',
         link: function (scope, el, attrs) {
-            scope.user = LoopBackAuth.currentUserData.username;
+            if (!!LoopBackAuth.isAuthenticated) {
+                scope.user = LoopBackAuth.currentUserData.username;
+            }
         }
     }
 }])
