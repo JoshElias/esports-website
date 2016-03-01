@@ -20,6 +20,15 @@ angular.module('tsAdSense', [])
     var e = $(".ad");
     var role = undefined;
     var canShowAds = !!window.canshowads;
+    var ai = $('.adblock-img');
+
+    $timeout(function () {
+        if (!canShowAds) {
+            for (var i = 0; i < ai.length; i++) {
+                $(ai[i]).removeClass('hidden');
+            }
+        }
+    }, 1000);
     
     function checkPremium () {
         //if (canShowAds) {
@@ -162,19 +171,7 @@ angular.module('tsAdSense', [])
             
             return moduleTpl + 'directives/a.' + tmp + '.html';
         },
-        controller: 'tsAdCtrl',
-        link: function (scope, el, attrs) {
-            var canShowAds = !!window.canShowAds;
-            var e = $('.adblock-img');
-
-            $timeout(function () {
-                if (!canShowAds) {
-                    for (var i = 0; i < e.length; i++) {
-                        $(e[i]).removeClass('hidden');
-                    }
-                }
-            }, 1000);
-        }
+        controller: 'tsAdCtrl'
     }
 }])
 ;
