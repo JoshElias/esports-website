@@ -70,17 +70,27 @@
 
 .default {
     .plg-long {
-        padding-top: 15px;
-        padding-bottom: 15px;
+        padding: 15px;
+        text-align: center;
         
         @include ts-div;
         
         &.plg-dbl {
             @media (max-width: 768px) {
-                padding-left: 15px;
-                padding-right: 15px;
+//                padding-left: 15px;
+//                padding-right: 15px;
 
             }
+            
+            .ad-wrap:first-of-type {
+                @media (max-width: 1199px) {
+                    margin-bottom: 15px;
+                }
+            }
+        }
+
+        .adblock-img {
+            height: 200px;
         }
     }
     
@@ -89,11 +99,6 @@
         padding-bottom: 25px;
         @include ts-div;
        
-    }
-    
-    .programmers {
-        height: 125px;
-        width: 100%;
     }
 }
 
@@ -105,8 +110,8 @@
     @include hs-snapshot-background;
     
     .plg-long {
-        padding-top: 15px;
-        padding-bottom: 15px;
+        padding: 15px;
+        text-align: center;
         
         &.plg-dbl {
             @media (max-width: 768px) {
@@ -122,11 +127,20 @@
                 padding-right: 15px;
             }
         }
+
+        .adblock-img {
+          height: 200px;
+        }
     }
     
     .plg-sidebar {
         padding-top: 35px;
         padding-bottom: 35px;
+        text-align: center;
+
+        .adblock-img {
+          height: 200px;
+        }
     }
     
 }

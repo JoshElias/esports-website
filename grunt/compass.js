@@ -15,10 +15,10 @@ module.exports = {
             cacheDir:    'modules/.sass-cache',
         }
     },
-    adsense: {
+    asense: {
         options: {
             outputStyle: 'expanded',
-            sassDir:     'modules/adsense/client/css',
+            sassDir:     'modules/asense/client/css',
             cssDir:      'client/dist/css/sass/modules',
             cacheDir:    'modules/.sass-cache',
         }

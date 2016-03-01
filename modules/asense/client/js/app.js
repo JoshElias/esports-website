@@ -13,50 +13,50 @@ angular.module('tsAdSense', [])
         }
     ]
 )
-.value('moduleTpl', (tpl !== './') ? tpl + 'views/adsense/client/views/' : 'dist/views/adsense/client/views/')
+.value('moduleTpl', (tpl !== './') ? tpl + 'views/asense/client/views/' : 'dist/views/asense/client/views/')
 .controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', function ($scope, $state, $window, User, EventService, $timeout) {
     var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
     var isAlreadyLoaded = !!document.getElementById("adCode");
     var e = $(".ad");
     var role = undefined;
-    
-    $scope.showAds = false;
-    $scope.adBlock = window.canShowAds;
+    var canShowAds = !!window.canshowads;
     
     function checkPremium () {
-        if (User.isAuthenticated() && !role) {
-            User.isInRoles({
-                uid: User.getCurrentId(),
-                roleNames: ['$premium']
-            })
-            .$promise
-            .then(function (data) {
-                role = data.isInRoles.$premium;
-                
-                var s = document.getElementById('adCode');
-                var eLength = e.length;
-                
-                if (!role) {
-                    $scope.showAds = true;
-                    return doLoadAds();
-                }
-                
-                if (isAlreadyLoaded && s !== null && s !== undefined) {
-                    s.parentNode.removeChild(s);
-                    isAlreadyLoaded = false;
-                }
-                
-                for (var i = 0; i < eLength; i++) {
-                    $(e[i]).remove();
-                }
-                
-                $scope.showAds = false;
-            })
-        } else {
-            role = false;
-            $scope.showAds = true;
-            return doLoadAds();
-        }
+        //if (canShowAds) {
+            if (User.isAuthenticated() && !role) {
+                User.isInRoles({
+                        uid: User.getCurrentId(),
+                        roleNames: ['$premium']
+                    })
+                    .$promise
+                    .then(function (data) {
+                        role = data.isInRoles.$premium;
+
+                        var s = document.getElementById('adCode');
+                        var eLength = e.length;
+
+                        if (!role) {
+                            $scope.showAds = true;
+                            return doLoadAds();
+                        }
+
+                        if (isAlreadyLoaded && s !== null && s !== undefined) {
+                            s.parentNode.removeChild(s);
+                            isAlreadyLoaded = false;
+                        }
+
+                        for (var i = 0; i < eLength; i++) {
+                            $(e[i]).remove();
+                        }
+
+                        $scope.showAds = false;
+                    })
+            } else {
+                role = false;
+                $scope.showAds = true;
+                return doLoadAds();
+            }
+        //}
     }
     
     function doLoadAds () {
@@ -94,13 +94,18 @@ angular.module('tsAdSense', [])
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: moduleTpl + 'directives/ad.html',
+        templateUrl: moduleTpl + 'directives/a.html',
         controller: ['$scope', function ($scope) {
             var adIter = 0;
             var adIterMax = 10;
-            
+            var canShowAds = !!window.canShowAds;
+
             if(!$window.adsbygoogle) {
                 $window.adsbygoogle = [];
+            }
+
+            $scope.getCanShowAds = function () {
+                return canShowAds;
             }
             
             function pushAd () {
@@ -138,7 +143,7 @@ angular.module('tsAdSense', [])
         }
     }
 }])
-.directive('tsAd', ['moduleTpl', '$compile', '$timeout', '$window', function (moduleTpl, $compile, $timeout, $window) {
+.directive('tsAd', ['moduleTpl', '$compile', '$timeout', function (moduleTpl, $compile, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -155,9 +160,21 @@ angular.module('tsAdSense', [])
         templateUrl: function (scope, attrs) {
             var tmp = attrs.structure || attrs.theme;
             
-            return moduleTpl + 'directives/ad.' + tmp + '.html';
+            return moduleTpl + 'directives/a.' + tmp + '.html';
         },
-        controller: 'tsAdCtrl'
+        controller: 'tsAdCtrl',
+        link: function (scope, el, attrs) {
+            var canShowAds = !!window.canShowAds;
+            var e = $('.adblock-img');
+
+            $timeout(function () {
+                if (!canShowAds) {
+                    for (var i = 0; i < e.length; i++) {
+                        $(e[i]).removeClass('hidden');
+                    }
+                }
+            }, 1000);
+        }
     }
 }])
 ;

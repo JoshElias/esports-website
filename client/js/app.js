@@ -9,7 +9,6 @@ var app = angular.module('app', [
     'angularMoment',
     'angularPayments',
     'youtube-embed',
-//    'tsAdSense',
     'dndLists',
     'ngCookies',
     'ngStorage',
@@ -26,6 +25,7 @@ var app = angular.module('app', [
     'app.directives',
     'app.animations',
     'app.redbull',
+    'tsAdSense'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
@@ -33,7 +33,8 @@ var app = angular.module('app', [
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
-            $rootScope.LoginModalService = LoginModalService;
+            $rootScope.LoginModalService = LoginModalService
+            console.log(window.canShowAds);
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
@@ -80,7 +81,7 @@ var app = angular.module('app', [
 
                 // seo
                 if (toState.seo) {
-                    $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
+                    $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords)
                 }
                 if (!toState.og) {
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
