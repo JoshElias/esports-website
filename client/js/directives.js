@@ -156,7 +156,9 @@ angular.module('app.directives', ['ui.load'])
 
                 function redir (go) {
                     var goto = go || 'app.home';
-                    $state.go(goto);
+                    var user = LoopBackAuth.currentUserData;
+
+                    $state.go(goto, {username: user.username});
                 }
 
                 $scope.cancel = function () {
@@ -180,16 +182,18 @@ angular.module('app.directives', ['ui.load'])
                                 $scope.setLoggingIn(0);
                             } else {
 
-                              LoginModalService.hideModal();
-                              $scope.setLoggingIn(2);
+                                  LoginModalService.hideModal();
+                                  $scope.setLoggingIn(2);
 
-                              if ($scope.callback) {
-                                $scope.callback(LoopBackAuth);
-                              } else if (!$scope.state) {
-                                  var redirect = $stateParams.redirect;
+                                console.log($stateParams.redirect);
 
-                                  redir(redirect);
-                              }
+                                if ($scope.callback) {
+                                    $scope.callback(LoopBackAuth);
+                                } else if (!$scope.state) {
+                                    var redirect = $stateParams.redirect;
+
+                                    redir(redirect);
+                                }
                             }
                         });
 

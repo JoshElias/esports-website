@@ -151,7 +151,7 @@ angular.module('tsAdSense', [])
         }
     }
 }])
-.directive('tsAd', ['moduleTpl', '$compile', '$timeout', function (moduleTpl, $compile, $timeout) {
+.directive('tsAd', ['moduleTpl', '$compile', '$timeout', 'LoopBackAuth', function (moduleTpl, $compile, $timeout, LoopBackAuth) {
     return {
         restrict: 'E',
         replace: true,
@@ -170,7 +170,10 @@ angular.module('tsAdSense', [])
             
             return moduleTpl + 'directives/a.' + tmp + '.html';
         },
-        controller: 'tsAdCtrl'
+        controller: 'tsAdCtrl',
+        link: function (scope, el, attrs) {
+            scope.user = LoopBackAuth.currentUserData.username;
+        }
     }
 }])
 ;

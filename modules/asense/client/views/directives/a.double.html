@@ -9,9 +9,12 @@
         </div>
 
         <div ng-if="!getCanShowAds()">
-            <div class="col-lg-6 col-sm-offset-3">
+            <div class="col-lg-4 col-sm-offset-4">
                 <!--<img class="adblock-img" src="http://i1.kym-cdn.com/photos/images/newsfeed/000/003/866/nfNeT7YvTozx0cv7ze3mplZpo1_500.gif">-->
-                Ads help us make awesome features, please consider whitelisting our domain or signing up for a tempostorm premium account here.
+                <div class="adblock">
+                    Ads help us make awesome features, please consider whitelisting us or signing up
+                    for a Tempo Storm premium account <span><a href="./user/{{user}}/edit/premium">here</a>.</span>
+                </div>
             </div>
         </div>
     </div>
