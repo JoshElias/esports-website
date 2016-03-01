@@ -17381,7 +17381,7 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     ], function (err) {
                         $window.scrollTo(0, 0);
-                        $scope.fetching = true;
+                        $scope.fetching = false;
                         if (err) {
                             return AlertService.setError({
                                 show: true,
@@ -17392,59 +17392,6 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.app.settings.guide = null;
                         $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
                     });
-
-//                    Guide.create({}, $scope.guide)
-//                    .$promise
-//                    .then(function (guideData) {
-//
-//                        Guide.maps.link({
-//                            id: guideData.id,
-//                            fk: $scope.guide.maps[0].id
-//                        }, null)
-//                        .$promise
-//                        .then(function (mapLinkData) {
-////                          console.log('mapLinkData:', mapLinkData);
-//                          Vote.create({
-//                              direction: 1,
-//                              createdDate: new Date().toISOString(),
-//                              authorId: User.getCurrentId(),
-//                              guideId: guideData.id
-//                          })
-//                          .$promise
-//                          .then(function (voteCreated) {
-//                              $scope.app.settings.guide = null;
-//                              $state.go('app.hots.guides.guide', { slug: guideData.slug });
-//                          })
-//                          .catch(function (err) {
-//                              $window.scrollTo(0, 0);
-//                              AlertService.setError({
-//                                show: true,
-//                                msg: 'Unable to Save Guide',
-//                                lbErr: err
-//                              });
-//                              console.log("Creating the guide - map link failed:", err);
-//                          });
-//
-//                        })
-//                        .catch(function (err) {
-//                            $window.scrollTo(0, 0);
-//                            AlertService.setError({
-//                              show: true,
-//                              msg: 'Unable to Save Guide',
-//                              lbErr: err
-//                            });
-//                            console.log("Creating the guide - map link failed:", err);
-//                        })
-//                    })
-//                    .catch(function (err) {
-//                        $window.scrollTo(0, 0);
-//                        AlertService.setError({
-//                          show: true,
-//                          msg: 'Unable to Save Guide',
-//                          lbErr: err
-//                        });
-//                        console.log("Creating the guide failed:", err);
-//                    })
                 }
             };
         }
