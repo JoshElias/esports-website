@@ -172,6 +172,7 @@ angular.module('tsAdSense', [])
         },
         controller: 'tsAdCtrl',
         link: function (scope, el, attrs) {
+
             if (!!LoopBackAuth.isAuthenticated) {
                 scope.user = LoopBackAuth.currentUserData.username;
             }
