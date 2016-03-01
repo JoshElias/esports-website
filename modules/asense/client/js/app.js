@@ -2,8 +2,17 @@ angular.module('tsAdSense', [])
 .run(
     ['$rootScope', '$window',
         function ($rootScope, $window) {
-            $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
-                
+            $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+                var canShowAds = !!window.canshowads;
+                var ai = $('.adblock-img');
+
+                $timeout(function () {
+                    if (!canShowAds) {
+                        for (var i = 0; i < ai.length; i++) {
+                            $(ai[i]).removeClass('hidden');
+                        }
+                    }
+                }, 1000);
 //              Object.keys($window).filter(function(k) { return k.indexOf('google') >= 0 }).forEach(
 //                function(key) {
 //                  delete($window[key]);
@@ -20,16 +29,7 @@ angular.module('tsAdSense', [])
     var e = $(".ad");
     var role = undefined;
     var canShowAds = !!window.canshowads;
-    var ai = $('.adblock-img');
 
-    $timeout(function () {
-        if (!canShowAds) {
-            for (var i = 0; i < ai.length; i++) {
-                $(ai[i]).removeClass('hidden');
-            }
-        }
-    }, 1000);
-    
     function checkPremium () {
         //if (canShowAds) {
             if (User.isAuthenticated() && !role) {
