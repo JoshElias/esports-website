@@ -1326,7 +1326,8 @@ var app = angular.module('app', [
                                             chapters: true,
                                             youtubeId: true,
                                             gameModeType: true,
-                                            isActive: true
+                                            isActive: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
@@ -2641,6 +2642,25 @@ var app = angular.module('app', [
                                         where: {
                                             slug: slug,
                                         },
+                                        fields: [
+                                            'against',
+                                            'authorId',
+                                            'comments',
+                                            'content',
+                                            'createdDate',
+                                            'description',
+                                            'guideType',
+                                            'id',
+                                            'isFeatured',
+                                            'isPublic',
+                                            'name',
+                                            'premium',
+                                            'slug',
+                                            'synergy',
+                                            'viewCount',
+                                            'youtubeId',
+                                            'isCommentable'
+                                        ],
                                         include: [
                                           {
                                             relation: 'author'
@@ -2827,12 +2847,7 @@ var app = angular.module('app', [
                                         where: {
                                             isActive: true
                                         },
-                                        fields: {
-                                            price: false,
-                                            title: false,
-                                            manaType: false,
-                                            characters: false
-                                        }
+                                        fields: ['id', 'className', 'description', 'heroType', 'isActive', 'name', 'orderNum', 'role', 'universe']
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -2992,7 +3007,10 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (guide) {
+                                    return guide;
+                                });
                             }],
                             userRoles: ['User', function(User) {
                                 if (!User.isAuthenticated()) {
@@ -3020,12 +3038,7 @@ var app = angular.module('app', [
                                         where: {
                                             isActive: true
                                         },
-                                        fields: {
-                                            price: false,
-                                            title: false,
-                                            manaType: false,
-                                            characters: false
-                                        }
+                                        fields: ['id', 'className', 'description', 'heroType', 'isActive', 'name', 'orderNum', 'role', 'universe']
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -3035,28 +3048,6 @@ var app = angular.module('app', [
                                     return waterCB();
                                   });
                                 },
-//                                function (heroData, waterCB) {
-//                                  async.each(heroData, function(hero, heroCB) {
-//                                    HeroTalent.find({
-//                                      filter: {
-//                                        where: {
-//                                          heroId: hero.id
-//                                        },
-//                                        include: ['talent']
-//                                      }
-//                                    }).$promise
-//                                    .then(function (heroTalents) {
-//                                      hero.talents = heroTalents;
-//                                      return heroCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                      return heroCB(err);
-//                                    });
-//
-//                                  }, function(err) {
-//                                    return waterCB(null, heroData);
-//                                  });
-//                                }
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
@@ -3116,12 +3107,6 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             isActive: true
-                                        },
-                                        fields: {
-                                            price: false,
-                                            title: false,
-                                            manaType: false,
-                                            characters: false
                                         }
                                     }
                                 }).$promise
@@ -4787,7 +4772,8 @@ var app = angular.module('app', [
                                                 chapters: true,
                                                 deckType: true,
                                                 gameModeType: true,
-                                                youtubeId: true
+                                                youtubeId: true,
+                                                isCommentable: true
                                             },
                                             include: [
                                                 {
@@ -4816,15 +4802,15 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'mulligansWithCoin',
-												scope: {
-													include: ['card']
-												}
+                                                scope: {
+                                                  include: ['card']
+                                                }
                                             },
                                             {
                                                 relation: 'mulligansWithoutCoin',
-												scope: {
-
-												}
+                                                scope: {
+                                                  include: ['card']
+                                                }
                                             }
                                         ]
                                     }
@@ -5496,12 +5482,7 @@ var app = angular.module('app', [
                                       isActive: true
                                     },
                                     filter: {
-                                      fields: {
-                                        price: false,
-                                        title: false,
-                                        manaType: false,
-                                        characters: false
-                                      }
+                                      fields: ['id', 'className', 'description', 'heroType', 'isActive', 'name', 'orderNum', 'role', 'universe']
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -5510,31 +5491,7 @@ var app = angular.module('app', [
                                   .catch(function (err) {
                                     return waterCB();
                                   });
-                                },
-//                                function (heroData, waterCB) {
-//                                  async.each(heroData, function(hero, heroCB) {
-//                                    HeroTalent.find({
-//                                      filter: {
-//                                        where: {
-//                                          heroId: hero.id
-//                                        },
-//                                        include: ['talent']
-//                                      }
-//                                    }).$promise
-//                                    .then(function (heroTalents) {
-//                                      console.log('heroTalents:', heroTalents);
-//                                      hero.talents = heroTalents;
-//                                      console.log('heroData:', heroData);
-//                                      return heroCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                      return heroCB(err);
-//                                    });
-//
-//                                  }, function(err) {
-//                                    return waterCB(null, heroData);
-//                                  });
-//                                }
+                                }
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
@@ -5710,12 +5667,7 @@ var app = angular.module('app', [
                                       where: {
                                         isActive: true
                                       },
-                                      fields: {
-                                        price: false,
-                                        title: false,
-                                        manaType: false,
-                                        characters: false
-                                      }
+                                      fields: ['id', 'className', 'description', 'heroType', 'isActive', 'name', 'orderNum', 'role', 'universe']
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -5725,28 +5677,6 @@ var app = angular.module('app', [
                                     return waterCB();
                                   });
                                 },
-//                                function (heroData, waterCB) {
-//                                  async.each(heroData, function(hero, heroCB) {
-//                                    HeroTalent.find({
-//                                      filter: {
-//                                        where: {
-//                                          heroId: hero.id
-//                                        },
-//                                        include: ['talent']
-//                                      }
-//                                    }).$promise
-//                                    .then(function (heroTalents) {
-//                                      hero.talents = heroTalents;
-//                                      return heroCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                      return heroCB(err);
-//                                    });
-//
-//                                  }, function(err) {
-//                                    return waterCB(null, heroData);
-//                                  });
-//                                }
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
@@ -5769,22 +5699,56 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.map.html',
                         controller: 'AdminHOTSGuideEditMapCtrl',
                         resolve: {
-                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                                var guideID = $stateParams.guideID;
-
-                                return Guide.find({
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
+                            dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                                var guideId = $stateParams.guideID;
+                                return Guide.findById({
+                                    id: guideId,
                                     filter: {
-                                        where: {
-                                            id: guideID
-                                        }
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            }
+                                        ]
                                     }
                                 }).$promise;
                             }],
-                            heroes: ['Hero', function (Hero) {
-                                return Hero.find({}).$promise;
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                });
                             }],
-                            maps: ['Map', function (Map) {
-                                return Map.find({}).$promise;
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }

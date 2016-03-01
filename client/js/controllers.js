@@ -6947,10 +6947,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.deck.premium.isPremium;
@@ -7180,12 +7190,13 @@ angular.module('app.controllers', ['ngCookies'])
                     'premium',
                     'voteScore',
                     'votes',
-                    'youtubeId'
+                    'youtubeId',
+                    'isCommentable'
                 ]);
 
 
 
-                console.log('deck before save:', cleanDeck);
+//                console.log('deck before save:', cleanDeck);
 
 
                 // save deck + children (array names were changed to avoid this)
@@ -7776,10 +7787,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            }
 
             $scope.isPremium = function () {
                 var premium = $scope.deck.premium.isPremium;
@@ -9864,11 +9885,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
-
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
             $scope.isFeatured = function () {
                 var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -10074,7 +10104,8 @@ angular.module('app.controllers', ['ngCookies'])
                     'premium',
                     'voteScore',
                     'votes',
-                    'youtubeId'
+                    'youtubeId',
+                    'isCommentable'
                 ]);
 
 //                console.log('deck before save:', cleanDeck);
@@ -10698,11 +10729,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
-
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
             $scope.isFeatured = function () {
                 var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -14699,10 +14739,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;
@@ -14758,6 +14808,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'youtubeId',
                             'viewCount',
                             'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) {
@@ -14978,10 +15029,20 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isFeatured = function () {
                 var featured = $scope.guide.featured;
@@ -14990,7 +15051,7 @@ angular.module('app.controllers', ['ngCookies'])
                         return $scope.featuredTypes[i].text;
                     }
                 }
-            }
+            };
 
 //            // save guide
 //            $scope.saveGuide = function () {
@@ -15151,10 +15212,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;
@@ -15211,7 +15282,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'isPublic',
                             'youtubeId',
                             'viewCount',
-                            'voteScore'
+                            'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(guideCopy, keys);
                 var temp = _.map(guideCopy.heroes, function (hero) {
@@ -15408,21 +15480,54 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'Guide', 'guide', 'heroes', 'maps',
-        function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, Guide, guide, heroes, maps) {
-            // create guide
-            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map', guide);
+    .controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'Guide', 'dataGuide', 'dataHeroes', 'dataMaps', 'userRoles', 'EventService', 'User', 'Util',
+        function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, Guide, dataGuide, dataHeroes, dataMaps, userRoles, EventService, User, Util) {
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
 
+            // Listen for login/logout events and update role accordingly
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
+            });
+
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+//                console.log("event listener response:", data);
+                $scope.isUserAdmin = false;
+                $scope.isUserContentProvider = false;
+            });
+
+//            console.log('dataGuide:', dataGuide);
+            // create guide
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map' && $scope.app.settings.guide.id === dataGuide.id) ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map', dataGuide);
+
+//            console.log('$scope.guide:', $scope.guide);
             // heroes
-            $scope.heroes = heroes;
+            $scope.heroes = dataHeroes;
+//            console.log('$scope.heroes:', $scope.heroes);
 
             // maps
-            $scope.maps = maps;
+            $scope.maps = dataMaps;
+//            console.log('$scope.maps:', $scope.maps);
+            var mapFromDB = dataGuide.maps[0];
 
             // steps
             $scope.step = 2;
             $scope.prevStep = function () {
-                if ($scope.step == 2) { return $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id }); }
+                if ($scope.step == 2) { return $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug }); }
                 if ($scope.step > 1) $scope.step = $scope.step - 1;
             }
             $scope.nextStep = function () {
@@ -15430,7 +15535,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.stepOne = function () {
-                $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide.id });
+                $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug });
             };
 
             // draw map rows
@@ -15440,8 +15545,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if ($scope.maps[index]) {
-                        maps.push($scope.maps[index]);
+                    if (dataMaps[index]) {
+                        maps.push(dataMaps[index]);
                     }
                     index++;
                 }
@@ -15454,7 +15559,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // summernote options
             $scope.options = {
-                disableDragAndDrop: true,
                 height: 100,
                 toolbar: [
                     ['style', ['style']],
@@ -15469,10 +15573,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;
@@ -15490,7 +15604,7 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.guide.featured;
+                var featured = $scope.guide.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
@@ -15500,25 +15614,70 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
+                var guideSlug;
+//                console.log('saving guide: ', $scope.guide);
                 if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                     return false;
                 }
+                if (!User.isAuthenticated()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.saveGuide();
+                    });
+                } else {
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+                    $scope.fetching = true;
 
-                Guide.update({
-                    where: {
-                        id: $scope.guide.id
-                    }
-
-                },$scope.guide).$promise.then(function () {
-
-                    AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been updated successfully.' });
-                    $state.go('app.admin.hots.guides.list');
-
-                }).catch( function(){
-                    AlertService.setError({ show: true, msg: $scope.guide.name + ' has not been updated. ' + err.status + ": " + err.data.error.message });
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                });
+                    async.parallel([
+                        function(paraCB){
+                            Guide.upsert($scope.guide)
+                            .$promise
+                            .then(function (guideData) {
+                                guideSlug = guideData.slug;
+                                return paraCB();
+                            })
+                            .catch(function (err) {
+                                return paraCB(err);
+                            });
+                        },
+                        function(paraCB) {
+                            Guide.maps.unlink({
+                                id: $scope.guide.id,
+                                fk: mapFromDB.id
+                            }).$promise
+                            .then(function (mapUnlinkData) {
+                                return paraCB();
+                            })
+                            .catch(function (err) {
+                                return paraCB(err);
+                            });
+                        },
+                        function(paraCB){
+                            Guide.maps.link({
+                                id: $scope.guide.id,
+                                fk: $scope.guide.maps[0].id
+                            }).$promise
+                            .then(function (mapLinkData) {
+                                return paraCB();
+                            })
+                            .catch(function (err) {
+                                return paraCB(err);
+                            });
+                        }
+                    ], function(err, results) {
+                        $scope.fetching = false;
+                        if (err) {
+                            $window.scrollTo(0, 0);
+                            AlertService.setError({
+                              show: true,
+                              msg: 'Unable to Update Guide',
+                              lbErr: err
+                            });
+                            return console.log('para err: ', err);
+                        }
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: guideSlug });
+                    });
+                }
             };
         }
     ])
@@ -16823,10 +16982,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;
@@ -16875,12 +17044,15 @@ angular.module('app.controllers', ['ngCookies'])
                             'description',
                             'createdDate',
                             'premium',
+                            'against',
                             'synergy',
                             'content',
                             'isFeatured',
                             'isPublic',
                             'youtubeId',
-                            'viewCount'
+                            'viewCount',
+                            'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) {
@@ -17108,10 +17280,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;
@@ -17152,13 +17334,6 @@ angular.module('app.controllers', ['ngCookies'])
                     
                     $scope.guide.slug = Util.slugify($scope.guide.name);
 //                    $scope.authorId = LoopBackAuth.currentUserId;
-
-                    $scope.guide.votes = [
-                        {
-                            userId: User.getCurrentId(),
-                            direction: 1
-                        }
-                    ];
 
                     $scope.guide.voteScore = 1;
 //                    console.log('saving $scope.guide:', $scope.guide);
@@ -17206,7 +17381,7 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     ], function (err) {
                         $window.scrollTo(0, 0);
-                        $scope.fetching = true;
+                        $scope.fetching = false;
                         if (err) {
                             return AlertService.setError({
                                 show: true,
@@ -17217,59 +17392,6 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.app.settings.guide = null;
                         $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
                     });
-
-//                    Guide.create({}, $scope.guide)
-//                    .$promise
-//                    .then(function (guideData) {
-//
-//                        Guide.maps.link({
-//                            id: guideData.id,
-//                            fk: $scope.guide.maps[0].id
-//                        }, null)
-//                        .$promise
-//                        .then(function (mapLinkData) {
-////                          console.log('mapLinkData:', mapLinkData);
-//                          Vote.create({
-//                              direction: 1,
-//                              createdDate: new Date().toISOString(),
-//                              authorId: User.getCurrentId(),
-//                              guideId: guideData.id
-//                          })
-//                          .$promise
-//                          .then(function (voteCreated) {
-//                              $scope.app.settings.guide = null;
-//                              $state.go('app.hots.guides.guide', { slug: guideData.slug });
-//                          })
-//                          .catch(function (err) {
-//                              $window.scrollTo(0, 0);
-//                              AlertService.setError({
-//                                show: true,
-//                                msg: 'Unable to Save Guide',
-//                                lbErr: err
-//                              });
-//                              console.log("Creating the guide - map link failed:", err);
-//                          });
-//
-//                        })
-//                        .catch(function (err) {
-//                            $window.scrollTo(0, 0);
-//                            AlertService.setError({
-//                              show: true,
-//                              msg: 'Unable to Save Guide',
-//                              lbErr: err
-//                            });
-//                            console.log("Creating the guide - map link failed:", err);
-//                        })
-//                    })
-//                    .catch(function (err) {
-//                        $window.scrollTo(0, 0);
-//                        AlertService.setError({
-//                          show: true,
-//                          msg: 'Unable to Save Guide',
-//                          lbErr: err
-//                        });
-//                        console.log("Creating the guide failed:", err);
-//                    })
                 }
             };
         }
@@ -17430,10 +17552,20 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            }
 
             $scope.isFeatured = function () {
                 var featured = $scope.guide.isFeatured;
@@ -17476,7 +17608,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'isPublic',
                             'youtubeId',
                             'viewCount',
-                            'voteScore'
+                            'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(guideCopy, keys);
                 var temp = _.map(guideCopy.heroes, function (hero) {
@@ -17767,10 +17900,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             $scope.isPremium = function () {
                 var premium = $scope.guide.premium.isPremium;

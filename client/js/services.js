@@ -1511,7 +1511,7 @@ angular.module('app.services', [])
             deckType: data.deckType || 'None',
             isCommentable: data.isCommentable,
             gameModeType: data.gameModeType || 'constructed',
-            basic: data.basic || false,
+            basic: _.isUndefined(data.basic) ? false : data.basic,
             matchups: data.matchups || [],
             cards: data.cards || [],
             heroName: data.heroName || '',
@@ -1523,7 +1523,8 @@ angular.module('app.services', [])
             },
             comments: data.comments || [],
             slug: data.slug || '',
-            isFeatured: data.isFeatured || false,
+            isFeatured: _.isUndefined(data.isFeatured) ? false : data.isFeatured,
+            isCommentable: _.isUndefined(data.isCommentable) ? true : data.isCommentable,
             isPublic: data.isPublic !== undefined && data.isPublic === false ? false : true,
             voteScore: data.voteScore || 1,
             votes: data.votes || [],
@@ -2173,8 +2174,9 @@ angular.module('app.services', [])
                     isPremium: false,
                     expiryDate: d
                 },
-                isFeatured: data.featured || false,
-                isPublic:  data.isPublic === false ? false : true,
+                isFeatured: _.isUndefined(data.isFeatured) ? false : data.isFeatured,
+                isPublic:  _.isUndefined(data.isPublic) ? true : data.isPublic,
+                isCommentable: _.isUndefined(data.isCommentable) ? true : data.isCommentable,
                 votes: data.votes || [],
                 voteScore: data.voteScore || 0,
                 viewCount: data.viewCount || 0,
@@ -2219,6 +2221,7 @@ angular.module('app.services', [])
 
             gb.toggleHero = function (hero) {
                 if (gb.hasHero(hero)) {
+                    console.log(1);
                     for (var i = 0; i < gb.heroes.length; i++) {
                         if (gb.heroes[i].hero.id === hero.id) {
                             gb.heroes.splice(i, 1);
