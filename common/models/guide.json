@@ -59,6 +59,9 @@
     "talentTiers": {
       "type": "object"
     },
+    "isCommentable": {
+      "type": "boolean"
+    },
     "synergy": {
       "type": [
         "string"
