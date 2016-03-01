@@ -5,13 +5,13 @@ angular.module('tsAdSense', [])
                 var canShowAds = !!window.canshowads;
                 var ai = $('.adblock-img');
 
-                $timeout(function () {
-                    if (!canShowAds) {
-                        for (var i = 0; i < ai.length; i++) {
-                            $(ai[i]).removeClass('hidden');
-                        }
-                    }
-                }, 3000);
+                //$timeout(function () {
+                //    if (!canShowAds) {
+                //        for (var i = 0; i < ai.length; i++) {
+                //            $(ai[i]).removeClass('hidden');
+                //        }
+                //    }
+                //}, 3000);
 //              Object.keys($window).filter(function(k) { return k.indexOf('google') >= 0 }).forEach(
 //                function(key) {
 //                  delete($window[key]);
