@@ -97,6 +97,7 @@
 			font-weight: bold;
 			color: grey;
 			padding:15px 0px;
+			width: 400px;
 		}
     }
     
@@ -134,9 +135,14 @@
             }
         }
 
-        .adblock-img {
-          height: 200px;
-        }
+		.adblock {
+			font-weight: bold;
+			color: grey;
+			padding:15px 0px;
+			width: 400px;
+			margin: auto;
+
+		}
     }
     
     .plg-sidebar {
@@ -147,6 +153,14 @@
         .adblock-img {
           height: 200px;
         }
+
+		.adblock {
+			font-weight: bold;
+			color: grey;
+			padding:15px 0px;
+			width: 200px;
+			margin: auto;
+		}
     }
     
 }
