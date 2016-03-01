@@ -2993,7 +2993,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (guide) {
-                                    console.log('guide:', guide);
                                     return guide;
                                 });
                             }],
@@ -3092,14 +3091,6 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             isActive: true
-                                        },
-                                        fields: {
-                                            oldTalents: false,
-                                            oldAbilities: false,
-                                            price: false,
-                                            title: false,
-                                            manaType: false,
-                                            characters: false
                                         }
                                     }
                                 }).$promise
@@ -5692,21 +5683,56 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.map.html',
                         controller: 'AdminHOTSGuideEditMapCtrl',
                         resolve: {
-                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                                var guideID = $stateParams.guideID;
-                                return Guide.find({
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
+                            dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                                var guideId = $stateParams.guideID;
+                                return Guide.findById({
+                                    id: guideId,
                                     filter: {
-                                        where: {
-                                            id: guideID
-                                        }
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            }
+                                        ]
                                     }
                                 }).$promise;
                             }],
-                            heroes: ['Hero', function (Hero) {
-                                return Hero.find({}).$promise;
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                });
                             }],
-                            maps: ['Map', function (Map) {
-                                return Map.find({}).$promise;
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }

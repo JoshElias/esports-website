@@ -2220,7 +2220,6 @@ angular.module('app.services', [])
             };
 
             gb.toggleHero = function (hero) {
-                console.log('hero:', hero);
                 if (gb.hasHero(hero)) {
                     console.log(1);
                     for (var i = 0; i < gb.heroes.length; i++) {
