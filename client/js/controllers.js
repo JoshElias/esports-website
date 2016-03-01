@@ -497,7 +497,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.subform = {
                 isBusy: false,
-                cardPlaceholder: (isPremium) ? "XXXX XXXX XXXX " + user.subscription.last4 : "XXXX XXXX XXXX XXXX"
+                cardPlaceholder: (isPremium && !!user.subscription.last4) ? "XXXX XXXX XXXX " + user.subscription.last4 : "XXXX XXXX XXXX XXXX"
             };
 
             $scope.testString = function (str) {
