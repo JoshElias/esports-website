@@ -2,25 +2,63 @@
 
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal" novalidate>
-    <div class="panel-heading">
-        Add Heroes of the Storm Snapshot
-    </div>
-    <div class="panel-body">
-        <div class="form-group">
-            <label for="vodDate" class="col-sm-2 control-label">Meta Snapshot #</label>
-            <div class="col-sm-10">
-                <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum" ng-keyup="setSlug()">
+        <div class="panel-heading">
+            Edit Heroes of the Storm Snapshot
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="vodDate" class="col-sm-2 control-label">Meta Snapshot #</label>
+                <div class="col-sm-10">
+                    <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="vodDate" class="col-sm-2 control-label">Subtitle</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" ng-model="snapshot.subtitle">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="vodDate" class="col-sm-2 control-label">Into</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" type="text" ng-model="snapshot.intro"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="vodDate" class="col-sm-2 control-label">Thoughts</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" type="text" ng-model="snapshot.thoughts"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    Tiers
+                    <button class="btn" ng-click="snapshot.addTier()">+ Add Tier</button>
+                </label>
+                <div class="col-sm-10">
+                    <ul class="tier-list" ng-repeat="tier in snapshot.tiers track by $index">
+                        <div class="tier-list-head clearfix">
+                            Tier {{tier.tier}}
+
+                            <button ng-click="addheroWnd(tier.tier)" class="btn pull-right">
+                                + Add Hero
+                            </button>
+                        </div>
+                        <li ng-if="tier.heroes.length === 0">There have been no heroes added to this tier yet!</li>
+                        <li ng-repeat="heroTier in tier.heroes">{{heroTier.hero.name}}</li>
+                        <li></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="panel-footer clearfix">
-        <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || !vod.displayDate || fetching" ng-click="saveVod(vod)">
-				<span ng-if="!fetching">Add Snapshot</span>
-				<span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
-			</button>
+        <div class="panel-footer clearfix">
+            <div class="col-sm-10 col-sm-offset-2">
+                <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || !vod.displayDate || fetching">
+                    <span ng-if="!fetching">Edit Snapshot</span>
+                    <span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
+                </button>
+            </div>
         </div>
-    </div>
     </form>
-    </div>
+</div>
 </div>

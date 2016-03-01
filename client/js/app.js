@@ -5822,11 +5822,22 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.snapshot.edit.html',
                         controller: 'AdminHOTSSnapshotEditCtrl',
                         resolve: {
-                            hotsSnapshot: ['HotsSnapshot', function (HotsSnapshot) {
-                                console.log('resolving');
+                            hotsSnapshot: ['HotsSnapshot', '$stateParams', function (HotsSnapshot, $stateParams) {
+                                var snapshotId = $stateParams.snapshotId;
+                                console.log('resolving', snapshotId);
                                 
                                 return HotsSnapshot.findById({
-                                    id: snapshotId
+                                    id: snapshotId,
+                                    filter: {
+                                        include: [
+                                            {
+                                                relation: 'heroTiers',
+                                                scope: {
+                                                    include: ['hero']
+                                                }
+                                            }
+                                        ]
+                                    }
                                 })
                                 .$promise
                                 .then(function (data) {

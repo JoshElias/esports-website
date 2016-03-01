@@ -48,7 +48,7 @@
       },
       "guides" : {
           "type": "hasMany",
-          "model": "tierGuide",
+          "model": "guideTier",
           "foreignKey": "heroTierId"
       }
   },

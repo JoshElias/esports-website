@@ -1897,4 +1897,85 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/overwatch.heroes.ability.edit.html'
     };
 })
+.directive('hotsSnapshotHeroAdd', function () {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/admin/hots.snapshot.hero.add.html',
+        controller: ['$scope', 'Hero', 'Guide', function ($scope, Hero, Guide) {
+            console.log($scope.tier);
+            $scope.maxScore = 10;
+            $scope.heroes = getHeroes(0, 3);
+            $scope.guides = getGuides(0, 3);
+            $scope.heroTier = {
+                summary      : "",
+                tier         : $scope.tier,
+                previousTier : "",
+                burstScore   : 0,
+                pushScore    : 0,
+                surviveScore : 0,
+                scaleScore   : 0,
+                utilityScore : 0,
+                heroId       : "",
+                guideTierId  : "",
+                snapshotId   : ""
+            };
+
+            $scope.setHero = function (hero) {
+                $scope.heroTier.hero = hero;
+                $scope.heroTier.heroId = hero.id;
+            }
+
+            $scope.setGuide = function (guide) {
+                $scope.heroTier.guideTier = {
+                    guideId: guide.id,
+                    guide: guide
+                }
+            }
+
+            $scope.isScoreValid = function (max, value) {
+                return value > max;
+            }
+
+            function getGuides (skip, limit) {
+                $scope.loading = true;
+
+                var skip = skip || 0;
+                var limit = limit || 10;
+
+                return Guide.find({
+                    filter: {
+                        fields: {
+                            id: true,
+                            name: true
+                        },
+                        skip: skip,
+                        limit: limit
+                    }
+                }, function () {
+                    $scope.loading = false;
+                });
+            }
+
+            function getHeroes (skip, limit) {
+                $scope.loading = true;
+
+                var skip = skip || 0;
+                var limit = limit || 10;
+
+                return Hero.find({
+                    filter: {
+                        fields: {
+                            id: true,
+                            name: true
+                        },
+                        skip: skip,
+                        limit: limit
+                    }
+                }, function () {
+                    $scope.loading = false;
+                });
+            }
+        }]
+    }
+})
 ;

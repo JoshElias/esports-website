@@ -1,5 +1,5 @@
 {
-  "name": "tierGuide",
+  "name": "guideTier",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,

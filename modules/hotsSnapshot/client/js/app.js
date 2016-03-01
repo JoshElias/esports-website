@@ -25,7 +25,7 @@ angular.module('hotsSnapshot', [])
             url: '/test',
             views: {
                 hotsSnapshots: {
-                    templateUrl: moduleTpl + 'snapshot.html',
+                    templateUrl: moduleTpl + 'snapshot.html'
                 }
             }
         })

@@ -45,7 +45,100 @@ angular.module('app.services', [])
         metaKeywords: function() { return metaKeywords; },
         getStatusCode: function() { return statusCode; }
     }
-})
+    })
+    .factory('CrudMan', [
+        function () {
+            //    var arrs = {};
+            var crud = {
+                exists  : [],
+                toDelete: [],
+                toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
+            }
+            var e = 'exists';
+            var d = 'toDelete';
+            var w = 'toWrite';
+
+            var CrudMan = function () {
+                var arrs = {};
+
+                function getArrs () {
+                    return arrs;
+                }
+
+                function find (item, arrName, crud) {
+                    return _.find(arrs[arrName][crud], function (val) { return val == item });
+                }
+
+                function createArr (arrName) {
+                    arrs[arrName] = angular.copy(crud);
+                }
+
+                function setExists (inArr, arrName) {
+                    if (!arrs[arrName]) {
+                        this.createArr(arrName);
+                    }
+
+                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
+                }
+
+                function removeFromArr (item, arrName, crud) {
+                    var arr = arrs[arrName];
+                    var idx = arr[crud].indexOf(item);
+
+                    arr[crud].splice(idx, 1);
+                }
+
+                function addToDelete (item, arrName) {
+                    var arr = arrs[arrName];
+
+                    if (find(item, arrName)) {
+                        var idx = arr[w].indexOf(item);
+
+                        arr[w].splice(idx, 1);
+                    }
+
+                    if (!find(item, arrName)) {
+                        arr[d].push(item);
+                    }
+                }
+
+                function addToArr (item, arrName) {
+                    var arr = arrs[arrName];
+
+                    if (find(item, arrName)) {
+                        var idx = arr[d].indexOf(item);
+
+                        arr[d].splice(idx, 1);
+                    }
+
+                    if (!find(item, arrName)) {
+                        arr[w].push(item);
+                    }
+                }
+
+                function toggleItem (item, arrName) {
+                    if (find(item, arrName, e)) {
+                        arrs[arrName][d].push(item);
+                    } else if (find(item, arrName, w)) {
+                        removeFromArr(item, arrName, w);
+                    } else {
+                        addToArr(item, arrName, w);
+                    }
+                }
+
+                return {
+                    setExists: setExists,
+                    toggle: toggleItem,
+                    add: addToArr,
+                    delete: addToDelete,
+                    createArr: createArr,
+                    getArrs: getArrs
+                }
+            }
+
+            return CrudMan;
+        }
+    ])
     .factory('AuthenticationService', function() {
     var loggedIn = false,
         admin = false,
@@ -354,6 +447,91 @@ angular.module('app.services', [])
                 return $localStorage['metaCom-'];
             }
         }
+    }])
+    .factory('HOTSSnapshot', ['CrudMan', function (CrudMan) {
+        var CrudMan = new CrudMan();
+            CrudMan.createArr('heroes');
+
+        var HOTSSnapshot = function (snapshot) {
+
+            this.snapNum  = snapshot.snapNum;
+            this.subtitle = snapshot.subtitle;
+            this.intro    = snapshot.intro;
+            this.thoughts = snapshot.thoughts;
+            this.tiers    = new Array();
+
+            function validate (obj) {
+                var arr = [];
+
+                _.each(obj, function (item, key) {
+                    if (typeof item === 'undefined') {
+                        arr.push(key);
+                    }
+                });
+
+                return arr;
+            }
+
+            //begin method definitions
+            this.addTier = function () {
+                var tier = {
+                    heroes: new Array(),
+                    tier: this.tiers.length + 1
+                }
+
+                this.tiers.push(tier);
+            }
+
+            this.newHero = function (obj) {
+                if (!_.isEmpty(validate(obj))) {
+                    console.log("error!");
+                }
+
+                var hero = {
+                    summary      : obj.summary,
+                    tier         : obj.tier,
+                    previousTier : obj.previousTier,
+                    burstScore   : obj.burstScore,
+                    pushScore    : obj.pushScore,
+                    surviveScore : obj.surviveScore,
+                    scaleScore   : obj.scaleScore,
+                    utilityScore : obj.utilityScore,
+                    guideTierId  : obj.guideTierId,
+                    snapshotId   : obj.snapshotId
+                };
+
+                console.log(hero);
+            };
+
+            this.newTier = function () {
+
+                this.tiers.push();
+            }
+
+
+            //INITIALIZE THE SNAPSHOT OBJECT
+            //
+            //
+            //
+            //build tiers
+            for (var i = 0; i < snapshot.heroTiers.length; i++) {
+                var item = snapshot.heroTiers[i];
+
+                if (_.isUndefined(this.tiers[item.tier-1])) {
+                    this.tiers[item.tier-1] = {
+                        heroes: new Array(),
+                        tier: item.tier
+                    };
+                }
+
+                this.tiers[item.tier-1].heroes.push(item);
+            }
+
+
+            return this;
+        };
+
+        return HOTSSnapshot;
     }])
     .factory('AdminTeamService', ['$http', '$q', function ($http, $q) {
         return {
@@ -3642,101 +3820,6 @@ angular.module('app.services', [])
             emit : emit
         }
     }])
-    .factory('CrudMan', [
-        function () {
-            //    var arrs = {};
-            var crud = {
-                exists  : [],
-                toDelete: [],
-                toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
-            }
-            var e = 'exists';
-            var d = 'toDelete';
-            var w = 'toWrite';
-
-            var CrudMan = function () {
-                var arrs = {};
-
-                function getArrs () {
-                    return arrs;
-                }
-
-                function find (item, arrName, crud) {
-                    return _.find(arrs[arrName][crud], function (val) { return val == item });
-                }
-
-                function createArr (arrName) {
-                    arrs[arrName] = angular.copy(crud);
-                }
-
-                function setExists (inArr, arrName) {
-                    if (!arrs[arrName]) {
-                        this.createArr(arrName);
-                    }
-
-                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
-                }
-
-                function removeFromArr (item, arrName, crud) {
-                    var arr = arrs[arrName];
-                    var idx = arr[crud].indexOf(item);
-
-                    arr[crud].splice(idx, 1);
-                }
-
-                function addToDelete (item, arrName) {
-                    var arr = arrs[arrName];
-
-                    if (find(item, arrName)) {
-                        var idx = arr[w].indexOf(item);
-
-                        arr[w].splice(idx, 1);
-                    }
-
-                    if (!find(item, arrName)) {
-                        arr[d].push(item);
-                    }
-                }
-
-                function addToArr (item, arrName) {
-                    var arr = arrs[arrName];
-
-                    if (find(item, arrName)) {
-                        var idx = arr[d].indexOf(item);
-
-                        arr[d].splice(idx, 1);
-                    }
-
-                    if (!find(item, arrName)) {
-                        arr[w].push(item);
-                    }
-                }
-
-                function toggleItem (item, arrName) {
-                    if (find(item, arrName, e)) {
-                        arrs[arrName][d].push(item);
-                    } else if (find(item, arrName, w)) {
-                        removeFromArr(item, arrName, w);
-                    } else {
-                        addToArr(item, arrName, w);
-                    }
-                }
-
-                return {
-                    setExists: setExists,
-                    toggle: toggleItem,
-                    add: addToArr,
-                    delete: addToDelete,
-                    createArr: createArr,
-                    getArrs: getArrs
-                }
-            }
-
-
-
-            return CrudMan;
-        }
-    ])
     .factory('markitupSettings', [
     function() {
         var factory, markset;

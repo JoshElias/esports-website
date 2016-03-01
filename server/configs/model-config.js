@@ -295,7 +295,7 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
-    "tierGuide": {
+    "guideTier": {
         "dataSource": "mongodb",
         "public": true
     }
