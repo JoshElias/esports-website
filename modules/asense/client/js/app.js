@@ -11,7 +11,7 @@ angular.module('tsAdSense', [])
                             $(ai[i]).removeClass('hidden');
                         }
                     }
-                }, 1000);
+                }, 3000);
 //              Object.keys($window).filter(function(k) { return k.indexOf('google') >= 0 }).forEach(
 //                function(key) {
 //                  delete($window[key]);
