@@ -44,6 +44,7 @@ angular.module('tsAdSense', [])
     //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
     var e = $(".ad");
     var r = UserRoleService.getRoles();
+    console.log(r);
     var role = r.$premium;
     var canShowAds = !!window.canshowads;
 
