@@ -1669,7 +1669,6 @@ angular.module('app.services', [])
                 //            console.log('mulligan: ', mulligan);
                 //            console.log('card: ', card);
                 //            console.log('with coin: ', withCoin);
-
                 var cardMulligans = (withCoin) ? mulligan.mulligansWithCoin : mulligan.mulligansWithoutCoin,
                     exists = false,
                     index = -1;
