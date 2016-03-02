@@ -44,41 +44,41 @@ angular.module('tsAdSense', [])
     //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
     var e = $(".ad");
     var r = UserRoleService.getRoles();
+    console.log(r);
     var role = (!_.isUndefined(r)) ? r.$premium : undefined;
+    //var role = true;
     var canShowAds = !!window.canshowads;
 
-    
+
     function checkPremium () {
-        //if (canShowAds) {
         console.log('stuff', User.isAuthenticated(), role);
-            if (User.isAuthenticated() && !role) {
-                console.log('role', role);
-                //role = data.isInRoles.$premium;
+        if (User.isAuthenticated()) {
+            console.log('role', role);
+            //role = data.isInRoles.$premium;
 
-                var s = document.getElementById('adCode');
-                var eLength = e.length;
+            var s = document.getElementById('adCode');
+            var eLength = e.length;
 
-                if (!role) {
-                    $scope.showAds = true;
-                    return doLoadAds();
-                }
-
-                if (window.googleAdsAlreadyLoaded && s !== null && s !== undefined) {
-                    s.parentNode.removeChild(s);
-                    window.googleAdsAlreadyLoaded = false;
-                }
-
-                for (var i = 0; i < eLength; i++) {
-                    $(e[i]).remove();
-                }
-
-                $scope.showAds = false;
-            } else {
-                role = false;
+            if (!role) {
                 $scope.showAds = true;
                 return doLoadAds();
             }
-        //}
+
+            if (window.googleAdsAlreadyLoaded && s !== null && s !== undefined) {
+                s.parentNode.removeChild(s);
+                window.googleAdsAlreadyLoaded = false;
+            }
+
+            for (var i = 0; i < eLength; i++) {
+                $(e[i]).remove();
+            }
+
+            $scope.showAds = false;
+        } else {
+            role = false;
+            $scope.showAds = true;
+            return doLoadAds();
+        }
     }
     
     function doLoadAds () {
