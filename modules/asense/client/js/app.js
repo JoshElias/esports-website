@@ -51,11 +51,7 @@ angular.module('tsAdSense', [])
 
 
     function checkPremium () {
-        console.log('stuff', User.isAuthenticated(), role);
         if (User.isAuthenticated()) {
-            console.log('role', role);
-            //role = data.isInRoles.$premium;
-
             var s = document.getElementById('adCode');
             var eLength = e.length;
 
@@ -184,13 +180,7 @@ angular.module('tsAdSense', [])
             
             return moduleTpl + 'directives/a.' + tmp + '.html';
         },
-        controller: 'tsAdCtrl',
-        link: function (scope, el, attrs) {
-
-            //if (!!LoopBackAuth.isAuthenticated) {
-            //    scope.user = LoopBackAuth.currentUserData.username;
-            //}
-        }
+        controller: 'tsAdCtrl'
     }
 }])
 ;
