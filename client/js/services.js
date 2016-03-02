@@ -46,7 +46,7 @@ angular.module('app.services', [])
         getStatusCode: function() { return statusCode; }
     }
 })
-    .factory('AuthenticationService', function() {
+.factory('AuthenticationService', function() {
     var loggedIn = false,
         admin = false,
         provider = false;
@@ -72,6 +72,17 @@ angular.module('app.services', [])
         }
     }
 })
+    .factory('UserRoleService', function () {
+        return {
+            roles: undefined,
+            setRoles: function (roles) {
+                this.roles = (!_.isUndefined(roles.isInRoles)) ? roles.isInRoles : roles;
+            },
+            getRoles: function () {
+                return this.roles;
+            }
+        }
+    })
     .factory('LoginService', ['$state', '$cookies', 'User', 'EventService', 'LoopBackAuth', function ($state, $cookies, User, EventService, LoopBackAuth) {
         return {
             login: function (email, password, remember, cb) {

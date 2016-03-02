@@ -181,7 +181,19 @@ var app = angular.module('app', [
                             }
                             return LoopBackAuth.currentUserData;
                         }
-                    ]
+                    ],
+                    userRoles: ['User', 'UserRoleService', function (User, UserRoleService) {
+                        if (User.isAuthenticated()) {
+                            User.isInRoles({
+                                uid: User.getCurrentId(),
+                                roleNames: ['$premium']
+                            })
+                            .$promise
+                            .then(function (data) {
+                                UserRoleService.setRoles(data);
+                            });
+                        }
+                    }]
                 },
                 onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', 'Util', function($cookies, $state, EventService, LoginModalService, AlertService, Util) {
                     // look for redirect cookie

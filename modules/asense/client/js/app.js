@@ -1,64 +1,77 @@
 angular.module('tsAdSense', [])
 .run(
-    ['$rootScope', '$window', '$timeout', function ($rootScope, $window, $timeout) {
-            $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
-                var canShowAds = !!window.canshowads;
-                var ai = $('.adblock-img');
+    ['$rootScope', 'User',
+        function ($rootScope, User) {
+            $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
+                var s = document.getElementById('adCode');
+                var e = $('.ad');
 
-                //$timeout(function () {
-                //    if (!canShowAds) {
-                //        for (var i = 0; i < ai.length; i++) {
-                //            $(ai[i]).removeClass('hidden');
-                //        }
+                //if (!_.isNull(s))
+                //    s.parentNode.removeChild(s);
+
+                //for (var i = 0; i < e.length; i++) {
+                //    $(e[0]).parentNode.removeChild(e[0]);
+                //}
+
+                //Object.keys($window).filter(function(k) { return k.indexOf('google') >= 0 }).forEach(
+                //    function(key) {
+                //      delete($window[key]);
                 //    }
-                //}, 3000);
-//              Object.keys($window).filter(function(k) { return k.indexOf('google') >= 0 }).forEach(
-//                function(key) {
-//                  delete($window[key]);
-//                }
-//              );
+                //);
+            });
+
+            $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+
+                //User.isInRoles({
+                //    uid: LoopBackAuth.currentUserId,
+                //    roleNames: ['$admin', '$redbullAdmin']
+                //})
+                //.$promise
+                //.then(function (data) {
+                //    if (data.isInRoles.$admin !== true && data.isInRoles.$redbullAdmin !== true) {
+                //        event.preventDefault();
+                //        $state.transitionTo('app.home');
+                //    }
+                //});
+
             });
         }
     ]
 )
 .value('moduleTpl', (tpl !== './') ? tpl + 'views/asense/client/views/' : 'dist/views/asense/client/views/')
-.controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', function ($scope, $state, $window, User, EventService, $timeout) {
+.controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', 'UserRoleService', function ($scope, $state, $window, User, EventService, $timeout, UserRoleService) {
     var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-    var isAlreadyLoaded = !!document.getElementById("adCode");
+    //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
     var e = $(".ad");
-    var role = undefined;
+    var r = UserRoleService.getRoles();
+    var role = r.$premium;
     var canShowAds = !!window.canshowads;
 
     function checkPremium () {
         //if (canShowAds) {
+        console.log('stuff', User.isAuthenticated(), role);
             if (User.isAuthenticated() && !role) {
-                User.isInRoles({
-                        uid: User.getCurrentId(),
-                        roleNames: ['$premium']
-                    })
-                    .$promise
-                    .then(function (data) {
-                        role = data.isInRoles.$premium;
+                console.log('role', role);
+                //role = data.isInRoles.$premium;
 
-                        var s = document.getElementById('adCode');
-                        var eLength = e.length;
+                var s = document.getElementById('adCode');
+                var eLength = e.length;
 
-                        if (!role) {
-                            $scope.showAds = true;
-                            return doLoadAds();
-                        }
+                if (!role) {
+                    $scope.showAds = true;
+                    return doLoadAds();
+                }
 
-                        if (isAlreadyLoaded && s !== null && s !== undefined) {
-                            s.parentNode.removeChild(s);
-                            isAlreadyLoaded = false;
-                        }
+                if (window.googleAdsAlreadyLoaded && s !== null && s !== undefined) {
+                    s.parentNode.removeChild(s);
+                    window.googleAdsAlreadyLoaded = false;
+                }
 
-                        for (var i = 0; i < eLength; i++) {
-                            $(e[i]).remove();
-                        }
+                for (var i = 0; i < eLength; i++) {
+                    $(e[i]).remove();
+                }
 
-                        $scope.showAds = false;
-                    })
+                $scope.showAds = false;
             } else {
                 role = false;
                 $scope.showAds = true;
@@ -74,15 +87,8 @@ angular.module('tsAdSense', [])
         $scope.region = $state.current.name;
         $scope.w = (!_.isUndefined($scope.w)) ? $scope.w : '100%';
         $scope.h = (!_.isUndefined($scope.h)) ? $scope.h : '100%';
-        
-        $timeout(function () {
-            for (var i = 0; i < e.length; i++) {
-                $(e[i]).removeClass('hidden');
-            }
-        });
-        
-        
-        if (!isAlreadyLoaded) {
+
+        if (!window.googleAdsAlreadyLoaded) {
             var s = document.createElement('script');
             s.type = 'text/javascript';
             s.id = "adCode";
@@ -90,8 +96,14 @@ angular.module('tsAdSense', [])
             s.async = true;
             document.body.appendChild(s);
 
-            isAlreadyLoaded = true;
+            window.googleAdsAlreadyLoaded = true;
         }
+
+        $timeout(function () {
+            for (var i = 0; i < e.length; i++) {
+                $(e[i]).removeClass('hidden');
+            }
+        });
     }
     
     EventService.registerListener(EventService.EVENT_LOGIN, checkPremium);
@@ -115,9 +127,10 @@ angular.module('tsAdSense', [])
             $scope.getCanShowAds = function () {
                 return canShowAds;
             }
-            
+
             function pushAd () {
                 if (adIter < adIterMax) {
+
                     $timeout(function () {
                         try {
                             $window.adsbygoogle.push({});
@@ -128,15 +141,15 @@ angular.module('tsAdSense', [])
                     }, 500);
                 } else {
                     var parent = $scope.el[0].parentNode;
-                    
+
                     while (!!parent['parentNode']) {
                         parent = parent['parentNode'];
                     }
-                    
+
                     $(parent).remove();
                 }
-            } 
-            
+            }
+
             pushAd();
         }],
         link: function (scope, el, attrs) {
@@ -173,9 +186,9 @@ angular.module('tsAdSense', [])
         controller: 'tsAdCtrl',
         link: function (scope, el, attrs) {
 
-            if (!!LoopBackAuth.isAuthenticated) {
-                scope.user = LoopBackAuth.currentUserData.username;
-            }
+            //if (!!LoopBackAuth.isAuthenticated) {
+            //    scope.user = LoopBackAuth.currentUserData.username;
+            //}
         }
     }
 }])
