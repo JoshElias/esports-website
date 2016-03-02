@@ -44,10 +44,10 @@ angular.module('tsAdSense', [])
     //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
     var e = $(".ad");
     var r = UserRoleService.getRoles();
-    console.log(r);
-    var role = r.$premium;
+    var role = (!_.isUndefined(r)) ? r.$premium : undefined;
     var canShowAds = !!window.canshowads;
 
+    
     function checkPremium () {
         //if (canShowAds) {
         console.log('stuff', User.isAuthenticated(), role);
