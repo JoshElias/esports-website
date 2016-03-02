@@ -1387,27 +1387,20 @@ This is the template for hots-hero-talents.
 
 //talents: xul
 
-//@include hots-hero-talents ( xul, (
-//    ( class: (), pos: 0 ), // 0
-//    ( class: (), pos: 1 ), // -30
-//    ( class: (), pos: 2 ), // -60
-//    ( class: (), pos: 3 ), // -90
-//    ( class: (), pos: 4 ), // -120
-//    ( class: (), pos: 5 ), // -150
-//    ( class: (), pos: 6 ), // -180
-//    ( class: (), pos: 7 ), // -210
-//    ( class: (), pos: 8 ), // -240
-//    ( class: (), pos: 9 ), // -270
-//    ( class: (), pos: 10 ), // -300
-//    ( class: (), pos: 11 ), // -330
-//    ( class: (), pos: 12 ), // -360
-//    ( class: (), pos: 13 ), // -390
-//    ( class: (), pos: 14 ), // -420
-//    ( class: (), pos: 15 ), // -450
-//    ( class: (), pos: 16 ), // -480
-//    ( class: (), pos: 17 ), // -510
-//    ( class: (), pos: 18 ) // -540
-//) );
+@include hots-hero-talents ( xul, (
+    ( class: (backlash), pos: 0 ), // 0
+    ( class: (shackler), pos: 1 ), // -30
+    ( class: (shade), pos: 2 ), // -60
+    ( class: (deaths-reach, decrepify, flowing-wounds, mortal-wound), pos: 3 ), // -90
+    ( class: (jailors, amplify-damage), pos: 4 ), // -120
+    ( class: (tragouls-essence, rathmas-blessing, corpse-explosion, skeleton-mastery), pos: 5 ), // -150
+    ( class: (harvest-vitality, giants-curse), pos: 6 ), // -180
+    ( class: (weaken), pos: 7 ), // -210
+    ( class: (poison-nova, call-of-the-grave), pos: 8 ), // -240
+    ( class: (skeletal-mages, raised-mage), pos: 9 ), // -270
+    ( class: (executioner), pos: 10 ), // -300
+    ( class: (bone-spear), pos: 11 ) // -330
+) );
 
 //talents: zagara
 
