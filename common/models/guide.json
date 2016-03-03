@@ -36,6 +36,10 @@
     "createdDate": {
       "type": "date"
     },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
+    },
     "premium": {
       "type": "object"
     },
@@ -74,6 +78,9 @@
     },
     "talentTiers": {
       "type": "object"
+    },
+    "isCommentable": {
+      "type": "boolean"
     },
     "synergy": {
       "type": [
@@ -156,7 +163,7 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__create__comments"
     },

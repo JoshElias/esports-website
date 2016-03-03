@@ -11,7 +11,7 @@
     <div class="container-fluid-max">
         
         <!-- first fullwidth plg -->
-        <ts-ad class="m-t-md container-fluid text-center" structure="double"></ts-ad>
+        <!--<ts-ad class="m-t-md container-fluid text-center" structure="double"></ts-ad>-->
         <!-- first fullwidth plg ends -->
         
         <div class="db-header clearfix" ng-class="{ 'head-shift' : step == 1 }">
@@ -174,7 +174,7 @@
                 </button>
                 
                 <!-- sidebar plg -->
-                <ts-ad class="text-center m-t-md m-b-md" structure="single"></ts-ad>
+                <!--<ts-ad class="text-center m-t-md m-b-md" structure="single"></ts-ad>-->
                 <!-- sidebar plg ends-->
                 
             </div>
@@ -643,6 +643,25 @@
                                                     ng-class="{active: deck.isFeatured === type.value}" 
                                                     ng-repeat="type in featuredTypes">
                                                     <a href="#" ng-click="deck.isFeatured = type.value">{{type.text}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-if="isUserAdmin || isUserContentProvider">
+                                <div class="form-group">
+                                    <label for="commentable" class="col-sm-2 control-label">Comments Enabled</label>
+                                    <div class="col-sm-10">
+                                        <div class="dropdown">
+                                            <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                                <span>{{isCommentable()}}</span>
+                                                <b class="caret"></b>
+                                            </button>
+                                            <ul class="list-group dropdown-menu dropdown-dark">
+                                                <li class="list-group-item" ng-class="{active: deck.isCommentable === type.value}" 
+                                                    ng-repeat="type in commentableTypes">
+                                                    <a href="#" ng-click="deck.isCommentable = type.value">{{type.text}}</a>
                                                 </li>
                                             </ul>
                                         </div>

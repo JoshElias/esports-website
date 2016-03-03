@@ -53,10 +53,10 @@
             </button>
         </li>
     </ul>
-        
-    <!-- adsense -->
+
+    <!-- a-sense -->
     <ts-ad class="container-fluid text-center m-t-md" structure="double"></ts-ad>
-    <!-- /adsense -->
+    <!-- /a-sense -->
 </div>
 <div class="container" ng-show="step === 2">
     <div class="guide-text hero-select"></div>
@@ -75,11 +75,11 @@
             </div>
         </div>
     </div>
-        
+
     <!-- adsense -->
-    <ts-ad class="container-fluid text-center m-t-md" structure="single"></ts-ad>
+    <!--<ts-ad class="container-fluid text-center m-t-md" structure="single"></ts-ad>-->
     <!-- /adsense -->
-    
+
 </div>
 <div class="container" ng-show="step === 3">
     <div class="guide-text talent-select"></div>
@@ -245,10 +245,10 @@
                         <div class="form-group row" ng-show="guide.premium.isPremium">
                             <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
                             <div class="col-sm-10">
-                                <div date-picker data-id="expiryDate" 
-									 data-name="expiryDate" 
-									 data-class="input-dark" 
-									 ng-model="guide.premium.expiryDate" 
+                                <div date-picker data-id="expiryDate"
+									 data-name="expiryDate"
+									 data-class="input-dark"
+									 ng-model="guide.premium.expiryDate"
 									 ng-disabled="!guide.premium.isPremium"></div>
                             </div>
                         </div>
@@ -271,6 +271,24 @@
                             </div>
                         </div>
                     </div>
+                    <div ng-if="isUserAdmin || isUserContentProvider">
+                        <div class="form-group row">
+                            <label for="commentable" class="col-sm-2 control-label">Comments Enabled</label>
+                            <div class="col-sm-10">
+                                <div class="dropdown">
+                                    <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                        <span>{{isCommentable()}}</span>
+                                        <b class="caret"></b>
+                                    </button>
+                                    <ul class="list-group dropdown-menu dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: guide.isCommentable === type.value}" ng-repeat="type in commentableTypes">
+                                            <a href="#" ng-click="guide.isCommentable = type.value">{{type.text}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <div class="col-sm-10 col-sm-offset-2">
                             <div class="radio">
@@ -287,8 +305,8 @@
                     </div>
                     <div class="form-group row m-b-none">
                         <div class="col-sm-10 col-sm-offset-2">
-                            <button type="submit" class="btn btn-blue" 
-                                    ng-disabled="gbForm.$invalid || fetching" 
+                            <button type="submit" class="btn btn-blue"
+                                    ng-disabled="gbForm.$invalid || fetching"
                                     ng-click="saveGuide()">
                                 <span ng-if="!fetching">Save Guide</span>
                                 <span ng-if="fetching">
@@ -302,3 +320,7 @@
         </div>
     </div>
 </div>
+
+<!-- a-sense -->
+<ts-ad class="container text-center center" structure="single"></ts-ad>
+<!-- /a-sense -->

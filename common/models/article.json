@@ -32,6 +32,10 @@
         "predicate": "premium"
       }
     },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
+    },
     "photoNames": {
       "type": "object"
     },
@@ -138,7 +142,7 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__create__comments"
     },

@@ -9,7 +9,6 @@ var app = angular.module('app', [
     'angularMoment',
     'angularPayments',
     'youtube-embed',
-    'tsAdSense',
     'dndLists',
     'ngCookies',
     'ngStorage',
@@ -26,6 +25,7 @@ var app = angular.module('app', [
     'app.directives',
     'app.animations',
     'app.redbull',
+    'tsAdSense'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
@@ -33,7 +33,8 @@ var app = angular.module('app', [
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
-            $rootScope.LoginModalService = LoginModalService;
+            $rootScope.LoginModalService = LoginModalService
+            console.log(window.canShowAds);
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
@@ -80,7 +81,7 @@ var app = angular.module('app', [
 
                 // seo
                 if (toState.seo) {
-                    $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
+                    $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords)
                 }
                 if (!toState.og) {
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
@@ -180,7 +181,19 @@ var app = angular.module('app', [
                             }
                             return LoopBackAuth.currentUserData;
                         }
-                    ]
+                    ],
+                    getRoles: ['User', 'UserRoleService', function (User, UserRoleService) {
+                        if (User.isAuthenticated()) {
+                            User.isInRoles({
+                                uid: User.getCurrentId(),
+                                roleNames: ['$premium']
+                            })
+                            .$promise
+                            .then(function (data) {
+                                UserRoleService.setRoles(data);
+                            });
+                        }
+                    }]
                 },
                 onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', 'Util', function($cookies, $state, EventService, LoginModalService, AlertService, Util) {
                     // look for redirect cookie
@@ -550,7 +563,7 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-//                                        console.log("roles", userRoles);
+                                        console.log(userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -563,11 +576,6 @@ var app = angular.module('app', [
 
                                 return Article.findOne({
                                     filter: {
-                                        fields: {
-                                          oldComments: false,
-                                          oldRelatedArticles: false,
-                                          isActive: false,
-                                        },
                                         where: {
                                             "slug.url": slug
                                         },
@@ -635,6 +643,7 @@ var app = angular.module('app', [
                                     return data;
                                 })
                                 .catch(function (err) {
+                                    console.log('err:', err);
                                     if (err.status === 404) {
                                         return throw404($state);
                                     }
@@ -715,14 +724,30 @@ var app = angular.module('app', [
                                     articleParams: {
                                         options: {
                                             filter: {
-                                            limit: 6,
-                                            order: "createdDate DESC",
-                                            where: artWhere,
-                                            include: ['author'],
-                                            fields: {
-                                              content: false
+                                                limit: 6,
+                                                order: "createdDate DESC",
+                                                where: artWhere,
+                                                fields: {
+                                                    id: true,
+                                                    articleType: true,
+                                                    authorId: true,
+                                                    createdDate: true,
+                                                    description: true,
+                                                    photoNames: true,
+                                                    slug: true,
+                                                    themeName: true,
+                                                    title: true,
+                                                    premium: true
+                                                },
+                                                include: [
+                                                    {
+                                                        relation: "author",
+                                                        scope: {
+                                                            fields: ['username']
+                                                        }
+                                                    }
+                                                ]
                                             }
-                                          }
                                         }
                                     },
                                     tsDeckParams: {
@@ -734,22 +759,25 @@ var app = angular.module('app', [
                                               fields: {
                                                 id: true,
                                                 name: true,
-                                                description: true,
-                                                deckType: true,
                                                 playerClass: true,
                                                 heroName: true,
                                                 premium: true,
-                                                voteScore: true,
                                                 authorId: true,
                                                 slug: true,
                                                 createdDate: true
                                               },
                                               include: [
                                                   {
-                                                      relation: "author"
+                                                      relation: "author",
+                                                      scope: {
+                                                          fields: ['username']
+                                                      }
                                                   },
                                                   {
-                                                      relation: "votes"
+                                                      relation: "votes",
+                                                      scope: {
+                                                          fields: ['authorId', 'direction']
+                                                      }
                                                   }
                                               ]
                                             }
@@ -764,22 +792,25 @@ var app = angular.module('app', [
                                               fields: {
                                                 id: true,
                                                 name: true,
-                                                description: true,
-                                                deckType: true,
                                                 playerClass: true,
                                                 heroName: true,
                                                 premium: true,
-                                                voteScore: true,
                                                 authorId: true,
                                                 slug: true,
                                                 createdDate: true
                                               },
                                               include: [
                                                   {
-                                                      relation: "author"
+                                                      relation: "author",
+                                                      scope: {
+                                                          fields: ['username']
+                                                      }
                                                   },
                                                   {
-                                                      relation: "votes"
+                                                      relation: "votes",
+                                                      scope: {
+                                                          fields: ['direction']
+                                                      }
                                                   }
                                               ]
                                             }
@@ -891,11 +922,9 @@ var app = angular.module('app', [
                                         fields: {
                                             id: true,
                                             name: true,
-                                            description: true,
                                             slug: true,
                                             heroName: true,
                                             authorId: true,
-                                            voteScore: true,
                                             playerClass: true,
                                             createdDate: true,
                                             premium: true,
@@ -913,7 +942,7 @@ var app = angular.module('app', [
                                           {
                                             relation: "votes",
                                             scope: {
-                                              fields: ['id', 'direction', 'authorId']
+                                              fields: ['direction']
                                             }
                                           }
                                         ]
@@ -927,7 +956,6 @@ var app = angular.module('app', [
                                         fields: {
                                             id: true,
                                             name: true,
-                                            description: true,
                                             slug: true,
                                             heroName: true,
                                             authorId: true,
@@ -1076,7 +1104,6 @@ var app = angular.module('app', [
                                             heroName: true,
                                             authorId: true,
                                             deckType: true,
-                                            viewCount: true,
                                             isPublic: true,
                                             votes: true,
                                             voteScore: true,
@@ -1084,34 +1111,43 @@ var app = angular.module('app', [
                                             youtubeId: true,
                                             gameModeType: true,
                                             isActive: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
                                                 relation: "cards",
                                                 scope: {
-                                                    include: ['card']
+                                                    include: {
+                                                        relation: 'card',
+                                                        scope: {
+                                                            fields: ['id', 'name', 'cardType', 'cost', 'dust', 'photoNames']
+                                                        }
+                                                    }
                                                 }
                                             },
                                             {
                                                 relation: "comments",
                                                 scope: {
-                                                    include: ['author']
+                                                    fields: ['id', 'votes', 'authorId', 'createdDate', 'text'],
+                                                    include: {
+                                                        relation: 'author',
+                                                        scope: {
+                                                            fields: ['id', 'username']
+                                                        }
+                                                    }
                                                 }
                                             },
                                             {
                                                 relation: "author",
                                                 scope: {
-                                                    fields: [
-                                                      'id',
-                                                      'email',
-                                                      'username',
-                                                      'social',
-                                                      'subscription'
-                                                    ]
+                                                    fields: ['id', 'username']
                                                 }
                                             },
                                             {
-                                                relation: "matchups"
+                                                relation: "matchups",
+                                                scope: {
+                                                    fields: ['forChance', 'deckName', 'className']
+                                                }
                                             },
                                             {
                                                 relation: "votes",
@@ -1124,7 +1160,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
-//                                    console.log('resolve deck:', deck);
                                     deck.voteScore = Util.tally(deck.votes, 'direction');
                                     return deck;
                                 })
@@ -1148,13 +1183,23 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'mulligansWithCoin',
                                                 scope: {
-                                                    include: 'card'
+                                                    include: {
+                                                        relation: 'card',
+                                                        scope: {
+                                                            fields: ['id', 'name', 'cardType', 'cost', 'photoNames']
+                                                        }
+                                                    }
                                                 }
                                             },
                                             {
                                                 relation: 'mulligansWithoutCoin',
                                                 scope: {
-                                                    include: 'card'
+                                                    include: {
+                                                        relation: 'card',
+                                                        scope: {
+                                                            fields: ['id', 'name', 'cardType', 'cost', 'photoNames']
+                                                        }
+                                                    }
                                                 }
                                             }
                                         ]
@@ -1223,6 +1268,18 @@ var app = angular.module('app', [
 
                                 return Card.find({
                                     filter: {
+                                        fields: {
+                                            artist: false,
+                                            attack: false,
+                                            durability: false,
+                                            expansion: false,
+                                            flavor: false,
+                                            health: false,
+                                            isActive: false,
+                                            race: false,
+                                            text: false,
+                                            deckable: false
+                                        },
                                         where: {
                                             playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
                                             deckable: true
@@ -1237,6 +1294,18 @@ var app = angular.module('app', [
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
+                                        fields: {
+                                            artist: false,
+                                            attack: false,
+                                            durability: false,
+                                            expansion: false,
+                                            flavor: false,
+                                            health: false,
+                                            isActive: false,
+                                            race: false,
+                                            text: false,
+                                            deckable: false
+                                        },
                                         where: {
                                             playerClass: 'Neutral',
                                             deckable: true
@@ -1253,7 +1322,8 @@ var app = angular.module('app', [
 
                                 return Card.count({
                                     where: {
-                                        playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1)
+                                        playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
+                                        deckable: true
                                     }
                                 })
                                 .$promise;
@@ -1262,7 +1332,8 @@ var app = angular.module('app', [
                             neutralCardsCount: ['Card', function (Card) {
                                 return Card.count({
                                     where: {
-                                        playerClass: 'Neutral'
+                                        playerClass: 'Neutral',
+                                        deckable: true
                                     }
                                 })
                                 .$promise;
@@ -1321,30 +1392,32 @@ var app = angular.module('app', [
                                             heroName: true,
                                             authorId: true,
                                             deckType: true,
-                                            viewCount: true,
                                             isPublic: true,
-                                            votes: true,
-                                            voteScore: true,
                                             chapters: true,
                                             youtubeId: true,
                                             gameModeType: true,
-                                            isActive: true
+                                            isActive: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
                                                 relation: "cards",
                                                 scope: {
-                                                    include: ['card']
+                                                    include: [
+                                                        {
+                                                            relation: 'card',
+                                                            scope: {
+                                                                fields: ['id', 'cardType', 'cost', 'dust', 'mechanics', 'name', 'photoNames', 'playerClass', 'rarity']
+                                                            }
+                                                        }
+                                                    ]
                                                 }
                                             },
                                             {
-                                                relation: "comments",
+                                                relation: 'author',
                                                 scope: {
-                                                    incldue: ['author']
+                                                    fields: ['id', 'username']
                                                 }
-                                            },
-                                            {
-                                                relation: 'author'
                                             },
                                             {
                                                 relation: 'matchups'
@@ -1395,7 +1468,14 @@ var app = angular.module('app', [
 
                                   async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
                                     Card.findById({
-                                      id: cardWithoutCoin.cardId
+                                      id: cardWithoutCoin.cardId,
+                                      filter: {
+                                          fields: {
+                                              id: true,
+                                              photoNames: true,
+                                              name: true
+                                          }
+                                      }
                                     }).$promise
                                     .then(function (cardFound) {
                                       var cardIndex = mulligan.mulligansWithoutCoin.indexOf(cardWithoutCoin);
@@ -1411,7 +1491,14 @@ var app = angular.module('app', [
                                   async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
 
                                     Card.findById({
-                                      id: cardWithCoin.cardId
+                                      id: cardWithCoin.cardId,
+                                      filter: {
+                                          fields: {
+                                              id: true,
+                                              photoNames: true,
+                                              name: true
+                                          }
+                                      }
                                     }).$promise
                                     .then(function (cardFound) {
                                       var cardIndex = mulligan.mulligansWithCoin.indexOf(cardWithCoin);
@@ -1453,7 +1540,8 @@ var app = angular.module('app', [
                                 var deckID = $stateParams.deckID;
                                 return Card.count({
                                     where: {
-                                        playerClass: deckNoMulligans.playerClass
+                                        playerClass: deckNoMulligans.playerClass,
+                                        deckable: true
                                     }
                                 }).$promise;
                             }],
@@ -1461,7 +1549,8 @@ var app = angular.module('app', [
                             neutralCardsCount: ['Card', function (Card) {
                                 return Card.count({
                                     where: {
-                                        playerClass: 'Neutral'
+                                        playerClass: 'Neutral',
+                                        deckable: true
                                     }
                                 }).$promise;
                             }],
@@ -1555,7 +1644,8 @@ var app = angular.module('app', [
                                             content: true,
                                             slug: true,
                                             photoNames: true,
-                                            createdDate: true
+                                            createdDate: true,
+                                            isCommentable: true
                                         },
                                         include: [
                                             {
@@ -2636,17 +2726,31 @@ var app = angular.module('app', [
                                 }
                             }],
                             guide: ['$state', '$stateParams', 'Guide', 'Util', function ($state, $stateParams, Guide, Util) {
-                                var slug = $stateParams.slug;
+                                var slug = _.clone($stateParams.slug);
                                 return Guide.findOne({
                                     filter: {
                                         where: {
                                             slug: slug,
                                         },
-                                        fields: {
-                                            oldMaps: false,
-                                            oldComments: false,
-                                            oldHeroes: false
-                                          },
+                                        fields: [
+                                            'against',
+                                            'authorId',
+                                            'comments',
+                                            'content',
+                                            'createdDate',
+                                            'description',
+                                            'guideType',
+                                            'id',
+                                            'isFeatured',
+                                            'isPublic',
+                                            'name',
+                                            'premium',
+                                            'slug',
+                                            'synergy',
+                                            'viewCount',
+                                            'youtubeId',
+                                            'isCommentable'
+                                        ],
                                         include: [
                                           {
                                             relation: 'author'
@@ -2736,7 +2840,10 @@ var app = angular.module('app', [
                                 });
                             }],
                             heroes: ['Hero', 'guide', function(Hero, guide) {
-                                var toLoad = _.union(guide.synergy, guide.against.strong, guide.against.weak);
+                                var synergy = Array.isArray(guide.synergy) ? guide.synergy : [];
+                                var strong = guide.against && Array.isArray(guide.against.strong) ? guide.against.strong : [];
+                                var weak = guide.against && Array.isArray(guide.against.weak) ? guide.against.weak : [];
+                                var toLoad = _.union(synergy, strong, weak);
 
                                 return Hero.find({
                                   filter: {
@@ -2756,10 +2863,21 @@ var app = angular.module('app', [
                                   }
                                 })
                                 .$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                })
+                                .catch(function (err) {
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
+                                });
                             }],
                             maps: ['Map', function(Map) {
                                 return Map.find({})
-                                .$promise;
+                                .$promise
+                                .then(function (maps) {
+                                    return maps;
+                                });
                             }]
                         }
                     }
@@ -2819,17 +2937,11 @@ var app = angular.module('app', [
                                         where: {
                                             isActive: true
                                         },
-                                        fields: {
-                                            oldTalents: false,
-                                            oldAbilities: false,
-                                            price: false,
-                                            title: false,
-                                            manaType: false,
-                                            characters: false
-                                        }
+                                        fields: ['id', 'className', 'description', 'heroType', 'isActive', 'name', 'orderNum', 'role', 'universe']
                                     }
                                   }).$promise
                                   .then(function(heroData) {
+                                    console.log('heroData:', heroData);
                                     return waterCB(null, heroData);
                                   })
                                   .catch(function (err) {
@@ -2843,7 +2955,13 @@ var app = angular.module('app', [
                               return d.promise;
                             }],
                             dataMaps: ['Map', function (Map) {
-                                return Map.find({}).$promise;
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -2985,7 +3103,10 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (guide) {
+                                    return guide;
+                                });
                             }],
                             userRoles: ['User', function(User) {
                                 if (!User.isAuthenticated()) {
@@ -3013,14 +3134,7 @@ var app = angular.module('app', [
                                         where: {
                                             isActive: true
                                         },
-                                        fields: {
-                                            oldTalents: false,
-                                            oldAbilities: false,
-                                            price: false,
-                                            title: false,
-                                            manaType: false,
-                                            characters: false
-                                        }
+                                        fields: ['id', 'className', 'description', 'heroType', 'isActive', 'name', 'orderNum', 'role', 'universe']
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -3030,28 +3144,6 @@ var app = angular.module('app', [
                                     return waterCB();
                                   });
                                 },
-//                                function (heroData, waterCB) {
-//                                  async.each(heroData, function(hero, heroCB) {
-//                                    HeroTalent.find({
-//                                      filter: {
-//                                        where: {
-//                                          heroId: hero.id
-//                                        },
-//                                        include: ['talent']
-//                                      }
-//                                    }).$promise
-//                                    .then(function (heroTalents) {
-//                                      hero.talents = heroTalents;
-//                                      return heroCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                      return heroCB(err);
-//                                    });
-//
-//                                  }, function(err) {
-//                                    return waterCB(null, heroData);
-//                                  });
-//                                }
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
@@ -3111,14 +3203,6 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             isActive: true
-                                        },
-                                        fields: {
-                                            oldTalents: false,
-                                            oldAbilities: false,
-                                            price: false,
-                                            title: false,
-                                            manaType: false,
-                                            characters: false
                                         }
                                     }
                                 }).$promise
@@ -4067,18 +4151,32 @@ var app = angular.module('app', [
                                     filter: {
                                         order: 'createdDate DESC',
                                         where: where,
+                                        fields: {
+                                            id: true,
+                                            name: true,
+                                            authorId: true,
+                                            createdDate: true,
+                                            description: true,
+                                            premium: true,
+                                            photoNames: true,
+                                            slug: true,
+                                            themeName: true,
+                                            title: true,
+                                            articleType: true,
+                                            isActive: true
+                                        },
                                         include: [
                                             {
                                                 relation: 'author',
                                                 scope: {
-                                                    fields: {
-                                                        id: true,
-                                                        username: true
-                                                    }
+                                                    fields: ['id', 'username']
                                                 }
                                             },
                                             {
                                                 relation: 'votes',
+                                                scope: {
+                                                    fields: ['id', 'authorId', 'direction']
+                                                }
                                             }
                                         ]
                                     }
@@ -4120,12 +4218,33 @@ var app = angular.module('app', [
                                     filter: {
                                         order: "createdDate DESC",
                                         where: where,
+                                        fields: {
+                                            id: true,
+                                            name: true,
+                                            createdDate: true,
+                                            authorId: true,
+                                            playerClass: true,
+                                            heroName: true,
+                                            slug: true
+                                        },
                                         include: [
                                             {
-                                                relation: 'author'
+                                                relation: 'author',
+                                                scope: {
+                                                    fields: {
+                                                        username: true
+                                                    }
+                                                }
                                             },
                                             {
-                                                relation: 'votes'
+                                                relation: 'votes',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        authorId: true,
+                                                        direction: true
+                                                    }
+                                                }
                                             }
                                         ]
                                     }
@@ -4168,9 +4287,21 @@ var app = angular.module('app', [
                                     filter: {
                                         order: "createdDate DESC",
                                         where: where,
+                                        fields: {
+                                            id: true,
+                                            name: true,
+                                            createdDate: true,
+                                            premium: true,
+                                            authorId: true,
+                                            guideType: true,
+                                            slug: true
+                                        },
                                         include: [
                                             {
-                                                relation: 'author'
+                                                relation: 'author',
+                                                scope: {
+                                                    fields: ['id', 'username']
+                                                }
                                             },
                                             {
                                                 relation: 'guideHeroes',
@@ -4179,11 +4310,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'hero',
                                                             scope: {
-                                                                include: [
-                                                                    {
-                                                                        relation: 'talents'
-                                                                    }
-                                                                ]
+                                                                fields: ['className', 'name', 'title'],
                                                             }
                                                         }
                                                     ]
@@ -4194,16 +4321,25 @@ var app = angular.module('app', [
                                                 scope: {
                                                     include: [
                                                         {
-                                                            relation: 'talent'
+                                                            relation: 'talent',
+                                                            scope: {
+                                                                fields: ['className', 'name']
+                                                            }
                                                         }
                                                     ]
                                                 }
                                             },
                                             {
-                                                relation: 'maps'
+                                                relation: 'maps',
+                                                scope: {
+                                                    fields: ['className']
+                                                }
                                             },
                                             {
-                                                relation: 'votes'
+                                                relation: 'votes',
+                                                scope: {
+                                                    fields: ['authorId', 'direction']
+                                                }
                                             }
                                         ]
                                     }
@@ -4317,7 +4453,17 @@ var app = angular.module('app', [
                 url: '/premium?plan',
                 views: {
                     editProfile: {
-                        templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
+                        templateUrl: tpl + 'views/frontend/profile.edit.premium.html',
+                        controller: 'ProfileSubscriptionCtrl',
+                        resolve: {
+                            resolvePlan: ['$stateParams', function($stateParams) {
+                                if ($stateParams.plan) {
+                                    return $stateParams.plan;
+                                } else {
+                                    return false;
+                                }
+                            }]
+                        }
                     }
                 },
                 access: { auth: true },
@@ -4502,22 +4648,7 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-                            }]
-//                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
-//                                return AdminDeckService.getDecks(1, 10, '');
-//                            }],
-//                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-//                                return AdminHOTSGuideService.getGuides(1, 10, '');
-//                            }],
-//                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
-//                                return AdminArticleService.getArticles(1, 10, '');
-//                            }],
-//                            dataProviders: ['AdminUserService', function (AdminUserService) {
-//                                return AdminUserService.getProviders();
-//                            }],
-//                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-//                                return AdminHeroService.getAllHeroes();
-//                            }]
+                            }],
                         }
                     }
                 },
@@ -4567,25 +4698,7 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-                            }]
-//                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
-//                                var page = 1,
-//                                    perpage = 10,
-//                                    search = '';
-//                                return AdminDeckService.getDecks(page, perpage, search);
-//                            }],
-//                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-//                                return AdminHOTSGuideService.getAllGuides();
-//                            }],
-//                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
-//                                return AdminArticleService.getAllArticles();
-//                            }],
-//                            dataProviders: ['AdminUserService', function (AdminUserService) {
-//                                return AdminUserService.getProviders();
-//                            }],
-//                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-//                                return AdminHeroService.getAllHeroes();
-//                            }]
+                            }],
                         }
                     }
                 },
@@ -4659,14 +4772,12 @@ var app = angular.module('app', [
                                         skip: (page*perpage) - perpage,
                                         order: "createdDate DESC",
                                         fields: paginationParams.options.filter.fields,
-                                        include: [
-                                            {
-                                                relation: 'mulligans'
-                                            }
-                                        ]
                                     }
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (deck) {
+                                    return deck;
+                                });
                             }]
                         }
                     }
@@ -4714,6 +4825,18 @@ var app = angular.module('app', [
 
                                 return Card.find({
                                     filter: {
+                                        fields: {
+                                            artist: false,
+                                            attack: false,
+                                            durability: false,
+                                            expansion: false,
+                                            flavor: false,
+                                            health: false,
+                                            isActive: false,
+                                            race: false,
+                                            text: false,
+                                            deckable: false
+                                        },
                                         where: {
                                             playerClass: playerClass,
                                             deckable: true
@@ -4731,7 +4854,8 @@ var app = angular.module('app', [
 								var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
                                 return Card.count({
                                     where: {
-                                        playerClass: playerClass
+                                        playerClass: playerClass,
+                                        deckable: true
                                     }
                                 }).$promise
                                 .then(function (classCardCounts) {
@@ -4742,7 +4866,8 @@ var app = angular.module('app', [
                             neutralCardsCount: ['Card', function (Card) {
                                 return Card.count({
                                     where: {
-                                        playerClass: 'Neutral'
+                                        playerClass: 'Neutral',
+                                        deckable: true
                                     }
                                 }).$promise;
                             }],
@@ -4750,6 +4875,18 @@ var app = angular.module('app', [
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
+                                        fields: {
+                                            artist: false,
+                                            attack: false,
+                                            durability: false,
+                                            expansion: false,
+                                            flavor: false,
+                                            health: false,
+                                            isActive: false,
+                                            race: false,
+                                            text: false,
+                                            deckable: false
+                                        },
                                         where: {
                                             playerClass: 'Neutral',
                                             deckable: true
@@ -4817,13 +4954,19 @@ var app = angular.module('app', [
                                                 chapters: true,
                                                 deckType: true,
                                                 gameModeType: true,
-                                                youtubeId: true
+                                                youtubeId: true,
+                                                isCommentable: true
                                             },
                                             include: [
                                                 {
                                                     relation: 'cards',
                                                     scope: {
-                                                        include: 'card'
+                                                        include: {
+                                                            relation: 'card',
+                                                            scope: {
+                                                                fields: ['id', 'name', 'cardType', 'cost', 'dust', 'mechanics', 'photoNames', 'playerClass', 'rarity']
+                                                            }
+                                                        }
                                                     }
                                                 },
                                                 {
@@ -4846,15 +4989,43 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'mulligansWithCoin',
-												scope: {
-													include: ['card']
-												}
+                                                scope: {
+                                                  include: ['card'],
+                                                    scope: {
+                                                        fields: {
+                                                            artist: false,
+                                                            attack: false,
+                                                            durability: false,
+                                                            expansion: false,
+                                                            flavor: false,
+                                                            health: false,
+                                                            isActive: false,
+                                                            race: false,
+                                                            text: false,
+                                                            deckable: false
+                                                        }
+                                                    }
+                                                }
                                             },
                                             {
                                                 relation: 'mulligansWithoutCoin',
-												scope: {
-
-												}
+                                                scope: {
+                                                    include: ['card'],
+                                                    scope: {
+                                                        fields: {
+                                                            artist: false,
+                                                            attack: false,
+                                                            durability: false,
+                                                            expansion: false,
+                                                            flavor: false,
+                                                            health: false,
+                                                            isActive: false,
+                                                            race: false,
+                                                            text: false,
+                                                            deckable: false
+                                                        }
+                                                    }
+                                                }
                                             }
                                         ]
                                     }
@@ -4883,51 +5054,79 @@ var app = angular.module('app', [
                                 });
                             }],
 
-							deckCardMulligans: ['deck', 'Card', '$q',  function(deck, Card, $q) {
-								var d = $q.defer();
-								async.each(deck.mulligans, function(mulligan, mulliganCB) {
+                          deckCardMulligans: ['deck', 'Card', '$q',  function(deck, Card, $q) {
+                            var d = $q.defer();
+                            async.each(deck.mulligans, function(mulligan, mulliganCB) {
 
-									var mulliganIndex = deck.mulligans.indexOf(mulligan);
+                              var mulliganIndex = deck.mulligans.indexOf(mulligan);
 
-									async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
-										Card.findById({
-											id: cardWithoutCoin.cardId
-										}).$promise
-										.then(function (cardFound) {
-											var cardIndex = mulligan.mulligansWithoutCoin.indexOf(cardWithoutCoin);
-											deck.mulligans[mulliganIndex].mulligansWithoutCoin[cardIndex] = cardFound;
-											return cardWithoutCoinCB();
-										})
-										.catch(function (err) {
-											return cardWithoutCoinCB(err);
-										});
+                              async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+                                Card.findById({
+                                  id: cardWithoutCoin.cardId,
+                                  filter: {
+                                      fields: {
+                                          artist: false,
+                                          attack: false,
+                                          durability: false,
+                                          expansion: false,
+                                          flavor: false,
+                                          health: false,
+                                          isActive: false,
+                                          race: false,
+                                          text: false,
+                                          deckable: false
+                                      }
+                                  }
+                                }).$promise
+                                .then(function (cardFound) {
+                                  var cardIndex = mulligan.mulligansWithoutCoin.indexOf(cardWithoutCoin);
+                                  deck.mulligans[mulliganIndex].mulligansWithoutCoin[cardIndex] = cardFound;
+                                  return cardWithoutCoinCB();
+                                })
+                                .catch(function (err) {
+                                  return cardWithoutCoinCB(err);
+                                });
 
-									});
+                              });
 
-									async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
+                              async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
 
-                        Card.findById({
-                          id: cardWithCoin.cardId
-                        }).$promise
-                        .then(function (cardFound) {
-                          var cardIndex = mulligan.mulligansWithCoin.indexOf(cardWithCoin);
-                          deck.mulligans[mulliganIndex].mulligansWithCoin[cardIndex] = cardFound;
-                          return cardWithCoinCB();
-                        })
-                        .catch(function (err) {
-                          return cardWithCoinCB(err);
-                        });
+                                    Card.findById({
+                                      id: cardWithCoin.cardId,
+                                        filter: {
+                                            fields: {
+                                                artist: false,
+                                                attack: false,
+                                                durability: false,
+                                                expansion: false,
+                                                flavor: false,
+                                                health: false,
+                                                isActive: false,
+                                                race: false,
+                                                text: false,
+                                                deckable: false
+                                            }
+                                        }
+                                    }).$promise
+                                    .then(function (cardFound) {
+                                      var cardIndex = mulligan.mulligansWithCoin.indexOf(cardWithCoin);
+                                      deck.mulligans[mulliganIndex].mulligansWithCoin[cardIndex] = cardFound;
+                                      return cardWithCoinCB();
+                                    })
+                                    .catch(function (err) {
+                                      return cardWithCoinCB(err);
+                                    });
 
-                      });
+                                  });
 
-                      mulliganCB();
+                                  mulliganCB();
 
-                    }, function(err) {
-                      if (err) return d.resolve(err);
-                      d.resolve(deck);
-                    });
-                    return d.promise;
-                  }],
+                                }, function(err) {
+                                  if (err) return d.resolve(err);
+                                  d.resolve(deck);
+                                });
+                                return d.promise;
+                              }],
 
                           classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
                                 var perpage = 15,
@@ -4935,6 +5134,18 @@ var app = angular.module('app', [
 
                                 return Card.find({
                                     filter: {
+                                        fields: {
+                                            artist: false,
+                                            attack: false,
+                                            durability: false,
+                                            expansion: false,
+                                            flavor: false,
+                                            health: false,
+                                            isActive: false,
+                                            race: false,
+                                            text: false,
+                                            deckable: false
+                                        },
                                         where: {
                                             playerClass: playerClass,
                                             deckable: true
@@ -4942,14 +5153,18 @@ var app = angular.module('app', [
                                         order: ['cost ASC', 'name ASC'],
                                         limit: perpage
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (classCards) {
+                                    return classCards;
+                                });
                             }],
 
                             classCardsCount: ['$stateParams', 'deck', 'Card', function ($stateParams, deck, Card) {
                                 var deckID = $stateParams.deckID;
                                 return Card.count({
                                     where: {
-                                        playerClass: deck.playerClass
+                                        playerClass: deck.playerClass,
+                                        deckable: true
                                     }
                                 }).$promise;
                             }],
@@ -4957,7 +5172,8 @@ var app = angular.module('app', [
                             neutralCardsCount: ['Card', function (Card) {
                                 return Card.count({
                                     where: {
-                                        playerClass: 'Neutral'
+                                        playerClass: 'Neutral',
+                                        deckable: true
                                     }
                                 }).$promise;
                             }],
@@ -4965,6 +5181,18 @@ var app = angular.module('app', [
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
+                                        fields: {
+                                            artist: false,
+                                            attack: false,
+                                            durability: false,
+                                            expansion: false,
+                                            flavor: false,
+                                            health: false,
+                                            isActive: false,
+                                            race: false,
+                                            text: false,
+                                            deckable: false
+                                        },
                                         where: {
                                             playerClass: 'Neutral',
                                             deckable: true
@@ -5526,14 +5754,7 @@ var app = angular.module('app', [
                                       isActive: true
                                     },
                                     filter: {
-                                      fields: {
-                                        oldTalents: false,
-                                        oldAbilities: false,
-                                        price: false,
-                                        title: false,
-                                        manaType: false,
-                                        characters: false
-                                      }
+                                      fields: ['id', 'className', 'description', 'heroType', 'isActive', 'name', 'orderNum', 'role', 'universe']
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -5542,31 +5763,7 @@ var app = angular.module('app', [
                                   .catch(function (err) {
                                     return waterCB();
                                   });
-                                },
-//                                function (heroData, waterCB) {
-//                                  async.each(heroData, function(hero, heroCB) {
-//                                    HeroTalent.find({
-//                                      filter: {
-//                                        where: {
-//                                          heroId: hero.id
-//                                        },
-//                                        include: ['talent']
-//                                      }
-//                                    }).$promise
-//                                    .then(function (heroTalents) {
-//                                      console.log('heroTalents:', heroTalents);
-//                                      hero.talents = heroTalents;
-//                                      console.log('heroData:', heroData);
-//                                      return heroCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                      return heroCB(err);
-//                                    });
-//
-//                                  }, function(err) {
-//                                    return waterCB(null, heroData);
-//                                  });
-//                                }
+                                }
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
@@ -5742,14 +5939,7 @@ var app = angular.module('app', [
                                       where: {
                                         isActive: true
                                       },
-                                      fields: {
-                                        oldTalents: false,
-                                        oldAbilities: false,
-                                        price: false,
-                                        title: false,
-                                        manaType: false,
-                                        characters: false
-                                      }
+                                      fields: ['id', 'className', 'description', 'heroType', 'isActive', 'name', 'orderNum', 'role', 'universe']
                                     }
                                   }).$promise
                                   .then(function(heroData) {
@@ -5759,28 +5949,6 @@ var app = angular.module('app', [
                                     return waterCB();
                                   });
                                 },
-//                                function (heroData, waterCB) {
-//                                  async.each(heroData, function(hero, heroCB) {
-//                                    HeroTalent.find({
-//                                      filter: {
-//                                        where: {
-//                                          heroId: hero.id
-//                                        },
-//                                        include: ['talent']
-//                                      }
-//                                    }).$promise
-//                                    .then(function (heroTalents) {
-//                                      hero.talents = heroTalents;
-//                                      return heroCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                      return heroCB(err);
-//                                    });
-//
-//                                  }, function(err) {
-//                                    return waterCB(null, heroData);
-//                                  });
-//                                }
                               ], function(err, results) {
                                 return d.resolve(results);
                               });
@@ -5803,22 +5971,56 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.map.html',
                         controller: 'AdminHOTSGuideEditMapCtrl',
                         resolve: {
-                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
-                                var guideID = $stateParams.guideID;
-
-                                return Guide.find({
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
+                            dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                                var guideId = $stateParams.guideID;
+                                return Guide.findById({
+                                    id: guideId,
                                     filter: {
-                                        where: {
-                                            id: guideID
-                                        }
+                                        include: [
+                                            {
+                                                relation: 'maps'
+                                            }
+                                        ]
                                     }
                                 }).$promise;
                             }],
-                            heroes: ['Hero', function (Hero) {
-                                return Hero.find({}).$promise;
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise
+                                .then(function (heroes) {
+                                    return heroes;
+                                });
                             }],
-                            maps: ['Map', function (Map) {
-                                return Map.find({}).$promise;
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -6492,10 +6694,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hs.snapshots.edit.html',
                         controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
-//                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
-//                                var snapshotID = $stateParams.snapshotID;
-//                                return AdminSnapshotService.getSnapshot(snapshotID);
-//                            }]
                             snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
                                 var snapshotID = $stateParams.snapshotID;
                                 return Snapshot.findOne({
@@ -6614,7 +6812,9 @@ var app = angular.module('app', [
                     admin: {
                         templateUrl: tpl + 'views/admin/teams.html'
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.list', {
                 url: '',
@@ -6650,7 +6850,9 @@ var app = angular.module('app', [
                             }],
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.add-team', {
                 url: '/add-team',
@@ -6659,7 +6861,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.add-team.html',
                         controller: 'AdminTeamAddCtrl',
                         resolve: {
-                            games: ['Game', function (Game) {
+                            gameOptions: ['Game', function (Game) {
                                 return Game.find({
                                     filter: {
                                         fields: ['id', 'name']
@@ -6667,7 +6869,13 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (games) {
-                                    return games;
+                                    var gameOptions = _.map(games, function (game) {
+                                        return {
+                                            id: game.id,
+                                            name: game.name
+                                        };
+                                    });
+                                    return gameOptions;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
@@ -6675,7 +6883,9 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.edit-team', {
                 url: '/edit-team/:teamId',
@@ -6684,7 +6894,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.edit-team.html',
                         controller: 'AdminTeamEditCtrl',
                         resolve: {
-                            games: ['Game', function (Game) {
+                            gameOptions: ['Game', function (Game) {
                                 return Game.find({
                                     filter: {
                                         fields: ['id', 'name']
@@ -6692,11 +6902,16 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (games) {
-                                    return games;
+                                    var gameOptions = _.map(games, function (game) {
+                                        return {
+                                            id: game.id,
+                                            name: game.name
+                                        };
+                                    });
+                                    return gameOptions;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
-                                    return throw404();
                                 });
                             }],
                             team: ['Team', '$stateParams', function (Team, $stateParams) {
@@ -6719,12 +6934,13 @@ var app = angular.module('app', [
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
-                                    return throw404();
                                 });
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.add-team-member', {
                 url: '/add-team-member',
@@ -6733,7 +6949,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.add-member.html',
                         controller: 'AdminTeamMemberAddCtrl',
                         resolve: {
-                            teams: ['Team', function (Team) {
+                            teamOptions: ['Team', function (Team) {
                                 return Team.find({
                                     filter: {
                                         fields: ['id', 'name', 'gameId'],
@@ -6749,16 +6965,25 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (teams) {
-                                    return teams;
+                                    var teamOptions = _.map(teams, function (team) {
+                                        var teamName = team.name ? ' ' + team.name : '',
+                                            gameName = team.game.name + teamName;
+                                        return {
+                                            teamId: team.id,
+                                            game: gameName
+                                        };
+                                    });
+                                    return teamOptions;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
-                                    return throw404();
                                 });
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.teams.edit-team-member', {
                 url: '/edit-team-member/:memberID',
@@ -6767,7 +6992,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.edit-member.html',
                         controller: 'AdminTeamMemberEditCtrl',
                         resolve: {
-                            teams: ['Team', function (Team) {
+                            teamOptions: ['Team', function (Team) {
                                 return Team.find({
                                     filter: {
                                         fields: ['id', 'gameId', 'name'],
@@ -6782,11 +7007,18 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (teams) {
-                                    return teams;
+                                    var teamOptions = _.map(teams, function (team) {
+                                        var teamName = team.name ? ' ' + team.name : '',
+                                            gameName = team.game.name + teamName;
+                                        return {
+                                            teamId: team.id,
+                                            game: gameName
+                                        };
+                                    });
+                                    return teamOptions;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
-                                    return throw404();
                                 });
                             }],
                             member: ['$stateParams', 'TeamMember', function ($stateParams, TeamMember) {
@@ -6803,7 +7035,9 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',

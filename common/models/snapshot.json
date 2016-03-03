@@ -37,6 +37,20 @@
     },
     "isActive": {
       "type": "boolean"
+    },
+    "oldAuthors": {
+      "type": [
+        "object"
+      ]
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
     }
   },
   "validations": [],
@@ -97,7 +111,7 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__create__comments"
     },

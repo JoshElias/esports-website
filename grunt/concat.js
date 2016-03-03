@@ -5,6 +5,9 @@ module.exports = {
             stripBanners: true,
         },
         files: {
+            'client/dist/js/showads.js': [
+                'client/js/showads.js'
+            ],
             'client/dist/js/vendor.js': [
                 'client/vendor/jquery/dist/jquery.js',
                 'client/vendor/jquery-ui/jquery-ui.js',

@@ -43,6 +43,9 @@
       "type": "string",
       "required": true
     },
+    "isCommentable": {
+      "type": "boolean"
+    },
     "description": {
       "type": "string",
       "$validate": ["spam"]
@@ -79,6 +82,10 @@
     "youtubeId": {
       "type": "string",
       "$validate": ["youtubeId"]
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
     },
     "chapters": {
       "type": [
@@ -235,7 +242,7 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__create__comments"
     },

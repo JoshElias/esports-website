@@ -87,7 +87,7 @@ module.exports = {
             {
                 expand: true,
                 cwd: 'client/dist/js/',
-                src: ['**/*', '!**/*.js'],
+                src: ['**/*', '!**/*.js', 'showads.js'],
                 dest: 'js'
             },
             {
