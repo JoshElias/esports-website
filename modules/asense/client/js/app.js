@@ -44,11 +44,25 @@ angular.module('tsAdSense', [])
     //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
     var e = $(".ad");
     var r = UserRoleService.getRoles();
-    console.log(r);
     var role = (!_.isUndefined(r)) ? r.$premium : undefined;
     //var role = true;
     var canShowAds = !!window.canshowads;
 
+    function loginPremiumCheck (user) {
+        User.isInRoles({
+            uid: user.id,
+            roleNames: ['$premium']
+        })
+        .$promise
+        .then(function (data) {
+            var usrRoles = data.isInRoles;
+            if(usrRoles.$premium) {
+                role = usrRoles.$premium;
+
+                return checkPremium();
+            }
+        })
+    }
 
     function checkPremium () {
         if (User.isAuthenticated()) {
@@ -103,7 +117,7 @@ angular.module('tsAdSense', [])
         });
     }
     
-    EventService.registerListener(EventService.EVENT_LOGIN, checkPremium);
+    EventService.registerListener(EventService.EVENT_LOGIN, loginPremiumCheck);
     EventService.registerListener(EventService.EVENT_LOGOUT, checkPremium);
     checkPremium();
 }])

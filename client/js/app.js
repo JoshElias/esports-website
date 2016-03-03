@@ -182,7 +182,7 @@ var app = angular.module('app', [
                             return LoopBackAuth.currentUserData;
                         }
                     ],
-                    userRoles: ['User', 'UserRoleService', function (User, UserRoleService) {
+                    getRoles: ['User', 'UserRoleService', function (User, UserRoleService) {
                         if (User.isAuthenticated()) {
                             User.isInRoles({
                                 uid: User.getCurrentId(),
@@ -563,6 +563,7 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
+                                        console.log(userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {

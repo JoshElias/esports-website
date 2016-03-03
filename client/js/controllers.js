@@ -12045,7 +12045,7 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (userRoles) {
-                        
+                        console.log(userRoles);
                         if (userRoles.isInRoles.$premium
                             || userRoles.isInRoles.$admin 
                             || userRoles.isInRoles.$contentProvider) {
