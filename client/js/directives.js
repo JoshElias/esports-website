@@ -176,7 +176,7 @@ angular.module('app.directives', ['ui.load'])
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
                         LoginService.login(email, password, $scope.remember, function(err, data) {
                             if (err) {
-                                AlertService.setError({ show: true, msg: "Error logging in" });
+                                AlertService.setError({ show: true, msg: "Error logging in, please check your email and password" });
 
                                 $scope.showError = true;
                                 $scope.setLoggingIn(0);
