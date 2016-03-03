@@ -1,27 +1,26 @@
-var app = require('../../../server/server');
-
-
 var DEFAULT_MAX_LIMIT = 100;
 var ADMIN_MAX_LIMIT = 1000;
 
 
-function addMaxScope(ctx, unused, finalCb) {
+function addMaxScope(models) {
+    return function(ctx, unused, finalCb) {
 
-    // If the user is not logged in, apply default limit
-    if(!ctx.req || !ctx.req.accessToken) {
-        applyLimit(ctx, DEFAULT_MAX_LIMIT);
-        return finalCb();
+        // If the user is not logged in, apply default limit
+        if(!ctx.req || !ctx.req.accessToken) {
+            applyLimit(ctx, DEFAULT_MAX_LIMIT);
+            return finalCb();
+        }
+
+        // Check if this user is an admin
+        var User = models.user;
+
+        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$admin"], function (err, isInRoles) {
+            if (err) return finalCb(err);
+            else if (isInRoles.none) applyLimit(ctx, DEFAULT_MAX_LIMIT);
+            else applyLimit(ctx, ADMIN_MAX_LIMIT);
+            return finalCb();
+        });
     }
-
-    // Check if this user is an admin
-    var User = app.models.user;
-
-    User.isInRoles(ctx.req.accessToken.userId.toString(), ["$admin"], function (err, isInRoles) {
-        if (err) return finalCb(err);
-        else if (isInRoles.none) applyLimit(ctx, DEFAULT_MAX_LIMIT);
-        else applyLimit(ctx, ADMIN_MAX_LIMIT);
-        return finalCb();
-    });
 }
 
 function applyLimit(ctx, limit) {

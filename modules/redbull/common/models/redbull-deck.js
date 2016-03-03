@@ -1,7 +1,7 @@
 var async = require("async");
 var loopback = require("loopback");
 var _ = require("underscore");
-var utils = require("./../../.././utils");
+var utils = require("../../../../modules/jloop").utils;
 
 var HS_CLASSES = ["Mage", "Paladin", "Rogue", "Druid", "Shaman",
     "Warlock", "Hunter", "Priest", "Warrior"];

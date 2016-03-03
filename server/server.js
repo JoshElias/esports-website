@@ -2,6 +2,7 @@ var async = require("async");
 var loopback = require('loopback');
 var boot = require('loopback-boot');
 var jloop = require("../modules/jloop");
+var path = require("path");
 
 var app = module.exports = loopback();
 
@@ -12,6 +13,9 @@ async.series([
     function(seriesCb) {
         return jloop.generateBootOptions(function(err, bootOptions) {
             if(err) return seriesCb(err);
+
+            // Add models for passport component
+            bootOptions.modelSources.push(path.join(__dirname, "..", "node_modules", "loopback-component-passport", "lib", "models"));
 
             boot(app, bootOptions);
             return seriesCb();

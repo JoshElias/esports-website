@@ -1,6 +1,6 @@
 var loopback = require("loopback");
 var async = require("async");
-var utils = require("./../../.././utils");
+var utils = require("../../../../modules/jloop").utils;
 
 
 module.exports = function(RedbullDraft) {

@@ -4,8 +4,8 @@ var mime = require("mime");
 var knox = require("knox");
 var s3 = require("s3");
 var s3Datasource = (process.env.NODE_ENV)
-    ? require("../server/configs/datasources."+process.env.NODE_ENV).s3
-    : require("../server/configs/datasources.json").s3;
+    ? require("../configs/datasources."+process.env.NODE_ENV).s3
+    : require("../configs/datasources.json").s3;
 
 
 

@@ -3,7 +3,7 @@ var loopback = require("loopback");
 var util = require("util");
 var _ = require('underscore');
 var validators = require("./validators");
-var requestCrawler = require("./request-crawler");
+var requestCrawler = require("../request-crawler");
 
 
 function validate(ctx, finalCb) {
@@ -112,4 +112,8 @@ function updateReport(key, state, validationErr, finalCb) {
     }
 
     return updateReport(key, state.parent, validationErr, finalCb);
+}
+
+module.exports = {
+    validate: validate
 }

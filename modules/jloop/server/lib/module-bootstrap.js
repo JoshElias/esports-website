@@ -8,7 +8,7 @@ function generateBootOptions(finalCb) {
     // Initialize the boot options
     var loopbackBootOptions = {
         bootDirs: [],
-        modelSourceDirs: []
+        modelSources: []
     };
 
     // Add default config
@@ -16,6 +16,9 @@ function generateBootOptions(finalCb) {
 
     // Add default boot dir
     loopbackBootOptions.bootDirs.push(path.join(__dirname, "..", "..", "..", "..", "server", "boot"));
+
+    // Add default model dir
+    loopbackBootOptions.modelSources.push(path.join(__dirname, "..", "..", "..", "..", "common", "models"));
 
     // Get module dirs
     async.waterfall([
@@ -142,7 +145,7 @@ function generateBootOptions(finalCb) {
     }
 
     function modelHandler(modelSourcePath, finalCb) {
-        loopbackBootOptions.modelSourceDirs.push(modelSourcePath);
+        loopbackBootOptions.modelSources.push(modelSourcePath);
         return finalCb();
     }
 }

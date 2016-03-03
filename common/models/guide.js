@@ -1,10 +1,11 @@
+var _ = require('underscore');
+var async = require('async');
+
+
 module.exports = function(Guide) {
-    var _ = require('underscore');
-    var async = require('async');
 
 
-
-    Gide.topGuide = function (filters, cb) {
+    Guide.topGuide = function (filters, cb) {
         var limit = 10;
         var iter = 1;
         var Vote = Guide.app.models.vote;

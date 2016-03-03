@@ -4,8 +4,9 @@ var loopback = require("loopback");
 var bcrypt = require('bcrypt-nodejs');
 var request = require("request");
 
-var utils = require("./.././utils");
-var subscription = require("./.././subscription");
+var utils = require("../../modules/jloop/server/lib/utils");
+var subscription = require("../../server/lib/subscription");
+
 
 module.exports = function(User) {
 

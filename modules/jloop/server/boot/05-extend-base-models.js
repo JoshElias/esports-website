@@ -1,7 +1,7 @@
-var utils = require("../../.././utils");
-var validator = require(".././validator");
-var scope = require("./scope");
-var relation = require("./relation");
+var validator = require("../lib/validator/validator");
+var filter = require("../lib/filter/filter");
+var scope = require("../lib/scope");
+var relation = require("../lib/relation");
 
 
 module.exports = function(server) {
@@ -18,7 +18,8 @@ module.exports = function(server) {
         var model = cleanModels[key];
 
         model.observe("before save", validator.validate);
-        model.beforeRemote("find", scope.addMaxScope);
+        model.beforeRemote("find", scope.addMaxScope(server.models));
+        model.observe("loaded", filter.filter);
         model.observe('before delete', relation.destroyChildren);
     }
 };

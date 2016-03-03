@@ -1,4 +1,4 @@
-var stripeKey = require("../server/configs/config." + process.env.NODE_ENV).stripeKey;
+var stripeKey = require("../configs/config." + process.env.NODE_ENV).stripeKey;
 var stripe = require('stripe')(stripeKey);
 
 function createStripe(user, cb) {
