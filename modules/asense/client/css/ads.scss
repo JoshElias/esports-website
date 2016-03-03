@@ -97,7 +97,7 @@
 			font-weight: bold;
 			color: grey;
 			padding:15px 0px;
-			width: 400px;
+			max-width: 400px;
 			margin: auto;
 		}
     }
@@ -136,11 +136,12 @@
             }
         }
 
+
 		.adblock {
 			font-weight: bold;
 			color: grey;
-			padding:15px 0px;
-			width: 400px;
+			padding: 15px 0px;
+			max-width: 400px;
 			margin: auto;
 
 		}
@@ -159,7 +160,7 @@
 			font-weight: bold;
 			color: grey;
 			padding:15px 0px;
-			width: 200px;
+			max-width: 200px;
 			margin: auto;
 		}
     }
@@ -193,11 +194,14 @@
         margin-right: 0px;
         margin-left: 0px;
     }
-    
-    .programmers {
-        height: 125px;
-        width: 100%;
-    }
+
+	.adblock {
+		font-weight: bold;
+		color: grey;
+		padding:15px 0px;
+		max-width: 400px;
+		margin: auto;
+	}
 
 }
 
