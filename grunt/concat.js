@@ -6,6 +6,7 @@ module.exports = {
         },
         files: {
             'client/dist/js/vendor.js': [
+                'client/js/showads.js',
                 'client/vendor/jquery/dist/jquery.js',
                 'client/vendor/jquery-ui/jquery-ui.js',
                 'client/vendor/bootstrap/dist/js/bootstrap.js',
