@@ -41,7 +41,7 @@ angular.module('tsAdSense', [])
 .value('moduleTpl', (tpl !== './') ? tpl + 'views/asense/client/views/' : 'dist/views/asense/client/views/')
 .controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', 'UserRoleService', 'LoopBackAuth',
     function ($scope, $state, $window, User, EventService, $timeout, UserRoleService, LoopBackAuth) {
-        var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+        var url = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
         //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
         var e = $(".ad");
         var r = UserRoleService.getRoles();
