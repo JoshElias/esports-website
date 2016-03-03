@@ -60,8 +60,11 @@ angular.module('tsAdSense', [])
             .$promise
             .then(function (data) {
                 var usrRoles = data.isInRoles;
+                UserRoleService.setRoles(usrRoles);
+
                 if(usrRoles.$premium) {
                     role = usrRoles.$premium;
+
 
                     return checkPremium();
                 }
