@@ -710,7 +710,6 @@ module.exports = function(User) {
     };
 
     User.getCurrent = function(finalCb) {
-
         // Is the user logged in?
         var loopbackContext = loopback.getCurrentContext();
         if(!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
@@ -730,7 +729,6 @@ module.exports = function(User) {
             return finalCb();
         }
         var userId = req.accessToken.userId.toString();
-
 
         return User.findById(userId, function (err, user) {
             if (err) return finalCb(err);
