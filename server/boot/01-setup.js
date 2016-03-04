@@ -35,7 +35,7 @@ module.exports = function(server) {
   server.use(methodOverride());
   server.use(loopback.favicon());
   server.use(loopback.context());
-
+console.log("dbur", server.get("dbUrl"));
   server.middleware('auth', loopback.token({
     model: server.models.AccessToken
   }));
