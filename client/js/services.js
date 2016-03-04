@@ -1491,7 +1491,7 @@ angular.module('app.services', [])
     
     var deckBuilder = {};
 
-    deckBuilder.new = function (playerClass, data, crudMan) {
+    deckBuilder.new = function (playerClass, data) {
         data = data || {};
 
         var d = new Date();
@@ -1804,32 +1804,19 @@ angular.module('app.services', [])
                 // check gameModeType
                 if(db.gameModeType === 'arena') {
                     
-                    var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[index]);
-                    if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
-                    
                     db.cards[index].cardQuantity += 1;
-                    crudMan.add(db.cards[index], 'cards');
-                    console.log('crudMan.getArrs():', crudMan.getArrs());
                     return true;
                 } else {
                     // mode is constructed or brawl mode
                     if (!isLegendary && db.cards[index].cardQuantity === 1) {
-                        var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[index]);
-                        if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
                             
                         db.cards[index].cardQuantity += 1;
-                        crudMan.add(db.cards[index], 'cards');
-                        console.log('crudMan.getArrs():', crudMan.getArrs());
                         return true;
                     }
                     // increase qty by one
                     if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
-                        var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[index]);
-                        if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
                         
                         db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
-                        crudMan.add(db.cards[index], 'cards');
-                        console.log('crudMan.getArrs():', crudMan.getArrs());
                         return true;
                     }
                 }
@@ -1841,11 +1828,7 @@ angular.module('app.services', [])
                     card: card
                 };
                 // add new card
-                var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[index]);
-                if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
                 db.cards.push(newCard);
-                crudMan.add(newCard, 'cards');
-                console.log('crudMan.getArrs():', crudMan.getArrs());
                 // sort deck
                 db.sortDeck();
             }
@@ -1901,8 +1884,6 @@ angular.module('app.services', [])
                     //					console.log('card.id:', card.id);
                     //					console.log('db.cards[i].card.id:', db.cards[i].card.id);
                     if (db.cards[i].cardQuantity > 1) {
-                        var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[i]);
-                        if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
                     } else {
@@ -1949,9 +1930,7 @@ angular.module('app.services', [])
                             callback: function () {
                                 
                                 $timeout(function() {
-                                    crudMan.delete(db.cards[index], 'cards');
                                     db.cards.splice(index, 1);
-                                    console.log('crudMan.getArrs():', crudMan.getArrs());
                                 });
                                 
                                 for(var i = 0; i < db.mulligans.length; i++) {
@@ -1981,7 +1960,6 @@ angular.module('app.services', [])
                 box.modal('show');
             } else {
                 if (index !== -1) {
-                    crudMan.delete(db.cards[index], 'cards');
                     db.cards.splice(index, 1);
                 }
             }
@@ -1993,7 +1971,6 @@ angular.module('app.services', [])
             } else {
                 var index = db.cards.indexOf(card);
                 
-                console.log('crudMan.getArrs():', crudMan.getArrs());
                 db.cards.splice(index, 1);
             }
         };

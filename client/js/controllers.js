@@ -10602,13 +10602,13 @@ angular.module('app.controllers', ['ngCookies'])
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
         
-            var crudMan = new CrudMan();
-            crudMan.createArr('cards');
-            crudMan.setExists(deckCardMulligans.cards, 'cards');
-            console.log('crudMan.getArrs():', crudMan.getArrs());
+//            var crudMan = new CrudMan();
+//            crudMan.createArr('cards');
+//            crudMan.setExists(deckCardMulligans.cards, 'cards');
+//            console.log('crudMan.getArrs():', crudMan.getArrs());
             
 //            console.log('deckCardMulligans:', deckCardMulligans);
-            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deckCardMulligans.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck, crudMan) : DeckBuilder.new($scope.className, deckCardMulligans, crudMan);
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deckCardMulligans.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deckCardMulligans);
 //            console.log('$scope.deck:', $scope.deck);
 
             $scope.$watch('deck', function() {
