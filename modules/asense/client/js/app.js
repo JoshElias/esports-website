@@ -39,88 +39,96 @@ angular.module('tsAdSense', [])
     ]
 )
 .value('moduleTpl', (tpl !== './') ? tpl + 'views/asense/client/views/' : 'dist/views/asense/client/views/')
-.controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', 'UserRoleService', function ($scope, $state, $window, User, EventService, $timeout, UserRoleService) {
-    var url = 'http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-    //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
-    var e = $(".ad");
-    var r = UserRoleService.getRoles();
-    var role = (!_.isUndefined(r)) ? r.$premium : undefined;
-    //var role = true;
-    var canShowAds = !!window.canshowads;
+.controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', 'UserRoleService', 'LoopBackAuth',
+    function ($scope, $state, $window, User, EventService, $timeout, UserRoleService, LoopBackAuth) {
+        var url = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+        //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
+        var e = $(".ad");
+        var r = UserRoleService.getRoles();
+        var role = (!_.isUndefined(r)) ? r.$premium : undefined;
+        //var role = true;
+        var canShowAds = !!window.canshowads;
 
-    function loginPremiumCheck (user) {
-        User.isInRoles({
-            uid: user.id,
-            roleNames: ['$premium']
-        })
-        .$promise
-        .then(function (data) {
-            var usrRoles = data.isInRoles;
-            if(usrRoles.$premium) {
-                role = usrRoles.$premium;
+        if (!_.isNull(LoopBackAuth.currentUserData))
+            $scope.user = LoopBackAuth.currentUserData.username;
 
-                return checkPremium();
-            }
-        })
-    }
+        function loginPremiumCheck (user) {
+            User.isInRoles({
+                uid: user.id,
+                roleNames: ['$premium']
+            })
+            .$promise
+            .then(function (data) {
+                var usrRoles = data.isInRoles;
+                UserRoleService.setRoles(usrRoles);
 
-    function checkPremium () {
-        if (User.isAuthenticated()) {
-            var s = document.getElementById('adCode');
-            var eLength = e.length;
+                if(usrRoles.$premium) {
+                    role = usrRoles.$premium;
 
-            if (!role) {
+
+                    return checkPremium();
+                }
+            })
+        }
+
+        function checkPremium () {
+            if (User.isAuthenticated()) {
+                var s = document.getElementById('adCode');
+                var eLength = e.length;
+
+                if (!role) {
+                    $scope.showAds = true;
+                    return doLoadAds();
+                }
+
+                if (window.googleAdsAlreadyLoaded && s !== null && s !== undefined) {
+                    s.parentNode.removeChild(s);
+                    window.googleAdsAlreadyLoaded = false;
+                }
+
+                for (var i = 0; i < eLength; i++) {
+                    $(e[i]).remove();
+                }
+
+                $scope.showAds = false;
+            } else {
+                role = false;
                 $scope.showAds = true;
                 return doLoadAds();
             }
-
-            if (window.googleAdsAlreadyLoaded && s !== null && s !== undefined) {
-                s.parentNode.removeChild(s);
-                window.googleAdsAlreadyLoaded = false;
-            }
-
-            for (var i = 0; i < eLength; i++) {
-                $(e[i]).remove();
-            }
-
-            $scope.showAds = false;
-        } else {
-            role = false;
-            $scope.showAds = true;
-            return doLoadAds();
-        }
-    }
-    
-    function doLoadAds () {
-        $scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
-        $scope.adSlot = $scope.adSlot || "7575226683";
-        $scope.theme = $state.theme || 'default';
-        $scope.region = $state.current.name;
-        $scope.w = (!_.isUndefined($scope.w)) ? $scope.w : '100%';
-        $scope.h = (!_.isUndefined($scope.h)) ? $scope.h : '100%';
-
-        if (!window.googleAdsAlreadyLoaded) {
-            var s = document.createElement('script');
-            s.type = 'text/javascript';
-            s.id = "adCode";
-            s.src = url;
-            s.async = true;
-            document.body.appendChild(s);
-
-            window.googleAdsAlreadyLoaded = true;
         }
 
-        $timeout(function () {
-            for (var i = 0; i < e.length; i++) {
-                $(e[i]).removeClass('hidden');
+        function doLoadAds () {
+            $scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
+            $scope.adSlot = $scope.adSlot || "7575226683";
+            $scope.theme = $state.theme || 'default';
+            $scope.region = $state.current.name;
+            $scope.w = (!_.isUndefined($scope.w)) ? $scope.w : '100%';
+            $scope.h = (!_.isUndefined($scope.h)) ? $scope.h : '100%';
+
+            if (!window.googleAdsAlreadyLoaded) {
+                var s = document.createElement('script');
+                s.type = 'text/javascript';
+                s.id = "adCode";
+                s.src = url;
+                s.async = true;
+                document.body.appendChild(s);
+
+                window.googleAdsAlreadyLoaded = true;
             }
-        });
+
+            $timeout(function () {
+                for (var i = 0; i < e.length; i++) {
+                    $(e[i]).removeClass('hidden');
+                }
+            });
+        }
+
+        EventService.registerListener(EventService.EVENT_LOGIN, loginPremiumCheck);
+        EventService.registerListener(EventService.EVENT_LOGOUT, checkPremium);
+        checkPremium();
     }
-    
-    EventService.registerListener(EventService.EVENT_LOGIN, loginPremiumCheck);
-    EventService.registerListener(EventService.EVENT_LOGOUT, checkPremium);
-    checkPremium();
-}])
+])
 .directive('ad', ['moduleTpl', '$timeout', '$window', function (moduleTpl, $timeout, $window) {
     return {
         restrict: 'E',
@@ -175,7 +183,7 @@ angular.module('tsAdSense', [])
         }
     }
 }])
-.directive('tsAd', ['moduleTpl', '$compile', '$timeout', 'LoopBackAuth', function (moduleTpl, $compile, $timeout, LoopBackAuth) {
+.directive('tsAd', ['moduleTpl', function (moduleTpl) {
     return {
         restrict: 'E',
         replace: true,
