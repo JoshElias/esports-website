@@ -34,7 +34,7 @@ angular.module('app.directives', ['ui.load'])
 .directive('hsCard', ['$compile', function ($compile) {
     return {
         restrict: 'A',
-		scope: {
+		    scope: {
             tooltipImg: '='
         },
         link: function (scope, el, attr) {
@@ -156,7 +156,9 @@ angular.module('app.directives', ['ui.load'])
 
                 function redir (go) {
                     var goto = go || 'app.home';
-                    $state.go(goto);
+                    var user = LoopBackAuth.currentUserData;
+
+                    $state.go(goto, {username: user.username});
                 }
 
                 $scope.cancel = function () {
@@ -174,22 +176,24 @@ angular.module('app.directives', ['ui.load'])
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
                         LoginService.login(email, password, $scope.remember, function(err, data) {
                             if (err) {
-                                AlertService.setError({ show: true, msg: "Error logging in" });
+                                AlertService.setError({ show: true, msg: "Error logging in, please check your email and password" });
 
                                 $scope.showError = true;
                                 $scope.setLoggingIn(0);
                             } else {
 
-                              LoginModalService.hideModal();
-                              $scope.setLoggingIn(2);
+                                  LoginModalService.hideModal();
+                                  $scope.setLoggingIn(2);
 
-                              if ($scope.callback) {
-                                $scope.callback(LoopBackAuth);
-                              } else if (!$scope.state) {
-                                  var redirect = $stateParams.redirect;
+                                console.log($stateParams.redirect);
 
-                                  redir(redirect);
-                              }
+                                if ($scope.callback) {
+                                    $scope.callback(LoopBackAuth);
+                                } else if (!$scope.state) {
+                                    var redirect = $stateParams.redirect;
+
+                                    redir(redirect);
+                                }
                             }
                         });
 
@@ -1060,6 +1064,10 @@ angular.module('app.directives', ['ui.load'])
                 style: false,
                 className: 'hots-talent-tooltip'
             });
+            
+            scope.$on('$destroy', function () {
+                $('.hots-talent-tooltip').remove();
+            });
         }
     };
 }])
@@ -1076,6 +1084,10 @@ angular.module('app.directives', ['ui.load'])
                 style: false,
                 className: 'hots-hero-tooltip'
             });
+
+            scope.$on('$destroy', function () {
+                $('.hots-hero-tooltip').remove();
+            });
         }
     };
 }])
@@ -1091,6 +1103,10 @@ angular.module('app.directives', ['ui.load'])
                 content: $compile('<div map-modal></div>')(scope),
                 style: false,
                 className: 'hots-map-tooltip'
+            });
+            
+            scope.$on('$destroy', function () {
+                $('.hots-map-tooltip').remove();
             });
         }
     };

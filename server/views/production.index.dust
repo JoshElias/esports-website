@@ -29,6 +29,8 @@
         var tpl = '{cdnUrl}';
     </script>
 
+    <script src="{cdnUrl}js/showads.js"></script>
+
     <!-- vendor -->
     <script src="{cdnUrl}js/{assets.vendor_min_js}"></script>
 

@@ -16,6 +16,8 @@ module.exports = function(server) {
 
         User.getCurrent(function(err, currentUser) {
            if(err) return cb(err);
+           else if (!currentUser) return cb(undefined, false);
+
            return cb(undefined, isSubscribed(currentUser.toJSON()));
         });
 
@@ -25,8 +27,7 @@ module.exports = function(server) {
 
             var now = new Date();
             var dateISO = now.toISOString();
-            
-            return (user.subscription.isSubscribed 
+            return (user.subscription.isSubscribed
                     || (user.subscription.expiryDate > dateISO));
         }
     });

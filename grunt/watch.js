@@ -33,7 +33,7 @@ module.exports = {
         tasks: [
             'newer:htmlmin:modules_',
             'compass:modules_',
-            'compass:adsense',
+            'compass:asense',
             'newer:concat:modules_',
             //'newer:imagemin:modules_'
         ]

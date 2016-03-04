@@ -45,7 +45,7 @@ angular.module('app.services', [])
         metaKeywords: function() { return metaKeywords; },
         getStatusCode: function() { return statusCode; }
     }
-    })
+})
     .factory('CrudMan', [
         function () {
             //    var arrs = {};
@@ -140,7 +140,7 @@ angular.module('app.services', [])
         }
     ])
     .factory('AuthenticationService', function() {
-    var loggedIn = false,
+var loggedIn = false,
         admin = false,
         provider = false;
 
@@ -165,6 +165,17 @@ angular.module('app.services', [])
         }
     }
 })
+    .factory('UserRoleService', function () {
+        return {
+            roles: undefined,
+            setRoles: function (roles) {
+                this.roles = (!_.isUndefined(roles.isInRoles)) ? roles.isInRoles : roles;
+            },
+            getRoles: function () {
+                return this.roles;
+            }
+        }
+    })
     .factory('LoginService', ['$state', '$cookies', 'User', 'EventService', 'LoopBackAuth', function ($state, $cookies, User, EventService, LoopBackAuth) {
         return {
             login: function (email, password, remember, cb) {
@@ -1672,6 +1683,8 @@ angular.module('app.services', [])
     deckBuilder.new = function (playerClass, data) {
         data = data || {};
 
+        console.log(data);
+
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
 
@@ -1685,8 +1698,9 @@ angular.module('app.services', [])
             description: data.description || '',
             chapters: data.chapters || [],
             deckType: data.deckType || 'None',
+            isCommentable: data.isCommentable,
             gameModeType: data.gameModeType || 'constructed',
-            basic: data.basic || false,
+            basic: _.isUndefined(data.basic) ? false : data.basic,
             matchups: data.matchups || [],
             cards: data.cards || [],
             heroName: data.heroName || '',
@@ -1698,7 +1712,8 @@ angular.module('app.services', [])
             },
             comments: data.comments || [],
             slug: data.slug || '',
-            isFeatured: data.isFeatured || false,
+            isFeatured: _.isUndefined(data.isFeatured) ? false : data.isFeatured,
+            isCommentable: _.isUndefined(data.isCommentable) ? true : data.isCommentable,
             isPublic: data.isPublic !== undefined && data.isPublic === false ? false : true,
             voteScore: data.voteScore || 1,
             votes: data.votes || [],
@@ -1832,7 +1847,6 @@ angular.module('app.services', [])
                 //            console.log('mulligan: ', mulligan);
                 //            console.log('card: ', card);
                 //            console.log('with coin: ', withCoin);
-
                 var cardMulligans = (withCoin) ? mulligan.mulligansWithCoin : mulligan.mulligansWithoutCoin,
                     exists = false,
                     index = -1;
@@ -2348,8 +2362,9 @@ angular.module('app.services', [])
                     isPremium: false,
                     expiryDate: d
                 },
-                isFeatured: data.featured || false,
-                isPublic:  data.isPublic === false ? false : true,
+                isFeatured: _.isUndefined(data.isFeatured) ? false : data.isFeatured,
+                isPublic:  _.isUndefined(data.isPublic) ? true : data.isPublic,
+                isCommentable: _.isUndefined(data.isCommentable) ? true : data.isCommentable,
                 votes: data.votes || [],
                 voteScore: data.voteScore || 0,
                 viewCount: data.viewCount || 0,
@@ -2394,6 +2409,7 @@ angular.module('app.services', [])
 
             gb.toggleHero = function (hero) {
                 if (gb.hasHero(hero)) {
+                    console.log(1);
                     for (var i = 0; i < gb.heroes.length; i++) {
                         if (gb.heroes[i].hero.id === hero.id) {
                             gb.heroes.splice(i, 1);

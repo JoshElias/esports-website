@@ -149,12 +149,12 @@
             //background-color: rgba(31,31,31,.9);
         
             //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
-            background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.45), rgba($gradient-grey,0.90)); /* FF3.6+ */
-            background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.45)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
-            background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
-            background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
-            background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
-            background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
+            background: -moz-linear-gradient(to bottom,rgba(10,10,10,.80),rgba(10,10,10,.95)); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba(10,10,10,.80)), color-stop(rgba(10,10,10,.95))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, rgba(10,10,10,.80), rgba(10,10,10,.95)); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, rgba(10,10,10,.80), rgba(10,10,10,.95)); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, rgba(10,10,10,.80), rgba(10,10,10,.95)); /* IE10+ */
+            background: linear-gradient(to bottom, rgba(10,10,10,.80), rgba(10,10,10,.95)); /* W3C */
         .modal-header {
             display: none;
         }
@@ -171,7 +171,9 @@
     }
 }
 
-
+.login-charm {
+    z-index: 10;
+}
 
 //general styles that affect both the modal content and /login
 
@@ -276,7 +278,8 @@
 .login-modal .forgot-form,
 .forgot-form {
     .login-form-header {
-        margin-bottom: 40px;    
+        margin-bottom: 40px;
+        
     }
     
     button[type=submit] {
@@ -320,12 +323,29 @@
         background-image: url(../img/login-bg.jpg);
         height: 170px;
         width: 100%;
-        padding-top: 25px;
+        padding-top: 32px;
         text-shadow: 1px 1px 1px rgba($black, .75);
         text-align: center;
         
+        
+        .closing-x {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: rgba($light-font, .5);
+            font-size: 18px;
+            font-weight: 100;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+            
+            &:hover {
+                color: rgba($light-font, 1);
+            }
+        }
+        
+        
         h1 {
-            margin-top: 23px;
+            margin-top: 10px;
             font-size: 20px;
             
         }
@@ -418,8 +438,8 @@
             }
         } 
     }
+
     
-  
     .login-form-email {
         
         .form-modal { 
@@ -494,6 +514,7 @@
                 left: 15px;
                 font-size: 12px; 
                 color: $light-font;
+                z-index: 10;
             }
             
             .form-control {

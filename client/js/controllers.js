@@ -488,20 +488,17 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService', 'isPremium',
-        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService, isPremium) {
-
-            var plan = user.subscription.plan || 'tempostorm_quarterly';
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService', 'LoginService', 'isPremium', '$stateParams',
+        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService, LoginService, isPremium, $stateParams) {
 
             $scope.user = user;
-            $scope.plan = user.subscription && user.subscription.plan ? user.subscription.plan : 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
             $scope.isPremium = isPremium;
 
             $scope.subform = {
                 isBusy: false,
-                cardPlaceholder: (isPremium) ? "XXXX XXXX XXXX " + user.subscription.last4 : "XXXX XXXX XXXX XXXX"
+                cardPlaceholder: (isPremium && !!user.subscription.last4) ? "XXXX XXXX XXXX " + user.subscription.last4 : "XXXX XXXX XXXX XXXX"
             };
 
             //noinspection UnterminatedStatementJS
@@ -862,6 +859,14 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
 //    }
 //])
+.controller('ProfileSubscriptionCtrl', ['$scope', 'resolvePlan', '$stateParams', function($scope, resolvePlan, $stateParams) {
+    if ($stateParams.plan) {
+        $scope.$parent.plan = resolvePlan;
+    } else {
+        $stateParams.plan = 'tempostorm_quarterly';
+        $scope.$parent.plan = 'tempostorm_quarterly';
+    }
+}])
 .controller('ProfileActivityCtrl', ['$scope', '$sce', '$filter', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth', 'Deck', 'Guide',
     function ($scope, $sce, $filter, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth, Deck, Guide) {
 
@@ -1059,18 +1064,31 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         order: 'createdDate DESC',
                         where: getWhere(),
+                        fields: {
+                            id: true,
+                            name: true,
+                            authorId: true,
+                            createdDate: true,
+                            description: true,
+                            premium: true,
+                            photoNames: true,
+                            slug: true,
+                            themeName: true,
+                            title: true,
+                            articleType: true
+                        },
                         include: [
                             {
                                 relation: 'author',
                                 scope: {
-                                    fields: {
-                                        id: true,
-                                        username: true
-                                    }
+                                    fields: ['id', 'username']
                                 }
                             },
                             {
                                 relation: 'votes',
+                                scope: {
+                                    fields: ['id', 'authorId', 'direction']
+                                }
                             }
                         ]
                     }
@@ -1119,12 +1137,33 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         order: "createdDate DESC",
                         where: getWhere(),
+                        fields: {
+                            id: true,
+                            name: true,
+                            createdDate: true,
+                            authorId: true,
+                            playerClass: true,
+                            heroName: true,
+                            slug: true
+                        },
                         include: [
                             {
-                                relation: 'author'
+                                relation: 'author',
+                                scope: {
+                                    fields: {
+                                        username: true
+                                    }
+                                }
                             },
                             {
-                                relation: 'votes'
+                                relation: 'votes',
+                                scope: {
+                                    fields: {
+                                        id: true,
+                                        authorId: true,
+                                        direction: true
+                                    }
+                                }
                             }
                         ]
                     }
@@ -1235,9 +1274,21 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         order: "createdDate DESC",
                         where: getWhere(),
+                        fields: {
+                            id: true,
+                            name: true,
+                            createdDate: true,
+                            premium: true,
+                            authorId: true,
+                            guideType: true,
+                            slug: true
+                        },
                         include: [
                             {
-                                relation: 'author'
+                                relation: 'author',
+                                scope: {
+                                    fields: ['id', 'username']
+                                }
                             },
                             {
                                 relation: 'guideHeroes',
@@ -1246,11 +1297,7 @@ angular.module('app.controllers', ['ngCookies'])
                                         {
                                             relation: 'hero',
                                             scope: {
-                                                include: [
-                                                    {
-                                                        relation: 'talents'
-                                                    }
-                                                ]
+                                                fields: ['className', 'name', 'title'],
                                             }
                                         }
                                     ]
@@ -1261,16 +1308,25 @@ angular.module('app.controllers', ['ngCookies'])
                                 scope: {
                                     include: [
                                         {
-                                            relation: 'talent'
+                                            relation: 'talent',
+                                            scope: {
+                                                fields: ['className', 'name']
+                                            }
                                         }
                                     ]
                                 }
                             },
                             {
-                                relation: 'maps'
+                                relation: 'maps',
+                                scope: {
+                                    fields: ['className']
+                                }
                             },
                             {
-                                relation: 'votes'
+                                relation: 'votes',
+                                scope: {
+                                    fields: ['authorId', 'direction']
+                                }
                             }
                         ]
                     }
@@ -6930,27 +6986,19 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
 
-                if (mechanics.length == 1) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    //noinspection UnterminatedStatementJS
-                    countOptionsClass.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsNeutral.where.mechanics = {
-                        inq: mechanics
-                    }
-                } else if (mechanics.length > 1) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where.mechanics = mechanics
-                    //noinspection UnterminatedStatementJS
-                    countOptionsClass.where.mechanics = mechanics
-                    countOptionsNeutral.where.mechanics = mechanics
+                if (mechanics.length > 0) {
+                    options.filter.where.and      = buildMechanicQuery(mechanics);
+                    countOptionsClass.where.and   = buildMechanicQuery(mechanics);
+                    countOptionsNeutral.where.and = buildMechanicQuery(mechanics);
                 }
+                
+                function buildMechanicQuery(mechanics) {
+                    var newArr = [];
+                    _.each(mechanics, function(mechanic) {
+                        newArr.push({ mechanics: mechanic })
+                    });
+                    return newArr;
+                };
 
                 if (mana != 'all' && mana != '7+') {
                     options.filter.where.cost = mana;
@@ -7132,10 +7180,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
@@ -7367,12 +7425,13 @@ angular.module('app.controllers', ['ngCookies'])
                     'premium',
                     'voteScore',
                     'votes',
-                    'youtubeId'
+                    'youtubeId',
+                    'isCommentable'
                 ]);
 
 
 
-                console.log('deck before save:', cleanDeck);
+//                console.log('deck before save:', cleanDeck);
 
 
                 // save deck + children (array names were changed to avoid this)
@@ -7692,6 +7751,18 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
+                        fields: {
+                            artist: false,
+                            attack: false,
+                            durability: false,
+                            expansion: false,
+                            flavor: false,
+                            health: false,
+                            isActive: false,
+                            race: false,
+                            text: false,
+                            deckable: false
+                        },
                         order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
@@ -7740,27 +7811,19 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
 
-                if (mechanics.length == 1) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    //noinspection UnterminatedStatementJS
-                    countOptionsClass.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsNeutral.where.mechanics = {
-                        inq: mechanics
-                    }
-                } else if (mechanics.length > 1) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where.mechanics = mechanics
-                    //noinspection UnterminatedStatementJS
-                    countOptionsClass.where.mechanics = mechanics
-                    countOptionsNeutral.where.mechanics = mechanics
+                if (mechanics.length > 0) {
+                    options.filter.where.and      = buildMechanicQuery(mechanics);
+                    countOptionsClass.where.and   = buildMechanicQuery(mechanics);
+                    countOptionsNeutral.where.and = buildMechanicQuery(mechanics);
                 }
+
+                function buildMechanicQuery(mechanics) {
+                    var newArr = [];
+                    _.each(mechanics, function(mechanic) {
+                        newArr.push({ mechanics: mechanic })
+                    });
+                    return newArr;
+                };
 
                 if (mana != 'all' && mana != '7+') {
                     options.filter.where.cost = mana;
@@ -7988,10 +8051,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            }
 
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
@@ -9836,6 +9909,18 @@ angular.module('app.controllers', ['ngCookies'])
                 //noinspection UnterminatedStatementJS
                 var options = {
                     filter: {
+                        fields: {
+                            artist: false,
+                            attack: false,
+                            durability: false,
+                            expansion: false,
+                            flavor: false,
+                            health: false,
+                            isActive: false,
+                            race: false,
+                            text: false,
+                            deckable: false
+                        },
                         where: {
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
@@ -9888,27 +9973,19 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
 
-                if (mechanics.length == 1) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    //noinspection UnterminatedStatementJS
-                    countOptionsClass.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsNeutral.where.mechanics = {
-                        inq: mechanics
-                    }
-                } else if (mechanics.length > 1) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where.mechanics = mechanics
-                    //noinspection UnterminatedStatementJS
-                    countOptionsClass.where.mechanics = mechanics
-                    countOptionsNeutral.where.mechanics = mechanics
+                if (mechanics.length > 0) {
+                    options.filter.where.and      = buildMechanicQuery(mechanics);
+                    countOptionsClass.where.and   = buildMechanicQuery(mechanics);
+                    countOptionsNeutral.where.and = buildMechanicQuery(mechanics);
                 }
+                
+                function buildMechanicQuery(mechanics) {
+                    var newArr = [];
+                    _.each(mechanics, function(mechanic) {
+                        newArr.push({ mechanics: mechanic })
+                    });
+                    return newArr;
+                };
 
                 if (mana != 'all' && mana != '7+') {
                     options.filter.where.cost = mana;
@@ -10116,12 +10193,21 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
 
-            //noinspection UnterminatedStatementJS
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
+
             $scope.isFeatured = function () {
                 var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -10327,7 +10413,8 @@ angular.module('app.controllers', ['ngCookies'])
                     'premium',
                     'voteScore',
                     'votes',
-                    'youtubeId'
+                    'youtubeId',
+                    'isCommentable'
                 ]);
 
 //                console.log('deck before save:', cleanDeck);
@@ -10473,6 +10560,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ], function(err) {
                     $scope.deckSubmitting = false;
+                    $window.scrollTo(0, 0);
                     if (err) {
                         console.log('waterfall err:', err);
                         return AlertService.setError({
@@ -10655,6 +10743,18 @@ angular.module('app.controllers', ['ngCookies'])
                             playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
                             deckable: true
                         },
+                        fields: {
+                            artist: false,
+                            attack: false,
+                            durability: false,
+                            expansion: false,
+                            flavor: false,
+                            health: false,
+                            isActive: false,
+                            race: false,
+                            text: false,
+                            deckable: false
+                        },
                         order: ["cost ASC", "name ASC"],
                         skip: ((page * perpage) - perpage),
                         limit: perpage
@@ -10703,27 +10803,19 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
 
-                if (mechanics.length == 1) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    //noinspection UnterminatedStatementJS
-                    countOptionsClass.where.mechanics = {
-                        inq: mechanics
-                    }
-
-                    countOptionsNeutral.where.mechanics = {
-                        inq: mechanics
-                    }
-                } else if (mechanics.length > 1) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where.mechanics = mechanics
-                    //noinspection UnterminatedStatementJS
-                    countOptionsClass.where.mechanics = mechanics
-                    countOptionsNeutral.where.mechanics = mechanics
+                if (mechanics.length > 0) {
+                    options.filter.where.and      = buildMechanicQuery(mechanics);
+                    countOptionsClass.where.and   = buildMechanicQuery(mechanics);
+                    countOptionsNeutral.where.and = buildMechanicQuery(mechanics);
                 }
+                
+                function buildMechanicQuery(mechanics) {
+                    var newArr = [];
+                    _.each(mechanics, function(mechanic) {
+                        newArr.push({ mechanics: mechanic })
+                    });
+                    return newArr;
+                };
 
                 if (mana != 'all' && mana != '7+') {
                     options.filter.where.cost = mana;
@@ -10744,7 +10836,6 @@ angular.module('app.controllers', ['ngCookies'])
                                 Card.find(options)
                                     .$promise
                                     .then(function (data) {
-
                                         $scope.classPagination.total = classCount.count;
                                         $scope.classPagination.page = page;
                                         $scope.neutralPagination.total = neutralCount.count;
@@ -10978,12 +11069,21 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
 
-            //noinspection UnterminatedStatementJS
+            $scope.isCommentable = function () {
+                var commentable = $scope.deck.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
+
             $scope.isFeatured = function () {
                 var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -11123,9 +11223,6 @@ angular.module('app.controllers', ['ngCookies'])
                 delete mulligan.mulligansWithoutCoin;
 
               });
-
-//              console.log('deck before update:', deck);
-//              console.log('WOOOOOOOOOOORK');
 
                 async.series([
                     function (seriesCallback) {
@@ -12238,7 +12335,7 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (userRoles) {
-                        
+                        console.log(userRoles);
                         if (userRoles.isInRoles.$premium
                             || userRoles.isInRoles.$admin 
                             || userRoles.isInRoles.$contentProvider) {
@@ -12479,6 +12576,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User', 'DeckBuilder',
         function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User, DeckBuilder) {
+//            console.log('deckWithMulligans:', deckWithMulligans);
 
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
@@ -12510,7 +12608,6 @@ angular.module('app.controllers', ['ngCookies'])
                                     heroName: true,
                                     authorId: true,
                                     deckType: true,
-                                    viewCount: true,
                                     isPublic: true,
                                     votes: true,
                                     voteScore: true,
@@ -12523,23 +12620,38 @@ angular.module('app.controllers', ['ngCookies'])
                                     {
                                         relation: "cards",
                                         scope: {
-                                            include: ['card']
+                                            include: {
+                                                relation: 'card',
+                                                scope: {
+                                                    fields: ['id', 'name', 'cardType', 'cost', 'dust', 'photoNames']
+                                                }
+                                            }
                                         }
                                     },
                                     {
-                                        relation: "mulligans",
+                                        relation: 'mulligans',
                                         scope: {
                                             include: [
                                                 {
                                                     relation: 'mulligansWithCoin',
                                                     scope: {
-                                                        include: 'card'
+                                                        include: {
+                                                            relation: 'card',
+                                                            scope: {
+                                                                fields: ['id', 'name', 'cardType', 'cost', 'photoNames']
+                                                            }
+                                                        }
                                                     }
                                                 },
                                                 {
                                                     relation: 'mulligansWithoutCoin',
                                                     scope: {
-                                                        include: 'card'
+                                                        include: {
+                                                            relation: 'card',
+                                                            scope: {
+                                                                fields: ['id', 'name', 'cardType', 'cost', 'photoNames']
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             ]
@@ -12548,29 +12660,39 @@ angular.module('app.controllers', ['ngCookies'])
                                     {
                                         relation: "comments",
                                         scope: {
-                                            include: ['author']
+                                            fields: ['id', 'votes', 'authorId', 'createdDate', 'text'],
+                                            include: {
+                                                relation: 'author',
+                                                scope: {
+                                                    fields: ['id', 'username']
+                                                }
+                                            }
                                         }
                                     },
                                     {
                                         relation: "author",
                                         scope: {
-                                            fields: [
-                                              'id',
-                                              'email',
-                                              'username',
-                                              'social',
-                                              'subscription'
-                                            ]
+                                            fields: ['id', 'username']
                                         }
                                     },
                                     {
-                                        relation: "matchups"
+                                        relation: "matchups",
+                                        scope: {
+                                            fields: ['forChance', 'deckName', 'className']
+                                        }
+                                    },
+                                    {
+                                        relation: "votes",
+                                        scope: {
+                                            fields: ['id', 'direction', 'authorId']
+                                        }
                                     }
                                 ]
                             }
                         })
                         .$promise
                         .then(function (data) {
+                            console.log('data:', data);
                             $scope.deck = DeckBuilder.new(data.playerClass, data);
 
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
@@ -15032,10 +15154,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
@@ -15092,6 +15224,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'youtubeId',
                             'viewCount',
                             'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) {
@@ -15315,10 +15448,20 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             //noinspection UnterminatedStatementJS
             $scope.isFeatured = function () {
@@ -15328,7 +15471,7 @@ angular.module('app.controllers', ['ngCookies'])
                         return $scope.featuredTypes[i].text;
                     }
                 }
-            }
+            };
 
 //            // save guide
 //            $scope.saveGuide = function () {
@@ -15494,10 +15637,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
@@ -15555,7 +15708,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'isPublic',
                             'youtubeId',
                             'viewCount',
-                            'voteScore'
+                            'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(guideCopy, keys);
                 var temp = _.map(guideCopy.heroes, function (hero) {
@@ -15752,22 +15906,55 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'Guide', 'guide', 'heroes', 'maps',
-        function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, Guide, guide, heroes, maps) {
-            // create guide
-            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map', guide);
+    .controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'Guide', 'dataGuide', 'dataHeroes', 'dataMaps', 'userRoles', 'EventService', 'User', 'Util',
+        function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, Guide, dataGuide, dataHeroes, dataMaps, userRoles, EventService, User, Util) {
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
 
+            // Listen for login/logout events and update role accordingly
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider']
+                })
+                .$promise
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
+            });
+
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+//                console.log("event listener response:", data);
+                $scope.isUserAdmin = false;
+                $scope.isUserContentProvider = false;
+            });
+
+//            console.log('dataGuide:', dataGuide);
+            // create guide
+            $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map' && $scope.app.settings.guide.id === dataGuide.id) ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map', dataGuide);
+
+//            console.log('$scope.guide:', $scope.guide);
             // heroes
-            $scope.heroes = heroes;
+            $scope.heroes = dataHeroes;
+//            console.log('$scope.heroes:', $scope.heroes);
 
             // maps
-            $scope.maps = maps;
+            $scope.maps = dataMaps;
+//            console.log('$scope.maps:', $scope.maps);
+            var mapFromDB = dataGuide.maps[0];
 
             // steps
             $scope.step = 2;
             //noinspection UnterminatedStatementJS
             $scope.prevStep = function () {
-                if ($scope.step == 2) { return $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id }); }
+                if ($scope.step == 2) { return $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug }); }
                 if ($scope.step > 1) $scope.step = $scope.step - 1;
             }
             //noinspection UnterminatedStatementJS
@@ -15776,7 +15963,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.stepOne = function () {
-                $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide.id });
+                $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug });
             };
 
             // draw map rows
@@ -15786,8 +15973,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if ($scope.maps[index]) {
-                        maps.push($scope.maps[index]);
+                    if (dataMaps[index]) {
+                        maps.push(dataMaps[index]);
                     }
                     index++;
                 }
@@ -15800,7 +15987,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // summernote options
             $scope.options = {
-                disableDragAndDrop: true,
                 height: 100,
                 toolbar: [
                     ['style', ['style']],
@@ -15815,10 +16001,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
@@ -15838,7 +16034,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             //noinspection UnterminatedStatementJS
             $scope.isFeatured = function () {
-                var featured = $scope.guide.featured;
+                var featured = $scope.guide.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
@@ -15848,25 +16044,70 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
+                var guideSlug;
+//                console.log('saving guide: ', $scope.guide);
                 if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                     return false;
                 }
+                if (!User.isAuthenticated()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.saveGuide();
+                    });
+                } else {
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+                    $scope.fetching = true;
 
-                Guide.update({
-                    where: {
-                        id: $scope.guide.id
-                    }
-
-                },$scope.guide).$promise.then(function () {
-
-                    AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been updated successfully.' });
-                    $state.go('app.admin.hots.guides.list');
-
-                }).catch( function(){
-                    AlertService.setError({ show: true, msg: $scope.guide.name + ' has not been updated. ' + err.status + ": " + err.data.error.message });
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                });
+                    async.parallel([
+                        function(paraCB){
+                            Guide.upsert($scope.guide)
+                            .$promise
+                            .then(function (guideData) {
+                                guideSlug = guideData.slug;
+                                return paraCB();
+                            })
+                            .catch(function (err) {
+                                return paraCB(err);
+                            });
+                        },
+                        function(paraCB) {
+                            Guide.maps.unlink({
+                                id: $scope.guide.id,
+                                fk: mapFromDB.id
+                            }).$promise
+                            .then(function (mapUnlinkData) {
+                                return paraCB();
+                            })
+                            .catch(function (err) {
+                                return paraCB(err);
+                            });
+                        },
+                        function(paraCB){
+                            Guide.maps.link({
+                                id: $scope.guide.id,
+                                fk: $scope.guide.maps[0].id
+                            }).$promise
+                            .then(function (mapLinkData) {
+                                return paraCB();
+                            })
+                            .catch(function (err) {
+                                return paraCB(err);
+                            });
+                        }
+                    ], function(err, results) {
+                        $scope.fetching = false;
+                        if (err) {
+                            $window.scrollTo(0, 0);
+                            AlertService.setError({
+                              show: true,
+                              msg: 'Unable to Update Guide',
+                              lbErr: err
+                            });
+                            return console.log('para err: ', err);
+                        }
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: guideSlug });
+                    });
+                }
             };
         }
     ])
@@ -16769,6 +17010,7 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (userRoles) {
+                        $window.scrollTo(0, 0);
                         Guide.findById({
                             id: $scope.guide.id,
                             filter: {
@@ -17051,7 +17293,9 @@ angular.module('app.controllers', ['ngCookies'])
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-
+                console.log('login event fired');
+                console.log('data:', data);
+                console.log('User.getCurrentId():', User.getCurrentId());
 //                 Check if user is admin or contentProvider
                 User.isInRoles({
                     uid: User.getCurrentId(),
@@ -17059,7 +17303,7 @@ angular.module('app.controllers', ['ngCookies'])
                 })
                 .$promise
                 .then(function (userRoles) {
-//                    console.log('userRoles: ', userRoles);
+                    console.log('userRoles: ', userRoles);
                     $scope.isUserAdmin = userRoles.isInRoles.$admin;
                     $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
                     return userRoles;
@@ -17182,10 +17426,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
@@ -17228,13 +17482,13 @@ angular.module('app.controllers', ['ngCookies'])
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
 
                 var keys = ['name',
+                            'against',
                             'authorId',
                             'slug',
                             'guideType',
                             'description',
                             'createdDate',
                             'premium',
-                            'votes',
                             'against',
                             'synergy',
                             'content',
@@ -17243,6 +17497,7 @@ angular.module('app.controllers', ['ngCookies'])
                             'youtubeId',
                             'viewCount',
                             'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(cleanGuide, keys);
                 var temp = _.map($scope.guide.heroes, function (hero) {
@@ -17270,6 +17525,7 @@ angular.module('app.controllers', ['ngCookies'])
                           return seriesCB();
                       })
                       .catch(function (err) {
+                          console.log("catching guide create error")
                           return seriesCB(err);
                       });
                   },
@@ -17279,19 +17535,19 @@ angular.module('app.controllers', ['ngCookies'])
                       }, cleanGuide.guideHeroes)
                       .$promise
                       .then(function (guideHeroData) {
-
-                          _.each(guideHeroData, function(eachVal) {
-                            var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                              return filterVal.heroId === eachVal.heroId;
-                            });
-
+                          
+                              _.each(guideHeroData, function(eachVal) {
+                                var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                                  return filterVal.heroId === eachVal.heroId;
+                                });
+                                  
                               _.each(heroTals, function (innerEachVal, index, list) {
                                 innerEachVal.guideId = guideCreated.id;
                                 innerEachVal.guideHeroId = eachVal.id;
                               });
+                                  
                               tals.push(heroTals);
                           });
-
                           return seriesCB();
                       })
                       .catch(function (err) {
@@ -17331,15 +17587,13 @@ angular.module('app.controllers', ['ngCookies'])
                   },
                   function (seriesCB) {
                     async.each(cleanGuide.maps, function(map, mapCB) {
-//                          console.log('map.id:', map.id);
-//                          console.log('guideData:', guideData);
+                        
                       Guide.maps.link({
                         id: guideCreated.id,
                         fk: map.id
                       }, null)
                       .$promise
                       .then(function (mapLinkData) {
-//                            console.log('mapLinkData:', mapLinkData);
                         return mapCB();
                       })
                       .catch(function (err) {
@@ -17353,7 +17607,7 @@ angular.module('app.controllers', ['ngCookies'])
                       return seriesCB();
                     });
 
-                  }], function (err, results) {
+                  }], function (err) {
                       $scope.fetching = false;
                       if (err) {
                         $window.scrollTo(0, 0);
@@ -17473,10 +17727,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
@@ -17518,13 +17782,6 @@ angular.module('app.controllers', ['ngCookies'])
                     
                     $scope.guide.slug = Util.slugify($scope.guide.name);
 //                    $scope.authorId = LoopBackAuth.currentUserId;
-
-                    $scope.guide.votes = [
-                        {
-                            userId: User.getCurrentId(),
-                            direction: 1
-                        }
-                    ];
 
                     $scope.guide.voteScore = 1;
 //                    console.log('saving $scope.guide:', $scope.guide);
@@ -17572,7 +17829,7 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     ], function (err) {
                         $window.scrollTo(0, 0);
-                        $scope.fetching = true;
+                        $scope.fetching = false;
                         if (err) {
                             return AlertService.setError({
                                 show: true,
@@ -17583,59 +17840,6 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.app.settings.guide = null;
                         $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
                     });
-
-//                    Guide.create({}, $scope.guide)
-//                    .$promise
-//                    .then(function (guideData) {
-//
-//                        Guide.maps.link({
-//                            id: guideData.id,
-//                            fk: $scope.guide.maps[0].id
-//                        }, null)
-//                        .$promise
-//                        .then(function (mapLinkData) {
-////                          console.log('mapLinkData:', mapLinkData);
-//                          Vote.create({
-//                              direction: 1,
-//                              createdDate: new Date().toISOString(),
-//                              authorId: User.getCurrentId(),
-//                              guideId: guideData.id
-//                          })
-//                          .$promise
-//                          .then(function (voteCreated) {
-//                              $scope.app.settings.guide = null;
-//                              $state.go('app.hots.guides.guide', { slug: guideData.slug });
-//                          })
-//                          .catch(function (err) {
-//                              $window.scrollTo(0, 0);
-//                              AlertService.setError({
-//                                show: true,
-//                                msg: 'Unable to Save Guide',
-//                                lbErr: err
-//                              });
-//                              console.log("Creating the guide - map link failed:", err);
-//                          });
-//
-//                        })
-//                        .catch(function (err) {
-//                            $window.scrollTo(0, 0);
-//                            AlertService.setError({
-//                              show: true,
-//                              msg: 'Unable to Save Guide',
-//                              lbErr: err
-//                            });
-//                            console.log("Creating the guide - map link failed:", err);
-//                        })
-//                    })
-//                    .catch(function (err) {
-//                        $window.scrollTo(0, 0);
-//                        AlertService.setError({
-//                          show: true,
-//                          msg: 'Unable to Save Guide',
-//                          lbErr: err
-//                        });
-//                        console.log("Creating the guide failed:", err);
-//                    })
                 }
             };
         }
@@ -17802,10 +18006,20 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // featured
-            $scope.featuredTypes = [
+            $scope.featuredTypes =
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            }
 
             $scope.isFeatured = function () {
                 var featured = $scope.guide.isFeatured;
@@ -17848,7 +18062,8 @@ angular.module('app.controllers', ['ngCookies'])
                             'isPublic',
                             'youtubeId',
                             'viewCount',
-                            'voteScore'
+                            'voteScore',
+                            'isCommentable'
                            ];
                 var stripped = Util.cleanObj(guideCopy, keys);
                 var temp = _.map(guideCopy.heroes, function (hero) {
@@ -18141,10 +18356,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // premium
-            $scope.premiumTypes = [
+            $scope.premiumTypes = 
+                $scope.commentableTypes = [
                 { text: 'No', value: false },
                 { text: 'Yes', value: true }
             ];
+            
+            $scope.isCommentable = function () {
+                var commentable = $scope.guide.isCommentable;
+                for (var i = 0; i < $scope.commentableTypes.length; i++) {
+                    if ($scope.commentableTypes[i].value === commentable) {
+                        return $scope.commentableTypes[i].text;
+                    }
+                }
+            };
 
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {

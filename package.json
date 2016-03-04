@@ -33,7 +33,7 @@
     "loopback-component-passport": "*",
     "loopback-component-storage": "^1.7.0",
     "loopback-connector-mandrill": "git://github.com/JoshElias/loopback-connector-mandrill.git",
-    "loopback-connector-mongodb": "^1.13.3",
+    "loopback-connector-mongodb": "1.13.2",
     "loopback-datasource-juggler": "^2.45.2",
     "loopback-sdk-angular": "^1.6.0",
     "method-override": "^2.3.5",

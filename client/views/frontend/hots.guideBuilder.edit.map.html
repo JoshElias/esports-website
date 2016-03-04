@@ -42,9 +42,9 @@
         </li>
     </ul>
     
-    <!-- adsense -->
-    <!--<ts-ad class="container-fluid text-center m-t-md" structure="double"></ts-ad>-->
-    <!-- /adsense -->
+    <!-- a-sense -->
+    <ts-ad class="container-fluid text-center m-t-md" structure="double"></ts-ad>
+    <!-- /a-sense -->
 </div>
 <div class="container" ng-show="step === 2">
     <div class="guide-text map-select"></div>
@@ -63,10 +63,10 @@
         </div>
     </div>
     
-    <!-- adsense -->
-    <!--<ts-ad class="container-fluid text-center m-t-md" structure="single"></ts-ad>-->
-    <!-- /adsense -->
-    
+    <!-- a-sense -->
+    <ts-ad class="container-fluid text-center m-t-md" structure="single"></ts-ad>
+    <!-- /a-sense -->
+
 </div>
 <div class="container" ng-show="step === 3">
     <div class="guide-text hero-information"></div>
@@ -214,6 +214,24 @@
                                             ng-class="{active: guide.isFeatured === type.value}" 
                                             ng-repeat="type in featuredTypes">
                                             <a href="#" ng-click="guide.isFeatured = type.value">{{type.text}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="isUserAdmin || isUserContentProvider">
+                        <div class="form-group row">
+                            <label for="commentable" class="col-sm-2 control-label">Comments Enabled</label>
+                            <div class="col-sm-10">
+                                <div class="dropdown">
+                                    <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                        <span>{{isCommentable()}}</span>
+                                        <b class="caret"></b>
+                                    </button>
+                                    <ul class="list-group dropdown-menu dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: guide.isCommentable === type.value}" ng-repeat="type in commentableTypes">
+                                            <a href="#" ng-click="guide.isCommentable = type.value">{{type.text}}</a>
                                         </li>
                                     </ul>
                                 </div>
