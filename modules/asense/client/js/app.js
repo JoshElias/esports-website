@@ -148,25 +148,27 @@ angular.module('tsAdSense', [])
             }
 
             function pushAd () {
-                if (adIter < adIterMax) {
+                $timeout(function () {
+                    if (adIter < adIterMax) {
 
-                    $timeout(function () {
-                        try {
-                            $window.adsbygoogle.push({});
-                        } catch (e) {
-                            adIter++;
-                            return pushAd();
+                        $timeout(function () {
+                            try {
+                                $window.adsbygoogle.push({});
+                            } catch (e) {
+                                adIter++;
+                                return pushAd();
+                            }
+                        }, 500);
+                    } else {
+                        var parent = $scope.el[0].parentNode;
+
+                        while (!!parent['parentNode']) {
+                            parent = parent['parentNode'];
                         }
-                    }, 500);
-                } else {
-                    var parent = $scope.el[0].parentNode;
 
-                    while (!!parent['parentNode']) {
-                        parent = parent['parentNode'];
+                        $(parent).remove();
                     }
-
-                    $(parent).remove();
-                }
+                }, 5000);
             }
 
             pushAd();
