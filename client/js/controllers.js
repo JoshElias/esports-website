@@ -7405,6 +7405,7 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
         function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
 //            console.log('deckCardMulligans:', deckCardMulligans);
+            
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
 
@@ -8194,6 +8195,7 @@ angular.module('app.controllers', ['ngCookies'])
                                             }
                                         });
                                     });
+                                    
                                 })
                                 .catch(function (err) {
                                     if (err) {
@@ -10336,9 +10338,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
+    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService', 'CrudMan',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService, CrudMan) {
 //            console.log('deckCardMulligans:', deckCardMulligans);
+            
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
 
@@ -10705,7 +10708,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
-
+        
+//            var crudMan = new CrudMan();
+//            crudMan.createArr('cards');
+//            crudMan.setExists(deckCardMulligans.cards, 'cards');
+//            console.log('crudMan.getArrs():', crudMan.getArrs());
+            
 //            console.log('deckCardMulligans:', deckCardMulligans);
             $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deckCardMulligans.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deckCardMulligans);
 //            console.log('$scope.deck:', $scope.deck);
@@ -11021,115 +11029,109 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         });
                     },
-
                     function (seriesCallback) {
                         // cycle through each mulligan
                         async.each(deck.deckMulligans, function(mulligan, mulliganCB) {
-//                          console.log('mulligan:', mulligan);
-                            // Update all mulligan instruction info
-                            Mulligan.upsert(mulligan)
-                            .$promise
-                            .then(function (mulliganUpserted) {
-//                                console.log('mulliganUpserted: ', mulligan);
-                                // Destroy all cards with coin and recreate them
-                                Mulligan.mulligansWithCoin.destroyAll({
-                                    id: mulligan.id
-                                })
-                                .$promise
-                                .then(function (deleted) {
-//                                    console.log('cardWithCoin deleted: ', deleted);
-
-                                    async.each(mulligan.coinCardMulligan, function(cardWithCoin, cardWithCoinCB) {
-//                                      console.log('cardWithCoin.id:', cardWithCoin.id);
+                            
+                            async.series([
+                                function (mulliganCardCB) {
+                                    Mulligan.upsert(mulligan)
+                                    .$promise
+                                    .then(function (mulliganUpserted) {
+                                        return mulliganCardCB(null);
+                                    })
+                                    .catch(function (err) {
+                                        return mulliganCardCB(err);
+                                    });
+                                },
+                                function (mulliganCardCB) {
+                                    Mulligan.mulligansWithCoin.destroyAll({
+                                        id: mulligan.id
+                                    })
+                                    .$promise
+                                    .then(function (cardWithCoinsDel) {
+                                        return mulliganCardCB(null);
+                                    })
+                                    .catch(function (err) {
+                                        return mulliganCardCB(err);
+                                    });
+                                },
+                                function (mulliganCardCB) {
+                                    async.each(mulligan.coinCardMulligan, function (cardWithCoin, cardWithCoinCB) {
                                         var realCardWithCoin = {
                                             cardId: cardWithCoin.id,
-                                            deckId: deck.id,
+                                            deckId: deck.id
                                         };
-//                                        console.log('realCardWithCoin: ', realCardWithCoin);
-
+                                        
                                         Mulligan.mulligansWithCoin.create({
-                                          id: mulligan.id
+                                            id: mulligan.id
                                         }, realCardWithCoin)
                                         .$promise
                                         .then(function (cardWithCoinCreated) {
-//                                                console.log('cardWithCoin created: ', cardWithCoinCreated);
-
-                                            // goto next cardWithCoin
-                                            cardWithCoinCB();
+                                            return cardWithCoinCB(null);
                                         })
                                         .catch(function (err) {
-                                            if (err) {
-                                                console.log('mulligan with coin create err: ', err);
-                                                cardWithCoinCB(err);
-                                            }
+                                            return cardWithCoinCB(err);
                                         });
+                                    }, function (err) {
+                                        if (err) {
+                                            console.log('cardWithCoin err:', err);
+                                            return cardWithCoinCB(err);
+                                        }
+                                        return mulliganCardCB(null);
                                     });
-                                })
-                                .catch(function (err) {
-                                    if (err) {
-                                        console.log('cardWithCoin destroyAll err: ', err);
-                                        mulliganCB(err);
-                                    }
-                                });
-
-                                // Destroy all cards without coin and recreate them
-                                Mulligan.mulligansWithoutCoin.destroyAll({
-                                    id: mulligan.id
-                                })
-                                .$promise
-                                .then(function (deleted) {
-//                                    console.log('cardWithoutCoin deleted: ', deleted);
-
-                                    async.each(mulligan.withoutCoinCardMulligan, function(cardWithoutCoin, cardWithoutCoinCB) {
-//                                      console.log('cardWithoutCoin.id:', cardWithoutCoin.id);
+                                },
+                                function (mulliganCardCB) {
+                                    Mulligan.mulligansWithoutCoin.destroyAll({
+                                        id: mulligan.id
+                                    })
+                                    .$promise
+                                    .then(function (cardWithoutCoinsDel) {
+                                        return mulliganCardCB(null);
+                                    })
+                                    .catch(function (err) {
+                                        return mulliganCardCB(err);
+                                    });
+                                },
+                                function (mulliganCardCB) {
+                                    async.each(mulligan.withoutCoinCardMulligan, function (cardWithoutCoin, cardWithoutCoinCB) {
                                         var realCardWithoutCoin = {
                                             cardId: cardWithoutCoin.id,
                                             deckId: deck.id
                                         };
-//                                        console.log('realCardWithoutCoin: ', realCardWithoutCoin);
-
+                                        
                                         Mulligan.mulligansWithoutCoin.create({
-                                          id: mulligan.id
+                                            id: mulligan.id
                                         }, realCardWithoutCoin)
                                         .$promise
                                         .then(function (cardWithoutCoinCreated) {
-//                                                console.log('cardWithoutCoin created: ', cardWithoutCoinCreated);
-
-                                            // goto next cardWithCoin
-                                            cardWithoutCoinCB();
+                                            return cardWithoutCoinCB(null);
                                         })
                                         .catch(function (err) {
-                                            if (err) {
-                                                console.log('mulligan without coin create : ', err);
-                                                cardWithoutCoinCB(err);
-                                            }
+                                            return cardWithoutCoinCB(err);
                                         });
+                                    }, function (err) {
+                                        if (err) {
+                                            console.log('cardWithoutCoin err:', err);
+                                            return mulliganCardCB(err);
+                                        }
+                                        return mulliganCardCB(null);
                                     });
-                                })
-                                .catch(function (err) {
-                                    if (err) {
-                                        console.log('cardWthoutCoin destroyAll err: ', err);
-                                        mulliganCB(err);
-                                    }
-                                });
-
-                            })
-                            .catch(function (err) {
-                                if (err) {
-                                    console.log('mulligan upsert err: ', err);
-                                    mulliganCB(err);
                                 }
+                            ], function (err) {
+                                if (err) {
+                                    console.log('mulligan card err:', err);
+                                    return mulliganCB(err);
+                                }
+                                return mulliganCB(null);
                             });
-
-                            // next mulligan
-                            return mulliganCB();
 
                         }, function(err) {
                             if (err) {
-                                console.log('err: ', err);
-                                seriesCallback(err);
+                                console.log('mulligan err:', err);
+                                return seriesCallback(err);
                             }
-                            seriesCallback(null, 'deck mulligans done');
+                            return seriesCallback(null);
                         });
                     },
                     function (seriesCallback) {
