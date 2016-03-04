@@ -701,12 +701,50 @@
 
 .profile-edit-wrapper .premium-wrapper {
     margin: 20px 0px 0px 0px;
-}
 
-.profile-edit-wrapper .premium-wrapper i {
-    color: white;
-    font-size: 24px;
-    float: left;
+	i {
+		color: white;
+		font-size: 24px;
+		float: left;
+	}
+
+	.prem-btn {
+		&.active {
+			.price-wrap h2 {
+				color: rgba(255,255,255,1);
+			}
+
+			.feature-list {
+				li {
+					color: rgba(255,255,255,1);
+				}
+			}
+		}
+	}
+
+	.feature-list {
+		margin-top: 20px;
+
+		li {
+			-webkit-transition: .2s;
+			-moz-transition: .2s;
+			transition: .2s;
+			
+			color: rgba(255,255,255,.3);
+			list-style: none;
+			text-align: left;
+			margin-left: 20px;
+		}
+
+		i {
+			color: green;
+			font-size: 18px;
+		}
+
+		.feature {
+			margin-left: 15px;
+		}
+	}
 }
 
 .profile-edit-wrapper .premium-btns {
@@ -730,7 +768,7 @@
 .profile-edit-wrapper .prem-btn .price-wrap {
     width: 100%;
     text-align: center;
-    padding: 60px 0px 80px 0px;
+    padding: 35px 0px 20px 0px;
 }
 .profile-edit-wrapper .prem-btn .price-wrap h2 {
     -webkit-transition: .2s;
@@ -738,9 +776,6 @@
     transition: .2s;
     color: rgba(255,255,255,.5);
     font-size: 24px;
-}
-.profile-edit-wrapper .prem-btn.active .price-wrap h2 {
-    color: rgba(255,255,255,1);
 }
 .profile-edit-wrapper .prem-btn .price-wrap h3 {
     text-align: center;
