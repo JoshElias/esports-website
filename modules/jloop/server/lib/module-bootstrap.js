@@ -11,8 +11,11 @@ function generateBootOptions(finalCb) {
         modelSources: []
     };
 
-    // Add default config
-    loopbackBootOptions.appRootDir = path.join(__dirname, "..", "..", "..", "..", "server", "configs"),
+    // Add root app dir
+    loopbackBootOptions.appRootDir = path.join(__dirname, "..", "..", "..", "..", "server");
+
+    // Add model config dir
+    loopbackBootOptions.modelsRootDir = path.join(__dirname, "..", "..", "..", "..", "server", "configs");
 
     // Add default boot dir
     loopbackBootOptions.bootDirs.push(path.join(__dirname, "..", "..", "..", "..", "server", "boot"));

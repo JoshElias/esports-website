@@ -1,3 +1,5 @@
+var utils = require("../../modules/jloop").utils;
+
 module.exports = function(Deck) {
 
     var funcs = [/*utils.validateYoutubeId,*/ utils.generateSlug('name')];
