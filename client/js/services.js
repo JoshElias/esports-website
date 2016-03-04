@@ -1487,14 +1487,12 @@ angular.module('app.services', [])
 
     return ow;
 })
-.factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone) {
-
+.factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', 'CrudMan', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone, CrudMan) {
+    
     var deckBuilder = {};
 
-    deckBuilder.new = function (playerClass, data) {
+    deckBuilder.new = function (playerClass, data, crudMan) {
         data = data || {};
-
-        console.log(data);
 
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
@@ -1600,348 +1598,129 @@ angular.module('app.services', [])
             }
         };
 
-            db.validVideo = function () {
-                //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-                //return (db.video.length) ? db.video.match(r) : true;
-                return true;
-            };
+        db.validVideo = function () {
+            //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+            //return (db.video.length) ? db.video.match(r) : true;
+            return true;
+        };
 
-            db.isStrong = function (strong) {
-                return strong.isStrong;
-            };
+        db.isStrong = function (strong) {
+            return strong.isStrong;
+        };
 
-            db.isWeak = function (weak) {
-                return weak.isWeak;
-            };
+        db.isWeak = function (weak) {
+            return weak.isWeak;
+        };
 
-            db.toggleStrong = function (strong) {
-                strong.isStrong = !strong.isStrong;
-            };
+        db.toggleStrong = function (strong) {
+            strong.isStrong = !strong.isStrong;
+        };
 
-            db.toggleWeak = function (weak) {
-                weak.isWeak = !weak.isWeak;
-            };
+        db.toggleWeak = function (weak) {
+            weak.isWeak = !weak.isWeak;
+        };
 
-            db.getStrong = function (klass) {
-                var strong = db.against.strong;
-                for (var i = 0; i < strong.length; i++) {
-                    if (strong[i].klass === klass) {
-                        return strong[i];
-                    }
+        db.getStrong = function (klass) {
+            var strong = db.against.strong;
+            for (var i = 0; i < strong.length; i++) {
+                if (strong[i].klass === klass) {
+                    return strong[i];
                 }
-                return false;
-            };
+            }
+            return false;
+        };
 
-            db.getWeak = function (klass) {
-                var weak = db.against.weak;
-                for (var i = 0; i < weak.length; i++) {
-                    if (weak[i].klass === klass) {
-                        return weak[i];
-                    }
+        db.getWeak = function (klass) {
+            var weak = db.against.weak;
+            for (var i = 0; i < weak.length; i++) {
+                if (weak[i].klass === klass) {
+                    return weak[i];
                 }
-                return false;
-            };
+            }
+            return false;
+        };
 
-            db.inMulligan = function (mulligan, withCoin, card) {
-                var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards;
-                // check if card already exists
-                for (var i = 0; i < c.length; i++) {
-                    if (c[i].id === card.id) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-
-            db.toggleMulligan = function (mulligan, withCoin, card) {
-                //            console.log('mulligan: ', mulligan);
-                //            console.log('card: ', card);
-                //            console.log('with coin: ', withCoin);
-
-                var cardMulligans = (withCoin) ? mulligan.mulligansWithCoin : mulligan.mulligansWithoutCoin,
-                    exists = false,
-                    index = -1;
-
-                // check if card already exists
-                for(var i = 0; i < cardMulligans.length; i++) {
-                    if (cardMulligans[i].id === card.id) {
-                        exists = true;
-                        index = i;
-                        break;
-                    }
-                }
-
-                if (exists) {
-                    cardMulligans.splice(index, 1);
-                    //                console.log('spliced coinMulligan: ', cardMulligans);
-                } else {
-                    // card doesn't exist in deck.mulligans
-                    if (cardMulligans.length < 6) {
-                        card.cardId = card.id;
-                        cardMulligans.push(card);
-                        //                    console.log('added to mulligan: ', cardMulligans);
-                    }
-                }
-            };
-
-            db.calcImgPosition = function(card) {
-                var pos = 0;
-                var pxRatio = 28;
-                if (card.cardQuantity > 1) {
-                    pos += 1;
-                }
-                if (card.card.rarity === 'Legendary') {
-                    pos += 1;
-                }
-                return pxRatio * pos;
-            };
-
-            db.toggleGameMode = function(gameMode) {
-                var cardQtyMoreThan2 = false;
-                if (gameMode === 'constructed' || gameMode === 'brawl') {
-                    for(var i = 0; i < db.cards.length; i++) {
-                        if (db.cards[i].cardQuantity > 2) {
-                            cardQtyMoreThan2 = true;
-                            break;
-                        }
-                    }
-                    if (cardQtyMoreThan2) {
-                        // Alert user that all cards with more than 2 will be reduced to 2
-                        var box = bootbox.dialog({
-                            title: 'Are you sure you want to change this deck from <strong>' + db.gameModeType + '</strong> to <strong>' + gameMode + '</strong>?',
-                            message: 'All cards with more than 2 will be reduced to 2.',
-                            buttons: {
-                                delete: {
-                                    label: 'Continue',
-                                    className: 'btn-danger',
-                                    callback: function () {
-                                        $timeout(function() {
-                                            for(var i = 0; i < db.cards.length; i++) {
-                                                if (db.cards[i].cardQuantity > 2) {
-                                                    db.cards[i].cardQuantity = 2;
-                                                }
-                                            }
-                                            db.gameModeType = gameMode;
-                                        });
-                                    }
-                                },
-                                cancel: {
-                                    label: 'Cancel',
-                                    className: 'btn-default pull-left',
-                                    callback: function () {
-                                        box.modal('hide');
-                                    }
-                                }
-                            },
-                            closeButton: false
-                        });
-                        box.modal('show');
-                    } else {
-                        db.gameModeType = gameMode;
-                    }
-                } else {
-                    db.gameModeType = gameMode;
-                }
-            };
-
-            db.getMulligan = function (klass) {
-                var mulligans = db.mulligans;
-                for (var i = 0; i < mulligans.length; i++) {
-                    if (mulligans[i].className === klass) {
-                        //                    console.log('mulligan: ', mulligans[i]);
-                        return mulligans[i];
-                    }
-                }
-                return false;
-            };
-
-            db.getContent = function () {
-                return $sce.trustAsHtml(db.content);
-            };
-
-            db.isAddable = function (card) {
-                if (db.gameModeType === 'arena') { return true; }
-                if (card.playerClass !== db.playerClass && card.playerClass !== 'Neutral') { return false; }
-                var exists = false,
-                    index = -1,
-                    isLegendary = (card.rarity === 'Legendary') ? true : false;
-
-                // check if card already exists
-                for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].card.id === card.id) {
-                        exists = true;
-                        index = i;
-                        break;
-                    }
-                }
-
-                if (exists) {
-                    return (!isLegendary && db.cards[index].cardQuantity === 1);
-                } else {
+        db.inMulligan = function (mulligan, withCoin, card) {
+            var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards;
+            // check if card already exists
+            for (var i = 0; i < c.length; i++) {
+                if (c[i].id === card.id) {
                     return true;
                 }
-            };
+            }
+            return false;
+        };
 
-            // add card
-            db.addCard = function (card) {
+        db.toggleMulligan = function (mulligan, withCoin, card) {
+            //            console.log('mulligan: ', mulligan);
+            //            console.log('card: ', card);
+            //            console.log('with coin: ', withCoin);
 
-                var exists = false,
-                    index = -1,
-                    isLegendary = (card.rarity === 'Legendary') ? true : false,
-                    totalCards = db.getSize();
+            var cardMulligans = (withCoin) ? mulligan.mulligansWithCoin : mulligan.mulligansWithoutCoin,
+                exists = false,
+                index = -1;
 
-                //            console.log('adding card: ', card);
+            // check if card already exists
+            for(var i = 0; i < cardMulligans.length; i++) {
+                if (cardMulligans[i].id === card.id) {
+                    exists = true;
+                    index = i;
+                    break;
+                }
+            }
 
-                // check if card already exists
-                for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].cardId === card.id) {
-                        exists = true;
-                        index = i;
+            if (exists) {
+                cardMulligans.splice(index, 1);
+                //                console.log('spliced coinMulligan: ', cardMulligans);
+            } else {
+                // card doesn't exist in deck.mulligans
+                if (cardMulligans.length < 6) {
+                    card.cardId = card.id;
+                    cardMulligans.push(card);
+                    //                    console.log('added to mulligan: ', cardMulligans);
+                }
+            }
+        };
+
+        db.calcImgPosition = function(card) {
+            var pos = 0;
+            var pxRatio = 28;
+            if (card.cardQuantity > 1) {
+                pos += 1;
+            }
+            if (card.card.rarity === 'Legendary') {
+                pos += 1;
+            }
+            return pxRatio * pos;
+        };
+
+        db.toggleGameMode = function(gameMode) {
+            var cardQtyMoreThan2 = false;
+            if (gameMode === 'constructed' || gameMode === 'brawl') {
+                for(var i = 0; i < db.cards.length; i++) {
+                    if (db.cards[i].cardQuantity > 2) {
+                        cardQtyMoreThan2 = true;
                         break;
                     }
                 }
-
-                // add card
-                if (exists) {
-                    // check gameModeType
-                    if(db.gameModeType === 'arena') {
-                        db.cards[index].cardQuantity += 1;
-                        return true;
-                    } else {
-                        // mode is constructed or brawl mode
-                        if (!isLegendary && db.cards[index].cardQuantity === 1) {
-                            db.cards[index].cardQuantity += 1;
-                            return true;
-                        }
-                        // increase qty by one
-                        if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
-                            db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
-                            return true;
-                        }
-                    }
-                } else {
-                    var newCard = {
-                        deckId: db.id,
-                        cardId: card.id,
-                        cardQuantity: 1,
-                        card: card
-                    };
-                    // add new card
-                    db.cards.push(newCard);
-                    // sort deck
-                    db.sortDeck();
-                }
-            };
-
-            db.sortDeck = function () {
-                var weights = {
-                    'Weapon' : 0,
-                    'Spell': 1,
-                    'Minion': 2
-                };
-
-                function dynamicSort(property) {
-                    return function (a, b) {
-                        if (property == 'cardType') {
-                            if (weights[a[property]] < weights[b[property]]) return -1;
-                            if (weights[a[property]] > weights[b[property]]) return 1;
-                        } else {
-                            if (a[property] < b[property]) return -1;
-                            if (a[property] > b[property]) return 1;
-                        }
-                        return 0;
-                    }
-                }
-
-                function dynamicSortMultiple() {
-                    var props = arguments;
-                    return function (a, b) {
-                        var i = 0,
-                            result = 0;
-
-                        while(result === 0 && i < props.length) {
-                            result = dynamicSort(props[i])(a.card, b.card);
-                            i++;
-                        }
-                        return result;
-                    }
-                }
-
-                db.cards.sort(dynamicSortMultiple('cost', 'cardType', 'name'));
-            };
-
-            db.removeCardFromDeck = function (card) {
-                //            console.log('card rem: ', card);
-                var cardRemovedFromDeck = false,
-                    index = -1,
-                    cardMulliganExists = false,
-                    cancel = false;
-
-                //			console.log('db.cards:', db.cards);
-                for (var i = 0; i < db.cards.length; i++) {
-                    if (card.id === db.cards[i].card.id) {
-                        //					console.log('card.id:', card.id);
-                        //					console.log('db.cards[i].card.id:', db.cards[i].card.id);
-                        if (db.cards[i].cardQuantity > 1) {
-                            db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
-                            return;
-                        } else {
-                            index = i;
-                            cardRemovedFromDeck = true;
-                            break;
-                        }
-                    }
-                }
-
-                if(cardRemovedFromDeck) {
-                    //                console.log('card was removed');
-                    // search all card with coin mulligans
-                    //				console.log('db.mulligans:', db.mulligans);
-                    for(var i = 0; i < db.mulligans.length; i++) {
-                        if (db.mulligans[i].mulligansWithCoin.length > 0) {
-                            for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
-                                if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
-                                    cardMulliganExists = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (db.mulligans[i].mulligansWithoutCoin.length > 0) {
-                            for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
-                                if (db.mulligans[i].mulligansWithoutCoin[j].id === card.id) {
-                                    cardMulliganExists = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (cardMulliganExists) {
+                if (cardQtyMoreThan2) {
+                    // Alert user that all cards with more than 2 will be reduced to 2
                     var box = bootbox.dialog({
-                        title: 'Are you sure you want to remove <strong>' + card.name + '</strong>?',
-                        message: 'Current mulligans for ' + card.name + ' will be lost as well.',
+                        title: 'Are you sure you want to change this deck from <strong>' + db.gameModeType + '</strong> to <strong>' + gameMode + '</strong>?',
+                        message: 'All cards with more than 2 will be reduced to 2.',
                         buttons: {
                             delete: {
                                 label: 'Continue',
                                 className: 'btn-danger',
                                 callback: function () {
                                     $timeout(function() {
-                                        db.cards.splice(index, 1);
+                                        for(var i = 0; i < db.cards.length; i++) {
+                                            if (db.cards[i].cardQuantity > 2) {
+                                                db.cards[i].cardQuantity = 2;
+                                            }
+                                        }
+                                        db.gameModeType = gameMode;
                                     });
-                                    for(var i = 0; i < db.mulligans.length; i++) {
-                                        for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
-                                            if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
-                                                db.mulligans[i].mulligansWithCoin.splice(j, 1);
-                                            }
-                                        }
-                                        for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
-                                            if (db.mulligans[i].mulligansWithoutCoin[j].id === card.id) {
-                                                db.mulligans[i].mulligansWithoutCoin.splice(j, 1);
-                                            }
-                                        }
-                                    }
                                 }
                             },
                             cancel: {
@@ -1956,150 +1735,398 @@ angular.module('app.services', [])
                     });
                     box.modal('show');
                 } else {
-                    if (index !== -1) {
-                        db.cards.splice(index, 1);
+                    db.gameModeType = gameMode;
+                }
+            } else {
+                db.gameModeType = gameMode;
+            }
+        };
+
+        db.getMulligan = function (klass) {
+            var mulligans = db.mulligans;
+            for (var i = 0; i < mulligans.length; i++) {
+                if (mulligans[i].className === klass) {
+                    //                    console.log('mulligan: ', mulligans[i]);
+                    return mulligans[i];
+                }
+            }
+            return false;
+        };
+
+        db.getContent = function () {
+            return $sce.trustAsHtml(db.content);
+        };
+
+        db.isAddable = function (card) {
+            if (db.gameModeType === 'arena') { return true; }
+            if (card.playerClass !== db.playerClass && card.playerClass !== 'Neutral') { return false; }
+            var exists = false,
+                index = -1,
+                isLegendary = (card.rarity === 'Legendary') ? true : false;
+
+            // check if card already exists
+            for (var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i].card.id === card.id) {
+                    exists = true;
+                    index = i;
+                    break;
+                }
+            }
+
+            if (exists) {
+                return (!isLegendary && db.cards[index].cardQuantity === 1);
+            } else {
+                return true;
+            }
+        };
+
+        // add card
+        db.addCard = function (card) {
+
+            var exists = false,
+                index = -1,
+                isLegendary = (card.rarity === 'Legendary') ? true : false,
+                totalCards = db.getSize();
+
+            //            console.log('adding card: ', card);
+
+            // check if card already exists
+            for (var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i].cardId === card.id) {
+                    exists = true;
+                    index = i;
+                    break;
+                }
+            }
+
+            // add card
+            if (exists) {
+                // check gameModeType
+                if(db.gameModeType === 'arena') {
+                    
+                    var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[index]);
+                    if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
+                    
+                    db.cards[index].cardQuantity += 1;
+                    crudMan.add(db.cards[index], 'cards');
+                    console.log('crudMan.getArrs():', crudMan.getArrs());
+                    return true;
+                } else {
+                    // mode is constructed or brawl mode
+                    if (!isLegendary && db.cards[index].cardQuantity === 1) {
+                        var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[index]);
+                        if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
+                            
+                        db.cards[index].cardQuantity += 1;
+                        crudMan.add(db.cards[index], 'cards');
+                        console.log('crudMan.getArrs():', crudMan.getArrs());
+                        return true;
+                    }
+                    // increase qty by one
+                    if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
+                        var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[index]);
+                        if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
+                        
+                        db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
+                        crudMan.add(db.cards[index], 'cards');
+                        console.log('crudMan.getArrs():', crudMan.getArrs());
+                        return true;
                     }
                 }
+            } else {
+                var newCard = {
+                    deckId: db.id,
+                    cardId: card.id,
+                    cardQuantity: 1,
+                    card: card
+                };
+                // add new card
+                var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[index]);
+                if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
+                db.cards.push(newCard);
+                crudMan.add(newCard, 'cards');
+                console.log('crudMan.getArrs():', crudMan.getArrs());
+                // sort deck
+                db.sortDeck();
+            }
+        };
+
+        db.sortDeck = function () {
+            var weights = {
+                'Weapon' : 0,
+                'Spell': 1,
+                'Minion': 2
             };
 
-            db.removeCard = function (card) {
-                if (card.cardQuantity > 1) {
-                    card.cardQuantity = card.cardQuantity - 1;
-                } else {
-                    var index = db.cards.indexOf(card);
+            function dynamicSort(property) {
+                return function (a, b) {
+                    if (property == 'cardType') {
+                        if (weights[a[property]] < weights[b[property]]) return -1;
+                        if (weights[a[property]] > weights[b[property]]) return 1;
+                    } else {
+                        if (a[property] < b[property]) return -1;
+                        if (a[property] > b[property]) return 1;
+                    }
+                    return 0;
+                }
+            }
+
+            function dynamicSortMultiple() {
+                var props = arguments;
+                return function (a, b) {
+                    var i = 0,
+                        result = 0;
+
+                    while(result === 0 && i < props.length) {
+                        result = dynamicSort(props[i])(a.card, b.card);
+                        i++;
+                    }
+                    return result;
+                }
+            }
+
+            db.cards.sort(dynamicSortMultiple('cost', 'cardType', 'name'));
+        };
+
+        db.removeCardFromDeck = function (card) {
+            //            console.log('card rem: ', card);
+            var cardRemovedFromDeck = false,
+                index = -1,
+                cardMulliganExists = false,
+                cancel = false;
+
+            //			console.log('db.cards:', db.cards);
+            for (var i = 0; i < db.cards.length; i++) {
+                if (card.id === db.cards[i].card.id) {
+                    //					console.log('card.id:', card.id);
+                    //					console.log('db.cards[i].card.id:', db.cards[i].card.id);
+                    if (db.cards[i].cardQuantity > 1) {
+                        var crudIndex = crudMan.getArrs().cards.toWrite.indexOf(db.cards[i]);
+                        if (crudIndex !== -1) crudMan.getArrs().cards.toWrite.splice(crudIndex, 1);
+                        db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
+                        return;
+                    } else {
+                        index = i;
+                        cardRemovedFromDeck = true;
+                        break;
+                    }
+                }
+            }
+
+            if(cardRemovedFromDeck) {
+                //                console.log('card was removed');
+                // search all card with coin mulligans
+                //				console.log('db.mulligans:', db.mulligans);
+                for(var i = 0; i < db.mulligans.length; i++) {
+                    if (db.mulligans[i].mulligansWithCoin.length > 0) {
+                        for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
+                            if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
+                                cardMulliganExists = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (db.mulligans[i].mulligansWithoutCoin.length > 0) {
+                        for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
+                            if (db.mulligans[i].mulligansWithoutCoin[j].id === card.id) {
+                                cardMulliganExists = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (cardMulliganExists) {
+                var box = bootbox.dialog({
+                    title: 'Are you sure you want to remove <strong>' + card.name + '</strong>?',
+                    message: 'Current mulligans for ' + card.name + ' will be lost as well.',
+                    buttons: {
+                        delete: {
+                            label: 'Continue',
+                            className: 'btn-danger',
+                            callback: function () {
+                                
+                                $timeout(function() {
+                                    crudMan.delete(db.cards[index], 'cards');
+                                    db.cards.splice(index, 1);
+                                    console.log('crudMan.getArrs():', crudMan.getArrs());
+                                });
+                                
+                                for(var i = 0; i < db.mulligans.length; i++) {
+                                    for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
+                                        if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
+                                            db.mulligans[i].mulligansWithCoin.splice(j, 1);
+                                        }
+                                    }
+                                    for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
+                                        if (db.mulligans[i].mulligansWithoutCoin[j].id === card.id) {
+                                            db.mulligans[i].mulligansWithoutCoin.splice(j, 1);
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    closeButton: false
+                });
+                box.modal('show');
+            } else {
+                if (index !== -1) {
+                    crudMan.delete(db.cards[index], 'cards');
                     db.cards.splice(index, 1);
                 }
-            };
-
-            db.manaCurve = function (mana) {
-                var big = 0,
-                    cnt;
-                // figure out largest mana count
-                for (var i = 0; i <= 7; i++) {
-                    cnt = db.manaCount(i);
-                    if (cnt > big) big = cnt;
-                }
-
-                if (big === 0) return 0;
-
-                return Math.ceil(db.manaCount(mana) / big * 100);
-            };
-
-            db.manaCount = function (mana) {
-                var cnt = 0;
-                for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].card.cost >= 7)) {
-                        cnt += db.cards[i].cardQuantity;
-                    }
-                }
-                return cnt;
-            };
-
-            //        db.manaCount = function (mana) {
-            //            var cnt = 0;
-            //            for (var i = 0; i < db.cards.length; i++) {
-            //                if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
-            //                    cnt += db.cards[i].cardQuantity;
-            //                }
-            //            }
-            //            return cnt;
-            //        };
-
-            db.cardQuantityById = function (cardId) {
-                for(var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].card.id === cardId) {
-                        return db.cards[i].cardQuantity;
-                    }
-                }
-                return 0;
-            };
-
-            db.getSize = function() {
-                var size = 0;
-                for(var i = 0; i < db.cards.length; i++) {
-                    size += db.cards[i].cardQuantity;
-                }
-                return size;
-            };
-
-            //        db.getSize = function () {
-            //            var size = 0;
-            //            for (var i = 0; i <= 7; i++) {
-            //                size += db.manaCount(i);
-            //            }
-            //            return size;
-            //        };
-
-            db.getDust = function () {
-                var dust = 0;
-                for (var i = 0; i < db.cards.length; i++) {
-                    dust += db.cards[i].cardQuantity * db.cards[i].card.dust;
-                }
-                return dust;
-            };
-
-            db.validDeck = function () {
-                // attch dust value to deck
-                db.dust = db.getDust();
-                // 30 cards in deck
-                if (db.getSize() !== 30) {
-                    return false;
-                } else if (db.getSize() === 30) {
-                    return true;
-                }
-            };
-
-            db.moveChapterUp = function (chapter) {
-                var oldIndex = db.chapters.indexOf(chapter),
-                    newIndex = oldIndex - 1;
-
-                if (newIndex < 0) { return false; }
-
-                db.chapters.splice(oldIndex, 1);
-                db.chapters.splice(newIndex, 0, chapter);
-            };
-
-            db.moveChapterDown = function (chapter) {
-                var oldIndex = db.chapters.indexOf(chapter),
-                    newIndex = oldIndex + 1;
-
-                if (newIndex < 0) { return false; }
-
-                db.chapters.splice(oldIndex, 1);
-                db.chapters.splice(newIndex, 0, chapter);
-            };
-
-            db.addChapter = function () {
-                db.chapters.push({
-                    title: '',
-                    content: ''
-                });
             }
-
-            db.removeChapter = function (index) {
-                db.chapters.splice(index,1);
-            }
-
-            db.newMatch = function (klass) {
-                //            console.log('vhat class?: ', klass);
-                var m = {
-                    deckName: '',
-                    className: '',
-                    forChance: 0,
-                    match: 0
-                };
-
-                m.className = klass;
-                db.matchups.push(m);
-            }
-
-            db.removeMatch = function (index) {
-                db.matchups.splice(index,1);
-            }
-
-            db.init();
-            return db;
         };
+
+        db.removeCard = function (card) {
+            if (card.cardQuantity > 1) {
+                card.cardQuantity = card.cardQuantity - 1;
+            } else {
+                var index = db.cards.indexOf(card);
+                
+                console.log('crudMan.getArrs():', crudMan.getArrs());
+                db.cards.splice(index, 1);
+            }
+        };
+
+        db.manaCurve = function (mana) {
+            var big = 0,
+                cnt;
+            // figure out largest mana count
+            for (var i = 0; i <= 7; i++) {
+                cnt = db.manaCount(i);
+                if (cnt > big) big = cnt;
+            }
+
+            if (big === 0) return 0;
+
+            return Math.ceil(db.manaCount(mana) / big * 100);
+        };
+
+        db.manaCount = function (mana) {
+            var cnt = 0;
+            for (var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].card.cost >= 7)) {
+                    cnt += db.cards[i].cardQuantity;
+                }
+            }
+            return cnt;
+        };
+
+        //        db.manaCount = function (mana) {
+        //            var cnt = 0;
+        //            for (var i = 0; i < db.cards.length; i++) {
+        //                if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
+        //                    cnt += db.cards[i].cardQuantity;
+        //                }
+        //            }
+        //            return cnt;
+        //        };
+
+        db.cardQuantityById = function (cardId) {
+            for(var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i].card.id === cardId) {
+                    return db.cards[i].cardQuantity;
+                }
+            }
+            return 0;
+        };
+
+        db.getSize = function() {
+            var size = 0;
+            for(var i = 0; i < db.cards.length; i++) {
+                size += db.cards[i].cardQuantity;
+            }
+            return size;
+        };
+
+        //        db.getSize = function () {
+        //            var size = 0;
+        //            for (var i = 0; i <= 7; i++) {
+        //                size += db.manaCount(i);
+        //            }
+        //            return size;
+        //        };
+
+        db.getDust = function () {
+            var dust = 0;
+            for (var i = 0; i < db.cards.length; i++) {
+                dust += db.cards[i].cardQuantity * db.cards[i].card.dust;
+            }
+            return dust;
+        };
+
+        db.validDeck = function () {
+            // attch dust value to deck
+            db.dust = db.getDust();
+            // 30 cards in deck
+            if (db.getSize() !== 30) {
+                return false;
+            } else if (db.getSize() === 30) {
+                return true;
+            }
+        };
+
+        db.moveChapterUp = function (chapter) {
+            var oldIndex = db.chapters.indexOf(chapter),
+                newIndex = oldIndex - 1;
+
+            if (newIndex < 0) { return false; }
+
+            db.chapters.splice(oldIndex, 1);
+            db.chapters.splice(newIndex, 0, chapter);
+        };
+
+        db.moveChapterDown = function (chapter) {
+            var oldIndex = db.chapters.indexOf(chapter),
+                newIndex = oldIndex + 1;
+
+            if (newIndex < 0) { return false; }
+
+            db.chapters.splice(oldIndex, 1);
+            db.chapters.splice(newIndex, 0, chapter);
+        };
+
+        db.addChapter = function () {
+            db.chapters.push({
+                title: '',
+                content: ''
+            });
+        }
+
+        db.removeChapter = function (index) {
+            db.chapters.splice(index,1);
+        }
+
+        db.newMatch = function (klass) {
+            //            console.log('vhat class?: ', klass);
+            var m = {
+                deckName: '',
+                className: '',
+                forChance: 0,
+                match: 0
+            };
+
+            m.className = klass;
+            db.matchups.push(m);
+        }
+
+        db.removeMatch = function (index) {
+            db.matchups.splice(index,1);
+        }
+
+        db.init();
+        return db;
+    };
     return deckBuilder;
 }])
 .factory('GuideBuilder', ['$sce', '$http', '$q', 'User', 'HeroTalent', function ($sce, $http, $q, User, HeroTalent) {
@@ -3734,8 +3761,6 @@ angular.module('app.services', [])
                     getArrs: getArrs
                 }
             }
-
-
 
             return CrudMan;
         }
