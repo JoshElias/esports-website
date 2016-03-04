@@ -34,7 +34,6 @@ var app = angular.module('app', [
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
             $rootScope.LoginModalService = LoginModalService
-            console.log(window.canShowAds);
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
@@ -563,7 +562,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log(userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
