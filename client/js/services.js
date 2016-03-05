@@ -3750,8 +3750,8 @@ angular.module('app.services', [])
         return factory;
     }
 ])
-.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Snapshot', 'Util', 'Hearthstone',
-    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Snapshot, Util, Hearthstone) {
+.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Snapshot', 'Util', 'Hearthstone', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup',
+    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Snapshot, Util, Hearthstone, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup) {
         var snapshot = {};
         var maxTrends = 12;
         var defaultSnap = {
@@ -3918,7 +3918,42 @@ angular.module('app.services', [])
                 })
                 .$promise
                 .then(function (data) {
-                    // TODO: strip ids from old data so new items get created
+                    console.log('loaded: ', data);
+                    // strip ids from old data so new items get created
+                    // snapshot
+                    delete data.id;
+                    
+                    // authors
+                    _.each(data.authors, function (author) {
+                        delete author.snapshotId;
+                        delete author.id;
+                    });
+                    
+                    // deck matchups
+                    _.each(data.deckMatchups, function (deckMatchup) {
+                        delete deckMatchup.snapshotId;
+                        delete deckMatchup.id;
+                    });
+                    
+                    // deck tiers
+                    _.each(data.deckTiers, function (deckTier) {
+                        
+                        // deck techs
+                        _.each(deckTier.deckTech, function (deckTech) {
+                            
+                            // tech cards
+                            _.each(deckTech.cardTech, function (cardTech) {
+                                delete cardTech.deckTechId;
+                                delete cardTech.id;
+                            });
+                            
+                            delete deckTech.deckTierId;
+                            delete deckTech.id;
+                        });
+                        
+                        delete deckTier.snapshotId;
+                        delete deckTier.id;
+                    });
                     
                     // increase snapshot number
                     data.snapNum++;
@@ -4556,10 +4591,154 @@ angular.module('app.services', [])
                     }
                 }
             };
-
+            
+            sb.saveDelete = function (callback) {
+                async.series([
+                    // delete card techs
+                    function (cb) {
+                        
+                        return cb();
+                    },
+                    // delete deck techs
+                    function (cb) {
+                        
+                        return cb();
+                    },
+                    // delete deck tiers
+                    function (cb) {
+                        
+                        return cb();
+                    },
+                    // delete deck matchups
+                    function (cb) {
+                        
+                        return cb();
+                    },
+                    // delete authors
+                    function (cb) {
+                        
+                        return cb();
+                    }
+                ], function (err) {
+                    console.log('done deleting');
+                    return callback();
+                });
+            };
+            
+            sb.saveUpdate = function (callback) {
+                console.log('done updating');
+                return callback();
+            };
+            
+            sb.saveCreate = function (callback) {
+                async.waterfall([
+                    // create snapshot
+                    function (cb) {
+                        if (sb.id) { return cb(null, sb.id); }
+                        Snapshot.create({
+                            
+                        })
+                        .$promise
+                        .then(function (data) {
+                            sb.id = data.id;
+                            return cb(null, data.id);
+                        })
+                        .catch(function (response) {
+                            return cb(response);
+                        });
+                    },
+                    // create authors
+                    function (cb, snapshotId) {
+                        async.each(sb.authors, function (author, eachCallback) {
+                            // only create authors without ids
+                            if (author.id) { return eachCallback(); }
+                            // create new author
+                            SnapshotAuthor.create({
+                                description: author.description,
+                                expertClasses: author.expertClasses,
+                                snapshotId: snapshotId,
+                                authorId: author.user.id
+                            })
+                            .$promise
+                            .then(function (data) {
+                                author.id = data.id;
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    },
+                    // create deck tiers
+                    function (cb, snapshotId) {
+                        async.each(sb.deckTiers, function (deckTier, eachCallback) {
+                            // only create deck tiers without ids
+                            if (deckTier.id) { return eachCallback(); }
+                            // create new deck tier
+                            DeckTier.create({
+                                
+                            })
+                            .$promise
+                            .then(function (data) {
+                                deckTier.id = data.id;
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    },
+                    // create matchups
+                    function (cb, snapshotId) {
+                        async.each(sb.matchups, function (matchup, eachCallback) {
+                            // only create matchups without ids
+                            if (matchup.id) { return eachCallback(); }
+                            // create new deck tier
+                            DeckMatchup.create({
+                                
+                            })
+                            .$promise
+                            .then(function (data) {
+                                matchup.id = data.id;
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    }
+                ], function (err) {
+                    if (err) {
+                        console.error('Save create error: ', err);
+                        return callback(err);
+                    }
+                    console.log('done creating');
+                    return callback();
+                });
+            };
+            
             // save snapshot
             sb.save = function () {
-
+                sb.saving = true;
+                
+                async.waterfall([
+                    sb.saveDelete,
+                    sb.saveUpdate,
+                    sb.saveCreate
+                ], function (err) {
+                    sb.saving = false;
+                    console.log('done saving');
+                });
+                
             };
 
             // run init
