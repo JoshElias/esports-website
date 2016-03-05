@@ -38,7 +38,7 @@
                     <div class="panel-body">
                         <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
                             <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item admin-list-item">
-                                {{author.user.username}}<div class="btn-group pull-right"><button class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}"><i class="fa fa-edit"></i></button><button class="btn btn-danger btn-xs" ng-click="snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
+                                {{author.user.username}}<div class="btn-group pull-right"><button class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-danger btn-xs" ng-click="snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                 <div class="collapse clearfix" id="{{author.user.id}}">
                                     <div class="form-group m-t-md">
                                         <label for="authorDescription_{{author.user.username}}" class="col-sm-1 control-label">Description</label>
@@ -67,7 +67,7 @@
                         </ul>
                     </div>
                     <div class="panel-footer">
-                        <button class="btn btn-green btn-rounded m-r-sm" ng-click="snapshot.authorAddPrompt()"><i class="fa fa-plus"></i> Add Author</button>
+                        <button type="button" class="btn btn-green btn-rounded m-r-sm" ng-click="snapshot.authorAddPrompt()"><i class="fa fa-plus"></i> Add Author</button>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                         <img ng-src="{{snapshot.getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
                     </div>
                     <div class="btn-toolbar">
-                        <button class="btn btn-default" ng-file-select="snapshot.photoUpload($files)" onclick="this.value=null" accept="image/*">
+                        <button type="button" class="btn btn-default" ng-file-select="snapshot.photoUpload($files)" onclick="this.value=null" accept="image/*">
                             <span ng-show="snapshot.photoNames.large === ''">Select image</span>
                             <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
                         </button>
@@ -121,7 +121,7 @@
                                 Tier {{tier.tier}} 
                             </a>
                         </h4>
-                        <button class="btn btn-danger btn-sm btn-rounded pull-right" ng-click="snapshot.tierDeletePrompt(tier)"><i class="fa fa-close"></i> Remove Tier</button>
+                        <button type="button" class="btn btn-danger btn-sm btn-rounded pull-right" ng-click="snapshot.tierDeletePrompt(tier)"><i class="fa fa-close"></i> Remove Tier</button>
                     </div>
                     <div id="collapse{{tier.tier}}" class="collapse">
                         <div class="panel-body">
@@ -189,12 +189,12 @@
                                                             </div>
                                                             <ul class="list-group">
                                                                 <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy: ['-toss', 'card.name']" class="list-group-item">
-                                                                    <button class="cardBtn" ng-click="snapshot.deckTechCardToggleToss(c)">
+                                                                    <button type="button" class="cardBtn" ng-click="snapshot.deckTechCardToggleToss(c)">
                                                                          <i class="fa" ng-class="{ 'fa-minus': c.toss, 'fa-plus': !c.toss }"></i>
                                                                     </button>
                                                                     {{c.card.name}}
-                                                                    <button class="pull-right cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
-                                                                    <button class="pull-right btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
+                                                                    <button type="button" class="pull-right cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
+                                                                    <button type="button" class="pull-right btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
                                                                 </li>
                                                                 <li class="list-group-item">
                                                                     <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
@@ -254,13 +254,13 @@
                             </ul>
                         </div>
                         <div class="panel-footer">
-                            <button class="btn btn-green btn-rounded" ng-click="snapshot.deckAddPrompt(tier)"><i class="fa fa-plus"></i> Add deck</button>
+                            <button type="button" class="btn btn-green btn-rounded" ng-click="snapshot.deckAddPrompt(tier)"><i class="fa fa-plus"></i> Add deck</button>
                         </div>
                     </div>
                 </div>
                 <!-- SECOND PANEL -->
                 
-                <button ng-click="snapshot.tierAdd()" class="btn btn-green btn-rounded"><i class="fa fa-plus"></i> Add Tier</button>
+                <button type="button" ng-click="snapshot.tierAdd()" class="btn btn-green btn-rounded"><i class="fa fa-plus"></i> Add Tier</button>
             </div>
         </div>
         
