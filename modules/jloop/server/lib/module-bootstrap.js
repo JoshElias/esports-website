@@ -3,7 +3,10 @@ var fs = require("fs");
 var async = require("async");
 
 
-function generateBootOptions(finalCb) {
+function generateBootOptions(app, finalCb) {
+
+    // Initialize app.bootin
+
 
     // Initialize the boot options
     var loopbackBootOptions = {
@@ -16,6 +19,7 @@ function generateBootOptions(finalCb) {
     loopbackBootOptions.appConfigRootDir = path.join(__dirname, "..", "..", "..", "..", "server", "configs");
     loopbackBootOptions.modelsRootDir = path.join(__dirname, "..", "..", "..", "..", "server", "configs");
     loopbackBootOptions.dsRootDir = path.join(__dirname, "..", "..", "..", "..", "server", "configs");
+    loopbackBootOptions.middleware = require(path.join(__dirname, "..", "..", "..", "..", "server", "configs", "middleware"));
     loopbackBootOptions.bootDirs.push(path.join(__dirname, "..", "..", "..", "..", "server", "boot"));
     loopbackBootOptions.modelSources.push(path.join(__dirname, "..", "..", "..", "..", "common", "models"));
 

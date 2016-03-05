@@ -5,7 +5,7 @@ var requestCrawler = require("../request-crawler");
 function filter(ctx, finalCb) {
 
     var filterOptions = {
-        optionKey: "$filter",
+        featureKey: "$filter",
         stateVars: {
             propertyContainer: undefined,
             propertyValue: undefined,
@@ -22,7 +22,7 @@ function newStateHandler(oldState, newState) {
 
     // Check if we need to set the initial value of the property container
     if(newState.instance && typeof oldState.propertyContainer === "undefined") {
-        newState.propertyContainer = oldState.ctx.instance;
+        newState.propertyContainer = oldState.ctx.instance["__data"];
     } else if(newState.data && typeof oldState.propertyContainer === "undefined") {
         newState.propertyContainer = oldState.ctx.data;
 
@@ -32,11 +32,18 @@ function newStateHandler(oldState, newState) {
     }
 
 
+
     // Check if we have the property value
+    /*
     if(newState.instance && typeof oldState.propertyValue === "undefined") {
-        oldState.propertyValue = newState.propertyContainer.getAttribute(oldState.propertyName);
+        console.log("newState.propertyContainer", newState.propertyContainer);
+        oldState.propertyValue = newState.propertyContainer.setAttribute(oldState.propertyName);
     } else if(newState.data && typeof oldState.propertyValue === "undefined") {
         oldState.propertyValue = newState.propertyContainer[oldState.propertyName];
+    }
+    */
+    if(typeof oldState.propertyValue === "undefined") {
+        oldState.propertyValue = newState.propertyContainer[newState.propertyName];
     }
     newState.propertyValue = oldState.propertyValue;
 
@@ -45,7 +52,7 @@ function newStateHandler(oldState, newState) {
     if(typeof oldState.propertyDataPoint === "undefined") {
         oldState.propertyDataPoint = newState.propertyValue;
     }
-    newState.propertyDataPoint = oldState.propertyDataPoint[newState.key];
+    newState.propertyDataPoint = newState.propertyContainer[newState.key];
 }
 
 function primitiveHandler(state, finalCb) {

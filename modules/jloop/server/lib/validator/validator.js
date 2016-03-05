@@ -9,7 +9,7 @@ var requestCrawler = require("../request-crawler");
 function validate(ctx, finalCb) {
 
     var crawlOptions = {
-        optionKey: "$validate",
+        featureKey: "$validate",
         stateVars: {
             report: {
                 passed: true,

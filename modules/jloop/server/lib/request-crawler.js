@@ -5,11 +5,13 @@ var _ = require('underscore');
 
 
 function crawl(ctx, options, finalCb) {
+    console.log("crawling in my skin")
 
     // Check if this model has the current feature enabled
-    if(!ctx.Model.definition.options || !ctx.Model.definition.options[options.featureKey]) {
+    if(!ctx.Model.definition.settings || !ctx.Model.definition.settings[options.featureKey]) {
         return finalCb();
     }
+    console.log("passed the thing")
 
     // Check if the ctx has an active request
     var loopbackContext = loopback.getCurrentContext();
@@ -37,6 +39,7 @@ function crawl(ctx, options, finalCb) {
     }
 
     return crawlObject(parentState, options, function(err, state) {
+        console.log("crawled the main object");
         if(err) return finalCb(err);
 
         return options.postHandler(state, finalCb);
@@ -45,6 +48,7 @@ function crawl(ctx, options, finalCb) {
 
 
 function buildNextState(value, key, oldState, options) {
+    console.log("building new states")
 
     // Populate the next level of the validation state
     var newState = {};
@@ -53,6 +57,10 @@ function buildNextState(value, key, oldState, options) {
     newState.key = key;
     newState.modelConfig = value;
     newState.modelName = oldState.modelName;
+
+    console.log("key", key);
+    console.log("value", value);
+    console.log("modelName", newState.modelName);
 
     // Build new data points for instance and data
     newState.data = (typeof oldState.data === "undefined")
@@ -74,7 +82,10 @@ function buildNextState(value, key, oldState, options) {
     }
 
     // Handler options for new state
-    return options.newStateHandler(newState)
+    console.log("before propertyDataPoint", newState.propertyDataPoint)
+    options.newStateHandler(oldState, newState);
+    console.log("after propertyDataPoint", newState.propertyDataPoint)
+    return newState;
 }
 
 

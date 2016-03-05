@@ -1,11 +1,5 @@
 module.exports = {
   "_meta": {
-    "sources": [
-      "loopback/common/models",
-      "loopback/server/models",
-      "../../common/models",
-      "./../models"
-    ],
     "mixins": [
       "loopback/common/mixins",
       "loopback/server/mixins",
