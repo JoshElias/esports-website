@@ -1,0 +1,79 @@
+@import 'ts-colors.scss';
+
+.admin-side-nav { // ---- bookend class ----
+
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  z-index: 1000;
+    
+  border-right: 0px solid transparent;
+    -webkit-box-shadow: 2px 2px 10px 3px rgba(0,0,0,0.4);
+        -moz-box-shadow: 2px 2px 10px 3px rgba(0,0,0,0.4);
+        box-shadow: 2px 2px 10px 3px rgba(0,0,0,0.4);
+background: rgba(0,0,0,0);
+background: -moz-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(28,28,28,0.05) 12%, rgba(28,28,28,0.32) 70%, rgba(28,28,28,0.45) 100%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0,0,0,0)), color-stop(12%, rgba(28,28,28,0.05)), color-stop(70%, rgba(28,28,28,0.32)), color-stop(100%, rgba(28,28,28,0.45)));
+background: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(28,28,28,0.05) 12%, rgba(28,28,28,0.32) 70%, rgba(28,28,28,0.45) 100%);
+background: -o-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(28,28,28,0.05) 12%, rgba(28,28,28,0.32) 70%, rgba(28,28,28,0.45) 100%);
+background: -ms-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(28,28,28,0.05) 12%, rgba(28,28,28,0.32) 70%, rgba(28,28,28,0.45) 100%);
+background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(28,28,28,0.05) 12%, rgba(28,28,28,0.32) 70%, rgba(28,28,28,0.45) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#1c1c1c', GradientType=1 );
+
+    .nav-sub {
+        background-color: $black-20;
+    }
+    
+    .fa-angle-down {
+        color: $light-font;
+    }
+    
+    .active .fa {
+        color: #febe10;
+        
+        .fa-angle-down {
+            color: $light-font !important;
+        }
+        
+    }
+
+    > ul.nav li > a {
+        color: $light-font;
+        position: relative;
+        display: block;
+        padding: 10px 15px;
+        border-left: 4px solid transparent;
+        
+        &.active {
+             border-left: 4px solid $ts-blue;
+        }
+    }
+
+    ul.nav li a:hover {
+        color: #FFF;
+        background: $white;
+    }
+
+    > ul.nav li.active {
+        
+       
+        
+        
+    > a {
+        color: $white;
+       background: transparent;
+        
+        
+    }
+
+}
+    ul.nav li.active a:hover {
+        color: $ts-blue;
+        background: #131e26;
+    }
+    
+    
+    
+}
