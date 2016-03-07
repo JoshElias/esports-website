@@ -131,23 +131,6 @@ angular.module('tsAdSense', [])
             var adIter = 0;
             var adIterMax = 10;
             var canShowAds = !!window.canShowAds;
-            var s = document.createElement('script');
-
-            s.type = 'text/javascript';
-            s.text = "<!-- google_ad_client = \"ca-pub-5622157629772216\"; /* tempostorm */ google_ad_slot = \"5924728078\"; google_ad_width = 728; google_ad_height = 90; //-->";
-            //s.async = true;
-            document.body.appendChild(s);
-
-            if (!window.googleAdsAlreadyLoaded) {
-                var x = document.createElement('script');
-                x.type = 'text/javascript';
-                x.id = "adCode";
-                x.src = "https://pagead2.googlesyndication.com/pagead/show_ads.js";
-                //s.async = true;
-                document.body.appendChild(x);
-
-                window.googleAdsAlreadyLoaded = true;
-            }
 
             if(!$window.adsbygoogle) {
                 $window.adsbygoogle = [];
@@ -185,7 +168,37 @@ angular.module('tsAdSense', [])
         }],
         link: function (scope, el, attrs) {
             scope.el = el;
-            scope.attrs = attrs;
+            scope.attrs = attrs
+
+            console.log(el);
+
+            var s = document.createElement('script');
+
+            s.type = 'text/javascript';
+            s.text = "<!-- google_ad_client = \"ca-pub-5622157629772216\"; /* tempostorm */ google_ad_slot = \"5924728078\"; google_ad_width = 728; google_ad_height = 90; //-->";
+            //s.async = true;
+            document.body.appendChild(s);
+
+            //if (!!window.googleAdsAlreadyLoaded) {
+            //    var tag = document.getElementById('adCode');
+            //    tag.parentNode.removeChild(tag);
+            //}
+
+            var w =  document.write;
+            document.write = function (content) {
+                console.log('rip', content);
+                el[0].innerHTML = content;
+                document.write = w;
+            }
+
+            var x = document.createElement('script');
+            x.type = 'text/javascript';
+            x.id = "adCode";
+            x.src = "https://pagead2.googlesyndication.com/pagead/show_ads.js";
+            //s.async = true;
+            document.body.appendChild(x);
+
+            window.googleAdsAlreadyLoaded = true;
             
             $timeout(function () {
                 if (attrs.adSlot === "7575226683") {
