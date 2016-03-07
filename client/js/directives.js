@@ -1948,17 +1948,28 @@ angular.module('app.directives', ['ui.load'])
                 }
             }
 
+            $scope.doSearch = function (obj) {
+                var skip = 0;
+                var limit = 10;
+                var search = $scope.search;
+                var func = {
+                    heroes: getHeroes,
+                    guides: getGuides
+                }
+
+                $scope[obj] = func[obj](skip, limit, search);
+            };
+
             $scope.isScoreValid = function (max, value) {
                 return value > max;
             }
 
-            function getGuides (skip, limit) {
+            function getGuides (skip, limit, search) {
                 $scope.loading = true;
 
                 var skip = skip || 0;
                 var limit = limit || 10;
-
-                return Guide.find({
+                var options = {
                     filter: {
                         fields: {
                             id: true,
@@ -1967,12 +1978,22 @@ angular.module('app.directives', ['ui.load'])
                         skip: skip,
                         limit: limit
                     }
-                }, function () {
+                }
+
+                if (!!search) {
+                    filter.where = {};
+                    filter.where.or = [
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } }
+                    ]
+                }
+
+                return Guide.find(options, function () {
                     $scope.loading = false;
                 });
             }
 
-            function getHeroes (skip, limit) {
+            function getHeroes (skip, limit, search) {
                 $scope.loading = true;
 
                 var skip = skip || 0;

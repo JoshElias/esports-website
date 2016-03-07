@@ -122,6 +122,23 @@ textarea[name=thoughts] {
 // 2.1. admin meta snapshot HOTS
 //*************************************
 
+.panel {
+	&.panel-hots-snapshot-admin {
+		.panel-heading {
+			background-color: rgba(255,255,255,.4);
+
+
+			.panel-label {
+				.control-label {
+					&.small {
+						color: rgba(255,255,255,.4);
+					}
+				}
+			}
+		}
+	}
+}
+
 .tier-list {
     list-style-type: none;
     padding: 0;

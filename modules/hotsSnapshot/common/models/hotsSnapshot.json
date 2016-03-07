@@ -8,7 +8,7 @@
   },
   "properties": {
     "snapNum": {
-      "type": "string"
+      "type": "number"
     },
     "subtitle": {
       "type": "string"

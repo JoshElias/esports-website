@@ -1,3 +1,9 @@
+<div class="panel">
+    <div class="panel-header">
+
+    </div>
+</div>
+
 <form name="abilityForm">
     <div class="row form-group">
         <label for="summary" class="col-sm-2 control-label">Tier</label>
@@ -73,7 +79,15 @@
 
             <div class="panel panel-interior padding-none">
                 <div class="panel-heading">
-                    SEARCH BOX
+                    <div class="input-group">
+                        <input class="form-control" type="text" placeholder="Search..." ng-model="search" />
+                        <span clas="input-group-btn">
+                            <button class="btn btn-sm btn-blue" ng-click="doSearch('heroes')" type="button">
+                                <i ng-if="!loading" class="fa fa-search"></i>
+                                <i ng-if="loading" class="fa fa-spinner fa-pulse"></i>
+                            </button>
+                        </span>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div ng-if="loading" class="panel-loading">
