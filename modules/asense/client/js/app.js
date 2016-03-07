@@ -41,7 +41,8 @@ angular.module('tsAdSense', [])
 .value('moduleTpl', (tpl !== './') ? tpl + 'views/asense/client/views/' : 'dist/views/asense/client/views/')
 .controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', 'UserRoleService', 'LoopBackAuth',
     function ($scope, $state, $window, User, EventService, $timeout, UserRoleService, LoopBackAuth) {
-        var url = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+        var url = 'https://pagead2.googlesyndication.com/pagead/show_ads.js';
+        //var url = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
         //var window.googleAdsAlreadyLoaded = !!document.getElementById("adCode");
         var e = $(".ad");
         var r = UserRoleService.getRoles();
@@ -99,23 +100,15 @@ angular.module('tsAdSense', [])
         }
 
         function doLoadAds () {
-            $scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
-            $scope.adSlot = $scope.adSlot || "7575226683";
+            $scope.adClient = $scope.adClient || "pub-5622157629772216";
+            //$scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
+            $scope.adSlot = $scope.adSlot || "1810633479";
+            //$scope.adSlot = $scope.adSlot || "7575226683";
             $scope.theme = $state.theme || 'default';
             $scope.region = $state.current.name;
             $scope.w = (!_.isUndefined($scope.w)) ? $scope.w : '100%';
             $scope.h = (!_.isUndefined($scope.h)) ? $scope.h : '100%';
 
-            if (!window.googleAdsAlreadyLoaded) {
-                var s = document.createElement('script');
-                s.type = 'text/javascript';
-                s.id = "adCode";
-                s.src = url;
-                s.async = true;
-                document.body.appendChild(s);
-
-                window.googleAdsAlreadyLoaded = true;
-            }
 
             $timeout(function () {
                 for (var i = 0; i < e.length; i++) {
@@ -138,6 +131,23 @@ angular.module('tsAdSense', [])
             var adIter = 0;
             var adIterMax = 10;
             var canShowAds = !!window.canShowAds;
+            var s = document.createElement('script');
+
+            s.type = 'text/javascript';
+            s.text = "<!-- google_ad_client = \"ca-pub-5622157629772216\"; /* tempostorm */ google_ad_slot = \"5924728078\"; google_ad_width = 728; google_ad_height = 90; //-->";
+            //s.async = true;
+            document.body.appendChild(s);
+
+            if (!window.googleAdsAlreadyLoaded) {
+                var x = document.createElement('script');
+                x.type = 'text/javascript';
+                x.id = "adCode";
+                x.src = "https://pagead2.googlesyndication.com/pagead/show_ads.js";
+                //s.async = true;
+                document.body.appendChild(x);
+
+                window.googleAdsAlreadyLoaded = true;
+            }
 
             if(!$window.adsbygoogle) {
                 $window.adsbygoogle = [];
