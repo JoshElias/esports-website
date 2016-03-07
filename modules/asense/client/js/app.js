@@ -170,8 +170,6 @@ angular.module('tsAdSense', [])
             scope.el = el;
             scope.attrs = attrs
 
-            console.log(scope);
-
             var s = document.createElement('script');
 
             s.type = 'text/javascript';
