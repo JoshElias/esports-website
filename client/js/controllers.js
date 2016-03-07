@@ -3325,6 +3325,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             // set default page
             $scope.page = 'general';
+            $scope.deckPage = 'general';
             
             // set mode to edit
             $scope.mode = 'edit';
@@ -3339,6 +3340,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             // set default page
             $scope.page = 'general';
+            $scope.deckPage = 'general';
             
             // set mode to add
             $scope.mode = 'add';
