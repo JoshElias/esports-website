@@ -3776,7 +3776,8 @@ angular.module('app.services', [])
             },
             votes: 0,
             active: false,
-            loaded: false
+            loaded: false,
+            activeDeck: null
         };
         var defaultAuthor = {
             id: null,
@@ -4096,7 +4097,12 @@ angular.module('app.services', [])
 
                 return false;
             };
-
+            
+            // set active deck
+            sb.setActiveDeck = function (deck) {
+                sb.activeDeck = deck;
+            };
+            
             // add deck
             sb.deckAdd = function (tier, deckName, deck) {
                 if (sb.getTierDeckByDeckId(deck.id)) { return false; }
