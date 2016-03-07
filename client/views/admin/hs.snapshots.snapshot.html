@@ -31,222 +31,88 @@
         </div>
     </div> <!--panel header ends -->
     <div class="panel-body">
-        <div class="form-group">
-            <label for="author" class="col-sm-2 control-label">Authors</label>
-            <div class="col-sm-10 wrapper-none">
-                <div class="panel panel-default">
+        <ul>
+            <li><a href="#" ng-click="page = 'general'">General</a></li>
+            <li><a href="#" ng-click="page = 'authors'">Authors</a></li>
+            <li><a href="#" ng-click="page = 'tiers'">Tiers</a></li>
+        </ul>
+        <!-- general -->
+        <div ng-show="page === 'general'">
+            <div class="form-group">
+                <label for="snapshotPhoto" class="col-sm-2 control-label">Snapshot Image</label>
+                <div class="col-sm-10">
+                    <input type="hidden" id="snapshotPhotoSquare" name="snapshotPhotoSquare" value="" ng-model="snapshot.photoNames.square">
+                    <input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photoNames.small">
+                    <input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photoNames.medium">
+                    <input type="hidden" id="snapshotPhotoLarge" name="snapshotPhotoLarge" value="" ng-model="snapshot.photoNames.large">
+                    <div class="photo-input">
+                        <div class="upload-thumbnail upload-thumbnail-article">
+                            <div class="upload-drop" ng-show="snapshot.photoNames.large === ''" ng-file-drop="snapshot.photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                            <img ng-src="{{snapshot.getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
+                        </div>
+                        <div class="btn-toolbar">
+                            <button type="button" class="btn btn-default" ng-file-select="snapshot.photoUpload($files)" onclick="this.value=null" accept="image/*">
+                                <span ng-show="snapshot.photoNames.large === ''">Select image</span>
+                                <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
+                            </button>
+                            <a href="#" class="btn btn-danger" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="intro" class="col-sm-2 control-label">Content</label>
+                <div class="panel panel-default wrapper-none col-sm-10">
                     <div class="panel-body">
-                        <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
-                            <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item admin-list-item">
-                                {{author.user.username}}<div class="btn-group pull-right"><button class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-danger btn-xs" ng-click="snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
-                                <div class="collapse clearfix" id="{{author.user.id}}">
-                                    <div class="form-group m-t-md">
-                                        <label for="authorDescription_{{author.user.username}}" class="col-sm-1 control-label">Description</label>
-                                        <div class="col-sm-10">
-                                            <textarea class="form-control" name="authorDescription_{{author.user.username}}" ng-model="author.description"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="authorClasses_{{author.user.username}}" class="col-sm-1 control-label">Class(es) of Expertise</label>
-                                        <div class="col-sm-10">
-                                            <select class="form-control" name="authorClasses{{author.user.username}}" ng-model="author.expertClasses" size="9" multiple>
-                                              <option value="druid">Druid</option>
-                                              <option value="hunter">Hunter</option>
-                                              <option value="mage">Mage</option>
-                                              <option value="paladin">Paladin</option>
-                                              <option value="priest">Priest</option>
-                                              <option value="rogue">Rogue</option>
-                                              <option value="shaman">Shaman</option>
-                                              <option value="warlock">Warlock</option>
-                                              <option value="warrior">Warrior</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="panel-footer">
-                        <button type="button" class="btn btn-green btn-rounded m-r-sm" ng-click="snapshot.authorAddPrompt()"><i class="fa fa-plus"></i> Add Author</button>
+                        <label for="intro" class="col-sm-1 control-label">Intro</label>
+                        <div class="col-sm-11">
+                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro"></textarea>
+                        </div>
+                        <label for="thoughts" class="col-sm-1 control-label">Thoughts</label>
+                        <div class="col-sm-11">
+                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts"></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="snapshotPhoto" class="col-sm-2 control-label">Snapshot Image</label>
-            <div class="col-sm-10">
-                <input type="hidden" id="snapshotPhotoSquare" name="snapshotPhotoSquare" value="" ng-model="snapshot.photoNames.square">
-                <input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photoNames.small">
-                <input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photoNames.medium">
-                <input type="hidden" id="snapshotPhotoLarge" name="snapshotPhotoLarge" value="" ng-model="snapshot.photoNames.large">
-                <div class="photo-input">
-                    <div class="upload-thumbnail upload-thumbnail-article">
-                        <div class="upload-drop" ng-show="snapshot.photoNames.large === ''" ng-file-drop="snapshot.photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img ng-src="{{snapshot.getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
-                    </div>
-                    <div class="btn-toolbar">
-                        <button type="button" class="btn btn-default" ng-file-select="snapshot.photoUpload($files)" onclick="this.value=null" accept="image/*">
-                            <span ng-show="snapshot.photoNames.large === ''">Select image</span>
-                            <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
-                        </button>
-                        <a href="#" class="btn btn-danger" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Active</label>
+                <input ng-model="snapshot.isActive" type="checkbox">
             </div>
         </div>
-        
-        <div class="form-group">
-            <label for="intro" class="col-sm-2 control-label">Content</label>
-            <div class="panel panel-default wrapper-none col-sm-10">
-                <div class="panel-body">
-                    <label for="intro" class="col-sm-1 control-label">Intro</label>
-                    <div class="col-sm-11">
-                        <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro"></textarea>
-                    </div>
-                    <label for="thoughts" class="col-sm-1 control-label">Thoughts</label>
-                    <div class="col-sm-11">
-                        <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts"></textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="intro" class="col-sm-2 control-label">Tiers</label>
-            <div class="col-sm-10 wrapper-none">
-                <div class="panel panel-default wrapper-none" ng-repeat="tier in snapshot.tiers track by tier.tier" ng-if="snapshot.tiers.length">
-                    <div class="panel-heading clearfix">
-                        <h4 class="panel-title pull-left">
-                            <a class="tierHeading" role="button" data-toggle="collapse" href="#collapse{{tier.tier}}" aria-expanded="false" aria-controls="collapse{{tier.tier}}"><i class="fa fa-caret-down"></i> 
-                                Tier {{tier.tier}} 
-                            </a>
-                        </h4>
-                        <button type="button" class="btn btn-danger btn-sm btn-rounded pull-right" ng-click="snapshot.tierDeletePrompt(tier)"><i class="fa fa-close"></i> Remove Tier</button>
-                    </div>
-                    <div id="collapse{{tier.tier}}" class="collapse">
+        <!-- / general -->
+        <!-- authors -->
+        <div ng-show="page === 'authors'">
+            <div class="form-group">
+                <label for="author" class="col-sm-2 control-label">Authors</label>
+                <div class="col-sm-10 wrapper-none">
+                    <div class="panel panel-default">
                         <div class="panel-body">
-                            <ul class="list-group m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
-                                <li class="list-group-item" ng-if="tier.decks == 0">There are no decks selected yet!</li>
-                                <li class="list-group-item admin-list-item" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="(tier.decks.length < 2 && snapshot.tiers.length < 2) || d.show" dnd-type="'deck'">
-                                    <div class="clearfix">
-                                        <div class="badge pull-left m-r-sm">{{d.ranks[0]}}</div>
-                                        <div class="pull-left">{{d.deck.name}}</div>
-                                        <div class="btn-group pull-right">
-                                            <button class="btn btn-default btn-xs" type="button" ng-click="d.show = !d.show"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-danger btn-xs" type="button" ng-click="snapshot.deckDeletePrompt(tier, d)"><i class="fa fa-close"></i></button>
+                            <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
+                                <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item admin-list-item">
+                                    {{author.user.username}}<div class="btn-group pull-right"><button class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-danger btn-xs" ng-click="snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
+                                    <div class="collapse clearfix" id="{{author.user.id}}">
+                                        <div class="form-group m-t-md">
+                                            <label for="authorDescription_{{author.user.username}}" class="col-sm-1 control-label">Description</label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" name="authorDescription_{{author.user.username}}" ng-model="author.description"></textarea>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div ng-show="d.show">
-                                        <div class="form-group wrapper-md">
-
-                                            <div class="clearfix m-b-md">
-                                                <label for="deck.name" class="control-label col-sm-1">Deck Name</label>
-                                                <div class="col-sm-9">
-                                                    <input type="text" class="form-control" name="dname" ng-model="d.name" />
-                                                </div>
-                                            </div>
-
-                                            <div class="clearfix m-b-md">
-                                                <label for="deck.explanation" class="control-label col-sm-1">Explanation</label>
-                                                <div class="col-sm-9">
-                                                    <textarea class="form-control" name="explanation" ng-model="d.description"></textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="clearfix m-b-md">
-                                                <label for="deck.weeklyNotes" class="control-label col-sm-1">Weekly Notes</label>
-                                                <div class="col-sm-9">
-                                                    <textarea class="form-control" name="weeklyNotes" ng-model="d.weeklyNotes"></textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="clearfix m-b-md">
-                                                <label for="deck.weeklyTrend" class="control-label col-sm-1">Weekly Trend</label>
-                                                <div class="col-sm-9">
-                                                    <div class="col-sm-1" ng-repeat="trend in snapshot.getTrends() track by $index">
-                                                        <input class="form-control wrapper-none" type="number" ng-model="d.ranks[1+$index]">
-                                                        <span># {{snapshot.snapNum - (1+$index)}}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="clearfix">
-                                                <div class="col-sm-1">
-                                                    <label for="deck.tech" class="control-label">Tech Decisions</label>
-                                                    <button type="button" class="btn btn-green btn-rounded m-t-sm" ng-click="snapshot.deckTechAdd(d)"><i class="fa fa-plus"></i> Add Tech</button>
-                                                </div>
-                                                <div class="col-sm-9">
-                                                    <div class="col-sm-4" ng-repeat="tech in d.deckTech | orderBy: 'title'">
-                                                        <div class="panel panel-default">
-                                                            <div class="panel-heading">
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon">vs</span>
-                                                                    <input type="text" class="form-control" ng-model="tech.title">
-                                                                    <span class="input-group-btn">
-                                                                        <a href="#" class="btn btn-danger" ng-click="snapshot.deckTechDeletePrompt(d, tech)"><i class="fa fa-close"></i></a>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <ul class="list-group">
-                                                                <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy: ['-toss', 'card.name']" class="list-group-item">
-                                                                    <button type="button" class="cardBtn" ng-click="snapshot.deckTechCardToggleToss(c)">
-                                                                         <i class="fa" ng-class="{ 'fa-minus': c.toss, 'fa-plus': !c.toss }"></i>
-                                                                    </button>
-                                                                    {{c.card.name}}
-                                                                    <button type="button" class="pull-right cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
-                                                                    <button type="button" class="pull-right btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
-                                                                </li>
-                                                                <li class="list-group-item">
-                                                                    <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div ng-if="tier.tier < 3">
-                                                <label class="control-label col-sm-1">Matches</label>
-                                                <div class="col-sm-9">
-                                                    <div class="col-sm-6" ng-repeat="match in snapshot.getMatchupsByDeckId(d.deck.id) track by $index"> 
-                                                        <div ng-if="d.deck.id != match.againstDeck.id">
-                                                            <div class="panel panel-default wrapper-none">
-                                                                <div class="panel-heading">
-                                                                    <p class="m-b-none">{{d.deck.name}} vs</p>
-                                                                    <p class="m-b-none bold-text ell">{{match.againstDeck.name}}</p>
-                                                                </div>
-                                                                <div class="panel-body">
-                                                                    <div class="col-sm-12 wrapper-none">
-                                                                        <div class="col-sm-10 pull-right">
-                                                                            <input ng-change="snapshot.matchupChangeForChance(match)" ng-model="match.forChance" type="range" min="0" max="100" step="5">
-                                                                        </div>
-                                                                        <div class="col-sm-2 m-t-sm center-text wrapper-none">
-                                                                            <p>% {{match.forChance}}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div ng-if="d.deck.id == match.againstDeck.id">
-                                                            <div class="panel panel-default wrapper-none">
-                                                                <div class="panel-heading">
-                                                                    <p class="m-b-none">{{d.deck.name}} vs</p>
-                                                                    <p class="m-b-none bold-text ell">{{match.forDeck.name}}</p>
-                                                                </div>
-                                                                <div class="panel-body">
-                                                                    <div class="col-sm-12 wrapper-none">
-                                                                        <div class="col-sm-10 pull-right">
-                                                                            <input ng-change="snapshot.matchupChangeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5" readonly>
-                                                                        </div>
-                                                                        <div class="col-sm-2 m-t-sm center-text wrapper-none">
-                                                                            <p>% {{match.againstChance}}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        <div class="form-group">
+                                            <label for="authorClasses_{{author.user.username}}" class="col-sm-1 control-label">Class(es) of Expertise</label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="authorClasses{{author.user.username}}" ng-model="author.expertClasses" size="9" multiple>
+                                                  <option value="druid">Druid</option>
+                                                  <option value="hunter">Hunter</option>
+                                                  <option value="mage">Mage</option>
+                                                  <option value="paladin">Paladin</option>
+                                                  <option value="priest">Priest</option>
+                                                  <option value="rogue">Rogue</option>
+                                                  <option value="shaman">Shaman</option>
+                                                  <option value="warlock">Warlock</option>
+                                                  <option value="warrior">Warrior</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -254,20 +120,169 @@
                             </ul>
                         </div>
                         <div class="panel-footer">
-                            <button type="button" class="btn btn-green btn-rounded" ng-click="snapshot.deckAddPrompt(tier)"><i class="fa fa-plus"></i> Add deck</button>
+                            <button type="button" class="btn btn-green btn-rounded m-r-sm" ng-click="snapshot.authorAddPrompt()"><i class="fa fa-plus"></i> Add Author</button>
                         </div>
                     </div>
                 </div>
-                <!-- SECOND PANEL -->
-                
-                <button type="button" ng-click="snapshot.tierAdd()" class="btn btn-green btn-rounded"><i class="fa fa-plus"></i> Add Tier</button>
             </div>
         </div>
-        
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Active</label>
-            <input ng-model="snapshot.isActive" type="checkbox">
+        <!-- / authors -->
+        <!-- tier list -->
+        <div ng-show="page === 'tiers'">
+            <div class="form-group">
+                <label for="intro" class="col-sm-2 control-label">Tiers</label>
+                <div class="col-sm-10 wrapper-none">
+                    <div class="panel panel-default wrapper-none" ng-repeat="tier in snapshot.tiers track by tier.tier" ng-if="snapshot.tiers.length">
+                        <div class="panel-heading clearfix">
+                            <h4 class="panel-title pull-left">
+                                <a class="tierHeading" role="button" data-toggle="collapse" href="#collapse{{tier.tier}}" aria-expanded="false" aria-controls="collapse{{tier.tier}}"><i class="fa fa-caret-down"></i> 
+                                    Tier {{tier.tier}} 
+                                </a>
+                            </h4>
+                            <button type="button" class="btn btn-danger btn-sm btn-rounded pull-right" ng-click="snapshot.tierDeletePrompt(tier)"><i class="fa fa-close"></i> Remove Tier</button>
+                        </div>
+                        <div id="collapse{{tier.tier}}" class="collapse">
+                            <div class="panel-body">
+                                <ul class="list-group m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
+                                    <li class="list-group-item" ng-if="tier.decks == 0">There are no decks selected yet!</li>
+                                    <li class="list-group-item admin-list-item" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="(tier.decks.length < 2 && snapshot.tiers.length < 2) || d.show" dnd-type="'deck'">
+                                        <div class="clearfix">
+                                            <div class="badge pull-left m-r-sm">{{d.ranks[0]}}</div>
+                                            <div class="pull-left">{{d.deck.name}}</div>
+                                            <div class="btn-group pull-right">
+                                                <button class="btn btn-default btn-xs" type="button" ng-click="d.show = !d.show"><i class="fa fa-edit"></i></button>
+                                                <button class="btn btn-danger btn-xs" type="button" ng-click="snapshot.deckDeletePrompt(tier, d)"><i class="fa fa-close"></i></button>
+                                            </div>
+                                        </div>
+                                        <div ng-show="d.show">
+                                            <div class="form-group wrapper-md">
+
+                                                <div class="clearfix m-b-md">
+                                                    <label for="deck.name" class="control-label col-sm-1">Deck Name</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" class="form-control" name="dname" ng-model="d.name" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="clearfix m-b-md">
+                                                    <label for="deck.explanation" class="control-label col-sm-1">Explanation</label>
+                                                    <div class="col-sm-9">
+                                                        <textarea class="form-control" name="explanation" ng-model="d.description"></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="clearfix m-b-md">
+                                                    <label for="deck.weeklyNotes" class="control-label col-sm-1">Weekly Notes</label>
+                                                    <div class="col-sm-9">
+                                                        <textarea class="form-control" name="weeklyNotes" ng-model="d.weeklyNotes"></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="clearfix m-b-md">
+                                                    <label for="deck.weeklyTrend" class="control-label col-sm-1">Weekly Trend</label>
+                                                    <div class="col-sm-9">
+                                                        <div class="col-sm-1" ng-repeat="trend in snapshot.getTrends() track by $index">
+                                                            <input class="form-control wrapper-none" type="number" ng-model="d.ranks[1+$index]">
+                                                            <span># {{snapshot.snapNum - (1+$index)}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="clearfix">
+                                                    <div class="col-sm-1">
+                                                        <label for="deck.tech" class="control-label">Tech Decisions</label>
+                                                        <button type="button" class="btn btn-green btn-rounded m-t-sm" ng-click="snapshot.deckTechAdd(d)"><i class="fa fa-plus"></i> Add Tech</button>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <div class="col-sm-4" ng-repeat="tech in d.deckTech | orderBy: 'title'">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">vs</span>
+                                                                        <input type="text" class="form-control" ng-model="tech.title">
+                                                                        <span class="input-group-btn">
+                                                                            <a href="#" class="btn btn-danger" ng-click="snapshot.deckTechDeletePrompt(d, tech)"><i class="fa fa-close"></i></a>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <ul class="list-group">
+                                                                    <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy: ['-toss', 'card.name']" class="list-group-item">
+                                                                        <button type="button" class="cardBtn" ng-click="snapshot.deckTechCardToggleToss(c)">
+                                                                             <i class="fa" ng-class="{ 'fa-minus': c.toss, 'fa-plus': !c.toss }"></i>
+                                                                        </button>
+                                                                        {{c.card.name}}
+                                                                        <button type="button" class="pull-right cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
+                                                                        <button type="button" class="pull-right btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
+                                                                    </li>
+                                                                    <li class="list-group-item">
+                                                                        <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div ng-if="tier.tier < 3">
+                                                    <label class="control-label col-sm-1">Matches</label>
+                                                    <div class="col-sm-9">
+                                                        <div class="col-sm-6" ng-repeat="match in snapshot.getMatchupsByDeckId(d.deck.id) track by $index"> 
+                                                            <div ng-if="d.deck.id != match.againstDeck.id">
+                                                                <div class="panel panel-default wrapper-none">
+                                                                    <div class="panel-heading">
+                                                                        <p class="m-b-none">{{d.deck.name}} vs</p>
+                                                                        <p class="m-b-none bold-text ell">{{match.againstDeck.name}}</p>
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <div class="col-sm-12 wrapper-none">
+                                                                            <div class="col-sm-10 pull-right">
+                                                                                <input ng-change="snapshot.matchupChangeForChance(match)" ng-model="match.forChance" type="range" min="0" max="100" step="5">
+                                                                            </div>
+                                                                            <div class="col-sm-2 m-t-sm center-text wrapper-none">
+                                                                                <p>% {{match.forChance}}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div ng-if="d.deck.id == match.againstDeck.id">
+                                                                <div class="panel panel-default wrapper-none">
+                                                                    <div class="panel-heading">
+                                                                        <p class="m-b-none">{{d.deck.name}} vs</p>
+                                                                        <p class="m-b-none bold-text ell">{{match.forDeck.name}}</p>
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <div class="col-sm-12 wrapper-none">
+                                                                            <div class="col-sm-10 pull-right">
+                                                                                <input ng-change="snapshot.matchupChangeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5" readonly>
+                                                                            </div>
+                                                                            <div class="col-sm-2 m-t-sm center-text wrapper-none">
+                                                                                <p>% {{match.againstChance}}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="panel-footer">
+                                <button type="button" class="btn btn-green btn-rounded" ng-click="snapshot.deckAddPrompt(tier)"><i class="fa fa-plus"></i> Add deck</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SECOND PANEL -->
+
+                    <button type="button" ng-click="snapshot.tierAdd()" class="btn btn-green btn-rounded"><i class="fa fa-plus"></i> Add Tier</button>
+                </div>
+            </div>
         </div>
+        <!-- / tier list -->
     </div>
     
     </form>

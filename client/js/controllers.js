@@ -3323,6 +3323,9 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'HearthstoneSnapshotBuilder', 'snapshot', 
         function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, HearthstoneSnapshotBuilder, snapshot) {
             
+            // set default page
+            $scope.page = 'general';
+            
             // set mode to edit
             $scope.mode = 'edit';
             
@@ -3333,6 +3336,9 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminHearthstoneSnapshotAddCtrl', ['$scope', 'HearthstoneSnapshotBuilder',
         function ($scope, HearthstoneSnapshotBuilder) {
+            
+            // set default page
+            $scope.page = 'general';
             
             // set mode to add
             $scope.mode = 'add';

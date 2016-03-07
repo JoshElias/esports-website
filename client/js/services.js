@@ -3998,7 +3998,7 @@ angular.module('app.services', [])
 
             // set slug
             sb.setSlug = function () {
-                if (!sb.slug.linked) { return false; }
+                if (!sb.slug || !sb.slug.linked) { return false; }
                 sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
             };
 
