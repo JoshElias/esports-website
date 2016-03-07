@@ -162,15 +162,7 @@ label p {
     display: inline;
 }
 
-.nav-sub {
-    background: #000;
-    opacity: 0;
-    height: 0;
-    overflow: hidden;
-    margin-left: -20px;
-    -webkit-transition: all .2s ease-in-out 0s;
-    transition: all .2s ease-in-out 0s;
-}
+
 
 .active .nav-sub {
     opacity: 1;
@@ -184,9 +176,7 @@ label p {
     color: #7ca1ae;
 }
 
-.nav-sub li.active a {
-    color: #FFF;
-}
+
 
 .nav-sub li a:hover {
     background: #000;

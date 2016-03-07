@@ -3750,8 +3750,8 @@ angular.module('app.services', [])
         return factory;
     }
 ])
-.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Snapshot', 'Util', 'Hearthstone', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup',
-    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Snapshot, Util, Hearthstone, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup) {
+.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup',
+    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup) {
         var snapshot = {};
         var maxTrends = 12;
         var defaultSnap = {
