@@ -12,26 +12,10 @@
                 <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum" ng-keyup="snapshot.setSlug()">
             </div>
         </div>
-        <div class="form-group  pull-right">
-            <label for="slug" class="control-label pull-left">URL</label>
-            <div class="wrapper-none pull-left">
-                <div class="input-group pull-left">
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-class="{active: snapshot.slug.linked}" ng-click="snapshot.slugToggleLink()"><i class="fa" ng-class="{'fa-link': snapshot.slug.linked, 'fa-unlink': !snapshot.slug.linked}"></i></button>
-                    </span>
-                    <input type="text" id="slug" name="slug" class="form-control wide-input" ng-model="snapshot.slug.url" ng-init="snapshot.setSlug()" ng-readonly="snapshot.slug.linked" required>
-                </div>
-            </div>
-        </div>
-        <div class="form-group  pull-right snap-title-group">
-            <label for="title" class="control-label pull-left">Title</label>
-            <div class="wrapper-none pull-left">
-                <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()">
-            </div>
-        </div>
+       
     </div> <!--panel header ends -->
     <div class="panel-body padding-none p-t-none p-b-none">
-        <div class="col-sm-3">
+        <div class="col-sm-3 leftside-content padding-none">
             <ul class="edit-nav">
                 <li class="pull-left" ng-class="{selected: page==='general'}"><a href="#" ng-click="page = 'general'" >General</a></li>
                 <li class="pull-left" ng-class="{selected: page==='authors'}"><a href="#" ng-click="page = 'authors'" >Authors</a></li>
@@ -39,6 +23,25 @@
             </ul>
             <!-- general nav -->
             <div ng-show="page === 'general'" class="col-sm-9">
+                 <div class="form-group  pull-right">
+                    <label for="slug" class="control-label pull-left">URL</label>
+                    <div class="wrapper-none pull-left">
+                        <div class="input-group pull-left">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-class="{active: snapshot.slug.linked}" ng-click="snapshot.slugToggleLink()"><i class="fa" ng-class="{'fa-link': snapshot.slug.linked, 'fa-unlink': !snapshot.slug.linked}"></i></button>
+                            </span>
+                            <input type="text" id="slug" name="slug" class="form-control wide-input" ng-model="snapshot.slug.url" ng-init="snapshot.setSlug()" ng-readonly="snapshot.slug.linked" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group  pull-right snap-title-group">
+                    <label for="title" class="control-label pull-left">Title</label>
+                    <div class="wrapper-none pull-left">
+                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()">
+                    </div>
+                </div>
+                
+                
                 <div class="form-group">
                     <label for="snapshotPhoto" class="col-sm-2 control-label">Snapshot Image</label>
                     <div class="col-sm-10">

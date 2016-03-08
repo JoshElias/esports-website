@@ -195,7 +195,7 @@
         overflow: auto;
         padding-left: 0px;
         padding-right: 0px;
-        background: $black-20;
+       
         
         
         li {
@@ -235,7 +235,12 @@
     .leftside-content {
             background-color: $black-20;
             margin: 0px !important;
-    
+        
+        .form-group {
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+            padding: 10px;
+        }
     }
 
     .rightside-content {
