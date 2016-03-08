@@ -187,6 +187,8 @@ angular.module('tsAdSense', [])
             //s.async = true;
             document.body.appendChild(s);
 
+            console.log('created our ad', s);
+
             if (!!window.googleAdsAlreadyLoaded) {
                 var tag = document.getElementById('adCode');
                 tag.parentNode.removeChild(tag);
