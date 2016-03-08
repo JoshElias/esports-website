@@ -3777,7 +3777,8 @@ angular.module('app.services', [])
             votes: 0,
             active: false,
             loaded: false,
-            activeDeck: null
+            activeDeck: null,
+            activeAuthor: null
         };
         var defaultAuthor = {
             id: null,
@@ -4013,7 +4014,12 @@ angular.module('app.services', [])
             sb.getTrends = function () {
                 return new Array(maxTrends);
             };
-
+            
+            // set active author
+            sb.setActiveAuthor = function (author) {
+                sb.activeAuthor = author;
+            };
+            
             // add author
             sb.authorAdd = function (user) {
                 var newAuthor = angular.copy(defaultAuthor);
