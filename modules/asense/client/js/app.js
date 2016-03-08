@@ -4,14 +4,17 @@ angular.module('tsAdSense', [])
         function ($rootScope, User) {
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
                 var s = document.getElementById('adCode');
-                var e = $('.ad');
+                var e = $('.ad-script-tag');
 
-                //if (!_.isNull(s))
-                //    s.parentNode.removeChild(s);
+                if (!_.isNull(s)) {
+                    s.parentNode.removeChild(s);
+                    window.googleAdsAlreadyLoaded = false;
+                }
 
-                //for (var i = 0; i < e.length; i++) {
-                //    $(e[0]).parentNode.removeChild(e[0]);
-                //}
+
+                for (var i = 0; i < e.length; i++) {
+                    $(e[i]).remove();
+                }
 
                 //Object.keys($window).filter(function(k) { return k.indexOf('google') >= 0 }).forEach(
                 //    function(key) {
@@ -140,31 +143,32 @@ angular.module('tsAdSense', [])
                 return canShowAds;
             }
 
-            function pushAd () {
-                $timeout(function () {
-                    if (adIter < adIterMax) {
-
-                        $timeout(function () {
-                            try {
-                                $window.adsbygoogle.push({});
-                            } catch (e) {
-                                adIter++;
-                                return pushAd();
-                            }
-                        }, 500);
-                    } else {
-                        var parent = $scope.el[0].parentNode;
-
-                        while (!!parent['parentNode']) {
-                            parent = parent['parentNode'];
-                        }
-
-                        $(parent).remove();
-                    }
-                }, 5000);
-            }
-
-            pushAd();
+            //function pushAd () {
+            //    $timeout(function () {
+            //        if (adIter < adIterMax) {
+            //
+            //            $timeout(function () {
+            //                try {
+            //                    $window.adsbygoogle.push({});
+            //                } catch (e) {
+            //                    console.log();
+            //                    adIter++;
+            //                    return pushAd();
+            //                }
+            //            }, 500);
+            //        } else {
+            //            var parent = $scope.el[0].parentNode;
+            //
+            //            while (!!parent['parentNode']) {
+            //                parent = parent['parentNode'];
+            //            }
+            //
+            //            $(parent).remove();
+            //        }
+            //    }, 5000);
+            //}
+            //
+            //pushAd();
         }],
         link: function (scope, el, attrs) {
             scope.el = el;
@@ -173,6 +177,7 @@ angular.module('tsAdSense', [])
             var s = document.createElement('script');
 
             s.type = 'text/javascript';
+            s.className = "ad-script-tag";
             s.text = "<!-- google_ad_client = \"ca-pub-5622157629772216\";" +
                 " /* tempostorm */ google_ad_slot = \"5924728078\";" +
                 " google_ad_width = " + scope.w + ";" +
@@ -189,6 +194,7 @@ angular.module('tsAdSense', [])
             var w =  document.write;
             document.write = function (content) {
                 el[0].innerHTML = content;
+
                 document.write = w;
             }
 
