@@ -6,9 +6,7 @@ var requestCrawler = require("../request-crawler");
 var FILTER_FEATURE_KEY = "$filter";
 
 
-function filter(ctx, finalCb) {
-
-    console.log("AIDS", loopback.getCurrentContext());
+function filter(ctx, modelInstance, finalCb) {
 
     var filterOptions = {
         featureKey: FILTER_FEATURE_KEY
@@ -42,34 +40,30 @@ function filterField(state, finalCb) {
         if(!predicate) {
             return removeField(state, filterCb);
         }
+
         if (predicate(state.requestData)) {
             return filterCb();
         }
 
         // Do we have an active accessToken
         var loopbackContext = loopback.getCurrentContext();
-        console.log("loopback context", loopbackContext);
-        if (!loopbackContext || typeof loopbackContext.active !== "object" || Object.keys(loopbackContext.active).length < 1) {
-            console.log("rip")
-            return removeField(state, filterCb);
-        }
-
-        if (!loopbackContext.active.http.req || !loopbackContext.active.http.req.accessToken) {
-            console.log("rip 2", loopbackContext.active.http.req.accessToken);
+        if (!loopbackContext
+            || typeof loopbackContext.active !== "object"
+            || !loopbackContext.active.accessToken) {
             return removeField(state, filterCb);
         }
 
         // Get userId
-        var userId = loopbackContext.active.http.req.accessToken.userId.toString();
-console.log("found userId");
+        var userId = loopbackContext.active.accessToken.userId.toString();
+
         // Get accepted roles
         var acceptedRoles = filter.acceptedRoles || [];
 
         // Get instance id if possible
         var instanceId = state.requestData.id;
 
-        console.log("looking for roles with Id", userId);
-
+        //console.log("KEYS", Object.keys(state.ctx.Model));
+        var User = state.models.user;
         return User.isInRoles(userId,
             acceptedRoles,
             {modelClass: state.modelName, modelId: instanceId},
