@@ -5,13 +5,11 @@ var _ = require('underscore');
 
 
 function crawl(ctx, options, finalCb) {
-    console.log("crawling in my skin")
 
     // Check if this model has the current feature enabled
     if(!ctx.Model.definition.settings || !ctx.Model.definition.settings[options.featureKey]) {
         return finalCb();
     }
-    console.log("passed the thing")
 
     // Check if the ctx has an active request
     var loopbackContext = loopback.getCurrentContext();
@@ -26,10 +24,10 @@ function crawl(ctx, options, finalCb) {
         propertyName: "",
         modelConfig: ctx.Model.definition.rawProperties,
         modelName: ctx.Model.definition.name,
-        data: ctx.data,
-        instance: ctx.instance,
+        requestData: (ctx.data) ? ctx.data : ctx.instance["__data"],
         currentInstance: ctx.currentInstance
     };
+    parentState.data = parentState.requestData;
 
     // Attach ctx specific vars to state obj
     if(options && typeof options.stateVars === "object") {
@@ -39,8 +37,11 @@ function crawl(ctx, options, finalCb) {
     }
 
     return crawlObject(parentState, options, function(err, state) {
-        console.log("crawled the main object");
         if(err) return finalCb(err);
+
+        if(!options.postHandler) {
+            return finalCb();
+        }
 
         return options.postHandler(state, finalCb);
     });
@@ -48,7 +49,6 @@ function crawl(ctx, options, finalCb) {
 
 
 function buildNextState(value, key, oldState, options) {
-    console.log("building new states")
 
     // Populate the next level of the validation state
     var newState = {};
@@ -57,18 +57,14 @@ function buildNextState(value, key, oldState, options) {
     newState.key = key;
     newState.modelConfig = value;
     newState.modelName = oldState.modelName;
+    newState.requestData = oldState.requestData;
 
-    console.log("key", key);
-    console.log("value", value);
-    console.log("modelName", newState.modelName);
 
     // Build new data points for instance and data
-    newState.data = (typeof oldState.data === "undefined")
-        ? undefined : oldState.data[key];
-    newState.instance = (typeof oldState.instance === "undefined")
-        ? undefined : oldState.instance[key];
-    newState.currentInstance = (oldState.currentInstance === null || typeof oldState.currentInstance === "undefined")
-        ? undefined : oldState.currentInstance[key];
+    newState.parentData = oldState.data;
+    newState.data = (!newState.parentData) ? undefined : newState.parentData[key];
+    newState.currentInstance = (!oldState.currentInstance) ? undefined : oldState.currentInstance[key];
+
 
     // Build new root key
     var rootKeyPrefix = (oldState.rootKey.length < 1) ? "" : oldState.rootKey + ".";
@@ -82,39 +78,43 @@ function buildNextState(value, key, oldState, options) {
     }
 
     // Handler options for new state
-    console.log("before propertyDataPoint", newState.propertyDataPoint)
+    if(!options.newStateHandler) {
+        return newState;
+    }
+
     options.newStateHandler(oldState, newState);
-    console.log("after propertyDataPoint", newState.propertyDataPoint)
     return newState;
 }
 
 
 function crawlObject(state, options, objectCb) {
-    async.forEachOf(state.modelConfig, function(value, key, eachCb) {
+
+    return async.forEachOf(state.modelConfig, function(value, key, eachCb) {
 
         // Update the validation state with this level of object
         var newState = buildNextState(value, key, state, options);
 
         // Return if no data to validate
-        var clientData = newState.ctx.data || newState.ctx.instance;
-        if(_.isEmpty(clientData)) {
+        if(_.isEmpty(newState.data)) {
             return eachCb();
         }
 
         // Determine type of value
         if(Array.isArray(newState.modelConfig)) {
-            return crawlArray(newState, eachCb);
+
+            return crawlArray(newState, options, eachCb);
+
         } else if(typeof newState.modelConfig === "object") {
 
             // Is there a type defined?
             var type = newState.modelConfig["type"];
-
-            if(typeof type === "string") {
-                return crawlPrimitive(newState, options, eachCb)
-            } else {
+            if(typeof type === "object" || type === "object") {
                 return crawlObject(newState, options, eachCb);
+            } else if(type === "string" || type === "number") {
+                return crawlPrimitive(newState, options, eachCb);
             }
         } else if(typeof value === "string") {
+
             return crawlPrimitive(newState, options, eachCb);
         }
 
@@ -147,7 +147,17 @@ function crawlArray(state, options, finalCb) {
 function crawlPrimitive(state, options, finalCb) {
 
     // Check if the tag for the current function exists
-    if(!state.modelConfig[options.optionKey]) {
+    if(!state.modelConfig[options.featureKey]) {
+        return finalCb();
+    }
+
+    // Check if we have a value
+    if(typeof state.data === "undefined") {
+        return finalCb();
+    }
+
+    // Check for a primitive handler
+    if(!options.primitiveHandler) {
         return finalCb();
     }
 
