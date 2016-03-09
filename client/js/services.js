@@ -3839,6 +3839,7 @@ angular.module('app.services', [])
                 sb.snapNum = data.snapNum;
                 sb.tiers = data.tiers;
                 sb.title = data.title;
+                sb.deckTiers = data.deckTiers;
                 sb.tiers = sb.generateTiers(data.deckTiers);
                 
                 sb.loaded = true;
@@ -4000,7 +4001,7 @@ angular.module('app.services', [])
 
             // set slug
             sb.setSlug = function () {
-                if (!sb.slug || !sb.slug.linked) { return false; }
+                if (!sb.slug.linked) { return false; }
                 sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
             };
 
@@ -4648,7 +4649,24 @@ angular.module('app.services', [])
                     function (cb) {
                         if (sb.id) { return cb(null, sb.id); }
                         Snapshot.create({
-                            
+                            snapNum: sb.snapNum,
+                            title: sb.title,
+                            slug: {
+                                url: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
+                            content: {
+                                intro: sb.content.intro,
+                                thoughts: sb.content.thoughts
+                            },
+                            createdDate: new Date().toISOString(),
+                            photoNames: {
+                                square: sb.photoNames.square || '',
+                                small: sb.photoNames.small || '',
+                                medium: sb.photoNames.medium || '',
+                                large: sb.photoNames.large || ''
+                            },
+                            isActive: sb.isActive
                         })
                         .$promise
                         .then(function (data) {
@@ -4660,7 +4678,7 @@ angular.module('app.services', [])
                         });
                     },
                     // create authors
-                    function (cb, snapshotId) {
+                    function (snapshotId, cb) {
                         async.each(sb.authors, function (author, eachCallback) {
                             // only create authors without ids
                             if (author.id) { return eachCallback(); }
@@ -4685,14 +4703,22 @@ angular.module('app.services', [])
                         });
                     },
                     // create deck tiers
-                    function (cb, snapshotId) {
+                    function (snapshotId, cb) {
                         async.each(sb.deckTiers, function (deckTier, eachCallback) {
                             // only create deck tiers without ids
                             if (deckTier.id) { return eachCallback(); }
                             // create new deck tier
-                            DeckTier.create({
-                                
-                            })
+                            var newDeckTier = {
+                                description: deckTier.description,
+                                weeklyNotes: deckTier.weeklyNotes,
+                                name: deckTier.name,
+                                tier: deckTier.tier,
+                                deckId: deckTier.deck.id,
+                                snapshotId: snapshotId,
+                                ranks: deckTier.ranks
+                            };
+                            console.log('Created Deck Tier: ', newDeckTier);
+                            DeckTier.create(newDeckTier)
                             .$promise
                             .then(function (data) {
                                 deckTier.id = data.id;
@@ -4707,13 +4733,17 @@ angular.module('app.services', [])
                         });
                     },
                     // create matchups
-                    function (cb, snapshotId) {
+                    function (snapshotId, cb) {
                         async.each(sb.matchups, function (matchup, eachCallback) {
                             // only create matchups without ids
                             if (matchup.id) { return eachCallback(); }
                             // create new deck tier
                             DeckMatchup.create({
-                                
+                                forChance: matchup.forChance,
+                                againstChance: matchup.againstChance,
+                                forDeckId: matchup.forDeck.id,
+                                againstDeckId: matchup.againstDeck.id,
+                                snapshotId: snapshotId
                             })
                             .$promise
                             .then(function (data) {
