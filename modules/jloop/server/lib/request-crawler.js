@@ -1,81 +1,103 @@
 var async = require("async");
 var loopback = require("loopback");
 var util = require("util");
-var _ = require('underscore');
 var app = require("../../../../server/server");
 
 
 function crawl(ctx, options, finalCb) {
-
+    console.log(1)
     // Get the model properties
     var definition;
     if(ctx.Model) {
+        console.log("ctx fields", Object.keys(ctx.Model));
         definition = ctx.Model.definition;
     } else {
         var modelName = ctx.methodString.split(".")[0];
         var model = app.models[modelName];
         definition = model.definition;
     }
-
+    console.log(2)
+    console.log("definition.setting", definition.settings);
+    // Check for the feature key before we continue
+    if(!definition.settings[options.featureKey]) {
+        return finalCb();
+    }
+    console.log(3)
     // Keep a reference to each possible state of the model's config, client data and the reportObj
     var parentState = {
         ctx: ctx,
         rootKey: "",
         propertyName: "",
-        modelConfig: definition.rawProperties,
+        modelSettings: definition.settings,
+        modelProperties: definition.rawProperties,
         modelName: definition.name,
         currentInstance: ctx.currentInstance,
         models: app.models
     };
-
-    if(ctx.data) {
-        parentState.requestData = ctx.data;
-    } else if(ctx.instance) {
-        parentState.requestData = ctx.instance["__data"];
-    } else if(ctx.result) {
-        parentState.requestData = ctx.result;
+    console.log(4)
+    // Append the active context if possible
+    var loopbackContext = loopback.getCurrentContext();
+    if (loopbackContext
+        || typeof loopbackContext.active === "object"
+        || loopbackContext.active) {
+        parentState.active = loopbackContext.active;
     }
-
-    parentState.data = parentState.requestData;
-
+    console.log(5)
+    // Get the data depending on the type of request made by the user
+    if(ctx.data) {
+        parentState.requestData = parentState.data = ctx.data;
+    } else if(ctx.instance) {
+        parentState.requestData = parentState.data = ctx.instance["__data"];
+    } else if(ctx.result) {
+        parentState.requestData = parentState.data = ctx.result;
+    }
+    console.log(6)
     // Attach ctx specific vars to state obj
     if(options && typeof options.stateVars === "object") {
         for(var key in options.stateVars) {
             parentState[key] = options.stateVars[key];
         }
     }
+console.log(7)
+    // If the client data came together in an array
+    if(Array.isArray(parentState.requestData)) {
+        return async.each(parentState.requestData, function(data, eachCb) {
+            parentState.requestData = parentState.data = data;
+            return crawlContainer("object", parentState, options, eachCb);
+        }, doneCrawling);
 
-    return crawlObject(parentState, options, function(err, state) {
+    // Or a single object
+    } else {
+        return crawlContainer("object", parentState, options, doneCrawling);
+    }
+
+    function doneCrawling(err, state) {
+        //console.log("done crawling report", state.report);
         if(err) return finalCb(err);
-
-        if(!options.postHandler) {
-            return finalCb();
-        }
-
-        return options.postHandler(state, finalCb);
-    });
+        else if(!options.postHandler) return finalCb();
+        else return options.postHandler(state, finalCb);
+    }
 }
 
 
 function buildNextState(value, key, oldState, options) {
-//console.log("building next state");
-    //console.log("value", value);
+console.log("building next state");
     // Populate the next level of the validation state
-    var newState = {};
-    newState.parent = oldState;
-    newState.ctx = oldState.ctx;
-    newState.key = key;
-    newState.modelConfig = oldState.modelConfig[key];
-    newState.modelName = oldState.modelName;
-    newState.requestData = oldState.requestData;
-    newState.models = oldState.models;
+    var newState                =   {};
+    newState.parent             =   oldState;
+    newState.ctx                =   oldState.ctx;
+    newState.key                =   key;
+    newState.modelSettings      =   oldState.modelSettings;
+    newState.modelProperties    =   oldState.modelProperties[key];
+    newState.modelName          =   oldState.modelName;
+    newState.requestData        =   oldState.requestData;
+    newState.models             =   oldState.models;
+    newState.active             =   oldState.active;
 
-//console.log("modelConfig", newState.modelConfig);
     // Build new data points for instance and data
     newState.parentData = oldState.data;
-    newState.data = (newState.parentData) ? newState.parentData[key] : undefined;
+    newState.data = (newState.parentData) ? oldState.data[key] : undefined;
     newState.currentInstance = (!oldState.currentInstance) ? undefined : oldState.currentInstance[key];
-
 
     // Build new root key
     var rootKeyPrefix = (oldState.rootKey.length < 1) ? "" : oldState.rootKey + ".";
@@ -98,75 +120,67 @@ function buildNextState(value, key, oldState, options) {
 }
 
 
-function crawlObject(state, options, objectCb) {
+function crawlContainer(type, state, options, finalCb) {
+    console.log("crawling container")
+    async.series([
 
-    return async.forEachOf(state.modelConfig, function(value, key, eachCb) {
-
-        // Update the validation state with this level of object
-        var newState = buildNextState(value, key, state, options);
-
-        console.log("key", newState.key);
-        console.log("modelConfig", newState.modelConfig);
-        console.log("data", newState.data);
-
-        // Return if no data to validate
-        if(newState.data === null || newState.data === undefined) {
-            console.log("rip")
-            return eachCb();
-        }
-
-
-
-        // Determine type of value
-        if(Array.isArray(newState.modelConfig)) {
-
-            return crawlArray(newState, options, eachCb);
-
-        } else if(typeof newState.modelConfig === "object") {
-
-            // Is there a type defined?
-            var type = newState.modelConfig["type"];
-            //console.log("type type", typeof type);
-            if(typeof type === "object" || type === "object") {
-                return crawlObject(newState, options, eachCb);
-            } else if(type === "string" || type === "number") {
-                return crawlPrimitive(newState, options, eachCb);
+        // Check if we should call the object hook
+        function(seriesCb) {
+            var handlerName = type+"Handler";
+            if(state.modelProperties[options.featureKey] && options[handlerName]) {
+                return options.objectHandler(state, seriesCb);
             }
-        } else if(typeof value === "string") {
+            return seriesCb();
+        },
 
-            return crawlPrimitive(newState, options, eachCb);
+        // Crawl the container
+        function(seriesCb) {
+
+            return async.forEachOf(state.modelProperties, function(value, key, eachCb) {
+
+                // Update the validation state with this level of object
+                var newState = buildNextState(value, key, state, options);
+
+                // Return if no data to validate
+                if(newState.data === null || newState.data === undefined) {
+                    return eachCb();
+                }
+
+                // Determine type of value
+                var type = newState.modelProperties["type"];
+                if(Array.isArray(newState.modelProperties) || Array.isArray(type)) {
+
+                    return crawlContainer("array", newState, options, eachCb);
+
+                } else if(typeof newState.modelProperties === "object") {
+
+                    // Is there a type defined?
+                    if(typeof type === "string" && (type === "string" || type === "number" || type === "boolean")) {
+                        return crawlPrimitive(newState, options, eachCb);
+                    } else if(typeof type === "function") {
+                        return crawlPrimitive(newState, options, eachCb);
+                    }
+                    else {
+                        return crawlContainer("object", newState, options, eachCb);
+                    }
+                }
+
+                // Invalid input. Continue
+                return eachCb();
+
+            }, seriesCb);
         }
 
-        // Invalid input
-        return eachCb();
-
-    }, function(err) {
-        return objectCb(err, state);
+    ], function(err) {
+        return finalCb(err, state);
     });
 }
 
-function crawlArray(state, options, finalCb) {
-console.log("ARRAY")
-    // Iterate over the models config that we're currently on
-    async.forEachOf(state.modelConfig, function(value, key, eachCb) {
-
-        // Update the validation state with this level of object
-        var nextValidationState = buildNextState(value, key, state, options);
-
-        var properties = nextValidationState.modelConfig["properties"];
-        if(typeof value !== "object" || typeof properties !== "object" ) {
-            return eachCb();
-        }
-
-        return crawlObject(nextValidationState, options, eachCb);
-
-    }, finalCb);
-}
 
 function crawlPrimitive(state, options, finalCb) {
-console.log("PRIMITIVE")
+console.log("crawling primitive");
     // Check if the tag for the current function exists
-    if(!state.modelConfig[options.featureKey]) {
+    if(!state.modelProperties[options.featureKey]) {
         return finalCb();
     }
 

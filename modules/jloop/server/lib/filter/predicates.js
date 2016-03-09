@@ -1,11 +1,11 @@
 
 
-function premium(instance) {
-    if(!instance || !instance.premium || !instance.premium.isPremium || !instance.premium.expiryDate)
+function premium(data) {
+    if(!data || !data.premium || !data.premium.isPremium || !data.premium.expiryDate)
         return false;
 
     var now = new Date();
-    var isPremium = now < new Date(instance.premium.expiryDate);
+    var isPremium = now < new Date(data.premium.expiryDate);
     return isPremium;
 }
 

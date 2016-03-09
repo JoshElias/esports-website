@@ -57,7 +57,12 @@
       "type": "date"
     },
     "premium": {
-      "type": "object"
+      "isPremium": {
+        "type": "boolean"
+      },
+      "expiryDate": {
+        "type": "date"
+      }
     },
     "articleType": {
       "type": [

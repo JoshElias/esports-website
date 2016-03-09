@@ -6,7 +6,8 @@
   "idInjection": true,
   "options": {
     "validateUpsert": true,
-    "$validate": true
+    "$validate": true,
+    "$filter": true
   },
   "properties": {
     "against": {

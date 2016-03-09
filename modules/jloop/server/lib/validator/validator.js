@@ -7,7 +7,7 @@ var requestCrawler = require("../request-crawler");
 
 
 function validate(ctx, finalCb) {
-
+console.log("validating things")
     var crawlOptions = {
         featureKey: "$validate",
         stateVars: {
@@ -27,31 +27,28 @@ function validate(ctx, finalCb) {
 
 function newStateHandler(oldState, newState) {
 
+    // Create new report
+    newState.report = {
+        passed: true
+    };
+
     // Build report appropriate for data type
-    var newClientData = newState.ctx.data || newState.ctx.instance;
-    if (typeof newClientData === "object") {
+    if (typeof newState.data === "object") {
         newState.report.errors = {};
         newState.report.elements = {};
     } else {
         newState.report.errors = [];
     }
 
-    // Create new report
-    newState.report = {
-        passed: true
-    };
-
     // Point reference to this new state if it's part of a container
-    var oldClientData = oldState.ctx.data || oldState.ctx.instance;
-    if (typeof oldClientData === "object") {
-        oldState.report.elements[key] = newState.report;
+    if (typeof oldState.data === "object") {
+        oldState.report.elements[newState.key] = newState.report;
     }
-
-    return newState;
 }
 
 function primitiveHandler(state, finalCb) {
-    var validators = state.modelConfig["validators"];
+    console.log("primitive handler")
+    var validators = state.modelProperties["validators"];
     if(!Array.isArray(validators)) {
         return finalCb();
     }
@@ -72,7 +69,7 @@ function postHandler(state, finalCb) {
 
 
 function runValidators(validatorNames, state, finalCb) {
-
+    console.log("running validators")
     function runValidator(validatorName, validatorCb) {
 
         var validator = validators[validatorName];
@@ -97,8 +94,7 @@ function updateReport(key, state, validationErr, finalCb) {
     // Update the current validation state with error
     state.report.passed = false;
 
-    var clientData = state.ctx.data || state.ctx.instance;
-    if(typeof clientData === "object") {
+    if(typeof state.data === "object") {
         if(typeof state.report.errors[key] === "undefined") {
             state.report.errors[key] = [];
         }

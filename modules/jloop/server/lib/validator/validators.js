@@ -5,14 +5,13 @@ var utils = require("./../utils");
 
 
 var youtubeRegex = /^[a-zA-Z0-9_-]{11}$/;
-function validateYoutubeId(validationState, youtubeCb) {
-    var youtubeId = validationState.data || validationState.instance;
-    if(typeof youtubeId !== "string") {
+function validateYoutubeId(state, youtubeCb) {
+    if(typeof state.data !== "string") {
         return youtubeCb();
     }
 
     var youtubeErr;
-    if(!youtubeRegex.test(youtubeId)) {
+    if(!youtubeRegex.test(state.data)) {
         youtubeErr = new Error('Invalid youtubeId');
         youtubeErr.statusCode = 400;
         youtubeErr.code = 'INVALID_YOUTUBE_ID';
@@ -23,14 +22,13 @@ function validateYoutubeId(validationState, youtubeCb) {
 
 
 var youtubePlaylistRegex = /^[a-zA-Z0-9_-]{34}$/;
-function validateYoutubePlaylistId(validationState, validatorCb) {
-    var youtubeVars = validationState.data || validationState.instance;
-    if(typeof youtubeVars !== "object" || typeof youtubeVars.list !== "string") {
+function validateYoutubePlaylistId(state, validatorCb) {
+    if(typeof state.data !== "object" || typeof state.data.list !== "string") {
         return validatorCb();
     }
 
     var playlistErr;
-    if(!youtubePlaylistRegex.test(youtubeVars.list)) {
+    if(!youtubePlaylistRegex.test(state.data.list)) {
         playlistErr = new Error('Invalid Youtube playlist id');
         playlistErr.statusCode = 400;
         playlistErr.code = 'INVALID_YOUTUBE_PLAYLIST_ID';
@@ -40,27 +38,27 @@ function validateYoutubePlaylistId(validationState, validatorCb) {
 }
 
 
-function validateSpam(validationState, validatorCb) {
+function validateSpam(state, validatorCb) {
+
+    // Only check for spam if we have an active connection
+    if(!state.active || !state.active.http || !state.active.http.req) {
+        return validatorCb();
+    }
+    var req = state.active.http.req;
+
 
     var filterErr = new Error('Unable to filter spam from the given data');
     filterErr.statusCode = 500;
     filterErr.code = 'UNABLE_TO_FILTER_SPAM';
 
-    var spamErr = new Error('Cannot save due to spam in property:', validationState.key);
+    var spamErr = new Error('Cannot save due to spam in property:', state.key);
     spamErr.statusCode = 422;
     spamErr.code = 'SPAM_FOUND';
 
-    var loopbackContext = loopback.getCurrentContext();
-    if (!loopbackContext || !loopbackContext.active) {
-        return validatorCb();
-    }
+    var User            =   state.models.user;
+    var SpamRegex       =   state.models.spamRegex;
+    var SpamOffence     =   state.models.spamOffence;
 
-    var req = loopbackContext.active.http.req;
-    var Model = validationState.ctx.Model;
-
-    var User = Model.app.models.user;
-    var SpamRegex = Model.app.models.spamRegex;
-    var SpamOffence = Model.app.models.spamOffence;
 
     // Track information about the sender
     var requestIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -94,9 +92,9 @@ function validateSpam(validationState, validatorCb) {
         },
         // Recurse through model's config and run validators
         function(user, combinedRegex, seriesCb) {
-          
-            var data = validationState.data || validationState.instance;
-            if(typeof data !== "string") {
+
+            var data = state.data;
+            if(typeof state.data !== "string") {
                 return seriesCb();
             }
 
@@ -114,8 +112,8 @@ function validateSpam(validationState, validatorCb) {
                 userAgent: requestUserAgent || "",
                 referer: requestReferer || "",
                 matches: matches,
-                modelName: validationState.modelName,
-                propertyName: validationState.key,
+                modelName: state.modelName,
+                propertyName: state.key,
                 createdDate: new Date().toISOString()
             }, function(err) {
                 if(err) return seriesCb(filterErr);
@@ -128,29 +126,29 @@ function validateSpam(validationState, validatorCb) {
     });
 }
 
-function validateUnique(validationState, uniqueCb) {
+function validateUnique(state, uniqueCb) {
 
-    var rootKey = validationState.rootKey;
-    var Model = validationState.ctx.Model;
+    var rootKey = state.rootKey;
+    var Model = state.ctx.Model;
     var modelId = "";
 
     // Find the relevant model id if available
-    if(typeof validationState.ctx.currentInstance === "object") {
-      modelId = validationState.ctx.currentInstance.id;
-    } else if(typeof validationState.ctx.where === "object" 
-              && typeof validationState.ctx.where.id == "string") {
-      modelId = validationState.ctx.where.id;
+    if(typeof state.currentInstance === "object") {
+      modelId = state.currentInstance.id;
+    } else if(typeof state.ctx.where === "object"
+              && typeof state.ctx.where.id == "string") {
+      modelId = state.ctx.where.id;
     }
-    var uniqueErr = new Error(validationState.key + ' is not unique');
+    var uniqueErr = new Error(state.key + ' is not unique');
     uniqueErr.statusCode = 422;
     uniqueErr.code = 'FIELD NOT UNIQUE';
   
     var where = {};
     
-    where[rootKey] = validationState.data || validationState.instance;
-    if (typeof validationState.ctx.where === "object") {
-        for (var key in validationState.ctx.where) {
-            where[key] = validationState.ctx.where[key];
+    where[rootKey] = state.data;
+    if (typeof state.ctx.where === "object") {
+        for (var key in state.ctx.where) {
+            where[key] = state.ctx.where[key];
         }
     }
 

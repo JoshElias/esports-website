@@ -19,7 +19,7 @@ module.exports = function(server) {
 
         model.observe("before save", validator.validate);
         model.beforeRemote("find", scope.addMaxScope(server.models));
-        model.afterRemote("**", filter.filter);
+        //model.afterRemote("**", filter.filter);
         model.observe('before delete', relation.destroyChildren);
     }
 };
