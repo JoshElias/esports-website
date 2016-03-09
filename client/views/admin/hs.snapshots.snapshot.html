@@ -16,14 +16,22 @@
     </div> <!--panel header ends -->
     <div class="panel-body padding-none p-t-none p-b-none">
         <div class="col-sm-3 leftside-content padding-none">
-            <ul class="edit-nav">
+            <ul class="edit-nav m-b-md">
                 <li class="pull-left" ng-class="{selected: page==='general'}"><a href="#" ng-click="page = 'general'" >General</a></li>
                 <li class="pull-left" ng-class="{selected: page==='authors'}"><a href="#" ng-click="page = 'authors'" >Authors</a></li>
                 <li class="pull-left" ng-class="{selected: page==='tiers'}"><a href="#" ng-click="page = 'tiers'" >Tier List</a></li>
             </ul>
-            <!-- general nav -->
-            <div ng-show="page === 'general'" class="col-sm-9">
-                 <div class="form-group  pull-right">
+            <!-- general nav ends-->
+            <!-- general section -->
+            <div ng-show="page === 'general'" class="col-sm-12">
+                <div class="form-group snap-title-group">
+                    <label for="title" class="control-label pull-left">Title</label>
+                    <div class="wrapper-none">
+                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()">
+                    </div>
+                </div>
+                <!--URL starts -->
+                <div class="form-group ">
                     <label for="slug" class="control-label pull-left">URL</label>
                     <div class="wrapper-none pull-left">
                         <div class="input-group pull-left">
@@ -34,17 +42,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group  pull-right snap-title-group">
-                    <label for="title" class="control-label pull-left">Title</label>
-                    <div class="wrapper-none pull-left">
-                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()">
-                    </div>
-                </div>
                 
-                
+                <!-- image starts -->
                 <div class="form-group">
-                    <label for="snapshotPhoto" class="col-sm-2 control-label">Snapshot Image</label>
-                    <div class="col-sm-10">
+                    <label for="snapshotPhoto" class="control-label">Snapshot Image</label>
+                    <div class="">
                         <input type="hidden" id="snapshotPhotoSquare" name="snapshotPhotoSquare" value="" ng-model="snapshot.photoNames.square">
                         <input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photoNames.small">
                         <input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photoNames.medium">
@@ -64,6 +66,22 @@
                         </div>
                     </div>
                 </div>
+                <!-- Is active starts -->
+                <div class="form-group">
+                    <button class="btn btn-default control-btn"
+                            ng-class="{active: snapshot.isActive}"
+                            ng-click="snapshot.isActive = !snapshot.isActive"
+                            ng-mouseover="activeHover = true"
+                            ng-mouseleave="activeHover = false"
+                        >
+                        <span ng-if="snapshot.isActive && activeHover">disable</span>
+                        <span ng-if="!snapshot.isActive && activeHover">enable</span>
+
+                        <span ng-if="!snapshot.isActive && !activeHover">inactive</span>
+                        <span ng-if="snapshot.isActive && !activeHover">active</span>
+                    </button>
+                </div>
+                
             </div>
             <!-- / general nav -->
             <!-- authors nav -->
@@ -128,7 +146,7 @@
         <!-- general -->
         <div ng-show="page === 'general'" class="col-sm-9">
             <div class="form-group">
-                <label for="intro" class="col-sm-2 control-label">Content</label>
+<!--                <label for="intro" class="col-sm-2 control-label">Content</label>-->
                 <div class="panel panel-default wrapper-none col-sm-10">
                     <div class="panel-body">
                         <label for="intro" class="col-sm-1 control-label">Intro</label>
@@ -141,10 +159,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Active</label>
-                <input ng-model="snapshot.isActive" type="checkbox">
             </div>
         </div>
         <!-- / general -->
