@@ -12,7 +12,7 @@
         .form-horizontal .control-label {
             padding-top: 7px;
             margin-bottom: 5px;
-            text-align: right;
+            text-align: left;
         }
     }
     
@@ -22,6 +22,7 @@
             margin-bottom: 5px;
             color: $light-font;
             font-weight: 100 !important;
+         text-transform: uppercase;
     }
     
     .admin-btn-blue {
@@ -68,14 +69,14 @@
 
             &:first-child>.btn, .input-group-btn:first-child>.btn-group {
                 margin-right: 0px !important;
+                height: 34px;
             }
         }
     }
     
+   
     .form-control {
         display: block;
-        
-        height: 32px;
         padding: 6px 12px;
         font-size: 14px;
         line-height: 1.42857143;
@@ -89,6 +90,13 @@
         -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
         -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
         transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    }
+    
+    textarea {
+        &.form-control {
+            resize: none;
+        }
+    
     }
     
     
@@ -116,6 +124,13 @@
     
     .panel {
         background-color: $black-50;
+        
+        &.opac-panel {
+        
+             background-color: transparent;
+        }
+        
+        
     }
     .pabel-body { 
         background-color: rgba($black-50, 0);
