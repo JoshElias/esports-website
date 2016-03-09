@@ -3750,12 +3750,18 @@ angular.module('app.services', [])
         return factory;
     }
 ])
-.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup',
-    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup) {
+.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
+    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
         var snapshot = {};
         var maxTrends = 12;
+        var snapshotTypes = [
+            { key: 'Standard', value: 'standard' },
+            { key: 'Wild', value: 'wild' },
+            { key: 'Legacy', value: 'legacy' },
+        ];
         var defaultSnap = {
             snapNum: 1,
+            snapshotType: 'standard',
             title: "",
             authors: [],
             slug: {
@@ -3812,6 +3818,7 @@ angular.module('app.services', [])
         var defaultTechCards = {
             card: undefined,
             toss: false,
+            both: false,
             orderNum: 1
         };
 
@@ -3998,7 +4005,12 @@ angular.module('app.services', [])
 
                 return tiers;
             };
-
+            
+            // get snapshot types
+            sb.getSnapshotTypes = function () {
+                return snapshotTypes;
+            };
+            
             // set slug
             sb.setSlug = function () {
                 if (!sb.slug.linked) { return false; }
@@ -4726,6 +4738,74 @@ angular.module('app.services', [])
                             })
                             .catch(function (response) {
                                 return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    },
+                    // create deck techs
+                    function (snapshotId, cb) {
+                        async.each(sb.deckTiers, function (deckTier, eachDeckTierCallback) {
+                            async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
+                                // only create deck techs without ids
+                                if (deckTech.id) { return eachDeckTechCallback(); }
+                                // create new deck tech
+                                var newDeckTech = {
+                                    title: deckTech.title,
+                                    deckId: deckTier.deck.id,
+                                    deckTierId: deckTier.id
+                                };
+                                console.log('Created Deck Tech: ', newDeckTech);
+                                DeckTech.create(newDeckTech)
+                                .$promise
+                                .then(function (data) {
+                                    deckTech.id = data.id;
+                                    return eachDeckTechCallback();
+                                })
+                                .catch(function (response) {
+                                    return eachDeckTechCallback(response);
+                                });
+                            }, function (err) {
+                                if (err) { return cb(err); }
+                                return eachDeckTierCallback();
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    },
+                    // create deck tech cards
+                    function (snapshotId, cb) {
+                        async.each(sb.deckTiers, function (deckTier, eachDeckTierCallback) {
+                            async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
+                                async.each(deckTech.cardTech, function (cardTech, eachCardTechCallback) {
+                                    // only create deck techs without ids
+                                    if (cardTech.id) { return eachCardTechCallback(); }
+                                    // create new deck tech
+                                    var newCardTech = {
+                                        both: cardTech.both || false,
+                                        toss: cardTech.toss || false,
+                                        cardId: cardTech.card.id,
+                                        deckTechId: deckTech.id
+                                    };
+                                    console.log('Created Card Tech: ', newCardTech);
+                                    CardTech.create(newCardTech)
+                                    .$promise
+                                    .then(function (data) {
+                                        cardTech.id = data.id;
+                                        return eachCardTechCallback();
+                                    })
+                                    .catch(function (response) {
+                                        return eachCardTechCallback(response);
+                                    });
+                                }, function (err) {
+                                    if (err) { return cb(err); }
+                                    return eachDeckTechCallback();
+                                });
+                            }, function (err) {
+                                if (err) { return cb(err); }
+                                return eachDeckTierCallback();
                             });
                         }, function (err) {
                             if (err) { return cb(err); }
