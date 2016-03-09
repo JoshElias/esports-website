@@ -3754,8 +3754,14 @@ angular.module('app.services', [])
     function ($upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
         var snapshot = {};
         var maxTrends = 12;
+        var snapshotTypes = [
+            { key: 'Standard', value: 'standard' },
+            { key: 'Wild', value: 'wild' },
+            { key: 'Legacy', value: 'legacy' },
+        ];
         var defaultSnap = {
             snapNum: 1,
+            snapshotType: 'standard',
             title: "",
             authors: [],
             slug: {
@@ -3999,7 +4005,12 @@ angular.module('app.services', [])
 
                 return tiers;
             };
-
+            
+            // get snapshot types
+            sb.getSnapshotTypes = function () {
+                return snapshotTypes;
+            };
+            
             // set slug
             sb.setSlug = function () {
                 if (!sb.slug.linked) { return false; }
