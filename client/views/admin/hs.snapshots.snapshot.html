@@ -3,7 +3,7 @@
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading wrapper-md clearfix">
         <h3 class="pull-left"><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot</h3>
-        <button type="button" ng-click="snapshot.loadPrevious()" ng-if="mode === 'add' && !snapshot.loaded" class="btn btn-green btn-rounded btn-sm pull-right">Load Previous</button>
+        <button type="button" ng-click="snapshot.loadPrevious()" ng-if="mode === 'add' && !snapshot.loaded" class="btn admin-btn-blue pull-right m-r-sm ">Load Previous</button>
    
     
         <div class="form-group pull-left">
@@ -15,7 +15,7 @@
        
     </div> <!--panel header ends -->
     <div class="panel-body padding-none p-t-none p-b-none">
-        <div class="col-sm-3 leftside-content padding-none">
+        <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
             <ul class="edit-nav m-b-md">
                 <li class="pull-left" ng-class="{selected: page==='general'}"><a href="#" ng-click="page = 'general'" >General</a></li>
                 <li class="pull-left" ng-class="{selected: page==='authors'}"><a href="#" ng-click="page = 'authors'" >Authors</a></li>
@@ -65,17 +65,17 @@
                                 <img ng-src="{{snapshot.getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
                             </div>
                             <div class="btn-toolbar">
-                                <button type="button" class="btn btn-default" ng-file-select="snapshot.photoUpload($files)" onclick="this.value=null" accept="image/*">
+                                <button type="button" class="btn btn-change" ng-file-select="snapshot.photoUpload($files)" onclick="this.value=null" accept="image/*">
                                     <span ng-show="snapshot.photoNames.large === ''">Select image</span>
                                     <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
                                 </button>
-                                <a href="#" class="btn btn-danger" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
+                                <a href="#" class="btn btn-danger pull-right" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- Is active starts -->
-                <div class="form-group">
+                <div class="form-group m-b-lg">
                     <button class="btn btn-default control-btn"
                             ng-class="{active: snapshot.isActive}"
                             ng-click="snapshot.isActive = !snapshot.isActive"
@@ -152,18 +152,18 @@
             <!-- / tiers nav -->
         </div>
         <!-- general -->
-        <div ng-show="page === 'general'" class="col-sm-9">
+        <div ng-show="page === 'general'" class="col-sm-12 col-md-8 col-lg-9">
             <div class="form-group">
 <!--                <label for="intro" class="col-sm-2 control-label">Content</label>-->
                 <div class="panel opac-panel wrapper-none col-sm-12">
                     <div class="panel-body">
-                        <label for="intro" class="col-sm-12 control-label">Intro</label>
+                        <label for="intro" class="col-sm-12 control-label">Introduction</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" rows="10"></textarea>
+                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" rows="11"></textarea>
                         </div>
-                        <label for="thoughts" class="col-sm-12 control-label">Thoughts</label>
+                        <label for="thoughts" class="col-sm-12 control-label">Thoughts &amp; Observations</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" rows="10"></textarea>
+                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" rows="11"></textarea>
                         </div>
                     </div>
                 </div>
@@ -171,7 +171,7 @@
         </div>
         <!-- / general -->
         <!-- authors -->
-        <div ng-show="page === 'authors'" class="col-sm-9">
+        <div ng-show="page === 'authors'" class="col-sm-12 col-md-8 col-lg-9">
             <div ng-if="snapshot.activeAuthor">
                 <div class="form-group m-t-md">
                     <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-1 control-label">Description</label>
@@ -199,7 +199,7 @@
         </div>
         <!-- / authors -->
         <!-- tier list -->
-        <div ng-show="page === 'tiers'" class="col-sm-9">
+        <div ng-show="page === 'tiers'" class="col-sm-12 col-md-8 col-lg-9">
             <div ng-if="snapshot.activeDeck">
                 <ul>
                     <li><a href="#" ng-click="deckPage = 'general'">General</a></li>
@@ -332,9 +332,9 @@
     
     </form>
     <div class="panel-footer clearfix">
-        <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg snapshot-btn" ng-disabled="form.$invalid || loading" ng-click="snapshot.save()">
-                <span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot
+        <div class="col-sm-12">
+            <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid || loading" ng-click="snapshot.save()">
+                <span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Update</span> Snapshot
             </button>
         </div>
     </div>
