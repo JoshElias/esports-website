@@ -97,10 +97,13 @@
                 <div class="form-group">
                     <div class="wrapper-none">
                         <div class="panel panel-default">
+                            <div class="panel-header">
+                                <h4>Author</h4>
+                            </div>
                             <div class="panel-body">
                                 <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
                                     <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item admin-list-item" ng-click="snapshot.setActiveAuthor(author)">
-                                        {{author.user.username}}<div class="btn-group pull-right"><button type="button" class="btn btn-danger btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
+                                        {{author.user.username}}<div class="btn-group pull-right"><button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                     </li>
                                 </ul>
                             </div>
