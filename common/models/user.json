@@ -6,7 +6,7 @@
   "idInjection": true,
   "options": {
     "validateUpsert": true,
-    "$filter": true
+    "$fieldFilter": true
   },
   "properties": {
     "isActive": {
@@ -31,13 +31,13 @@
     "subscription": {
       "type": "object",
       "default": {},
-      "$filter": {
+      "$fieldFilter": {
         "acceptedRoles": ["$owner", "$admin"]
       }
     },
     "isProvider": {
       "type": "boolean",
-      "$filter": {
+      "$fieldFilter": {
         "acceptedRoles": ["$owner", "$admin"]
       }
     },
@@ -55,7 +55,7 @@
     },
     "resetPasswordCode": {
       "type": "string",
-      "$filter": {
+      "$fieldFilter": {
         "acceptedRoles": ["$owner", "$admin"]
       }
     },

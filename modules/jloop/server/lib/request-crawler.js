@@ -1,28 +1,19 @@
 var async = require("async");
-var loopback = require("loopback");
 var util = require("util");
 var app = require("../../../../server/server");
 
 
 function crawl(ctx, options, finalCb) {
-    console.log(1)
+
     // Get the model properties
-    var definition;
-    if(ctx.Model) {
-        console.log("ctx fields", Object.keys(ctx.Model));
-        definition = ctx.Model.definition;
-    } else {
-        var modelName = ctx.methodString.split(".")[0];
-        var model = app.models[modelName];
-        definition = model.definition;
-    }
-    console.log(2)
-    console.log("definition.setting", definition.settings);
+    var modelName = (ctx.Model) ? ctx.Model.definition.name : ctx.methodString.split(".")[0];
+    var definition = app.models[modelName].definition;
+
     // Check for the feature key before we continue
     if(!definition.settings[options.featureKey]) {
         return finalCb();
     }
-    console.log(3)
+
     // Keep a reference to each possible state of the model's config, client data and the reportObj
     var parentState = {
         ctx: ctx,
@@ -34,15 +25,12 @@ function crawl(ctx, options, finalCb) {
         currentInstance: ctx.currentInstance,
         models: app.models
     };
-    console.log(4)
+
     // Append the active context if possible
-    var loopbackContext = loopback.getCurrentContext();
-    if (loopbackContext
-        || typeof loopbackContext.active === "object"
-        || loopbackContext.active) {
-        parentState.active = loopbackContext.active;
+    if (typeof ctx.active === "object") {
+        parentState.active = ctx.active;
     }
-    console.log(5)
+
     // Get the data depending on the type of request made by the user
     if(ctx.data) {
         parentState.requestData = parentState.data = ctx.data;
@@ -51,14 +39,14 @@ function crawl(ctx, options, finalCb) {
     } else if(ctx.result) {
         parentState.requestData = parentState.data = ctx.result;
     }
-    console.log(6)
+
     // Attach ctx specific vars to state obj
     if(options && typeof options.stateVars === "object") {
         for(var key in options.stateVars) {
             parentState[key] = options.stateVars[key];
         }
     }
-console.log(7)
+
     // If the client data came together in an array
     if(Array.isArray(parentState.requestData)) {
         return async.each(parentState.requestData, function(data, eachCb) {
@@ -72,7 +60,6 @@ console.log(7)
     }
 
     function doneCrawling(err, state) {
-        //console.log("done crawling report", state.report);
         if(err) return finalCb(err);
         else if(!options.postHandler) return finalCb();
         else return options.postHandler(state, finalCb);
@@ -81,7 +68,7 @@ console.log(7)
 
 
 function buildNextState(value, key, oldState, options) {
-console.log("building next state");
+
     // Populate the next level of the validation state
     var newState                =   {};
     newState.parent             =   oldState;
@@ -121,7 +108,7 @@ console.log("building next state");
 
 
 function crawlContainer(type, state, options, finalCb) {
-    console.log("crawling container")
+    //console.log("crawling container")
     async.series([
 
         // Check if we should call the object hook
@@ -178,7 +165,7 @@ function crawlContainer(type, state, options, finalCb) {
 
 
 function crawlPrimitive(state, options, finalCb) {
-console.log("crawling primitive");
+
     // Check if the tag for the current function exists
     if(!state.modelProperties[options.featureKey]) {
         return finalCb();

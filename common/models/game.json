@@ -4,7 +4,11 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    }
   },
   "properties": {
     "__v": {

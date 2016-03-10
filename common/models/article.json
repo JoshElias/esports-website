@@ -6,7 +6,11 @@
   "options": {
     "validateUpsert": true,
     "$validate": true,
-    "$filter": true
+    "$fieldFilter": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    }
   },
   "properties": {
     "title": {
@@ -27,7 +31,7 @@
     },
     "content": {
       "type": "string",
-      "$filter": {
+      "$fieldFilter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }

@@ -3,24 +3,23 @@ var predicates = require("./predicates");
 var requestCrawler = require("../request-crawler");
 
 
-var FILTER_FEATURE_KEY = "$filter";
+var FILTER_FEATURE_KEY = "$fieldFilter";
 
 
-
-function filter(ctx, modelInstance, finalCb) {
+function filterFields(ctx, modelInstance, finalCb) {
 
     var filterOptions = {
         featureKey: FILTER_FEATURE_KEY
     };
-    filterOptions.objectHandler = filterField;
-    filterOptions.arrayHandler = filterField;
-    filterOptions.primitiveHandler = filterField;
+    filterOptions.objectHandler = filterHandler;
+    filterOptions.arrayHandler = filterHandler;
+    filterOptions.primitiveHandler = filterHandler;
 
     return requestCrawler.crawl(ctx, filterOptions, finalCb);
 }
 
 
-function filterField(state, finalCb) {
+function filterHandler(state, finalCb) {
 
     var filters = state.modelProperties[FILTER_FEATURE_KEY];
     if(Array.isArray(filters)) {
@@ -78,5 +77,5 @@ function filterField(state, finalCb) {
 
 
 module.exports = {
-    filter: filter
+    filterFields: filterFields
 };

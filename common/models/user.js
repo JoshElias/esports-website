@@ -464,15 +464,34 @@ module.exports = function(User) {
         // Check for the roles we already have
         var isInRoles = {};
         if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
-            if (typeof ctx.active.http.req.roles !== "object") {
-                ctx.active.http.req.roles = {};
+            console.log("cached req stuff");
+            console.log("ctx.active.http.req.ownedModels", loopbackContext.active.http.req.ownedModels);
+            console.log("ctx.active.http.req.roles", loopbackContext.active.http.req.roles);
+
+
+            // Add generic static/dynamic roles
+            if (typeof loopbackContext.active.http.req.roles !== "object") {
+                loopbackContext.active.http.req.roles = {};
             }
 
             var currentRoles = loopbackContext.active.http.req.roles[uid];
             for (var key in currentRoles) {
                 isInRoles[key] = currentRoles[key];
             }
+
+            // Add the owner status if applicable
+            if (typeof loopbackContext.active.http.req.ownedModels !== "object") {
+                loopbackContext.active.http.req.ownedModels = {};
+            }
+
+            var ownedModels = loopbackContext.active.http.req.ownedModels;
+            if( ownedModels !== "object" && typeof options.modelId === "string") {
+                if(typeof ownedModels[options.modelId] !== "undefined") {
+                    isInRoles["$owner"] = ownedModels[options.modelId];
+                }
+            }
         }
+
         
         // Re evaluate isInRole report
         if (Object.keys(isInRoles).length > 0) {
@@ -521,19 +540,30 @@ module.exports = function(User) {
                 }
 
                 var modelClass = loopback.getModel(options.modelClass);
-                return Role.isOwner(modelClass, options.modelId, uid, updateIsInRoles);
+                return Role.isOwner(modelClass, options.modelId, uid, function(err, isRole) {
+                    if(err) return eachCb(err);
+
+                    if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
+                        loopbackContext.active.http.req.ownedModels[options.modelId] = isRole;
+                    }
+                    return updateIsInRoles(undefined, isRole);
+                });
             }
 
             // Handle all other roles
-            return Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, updateIsInRoles);
+            return Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, function(err, isRole) {
+                if(err) return eachCb(err);
+
+                if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
+                    loopbackContext.active.http.req.roles[uid][roleName] = isRole;
+                }
+                return updateIsInRoles(undefined, isRole);
+            })
 
 
-        }, function (err) {
+            }, function (err) {
             if (err) return cb(err);
 
-            if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
-                loopbackContext.active.http.req.roles[uid] = isInRoles;
-            }
             cb(err, isInRoles);
         });
 

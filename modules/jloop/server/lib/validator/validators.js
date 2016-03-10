@@ -6,7 +6,8 @@ var utils = require("./../utils");
 
 var youtubeRegex = /^[a-zA-Z0-9_-]{11}$/;
 function validateYoutubeId(state, youtubeCb) {
-    if(typeof state.data !== "string") {
+
+    if(typeof state.data !== "string" || state.data.length < 1) {
         return youtubeCb();
     }
 
@@ -16,14 +17,13 @@ function validateYoutubeId(state, youtubeCb) {
         youtubeErr.statusCode = 400;
         youtubeErr.code = 'INVALID_YOUTUBE_ID';
     }
-
     return youtubeCb(undefined, youtubeErr);
 }
 
 
 var youtubePlaylistRegex = /^[a-zA-Z0-9_-]{34}$/;
 function validateYoutubePlaylistId(state, validatorCb) {
-    if(typeof state.data !== "object" || typeof state.data.list !== "string") {
+    if(typeof state.data !== "object" || typeof state.data.list !== "string" || state.data.list.length < 1) {
         return validatorCb();
     }
 
@@ -139,6 +139,7 @@ function validateUnique(state, uniqueCb) {
               && typeof state.ctx.where.id == "string") {
       modelId = state.ctx.where.id;
     }
+
     var uniqueErr = new Error(state.key + ' is not unique');
     uniqueErr.statusCode = 422;
     uniqueErr.code = 'FIELD NOT UNIQUE';
@@ -166,6 +167,7 @@ function validateUnique(state, uniqueCb) {
         return uniqueCb();
     });
 }
+
 
 
 module.exports = {

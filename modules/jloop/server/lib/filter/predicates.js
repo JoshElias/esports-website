@@ -1,6 +1,6 @@
 
 
-function premium(data) {
+function isPremium(data) {
     if(!data || !data.premium || !data.premium.isPremium || !data.premium.expiryDate)
         return false;
 
@@ -9,7 +9,32 @@ function premium(data) {
     return isPremium;
 }
 
+function isPrivate(data) {
+    if(!data || !data.isPublic)
+        return false;
+
+    return true
+}
+
+function isOfficial(data) {
+    if(!data || !data.isOfficial)
+        return false;
+
+    return true;
+}
+
+function isInactive(data) {
+    if(!data || data.isActive)
+        return false;
+
+    return true;
+}
+
+
 
 module.exports = {
-    premium: premium
+    premium: isPremium,
+    private: isPrivate,
+    official: isOfficial,
+    inactive: isInactive
 };

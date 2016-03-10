@@ -6,10 +6,13 @@ var validators = require("./validators");
 var requestCrawler = require("../request-crawler");
 
 
+var VALIDATE_FEATURE_KEY = "$validate";
+
+
 function validate(ctx, finalCb) {
-console.log("validating things")
+
     var crawlOptions = {
-        featureKey: "$validate",
+        featureKey: VALIDATE_FEATURE_KEY,
         stateVars: {
             report: {
                 passed: true,
@@ -47,8 +50,8 @@ function newStateHandler(oldState, newState) {
 }
 
 function primitiveHandler(state, finalCb) {
-    console.log("primitive handler")
-    var validators = state.modelProperties["validators"];
+    var validators = state.modelProperties[VALIDATE_FEATURE_KEY];
+    console.log("validators", validators);
     if(!Array.isArray(validators)) {
         return finalCb();
     }
@@ -69,7 +72,7 @@ function postHandler(state, finalCb) {
 
 
 function runValidators(validatorNames, state, finalCb) {
-    console.log("running validators")
+
     function runValidator(validatorName, validatorCb) {
 
         var validator = validators[validatorName];
@@ -110,6 +113,8 @@ function updateReport(key, state, validationErr, finalCb) {
     return updateReport(key, state.parent, validationErr, finalCb);
 }
 
+
+
 module.exports = {
     validate: validate
-}
+};

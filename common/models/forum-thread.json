@@ -6,7 +6,11 @@
   "idInjection": true,
   "options": {
     "validateUpsert": true,
-    "$validate": true
+    "$validate": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    }
   },
   "properties": {
     "__v": {

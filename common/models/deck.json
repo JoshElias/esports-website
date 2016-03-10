@@ -7,7 +7,11 @@
   "options": {
     "validateUpsert": true,
     "$validate": true,
-    "$filter": true
+    "$fieldFilter": true,
+    "$docFilter": {
+      "acceptedRoles": ["$owner", "$admin"],
+      "predicate": "private"
+    }
   },
   "properties": {
     "against": {
@@ -104,7 +108,7 @@
           }
         }
       ],
-      "$filter": {
+      "$fieldFilter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
