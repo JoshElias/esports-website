@@ -3825,6 +3825,21 @@ angular.module('app.services', [])
         snapshot.new = function (data) {
             // start with default snapshot
             var sb = angular.copy(defaultSnap);
+            sb.deleted = {
+                authors: [],
+                deckTiers: [],
+                deckTechs: [],
+                cardTechs: [],
+                matchups: []
+            };
+            sb.updated = {
+                snapshot: [],
+                authors: [],
+                deckTiers: [],
+                deckTechs: [],
+                cardTechs: [],
+                matchups: []
+            };
 
             // init
             sb.init = function(data) {
@@ -4060,8 +4075,12 @@ angular.module('app.services', [])
                     }
                 }
                 if (index !== -1) {
+                    // flag snapshot author for delete
+                    if (sb.authors[index].id) {
+                        sb.deleted.authors.push(sb.authors[index].id);
+                    }
+                    
                     sb.authors.splice(index, 1);
-                    // TODO: CRUDMAN REMOVE AUTHOR
                 }
             };
 
@@ -4079,7 +4098,6 @@ angular.module('app.services', [])
                     sb.tierDeleteAllDecks(tier);
                     sb.tiers.splice(index, 1);
                     sb.tierUpdateNumbers();
-                    // TODO: CRUDMAN DELETE TIER
                 }
             };
 
@@ -4139,11 +4157,15 @@ angular.module('app.services', [])
             sb.deckDelete = function (tier, deck) {
                 var index = tier.decks.indexOf(deck);
                 if (index !== -1) {
+                    // flag deckTier for delete
+                    if (deck.id) {
+                        sb.deleted.deckTiers.push(deck.id);
+                    }
+                    
                     sb.deckDeleteAllTechs(deck);
                     sb.matchupsDelete(deck);
                     tier.decks.splice(index, 1);
                     sb.decksUpdateCurrentRanks();
-                    // TODO: CRUDMAN DELETE DECK
                 }
             };
 
@@ -4207,9 +4229,15 @@ angular.module('app.services', [])
             sb.deckTechDelete = function (deck, deckTech) {
                 var index = deck.deckTech.indexOf(deckTech);
                 if (index !== -1) {
+                    // flag deckTech for delete
+                    if (deckTech.id) {
+                        sb.deleted.deckTechs.push(deckTech.id);
+                    }
+
+                    // delete cardTechs from deckTech
                     sb.deckDeleteAllTechCards(deckTech);
+                    // delete deckTech
                     deck.deckTech.splice(index, 1);
-                    // TODO: CRUDMAN DELETE DECKTECH
                 }
             };
 
@@ -4239,8 +4267,13 @@ angular.module('app.services', [])
                     }
                 }
                 if (index !== -1) {
+                    // flag cardTech for delete
+                    if (deckTech.cardTech[index].id) {
+                        sb.deleted.cardTechs.push(deckTech.cardTech[index].id);
+                    }
+                    
+                    // remove cardTech
                     deckTech.cardTech.splice(index, 1);
-                    // TODO: CRUDMAN DELETE DECKTECH CARD
                 }
             };
 
@@ -4309,6 +4342,11 @@ angular.module('app.services', [])
             sb.matchupsDelete = function (deck) {
                 for (var i = sb.matchups.length - 1; i >= 0; i--) {
                     if (sb.matchups[i].forDeck.id === deck.deck.id || sb.matchups[i].againstDeck.id === deck.deck.id) {
+                        // flag matchup for delete
+                        if (sb.matchups[i].id) {
+                            sb.deleted.matchups.push(sb.matchups[i].id);
+                        }
+                        
                         sb.matchups.splice(i, 1);
                     }
                 }
@@ -4317,6 +4355,8 @@ angular.module('app.services', [])
             // update for chance when updating against chance on a matchup
             sb.matchupChangeAgainstChance = function (matchup) {
                 matchup.forChance = (100 - matchup.againstChance);
+                // flag matchup for update
+                sb.updated.matchups.push();
             }
 
             // update against chance when updating for chance on a matchup
@@ -4621,38 +4661,377 @@ angular.module('app.services', [])
                 async.series([
                     // delete card techs
                     function (cb) {
+                        console.log('deleting card techs');
+                        // skip if nothing to delete
+                        if (!sb.deleted.cardTechs.length) { return cb(); }
                         
-                        return cb();
+                        async.each(sb.deleted.cardTechs, function (cardTechId, eachCallback) {
+                            CardTech.deleteById({ id: cardTechId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted cardTech: ', cardTechId);
+                                // reset deleted flags
+                                var index = sb.deleted.cardTechs.indexOf(cardTechId);
+                                if (index !== -1) {
+                                    sb.deleted.cardTechs.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete cardTech error: ', err);
+                            }
+                            return cb(err);
+                        });
                     },
                     // delete deck techs
                     function (cb) {
+                        console.log('deleting deck techs');
+                        // skip if nothing to delete
+                        if (!sb.deleted.deckTechs.length) { return cb(); }
                         
-                        return cb();
+                        async.each(sb.deleted.deckTechs, function (deckTechId, eachCallback) {
+                            DeckTech.deleteById({ id: deckTechId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted deckTech: ', deckTechId);
+                                // reset deleted flags
+                                var index = sb.deleted.deckTechs.indexOf(deckTechId);
+                                if (index !== -1) {
+                                    sb.deleted.deckTechs.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete deckTech error: ', err);
+                            }
+                            return cb(err);
+                        });
                     },
                     // delete deck tiers
                     function (cb) {
+                        console.log('deleting deck tiers');
+                        // skip if nothing to delete
+                        if (!sb.deleted.deckTiers.length) { return cb(); }
                         
-                        return cb();
+                        async.each(sb.deleted.deckTiers, function (deckTierId, eachCallback) {
+                            DeckTier.deleteById({ id: deckTierId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted deckTier: ', deckTierId);
+                                // reset deleted flags
+                                var index = sb.deleted.deckTiers.indexOf(deckTierId);
+                                if (index !== -1) {
+                                    sb.deleted.deckTiers.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete deckTier error: ', err);
+                            }
+                            return cb(err);
+                        });
                     },
                     // delete deck matchups
                     function (cb) {
+                        console.log('deleting matchups');
+                        // skip if nothing to delete
+                        if (!sb.deleted.matchups.length) { return cb(); }
                         
-                        return cb();
+                        async.each(sb.deleted.matchups, function (matchupId, eachCallback) {
+                            DeckMatchup.deleteById({ id: matchupId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted matchup: ', matchupId);
+                                // reset deleted flags
+                                var index = sb.deleted.matchups.indexOf(matchupId);
+                                if (index !== -1) {
+                                    sb.deleted.matchups.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete matchup error: ', err);
+                            }
+                            return cb(err);
+                        });
+                        
                     },
                     // delete authors
                     function (cb) {
+                        console.log('deleting authors');
+                        // skip if nothing to delete
+                        if (!sb.deleted.authors.length) { return cb(); }
                         
-                        return cb();
+                        async.each(sb.deleted.authors, function (authorId, eachCallback) {
+                            SnapshotAuthor.deleteById({ id: authorId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted author: ', authorId);
+                                // reset deleted flags
+                                var index = sb.deleted.authors.indexOf(authorId);
+                                if (index !== -1) {
+                                    sb.deleted.authors.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete author error: ', err);
+                            }
+                            return cb(err);
+                        });
                     }
                 ], function (err) {
                     console.log('done deleting');
+                    console.log('deleted: ', sb.deleted);
                     return callback();
                 });
             };
             
             sb.saveUpdate = function (callback) {
-                console.log('done updating');
-                return callback();
+                async.series([
+                    // update card techs
+                    function (cb) {
+                        console.log('updating card techs');
+                        // skip if nothing to update
+                        if (!sb.updated.cardTechs.length) { return cb(); }
+                        
+                        async.each(sb.updated.cardTechs, function (cardTechId, eachCallback) {
+                            var cardTech = sb.getCardTechById(cardTechId);
+                            CardTech.update({
+                                where: {
+                                    id: cardTechId
+                                }
+                            }, {
+                                both: cardTech.both || false,
+                                toss: cardTech.toss || false,
+                                cardId: cardTech.card.id
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated cardTech: ', cardTechId);
+                                // reset updated flags
+                                var index = sb.updated.cardTechs.indexOf(cardTechId);
+                                if (index !== -1) {
+                                    sb.updated.cardTechs.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update cardTech error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // delete deck techs
+                    function (cb) {
+                        console.log('update deck techs');
+                        // skip if nothing to update
+                        if (!sb.updated.deckTechs.length) { return cb(); }
+                        
+                        async.each(sb.updated.deckTechs, function (deckTechId, eachCallback) {
+                            var deckTech = sb.getDeckTechById(deckTechId);
+                            DeckTech.update({
+                                id: deckTechId
+                            }, {
+                                title: deckTech.title
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated deckTech: ', deckTechId);
+                                // reset updated flags
+                                var index = sb.updated.deckTechs.indexOf(deckTechId);
+                                if (index !== -1) {
+                                    sb.updated.deckTechs.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update deckTech error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // update deck tiers
+                    function (cb) {
+                        console.log('updating deck tiers');
+                        // skip if nothing to update
+                        if (!sb.updated.deckTiers.length) { return cb(); }
+                        
+                        async.each(sb.updated.deckTiers, function (deckTierId, eachCallback) {
+                            var deckTier = sb.getDeckTierById(deckTierId);
+                            DeckTier.update({
+                                id: deckTierId
+                            }, {
+                                name: deckTier.name,
+                                explanation: deckTier.explanation,
+                                weeklyNotes: deckTier.weeklyNotes,
+                                deckId: deckTier.deck.id,
+                                ranks: deckTier.ranks
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated deckTier: ', deckTierId);
+                                // reset updated flags
+                                var index = sb.updated.deckTiers.indexOf(deckTierId);
+                                if (index !== -1) {
+                                    sb.updated.deckTiers.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update deckTier error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // update deck matchups
+                    function (cb) {
+                        console.log('updating matchups');
+                        // skip if nothing to update
+                        if (!sb.updated.matchups.length) { return cb(); }
+                        
+                        async.each(sb.updated.matchups, function (matchupId, eachCallback) {
+                            var matchup = sb.getMatchupById(matchupId);
+                            DeckMatchup.update({
+                                id: matchupId
+                            }, {
+                                forDeckId: matchup.forDeck.id,
+                                againstDeckId: matchup.againstDeck.id,
+                                forChance: matchup.forChance,
+                                againstChance: matchup.againstChance
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated matchup: ', matchupId);
+                                // reset updated flags
+                                var index = sb.updated.matchups.indexOf(matchupId);
+                                if (index !== -1) {
+                                    sb.updated.matchups.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update matchup error: ', err);
+                            }
+                            return cb(err);
+                        });
+                        
+                    },
+                    // update authors
+                    function (cb) {
+                        console.log('updating authors');
+                        // skip if nothing to update
+                        if (!sb.updated.authors.length) { return cb(); }
+                        
+                        async.each(sb.updated.authors, function (authorId, eachCallback) {
+                            var author = sb.getAuthorById(authorId);
+                            SnapshotAuthor.update({
+                                id: authorId
+                            }, {
+                                description: author.description,
+                                klass: author.klass
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated author: ', authorId);
+                                // reset updated flags
+                                var index = sb.updated.authors.indexOf(authorId);
+                                if (index !== -1) {
+                                    sb.updated.authors.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update author error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // update snapshot
+                    function (cb) {
+                        console.log('updating snapshot');
+                        // skip if nothing to update
+                        if (sb.updated.snapshot && sb.id) { return cb(); }
+                        
+                        Snapshot.update({
+                            id: sb.id
+                        }, {
+                            snapNum: sb.snapNum,
+                            //snapshotType: sb.snapshotType,
+                            title: sb.title,
+                            slug: sb.slug,
+                            content: sb.content,
+                            photoNames: sb.photoNames,
+                            isActive: sb.active
+                        })
+                        .$promise
+                        .then(function (data) {
+                            console.log('updated snapshot: ', sb.id);
+                            // reset updated flags
+                            sb.updated.snapshot = false;
+                            // next
+                            return cb();
+                        })
+                        .catch(function (response) {
+                            console.log('update snapshot error: ', response);
+                            return cb(response);
+                        });
+                    }
+                ], function (err) {
+                    console.log('done updating');
+                    console.log('updated: ', sb.updated);
+                    return callback();
+                });
             };
             
             sb.saveCreate = function (callback) {
@@ -4853,9 +5232,9 @@ angular.module('app.services', [])
                 sb.saving = true;
                 
                 async.waterfall([
-                    sb.saveDelete,
+                    //sb.saveDelete,
                     sb.saveUpdate,
-                    sb.saveCreate
+                    //sb.saveCreate
                 ], function (err) {
                     sb.saving = false;
                     console.log('done saving');
