@@ -3221,7 +3221,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
 
             $scope.searchSnapshots = function() {
-                updateSnapshots(1, $scope.perpage, $scope.search, false);
+                updateSnapshots(1, $scope.perpage, $scope.search);
             };
 
             // pagination
@@ -3236,22 +3236,26 @@ angular.module('app.controllers', ['ngCookies'])
                     fields: paginationParams.options.filter.fields,
                     order: "createdDate DESC",
                     skip: ((page*perpage)-perpage),
-                    limit: paginationParams.perpage
+                    limit: perpage
                 };
 
-                if ($scope.search.length > 0) {
-                    options.filter.where = {
+                if ($scope.search.length) {
+                    options.filter['where'] = {
                         or: [
                             { title: { regexp: pattern } },
-                            { content: { regexp: pattern } }
+                            { snapNum: parseInt(search) },
+                            { 'content.intro': { regexp: pattern } },
+                            { 'content.thoughts': { regexp: pattern } }
                         ]
-                    }
-                    countOptions.where = {
+                    };
+                    countOptions['where'] = {
                         or: [
                             { title: { regexp: pattern } },
-                            { content: { regexp: pattern } }
+                            { snapNum: parseInt(search) },
+                            { 'content.intro': { regexp: pattern } },
+                            { 'content.thoughts': { regexp: pattern } }
                         ]
-                    }
+                    };
                 }
 
                 AjaxPagination.update(Snapshot, options, countOptions, function (err, data, count) {

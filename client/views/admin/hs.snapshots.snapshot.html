@@ -102,7 +102,8 @@
                             </div>
                             <div class="panel-body">
                                 <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
-                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item admin-list-item" ng-click="snapshot.setActiveAuthor(author)">
+
+                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item admin-list-item" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
                                         {{author.user.username}}<div class="btn-group pull-right"><button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                     </li>
                                 </ul>
@@ -120,7 +121,7 @@
                 <div class="form-group">
                     <label for="intro" class="control-label">Tiers</label>
                     <div class="panel panel-default wrapper-none" ng-repeat="tier in snapshot.tiers track by tier.tier" ng-if="snapshot.tiers.length">
-                        <div class="panel-heading clearfix">
+                        <div class="panel-heading clearfix"  ng-class="{ active: snapshot.activeDeck && snapshot.activeDeck.tier === tier.tier }">
                             <h4 class="panel-title pull-left">
                                 <a class="tierHeading" role="button" data-toggle="collapse" href="#collapse{{tier.tier}}" aria-expanded="false" aria-controls="collapse{{tier.tier}}"><i class="fa fa-caret-down"></i> 
                                     Tier {{tier.tier}} 
@@ -132,7 +133,7 @@
                             <div class="panel-body">
                                 <ul class="list-group m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
                                     <li class="list-group-item" ng-if="tier.decks == 0">There are no decks selected yet!</li>
-                                    <li class="list-group-item admin-list-item" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
+                                    <li class="list-group-item admin-list-item" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
                                         <div ng-click="snapshot.setActiveDeck(d)" class="clearfix">
                                             <div class="badge pull-left m-r-sm">{{d.ranks[0]}}</div>
                                             <div class="pull-left">{{d.deck.name}}</div>
