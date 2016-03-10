@@ -96,20 +96,20 @@
             <div ng-show="page === 'authors'" class="author-section">
                 <div class="form-group">
                     <div class="wrapper-none">
-                        <div class="panel panel-default">
+                        <div class="panel neg-margin panel-default">
                             <div class="panel-header">
                                 <h4>Author</h4>
                             </div>
                             <div class="panel-body">
                                 <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
 
-                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item admin-list-item" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
+                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item gradient-add admin-list-item" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
                                         {{author.user.username}}<div class="btn-group pull-right"><button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                     </li>
+                                    <li class="list-group-item gradient-add admin-list-item">
+                                    <a ng-click="snapshot.authorAddPrompt()" class="add-element"><i class="fa fa-plus-circle"></i> Add Author</a>
+                                    </li>
                                 </ul>
-                            </div>
-                            <div class="panel-footer">
-                                <button type="button" class="btn btn-green btn-rounded m-r-sm" ng-click="snapshot.authorAddPrompt()"><i class="fa fa-plus"></i> Add Author</button>
                             </div>
                         </div>
                     </div>
@@ -117,41 +117,57 @@
             </div>
             <!-- / authors nav -->
             <!-- tiers nav -->
-            <div ng-show="page === 'tiers'">
+            <div ng-show="page === 'tiers'" class="tier-section">
                 <div class="form-group">
-                    <label for="intro" class="control-label">Tiers</label>
-                    <div class="panel panel-default wrapper-none" ng-repeat="tier in snapshot.tiers track by tier.tier" ng-if="snapshot.tiers.length">
-                        <div class="panel-heading clearfix"  ng-class="{ active: snapshot.activeDeck && snapshot.activeDeck.tier === tier.tier }">
-                            <h4 class="panel-title pull-left">
-                                <a class="tierHeading" role="button" data-toggle="collapse" href="#collapse{{tier.tier}}" aria-expanded="false" aria-controls="collapse{{tier.tier}}"><i class="fa fa-caret-down"></i> 
+                <div class="panel">
+                    <div class="panel-header">
+                        <h4>All Decks</h4>
+                    </div>
+                    <div class="tier-panel wrapper-none" ng-repeat="tier in snapshot.tiers track by tier.tier" ng-if="snapshot.tiers.length">
+                        <div class="clearfix tier-top"  ng-class="{ active: snapshot.activeDeck && snapshot.activeDeck.tier === tier.tier }">
+                            
+                                <a class="" role="button" data-toggle="collapse" href="#collapse{{tier.tier}}" aria-expanded="false" aria-controls="collapse{{tier.tier}}"><h4 class="panel-title pull-left"> 
                                     Tier {{tier.tier}} 
-                                </a>
-                            </h4>
-                            <button type="button" class="btn btn-danger btn-sm btn-rounded pull-right" ng-click="snapshot.tierDeletePrompt(tier)"><i class="fa fa-close"></i> Remove Tier</button>
+                                </h4>
+                            </a>
+                            
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-remove pull-right" ng-click="snapshot.tierDeletePrompt(tier)"><i class="fa fa-close"></i></button>
+                            </div>
                         </div>
-                        <div id="collapse{{tier.tier}}" class="collapse">
+                        <div id="collapse{{tier.tier}}" class="collapse panel">
                             <div class="panel-body">
                                 <ul class="list-group m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
                                     <li class="list-group-item" ng-if="tier.decks == 0">There are no decks selected yet!</li>
-                                    <li class="list-group-item admin-list-item" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
-                                        <div ng-click="snapshot.setActiveDeck(d)" class="clearfix">
-                                            <div class="badge pull-left m-r-sm">{{d.ranks[0]}}</div>
-                                            <div class="pull-left">{{d.deck.name}}</div>
-                                            <div class="btn-group pull-right">
-                                                <button class="btn btn-danger btn-xs" type="button" ng-click="$event.stopPropagation(); snapshot.deckDeletePrompt(tier, d)"><i class="fa fa-close"></i></button>
+                                    <li class="list-group-item admin-list-item z-5" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
+                                        <div class="gradient-fill gradient-add"></div>
+                                            <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5">
+                                                <div class="pull-left m-r-sm">{{d.ranks[0]}}</div>
+                                                <div class="pull-left">{{d.deck.name}}</div>
+                                                <div class="btn-group pull-right">
+                                                    <button class="btn btn-remove" type="button" ng-click="$event.stopPropagation(); snapshot.deckDeletePrompt(tier, d)"><i class="fa fa-close"></i></button>
+                                                </div>
                                             </div>
-                                        </div>
+                                        
+                                    
+                                    </li>
+                                    <li class="list-group-item gradient-add admin-list-item">
+                                    <a ng-click="snapshot.deckAddPrompt(tier)" class="add-element"><i class="fa fa-plus-circle"></i> Add Deck</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="panel-footer">
-                                <button type="button" class="btn btn-green btn-rounded" ng-click="snapshot.deckAddPrompt(tier)"><i class="fa fa-plus"></i> Add deck</button>
-                            </div>
+                            
                         </div>
                     </div>
-
-                    <button type="button" ng-click="snapshot.tierAdd()" class="btn btn-green btn-rounded"><i class="fa fa-plus"></i> Add Tier</button>
-                </div>
+                    <div class="panel-body">
+                        <ul class="list-group m-b-none">
+                            <li class="list-group-item gradient-add admin-list-item">
+                                            <a ng-click="snapshot.tierAdd()" class="add-element"><i class="fa fa-plus-circle"></i>Add Tier</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div> <!-- panel -->
+            </div> 
             </div>
             <!-- / tiers nav -->
         </div>
@@ -175,32 +191,48 @@
         </div>
         <!-- / general -->
         <!-- authors -->
-        <div ng-show="page === 'authors'" class="col-sm-12 col-md-8 col-lg-9">
+        <div ng-show="page === 'authors'" class="col-sm-12 col-md-8 col-lg-9 author-right-section">
             <div ng-if="snapshot.activeAuthor">
-                <div class="form-group m-t-md">
+                
+                
+                
+                
+                
+                <div class="col-sm-12">
+                    <div class="form-group col-sm-5">
                     <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-1 control-label">Description</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description"></textarea>
+                    </div>
+                    <div class="form-group col-sm-7">
+                        <label for="authorClasses_{{snapshot.activeAuthor.user.username}}" class="col-sm-3 control-label">Class(es) of Expertise</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" name="authorClasses{{author.user.username}}" ng-model="snapshot.activeAuthor.expertClasses" size="9" multiple>
+                              <option value="druid">Druid</option>
+                              <option value="hunter">Hunter</option>
+                              <option value="mage">Mage</option>
+                              <option value="paladin">Paladin</option>
+                              <option value="priest">Priest</option>
+                              <option value="rogue">Rogue</option>
+                              <option value="shaman">Shaman</option>
+                              <option value="warlock">Warlock</option>
+                              <option value="warrior">Warrior</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div class="col-sm-12">
+                        <textarea class="form-control" rows="15" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description"></textarea>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="authorClasses_{{snapshot.activeAuthor.user.username}}" class="col-sm-1 control-label">Class(es) of Expertise</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" name="authorClasses{{author.user.username}}" ng-model="snapshot.activeAuthor.expertClasses" size="9" multiple>
-                          <option value="druid">Druid</option>
-                          <option value="hunter">Hunter</option>
-                          <option value="mage">Mage</option>
-                          <option value="paladin">Paladin</option>
-                          <option value="priest">Priest</option>
-                          <option value="rogue">Rogue</option>
-                          <option value="shaman">Shaman</option>
-                          <option value="warlock">Warlock</option>
-                          <option value="warrior">Warrior</option>
-                        </select>
-                    </div>
-                </div>
+                
+                
+                
+                
             </div>
         </div>
+        
+        
         <!-- / authors -->
         <!-- tier list -->
         <div ng-show="page === 'tiers'" class="col-sm-12 col-md-8 col-lg-9">

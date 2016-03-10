@@ -69,7 +69,7 @@
             
             
              &:hover {
-                border-left: 6px solid $ts-blue;
+                border-left: 6px solid #febe10;
                 transition: 0.5s ease-in-out;
                  
                  &:after {
@@ -81,7 +81,7 @@
 
 
             &.active {
-                 border-left: 6px solid $ts-blue;
+                 border-left: 6px solid #febe10;
 //                 transition: 0.0s ease-in-out;
                 
             

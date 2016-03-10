@@ -12,6 +12,60 @@ body.admin {
 
 .ts-admin-styles { // ---- bookend class ----
     
+    .gradient-fill {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1;
+        
+    }
+    .gradient-add {
+                      z-index: 1;      
+        &:after {  //gradient hover
+
+            position: absolute;
+              content: '';
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+
+            background: rgba(255,255,255,0.2);
+            background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+            background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.2)), color-stop(68%, rgba(255,255,255,0.02)), color-stop(69%, rgba(255,255,255,0.02)));
+            background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+            background: -o-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+            background: -ms-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+            background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+
+//                    transition: all 0.2s ease-in-out;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+
+        } // gradient
+
+        &:hover {
+
+            transition: 0.5s ease;
+            color: $white;
+
+             &:after {
+                        opacity: 0.7;
+                        transition: opacity 0.5s ease;
+                    }
+
+        }
+
+    } // gradient-add
+    
+    .z-5 {
+        z-index: 5;
+        position: relative;
+    }
     // button and typography styles
     
     .btn {
@@ -42,7 +96,7 @@ body.admin {
         border-radius: 0px;
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
-        height: 34px !important;
+        height: 34px;
 
         &:active {
             border: 0x solid Transparent;
@@ -317,6 +371,7 @@ body.admin {
             color: $white;
             transition: 0.2s ease;
             padding: 10px;
+            height: 40px;
 
             &.active {
                 
@@ -477,20 +532,56 @@ body.admin {
     
     //hs snapshot - author panel  
     
-    .author-section {
+    .author-section,
+    .tier-section {
+        
+        .panel {
+            a {
+                &.add-element {
+                    z-index: 5;
+                    position: relative;
+                    cursor: pointer;
+                    width: 100%;
+                    display: block;
+                    line-height: 100%;
+                    color: $white-50;
+
+                    .fa {
+                        color: $white-50;
+                        margin-right: 20px;
+
+                    }
+                    &:hover,
+                    &:focus {
+                        color: $white;
+
+                        .fa {
+                            color: $white;
+                        }
+                    }
+                }
+
+            }
+        }
+        
+        
         margin-top: -20px;
         > .form-group {
                 padding: 0px;
             .panel {
-                margin-bottom: -24px;
                 background-color: transparent;
+                
+                &.neg-margin {
+                    margin-bottom: -24px;
+                }
+                
                 
                 .panel-header {
                     background-color: transparent;
                     height: 50px;
                     color: $white-50;
                     margin-bottom: 0px;
-                    background-color: $white-15;
+                    background-color: $black-50;
                     
                     h4 {
                         line-height: 50px;
@@ -511,43 +602,6 @@ body.admin {
                             
                             background-color: transparent;
                             padding: 15px 20px;
-                            
-                            &:after {  //gradient hover
-                            
-                                position: absolute;
-                                  content: '';
-                                  top: 0;
-                                  left: 0;
-                                  width: 100%;
-                                  height: 100%;
-
-                                background: rgba(255,255,255,0.2);
-                                background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
-                                background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.2)), color-stop(68%, rgba(255,255,255,0.02)), color-stop(69%, rgba(255,255,255,0.02)));
-                                background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
-                                background: -o-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
-                                background: -ms-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
-                                background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
-                                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
-
-            //                    transition: all 0.2s ease-in-out;
-                                z-index: 1;
-                                opacity: 0;
-                                transition: opacity 0.5s ease;
- 
-                            } // gradient
-                            
-                            &:hover {
-                                
-                                transition: 0.5s ease;
-
-                                 &:after {
-                                            opacity: 0.7;
-                                            transition: opacity 0.5s ease;
-                                        }
-
-                            }
-
                             
                             
                             
@@ -591,6 +645,93 @@ body.admin {
         } // form-group
     } // author-section
     
+    .tier-section {
+        
+        .tier-top {
+            .btn-group {
+                height: 50px;
+                width: 65px;
+            }
+        }
+        
+        .btn-group {
+            position: relative;
+            z-index: 5;
+            float: right;
+            
+
+            .btn-remove {
+                background-color: transparent;
+                color: $white-50;
+                outline: none;
+                font-size: 14px;
+                font-weight: 100;
+                height: 100%;
+                width: 65px;
+                position: absolute;
+                right: 0;
+                top: 0;
+                box-shadow: none;
+                z-index: 5;
+
+                &:hover,
+                &:focus {
+                    color: $btn-red;
+                    outline: none;
+                }
+            }
+        }
+        
+        
+       > .form-group {
+            .panel {
+                margin-bottom: 0px;
+                .tier-panel {
+                    .tier-top {
+                        background-color: rgba($admin-blue, .8);
+                        
+                        &:hover,
+                        &:focus {
+                            background-color: rgba($admin-blue, 1);
+                        }
+                    }
+                    
+                    a {
+
+                        h4 {
+                            line-height: 50px;
+                            margin-left: 25px;
+                            width: 75%;
+                            display: block;
+                            color: $white-50;
+                            
+                            &:hover,
+                            &:focus {
+                                color: $white;
+                            }
+                            
+                        }
+                    }
+                    
+                    li {
+                        border-bottom: 1px solid rgba($admin-blue, .8);
+                    }
+                }
+            }
+        } // form-group
+    }
+    
+    .author-right-section {
+        .form-group {
+            .control-label {
+                font-size: 14px;
+                padding-top: 20px;
+            } // control-label
+            
+        } // form-group
+    }
+    
+    
     //Admin Snapshot list
     
     .input-sm {
@@ -610,13 +751,13 @@ body.admin {
             color: $white-50;
             
             &:first-child {
-                border-top-left-radius: 0px;
-                border-top-right-radius: 0px;
+                border-top-left-radius: 0px !important;
+                border-top-right-radius: 0px  !important;
             }
             
             &:last-child {
-                border-bottom-right-radius: 0px;
-                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 0px !important;
+                border-bottom-left-radius: 0px !important;
             }
             
             .snapshot-list-item {
