@@ -4036,8 +4036,30 @@ angular.module('app.services', [])
             sb.slugToggleLink = function () {
                 sb.slug.linked = !sb.slug.linked;
                 sb.setSlug();
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
             };
-
+            
+            // remove image
+            sb.removeImage = function () {
+                sb.photoNames.square = '';
+                sb.photoNames.small = '';
+                sb.photoNames.medium = '';
+                sb.photoNames.large = '';
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
+            // toggle active
+            sb.toggleActive = function () {
+                sb.isActive = !sb.isActive;
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
             // trends array for decks
             sb.getTrends = function () {
                 return new Array(maxTrends);
@@ -4657,6 +4679,78 @@ angular.module('app.services', [])
                 }
             };
             
+            // flag snapshot as updated
+            sb.snapshotUpdated = function () {
+                console.log('snapshot updated');
+                
+                // don't flag for update if new
+                if (!sb.id) { return false; }
+                
+                // flag for update
+                sb.updated.snapshot = true;
+            };
+            
+            // flag author as updated
+            sb.authorUpdated = function (author) {
+                // don't flag for update if new
+                if (!author.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.authors.indexOf(author.id);
+                if (index !== -1) {
+                    sb.updated.authors.push(author.id);
+                }
+            };
+            
+            // flag deckTier as updated
+            sb.deckTierUpdated = function (deckTier) {
+                // don't flag for update if new
+                if (!deckTier.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.deckTiers.indexOf(deckTier.id);
+                if (index !== -1) {
+                    sb.updated.deckTiers.push(deckTier.id);
+                }
+            };
+            
+            // flag deckTech as updated
+            sb.deckTechUpdated = function (deckTech) {
+                // don't flag for update if new
+                if (!deckTech.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.deckTechs.indexOf(deckTech.id);
+                if (index !== -1) {
+                    sb.updated.deckTechs.push(deckTech.id);
+                }
+            };
+            
+            // flag cardTech as updated
+            sb.cardTechUpdated = function (cardTech) {
+                // don't flag for update if new
+                if (!cardTech.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.cardTechs.indexOf(cardTech.id);
+                if (index !== -1) {
+                    sb.updated.cardTechs.push(cardTech.id);
+                }
+            };
+            
+            // flag matchup as updated
+            sb.matchupUpdated = function (matchup) {
+                // don't flag for update if new
+                if (!matchup.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.matchups.indexOf(matchup.id);
+                if (index !== -1) {
+                    sb.updated.matchups.push(matchup.id);
+                }
+            };
+            
+            // delete items on save
             sb.saveDelete = function (callback) {
                 async.series([
                     // delete card techs
@@ -4812,6 +4906,7 @@ angular.module('app.services', [])
                 });
             };
             
+            // update items on save
             sb.saveUpdate = function (callback) {
                 async.series([
                     // update card techs
@@ -5034,6 +5129,7 @@ angular.module('app.services', [])
                 });
             };
             
+            // create new items on save
             sb.saveCreate = function (callback) {
                 async.waterfall([
                     // create snapshot
@@ -5232,9 +5328,9 @@ angular.module('app.services', [])
                 sb.saving = true;
                 
                 async.waterfall([
-                    //sb.saveDelete,
+                    sb.saveDelete,
                     sb.saveUpdate,
-                    //sb.saveCreate
+                    sb.saveCreate
                 ], function (err) {
                     sb.saving = false;
                     console.log('done saving');

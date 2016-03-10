@@ -9,7 +9,7 @@
         <div class="form-group pull-left">
             <label for="title" class="control-label pull-left snap-num-title">#</label>
             <div class="wrapper-none pull-left">
-                <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum" ng-keyup="snapshot.setSlug()">
+                <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum" ng-keyup="snapshot.setSlug()" ng-change="snapshot.snapshotUpdated()">
             </div>
         </div>
        
@@ -27,7 +27,7 @@
                 <div class="form-group snap-title-group">
                     <label for="title" class="control-label pull-left">Title</label>
                     <div class="wrapper-none">
-                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()">
+                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()" ng-change="snapshot.snapshotUpdated()">
                     </div>
                 </div>
                 <!--URL starts -->
@@ -38,7 +38,7 @@
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default" ng-class="{active: snapshot.slug.linked}" ng-click="snapshot.slugToggleLink()"><i class="fa" ng-class="{'fa-link': snapshot.slug.linked, 'fa-unlink': !snapshot.slug.linked}"></i></button>
                             </span>
-                            <input type="text" id="slug" name="slug" class="form-control wide-input" ng-model="snapshot.slug.url" ng-init="snapshot.setSlug()" ng-readonly="snapshot.slug.linked" required>
+                            <input type="text" id="slug" name="slug" class="form-control wide-input" ng-model="snapshot.slug.url" ng-init="snapshot.setSlug()" ng-change="snapshot.snapshotUpdated()" ng-readonly="snapshot.slug.linked" required>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                 <div class="form-group snap-title-group">
                     <label for="snapshotType" class="control-label pull-left">Type</label>
                     <div class="wrapper-none">
-                        <select id="snapshotType" name="snapshotType" class="form-control wide-input" ng-options="type.value as type.key for type in snapshot.getSnapshotTypes()" ng-model="snapshot.snapshotType"></select>
+                        <select id="snapshotType" name="snapshotType" class="form-control wide-input" ng-options="type.value as type.key for type in snapshot.getSnapshotTypes()" ng-model="snapshot.snapshotType" ng-change="snapshot.snapshotUpdated()"></select>
                     </div>
                 </div>
                 
@@ -69,7 +69,7 @@
                                     <span ng-show="snapshot.photoNames.large === ''">Select image</span>
                                     <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
                                 </button>
-                                <a href="#" class="btn btn-danger pull-right" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
+                                <a href="#" class="btn btn-danger pull-right" ng-click="snapshot.removeImage()" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                 <div class="form-group m-b-lg">
                     <button class="btn btn-default control-btn"
                             ng-class="{active: snapshot.isActive}"
-                            ng-click="snapshot.isActive = !snapshot.isActive"
+                            ng-click="snapshot.toggleActive()"
                             ng-mouseover="activeHover = true"
                             ng-mouseleave="activeHover = false"
                         >
@@ -159,11 +159,11 @@
                     <div class="panel-body">
                         <label for="intro" class="col-sm-12 control-label">Introduction</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" rows="11"></textarea>
+                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" rows="11" ng-change="snapshot.snapshotUpdated()"></textarea>
                         </div>
                         <label for="thoughts" class="col-sm-12 control-label">Thoughts &amp; Observations</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" rows="11"></textarea>
+                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" rows="11" ng-change="snapshot.snapshotUpdated()"></textarea>
                         </div>
                     </div>
                 </div>
