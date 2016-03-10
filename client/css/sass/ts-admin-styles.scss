@@ -1,7 +1,13 @@
 @import 'ts-colors.scss';
 
+//body background
 
-//titles 20px??
+body.admin {
+    background-image: url('../img/backgrounds/admin-bg.jpg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+}
 
 
 .ts-admin-styles { // ---- bookend class ----
@@ -20,7 +26,7 @@
             margin-bottom: 5px;
             text-align: left;
         }
-    }
+    } // media
     
      label {
             display: inline-block;
@@ -46,7 +52,7 @@
             box-shadow: none !important;
             height: 34px !important;
         }
-    }
+    } // btn-default
     
     
     .admin-btn-blue {
@@ -68,8 +74,7 @@
                 color: $white;
             }
         }
-    
-    }
+    } // admin-btn-blue
     
     .btn-danger, 
     .btn-change {
@@ -89,7 +94,7 @@
         
         }
         
-    }
+    } // btn-change, btn-danger
     
     .btn-change {
         
@@ -431,34 +436,38 @@
                             margin: 10px 0 0 0 !important;
                             
                         }
-                    }
-                }
-            }
+                    } // media
+                } // btn-toolbar 
+            } // photo-input
         }
     }
     
-    .upload-thumbnail.upload-thumbnail-article {
-        width: 100%;
-        height: 100px;
-        
-        
-        .upload-drop {
+    .upload-thumbnail {
+    
+        &.upload-thumbnail-article {
             width: 100%;
-            height: 90px;
-            line-height: 90px;
-            background: $white-08;
-        }
-        
-    }
-    
-    .photo-input .upload-thumbnail {
-      display: inline-block;
-      margin-bottom: 15px;
-      overflow: hidden;
-      text-align: center;
-      vertical-align: middle;
-    }
-    
+            height: 100px;
+            display: inline-block;
+            margin-bottom: 15px;
+            overflow: hidden;
+            text-align: center;
+            vertical-align: middle;
+
+
+            .upload-drop {
+                width: 100%;
+                height: 90px;
+                line-height: 90px;
+                background: $white-08;
+                outline: 1px dashed $white-50;
+                outline-offset: -6px;
+                border: 0px solid transparent;
+                border-radius: 0px;
+                text-align: center;
+                color: $white-50;
+            }
+        } // upload-thumbnail-article
+    } // upload-thumbnail
     
     .rightside-content {
         min-height: 100px;
@@ -472,26 +481,115 @@
         margin-top: -20px;
         > .form-group {
                 padding: 0px;
-            .panel-body {
-                padding: 0px;
-                .list-group {
+            .panel {
+                margin-bottom: -24px;
+                background-color: transparent;
+                
+                .panel-header {
+                    background-color: transparent;
+                    height: 50px;
+                    color: $white-50;
+                    margin-bottom: 0px;
+                    background-color: $white-15;
+                    
+                    h4 {
+                        line-height: 50px;
+                        text-transform: uppercase;
+                        padding-left: 24px;
 
-                    padding: 0px;
 
-                    .list-group-item {
-                       
                     }
-                }
-            }
-            
-            .panel-footer {
-                position: absolute;
-                bottom: 0px;
-                height: 70px;
-                width: 100%;
-            }
-        }
-    }
+                    
+                } // panel-header
+                .panel-body {
+                    padding: 0px;
+                    .list-group {
+
+                        padding: 0px;
+
+                        .list-group-item {
+                            
+                            background-color: transparent;
+                            padding: 15px 20px;
+                            
+                            &:after {  //gradient hover
+                            
+                                position: absolute;
+                                  content: '';
+                                  top: 0;
+                                  left: 0;
+                                  width: 100%;
+                                  height: 100%;
+
+                                background: rgba(255,255,255,0.2);
+                                background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                                background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.2)), color-stop(68%, rgba(255,255,255,0.02)), color-stop(69%, rgba(255,255,255,0.02)));
+                                background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                                background: -o-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                                background: -ms-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                                background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+
+            //                    transition: all 0.2s ease-in-out;
+                                z-index: 1;
+                                opacity: 0;
+                                transition: opacity 0.5s ease;
+ 
+                            } // gradient
+                            
+                            &:hover {
+                                
+                                transition: 0.5s ease;
+
+                                 &:after {
+                                            opacity: 0.7;
+                                            transition: opacity 0.5s ease;
+                                        }
+
+                            }
+
+                            
+                            
+                            
+                            .btn-group {
+                                position: static;
+                                z-index: 5;
+                                
+                                .btn-remove {
+                                    background-color: transparent;
+                                    color: $white-50;
+                                    outline: none;
+                                    font-size: 14px;
+                                    font-weight: 100;
+                                    height: 100%;
+                                    width: 65px;
+                                    position: absolute;
+                                    right: 0;
+                                    top: 0;
+                                    box-shadow: none;
+                                    z-index: 5;
+                                    
+                                    
+                                    &:hover,
+                                    &:focus {
+                                        color: $btn-red;
+                                        outline: none;
+                                    }
+                                } //btn-remove
+                            } // btn-group
+                        } // list-group-item
+                    } // list-group
+                } // panel-body
+
+                .panel-footer {
+                    position: absolute;
+                    bottom: 0px;
+                    height: 70px;
+                    width: 100%;
+                } 
+            } // panel
+        } // form-group
+    } // author-section
     
     //Admin Snapshot list
     
@@ -507,7 +605,7 @@
             display: block;
             padding: 15px 10px;
             margin-bottom: 0px;
-            background-color: #fff;
+            background-color: transparent;
             border: 0px solid transparent;
             color: $white-50;
             
@@ -521,16 +619,19 @@
                 border-bottom-left-radius: 0px;
             }
             
-        }
+            .snapshot-list-item {
+                line-height: 34px;
+            } // snapshot-list-item
+        } // list-group-item
         
         .admin-list-item {
             background: $white-02;
-            transition: 0.2s ease;
+            transition: 0.5s ease;
             border-left: 6px solid transparent;
             
             &:hover {
                     background: rgba(255, 255, 255, 0.15);
-                    transition: 0.2s ease;
+                    transition: 0.5s ease;
                     border-left: 6px solid $ts-blue;
                 }
         
@@ -544,7 +645,7 @@
                     border-left: 6px solid $ts-blue;
                 }
             }
-        }
-    }
+        } // admin-list-item
+    } // list-group
     
-} // ts-admin-styles ENDS
+} // ts-admin-styles
