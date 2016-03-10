@@ -8,6 +8,12 @@
     
     // button and typography styles
     
+    .btn {
+        border-radius: 0px;
+        border: 0 solid transparent;
+        padding: 7px 12px;
+    }
+    
     @media (min-width: 768px) {
         .form-horizontal .control-label {
             padding-top: 10px;
@@ -23,6 +29,23 @@
             color: $white-50;
             font-weight: 100 !important;
          text-transform: uppercase;
+    }
+    
+    .btn-default {
+        border: 0px solid transparent;
+        border-radius: 0px;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        height: 34px !important;
+
+        &:active {
+            border: 0x solid Transparent;
+            background: #2766ad;
+            color: #FFF;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            height: 34px !important;
+        }
     }
     
     
@@ -90,6 +113,7 @@
     .btn-default {
         background: transparent;
         text-shadow: none;
+        background: rgba($ts-blue, 0.8);
     }
     .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open > .dropdown-toggle.btn-default {
         border: 0px solid #000;
@@ -164,6 +188,7 @@
     .panel-body {
         border: 0px solid transparent;
         color: $white-80;
+        border-radius: 0;
     }
     
     .panel {
@@ -216,22 +241,7 @@
             padding: 0px;
 
 
-            .btn-default {
-                border: 0px solid transparent;
-                border-radius: 0px;
-                -webkit-box-shadow: none !important;
-                    box-shadow: none !important;
-                    height: 34px !important;
-
-                &:active {
-                    border: 0x solid Transparent;
-                    background: #2766ad;
-                    color: #FFF;
-                    -webkit-box-shadow: none !important;
-                    box-shadow: none !important;
-                    height: 34px !important;
-                }
-            }
+            
         }
 
         
@@ -454,6 +464,87 @@
         min-height: 100px;
         
 
+    }
+    
+    //hs snapshot - author panel  
+    
+    .author-section {
+        margin-top: -20px;
+        > .form-group {
+                padding: 0px;
+            .panel-body {
+                padding: 0px;
+                .list-group {
+
+                    padding: 0px;
+
+                    .list-group-item {
+                       
+                    }
+                }
+            }
+            
+            .panel-footer {
+                position: absolute;
+                bottom: 0px;
+                height: 70px;
+                width: 100%;
+            }
+        }
+    }
+    
+    //Admin Snapshot list
+    
+    .input-sm {
+        height: 34px;
+    }
+    
+    .list-group {
+        
+
+        .list-group-item {
+            position: relative;
+            display: block;
+            padding: 15px 10px;
+            margin-bottom: 0px;
+            background-color: #fff;
+            border: 0px solid transparent;
+            color: $white-50;
+            
+            &:first-child {
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+            }
+            
+            &:last-child {
+                border-bottom-right-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+            
+        }
+        
+        .admin-list-item {
+            background: $white-02;
+            transition: 0.2s ease;
+            border-left: 6px solid transparent;
+            
+            &:hover {
+                    background: rgba(255, 255, 255, 0.15);
+                    transition: 0.2s ease;
+                    border-left: 6px solid $ts-blue;
+                }
+        
+
+            &:nth-child(odd) {
+              background: transparent;
+                
+                 &:hover {
+                    background: rgba(255, 255, 255, 0.15);
+                    transition: 0.2s ease;
+                    border-left: 6px solid $ts-blue;
+                }
+            }
+        }
     }
     
 } // ts-admin-styles ENDS
