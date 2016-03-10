@@ -5003,33 +5003,28 @@ angular.module('app.services', [])
                         // skip if nothing to update
                         if (sb.updated.snapshot && sb.id) { return cb(); }
                         
-                            Snapshot.update({
-                                id: sb.id
-                            }, {
-                                snapNum: sb.snapNum,
-                                //snapshotType: sb.snapshotType,
-                                title: sb.title,
-                                slug: sb.slug,
-                                content: sb.content,
-                                photoNames: sb.photoNames,
-                                isActive: sb.active
-                            })
-                            .$promise
-                            .then(function (data) {
-                                console.log('updated snapshot: ', sb.id);
-                                // reset updated flags
-                                sb.updated.snapshot = false;
-                                // next
-                                return eachCallback();
-                            })
-                            .catch(function (response) {
-                                return eachCallback(response);
-                            });
-                        }, function (err) {
-                            if (err) {
-                                console.log('update snapshot error: ', err);
-                            }
-                            return cb(err);
+                        Snapshot.update({
+                            id: sb.id
+                        }, {
+                            snapNum: sb.snapNum,
+                            //snapshotType: sb.snapshotType,
+                            title: sb.title,
+                            slug: sb.slug,
+                            content: sb.content,
+                            photoNames: sb.photoNames,
+                            isActive: sb.active
+                        })
+                        .$promise
+                        .then(function (data) {
+                            console.log('updated snapshot: ', sb.id);
+                            // reset updated flags
+                            sb.updated.snapshot = false;
+                            // next
+                            return cb();
+                        })
+                        .catch(function (response) {
+                            console.log('update snapshot error: ', response);
+                            return cb(response);
                         });
                     }
                 ], function (err) {
