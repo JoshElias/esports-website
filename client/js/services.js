@@ -461,15 +461,43 @@ var loggedIn = false,
     }])
     .factory('HOTSSnapshot', ['CrudMan', function (CrudMan) {
         var CrudMan = new CrudMan();
-            CrudMan.createArr('heroes');
+        var defaultSnapshot = {
+            snapNum: 0,
+            subtitle: "default title",
+            intro: "default intro",
+            thoughts: "default thoughts",
+            url: {
+                linked: true,
+                slug: "default slug"
+            },
+            authors: []
+        }
+        var defaultAuthor = {
+            description: "",
+            expertClasses: [],
+            snapshotId: "",
+            authorId: ""
+        }
+
+        CrudMan.createArr('heroes');
+
 
         var HOTSSnapshot = function (snapshot) {
+            if (!snapshot)
+                snapshot = angular.copy(defaultSnapshot);
 
-            this.snapNum  = snapshot.snapNum;
-            this.subtitle = snapshot.subtitle;
-            this.intro    = snapshot.intro;
-            this.thoughts = snapshot.thoughts;
-            this.tiers    = new Array();
+            this.snapNum   = snapshot.snapNum || 0;
+            this.subtitle  = snapshot.subtitle || "";
+            this.intro     = snapshot.intro || "";
+            this.thoughts  = snapshot.thoughts || "";
+            this.url       = snapshot.url || defaultSnapshot.url;
+            this.authors   = snapshot.authors || [];
+            this.heroTiers = snapshot.heroTiers || [];
+            this.tiers     = new Array();
+
+            if(!!snapshot.id) {
+                this.id = snapshot.id;
+            }
 
             function validate (obj) {
                 var arr = [];
@@ -483,66 +511,104 @@ var loggedIn = false,
                 return arr;
             }
 
-            //begin method definitions
-            this.addTier = function () {
-                var tier = {
-                    heroes: new Array(),
-                    tier: this.tiers.length + 1
-                }
+            //this.buildTiers();
 
-                this.tiers.push(tier);
-            }
-
-            this.newHero = function (obj) {
-                if (!_.isEmpty(validate(obj))) {
-                    console.log("error!");
-                }
-
-                var hero = {
-                    summary      : obj.summary,
-                    tier         : obj.tier,
-                    previousTier : obj.previousTier,
-                    burstScore   : obj.burstScore,
-                    pushScore    : obj.pushScore,
-                    surviveScore : obj.surviveScore,
-                    scaleScore   : obj.scaleScore,
-                    utilityScore : obj.utilityScore,
-                    guideTierId  : obj.guideTierId,
-                    snapshotId   : obj.snapshotId
-                };
-
-                console.log(hero);
-            };
-
-            this.newTier = function () {
-
-                this.tiers.push();
-            }
-
-
-            //INITIALIZE THE SNAPSHOT OBJECT
-            //
-            //
-            //
-            //build tiers
-            for (var i = 0; i < snapshot.heroTiers.length; i++) {
-                var item = snapshot.heroTiers[i];
-
-                if (_.isUndefined(this.tiers[item.tier-1])) {
-                    this.tiers[item.tier-1] = {
-                        heroes: new Array(),
-                        tier: item.tier
-                    };
-                }
-
-                this.tiers[item.tier-1].heroes.push(item);
-            }
-
-
-            return this;
+            //return this;
         };
 
-        return HOTSSnapshot;
+        //begin method definitions
+        HOTSSnapshot.prototype.addTier = function () {
+            console.log(this);
+            var tier = {
+                heroes: new Array(),
+                tier: this.tiers.length + 1
+            }
+
+            this.tiers.push(tier);
+        }
+
+        HOTSSnapshot.prototype.buildTiers = function () {
+            var heroTiers = this.heroTiers
+
+            if (!!heroTiers) {
+                this.tiers = new Array();
+
+                for (var i = 0; i < heroTiers.length; i++) {
+                    var item = heroTiers[i];
+
+                    if (_.isUndefined(this.tiers[item.tier - 1])) {
+                        this.tiers[item.tier - 1] = {
+                            heroes: new Array(),
+                            tier: item.tier
+                        };
+                    }
+
+                    this.tiers[item.tier - 1].heroes.push(item);
+                }
+            }
+        }
+
+        HOTSSnapshot.prototype.newHero = function (obj) {
+            //if (!_.isEmpty(validate(obj))) {
+            //    console.log("error!");
+            //    return;
+            //}
+
+            console.log(obj);
+
+            var hero = {
+                summary      : obj.summary,
+                tier         : obj.tier,
+                previousTier : obj.previousTier,
+                hero         : obj.hero,
+                burstScore   : obj.burstScore,
+                pushScore    : obj.pushScore,
+                surviveScore : obj.surviveScore,
+                scaleScore   : obj.scaleScore,
+                utilityScore : obj.utilityScore,
+                guideTierId  : obj.guideTierId,
+                heroId       : obj.heroId,
+                snapshotId   : obj.snapshotId
+            };
+
+            console.log(hero);
+
+            this.heroTiers.push(hero);
+        };
+
+        HOTSSnapshot.prototype.newAuthor = function (obj) {
+            //if (!_.isEmpty(validate(obj))) {
+            //    console.log("error!");
+            //    return;
+            //}
+
+            var author = {
+                description: obj.description,
+                expertClasses: obj.expertClasses,
+                snapshotId: obj.snapshotId,
+                authorId: obj.authorId,
+                author: obj.author
+            }
+
+            this.authors.push(author);
+        }
+
+        HOTSSnapshot.prototype.removeHero = function (obj) {
+
+        }
+
+        HOTSSnapshot.prototype.removeAuthor = function (obj) {
+            var authors = this.authors;
+
+            this.authors = _.difference(authors, [obj]);
+        }
+
+        HOTSSnapshot.prototype.newTier = function () {
+
+            this.tiers.push();
+        }
+
+        return function (snapshot) { return new HOTSSnapshot(snapshot); }
     }])
     .factory('AdminTeamService', ['$http', '$q', function ($http, $q) {
         return {

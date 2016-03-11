@@ -1,16 +1,22 @@
-<div class="panel panel-dark m-b-none">   
-    <div class="panel-heading clearfix">
-        <strong class="lh-lg">ADD AUTHOR</strong>
-        <div class="pull-right m-r-sm">
-            <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
-        </div>
+<div>
+    <div class="clearfix">
+        <form ng-submit="updateSearch()" class="search-styles">
+            <input type="text" ng-model="search" class="form-control input-sm pull-right" placeholder="search"><i class="fa fa-search"></i>
+        </form>
     </div>
-    <div class="list-group m-b-none">
-        <a href="#" class="list-group-item" ng-class="{active: isAuthor(p)}" ng-click="addAuthor(p)" ng-repeat="p in filtered = (authorData | filterAll:search | limitTo:10)">
-            {{p.username}}
-        </a>
-        <div class="list-group-item center-text">
-            <button class="btn btn-blue btn-lg center-text" ng-click="closeBox()">Done</button>
-        </div>
+    <div class="text-center big-spin" ng-if="loading">
+        <i class="fa fa-refresh fa-spin fa-5x"></i>
     </div>
+    <ul class="list-group m-b-none" ng-if="!loading && authors.length">
+        <li class="clearfix" ng-class="{ active: authorExistsById(author.id) }" ng-repeat="author in authors">
+            <div class="pull-right">
+                <button type="button" class="btn btn-success" ng-click="authorAdd(author)" ng-if="!authorExistsById(author.id)">Add</button>
+                <button type="button" class="btn btn-danger" ng-click="authorDeleteById(author.id)" ng-if="authorExistsById(author.id)">Remove</button>
+            </div>
+            <div class="authour pull-left">
+                {{author.username}}
+            </div>
+        </li>
+    </ul>
+    <div pagination="pagination" theme="modal-admin" class="modal-admin"></div>
 </div>

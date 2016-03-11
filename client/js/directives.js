@@ -1274,10 +1274,173 @@ angular.module('app.directives', ['ui.load'])
     };
   }
 ])
-.directive('snapshotAddAuthor', [function () {
+.directive('snapshotAddAuthor', ['$q', 'User', 'AjaxPagination', function ($q, User, AjaxPagination) {
     return {
-        templateUrl: tpl + "views/admin/hs.snapshot.add.author.html"
+        templateUrl: tpl + "views/admin/hs.snapshot.add.author.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.authors = [];
+
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 10;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateAuthors(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+
+            function updateAuthors (page, perpage, search, callback) {
+                $scope.loading = true;
+
+                var pattern = '/.*'+search+'.*/i';
+                var where = {
+                    isProvider: true
+                };
+
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            username: {
+                                regexp: pattern
+                            }
+                        },
+                        {
+                            email: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+
+                AjaxPagination.update(User, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.authors = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateAuthors($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateAuthors(1, $scope.perpage, $scope.search);
+            };
+
+        }]
     };
+}])
+.directive('snapshotAddHero', ['$q', 'Hero', 'AjaxPagination', function ($q, Hero, AjaxPagination) {
+    return {
+        templateUrl: tpl + "views/admin/hero.search.modal.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.heroes = [];
+
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 10;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateHeroes(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+
+            function updateHeroes (page, perpage, search, callback) {
+                $scope.loading = true;
+
+                var pattern = '/.*'+search+'.*/i';
+                var where = {};
+
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            name: {
+                                regexp: pattern
+                            }
+                        },
+                        {
+                            universe: {
+                                regexp: pattern
+                            }
+                        },
+                        {
+                            role: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+
+                AjaxPagination.update(Hero, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.heroes = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateHeroes($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateHeroes(1, $scope.perpage, $scope.search);
+            };
+        }]
+    }
 }])
 .directive('snapshotAddDeck', [function () {
     return {
@@ -1913,12 +2076,225 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/overwatch.heroes.ability.edit.html'
     };
 })
+.directive('hotsSnapshotGeneral', function () {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
+        controller: ['$scope', function ($scope) {
+            $scope.snapshot = $scope.$parent.snapshot;
+        }]
+    }
+})
+.directive('hotsSnapshotAuthors', ['$compile', 'HOTS', function ($compile, HOTS) {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/admin/hots.snapshot.authors.html',
+        controller: ['$scope', function ($scope) {
+            var box = bootbox.dialog;
+            var aBuffer = [];
+            var defaultAuthor = {
+                description: "",
+                expertClasses: [],
+                snapshotId: "",
+                authorId: ""
+            }
+
+            //we buffer our authors during the add phase and apply them to the model when the user confirms
+            //their selection
+            function addBufferedAuthors () {
+                var snap = $scope.snapshot;
+                var authorEmpty = _.isEmpty(snap.authors);
+
+                //apply is required to update the scope when we iterate through our buffered authors
+                //and add them to the model
+                $scope.$apply(_.each(aBuffer, function (author) { snap.newAuthor(author); }));
+                aBuffer = [];
+
+                //this sets activeAuthor if there was no authors added to the scope already
+                //default is always index 0
+                if (authorEmpty) {
+                    $scope.activeAuthor = snap.authors[0];
+                }
+            }
+
+            //begin our scope definition
+            //
+            $scope.roles = HOTS.roles;
+
+            if (!!$scope.snapshot.authors)
+                $scope.activeAuthor = $scope.snapshot.authors[0];
+
+            $scope.openAuthorAdd = function () {
+                var dialog = box({
+                    message: $compile('<snapshot-add-author></snapshot-add-author>')($scope),
+                    title: 'rekt'
+                });
+
+                dialog.modal('show');
+                dialog.on('hidden.bs.modal', addBufferedAuthors);
+            }
+
+            // check if user is already an author on snapshot
+            $scope.authorExistsById = function (authorId) {
+                var authors = $scope.snapshot.authors;
+                var allAuthors = _.union(authors, aBuffer);
+
+                return _.find(allAuthors, function (auth) { return authorId == auth.author.id });
+            };
+
+            // delete author
+            $scope.authorDeleteById = function (authorId) {
+                var snapAuths = $scope.snapshot.authors;
+                var allAuthors = _.union(aBuffer, snapAuths);
+                var toDelete = _.find(allAuthors, function (auth) { return auth.author.id == authorId });
+
+                //remove from our author buffer
+                aBuffer = _.difference(aBuffer, [toDelete]);
+
+                //remove from our model
+                $scope.snapshot.removeAuthor(toDelete);
+
+                //if the author has an id then we want to queue it for removal from the db
+                if (toDelete.snapshotId) {
+                    // TODO: CRUDMAN REMOVE AUTHOR
+                }
+            };
+
+            //this method used by the popup dialog to add authors to the author buffer
+            $scope.authorAdd = function (author) {
+                var newAuthor = angular.copy(defaultAuthor);
+                    newAuthor.authorId = author.id;
+                    newAuthor.author = author;
+
+                aBuffer.push(newAuthor);
+            }
+
+            //our activeAuthor is the author currently being displayed in the right panel
+            //this is where we set the scope variable, this fn is being used by the template
+            $scope.setActiveAuthor = function (author) {
+                $scope.activeAuthor = author;
+            }
+
+            //toggling our activeAuthor expert classes on and off
+            $scope.toggleActiveExpert = function (role) {
+                var authors = $scope.snapshot.authors;
+                var activeAuthor = $scope.activeAuthor;
+                var snapAuthor = _.find(authors, function (val) {
+                    return val.author.id == activeAuthor.author.id
+                });
+
+                //if activeAuthor is already toggled as an expert of the role arg
+                if ($scope.isExpert(role)) {
+                    var idx = snapAuthor.expertClasses.indexOf(role);
+                    snapAuthor.expertClasses.splice(idx,1);
+                    return;
+                }
+
+                //at this point we know activeAuthor isn't flagged as an expert
+                snapAuthor.expertClasses.push(role);
+            }
+
+            //fn returns if the activeAuthor is an expert of the role arg
+            $scope.isExpert = function (role) {
+                var activeAuthor = $scope.activeAuthor;
+
+                return _.find(activeAuthor.expertClasses, function (val) {
+                    return val == role;
+                });
+            }
+        }]
+    }
+}])
+.directive('hotsSnapshotTierlist', ['$compile', function ($compile) {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/admin/hots.snapshot.tierlist.html',
+        controller: ['$scope', function ($scope) {
+            var box = bootbox.dialog;
+            var hBuffer = [];
+            var defaultHeroTier = {
+                summary      : "",
+                tier         : $scope.tier,
+                previousTier : "",
+                burstScore   : 0,
+                pushScore    : 0,
+                surviveScore : 0,
+                scaleScore   : 0,
+                utilityScore : 0,
+                heroId       : "",
+                guideTierId  : "",
+                snapshotId   : ""
+            };
+
+            function addBufferedHeroes (tier) {
+                var snap = $scope.snapshot;
+                var heroEmpty = _.isEmpty(snap.authors);
+
+                _.each(hBuffer, function (hero) {
+                    var heroToPush = hero;
+
+                    heroToPush.tier = tier;
+                    snap.newHero(hero);
+                });
+                hBuffer = [];
+
+                //snap.buildTiers();
+                $scope.$apply(function () {
+                    snap.buildTiers();
+                });
+
+                if (heroEmpty) {
+                    $scope.activeHero = snap.heroTiers[0];
+                }
+            }
+
+            if (!!$scope.snapshot.heroTiers)
+                $scope.activeHero = $scope.snapshot.heroTiers[0];
+
+            $scope.openHeroAdd = function (tier) {
+                var dialog = box({
+                    message: $compile('<snapshot-add-hero></snapshot-add-hero>')($scope),
+                    title: 'rekt'
+                });
+
+                function sup () {
+                    addBufferedHeroes(tier);
+                }
+
+                dialog.modal('show');
+                dialog.on('hidden.bs.modal', sup);
+            }
+
+            $scope.setActiveHero = function (hero) {
+                $scope.activeHero = hero;
+            }
+
+            $scope.heroExistsById = function (heroId) {
+                var heroes = $scope.snapshot.heroTiers;
+                var allHeroes = _.union(heroes, hBuffer);
+
+
+                return _.find(allHeroes, function (hero) { return heroId == hero.hero.id });
+            };
+
+            $scope.heroAdd = function (hero) {
+                var newHero = angular.copy(defaultHeroTier);
+                    newHero['heroId'] = hero.id;
+                    newHero['hero'] = hero;
+
+                hBuffer.push(newHero);
+            }
+
+            $scope.snapshot.buildTiers();
+            //$scope.$watch($scope.snapshot.heroTiers, $scope.snapshot.buildTiers);
+        }]
+    }
+}])
 .directive('hotsSnapshotHeroAdd', function () {
     return {
         restrict: 'E',
         templateUrl: tpl + 'views/admin/hots.snapshot.hero.add.html',
         controller: ['$scope', 'Hero', 'Guide', function ($scope, Hero, Guide) {
-            console.log($scope.tier);
             $scope.maxScore = 10;
             $scope.heroes = getHeroes(0, 3);
             $scope.guides = getGuides(0, 3);

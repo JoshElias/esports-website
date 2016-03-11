@@ -26,6 +26,11 @@
           "type": "hasMany",
           "model": "heroTier",
           "foreignKey": "snapshotId"
+      },
+      "authors": {
+          "type": "hasMany",
+          "model": "hotsSnapshotAuthor",
+          "foreignKey": "snapshotId"
       }
   },
   "acls": [

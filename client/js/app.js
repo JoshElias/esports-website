@@ -6043,26 +6043,25 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.admin.hots.snapshots.add', {
-                url: '/add',
+            .state('app.admin.hots.snapshots.snapshot', {
+                abstract: true,
+                url: '/snapshot/:snapshotId',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/hots.snapshot.add.html',
-                        controller: 'AdminHOTSSnapshotAddCtrl'
-                    }
-                }
-            })
-            .state('app.admin.hots.snapshots.edit', {
-                url: '/edit/:snapshotId',
-                views: {
-                    snapshots: {
-                        templateUrl: tpl + 'views/admin/hots.snapshot.edit.html',
+                        templateUrl: tpl + 'views/admin/hots.snapshot.build.html',
                         controller: 'AdminHOTSSnapshotEditCtrl',
                         resolve: {
+                            //cacheTemplates: ['$templateCache', function ($templateCache) {
+                            //    $templateCache.put(tpl + 'views/admin/hots.snapshot.general.html');
+                            //    $templateCache.put('authors', tpl + 'views/admin/hots.snapshot.authors.html');
+                            //    $templateCache.put(tpl + 'views/admin/hots.snapshot.tierlist.html');
+                            //}],
                             hotsSnapshot: ['HotsSnapshot', '$stateParams', function (HotsSnapshot, $stateParams) {
                                 var snapshotId = $stateParams.snapshotId;
                                 console.log('resolving', snapshotId);
-                                
+                                if (!snapshotId)
+                                    return;
+
                                 return HotsSnapshot.findById({
                                     id: snapshotId,
                                     filter: {
@@ -6072,6 +6071,9 @@ var app = angular.module('app', [
                                                 scope: {
                                                     include: ['hero']
                                                 }
+                                            },
+                                            {
+                                                relation: 'authors'
                                             }
                                         ]
                                     }
@@ -6082,6 +6084,30 @@ var app = angular.module('app', [
                                 })
                             }]
                         }
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.snapshot.general', {
+                url: '',
+                views: {
+                    "hots-admin-snapshot": {
+                        template: "<hots-snapshot-general>"
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.snapshot.authors', {
+                url: '',
+                views: {
+                    "hots-admin-snapshot": {
+                        template: "<hots-snapshot-authors>"
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.snapshot.tierlist', {
+                url: '',
+                views: {
+                    "hots-admin-snapshot": {
+                        template: "<hots-snapshot-tierlist>"
                     }
                 }
             })

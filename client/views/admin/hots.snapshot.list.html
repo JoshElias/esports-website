@@ -38,7 +38,7 @@
         <div class="list-group-item admin-list-item clearfix" ng-repeat="snapshot in snapshots">
             <span>{{snapshot.snapNum}} - {{snapshot.subtitle}}</span>
             <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.hots.snapshots.edit({ snapshotId: snapshot.id })" class="btn btn-default">Edit</a>
+                <a ui-sref="app.admin.hots.snapshots.snapshot.general({ snapshotId: snapshot.id })" class="btn btn-default">Edit</a>
                 <button class="btn btn-danger" ng-click="deleteSnapshot(snapshot)">Delete</button>
             </div>
         </div>

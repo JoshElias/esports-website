@@ -5922,7 +5922,8 @@ angular.module('app.controllers', ['ngCookies'])
         console.log('were in add');
     }])
     .controller('AdminHOTSSnapshotEditCtrl', ['$scope', '$compile', 'hotsSnapshot', 'HOTSSnapshot', function ($scope, $compile, hotsSnapshot, HOTSSnapshot) {
-        $scope.snapshot = new HOTSSnapshot(hotsSnapshot);
+        $scope.snapshot = HOTSSnapshot(hotsSnapshot);
+        $scope.state = 'general';
 
         var box;
 

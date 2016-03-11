@@ -136,18 +136,70 @@ textarea[name=thoughts] {
 				}
 			}
 		}
+
+		.panel-body {
+			.active-btn {
+				transition: 1s;
+				-moz-transition: 1s;
+				-webkit-transition: 1s;
+				width: 100%;
+				height: 70px;
+				border-radius: 4px;
+				color: white;
+				font-weight: bold;
+				background: #d9534f;
+				border: 1px solid #ac2925;
+
+				&.active {
+					background: #5cb85c;
+					border: 1px solid #4cae4c;
+				}
+
+				&:hover {
+					background: #f0ad4e;
+					border: 1px solid #eea236;
+				}
+			}
+		}
 	}
 }
 
 .tier-list {
     list-style-type: none;
     padding: 0;
-    
-    
+
+
     .tier-list-head {
         font-weight: bold;
-        border-bottom: solid 2px black;
+        background: #434343;
+		color: white;
+		padding: 10px;
+		line-height:50px;
     }
+
+	.tier-list-item {
+		div {
+			background: #DDDDDD;
+			padding: 5px 10px;
+			height: 40px;
+			line-height: 30px;
+
+			&.active {
+				background: $ts-blue;
+				color: white;
+				font-weight: bold;
+			}
+
+			&:nth-child(even) {
+				background: #BBBBBB;
+
+			}
+
+			&:hover {
+				background: #999999;
+			}
+		}
+	}
 }
 
 //*************************************
