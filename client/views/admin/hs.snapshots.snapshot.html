@@ -136,7 +136,7 @@
                         <div id="collapse{{tier.tier}}" class="collapse panel">
                             <div class="panel-body">
                                 <ul class="list-group m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
-                                    <li class="list-group-item" ng-if="tier.decks == 0">There are no decks selected yet!</li>
+                                    <li class="list-group-item" ng-if="tier.decks == 0">There are no decks in this tier yet.</li>
                                     <li class="list-group-item admin-list-item" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
                                         <div class="gradient-fill gradient-add"></div>
                                             <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5">
