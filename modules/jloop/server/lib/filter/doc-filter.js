@@ -10,18 +10,13 @@ var FILTER_FEATURE_KEY = "$docFilter";
 
 function filterDocs(ctx, modelInstance, finalCb) {
 
-
     // Attach the active model
     var modelName = ctx.methodString.split(".")[0];
     ctx.Model = app.models[modelName];
 
     // Attach active ctx if able
     var loopbackContext = loopback.getCurrentContext();
-    if(loopbackContext && typeof loopbackContext.active === "object") {
-        var active = {};
-        _.extendOwn(active, loopbackContext.active);
-        ctx.active = active;
-    }
+    ctx.req = loopbackContext.get("req");
 
     // Check for the feature key in the model's settings
     var filterOptions = ctx.Model.definition.settings[FILTER_FEATURE_KEY];
@@ -57,17 +52,14 @@ function filterResults(ctx, filterOptions, finalCb) {
 
         // Check for userId
         var userId;
-        if(!ctx.active || !ctx.active.accessToken || !ctx.active.accessToken.userId) {
-            console.log("RIP");
-            return done(undefined, ctx, answer, finalCb);
+        if(!ctx.req || !ctx.req.accessToken || !ctx.req.accessToken.userId) {
+            return resultCb();
         }
-        userId = ctx.active.accessToken.userId;
-        console.log("found user id WOOO HOOOO", userId);
-        console.log("result id", result.id);
-        console.log("modelClass", ctx.Model.definition.name);;
+        userId = ctx.req.accessToken.userId;
+
         var User = app.models.user;
         return User.isInRoles(userId,
-            ["$owner"],
+            filterOptions.acceptedRoles,
             {modelClass: ctx.Model.definition.name, modelId: result.id},
             function (err, isInRoles) {
                 if(err) return resultCb(err);
@@ -83,7 +75,6 @@ function filterResults(ctx, filterOptions, finalCb) {
 }
 
 function filterResult(ctx, filterOptions, finalCb) {
-    console.log("RESULT", ctx.result);
     var answer = {};
 
     // Handle predicate
@@ -95,17 +86,14 @@ function filterResult(ctx, filterOptions, finalCb) {
 
     // Check for userId
     var userId;
-    if(!ctx.active || !ctx.active.accessToken || !ctx.active.accessToken.userId) {
+    if(!ctx.req || !ctx.req.accessToken || !ctx.req.accessToken.userId) {
         return done(undefined, ctx, answer, finalCb);
     }
-    userId = ctx.active.accessToken.userId;
-    console.log("found user id WOOO HOOOO", userId);
-    console.log("result id", ctx.result.id);
-    console.log("modelClass", ctx.Model.definition.name);;
+    userId = ctx.req.accessToken.userId;
 
     var User = app.models.user;
     return User.isInRoles(userId,
-        ["$owner"],
+        filterOptions.acceptedRoles,
         {modelClass: ctx.Model.definition.name, modelId: ctx.result.id},
         function (err, isInRoles) {
             if(err) return finalCb(err);
@@ -117,7 +105,6 @@ function filterResult(ctx, filterOptions, finalCb) {
             }
 
             answer = ctx.result;
-
             return done(undefined, ctx, answer, finalCb);
         }
     );

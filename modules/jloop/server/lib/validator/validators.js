@@ -41,10 +41,9 @@ function validateYoutubePlaylistId(state, validatorCb) {
 function validateSpam(state, validatorCb) {
 
     // Only check for spam if we have an active connection
-    if(!state.active || !state.active.http || !state.active.http.req) {
+    if(!state.ctx.req) {
         return validatorCb();
     }
-    var req = state.active.http.req;
 
 
     var filterErr = new Error('Unable to filter spam from the given data');
@@ -61,9 +60,9 @@ function validateSpam(state, validatorCb) {
 
 
     // Track information about the sender
-    var requestIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    var requestUserAgent = req.headers['user-agent'];
-    var requestReferer = req.header('Referer');
+    var requestIp = state.ctx.req.headers['x-forwarded-for'] || state.ctx.req.connection.remoteAddress;
+    var requestUserAgent = state.ctx.req.headers['user-agent'];
+    var requestReferer = state.ctx.header('Referer');
 
 
     async.waterfall([

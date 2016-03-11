@@ -10,7 +10,7 @@ function isPremium(data) {
 }
 
 function isPrivate(data) {
-    if(!data || !data.isPublic)
+    if(!data || data.isPublic)
         return false;
 
     return true

@@ -37,12 +37,12 @@ function filterHandler(state, finalCb) {
         }
 
         // Do we have an active accessToken
-        if (!state.active || !state.active.accessToken) {
+        if (!state.ctx.req || !state.ctx.req.accessToken) {
             return removeField(state, filterCb);
         }
 
         // Check for user roles
-        var userId          =   state.active.accessToken.userId.toString();
+        var userId          =   state.ctx.req.accessToken.userId.toString();
         var acceptedRoles   =   filter.acceptedRoles || [];
         var instanceId      =   state.requestData.id;
         var User            =   state.models.user;

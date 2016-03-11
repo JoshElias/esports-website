@@ -1,5 +1,6 @@
 var async = require("async");
 var util = require("util");
+var loopback = require("loopback");
 var app = require("../../../../server/server");
 
 
@@ -25,11 +26,6 @@ function crawl(ctx, options, finalCb) {
         currentInstance: ctx.currentInstance,
         models: app.models
     };
-
-    // Append the active context if possible
-    if (typeof ctx.active === "object") {
-        parentState.active = ctx.active;
-    }
 
     // Get the data depending on the type of request made by the user
     if(ctx.data) {
@@ -79,7 +75,6 @@ function buildNextState(value, key, oldState, options) {
     newState.modelName          =   oldState.modelName;
     newState.requestData        =   oldState.requestData;
     newState.models             =   oldState.models;
-    newState.active             =   oldState.active;
 
     // Build new data points for instance and data
     newState.parentData = oldState.data;

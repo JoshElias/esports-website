@@ -51,7 +51,6 @@ function newStateHandler(oldState, newState) {
 
 function primitiveHandler(state, finalCb) {
     var validators = state.modelProperties[VALIDATE_FEATURE_KEY];
-    console.log("validators", validators);
     if(!Array.isArray(validators)) {
         return finalCb();
     }

@@ -21,36 +21,49 @@ module.exports = function(server) {
     for(var key in cleanModels) {
         var model = cleanModels[key];
 
+        model.beforeRemote('**', function(ctx, modelInstance, next) {
+
+            // Set loopback Context
+            loopback.getCurrentContext().set('req', ctx.req);
+            next();
+        });
+
+
+        // Validation
+        model.observe("before save", function(ctx, next) {
+            attachLoopbackContext(ctx);
+            validator.validate(ctx, next);
+        });
+
+
+        // Scope
+        model.beforeRemote("find", function(ctx, unused, next) {
+            attachLoopbackContext(ctx);
+            scope.addMaxScope(server.models)(ctx, unused, next);
+        });
+
+
+        // Relations
+        model.observe('before delete', function(ctx, next) {
+            attachLoopbackContext(ctx);
+            relation.destroyChildren(ctx, next);
+        });
+
 
         // Filtering
         var filterFuncs = [docFilter.filterDocs, fieldFilter.filterFields];
         model.afterRemote("**", function (ctx, modelInstance, next) {
-
             attachLoopbackContext(ctx);
             async.eachSeries(filterFuncs, function(filterFunc, filterCb) {
                 filterFunc(ctx, modelInstance, filterCb);
             }, next);
         });
-
-
-        // Validation
-        model.observe("before save", validator.validate);
-
-
-        // Scope
-        model.beforeRemote("find", scope.addMaxScope(server.models));
-
-
-        // Relations
-        model.observe('before delete', relation.destroyChildren);
     }
 
     function attachLoopbackContext(ctx) {
         var loopbackContext = loopback.getCurrentContext();
-        if(loopbackContext && typeof loopbackContext.active === "object") {
-            var active = {};
-            _.extendOwn(active, loopbackContext.active);
-            ctx.active = active;
+        if (loopbackContext && !ctx.req) {
+            ctx.req = loopback.getCurrentContext().get("req");
         }
     }
 };

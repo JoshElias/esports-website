@@ -3,7 +3,7 @@ var async = require("async");
 
 function destroyChildren(ctx, finalCb) {
     var query = {
-        where:ctx.where,
+        where: ctx.where,
         fields:{ id:true }
     };
     var relations = ctx.Model.settings.relations;
