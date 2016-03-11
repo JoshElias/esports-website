@@ -39,7 +39,7 @@
                     <span class="snapshot-list-item">Meta Snapshot {{snapshot.snapNum}} - {{snapshot.title}}</span>
                 </div>
                 <div class="col-sm-6">
-                    <div class="pull-right btn-toolbar">
+                    <div class="pull-right btn-toolbar snapshot-list-item">
                         <a ui-sref="app.admin.hearthstone.snapshots.edit({ snapshotID: snapshot.id })" class="btn btn-default">Edit</a>
                         <button class="btn btn-danger" ng-click="deleteSnapshot(snapshot)">Delete</button>
                     </div>

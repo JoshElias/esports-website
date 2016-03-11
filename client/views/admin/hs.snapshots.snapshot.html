@@ -102,7 +102,7 @@
                                 <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
 
                                     <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item gradient-add admin-list-item" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
-                                        {{author.user.username}}<div class="btn-group pull-right"><button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
+                                        <span class="full-div">{{author.user.username}}</span><div class="btn-group pull-right"><button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                     </li>
                                 </ul>
                                 <div class="panel-body">
@@ -142,7 +142,7 @@
                                 <ul class="list-group m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
                                     <li class="list-group-item" ng-if="tier.decks == 0">There are no decks in this tier yet.</li>
                                     <li class="list-group-item admin-list-item gradient-add" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
-                                        <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5">
+                                        <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5 full-div">
                                             <div class="pull-left m-r-sm">{{d.ranks[0]}}</div>
                                             <div class="pull-left">{{d.deck.name}}</div>
                                             <div class="btn-group pull-right">
@@ -193,17 +193,20 @@
         </div>
         <!-- / general -->
         <!-- authors -->
-        <div ng-show="page === 'authors'" class="col-sm-12 col-md-8 col-lg-9 author-right-section">
+        <div ng-show="page === 'authors'" class="col-sm-12 col-md-8 col-lg-9 author-right-section padding-none">
             <div ng-if="snapshot.activeAuthor">
                 
-                <div class="col-sm-12">
-                    <div class="form-group col-sm-5">
-                    </div>
-                    <div class="form-group col-sm-7">
-                        <div class="col-sm-6">
+                <div class="col-sm-12 padding-none m-t-md">
+                    
+                    <div class="form-group col-sm-12 padding-none class-section">
+                        <div class="col-md-12 col-lg-4">
+                            <h4 class="class-section">Class(es) of Expertise</h4>
+                        </div>
+                        <div class="col-md-12 col-lg-8 padding-none">
                             <ul class="author-classes">
                                 <li ng-repeat="hsClass in snapshot.getHearthstoneClasses()">
-                                    <button type="button" class="btn pull-left {{hsClass}}" ng-class="{ 'btn-default': snapshot.authorHasClass(snapshot.activeAuthor, hsClass) }" ng-click="snapshot.toggleAuthorClass(snapshot.activeAuthor, hsClass)">{{hsClass}}</button>
+                                    <button type="button" class="btn pull-right {{hsClass}}" ng-class="{ 'btn-class': snapshot.authorHasClass(snapshot.activeAuthor, hsClass) }" ng-click="snapshot.toggleAuthorClass(snapshot.activeAuthor, hsClass)">
+                                        <img src="../img/meta-snapshot/class-icons/{{hsClass}}.png">                                      </button>
                                 </li>
                             </ul>
                         </div>
@@ -211,7 +214,7 @@
                     
                     <div class="col-sm-12">
                         <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-1 control-label">Description</label>
-                        <textarea class="form-control" rows="15" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description"></textarea>
+                        <textarea class="form-control m-b-lg" rows="15" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description"></textarea>
                     </div>
                 </div>
                 
@@ -219,13 +222,15 @@
         </div>
         <!-- / authors -->
         <!-- tier list -->
-        <div ng-show="page === 'tiers'" class="col-sm-12 col-md-8 col-lg-9">
+        <div ng-show="page === 'tiers'" class="col-sm-12 col-md-8 col-lg-9 tier-right-section padding-none">
             <div ng-if="snapshot.activeDeck">
-                <ul>
-                    <li><a href="#" ng-click="deckPage = 'general'">General</a></li>
-                    <li><a href="#" ng-click="deckPage = 'tech'">Tech Decisions</a></li>
-                    <li><a href="#" ng-click="deckPage = 'matchups'">Matchups</a></li>
-                </ul>
+                <div class="col-sm-12 tier-sub-nav">
+                    <ul>
+                        <li ng-class="{selected: deckPage==='general'}"><a href="#" ng-click="deckPage = 'general'" class="">General</a></li>
+                        <li ng-class="{selected: deckPage==='tech'}"><a href="#" ng-click="deckPage = 'tech'" class="">Tech</a></li>
+                        <li ng-class="{selected: deckPage==='matchups'}"><a href="#" ng-click="deckPage = 'matchups'" class="p">Matchups</a></li>
+                    </ul>
+                </div>
                 <!-- general -->
                 <div class="form-group" ng-show="deckPage === 'general'">
                     <div class="clearfix m-b-md">
@@ -280,16 +285,16 @@
                                         </div>
                                     </div>
                                     <ul class="list-group">
-                                        <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy: ['-toss', 'card.name']" class="list-group-item">
-                                            <button type="button" class="cardBtn" ng-click="snapshot.deckTechCardToggleToss(c)">
+                                        <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy: ['-toss', 'card.name']" class="list-group-item gradient-add">
+                                            <button type="button" class="cardBtn z-5" ng-click="snapshot.deckTechCardToggleToss(c)">
                                                  <i class="fa" ng-class="{ 'fa-minus': c.toss, 'fa-plus': !c.toss }"></i>
                                             </button>
                                             {{c.card.name}}
-                                            <button type="button" class="pull-right cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
-                                            <button type="button" class="pull-right btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
+                                            <button type="button" class="pull-right z-5 cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
+                                            <button type="button" class="pull-right z-5 btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
                                         </li>
                                         <li class="list-group-item">
-                                            <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
+                                            <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)"><i class="fa fa-plus-circle"></i>&nbsp Add Card</a>
                                         </li>
                                     </ul>
                                 </div>

@@ -44,6 +44,40 @@
     }
 }
 
+.modal-admin-remove {
+    .modal-content {
+        min-height: 330px;
+    }
+    
+    .modal-body {
+        text-align: center;
+        margin-top: 20px;
+        color: $light-font;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .btn-danger, 
+    .btn-change {
+        background-image: none;
+        border-color: transparent;
+        border-radius: 0px;
+        background-color: rgba($btn-red, 0.6);
+        color: $light-font;
+        
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        
+        &:hover,
+        &:focus {
+            background-color: rgba($btn-red, 0.9);
+            color: $white;
+        
+        }
+        
+    } // btn-change, btn-danger
+}
+
 
 .modal-admin {
     
@@ -69,7 +103,7 @@
         .modal-header {
             background: rgba($white,0.15);
             border: 0px solid black;
-            height: 70px;
+            min-height: 70px;
             
             .close {
                 margin-top: 5px;
@@ -433,6 +467,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
         .fa {
             
             margin-top: 37%;
+            font-size: 80px;
 
         }
     }
