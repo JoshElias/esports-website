@@ -5,14 +5,12 @@
         <h3 class="pull-left"><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot</h3>
         <button type="button" ng-click="snapshot.loadPrevious()" ng-if="mode === 'add' && !snapshot.loaded" class="btn admin-btn-blue pull-right m-r-sm ">Load Previous</button>
    
-    
         <div class="form-group pull-left">
             <label for="title" class="control-label pull-left snap-num-title">#</label>
             <div class="wrapper-none pull-left">
                 <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum" ng-keyup="snapshot.setSlug()">
             </div>
         </div>
-       
     </div> <!--panel header ends -->
     <div class="panel-body padding-none p-t-none p-b-none">
         <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
@@ -194,45 +192,27 @@
         <div ng-show="page === 'authors'" class="col-sm-12 col-md-8 col-lg-9 author-right-section">
             <div ng-if="snapshot.activeAuthor">
                 
-                
-                
-                
-                
                 <div class="col-sm-12">
                     <div class="form-group col-sm-5">
-                    <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-1 control-label">Description</label>
                     </div>
                     <div class="form-group col-sm-7">
-                        <label for="authorClasses_{{snapshot.activeAuthor.user.username}}" class="col-sm-3 control-label">Class(es) of Expertise</label>
                         <div class="col-sm-6">
-                            <select class="form-control" name="authorClasses{{author.user.username}}" ng-model="snapshot.activeAuthor.expertClasses" size="9" multiple>
-                              <option value="druid">Druid</option>
-                              <option value="hunter">Hunter</option>
-                              <option value="mage">Mage</option>
-                              <option value="paladin">Paladin</option>
-                              <option value="priest">Priest</option>
-                              <option value="rogue">Rogue</option>
-                              <option value="shaman">Shaman</option>
-                              <option value="warlock">Warlock</option>
-                              <option value="warrior">Warrior</option>
-                            </select>
+                            <ul class="author-classes">
+                                <li ng-repeat="hsClass in snapshot.getHearthstoneClasses()">
+                                    <button type="button" class="btn pull-left {{hsClass}}" ng-class="{ 'btn-default': snapshot.authorHasClass(snapshot.activeAuthor, hsClass) }" ng-click="snapshot.toggleAuthorClass(snapshot.activeAuthor, hsClass)">{{hsClass}}</button>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     
-                    
-                    
                     <div class="col-sm-12">
+                        <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-1 control-label">Description</label>
                         <textarea class="form-control" rows="15" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description"></textarea>
                     </div>
                 </div>
                 
-                
-                
-                
             </div>
         </div>
-        
-        
         <!-- / authors -->
         <!-- tier list -->
         <div ng-show="page === 'tiers'" class="col-sm-12 col-md-8 col-lg-9">
