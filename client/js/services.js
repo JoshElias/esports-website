@@ -3759,6 +3759,17 @@ angular.module('app.services', [])
             { key: 'Wild', value: 'wild' },
             { key: 'Legacy', value: 'legacy' },
         ];
+        var hsClasses = [
+            'druid',
+            'hunter',
+            'mage',
+            'paladin',
+            'priest',
+            'rogue',
+            'shaman',
+            'warlock',
+            'warrior'
+        ];
         var defaultSnap = {
             snapNum: 1,
             snapshotType: 'standard',
@@ -3790,7 +3801,7 @@ angular.module('app.services', [])
             id: null,
             user: undefined,
             description: "",
-            klass: []
+            expertClasses: []
         };
         var defaultTier = {
             tier: 1,
@@ -4105,7 +4116,29 @@ angular.module('app.services', [])
                     sb.authors.splice(index, 1);
                 }
             };
-
+            
+            // get hs classes
+            sb.getHearthstoneClasses = function () {
+                return hsClasses;
+            };
+            
+            // toggle class for author
+            sb.toggleAuthorClass = function (author, klass) {
+                // check if class exists
+                var index = author.expertClasses.indexOf(klass);
+                if (index !== -1) {
+                    author.expertClasses.splice(index, 1);
+                } else {
+                    author.expertClasses.push(klass);
+                }
+            };
+            
+            // return if author has class
+            sb.authorHasClass = function (author, klass) {
+                var index = author.expertClasses.indexOf(klass);
+                return (index !== -1);
+            };
+            
             // add tier
             sb.tierAdd = function () {
                 var newTier = angular.copy(defaultTier);
@@ -4450,7 +4483,7 @@ angular.module('app.services', [])
                     title: "Authors",
                     message: $compile('<div snapshot-add-author></div>')(newScope),
                     show: false,
-                    className: 'modal-admin'
+                    className: 'modal-admin modal-admin-authors'
                 });
                 box.modal('show');
             };
@@ -4543,7 +4576,7 @@ angular.module('app.services', [])
                         }
                     },
                     show: false,
-                    className: 'modal-admin modal-has-footer'
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
                 });
                 box.modal('show');
             };
@@ -4618,7 +4651,7 @@ angular.module('app.services', [])
                     title: "Cards",
                     message: $compile('<div snapshot-add-card></div>')(newScope),
                     show: false,
-                    className: 'modal-admin'
+                    className: 'modal-admin modal-admin-cards'
                 });
                 box.modal('show');
             };
