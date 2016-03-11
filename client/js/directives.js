@@ -1442,6 +1442,81 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
+.directive('snapshotAddGuide', ['$q', 'Guide', 'AjaxPagination', function ($q, Guide, AjaxPagination) {
+    return {
+        templateUrl: tpl + "views/admin/guide.search.modal.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.guides = [];
+
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 10;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateGuides(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+
+            function updateGuides (page, perpage, search, callback) {
+                $scope.loading = true;
+
+                var pattern = '/.*'+search+'.*/i';
+                var where = {};
+
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            title: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+
+                AjaxPagination.update(Guide, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.guides = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateGuides($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateGuides(1, $scope.perpage, $scope.search);
+            };
+        }]
+    }
+}])
 .directive('snapshotAddDeck', [function () {
     return {
         templateUrl: tpl + "views/admin/hs.snapshot.add.deck.html"
@@ -2212,6 +2287,7 @@ angular.module('app.directives', ['ui.load'])
         controller: ['$scope', function ($scope) {
             var box = bootbox.dialog;
             var hBuffer = [];
+            var gBuffer = [];
             var defaultHeroTier = {
                 summary      : "",
                 tier         : $scope.tier,
@@ -2225,6 +2301,11 @@ angular.module('app.directives', ['ui.load'])
                 guideTierId  : "",
                 snapshotId   : ""
             };
+            var defaultTierGuide = {
+                heroTierId : "",
+                guideId    : "",
+                orderNum   : 0
+            }
 
             function addBufferedHeroes (tier) {
                 var snap = $scope.snapshot;
@@ -2257,33 +2338,70 @@ angular.module('app.directives', ['ui.load'])
                     title: 'rekt'
                 });
 
-                function sup () {
+                dialog.modal('show');
+                dialog.on('hidden.bs.modal', function () {
                     addBufferedHeroes(tier);
-                }
+                });
+            };
+
+            $scope.heroAdd = function (hero) {
+                var newHero = angular.copy(defaultHeroTier);
+                newHero['heroId'] = hero.id;
+                newHero['hero'] = hero;
+
+                hBuffer.push(newHero);
+            };
+
+            $scope.openGuideAdd = function () {
+                var dialog = box({
+                    message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope)
+                });
 
                 dialog.modal('show');
-                dialog.on('hidden.bs.modal', sup);
+                dialog.on('hidden.bs.modal', function () {
+                    addBufferedHeroes();
+                });
+            }
+
+            $scope.guideAdd = function (guide) {
+                var tierGuide = angular.copy(defaultTierGuide);
+                tierGuide['guide'] = guide;
+                tierGuide['guideId'] = guide.id;
+                tierGuide['heroTierId'] = $scope.activeHero.id || "";
+
+                $scope.activeHero.tierGuides = []
+
+                $scope.activeHero.tierGuides.push(tierGuide);
+            }
+
+            $scope.removeHero = function () {
+                return $scope.snapshot.removeHero();
+            }
+
+            $scope.guideDeleteById = function (guideId) {
+                var active = $scope.activeHero;
+
+                return $scope.snapshot.removeGuideFromHero(guideId, active.hero.id);
             }
 
             $scope.setActiveHero = function (hero) {
+                gBuffer = [];
+
                 $scope.activeHero = hero;
+            };
+
+            $scope.guideExistsById = function (guideId) {
+                var guides = $scope.activeHero.tierGuides;
+
+                return _.find(guides, function (guide) { return guide.guideId == guideId });
             }
 
             $scope.heroExistsById = function (heroId) {
                 var heroes = $scope.snapshot.heroTiers;
                 var allHeroes = _.union(heroes, hBuffer);
 
-
                 return _.find(allHeroes, function (hero) { return heroId == hero.hero.id });
             };
-
-            $scope.heroAdd = function (hero) {
-                var newHero = angular.copy(defaultHeroTier);
-                    newHero['heroId'] = hero.id;
-                    newHero['hero'] = hero;
-
-                hBuffer.push(newHero);
-            }
 
             $scope.snapshot.buildTiers();
             //$scope.$watch($scope.snapshot.heroTiers, $scope.snapshot.buildTiers);

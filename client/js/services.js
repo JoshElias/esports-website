@@ -597,6 +597,18 @@ var loggedIn = false,
 
         }
 
+        HOTSSnapshot.prototype.removeGuideFromHero = function (guideId, heroId) {
+            var hero = _.find(this.heroTiers, function (h) {
+                return h.heroId == heroId;
+            });
+
+            var guide = _.find(hero.tierGuides, function (g) {
+                return g.guideId == guideId;
+            })
+
+            hero.tierGuides = _.difference(hero.tierGuides, [guide]);
+        }
+
         HOTSSnapshot.prototype.removeAuthor = function (obj) {
             var authors = this.authors;
 

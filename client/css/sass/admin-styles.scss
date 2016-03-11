@@ -184,15 +184,15 @@ textarea[name=thoughts] {
 			height: 40px;
 			line-height: 30px;
 
+			&:nth-child(even) {
+				background: #BBBBBB;
+
+			}
+
 			&.active {
 				background: $ts-blue;
 				color: white;
 				font-weight: bold;
-			}
-
-			&:nth-child(even) {
-				background: #BBBBBB;
-
 			}
 
 			&:hover {
