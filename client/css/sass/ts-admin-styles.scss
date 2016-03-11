@@ -12,15 +12,11 @@ body.admin {
 
 .ts-admin-styles { // ---- bookend class ----
     
-    .gradient-fill {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 1;
-        
+    .dndPlaceholder {
+        background-color: $black-50 !important;
+        background-image: none;
     }
+    
     .gradient-add {
                       z-index: 1;      
         &:after {  //gradient hover
@@ -371,7 +367,7 @@ body.admin {
             color: $white;
             transition: 0.2s ease;
             padding: 10px;
-            height: 40px;
+            height: 40px !important;
 
             &.active {
                 
@@ -445,7 +441,7 @@ body.admin {
     .leftside-content {
             background-color: $black-20;
             margin: 0px !important;
-            min-height: 575px;
+            min-height: 628px;
             padding-bottom: 20px;
         
         .form-group {
@@ -531,7 +527,12 @@ body.admin {
     }
     
     //hs snapshot - author panel  
-    
+    .general-section {
+        .control-label {
+            padding-top: 15px;
+            padding-bottom: 5px;
+        }
+    }
     .author-section,
     .tier-section {
         
@@ -543,7 +544,7 @@ body.admin {
                     cursor: pointer;
                     width: 100%;
                     display: block;
-                    line-height: 100%;
+                    line-height: 50px;
                     color: $white-50;
 
                     .fa {
@@ -601,8 +602,8 @@ body.admin {
                         .list-group-item {
                             
                             background-color: transparent;
-                            padding: 15px 20px;
-                            
+                            //padding: 15px 20px;
+                            cursor: pointer;
                             
                             
                             .btn-group {
@@ -744,11 +745,17 @@ body.admin {
         .list-group-item {
             position: relative;
             display: block;
-            padding: 15px 10px;
+            //padding: 15px 10px;
+            padding: 0 0 0 10px !important;
             margin-bottom: 0px;
             background-color: transparent;
             border: 0px solid transparent;
             color: $white-50;
+            height: 50px;
+            
+            &:hover{
+                color: $white;
+            }
             
             &:first-child {
                 border-top-left-radius: 0px !important;
