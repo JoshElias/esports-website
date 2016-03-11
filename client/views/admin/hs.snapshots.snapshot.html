@@ -106,10 +106,14 @@
                                     <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item gradient-add admin-list-item" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
                                         {{author.user.username}}<div class="btn-group pull-right"><button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                     </li>
-                                    <li class="list-group-item gradient-add admin-list-item">
-                                    <a ng-click="snapshot.authorAddPrompt()" class="add-element"><i class="fa fa-plus-circle"></i> Add Author</a>
-                                    </li>
                                 </ul>
+                                <div class="panel-body">
+                                    <div class="list-group m-b-none">
+                                        <div class="list-group-item gradient-add admin-list-item">
+                                                        <a ng-click="snapshot.authorAddPrompt()"  class="add-element"><i class="fa fa-plus-circle"></i>Add Tier</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -139,32 +143,32 @@
                             <div class="panel-body">
                                 <ul class="list-group m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
                                     <li class="list-group-item" ng-if="tier.decks == 0">There are no decks selected yet!</li>
-                                    <li class="list-group-item admin-list-item" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
-                                        <div class="gradient-fill gradient-add"></div>
-                                            <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5">
-                                                <div class="pull-left m-r-sm">{{d.ranks[0]}}</div>
-                                                <div class="pull-left">{{d.deck.name}}</div>
-                                                <div class="btn-group pull-right">
-                                                    <button class="btn btn-remove" type="button" ng-click="$event.stopPropagation(); snapshot.deckDeletePrompt(tier, d)"><i class="fa fa-close"></i></button>
-                                                </div>
+                                    <li class="list-group-item admin-list-item gradient-add" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
+                                        <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5">
+                                            <div class="pull-left m-r-sm">{{d.ranks[0]}}</div>
+                                            <div class="pull-left">{{d.deck.name}}</div>
+                                            <div class="btn-group pull-right">
+                                                <button class="btn btn-remove" type="button" ng-click="$event.stopPropagation(); snapshot.deckDeletePrompt(tier, d)"><i class="fa fa-close"></i></button>
                                             </div>
-                                        
-                                    
-                                    </li>
-                                    <li class="list-group-item gradient-add admin-list-item">
-                                    <a ng-click="snapshot.deckAddPrompt(tier)" class="add-element"><i class="fa fa-plus-circle"></i> Add Deck</a>
+                                        </div>
                                     </li>
                                 </ul>
+                                <div class="panel-body">
+                                    <div class="list-group m-b-none">
+                                        <div class="list-group-item gradient-add admin-list-item">
+                                            <a ng-click="snapshot.deckAddPrompt(tier)"  class="add-element"><i class="fa fa-plus-circle"></i>Add Tier</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            
                         </div>
                     </div>
                     <div class="panel-body">
-                        <ul class="list-group m-b-none">
-                            <li class="list-group-item gradient-add admin-list-item">
+                        <div class="list-group m-b-none">
+                            <div class="list-group-item gradient-add admin-list-item">
                                             <a ng-click="snapshot.tierAdd()" class="add-element"><i class="fa fa-plus-circle"></i>Add Tier</a>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
                     </div>
                 </div> <!-- panel -->
             </div> 
@@ -172,7 +176,7 @@
             <!-- / tiers nav -->
         </div>
         <!-- general -->
-        <div ng-show="page === 'general'" class="col-sm-12 col-md-8 col-lg-9">
+        <div ng-show="page === 'general'" class="col-sm-12 col-md-8 col-lg-9 general-section">
             <div class="form-group">
 <!--                <label for="intro" class="col-sm-2 control-label">Content</label>-->
                 <div class="panel opac-panel wrapper-none col-sm-12">
