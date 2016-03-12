@@ -306,47 +306,53 @@
                 <!-- matchups -->
                 <div class="form-group" ng-show="deckPage === 'matchups'">
                     <div ng-if="snapshot.activeDeck.tier < 3">
-                        <label class="control-label col-sm-1">Matches</label>
-                        <div class="col-sm-9">
-                            <div class="col-sm-6" ng-repeat="match in snapshot.getMatchupsByDeckId(snapshot.activeDeck.deck.id) track by $index"> 
-                                <div ng-if="snapshot.activeDeck.deck.id != match.againstDeck.id">
-                                    <div class="panel panel-default wrapper-none">
-                                        <div class="panel-heading">
-                                            <p class="m-b-none">{{snapshot.activeDeck.deck.name}} vs</p>
-                                            <p class="m-b-none bold-text ell">{{match.againstDeck.name}}</p>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="col-sm-12 wrapper-none">
-                                                <div class="col-sm-10 pull-right">
-                                                    <input ng-change="snapshot.matchupChangeForChance(match)" ng-model="match.forChance" type="range" min="0" max="100" step="5">
-                                                </div>
-                                                <div class="col-sm-2 m-t-sm center-text wrapper-none">
-                                                    <p>% {{match.forChance}}</p>
-                                                </div>
+                        <div class="col-xs-12" ng-repeat="match in snapshot.getMatchupsByDeckId(snapshot.activeDeck.deck.id) track by $index"> 
+                            <div ng-if="snapshot.activeDeck.deck.id != match.againstDeck.id">
+                                <div class="panel panel-default wrapper-none">
+                                    <div class="panel-heading">
+                                        <p class="m-b-none">{{snapshot.activeDeck.deck.name}} vs</p>
+                                        <p class="m-b-none bold-text ell">{{match.againstDeck.name}}</p>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="col-sm-12 wrapper-none">
+                                            <div class="col-sm-3">
+                                            
+                                            {{match.againstDeck.name}}
+                                            </div>
+                                            <div class="col-sm-8 pull-left">
+                                                <input ng-change="snapshot.matchupChangeForChance(match)" ng-model="match.forChance" type="range" min="0" max="100" step="5">
+                                            </div>
+                                            <div class="col-sm-1 m-t-sm center-text wrapper-none">
+                                                <p>% {{match.forChance}}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div ng-if="snapshot.activeDeck.deck.id == match.againstDeck.id">
-                                    <div class="panel panel-default wrapper-none">
-                                        <div class="panel-heading">
-                                            <p class="m-b-none">{{snapshot.activeDeck.deck.name}} vs</p>
-                                            <p class="m-b-none bold-text ell">{{match.forDeck.name}}</p>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="col-sm-12 wrapper-none">
-                                                <div class="col-sm-10 pull-right">
-                                                    <input ng-change="snapshot.matchupChangeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5" readonly>
-                                                </div>
-                                                <div class="col-sm-2 m-t-sm center-text wrapper-none">
-                                                    <p>% {{match.againstChance}}</p>
-                                                </div>
+                            </div>
+                            <div ng-if="snapshot.activeDeck.deck.id == match.againstDeck.id">
+                                <div class="panel panel-default wrapper-none">
+                                    <div class="panel-heading">
+                                        <p class="m-b-none">{{snapshot.activeDeck.deck.name}} vs</p>
+                                        <p class="m-b-none bold-text ell">{{match.forDeck.name}}</p>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="col-sm-12 wrapper-none">
+                                            <div class="col-sm-3">
+                                            {{match.forDeck.name}}
+                                            
+                                            </div>
+                                            <div class="col-sm-8 pull-left">
+                                                <input ng-change="snapshot.matchupChangeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5" readonly>
+                                            </div>
+                                            <div class="col-sm-1 m-t-sm center-text wrapper-none">
+                                                <p>% {{match.againstChance}}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 <!-- / matchups -->
