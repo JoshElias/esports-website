@@ -1,36 +1,40 @@
 {
-  "name": "forumCategory",
-  "plural": "forumCategories",
+  "name": "deckTech",
+  "plural": "deckTechs",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
   "options": {
     "validateUpsert": true,
-    "$validate": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    }
+    "$destroyOnDelete": true
   },
   "properties": {
     "title": {
-      "type": "string",
-      "$validate": ["spam"]
+      "type": "string"
     },
-    "isActive": {
-      "type": "boolean"
-    },
-    "__v": {
+    "orderNum": {
       "type": "number"
-    }
+    },
+    "deckId": {},
+    "deckTierId": {}
   },
   "validations": [],
   "relations": {
-    "forumThreads": {
+    "deckTier": {
+      "type": "belongsTo",
+      "model": "deckTier",
+      "foreignKey": "deckTierId"
+    },
+    "cardTech": {
       "type": "hasMany",
-      "model": "forumThread",
-      "foreignKey": "forumCategoryId",
-      "isChild": true
+      "model": "cardTech",
+      "foreignKey": "deckTechId",
+      "$destroyOnDelete": true
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
     }
   },
   "acls": [
@@ -56,6 +60,12 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "__create__cardTechs"
     }
   ],
   "methods": {}

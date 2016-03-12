@@ -23,7 +23,7 @@ function filterHandler(state, finalCb) {
 
     var filters = state.modelProperties[FILTER_FEATURE_KEY];
     if(Array.isArray(filters)) {
-        return async.eachSeries(filters, applyFilter, finalCb);
+        return async.each(filters, applyFilter, finalCb);
     } else {
         return applyFilter(filters, finalCb);
     }
@@ -49,6 +49,7 @@ function filterHandler(state, finalCb) {
 
         return User.isInRoles(userId,
             acceptedRoles,
+            state.ctx.req,
             {modelClass: state.modelName, modelId: instanceId},
             function (err, isInRoles) {
                 if (err) return filterCb();

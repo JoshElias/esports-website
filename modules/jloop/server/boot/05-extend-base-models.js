@@ -8,6 +8,7 @@ var scope = require("../lib/scope");
 var relation = require("../lib/relation");
 
 
+
 module.exports = function(server) {
 
     var cleanModels = {};
@@ -30,9 +31,13 @@ module.exports = function(server) {
 
 
         // Validation
+        // Slug
+        var beforeSaveFuncs = [validator.validate, slug.generateSlug];
         model.observe("before save", function(ctx, next) {
             attachLoopbackContext(ctx);
-            validator.validate(ctx, next);
+            async.eachSeries(beforeSaveFuncs, function(beforeSaveFunc, beforeSaveCb) {
+                beforeSaveFunc(ctx,  beforeSaveCb);
+            }, next);
         });
 
 
@@ -51,11 +56,11 @@ module.exports = function(server) {
 
 
         // Filtering
-        var filterFuncs = [docFilter.filterDocs, fieldFilter.filterFields];
+        var afterRemoteFuncs = [docFilter.filterDocs, fieldFilter.filterFields];
         model.afterRemote("**", function (ctx, modelInstance, next) {
             attachLoopbackContext(ctx);
-            async.eachSeries(filterFuncs, function(filterFunc, filterCb) {
-                filterFunc(ctx, modelInstance, filterCb);
+            async.eachSeries(afterRemoteFuncs, function(afterRemoteFunc, remoteCb) {
+                afterRemoteFunc(ctx, modelInstance, remoteCb);
             }, next);
         });
     }

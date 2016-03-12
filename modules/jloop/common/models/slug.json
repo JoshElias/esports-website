@@ -1,0 +1,27 @@
+{
+  "name": "slug",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "slug": {
+      "type": "string"
+    },
+    "linked": {
+      "type": "boolean"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "sluggable": {
+      "type": "hasMany",
+      "model": "sluggable",
+      "foreignKey": "slugId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

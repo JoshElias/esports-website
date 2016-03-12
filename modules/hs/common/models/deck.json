@@ -11,7 +11,8 @@
     "$docFilter": {
       "acceptedRoles": ["$owner", "$admin"],
       "predicate": "private"
-    }
+    },
+    "$destroyOnDelete": true
   },
   "properties": {
     "against": {
@@ -129,7 +130,7 @@
       "type": "hasMany",
       "model": "deckCard",
       "foreignKey": "deckId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "comments": {
       "type": "hasMany",
@@ -140,13 +141,13 @@
       "type": "hasMany",
       "model": "deckMatchup",
       "foreignKey": "deckId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "mulligans": {
       "type": "hasMany",
       "model": "mulligan",
       "foreignKey": "deckId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "votes": {
       "type": "hasMany",

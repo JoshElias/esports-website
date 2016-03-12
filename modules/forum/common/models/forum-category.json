@@ -1,49 +1,37 @@
 {
-  "name": "deckTier",
+  "name": "forumCategory",
+  "plural": "forumCategories",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "$destroyOnDelete": true
   },
   "properties": {
-    "description": {
-      "type": "string"
+    "title": {
+      "type": "string",
+      "$validate": ["spam"]
     },
-    "weeklyNotes": {
-      "type": "string"
+    "isActive": {
+      "type": "boolean"
     },
-    "name": {
-      "type": "string"
-    },
-    "tier": {
+    "__v": {
       "type": "number"
-    },
-    "ranks": {
-      "type": [
-        "number"
-      ]
-    },
-    "deckId": {},
-    "snapshotId": {}
+    }
   },
   "validations": [],
   "relations": {
-    "deck": {
-      "type": "belongsTo",
-      "model": "deck",
-      "foreignKey": "deckId"
-    },
-    "deckTech": {
+    "forumThreads": {
       "type": "hasMany",
-      "model": "deckTech",
-      "foreignKey": "deckTierId",
-      "isChild": true
-    },
-    "snapshot": {
-      "type": "belongsTo",
-      "model": "snapshot",
-      "foreignKey": "snapshotId"
+      "model": "forumThread",
+      "foreignKey": "forumCategoryId",
+      "$destroyOnDelete": true
     }
   },
   "acls": [
@@ -69,12 +57,6 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$admin",
-      "permission": "ALLOW",
-      "property": "__create__deckTechs"
     }
   ],
   "methods": {}

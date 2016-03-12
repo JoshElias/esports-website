@@ -4,8 +4,8 @@ var loopback = require("loopback");
 var bcrypt = require('bcrypt-nodejs');
 var request = require("request");
 
-var utils = require("../../modules/jloop/server/lib/utils");
-var subscription = require("../../server/lib/subscription");
+var utils = require("../../server/lib/utils");
+var subscription = require("../../../../server/lib/subscription");
 
 
 module.exports = function(User) {
@@ -448,8 +448,8 @@ module.exports = function(User) {
 
 
 
-    User.isInRoles = function(uid, roleNames, options, finalCb) {
-        if (finalCb === undefined && typeof options === 'function') {
+    User.isInRoles = function(uid, roleNames, req, options, finalCb) {
+        if (finalCb === undefined && typeof options === "function") {
             finalCb = options;
             options = undefined;
         }
@@ -459,21 +459,10 @@ module.exports = function(User) {
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
-        var loopbackContext = loopback.getCurrentContext();
-        var req;
-        if(loopbackContext) {
-            req = loopbackContext.get("req");
-        } else {
-            console.log("NO REQ LOL")
-        }
 
         // Check for the roles we already have
         var isInRoles = {};
         if (req) {
-            console.log("cached req stuff");
-            console.log("ctx.active.http.req.ownedModels", req.ownedModels);
-            console.log("ctx.active.http.req.roles", req.roles);
-
 
             // Add generic static/dynamic roles
             if (typeof req.roles !== "object") {
@@ -525,7 +514,7 @@ module.exports = function(User) {
             isInRoles.none = true;
         }
 
-        return async.eachSeries(roleNames, function (roleName, eachCb) {
+        return async.each(roleNames, function (roleName, eachCb) {
 
             if (typeof isInRoles[roleName] !== "undefined") {
                 return eachCb();
@@ -821,7 +810,9 @@ module.exports = function(User) {
             description: "Checks if a user is of role",
             accepts: [
                 {arg: 'uid', type: 'string', required:true, http: {source: 'query'}},
-                {arg: 'roleNames', type: 'array', required:true, http: {source: 'query'}}
+                {arg: 'roleNames', type: 'array', required:true, http: {source: 'query'}},
+                {arg: 'req', type: 'object', description:'http request object. Not read from client', required:true, http: {source: 'req'}},
+                {arg: 'options', type: 'object', required:true, http: {source: 'query'}}
             ],
             returns: {arg: 'isInRoles', type: 'object'},
             http: {verb: 'get'},

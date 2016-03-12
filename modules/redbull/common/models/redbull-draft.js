@@ -24,7 +24,7 @@ module.exports = function(RedbullDraft) {
         }
         var userId = req.accessToken.userId.toString();
 
-        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], req, function (err, isInRoles) {
             if(err) return finalCb(err);
             if(isInRoles.none) return applyFilter();
 
@@ -56,6 +56,7 @@ module.exports = function(RedbullDraft) {
 
                     return User.isInRoles(userId,
                         ["$owner"],
+                        req,
                         {modelClass: "redbullDraft", modelId: result.id},
                         function (err, isInRoles) {
                             if(err) return resultCb(err);
@@ -80,6 +81,7 @@ module.exports = function(RedbullDraft) {
 
                 return User.isInRoles(userId,
                     ["$owner"],
+                    req,
                     {modelClass: "redbullDraft", modelId: ctx.result.id},
                     function (err, isInRoles) {
                         if(err) return finalCb(err);
@@ -160,7 +162,7 @@ module.exports = function(RedbullDraft) {
         clientData.authorId = userId;
 
         // Check if this is an official draft or not
-        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], req, function (err, isInRoles) {
             if (err) return finalCb(err);
 
             // If the user tried to start an official draft without authorization

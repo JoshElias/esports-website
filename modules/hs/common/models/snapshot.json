@@ -9,7 +9,8 @@
     "$docFilter": {
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
-    }
+    },
+    "$destroyOnDelete": true
   },
   "properties": {
     "snapNum": {
@@ -63,30 +64,36 @@
       "type": "hasMany",
       "model": "deckMatchup",
       "foreignKey": "snapshotId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "authors": {
       "type": "hasMany",
       "model": "snapshotAuthor",
       "foreignKey": "snapshotId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "snapshotId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "deckTiers": {
       "type": "hasMany",
       "model": "deckTier",
       "foreignKey": "snapshotId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "votes": {
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "snapshotId"
+    },
+    "slug": {
+      "type": "hasMany",
+      "model": "slug",
+      "foreignKey": "snapshotId",
+      "through": "sluggable"
     }
   },
   "acls": [

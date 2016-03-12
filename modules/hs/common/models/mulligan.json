@@ -4,7 +4,8 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$destroyOnDelete": true
   },
   "properties": {
     "className": {
@@ -39,13 +40,13 @@
       "type": "hasMany",
       "model": "cardWithCoin",
       "foreignKey": "mulliganId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "mulligansWithoutCoin": {
       "type": "hasMany",
       "model": "cardWithoutCoin",
       "foreignKey": "mulliganId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "deck": {
       "type": "belongsTo",

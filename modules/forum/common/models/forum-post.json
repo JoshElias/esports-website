@@ -9,7 +9,8 @@
     "$docFilter": {
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
-    }
+    },
+    "$destroyOnDelete": true
   },
   "properties": {
     "__v": {
@@ -55,13 +56,19 @@
       "type": "belongsTo",
       "model": "forumThread",
       "foreignKey": "forumThreadId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "forumPostId",
-      "isChild": true
+      "$destroyOnDelete": true
+    },
+    "slug": {
+      "type": "hasMany",
+      "model": "slug",
+      "foreignKey": "forumPostId",
+      "through": "sluggable"
     }
   },
   "acls": [

@@ -41,7 +41,7 @@ function filterDocs(ctx, modelInstance, finalCb) {
 function filterResults(ctx, filterOptions, finalCb) {
     var answer = [];
 
-    async.eachSeries(ctx.result, function(result, resultCb) {
+    async.each(ctx.result, function(result, resultCb) {
 
         // Handle predicate
         var predicate = predicates[filterOptions.predicate];
@@ -60,6 +60,7 @@ function filterResults(ctx, filterOptions, finalCb) {
         var User = app.models.user;
         return User.isInRoles(userId,
             filterOptions.acceptedRoles,
+            ctx.req,
             {modelClass: ctx.Model.definition.name, modelId: result.id},
             function (err, isInRoles) {
                 if(err) return resultCb(err);
@@ -94,6 +95,7 @@ function filterResult(ctx, filterOptions, finalCb) {
     var User = app.models.user;
     return User.isInRoles(userId,
         filterOptions.acceptedRoles,
+        ctx.req,
         {modelClass: ctx.Model.definition.name, modelId: ctx.result.id},
         function (err, isInRoles) {
             if(err) return finalCb(err);

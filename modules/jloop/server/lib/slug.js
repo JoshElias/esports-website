@@ -1,9 +1,14 @@
-function slugify(string) {
-    return (string) ? string.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
-};
 
-function generateSlug(sourceKey) {
-    return function(ctx, next) {
+
+
+
+
+
+function generateSlug(ctx, next) {
+
+
+
+
         var properties = ctx.Model.definition.rawProperties;
         var data;
         var newName;
@@ -61,4 +66,15 @@ function generateSlug(sourceKey) {
 
         return next();
     }
+};
+
+
+function slugify(string) {
+    return (string) ? string.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
+};
+
+
+module.exports = {
+    generateSlug: generateSlug,
+    slugify: slugify
 };

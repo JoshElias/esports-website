@@ -1,7 +1,16 @@
 var async = require("async");
 
+var DESTROY_CHILDREN_FEATURE_KEY = "$destroyOnDelete";
+
+
 
 function destroyChildren(ctx, finalCb) {
+
+    // Check for the feature key in the model's settings
+    if (!ctx.Model.definition.settings[DESTROY_CHILDREN_FEATURE_KEY]) {
+        return finalCb();
+    }
+
     var query = {
         where: ctx.where,
         fields:{ id:true }
@@ -14,7 +23,7 @@ function destroyChildren(ctx, finalCb) {
         async.each(instances, function(instance, instanceCb) {
             async.forEachOf(relations, function(relationObj, relationName, relationCb) {
 
-                if(!relationObj.isChild) {
+                if(!relationObj[DESTROY_CHILDREN_FEATURE_KEY]) {
                     return relationCb();
                 }
 
@@ -33,7 +42,18 @@ function destroyChildren(ctx, finalCb) {
     });
 };
 
+
+module.exports = {
+    destroyChildren: destroyChildren
+};
+
+
+
+
 /*
+    HERE LIES SAVE CHILDREN. GONE BUT NEVER FORGOTTEN
+
+
 function saveChildren(ctx, next) {
     var parentRelations = ctx.Model.settings.relations;
     var parentOptions = ctx.options || {};
@@ -232,7 +252,3 @@ function saveChildren(ctx, next) {
     });
 }
 */
-
-module.exports = {
-    destroyChildren: destroyChildren
-};

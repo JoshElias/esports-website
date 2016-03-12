@@ -10,7 +10,8 @@
     "$docFilter": {
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
-    }
+    },
+    "$destroyOnDelete": true
   },
   "properties": {
     "title": {
@@ -89,7 +90,7 @@
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "articleId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "author": {
       "type": "belongsTo",
@@ -117,6 +118,12 @@
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "articleId"
+    },
+    "slug": {
+      "type": "hasMany",
+      "model": "slug",
+      "foreignKey": "articleId",
+      "through": "sluggable"
     }
   },
   "acls": [

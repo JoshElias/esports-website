@@ -10,7 +10,8 @@
     "$docFilter": {
       "acceptedRoles": ["$admin", "$owner"],
       "predicate": "private"
-    }
+    },
+    "$destroyOnDelete": true
   },
   "properties": {
     "name": {
@@ -104,7 +105,7 @@
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "guideId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "maps": {
       "type": "hasAndBelongsToMany",
@@ -114,7 +115,7 @@
       "type": "hasMany",
       "model": "guideHero",
       "foreignKey": "guideId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "guideTalents": {
       "type": "hasMany",
@@ -125,6 +126,12 @@
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "guideId"
+    },
+    "slug": {
+      "type": "hasMany",
+      "model": "slug",
+      "foreignKey": "guideId",
+      "through": "sluggable"
     }
   },
   "acls": [

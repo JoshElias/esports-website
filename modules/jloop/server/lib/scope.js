@@ -14,7 +14,7 @@ function addMaxScope(models) {
         // Check if this user is an admin
         var User = models.user;
 
-        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$admin"], function (err, isInRoles) {
+        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$admin"], ctx.req, function (err, isInRoles) {
             if (err) return finalCb(err);
             else if (isInRoles.none) applyLimit(ctx, DEFAULT_MAX_LIMIT);
             else applyLimit(ctx, ADMIN_MAX_LIMIT);

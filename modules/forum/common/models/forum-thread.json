@@ -1,10 +1,12 @@
 {
-  "name": "game",
+  "name": "forumThread",
+  "plural": "forumThreads",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
   "options": {
     "validateUpsert": true,
+    "$validate": true,
     "$docFilter": {
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
@@ -15,27 +17,46 @@
     "__v": {
       "type": "number"
     },
-    "name": {
-      "type": "string",
-      "required": true
-    },
     "isActive": {
       "type": "boolean"
-    }
+    },
+    "description": {
+      "type": "string",
+      "$validate": ["spam"]
+    },
+    "title": {
+      "type": "string",
+      "$validate": ["spam"]
+    },
+    "slug": {
+        "url": {
+          "type": "string",
+          "$validate": ["unique"]
+        },
+        "linked": {
+          "type": "boolean"
+        }
+    },
+    "forumCategoryId": {}
   },
   "validations": [],
   "relations": {
-    "teams": {
+    "forumPosts": {
       "type": "hasMany",
-      "model": "team",
-      "foreignKey": "gameId",
+      "model": "forumPost",
+      "foreignKey": "forumThreadId",
       "$destroyOnDelete": true
     },
-    "hsClasses": {
+    "forumCategory": {
+      "type": "belongsTo",
+      "model": "forumCategory",
+      "foreignKey": "forumCategoryId"
+    },
+    "slug": {
       "type": "hasMany",
-      "model": "hsClass",
-      "foreignKey": "gameId",
-      "$destroyOnDelete": true
+      "model": "slug",
+      "foreignKey": "forumThreadId",
+      "through": "sluggable"
     }
   },
   "acls": [
@@ -54,6 +75,12 @@
       "accessType": "WRITE",
       "principalType": "ROLE",
       "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
       "permission": "ALLOW"
     }
   ],

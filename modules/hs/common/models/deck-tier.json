@@ -1,55 +1,50 @@
 {
-  "name": "forumThread",
-  "plural": "forumThreads",
+  "name": "deckTier",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
   "options": {
     "validateUpsert": true,
-    "$validate": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    }
+    "$destroyOnDelete": true
   },
   "properties": {
-    "__v": {
+    "description": {
+      "type": "string"
+    },
+    "weeklyNotes": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "tier": {
       "type": "number"
     },
-    "isActive": {
-      "type": "boolean"
+    "ranks": {
+      "type": [
+        "number"
+      ]
     },
-    "description": {
-      "type": "string",
-      "$validate": ["spam"]
-    },
-    "title": {
-      "type": "string",
-      "$validate": ["spam"]
-    },
-    "slug": {
-        "url": {
-          "type": "string",
-          "$validate": ["unique"]
-        },
-        "linked": {
-          "type": "boolean"
-        }
-    },
-    "forumCategoryId": {}
+    "deckId": {},
+    "snapshotId": {}
   },
   "validations": [],
   "relations": {
-    "forumPosts": {
-      "type": "hasMany",
-      "model": "forumPost",
-      "foreignKey": "forumThreadId",
-      "isChild": true
-    },
-    "forumCategory": {
+    "deck": {
       "type": "belongsTo",
-      "model": "forumCategory",
-      "foreignKey": "forumCategoryId"
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "deckTech": {
+      "type": "hasMany",
+      "model": "deckTech",
+      "foreignKey": "deckTierId",
+      "$destroyOnDelete": true
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
     }
   },
   "acls": [
@@ -75,6 +70,12 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "__create__deckTechs"
     }
   ],
   "methods": {}

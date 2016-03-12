@@ -8,7 +8,8 @@
     "$docFilter": {
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
-    }
+    },
+    "$destroyOnDelete": true
   },
   "properties": {
     "__v": {
@@ -33,7 +34,7 @@
       "type": "hasMany",
       "model": "teamMember",
       "foreignKey": "teamId",
-      "isChild": true
+      "$destroyOnDelete": true
     }
   },
   "acls": [
