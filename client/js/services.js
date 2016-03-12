@@ -1518,7 +1518,6 @@ angular.module('app.services', [])
             description: data.description || '',
             chapters: data.chapters || [],
             deckType: data.deckType || 'None',
-            isCommentable: data.isCommentable,
             gameModeType: data.gameModeType || 'constructed',
             basic: _.isUndefined(data.basic) ? false : data.basic,
             matchups: data.matchups || [],
