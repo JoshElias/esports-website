@@ -2344,6 +2344,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.fetching = true;
             
             var cleanArticle = angular.copy(article);
+
+            cleanArticle.deckId = article.deck.id;
             
             cleanArticle = Util.cleanObj(cleanArticle, [
                 'articleType',
@@ -2953,6 +2955,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.fetching = true;
             
             var cleanArticle = angular.copy(article);
+
+            cleanArticle.deckId = article.deck.id;
             
             cleanArticle = Util.cleanObj(cleanArticle, [
                 'articleType',

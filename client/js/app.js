@@ -631,6 +631,23 @@ var app = angular.module('app', [
                                                         }
                                                     ]
                                                 }
+                                            },
+                                            {
+                                                relation: "deck",
+                                                scope: {
+                                                    fields: ['id', 'playerClass', 'heroName', 'dust', 'gameModeType'],
+                                                    include: {
+                                                        relation: 'cards',
+                                                        scope: {
+                                                            include: {
+                                                                relation: 'card',
+                                                                scope: {
+                                                                    fields: ['id', 'name', 'cost', 'photoNames']
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         ]
                                     }
