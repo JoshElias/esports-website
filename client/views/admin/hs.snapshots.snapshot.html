@@ -108,7 +108,7 @@
                                 <div class="panel-body">
                                     <div class="list-group m-b-none">
                                         <div class="list-group-item gradient-add admin-list-item">
-                                                        <a ng-click="snapshot.authorAddPrompt()"  class="add-element"><i class="fa fa-plus-circle"></i>Add Author</a>
+                                            <a ng-click="snapshot.authorAddPrompt()"  class="add-element"><i class="fa fa-plus-circle"></i>Add Author</a>
                                         </div>
                                     </div>
                                 </div>
@@ -164,12 +164,12 @@
                     <div class="panel-body">
                         <div class="list-group m-b-none">
                             <div class="list-group-item gradient-add admin-list-item">
-                                            <a ng-click="snapshot.tierAdd()" class="add-element"><i class="fa fa-plus-circle"></i>Add Tier</a>
+                                <a ng-click="snapshot.tierAdd()" class="add-element"><i class="fa fa-plus-circle"></i>Add Tier</a>
                             </div>
                         </div>
                     </div>
                 </div> <!-- panel -->
-            </div> 
+            </div>
             </div>
             <!-- / tiers nav -->
         </div>
@@ -214,7 +214,7 @@
                     
                     <div class="col-sm-12">
                         <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-1 control-label">Description</label>
-                        <textarea class="form-control m-b-lg" rows="15" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description"></textarea>
+                        <textarea class="form-control m-b-lg" rows="15" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description" ng-change="snapshot.authorUpdated(snapshot.activeAuthor)"></textarea>
                     </div>
                 </div>
                 
@@ -236,21 +236,21 @@
                     <div class="clearfix m-b-md">
                         <label for="deckName" class="control-label col-sm-1">Deck Name</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="deckName" name="deckName" ng-model="snapshot.activeDeck.name" />
+                            <input type="text" class="form-control" id="deckName" name="deckName" ng-model="snapshot.activeDeck.name" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)" />
                         </div>
                     </div>
 
                     <div class="clearfix m-b-md">
                         <label for="deckExplanation" class="control-label col-sm-1">Explanation</label>
                         <div class="col-sm-9">
-                            <textarea class="form-control" id="deckExplanation" name="deckExplanation" ng-model="snapshot.activeDeck.description"></textarea>
+                            <textarea class="form-control" id="deckExplanation" name="deckExplanation" ng-model="snapshot.activeDeck.description" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)"></textarea>
                         </div>
                     </div>
 
                     <div class="clearfix m-b-md">
                         <label for="deckWeeklyNotes" class="control-label col-sm-1">Weekly Notes</label>
                         <div class="col-sm-9">
-                            <textarea class="form-control" id="deckWeeklyNotes" name="deckWeeklyNotes" ng-model="snapshot.activeDeck.weeklyNotes"></textarea>
+                            <textarea class="form-control" id="deckWeeklyNotes" name="deckWeeklyNotes" ng-model="snapshot.activeDeck.weeklyNotes" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)"></textarea>
                         </div>
                     </div>
 
@@ -258,7 +258,7 @@
                         <label for="deck.weeklyTrend" class="control-label col-sm-1">Weekly Trend</label>
                         <div class="col-sm-9">
                             <div class="col-sm-1" ng-repeat="trend in snapshot.getTrends() track by $index">
-                                <input class="form-control wrapper-none" type="number" ng-model="snapshot.activeDeck.ranks[1+$index]">
+                                <input class="form-control wrapper-none" type="number" ng-model="snapshot.activeDeck.ranks[1+$index]" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)">
                                 <span># {{snapshot.snapNum - (1+$index)}}</span>
                             </div>
                         </div>
@@ -278,7 +278,7 @@
                                     <div class="panel-heading">
                                         <div class="input-group">
                                             <span class="input-group-addon">vs</span>
-                                            <input type="text" class="form-control" ng-model="tech.title">
+                                            <input type="text" class="form-control" ng-model="tech.title" ng-change="snapshot.deckTechUpdated(tech)">
                                             <span class="input-group-btn">
                                                 <a href="#" class="btn btn-danger" ng-click="snapshot.deckTechDeletePrompt(snapshot.activeDeck, tech)"><i class="fa fa-close"></i></a>
                                             </span>
