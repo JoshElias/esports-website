@@ -99,15 +99,15 @@
                                 <h4>Author</h4>
                             </div>
                             <div class="panel-body">
-                                <ul class="list-group m-b-none" ng-if="snapshot.authors.length!=0">
+                                <ul class="admin-list m-b-none" ng-if="snapshot.authors.length!=0">
 
-                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="list-group-item gradient-add admin-list-item" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
+                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="admin-list-item gradient-add admin-list-item" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
                                         <span class="full-div">{{author.user.username}}</span><div class="btn-group pull-right"><button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                     </li>
                                 </ul>
                                 <div class="panel-body">
-                                    <div class="list-group m-b-none">
-                                        <div class="list-group-item gradient-add admin-list-item">
+                                    <div class="admin-list m-b-none">
+                                        <div class="admin-list-item gradient-add admin-list-item">
                                             <a ng-click="snapshot.authorAddPrompt()"  class="add-element"><i class="fa fa-plus-circle"></i>Add Author</a>
                                         </div>
                                     </div>
@@ -139,9 +139,9 @@
                         </div>
                         <div id="collapse{{tier.tier}}" class="collapse panel">
                             <div class="panel-body">
-                                <ul class="list-group m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
-                                    <li class="list-group-item" ng-if="tier.decks == 0">There are no decks in this tier yet.</li>
-                                    <li class="list-group-item admin-list-item gradient-add" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
+                                <ul class="admin-list m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
+                                    <li class="admin-list-item" ng-if="tier.decks == 0">There are no decks in this tier yet.</li>
+                                    <li class="admin-list-item admin-list-item gradient-add" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
                                         <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5 full-div">
                                             <div class="pull-left m-r-sm">{{d.ranks[0]}}</div>
                                             <div class="pull-left">{{d.deck.name}}</div>
@@ -152,8 +152,8 @@
                                     </li>
                                 </ul>
                                 <div class="panel-body">
-                                    <div class="list-group m-b-none">
-                                        <div class="list-group-item gradient-add admin-list-item">
+                                    <div class="admin-list m-b-none">
+                                        <div class="admin-list-item gradient-add admin-list-item">
                                             <a ng-click="snapshot.deckAddPrompt(tier)"  class="add-element"><i class="fa fa-plus-circle"></i>Add Deck</a>
                                         </div>
                                     </div>
@@ -162,8 +162,8 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <div class="list-group m-b-none">
-                            <div class="list-group-item gradient-add admin-list-item">
+                        <div class="admin-list m-b-none">
+                            <div class="admin-list-item gradient-add admin-list-item">
                                 <a ng-click="snapshot.tierAdd()" class="add-element"><i class="fa fa-plus-circle"></i>Add Tier</a>
                             </div>
                         </div>
@@ -224,7 +224,10 @@
         <!-- tier list -->
         <div ng-show="page === 'tiers'" class="col-sm-12 col-md-8 col-lg-9 tier-right-section padding-none">
             <div ng-if="snapshot.activeDeck">
-                <div class="col-sm-12 tier-sub-nav">
+                <div class="col-xs-4 admin-title m-t-md">
+                    <h3 class="dark-title">{{snapshot.activeDeck.deck.name}}</h3>
+                </div>
+                <div class="col-xs-8 tier-sub-nav">
                     <ul>
                         <li ng-class="{selected: deckPage==='general'}"><a href="#" ng-click="deckPage = 'general'" class="">General</a></li>
                         <li ng-class="{selected: deckPage==='tech'}"><a href="#" ng-click="deckPage = 'tech'" class="">Tech</a></li>
@@ -268,32 +271,38 @@
                 <!-- tech decisions -->
                 <div class="form-group" ng-show="deckPage === 'tech'">
                     <div class="clearfix">
+                        
+                        <!-- move --> 
+                        
                         <div class="col-sm-1">
                             <label for="tech" class="control-label">Tech Decisions</label>
                             <button type="button" class="btn btn-green btn-rounded m-t-sm" ng-click="snapshot.deckTechAdd(snapshot.activeDeck)"><i class="fa fa-plus"></i> Add Tech</button>
                         </div>
-                        <div class="col-sm-9">
-                            <div class="col-sm-4" ng-repeat="tech in snapshot.activeDeck.deckTech | orderBy: 'title'">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
+                        
+                        <!-- move --> 
+                        
+                        <div class="col-xs-12">
+                            <div class="col-xs-12 padding-none" ng-repeat="tech in snapshot.activeDeck.deckTech | orderBy: 'title'">
+                                <div class="panel tech-panel panel-default">
+                                    <div class="tech-heading">
                                         <div class="input-group">
                                             <span class="input-group-addon">vs</span>
                                             <input type="text" class="form-control" ng-model="tech.title" ng-change="snapshot.deckTechUpdated(tech)">
                                             <span class="input-group-btn">
-                                                <a href="#" class="btn btn-danger" ng-click="snapshot.deckTechDeletePrompt(snapshot.activeDeck, tech)"><i class="fa fa-close"></i></a>
+                                                <a href="#" class="btn btn-remove" ng-click="snapshot.deckTechDeletePrompt(snapshot.activeDeck, tech)"><i class="fa fa-close"></i></a>
                                             </span>
                                         </div>
                                     </div>
-                                    <ul class="list-group">
-                                        <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy: ['-toss', 'card.name']" class="list-group-item gradient-add">
+                                    <ul class="admin-list m-b-none padding-none">
+                                        <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy: ['-toss', 'card.name']" class="admin-list-item gradient-add">
                                             <button type="button" class="cardBtn z-5" ng-click="snapshot.deckTechCardToggleToss(c)">
                                                  <i class="fa" ng-class="{ 'fa-minus': c.toss, 'fa-plus': !c.toss }"></i>
                                             </button>
                                             {{c.card.name}}
-                                            <button type="button" class="pull-right z-5 cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
+                                            <button type="button" class="pull-right btn-remove z-5 cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
                                             <button type="button" class="pull-right z-5 btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
                                         </li>
-                                        <li class="list-group-item">
+                                        <li class="admin-list-item">
                                             <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)"><i class="fa fa-plus-circle"></i>&nbsp Add Card</a>
                                         </li>
                                     </ul>
@@ -308,44 +317,38 @@
                     <div ng-if="snapshot.activeDeck.tier < 3">
                         <div class="col-xs-12" ng-repeat="match in snapshot.getMatchupsByDeckId(snapshot.activeDeck.deck.id) track by $index"> 
                             <div ng-if="snapshot.activeDeck.deck.id != match.againstDeck.id">
-                                <div class="panel panel-default wrapper-none">
-                                    <div class="panel-heading">
-                                        <p class="m-b-none">{{snapshot.activeDeck.deck.name}} vs</p>
-                                        <p class="m-b-none bold-text ell">{{match.againstDeck.name}}</p>
-                                    </div>
+                                <div class="panel matchup-panel  panel-default m-b-none wrapper-none">
+                                    
                                     <div class="panel-body">
                                         <div class="col-sm-12 wrapper-none">
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4 m-t-sm">
                                             
                                             {{match.againstDeck.name}}
                                             </div>
-                                            <div class="col-sm-8 pull-left">
+                                            <div class="col-sm-7 pull-left">
                                                 <input ng-change="snapshot.matchupChangeForChance(match)" ng-model="match.forChance" type="range" min="0" max="100" step="5">
                                             </div>
                                             <div class="col-sm-1 m-t-sm center-text wrapper-none">
-                                                <p>% {{match.forChance}}</p>
+                                                <p>{{match.forChance}}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div ng-if="snapshot.activeDeck.deck.id == match.againstDeck.id">
-                                <div class="panel panel-default wrapper-none">
-                                    <div class="panel-heading">
-                                        <p class="m-b-none">{{snapshot.activeDeck.deck.name}} vs</p>
-                                        <p class="m-b-none bold-text ell">{{match.forDeck.name}}</p>
-                                    </div>
-                                    <div class="panel-body">
+                                <div class="panel matchup-panel read-only-match panel-default m-b-none wrapper-none">
+                                    
+                                    <div class="panel-body ">
                                         <div class="col-sm-12 wrapper-none">
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4 read-only-panel m-t-sm">
                                             {{match.forDeck.name}}
                                             
                                             </div>
-                                            <div class="col-sm-8 pull-left">
+                                            <div class="col-sm-7 pull-left read-only-panel">
                                                 <input ng-change="snapshot.matchupChangeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5" readonly>
                                             </div>
                                             <div class="col-sm-1 m-t-sm center-text wrapper-none">
-                                                <p>% {{match.againstChance}}</p>
+                                                <p>{{match.againstChance}}</p>
                                             </div>
                                         </div>
                                     </div>
