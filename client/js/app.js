@@ -6405,7 +6405,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: "deck",
                                                             scope: {
-                                                                fields: ["name"]
+                                                                fields: ["name", "playerClass"]
                                                             }
                                                         },
                                                         {
@@ -6520,7 +6520,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: "deck",
                                                             scope: {
-                                                                fields: ["name"]
+                                                                fields: ["name", "playerClass"]
                                                             }
                                                         },
                                                         {
