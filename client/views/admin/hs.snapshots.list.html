@@ -32,8 +32,8 @@
             </form>
         </div>
     </div>
-    <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="snapshot in snapshots | orderBy : '-snapNum'">
+    <div class="admin-list">
+        <div class="admin-list-item clearfix" ng-repeat="snapshot in snapshots | orderBy : '-snapNum'">
             <div class="row">
                 <div class="col-sm-6">
                     <span class="snapshot-list-item">Meta Snapshot {{snapshot.snapNum}} - {{snapshot.title}}</span>
@@ -46,10 +46,10 @@
                 </div>
             </div>
         </div>
-        <div class="list-group-item" ng-if="!snapshots.length && !search.length">
+        <div class="admin-list-item" ng-if="!snapshots.length && !search.length">
             There are no snapshots yet.
         </div>
-        <div class="list-group-item b-t-none" ng-if="search.length && snapshotPagination.total === 0">
+        <div class="admin-list-item b-t-none" ng-if="search.length && snapshotPagination.total === 0">
             That search returned no results.
         </div>
     </div>

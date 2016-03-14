@@ -12,6 +12,20 @@ body.admin {
 
 .ts-admin-styles { // ---- bookend class ----
     
+    .admin-title {
+        height: 50px;
+        display: block;
+        
+        .dark-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: $ts-blue;
+            font-weight: 300;
+            margin: 0;
+            
+        }
+    }
+    
     .dndPlaceholder {
         background-color: $black-50 !important;
         background-image: none;
@@ -69,6 +83,28 @@ body.admin {
         border: 0 solid transparent;
         padding: 7px 12px;
     }
+    
+    .btn-remove {
+        background-color: transparent;
+        color: $white-50;
+        outline: none;
+        font-size: 14px;
+        font-weight: 100;
+        height: 100%;
+        width: 65px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        box-shadow: none;
+        z-index: 5;
+
+
+        &:hover,
+        &:focus {
+            color: $btn-red;
+            outline: none;
+        }
+    } //btn-remove
     
     @media (min-width: 768px) {
         .form-horizontal .control-label {
@@ -350,7 +386,93 @@ body.admin {
             
         }
     }
+    // TECH Decisions
     
+    .tech-panel {
+        
+        &.panel {
+        
+            margin: 0px;
+                
+            &:hover {
+                .tech-heading {
+                    background-color: rgba($admin-blue, 1);
+                    
+                    .admin-group-addon {
+                        color: $white;
+                    }
+                }
+            
+            }
+        }
+    
+    }
+    
+    .tech-heading {
+    
+        background-color: rgba($admin-blue, .8);
+        height: 74px;
+        padding: 10px;
+        
+        .input-group {
+          
+            margin: 10px;
+            
+            input {
+                width: 200px;
+                
+                &:focus {
+                    color: $white;
+                } 
+            }
+        }
+        
+        .admin-group-addon {
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1;
+            color: $light-font;
+            text-align: center;
+            background-color: transparent;
+            border: 0px solid transparent;
+            border-radius: 0px;
+            width: 1%;
+            white-space: nowrap;
+            vertical-align: middle;
+            display: table-cell;
+        }
+    }
+    
+    
+    // TIER matchups
+    
+    .matchup-panel {
+        border-top: 1px solid rgba($admin-blue, .8);
+        background: transparent;
+        font-size: 12px;
+        
+        .match-name {
+        
+        }
+        
+        .read-only-panel {
+            color: $white-50;
+            
+            input  { cursor: not-allowed !important; }
+            
+            input[type=range]::-webkit-slider-thumb { cursor: not-allowed !important; }
+            input[type=range]::-webkit-slider-runnable-track { cursor: not-allowed !important; }
+            input[type=range]::-moz-range-track { cursor: not-allowed !important; }
+            input[type=range]::-moz-range-thumb { cursor: not-allowed !important; }
+            input[type=range]::-ms-thumb { cursor: not-allowed !important; }
+            input[type=range]::-ms-track { cursor: not-allowed !important; }
+            
+        }
+        
+    }
+    
+        
     .form-group {
         
         margin-bottom: 4px;
@@ -412,7 +534,7 @@ body.admin {
             text-align: center;
             font-weight: 300;
             border-bottom: 6px solid rgba($ts-blue, 0.5);
-            line-height: 50px;
+            line-height: 55px;
             
             &.selected {
                 border-bottom: 6px solid rgba($ts-blue, 1);
@@ -594,11 +716,11 @@ body.admin {
                 } // panel-header
                 .panel-body {
                     padding: 0px;
-                    .list-group {
+                    .admin-list {
 
                         padding: 0px;
 
-                        .list-group-item {
+                        .admin-list-item {
                             
                             background-color: transparent;
                             //padding: 15px 20px;
@@ -609,30 +731,10 @@ body.admin {
                                 position: static;
                                 z-index: 5;
                                 
-                                .btn-remove {
-                                    background-color: transparent;
-                                    color: $white-50;
-                                    outline: none;
-                                    font-size: 14px;
-                                    font-weight: 100;
-                                    height: 100%;
-                                    width: 65px;
-                                    position: absolute;
-                                    right: 0;
-                                    top: 0;
-                                    box-shadow: none;
-                                    z-index: 5;
-                                    
-                                    
-                                    &:hover,
-                                    &:focus {
-                                        color: $btn-red;
-                                        outline: none;
-                                    }
-                                } //btn-remove
+                                
                             } // btn-group
-                        } // list-group-item
-                    } // list-group
+                        } // admin-list-item
+                    } // admin-list
                 } // panel-body
 
                 .panel-footer {
@@ -655,31 +757,10 @@ body.admin {
         }
         
         .btn-group {
-            position: relative;
+            position: absolute;
             z-index: 5;
+            right: 0;
             float: right;
-            
-
-            .btn-remove {
-                background-color: transparent;
-                color: $white-50;
-                outline: none;
-                font-size: 14px;
-                font-weight: 100;
-                height: 100%;
-                width: 65px;
-                position: absolute;
-                right: 0;
-                top: 0;
-                box-shadow: none;
-                z-index: 5;
-
-                &:hover,
-                &:focus {
-                    color: $btn-red;
-                    outline: none;
-                }
-            }
         }
         
         
@@ -700,8 +781,8 @@ body.admin {
 
                         h4 {
                             line-height: 50px;
-                            margin-left: 25px;
-                            width: 75%;
+                            padding-left: 25px;
+                            width: 100%;
                             display: block;
                             color: $white-50;
 
@@ -778,6 +859,12 @@ body.admin {
                     width: 50px;
                     height: 50px;
                     margin-bottom: 20px;
+                    transition: 0.2s ease-in-out;
+                    
+                    &:hover {
+                        opacity: 0.7;
+                        transition: 0.2s ease-in-out;
+                    }
                 }
                 
             }
@@ -791,6 +878,12 @@ body.admin {
                 
                 img {
                     opacity: 1;
+                    transition: 0.2s ease-in-out;
+                    
+                     &:hover {
+                        opacity: 1;
+                         transition: 0.2s ease-in-out;
+                    }
                     
                 }
                 
@@ -886,10 +979,10 @@ body.admin {
         }
         input[type=range]::-webkit-slider-thumb {
           box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-          border: 1px solid #000000;
+          border: 0px solid transparent;
           height: 20px;
-          width: 20px;
-          border-radius: 50%;
+          width: 10px;
+          border-radius: 0;
           background: $light-font;
           cursor: pointer;
           -webkit-appearance: none;
@@ -966,10 +1059,10 @@ body.admin {
         height: 34px;
     }
     
-    .list-group {
+    .admin-list {
         
 
-        .list-group-item {
+        .admin-list-item {
             position: relative;
             display: block;
             //padding: 15px 10px;
@@ -1009,7 +1102,7 @@ body.admin {
                 }
             }
             
-        } // list-group-item
+        } // admin-list-item
         
         .admin-list-item {
             background: $white-02;
@@ -1033,6 +1126,6 @@ body.admin {
                 }
             }
         } // admin-list-item
-    } // list-group
+    } // admin-list
     
 } // ts-admin-styles
