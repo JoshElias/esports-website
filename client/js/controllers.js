@@ -2638,7 +2638,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.setDeck = function (deck) {
-				        $scope.article.deckId = (deck) ? deck.id : null;
+                $scope.article.deckId = (deck) ? deck.id : null;
                 $scope.article.deck = (deck) ? deck : null;
             }
 
@@ -2956,8 +2956,6 @@ angular.module('app.controllers', ['ngCookies'])
             
             var cleanArticle = angular.copy(article);
 
-            cleanArticle.deckId = article.deck.id;
-            
             cleanArticle = Util.cleanObj(cleanArticle, [
                 'articleType',
                 'authorId',
@@ -2975,6 +2973,8 @@ angular.module('app.controllers', ['ngCookies'])
                 'title',
                 'isCommentable'
             ]);
+
+            cleanArticle.deckId = (article.deck) ? article.deck.id : null;
             
             if (cleanArticle.guide) {
                 delete cleanArticle.guide;
@@ -2984,16 +2984,16 @@ angular.module('app.controllers', ['ngCookies'])
                 delete cleanArticle.deck;
             }
 
-				    // unlink guides/decks depending on what type of guide
-				    if (cleanArticle.articleType[0] !== 'hs') {
+            // unlink guides/decks depending on what type of guide
+            if (cleanArticle.articleType[0] !== 'hs') {
                 cleanArticle['deck'] = null;
                 cleanArticle['deckId'] = null;
-				    }
+            }
 
-				    if (cleanArticle.articleType[0] !== 'hots') {
+            if (cleanArticle.articleType[0] !== 'hots') {
                 cleanArticle['guide'] = null;
                 cleanArticle['guideId'] = null;
-				    }
+            }
 
             async.parallel([
               function (paraCB) {

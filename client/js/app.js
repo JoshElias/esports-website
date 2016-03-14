@@ -635,14 +635,27 @@ var app = angular.module('app', [
                                             {
                                                 relation: "deck",
                                                 scope: {
-                                                    fields: ['id', 'playerClass', 'heroName', 'dust', 'gameModeType'],
+                                                    fields: [
+                                                        'id',
+                                                        'playerClass',
+                                                        'heroName',
+                                                        'dust',
+                                                        'gameModeType',
+                                                        'name',
+                                                        'slug'
+                                                    ],
                                                     include: {
                                                         relation: 'cards',
                                                         scope: {
                                                             include: {
                                                                 relation: 'card',
                                                                 scope: {
-                                                                    fields: ['id', 'name', 'cost', 'photoNames']
+                                                                    fields: [
+                                                                        'id',
+                                                                        'name',
+                                                                        'cost',
+                                                                        'photoNames'
+                                                                    ]
                                                                 }
                                                             }
                                                         }
