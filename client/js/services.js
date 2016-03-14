@@ -4960,7 +4960,6 @@ angular.module('app.services', [])
                             }
                             return cb(err);
                         });
-                        
                     },
                     // delete authors
                     function (cb) {
