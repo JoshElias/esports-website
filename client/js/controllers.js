@@ -3316,7 +3316,9 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
                 });
                 box.modal('show');
             };
