@@ -95,9 +95,11 @@
                 <div class="form-group">
                     <div class="wrapper-none">
                         <div class="panel neg-margin panel-default">
+<!--
                             <div class="panel-header">
                                 <h4>Author</h4>
                             </div>
+-->
                             <div class="panel-body">
                                 <ul class="admin-list m-b-none" ng-if="snapshot.authors.length!=0">
 
@@ -121,36 +123,36 @@
             <!-- tiers nav -->
             <div ng-show="page === 'tiers'" class="tier-section">
                 <div class="form-group">
-                <div class="panel">
-                    <div class="panel-header">
-                        <h4>All Decks</h4>
-                    </div>
-                    <div class="tier-panel wrapper-none" ng-repeat="tier in snapshot.tiers track by tier.tier" ng-if="snapshot.tiers.length">
-                        <div class="clearfix tier-top"  ng-class="{ active: snapshot.activeDeck && snapshot.activeDeck.tier === tier.tier }">
-                            
-                                <a class="" role="button" data-toggle="collapse" href="#collapse{{tier.tier}}" aria-expanded="false" aria-controls="collapse{{tier.tier}}"><h4 class="panel-title pull-left"> 
-                                    Tier {{tier.tier}} 
-                                </h4>
-                            </a>
-                            
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-remove pull-right" ng-click="snapshot.tierDeletePrompt(tier)"><i class="fa fa-close"></i></button>
-                            </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h4>All Decks</h4>
                         </div>
-                        <div id="collapse{{tier.tier}}" class="collapse panel">
-                            <div class="panel-body">
-                                <ul class="admin-list m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
-                                    <li class="admin-list-item" ng-if="tier.decks == 0">There are no decks in this tier yet.</li>
-                                    <li class="admin-list-item admin-list-item gradient-add" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
-                                        <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5 full-div">
-                                            <div class="pull-left m-r-sm">{{d.ranks[0]}}</div>
-                                            <div class="pull-left">{{d.deck.name}}</div>
-                                            <div class="btn-group pull-right">
-                                                <button class="btn btn-remove" type="button" ng-click="$event.stopPropagation(); snapshot.deckDeletePrompt(tier, d)"><i class="fa fa-close"></i></button>
+                        <div class="tier-panel wrapper-none" ng-repeat="tier in snapshot.tiers track by tier.tier" ng-if="snapshot.tiers.length">
+                            <div class="clearfix tier-top"  ng-class="{ active: snapshot.activeDeck && snapshot.activeDeck.tier === tier.tier }">
+
+                                    <a class="" role="button" data-toggle="collapse" href="#collapse{{tier.tier}}" aria-expanded="false" aria-controls="collapse{{tier.tier}}"><h4 class="panel-title pull-left"> 
+                                        Tier {{tier.tier}} 
+                                    </h4>
+                                </a>
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-remove pull-right" ng-click="snapshot.tierDeletePrompt(tier)"><i class="fa fa-close"></i></button>
+                                </div>
+                            </div>
+                            <div id="collapse{{tier.tier}}" class="collapse panel">
+                                <div class="panel-body">
+                                    <ul class="admin-list m-b-none" dnd-list="tier.decks" dnd-allowed-types="['deck']">
+                                        <li class="admin-list-item" ng-if="tier.decks == 0">There are no decks in this tier yet.</li>
+                                        <li class="admin-list-item admin-list-item gradient-add" ng-class="{ active: snapshot.activeDeck === d }" ng-repeat="d in tier.decks" ng-if="tier.decks.length" dnd-draggable="d" dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" dnd-type="'deck'">
+                                            <div ng-click="snapshot.setActiveDeck(d)" class="clearfix z-5 full-div">
+                                                <div class="pull-left m-r-sm">{{d.ranks[0]}}</div>
+                                                <div class="pull-left">{{d.deck.name}}</div>
+                                                <div class="btn-group pull-right">
+                                                    <button class="btn btn-remove" type="button" ng-click="$event.stopPropagation(); snapshot.deckDeletePrompt(tier, d)"><i class="fa fa-close"></i></button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                </ul>
+                                        </li>
+                                    </ul>
                                 <div class="panel-body">
                                     <div class="admin-list m-b-none">
                                         <div class="admin-list-item gradient-add admin-list-item">
@@ -224,11 +226,11 @@
         <!-- tier list -->
         <div ng-show="page === 'tiers'" class="col-sm-12 col-md-8 col-lg-9 tier-right-section padding-none">
             <div ng-if="snapshot.activeDeck">
-                <div class="col-xs-4 admin-title m-t-md">
-                    <img src="../img/meta-snapshot/class-icons/{{snapshot.activeDeck.deck.playerClass.toLowerCase()}}.png">   
-                    <h3 class="dark-title">{{snapshot.activeDeck.deck.name}}</h3>
+                <div class="col-xs-6 admin-title">
+                    <img src="../img/meta-snapshot/class-icons/{{snapshot.activeDeck.deck.playerClass.toLowerCase()}}.png" class="class-image pull-left m-t-sm">   
+                    <h3 class="dark-title pull-left m-t-md m-l-md">{{snapshot.activeDeck.name}}</h3>
                 </div>
-                <div class="col-xs-8 tier-sub-nav">
+                <div class="col-xs-6 tier-sub-nav">
                     <ul class="m-b-none">
                         <li ng-class="{selected: deckPage==='general'}"><a href="#" ng-click="deckPage = 'general'" class="">General</a></li>
                         <li ng-class="{selected: deckPage==='tech'}"><a href="#" ng-click="deckPage = 'tech'" class="">Tech</a></li>
@@ -272,22 +274,12 @@
                 <!-- tech decisions -->
                 <div class="form-group" ng-show="deckPage === 'tech'">
                     <div class="clearfix">
-                        
-                        <!-- move --> 
-                        
-                        <div class="col-sm-1">
-                            <label for="tech" class="control-label">Tech Decisions</label>
-                            <button type="button" class="btn btn-green btn-rounded m-t-sm" ng-click="snapshot.deckTechAdd(snapshot.activeDeck)"><i class="fa fa-plus"></i> Add Tech</button>
-                        </div>
-                        
-                        <!-- move --> 
-                        
                         <div class="col-xs-12">
                             <div class="col-xs-12 padding-none" ng-repeat="tech in snapshot.activeDeck.deckTech | orderBy: 'title'">
                                 <div class="panel tech-panel panel-default">
                                     <div class="tech-heading">
                                         <div class="input-group">
-                                            <span class="input-group-addon">vs</span>
+                                            <span class="admin-group-addon">vs</span>
                                             <input type="text" class="form-control" ng-model="tech.title" ng-change="snapshot.deckTechUpdated(tech)">
                                             <span class="input-group-btn">
                                                 <a href="#" class="btn btn-remove" ng-click="snapshot.deckTechDeletePrompt(snapshot.activeDeck, tech)"><i class="fa fa-close"></i></a>
@@ -299,16 +291,23 @@
                                             <button type="button" class="cardBtn z-5" ng-click="snapshot.deckTechCardToggleToss(c)">
                                                  <i class="fa" ng-class="{ 'fa-minus': c.toss, 'fa-plus': !c.toss }"></i>
                                             </button>
-                                            {{c.card.name}}
+                                            <span class="full-div">{{c.card.name}}</span>
                                             <button type="button" class="pull-right btn-remove z-5 cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
                                             <button type="button" class="pull-right z-5 btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
                                         </li>
                                         <li class="admin-list-item">
-                                            <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)"><i class="fa fa-plus-circle"></i>&nbsp Add Card</a>
+                                            <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)" class="add-element"><i class="fa fa-plus-circle"></i>&nbsp; Add Card</a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <ul class="admin-list m-b-none padding-none">
+                                <li class="admin-list-item gradient-add">
+                                    <a href="#" ng-click="snapshot.deckTechAdd(snapshot.activeDeck)" class="z-5 add-element"><i class="fa fa-plus-circle "></i>&nbsp; Add Tech</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
