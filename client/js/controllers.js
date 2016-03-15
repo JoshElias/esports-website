@@ -2345,7 +2345,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             var cleanArticle = angular.copy(article);
 
-            cleanArticle.deckId = article.deck.id;
+            cleanArticle.deckId = (article.articleType[0] === 'hs' && article.deck && article.deck.id) ? article.deck.id : null;
             
             cleanArticle = Util.cleanObj(cleanArticle, [
                 'articleType',
@@ -2974,7 +2974,7 @@ angular.module('app.controllers', ['ngCookies'])
                 'isCommentable'
             ]);
 
-            cleanArticle.deckId = (article.deck) ? article.deck.id : null;
+            cleanArticle.deckId = (article.articleType[0] === 'hs' && article.deck && article.deck.id) ? article.deck.id : null;
             
             if (cleanArticle.guide) {
                 delete cleanArticle.guide;
@@ -2994,7 +2994,8 @@ angular.module('app.controllers', ['ngCookies'])
                 cleanArticle['guide'] = null;
                 cleanArticle['guideId'] = null;
             }
-
+            
+            console.log('cleanArticle:', cleanArticle);
             async.parallel([
               function (paraCB) {
                   Article.prototype$updateAttributes({
