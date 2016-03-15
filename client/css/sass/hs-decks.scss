@@ -52,6 +52,7 @@
 @include hs-deck-images (mage, jaina);
 @include hs-deck-images (mage, medivh);
 @include hs-deck-images (paladin, uther);
+@include hs-deck-images (paladin, liadrin);
 @include hs-deck-images (priest, anduin);
 @include hs-deck-images (rogue, valeera);
 @include hs-deck-images (shaman, thrall);
@@ -70,6 +71,7 @@
 @include hs-db-and-color (warrior, magni, magni, $warrior-tan );
 @include hs-db-and-color (rogue, valeera, rogue-large, $rogue-yellow );
 @include hs-db-and-color (paladin, uther, paladin-large, $paladin-pink );
+@include hs-db-and-color (paladin, liadrin, liadrin, $paladin-pink );
 @include hs-db-and-color (priest, anduin, priest-large, $priest-white );
 @include hs-db-and-color (warlock, guldan, warlock-large, $warlock-pink );
 @include hs-db-and-color (hunter, rexxar, hunter-large, $hunter-green );

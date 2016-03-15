@@ -1444,7 +1444,7 @@ angular.module('app.services', [])
         Shaman: ['Thrall'],
         Warrior: ['Garrosh','Magni'],
         Rogue: ['Valeera'],
-        Paladin: ['Uther'],
+        Paladin: ['Uther', 'Liadrin'],
         Priest: ['Anduin'],
         Warlock: ['Guldan'],
         Hunter: ['Rexxar', 'Alleria'],
