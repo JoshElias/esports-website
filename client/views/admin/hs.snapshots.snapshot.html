@@ -3,7 +3,9 @@
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading wrapper-md clearfix">
         <h3 class="pull-left"><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot</h3>
-        <button type="button" ng-click="snapshot.loadPrevious()" ng-if="mode === 'add' && !snapshot.loaded" class="btn admin-btn-blue pull-right m-r-sm ">Load Previous</button>
+        <button type="button" ng-click="snapshot.loadPrevious()" ng-if="mode === 'add' && !snapshot.loaded" ng-disabled="snapshot.loading" class="btn admin-btn-blue pull-right m-r-sm ">
+            Load Previous<i class="fa fa-refresh fa-spin m-l-sm" ng-if="snapshot.loading"></i>
+        </button>
    
         <div class="form-group pull-left">
             <label for="title" class="control-label pull-left snap-num-title">#</label>
@@ -375,8 +377,8 @@
     </form>
     <div class="panel-footer clearfix">
         <div class="col-sm-12">
-            <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid || loading" ng-click="snapshot.save()">
-                <span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Update</span> Snapshot
+            <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid || snapshot.loading || snapshot.saving" ng-click="snapshot.save()">
+                <span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Update</span> Snapshot<i class="fa fa-refresh fa-spin m-l-sm" ng-if="snapshot.saving"></i>
             </button>
         </div>
     </div>

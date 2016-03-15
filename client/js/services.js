@@ -3793,7 +3793,9 @@ angular.module('app.services', [])
             },
             votes: 0,
             active: false,
+            loading: false,
             loaded: false,
+            saving: false,
             activeDeck: null,
             activeAuthor: null
         };
@@ -3844,7 +3846,7 @@ angular.module('app.services', [])
                 matchups: []
             };
             sb.updated = {
-                snapshot: [],
+                snapshot: false,
                 authors: [],
                 deckTiers: [],
                 deckTechs: [],
@@ -3880,6 +3882,10 @@ angular.module('app.services', [])
 
             // load latest snapshot and increment snapshot number / shift trends
             sb.loadPrevious = function () {
+                // set loading
+                sb.loading = true;
+                
+                // get latest snapshot
                 Snapshot.findOne({
                     filter: {
                         where: {
@@ -4005,6 +4011,9 @@ angular.module('app.services', [])
                     
                     // load data
                     sb.load(data);
+                    
+                    // set loading
+                    sb.loading = false;
                 });
             };
 
@@ -4923,8 +4932,14 @@ angular.module('app.services', [])
                 }
             };
             
+            // check snapshot before save
+            sb.saveCheck = function (callback) {
+                return callback();
+            };
+            
             // delete items on save
             sb.saveDelete = function (callback) {
+                console.log('begin deleted: ', sb.deleted);
                 async.series([
                     // delete card techs
                     function (cb) {
@@ -5080,6 +5095,7 @@ angular.module('app.services', [])
             
             // update items on save
             sb.saveUpdate = function (callback) {
+                console.log('begin updated: ', sb.updated);
                 async.series([
                     // update card techs
                     function (cb) {
@@ -5276,7 +5292,7 @@ angular.module('app.services', [])
                     function (cb) {
                         console.log('updating snapshot');
                         // skip if nothing to update
-                        if (sb.updated.snapshot && sb.id) { return cb(); }
+                        if (!sb.updated.snapshot || !sb.id) { return cb(); }
                         
                         Snapshot.update({
                             where: {
@@ -5507,14 +5523,19 @@ angular.module('app.services', [])
             
             // save snapshot
             sb.save = function () {
+                console.log('snapshot: ', sb);
                 sb.saving = true;
                 
                 async.waterfall([
+                    sb.saveCheck,
                     sb.saveDelete,
                     sb.saveUpdate,
                     sb.saveCreate
                 ], function (err) {
-                    sb.saving = false;
+                    $timeout(function () {
+                        sb.saving = false;
+                    });
+                    
                     console.log('done saving');
                 });
                 
