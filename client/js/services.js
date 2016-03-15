@@ -4118,8 +4118,11 @@ angular.module('app.services', [])
                     }
                 }
                 if (index !== -1) {
-                    // flag snapshot author for delete
+                    // if existing item
                     if (sb.authors[index].id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('authors', sb.authors[index].id);
+                        // add delete flag
                         sb.deleted.authors.push(sb.authors[index].id);
                     }
                     
@@ -4245,11 +4248,14 @@ angular.module('app.services', [])
             sb.deckDelete = function (tier, deck) {
                 var index = tier.decks.indexOf(deck);
                 if (index !== -1) {
-                    // flag deckTier for delete
+                    // if existing item
                     if (deck.id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('deckTiers', deck.id);
+                        // flag deckTier for delete
                         sb.deleted.deckTiers.push(deck.id);
                     }
-                    
+                                        
                     sb.deckDeleteAllTechs(deck);
                     sb.matchupsDelete(deck);
                     tier.decks.splice(index, 1);
@@ -4336,8 +4342,11 @@ angular.module('app.services', [])
             sb.deckTechDelete = function (deck, deckTech) {
                 var index = deck.deckTech.indexOf(deckTech);
                 if (index !== -1) {
-                    // flag deckTech for delete
+                    // if existing item
                     if (deckTech.id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('deckTechs', deckTech.id);
+                        // flag deckTech for delete
                         sb.deleted.deckTechs.push(deckTech.id);
                     }
 
@@ -4390,8 +4399,11 @@ angular.module('app.services', [])
                     }
                 }
                 if (index !== -1) {
-                    // flag cardTech for delete
+                    // if existing item
                     if (deckTech.cardTech[index].id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('cardTechs', deckTech.cardTech[index].id);
+                        // flag cardTech for delete
                         sb.deleted.cardTechs.push(deckTech.cardTech[index].id);
                     }
                     
@@ -4455,6 +4467,16 @@ angular.module('app.services', [])
                 return ((n / 2 * (2 + (n - 1))) === sb.matchups.length);
             };
 
+            // get matchup by id
+            sb.getMatchupById = function (matchupId) {
+                for (var i = 0; i < sb.matchups.length; i++) {
+                    if (sb.matchups[i].id === matchupId) {
+                        return sb.matchups[i];
+                    }
+                }
+                return false;
+            };
+            
             // add matchups to each deck for deck
             sb.matchupsAdd = function (deck) {
                 var matchupDecks = sb.matchupDecks();
@@ -4477,8 +4499,11 @@ angular.module('app.services', [])
             sb.matchupsDelete = function (deck) {
                 for (var i = sb.matchups.length - 1; i >= 0; i--) {
                     if (sb.matchups[i].forDeck.id === deck.deck.id || sb.matchups[i].againstDeck.id === deck.deck.id) {
-                        // flag matchup for delete
+                        // if existing item
                         if (sb.matchups[i].id) {
+                            // remove update flag
+                            sb.removeUpdateFlag('matchups', sb.matchups[i].id);
+                            // flag matchup for delete
                             sb.deleted.matchups.push(sb.matchups[i].id);
                         }
                         
@@ -4490,13 +4515,21 @@ angular.module('app.services', [])
             // update for chance when updating against chance on a matchup
             sb.matchupChangeAgainstChance = function (matchup) {
                 matchup.forChance = (100 - matchup.againstChance);
+                
                 // flag matchup for update
-                sb.updated.matchups.push();
+                if (matchup.id) {
+                    sb.updated.matchups.push(matchup.id);
+                }
             }
 
             // update against chance when updating for chance on a matchup
             sb.matchupChangeForChance = function (matchup) {
                 matchup.againstChance = (100 - matchup.forChance);
+                
+                // flag matchup for update
+                if (matchup.id) {
+                    sb.updated.matchups.push(matchup.id);
+                }
             }
 
             // get matchups by deck id
@@ -4878,6 +4911,15 @@ angular.module('app.services', [])
                 if (index === -1) {
                     sb.updated.matchups.push(matchup.id);
                     console.log('matchup update flagged: ', matchup.id);
+                }
+            };
+            
+            // remove the update flag for an item
+            sb.removeUpdateFlag = function (type, itemId) {
+                var updated = sb.updated[type];
+                var index = updated.indexOf(itemId);
+                if (index !== -1) {
+                    updated.splice(index, 1);
                 }
             };
             

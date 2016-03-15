@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "angular.min.js": "angular.min.5bcabd93.js",
   "app.min.js": "app.min.b629c7e1.js",
   "vendor.min.js": "vendor.min.4682e0de.js",
@@ -6,5 +7,14 @@
   "lb-services.min.js": "lb-services.min.832a309c.js",
   "style.min.css": "style.min.c7d1660a.css",
   "vendor.min.css": "vendor.min.ae26999c.css",
+=======
+  "angular.min.js": "angular.min.05efb3d5.js",
+  "app.min.js": "app.min.b629c7e1.js",
+  "vendor.min.js": "vendor.min.8a01677c.js",
+  "modules.min.js": "modules.min.b609d88a.js",
+  "lb-services.min.js": "lb-services.min.832a309c.js",
+  "style.min.css": "style.min.9e3cbf81.css",
+  "vendor.min.css": "vendor.min.60b209a2.css",
+>>>>>>> 1676dc1c7ac95d048eeb6058c804deb2bffb8593
   "modules.min.css": "modules.min.5cf7e8d7.css"
 }
