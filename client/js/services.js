@@ -4123,6 +4123,12 @@ angular.module('app.services', [])
                         sb.deleted.authors.push(sb.authors[index].id);
                     }
                     
+                    // make sure active author isn't deleted author
+                    if (sb.activeAuthor.user.id === authorId) {
+                        sb.activeAuthor = null;
+                    };
+                    
+                    // delete author
                     sb.authors.splice(index, 1);
                 }
             };
@@ -4171,11 +4177,23 @@ angular.module('app.services', [])
 
             sb.tierUpdateNumbers = function () {
                 var tierNum = 1;
+                var oldTier;
+                var newTier;
+                
                 for (var i = 0; i < sb.tiers.length; i++) {
                     sb.tiers[i].tier = tierNum;
 
                     for (var j = 0; j < sb.tiers[i].decks.length; j++) {
-                        sb.tiers[i].decks[j].tier = tierNum;
+                        oldTier = sb.tiers[i].decks[j].tier;
+                        newTier = tierNum;
+                        
+                        // if tier moves from non matchups to matchups - add matchups for the deck
+                        if (oldTier > 2 && newTier < 3) {
+                            sb.matchupsAdd(sb.tiers[i].decks[j]);
+                        }
+                        
+                        // set new tier for deck
+                        sb.tiers[i].decks[j].tier = newTier;
                     }
 
                     tierNum++;
@@ -4212,12 +4230,14 @@ angular.module('app.services', [])
             sb.deckAdd = function (tier, deckName, deck) {
                 if (sb.getTierDeckByDeckId(deck.id)) { return false; }
                 var newDeck = angular.copy(defaultTierDeck);
+                newDeck.tier = tier.tier;
                 newDeck.name = deckName;
                 newDeck.deck = deck;
                 tier.decks.push(newDeck);
                 sb.decksUpdateCurrentRanks();
                 if (tier.tier <= 2) {
                     sb.matchupsAdd(newDeck);
+                    console.log(newDeck);
                 }
             };
 
@@ -4234,6 +4254,11 @@ angular.module('app.services', [])
                     sb.matchupsDelete(deck);
                     tier.decks.splice(index, 1);
                     sb.decksUpdateCurrentRanks();
+                    
+                    // make sure not to leave deleted deck active
+                    if (sb.activeDeck === deck) {
+                        sb.activeDeck = null;
+                    }
                 }
             };
 
@@ -4415,6 +4440,16 @@ angular.module('app.services', [])
                 return decks;
             };
 
+            // order the matchups by deck ranks
+            sb.matchupOrderBy = function (matchup, deck) {
+                deck = deck || sb.activeDeck;
+                
+                if (!deck) { return 0; }
+                
+                return (matchup.forDeck.id === deck.id) ? sb.getTierDeckByDeckId(matchup.againstDeck.id).ranks[0] : sb.getTierDeckByDeckId(matchup.forDeck.id).ranks[0];
+            };
+            
+            // verify the number of matchups to number of decks in first two tiers
             sb.validMatchups = function () {
                 var n = sb.matchupDecks().length;
                 return ((n / 2 * (2 + (n - 1))) === sb.matchups.length);
@@ -4426,19 +4461,15 @@ angular.module('app.services', [])
 
                 for (var i = 0; i < matchupDecks.length; i++) {
                     var newMatchup = angular.copy(defaultDeckMatch);
-                    newMatchup.forDeck = {
-                        id: deck.deck.id,
-                        name: deck.deck.name
-                    };
-                    newMatchup.againstDeck = {
-                        id: matchupDecks[i].deck.id,
-                        name: matchupDecks[i].deck.name
-                    };
+                    newMatchup.forDeck = deck.deck;
+                    newMatchup.againstDeck = matchupDecks[i].deck;
+                    
                     if (deck.deck.id === matchupDecks[i].deck.id) {
                         newMatchup.forChance = 50;
                         newMatchup.againstChance = 50;
                     }
                     sb.matchups.push(newMatchup);
+                    console.log(newMatchup);
                 }
             };
 
@@ -4510,6 +4541,9 @@ angular.module('app.services', [])
                         var URL = (tpl === './') ? cdn2 : tpl;
                         sb.snapshotImg = URL + data.path + data.small;
                         box.modal('hide');
+                        
+                        // mark snapshot as updated
+                        sb.snapshotUpdated();
                     });
                 }
             };
@@ -4561,6 +4595,7 @@ angular.module('app.services', [])
                             }
                         }
                     },
+                    className: 'modal-admin modal-admin-remove',
                     show: false
                 });
                 box.modal('show');
@@ -4590,6 +4625,7 @@ angular.module('app.services', [])
                             }
                         }
                     },
+                    className: 'modal-admin modal-admin-remove',
                     show: false
                 });
                 box.modal('show');
@@ -4654,12 +4690,13 @@ angular.module('app.services', [])
                             }
                         }
                     },
+                    className: 'modal-admin modal-admin-remove',
                     show: false
                 });
                 box.modal('show');
             };
 
-            // prompt for deck delete
+            // prompt for deck tech delete
             sb.deckTechDeletePrompt = function (deck, deckTech) {
                 var box = bootbox.dialog({
                     title: "Remove Deck Tech?",
@@ -4683,6 +4720,7 @@ angular.module('app.services', [])
                             }
                         }
                     },
+                    className: 'modal-admin modal-admin-remove',
                     show: false
                 });
                 box.modal('show');
@@ -4729,6 +4767,7 @@ angular.module('app.services', [])
                             }
                         }
                     },
+                    className: 'modal-admin modal-admin-remove',
                     show: false
                 });
                 box.modal('show');
