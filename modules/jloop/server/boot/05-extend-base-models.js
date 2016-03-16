@@ -5,7 +5,8 @@ var validator = require("../lib/validator/validator");
 var docFilter = require("../lib/filter/doc-filter");
 var fieldFilter = require("../lib/filter/field-filter");
 var scope = require("../lib/scope");
-var relation = require("../lib/relation");
+var relation = require("../relation/relation");
+var slug = require("../lib/slug");
 
 
 
@@ -32,7 +33,7 @@ module.exports = function(server) {
 
         // Validation
         // Slug
-        var beforeSaveFuncs = [validator.validate, slug.generateSlug];
+        var beforeSaveFuncs = [slug.handleSlug, validator.validate];
         model.observe("before save", function(ctx, next) {
             attachLoopbackContext(ctx);
             async.eachSeries(beforeSaveFuncs, function(beforeSaveFunc, beforeSaveCb) {

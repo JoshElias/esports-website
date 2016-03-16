@@ -11,6 +11,9 @@ function destroyChildren(ctx, finalCb) {
         return finalCb();
     }
 
+    // Get all the foreign keys for this model
+
+
     var query = {
         where: ctx.where,
         fields:{ id:true }
@@ -21,26 +24,26 @@ function destroyChildren(ctx, finalCb) {
         if(err) return finalCb(err);
 
         async.each(instances, function(instance, instanceCb) {
-            async.forEachOf(relations, function(relationObj, relationName, relationCb) {
+            async.forEachOf(relations, function(relationData, relationName, relationCb) {
 
-                if(!relationObj[DESTROY_CHILDREN_FEATURE_KEY]) {
+                if(!relationData[DESTROY_CHILDREN_FEATURE_KEY]) {
                     return relationCb();
                 }
 
-                var relation = instance[relationName];
-                if(!relation) {
+                var deleteHandler = relationDeleteHandlers[relationData.type];
+                if(!deleteHandler) {
                     return relationCb();
                 }
 
-                relation.destroyAll(function(err) {
-                    return relationCb(err);
-                });
+                return deleteHandler(ctx, instance, relationData, relationName, relationCb);
+
             }, instanceCb);
         }, function(err) {
             finalCb(err);
         });
     });
 };
+
 
 
 module.exports = {

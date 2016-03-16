@@ -152,7 +152,13 @@ function validateUnique(state, uniqueCb) {
         }
     }
 
-    Model.find({where: where, fields: {id: true }}, function (err, instances) {
+    Model.find({
+        where: where,
+        fields: {
+            id: true
+        },
+        limit: 1
+    }, function (err, instances) {
         if (err) return uniqueCb(err);
       
         if (instances.length < 1) {

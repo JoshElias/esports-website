@@ -8,18 +8,28 @@
   },
   "properties": {
     "slug": {
-      "type": "string"
+      "type": "string",
+      "$validate": ["unique"]
     },
     "linked": {
       "type": "boolean"
+    },
+    "baseKey": {
+      "type": "string"
     }
   },
   "validations": [],
   "relations": {
-    "sluggable": {
+    "sluggables": {
       "type": "hasMany",
       "model": "sluggable",
       "foreignKey": "slugId"
+    },
+    "articles": {
+      "type": "hasMany",
+      "model": "article",
+      "foreignKey": "slugId",
+      "through": "sluggable"
     }
   },
   "acls": [],

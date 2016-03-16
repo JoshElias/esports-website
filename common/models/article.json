@@ -11,12 +11,14 @@
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
     },
-    "$destroyOnDelete": true
+    "$destroyOnDelete": true,
+    "$slug": true
   },
   "properties": {
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "$slug": true
     },
     "slug": {
       "url": {
@@ -119,7 +121,12 @@
       "model": "vote",
       "foreignKey": "articleId"
     },
-    "slug": {
+    "sluggables": {
+      "type": "hasMany",
+      "model": "sluggable",
+      "foreignKey": "articleId"
+    },
+    "slugs": {
       "type": "hasMany",
       "model": "slug",
       "foreignKey": "articleId",

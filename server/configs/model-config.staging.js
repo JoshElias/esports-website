@@ -283,5 +283,13 @@ module.exports = {
     "twitchfeeds": {
         "dataSource": "mongodb",
         "public": true
-    }
+    },
+  "slug": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "sluggable": {
+    "dataSource": "mongodb",
+    "public": true
+  }
 }
