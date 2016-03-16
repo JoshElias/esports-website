@@ -209,11 +209,8 @@
                 <div class="col-sm-12 padding-none m-t-md">
                     
                     <div class="form-group col-sm-12 padding-none class-section">
-                        <div class="col-md-12 col-lg-2">
+                        <div class="col-md-12 col-lg-4 p-l-md">
                             <h4 class="user-section">{{snapshot.activeAuthor.user.username}}</h4>
-                        </div>
-                        <div class="col-md-12 col-lg-2">
-                            <h4 class="class-section pull-right">Class(es) of Expertise</h4>
                         </div>
                         <div class="col-md-12 col-lg-8 padding-none">
                             <ul class="author-classes">
@@ -227,7 +224,7 @@
                     </div>
                     
                     <div class="col-sm-12">
-                        <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-1 control-label">Description</label>
+                        <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-12 padding-none control-label m-t-sm">Description</label>
                         <textarea class="form-control m-b-lg" rows="15" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description" ng-change="snapshot.authorUpdated(snapshot.activeAuthor)"></textarea>
                     </div>
                 </div>
@@ -238,11 +235,11 @@
         <!-- tier list -->
         <div ng-show="page === 'tiers'" class="col-sm-12 col-md-8 col-lg-9 tier-right-section padding-none">
             <div ng-if="snapshot.activeDeck">
-                <div class="col-xs-6 admin-title">
+                <div class="col-xs-5 admin-title">
                     <img src="../img/meta-snapshot/class-icons/{{snapshot.activeDeck.deck.playerClass.toLowerCase()}}.png" class="class-image pull-left m-t-sm">   
                     <h3 class="dark-title pull-left m-t-md m-l-md">{{snapshot.activeDeck.name}}</h3>
                 </div>
-                <div class="col-xs-6 tier-sub-nav">
+                <div class="col-xs-7 tier-sub-nav">
                     <ul class="m-b-none">
                         <li ng-class="{selected: deckPage==='general'}"><a href="#" ng-click="deckPage = 'general'" class="">General</a></li>
                         <li ng-class="{selected: deckPage==='tech'}"><a href="#" ng-click="deckPage = 'tech'" class="">Tech</a></li>
@@ -251,33 +248,63 @@
                 </div>
                 <!-- general -->
                 <div class="form-group" ng-show="deckPage === 'general'">
-                    <div class="clearfix m-b-md">
-                        <label for="deckName" class="control-label col-sm-1">Deck Name</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="deckName" name="deckName" ng-model="snapshot.activeDeck.name" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)" />
+                    <div class="clearfix">
+                        <div class="col-md-12 col-lg-6 m-b-sm">
+                            <label for="deckName" class="control-label col-xs-12">Deck Name</label>
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" id="deckName" name="deckName" ng-model="snapshot.activeDeck.name" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)" />
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-6 m-b-sm">
+                            <label for="deckName" class="control-label col-xs-12">Linked Deck</label>
+                            <div class="col-xs-12">
+                                
+                                
+                                
+                                
+                                <div class="wrapper-none pull-left">
+                                    <div class="input-group pull-left">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default active"><i class="fa fa-link"></i></button>
+                                        </span>
+                                        <input type="text" id="slug" name="slug" class="form-control wide-input ng-pristine ng-valid ng-valid-required ng-touched">
+                                    </div>
+                                </div>
+
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="col-xs-6"></div>
+                    </div>
+
+                    <div class="clearfix m-b-sm">
+                        <div class="col-xs-12">
+                            <label for="deckExplanation" class="control-label col-xs-12">Explanation</label>
+                            <div class="col-xs-12">
+                                <textarea class="form-control" id="deckExplanation" name="deckExplanation" ng-model="snapshot.activeDeck.description" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)" rows="8"></textarea>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="clearfix m-b-md">
-                        <label for="deckExplanation" class="control-label col-sm-1">Explanation</label>
-                        <div class="col-sm-9">
-                            <textarea class="form-control" id="deckExplanation" name="deckExplanation" ng-model="snapshot.activeDeck.description" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)"></textarea>
+                    <div class="clearfix m-b-sm">
+                        <div class="col-xs-12">
+                            <label for="deckWeeklyNotes" class="control-label col-xs-12">Weekly Notes</label>
+                            <div class="col-xs-12">
+                                <textarea class="form-control" id="deckWeeklyNotes" name="deckWeeklyNotes" ng-model="snapshot.activeDeck.weeklyNotes" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)" rows="8"></textarea>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="clearfix m-b-md">
-                        <label for="deckWeeklyNotes" class="control-label col-sm-1">Weekly Notes</label>
-                        <div class="col-sm-9">
-                            <textarea class="form-control" id="deckWeeklyNotes" name="deckWeeklyNotes" ng-model="snapshot.activeDeck.weeklyNotes" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="clearfix m-b-md">
-                        <label for="deck.weeklyTrend" class="control-label col-sm-1">Weekly Trend</label>
-                        <div class="col-sm-9">
-                            <div class="col-sm-1" ng-repeat="trend in snapshot.getTrends() track by $index">
-                                <input class="form-control wrapper-none" type="number" ng-model="snapshot.activeDeck.ranks[1+$index]" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)">
-                                <span># {{snapshot.snapNum - (1+$index)}}</span>
+                    <div class="clearfix m-b-sm">
+                        <div class="col-xs-12">
+                            <label for="deck.weeklyTrend" class="control-label col-xs-12">Weekly Trend</label>
+                            <div class="col-xs-12">
+                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-1 m-b-md" ng-repeat="trend in snapshot.getTrends() track by $index">
+                                    <input class="form-control wrapper-none" type="number" ng-model="snapshot.activeDeck.ranks[1+$index]" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)">
+                                    <span class="snap-number"># {{snapshot.snapNum - (1+$index)}}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

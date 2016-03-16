@@ -46,7 +46,11 @@
 
 .modal-admin-remove {
     .modal-content {
-        min-height: 330px;
+        //min-height: 330px;
+    }
+    
+    .bootbox-body {
+        margin-bottom: 20px;
     }
     
     .modal-body {

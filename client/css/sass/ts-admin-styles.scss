@@ -169,24 +169,24 @@ body.admin {
       border: 0px solid transparent;
       outline: none;
       padding: 2px 8px;
-        color: white;
+        color: $white-50;
         border-radius: 50px !important;
 
     }
 
    
     .cardBtn.green {
-      background: #5CB85C;
+      background: $white-15;
       border: 0px solid transparent;
       outline: none;
       padding: 2px 8px;
       color: white;
-        border-radius: 50px !important;
+      border-radius: 50px !important;
     }
 
    
     .cardBtn.danger {
-      background: #D9534F;
+      background: $white-15;
       border: 0px solid transparent;
       outline: none;
       padding: 2px 8px;
@@ -660,21 +660,9 @@ body.admin {
         }
         
         .class-section {
-            text-align: center;
+            //text-align: center;
         }
-        
-        h4.user-section {
-            padding-top: 25px;
-            color: rgba($ts-blue, 0.8);
-            font-size: 14px;
-            text-align: center;
             
-            @media screen and (max-width: 1199px) {
-                padding-top: 15px;
-            }
-            
-        }
-        
         .form-group {
             
             margin-right: 0 !important;
@@ -707,13 +695,7 @@ body.admin {
                     height: 50px;
                     margin-bottom: 20px;
                     transition: 0.2s ease-in-out;
-                    
-                    &:hover {
-                        opacity: 0.7;
-                        transition: 0.2s ease-in-out;
-                    }
                 }
-                
             }
             
             .btn-class{
@@ -727,10 +709,10 @@ body.admin {
                     opacity: 1;
                     transition: 0.2s ease-in-out;
                     
-                     &:hover {
-                        opacity: 1;
-                         transition: 0.2s ease-in-out;
-                    }
+//                     &:hover {
+//                        opacity: 1;
+//                         transition: 0.2s ease-in-out;
+//                    }
                     
                 }
                 
@@ -749,6 +731,11 @@ body.admin {
                  &:hover {
                     border-bottom: 6px solid rgba($ts-blue, 0.8);
                     transition: 0.2s ease-in-out;
+                     
+                     img {
+                        opacity: 0.7;
+                        transition: 0.2s ease-in-out;
+                     }
                 }
             }
             
@@ -796,6 +783,24 @@ body.admin {
                 border-bottom: 1px solid rgba(46, 67, 98, 0.8) !important;
                 background: transparent !important;
         }
+        
+        .list-accent-div {
+            border-left: 6px solid $ts-blue !important;
+        } // list-accent-div 
+
+
+        .card-toss {
+            .list-accent-div {
+                border-left: 6px solid $btn-red !important;
+            }
+        }
+        
+        .card-keep {
+            .list-accent-div {
+                border-left: 6px solid $btn-green !important;
+            }
+        }
+        
     }
     
     .tech-heading {
@@ -1067,12 +1072,12 @@ body.admin {
         } // form-group
     }
     
-
-    
-    
     .tier-right-section {
         
-        
+        .form-group {
+            margin-right: 0;
+            margin-left: 0;
+        }
         
         .tier-sub-nav {
             display: block;
@@ -1241,6 +1246,10 @@ body.admin {
             
             &.snapshot-list {
                 
+                &:nth-child(odd) {
+                  background: $white-02;
+                }
+                
                 &:hover {
                     background-color: $white-15;
                     
@@ -1304,9 +1313,7 @@ body.admin {
             .snapshot-list-item {
                 line-height: 50px;
                 
-                &:nth-child(odd) {
-                  background: transparent;
-                }
+                
                 
             } // snapshot-list-item
             
