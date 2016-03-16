@@ -3750,8 +3750,8 @@ angular.module('app.services', [])
         return factory;
     }
 ])
-.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
-    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
+.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'AlertService', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
+    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, AlertService, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
         var snapshot = {};
         var maxTrends = 12;
         var snapshotTypes = [
@@ -4934,7 +4934,136 @@ angular.module('app.services', [])
             
             // check snapshot before save
             sb.saveCheck = function (callback) {
-                return callback();
+                async.series([
+                    // check snapshot
+                    function (cb) {
+                        // check title
+                        if (!sb.title || !sb.title.length) {
+                            return cb("Snapshot doesn't have a title");
+                        }
+                        
+                        // check url
+                        if (!sb.slug || !sb.slug.url || !sb.slug.url.length) {
+                            return cb("Snapshot doesn't have a url");
+                        }
+                        
+                        // check type
+                        if (!sb.snapshotType || !sb.slug.snapshotType.length) {
+                            return cb("Snapshot doesn't have a type");
+                        }
+                        
+                        // check image
+                        if (!sb.photoNames || !sb.photoNames.square || !sb.photoNames.square.length || !sb.photoNames.small || !sb.photoNames.small.length || !sb.photoNames.medium || !sb.photoNames.medium.length || !sb.photoNames.large || !sb.photoNames.large.length) {
+                            return cb("Snapshot doesn't have an image");
+                        }
+                        
+                        // check active
+                        if (sb.isActive === undefined || (sb.isActive !== true && sb.isActive !== false)) {
+                            return cb("Snapshot active field is set to an invalid value");
+                        }
+                        
+                        // check intro
+                        if (!sb.content || !sb.content.intro || !sb.content.intro.length) {
+                            return cb("Snapshot does not have an introduction");
+                        }
+                        
+                        // check thoughts
+                        if (!sb.content || !sb.content.thoughts || !sb.content.thoughts.length) {
+                            return cb("Snapshot does not have thoughts and observations");
+                        }
+                    },
+                    // check authors
+                    function (cb) {
+                        // check that at least 1 author exists
+                        if (!sb.authors || !sb.authors.length) {
+                            return cb("Snapshot doesn't have any authors");
+                        }
+                        
+                        // check each author
+                        for (var i = 0; i < sb.authors.length; i++) {
+                            // check author expert classes
+                            if (!sb.authors[i].expertClasses || !sb.sb.authors[i].expertClasses.length) {
+                                return cb("Author " + sb.authors[i].user.username + " has no expert class");
+                            }
+                            
+                            // check description
+                            if (!sb.authors[i].description || !sb.sb.authors[i].description.length) {
+                                return cb("Author " + sb.authors[i].user.username + " has no description");
+                            }
+                        }
+                        
+                        // TODO: verify all classes selected
+                        // TODO: verify no duplicate classes used
+                    },
+                    // check tiers / decks
+                    function (cb) {
+                        // make sure at least 1 tier
+                        if (!sb.tiers || !sb.tiers.length) {
+                            return cb("Snapshot doesn't have any tiers");
+                        }
+                        
+                        // loop trough each tier
+                        for (var tierInc = 0; tierInc < sb.tiers.length; tierInc++) {
+                            // make sure at least 1 deck in tier
+                            if (!sb.tiers[tierInc].decks || !sb.tiers[tierInc].decks.length) {
+                                return cb("Tier " + sb.tiers[tierInc].tier + " doesn't have any decks");
+                            }
+
+                            // check each deck
+                            for (var deckInc = 0; deckInc < sb.tiers[tierInc].length; deckInc++) {
+                                // check deck name
+                                if (!sb.tiers[tierInc].decks[deckInc].name || !sb.tiers[tierInc].decks[deckInc].name.length) {
+                                    return cb("Deck at rank " + sb.tiers[tierInc].decks[deckInc].ranks[0] + " has no name");
+                                }
+                                
+                                // check deck exists
+                                if (!sb.tiers[tierInc].decks[deckInc].deck || !sb.tiers[tierInc].decks[deckInc].deck.id || !sb.tiers[tierInc].decks[deckInc].deck.id.length) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no deck attached");
+                                }
+                                
+                                // check explanation
+                                if (!sb.tiers[tierInc].decks[deckInc].explanation || !sb.tiers[tierInc].decks[deckInc].explanation.length) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no explanation");
+                                }
+                                
+                                // check weekly notes
+                                if (!sb.tiers[tierInc].decks[deckInc].weeklyNotes || !sb.tiers[tierInc].decks[deckInc].weeklyNotes.length) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no weekly notes");
+                                }
+                                
+                                // check weekly trends
+                                if (!sb.tiers[tierInc].decks[deckInc].ranks || !sb.tiers[tierInc].decks[deckInc].ranks.length || (!sb.tiers[tierInc].decks[deckInc].ranks.length === (maxTrends + 1))) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no weekly trends");
+                                }
+                                
+                                // check each deck tech if any exist
+                                for (var deckTechCnt = 0; deckTechCnt < sb.tiers[tierInc].decks[deckInc].deckTech.length; deckTechCnt++) {
+                                    // check title
+                                    if (!sb.tiers[tierInc].decks[deckInc].deckTech[deckTechCnt].title || !sb.tiers[tierInc].decks[deckInc].deckTech[deckTechCnt].title.length) {
+                                        return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has a deck tech with no title");
+                                    }
+                                    
+                                    // check that it has at least 1 card
+                                    if (!sb.tiers[tierInc].decks[deckInc].deckTech[deckTechCnt].cards || !sb.tiers[tierInc].decks[deckInc].deckTech[deckTechCnt].cards.length) {
+                                        return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has a deck tech with no cards");
+                                    }
+                                    
+                                    // TODO: check that there are no class cards for different class than deck
+                                }
+
+                            }
+                        }
+                    },
+                    // verify matchups
+                    function (cb) {
+                        // check that matchups count matches number of decks
+                        if (!sb.validMatchups()) {
+                            return cb("FATAL ERROR: Number of matchups do not match number of decks");
+                        }
+                    }
+                ], function (err) {
+                    return callback(err);
+                });
             };
             
             // delete items on save
@@ -5526,6 +5655,9 @@ angular.module('app.services', [])
                 console.log('snapshot: ', sb);
                 sb.saving = true;
                 
+                // reset errors
+                AlertService.reset();
+                
                 async.waterfall([
                     sb.saveCheck,
                     sb.saveDelete,
@@ -5535,6 +5667,21 @@ angular.module('app.services', [])
                     $timeout(function () {
                         sb.saving = false;
                     });
+                    
+                    if (err) {
+                        if (typeof err === 'string') {
+                            AlertService.setError({
+                                msg: err,
+                                show: true
+                            });
+                        } else {
+                            AlertService.setError({
+                                msg: 'Snapshot Error',
+                                lbErr: err,
+                                show: true
+                            });
+                        }
+                    }
                     
                     console.log('done saving');
                 });
