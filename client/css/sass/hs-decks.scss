@@ -46,18 +46,35 @@
 // 2... HS decks backgrounds & deck builder header
 //*************************************
 
-@include hs-deck-images (druid, malfurion);
-@include hs-deck-images (hunter, rexxar);
+// druid
+@include hs-deck-images (malfurion, malfurion);
+
+// hunter
+@include hs-deck-images (rexxar, rexxar);
 @include hs-deck-images (alleria, alleria);
-@include hs-deck-images (mage, jaina);
+
+// mage
+@include hs-deck-images (jaina, jaina);
 @include hs-deck-images (medivh, medivh);
-@include hs-deck-images (paladin, uther);
+
+// paladin
+@include hs-deck-images (uther, uther);
 @include hs-deck-images (liadrin, liadrin);
-@include hs-deck-images (priest, anduin);
-@include hs-deck-images (rogue, valeera);
-@include hs-deck-images (shaman, thrall);
-@include hs-deck-images (warlock, guldan);
-@include hs-deck-images (warrior, garrosh);
+
+// priest
+@include hs-deck-images (anduin, anduin);
+
+// rogue
+@include hs-deck-images (valeera, valeera);
+
+// shaman
+@include hs-deck-images (thrall, thrall);
+
+// warlock
+@include hs-deck-images (guldan, guldan);
+
+// warrior
+@include hs-deck-images (garrosh, garrosh);
 @include hs-deck-images (magni, magni);
 
 //*************************************

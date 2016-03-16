@@ -8033,7 +8033,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // Updates Deck, Mulligan, and Matchup Models
             function updateDeck(deckSubmitted) {
-				      var deck = angular.copy(deckSubmitted);
+				          var deck = angular.copy(deckSubmitted);
 //              console.log('saving deck:', deck);
 
               // renaming arrays and deleting to avoid update Children

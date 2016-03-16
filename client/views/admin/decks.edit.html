@@ -123,7 +123,7 @@
                 </div>
 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{ deck.heroName | lowercase }}">
+                    <div class="db-deck-header db-deck-{{deck.heroName.toLowerCase()}} {{ deck.heroName | lowercase }}">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
@@ -153,7 +153,7 @@
                         </div>
                     </div>
                     
-                    <div class="db-deck-dust db-deck-footer db-deck-{{deck.playerClass | lowercase}} {{deck.heroName | lowercase}}">
+                    <div class="db-deck-dust db-deck-footer db-deck-{{deck.heroName | lowercase}} {{deck.heroName | lowercase}}">
                         {{deck.getDust()}}
                         <div class="dust-bottle-sm"></div>
                     </div>
