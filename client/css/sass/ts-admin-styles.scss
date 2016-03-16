@@ -1079,6 +1079,22 @@ body.admin {
             margin-left: 0;
         }
         
+        .weekly-trend {
+            input {
+            padding: 0;
+            text-align: center;
+            }
+        }
+        
+        .snap-number {
+            background-color: $white-15;
+            width: 100%;
+            display: block;
+            height: 35px;
+            text-align: center;
+            padding-top: 7px;
+        }
+        
         .tier-sub-nav {
             display: block;
             padding-left: 0px;
