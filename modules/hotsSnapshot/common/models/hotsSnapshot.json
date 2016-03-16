@@ -18,6 +18,9 @@
     },
     "thoughts": {
         "type": "string"
+    },
+    "isActive": {
+        "type": "boolean"
     }
   },
   "validations": [],

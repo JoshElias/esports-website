@@ -5921,21 +5921,27 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminHOTSSnapshotAddCtrl', ['$scope', function ($scope) {
         console.log('were in add');
     }])
-    .controller('AdminHOTSSnapshotEditCtrl', ['$scope', '$compile', 'hotsSnapshot', 'HOTSSnapshot', function ($scope, $compile, hotsSnapshot, HOTSSnapshot) {
-        $scope.snapshot = HOTSSnapshot(hotsSnapshot);
-        $scope.state = 'general';
+    .controller('AdminHOTSSnapshotBuildCtrl', ['$scope', '$state', 'hotsSnapshot', 'HOTSSnapshot', 'AlertService',
+        function ($scope, $state, hotsSnapshot, HOTSSnapshot, AlertService) {
+        $scope.snapshot = new HOTSSnapshot(hotsSnapshot);
 
-        var box;
+        $scope.submit = function () {
+            return $scope.snapshot.submit(function (err) {
+                if (err) {
+                    //TODO HANDLE ERRORS
+                }
 
-        $scope.addheroWnd = function (tier) {
-            $scope.tier = tier;
-            box = bootbox.dialog({
-                message: $compile('<hots-snapshot-hero-add tier="' + tier + '"> </hots-snapshot-hero-add>')($scope)
+                AlertService.setSuccess({
+                    show: true,
+                    msg: $scope.snapshot.subtitle + ' has been added successfully.'
+                });
+                $state.go('app.admin.hots.snapshots.list');
             });
         }
 
-        console.log($scope.snapshot);
-        console.log('were in edit');
+        //$scope.on('destroy', function () {
+        //    console.log('sup');
+        //})
     }])
     .controller('AdminTeamListCtrl', ['$scope', '$window', 'TeamMember', 'teamMembers', 'AlertService',
         function ($scope, $window, TeamMember, teamMembers, AlertService) {

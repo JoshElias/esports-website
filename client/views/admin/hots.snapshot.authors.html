@@ -8,10 +8,10 @@
         ng-repeat="author in snapshot.authors"
         ng-click="setActiveAuthor(author)"
         >
-            <span ng-class="{ 'mark': activeAuthor.author.id == author.author.id }">
-                {{author.author.username}}
+            <span ng-class="{ 'mark': activeAuthor.user.id == author.user.id }">
+                {{author.user.username}}
             </span>
-            <span ng-click="authorDeleteById(author.author.id)" class="pull-right"><i class="fa fa-close"></i></span>
+            <span ng-click="authorDeleteById(author.user.id)" class="pull-right"><i class="fa fa-close"></i></span>
         </div>
         <div ng-if="!snapshot.authors.length">No authors have been added yet.</div>
         <div ng-click="openAuthorAdd()">
@@ -22,7 +22,7 @@
     <div class="col-md-8" ng-if="!!activeAuthor">
         <div class="row">
             <div class="col-md-12 clearfix">
-                <span>DESCRIPTION - {{activeAuthor.author.username}}</span>
+                <span>DESCRIPTION - {{activeAuthor.user.username}}</span>
                 <ul class="pull-right hero-roles clearfix">
                     <span class="pull-left">ROLE(S) OF EXPERTISE</span>
                     <li class="pull-left" ng-repeat="role in roles">

@@ -45,17 +45,19 @@
 
         <div class="col-lg-12">
             <button class="btn active-btn"
-                    ng-class="{ active: snapshot.active }"
-                    ng-click="snapshot.active = !snapshot.active"
+                    ng-class="{ active: snapshot.isActive }"
+                    ng-click="snapshot.isActive = !snapshot.isActive"
                     ng-mouseover="activeHover = true"
                     ng-mouseleave="activeHover = false"
                 >
-                <span ng-if="snapshot.active && activeHover">disable</span>
-                <span ng-if="!snapshot.active && activeHover">enable</span>
+                <span ng-if="snapshot.isActive && activeHover">disable</span>
+                <span ng-if="!snapshot.isActive && activeHover">enable</span>
 
-                <span ng-if="!snapshot.active && !activeHover">inactive</span>
-                <span ng-if="snapshot.active && !activeHover">active</span>
+                <span ng-if="!snapshot.isActive && !activeHover">inactive</span>
+                <span ng-if="snapshot.isActive && !activeHover">active</span>
             </button>
+
+            {{snapshot.isActive}}
         </div>
     </div>
     <div class="col-md-8">

@@ -6049,7 +6049,7 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/hots.snapshot.build.html',
-                        controller: 'AdminHOTSSnapshotEditCtrl',
+                        controller: 'AdminHOTSSnapshotBuildCtrl',
                         resolve: {
                             //cacheTemplates: ['$templateCache', function ($templateCache) {
                             //    $templateCache.put(tpl + 'views/admin/hots.snapshot.general.html');
@@ -6058,7 +6058,6 @@ var app = angular.module('app', [
                             //}],
                             hotsSnapshot: ['HotsSnapshot', '$stateParams', function (HotsSnapshot, $stateParams) {
                                 var snapshotId = $stateParams.snapshotId;
-                                console.log('resolving', snapshotId);
                                 if (!snapshotId)
                                     return;
 
@@ -6069,11 +6068,25 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'heroTiers',
                                                 scope: {
-                                                    include: ['hero']
+                                                    include: [
+                                                        {
+                                                            relation: 'hero'
+                                                        },
+                                                        {
+                                                            relation: 'guides',
+                                                            scope: {
+                                                                include: ['guide']
+                                                            }
+                                                        }
+                                                    ],
+                                                    order: 'orderNum ASC'
                                                 }
                                             },
                                             {
-                                                relation: 'authors'
+                                                relation: 'authors',
+                                                scope: {
+                                                    include: ['user']
+                                                }
                                             }
                                         ]
                                     }
