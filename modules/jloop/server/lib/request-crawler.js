@@ -8,10 +8,10 @@ function crawl(ctx, options, finalCb) {
 
     // Get the model properties
     var modelName = (ctx.Model) ? ctx.Model.definition.name : ctx.methodString.split(".")[0];
-    var definition = app.models[modelName].definition;
+    var model = app.models[modelName];
 
     // Check for the feature key before we continue
-    if(!definition.settings[options.featureKey]) {
+    if(!model.definition.settings[options.featureKey]) {
         return finalCb();
     }
 
@@ -20,9 +20,10 @@ function crawl(ctx, options, finalCb) {
         ctx: ctx,
         rootKey: "",
         propertyName: "",
-        modelSettings: definition.settings,
-        modelProperties: definition.rawProperties,
-        modelName: definition.name,
+        model: model,
+        modelSettings: model.definition.settings,
+        modelProperties: model.definition.rawProperties,
+        modelName: model.definition.name,
         currentInstance: ctx.currentInstance,
         models: app.models
     };
@@ -70,6 +71,7 @@ function buildNextState(value, key, oldState, options) {
     newState.parent             =   oldState;
     newState.ctx                =   oldState.ctx;
     newState.key                =   key;
+    newState.model              =   oldState.model;
     newState.modelSettings      =   oldState.modelSettings;
     newState.modelProperties    =   oldState.modelProperties[key];
     newState.modelName          =   oldState.modelName;

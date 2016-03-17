@@ -18,7 +18,7 @@ module.exports = function(server) {
         },
         // Add Slug
         function (article, seriesCb) {
-            console.log("new article", article);
+            //console.log("new article", article);
             return article.slugs.create({
                 slug: "tits-at-the-bar",
                 linked: true,
@@ -26,7 +26,7 @@ module.exports = function(server) {
             }, function(err, newSlug) {
                 if(err) return seriesCb(err);
 
-                console.log("new slug", newSlug);
+                //console.log("new slug", newSlug);
                 return seriesCb(undefined, {
                     article: article,
                     slug: newSlug
@@ -40,7 +40,7 @@ module.exports = function(server) {
             }, function(err, article) {
                 if(err) return seriesCb(err);
 
-                console.log("article include", article);
+                //console.log("article include", article);
                 return seriesCb(undefined, models);
             });
         },
@@ -51,7 +51,7 @@ module.exports = function(server) {
             }, function(err, slug) {
                 if(err) return seriesCb(err);
 
-                console.log("slug include", slug);
+                //console.log("slug include", slug);
                 return seriesCb(undefined, models);
             });
         },
@@ -60,14 +60,14 @@ module.exports = function(server) {
             return models.article.slugs.destroyAll(function(err) {
                 if(err) return seriesCb(err);
 
-                console.log("deleted all slugs");
+                //console.log("deleted all slugs");
                 return seriesCb(undefined, models);
             });
         },
         // Delete the article
         function (models, seriesCb) {
             return Article.deleteById(models.article.id, function(err) {
-                if(!err) console.log("deleted article");
+                //if(!err) console.log("deleted article");
                 return seriesCb(err);
             });
         }

@@ -4,17 +4,21 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "slug": {
       "type": "string",
-      "$validate": ["unique"]
+      "$validate": ["slug"]
     },
     "linked": {
       "type": "boolean"
     },
     "baseKey": {
+      "type": "string"
+    },
+    "parentModelName": {
       "type": "string"
     }
   },

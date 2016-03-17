@@ -1,7 +1,8 @@
 var async = require("async");
+var utils = require("../utils");
+var deleteHandlers = require("./delete-handlers");
 
 var DESTROY_CHILDREN_FEATURE_KEY = "$destroyOnDelete";
-
 
 
 function destroyChildren(ctx, finalCb) {
@@ -11,14 +12,19 @@ function destroyChildren(ctx, finalCb) {
         return finalCb();
     }
 
-    // Get all the foreign keys for this model
+    var relations = ctx.Model.settings.relations;
 
-
+    // Create query to retrieve the objectId(s) of the instances we are deleting
     var query = {
         where: ctx.where,
         fields:{ id:true }
     };
-    var relations = ctx.Model.settings.relations;
+
+    // Append all foreing keys to the query fields
+    var foreignKeys = utils.getForeignKeys(ctx.Model.definition.rawProperties);
+    for(var key in foreignKeys) {
+        query.fields[foreignKeys[key]] = true;
+    }
 
     ctx.Model.find(query, function(err, instances) {
         if(err) return finalCb(err);
@@ -30,7 +36,7 @@ function destroyChildren(ctx, finalCb) {
                     return relationCb();
                 }
 
-                var deleteHandler = relationDeleteHandlers[relationData.type];
+                var deleteHandler = deleteHandlers[relationData.type];
                 if(!deleteHandler) {
                     return relationCb();
                 }

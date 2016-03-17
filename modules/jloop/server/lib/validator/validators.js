@@ -173,11 +173,58 @@ function validateUnique(state, uniqueCb) {
     });
 }
 
+function validateSlug(state, uniqueCb) {
+console.log("validating slug");
+    var uniqueErr = new Error(state.key + ' is not unique');
+    uniqueErr.statusCode = 422;
+    uniqueErr.code = 'FIELD NOT UNIQUE';
+
+    console.log("slug where", state.requestData)
+    return state.model.find({
+        where: state.requestData,
+        fields: {
+            id: true,
+            parentModelName: true
+        }
+    }, function (err, slugs) {
+        console.log("found slugs", slugs);
+        if (err) return uniqueCb(err);
+
+        return async.some(slugs, function(slug, slugCb) {
+            state.model.find({
+                where: {
+                    slug: state.data,
+                    parentModelName: slug.parentModelName
+                },
+                fields: { id: true },
+                limit: 1
+            }, function(err, slugMatches) {
+                console.log("slug matches", slugMatches);
+                if (err) return slugCb(err);
+                else if (slugMatches.length === 0)
+                    return slugCb();
+                else if (slugMatches.length > 1)
+                    return slugCb(undefined, true);
+                else if (slug.id !== slugMatches[0].id)
+                    return slugCb(undefined, true);
+
+                return slugCb();
+            });
+        }, function(err, result) {
+            if(err) return uniqueCb(err);
+            else if(result) return uniqueCb(undefined, uniqueErr);
+
+            return uniqueCb();
+        });
+    });
+}
+
 
 
 module.exports = {
     youtubeId: validateYoutubeId,
     youtubePlaylistId: validateYoutubePlaylistId,
     spam : validateSpam,
-    unique : validateUnique
+    unique : validateUnique,
+    slug : validateSlug
 };

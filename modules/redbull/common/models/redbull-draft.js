@@ -1,5 +1,6 @@
 var loopback = require("loopback");
 var async = require("async");
+var Promise = require("bluebird");
 var utils = require("../../../../modules/jloop").utils;
 
 
@@ -229,7 +230,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         var currentTime = Date.now();
 
@@ -262,7 +263,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         RedbullDraft.findById(draftId, {
             include: ["settings"]
@@ -317,7 +318,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         var RedbullDeck = RedbullDraft.app.models.redbullDeck;
 
@@ -366,7 +367,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;
@@ -374,7 +375,7 @@ module.exports = function(RedbullDraft) {
     };
 
     RedbullDraft.getDraftPlayers = function (finalCb) {
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;
@@ -422,7 +423,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;

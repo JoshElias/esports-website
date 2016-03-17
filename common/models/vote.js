@@ -1,11 +1,12 @@
 var utils = require("../../modules/jloop/server/lib/utils");
 var _ = require("underscore");
+var Promise = require("bluebird");
 var ObjectID = require("mongodb").ObjectID;
 
 module.exports = function(Vote) {
     
      Vote.getScore = function(parentId, finalCb) {
-         finalCb = finalCb || utils.createPromiseCallback();
+         finalCb = finalCb || new Promise();
          if (typeof parentId === "undefined") 
              return finalCb();
          
@@ -41,7 +42,7 @@ module.exports = function(Vote) {
     };
     
     Vote.hasVoted = function(uid, parentId, finalCb) {
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
         if (typeof uid === "undefined" || typeof parentId === "undefined")
             return finalCb();
         

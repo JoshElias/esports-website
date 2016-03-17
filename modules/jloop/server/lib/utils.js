@@ -1,37 +1,11 @@
 var _ = require("underscore");
 var loopback = require("loopback");
 var async = require("async");
-
-var server = require("../../../../server/server");
-
-
-function createPromiseCallback() {
-    var cb;
-
-    if (!global.Promise) {
-        cb = function() {};
-        cb.promise = {};
-        Object.defineProperty(cb.promise, 'then', { get: throwPromiseNotDefined });
-        Object.defineProperty(cb.promise, 'catch', { get: throwPromiseNotDefined });
-        return cb;
-    }
-
-    var promise = new global.Promise(function(resolve, reject) {
-        cb = function(err, data) {
-            if (err) return reject(err);
-            return resolve(data);
-        };
-    });
-    cb.promise = promise;
-    return cb;
-}
+var app = require("../../../../server/server");
 
 
-function throwPromiseNotDefined() {
-    throw new Error(
-        'Your Node runtime does support ES6 Promises. ' +
-        'Set "global.Promise" t``1  o your preferred implementation of promises.');
-}
+var ID_SUFFIX = "Id";
+
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -49,22 +23,43 @@ function convertMillisecondsToDigitalClock(ms) {
     };
 }
 
+function isForeignKey(key) {
+    if(typeof key !== "string" || key.length < 3)
+        return false;
 
-function slugify(string) {
-    return (string) ? string.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
-}
-
-function modelNameFromForeignKey(keyName) {
-    if(typeof keyName !== "string" || keyName.length < 2) {
-        return;
+    var suffix = key.slice(key.length-2, key.length);
+    if(suffix !== ID_SUFFIX) {
+        return false;
     }
 
-    var modelName = keyName.slice(0, keyName.length-3);
+    return true;
+}
 
+function getForeignKeys(properties) {
+    var foreignKeys = [];
+    for(var key in properties) {
+        if(isForeignKey(key)) {
+            foreignKeys.push(key);
+        }
+    }
+    return foreignKeys;
+}
+
+function modelNameFromForeignKey(key) {
+    if(!isForeignKey(key)) {
+        throw new Error("No model for key:", key);
+    }
+
+    var modelName = key.slice(0, key.length-2);
+
+    // Amend known exceptions
     if(modelName === "author" || modelName === "owner") {
         modelName = "user";
     }
 
+    if(!app.models[modelName]) {
+        throw new Error("No model for key:", key);
+    }
     return modelName;
 }
 
@@ -85,11 +80,11 @@ function getFirstForeignKey(data) {
 }
 
 
+
 module.exports = {
-    createPromiseCallback : createPromiseCallback,
     getRandomInt : getRandomInt,
     convertMillisecondsToDigitalClock : convertMillisecondsToDigitalClock,
-    slugify: slugify,
+    getForeignKeys: getForeignKeys,
     modelNameFromForeignKey: modelNameFromForeignKey,
     getFirstForeignKey: getFirstForeignKey
 };

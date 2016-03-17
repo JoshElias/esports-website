@@ -1,4 +1,5 @@
 var async = require("async");
+var Promise = require("bluebird")
 var uuid = require("node-uuid");
 var loopback = require("loopback");
 var bcrypt = require('bcrypt-nodejs');
@@ -139,7 +140,7 @@ module.exports = function(User) {
          * @param {Error} err
          */
         User.confirm = function (uid, token, redirect, fn) {
-            fn = fn || utils.createPromiseCallback();
+            fn = fn || new Promise();
 
             User.findOne({where:{id:uid, verificationToken:token}}, function (err, user) {
                 if (err) return fn(err);
@@ -244,7 +245,7 @@ module.exports = function(User) {
 
     
     User.changePassword = function (email, password, token, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         User.findOne({where: {email: email}}, function (err, user) {
             if (err) {
@@ -283,7 +284,7 @@ module.exports = function(User) {
     };
 
     User.resetEmail = function (email, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
         var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
         User.getCurrent(function(err, user) {
@@ -343,7 +344,7 @@ module.exports = function(User) {
 
     
     User.changeEmail = function (uid, token, email, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         var AccessToken = User.app.models.AccessToken;
 
@@ -454,7 +455,7 @@ module.exports = function(User) {
             options = undefined;
         }
 
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
@@ -574,7 +575,7 @@ module.exports = function(User) {
 
 
     User.assignRoles = function (uid, roleNames, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
@@ -645,7 +646,7 @@ module.exports = function(User) {
 
 
     User.revokeRoles = function (uid, roleNames, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
@@ -713,7 +714,7 @@ module.exports = function(User) {
 
 
     User.isLinked = function (providers, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         var UserIdentity = User.app.models.userIdentity;
         var ctx = loopback.getCurrentContext();
@@ -769,7 +770,7 @@ module.exports = function(User) {
 
 
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         User.getCurrent(function (err, user) {
             if (err) return cb(err);
@@ -781,7 +782,7 @@ module.exports = function(User) {
 
 
     User.setSubscriptionCard = function (cctoken, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         User.getCurrent(function (err, user) {
             if (err) return cb(err);
@@ -792,7 +793,7 @@ module.exports = function(User) {
     };
 
     User.cancelSubscription = function (cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         User.getCurrent(function (err, user) {
             if (err) return cb(err);
