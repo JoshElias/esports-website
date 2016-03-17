@@ -473,23 +473,23 @@ var loggedIn = false,
                 },
                 authors: [],
                 isActive: false
-            }
+            };
             var defaultAuthor = {
                 description: "",
                 expertClasses: [],
                 snapshotId: "",
                 authorId: ""
-            }
+            };
             var defaultGuideTier = {
                 heroTierId: "",
                 guideId: "",
                 orderNum: 0
-            }
+            };
             var defaultCrud = {
                 exists: [],
                 toDelete: [],
                 toWrite: []
-            }
+            };
             var exists = new Object();
 
             var HOTSSnapshot = function (snapshot) {
@@ -498,7 +498,7 @@ var loggedIn = false,
 
                 exists['authors'] = angular.copy(defaultCrud);
                 exists['heroTiers'] = angular.copy(defaultCrud);
-                exists['tierGuides'] = angular.copy(defaultCrud);
+                exists['guideTiers'] = angular.copy(defaultCrud);
 
                 this.snapNum   = snapshot.snapNum || 0;
                 this.subtitle  = snapshot.subtitle || "";
@@ -541,33 +541,37 @@ var loggedIn = false,
                 var tier = {
                     heroes: new Array(),
                     tier: this.tiers.length + 1
-                }
+                };
 
                 this.tiers.push(tier);
-            }
+            };
 
             HOTSSnapshot.prototype.buildTiers = function () {
-                var heroTiers = this.heroTiers
-
-                _.each(heroTiers, function (heroTier, idx) { heroTier.orderNum = idx; });
+                var heroTiers = this.heroTiers;
+                var tiers = angular.copy(this.tiers);
+                var largestTier = tiers.length;
 
                 if (!!heroTiers) {
                     this.tiers = new Array();
 
+                    _.each(heroTiers, function (heroTier, idx) {
+                        heroTier.orderNum = idx;
+
+                        if (heroTier.tier > largestTier)
+                            largestTier = heroTier.tier;
+                    });
+
+                    for (var i = 0; i < largestTier; i++) {
+                        this.addTier();
+                    }
+
                     for (var i = 0; i < heroTiers.length; i++) {
                         var item = heroTiers[i];
-
-                        if (_.isUndefined(this.tiers[item.tier - 1])) {
-                            this.tiers[item.tier - 1] = {
-                                heroes: new Array(),
-                                tier: item.tier
-                            };
-                        }
 
                         this.tiers[item.tier - 1].heroes.push(item);
                     }
                 }
-            }
+            };
 
             HOTSSnapshot.prototype.newHero = function (obj) {
                 //if (!_.isEmpty(validate(obj))) {
@@ -606,12 +610,13 @@ var loggedIn = false,
                     snapshotId: obj.snapshotId,
                     authorId: obj.authorId,
                     user: obj.user
-                }
+                };
 
                 this.authors.push(author);
-            }
+            };
 
             HOTSSnapshot.prototype.addGuideToHero = function (hero, guide) {
+                var that = this;
                 var tierGuide = angular.copy(defaultGuideTier);
                 tierGuide['guide'] = guide;
                 tierGuide['guideId'] = guide.id;
@@ -620,42 +625,57 @@ var loggedIn = false,
                 //this is temporary until we decide to enable multiple guides per hero
                 if (hero.guides && hero.guides.length > 0 && hero.guides[0].id) {
                     _.each(hero.guides, function (tierGuide) {
-                        exists['tierGuides'].toDelete.push(tierGuide);
-                    })
+                        that.removeGuideFromHero(tierGuide.id, hero.id);
+                    });
                 }
 
-                hero.guides = [];
                 hero.guides.push(tierGuide);
 
                 console.log(exists);
-            }
+            };
 
-            HOTSSnapshot.prototype.removeHero = function (obj) {
+            HOTSSnapshot.prototype.removeHero = function (hero) {
+                var that = this;
+                var heroTiersCopy = angular.copy(this.heroTiers);
+                var heroCopy = angular.copy(hero);
 
-            }
+                _.each(hero.guides, function (guide) {
+                    that.removeGuideFromHero(guide.id, hero.id);
+                });
+
+                if (hero.id)
+                    exists.heroTiers.toDelete.push(hero);
+
+                this.heroTiers.splice(this.heroTiers.indexOf(hero),1);
+            };
 
             HOTSSnapshot.prototype.removeGuideFromHero = function (guideId, heroId) {
                 var hero = _.find(this.heroTiers, function (h) {
-                    return h.heroId == heroId;
+                    return h.heroId == heroId || h.id == heroId;
                 });
 
-                var guide = _.find(hero.tierGuides, function (g) {
-                    return g.guideId == guideId;
-                })
+                var guide = _.find(hero.guides, function (g) {
+                    return g.guideId == guideId || g.id == guideId;
+                });
 
-                hero.tierGuides = _.difference(hero.tierGuides, [guide]);
-            }
+                if (guide.id)
+                    exists.guideTiers.toDelete.push(guide);
+
+                hero.guides = _.difference(hero.guides, [guide]);
+            };
 
             HOTSSnapshot.prototype.removeAuthor = function (obj) {
                 var authors = this.authors;
 
+                exists.authors.toDelete.push(obj);
+
                 this.authors = _.difference(authors, [obj]);
-            }
+            };
 
             HOTSSnapshot.prototype.newTier = function () {
 
                 this.tiers.push();
-            }
+            };
 
             HOTSSnapshot.prototype.submit = function (cb) {
                 var arrs = exists;
@@ -675,7 +695,6 @@ var loggedIn = false,
                         });
 
                         if (!diff) {
-                            console.log('pushing');
                             toWrite.push(val);
                         }
                     });
@@ -745,23 +764,27 @@ var loggedIn = false,
                         }, seriesCb);
 
                     }, function (seriesCb) {
-                        var guideTiers = arrs.tierGuides;
+                        var objs = {
+                            guideTiers: GuideTier,
+                            heroTiers: HeroTier,
+                            authors: HotsSnapshotAuthor
+                        };
 
-                        console.log(guideTiers);
-
-                        async.forEach(guideTiers.toDelete, function (guideTier, eachCb) {
-                            GuideTier.destroyById({
-                                id: guideTier.id
-                            })
-                            .$promise
-                            .then(function () {
-                                console.log('delete guideTier');
-                                return eachCb();
-                            });
+                        async.forEachOf(objs, function (obj, key, forEachCb) {
+                            async.forEach(arrs[key].toDelete, function (toDelete, eachCb) {
+                                obj.deleteById({
+                                    id: toDelete.id
+                                })
+                                .$promise
+                                .then(function () {
+                                    console.log('delete ' + key);
+                                    return eachCb();
+                                });
+                            }, forEachCb);
                         }, seriesCb);
                     }
                 ], cb);
-            }
+            };
 
             return function (snapshot) { return new HOTSSnapshot(snapshot); }
         }
@@ -1557,37 +1580,37 @@ var loggedIn = false,
       var servObj = {};
       // ui.router hack for updating $stateParams without reloading resolves/controller
       // and allows History API to work.
-    
+
       servObj.updateStateParams = function(stateParams) {
           $state.current.reloadOnSearch = false;
-          
+
           $state.transitionTo($state.current.name, stateParams, {
               location: true,
               inherit: true,
               relative: $state.$current.name,
               notify: false
           });
-          
+
           $timeout(function () {
             $state.current.reloadOnSearch = undefined;
           });
       };
-      
+
       servObj.replaceHistoryWith404 = function() {
           $state.transitionTo('app.404', {}, {
               location: "replace"
           });
       };
-      // this method expects: 
+      // this method expects:
       // page - number
       // count - number
       // perpage - number
       servObj.validatePage = function (page, count, perpage) {
           // 404 if page entered manually is not valid
           if (angular.isUndefined(page)) return;
-          
+
           var page = angular.isNumber(page) ? page : parseInt(page);
-          
+
           if (angular.isDefined(page) && angular.isNumber(page) && page !== 1) {
               if (page <= 0) {
                   this.replaceHistoryWith404();
@@ -1602,7 +1625,7 @@ var loggedIn = false,
           }
 //          console.log('cleared page validation');
       };
-      
+
       // this method expects:
       // stateFilters - a stateParam array of values
       // availFilters - an array of available filters
@@ -1612,7 +1635,7 @@ var loggedIn = false,
               this.replaceHistoryWith404();
           }
       };
-      
+
       return servObj;
   }])
   .factory('AjaxPagination', ['$state', '$timeout', function ($state, $timeout) {
@@ -1899,7 +1922,7 @@ var loggedIn = false,
     return ow;
 })
 .factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', 'CrudMan', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone, CrudMan) {
-    
+
     var deckBuilder = {};
 
     deckBuilder.new = function (playerClass, data) {
@@ -2062,7 +2085,7 @@ var loggedIn = false,
             }
             return false;
         };
-        
+
         db.toggleMulligan = function (mulligan, withCoin, card) {
             //            console.log('mulligan: ', mulligan);
             //            console.log('card: ', card);
@@ -2215,19 +2238,19 @@ var loggedIn = false,
             if (exists) {
                 // check gameModeType
                 if(db.gameModeType === 'arena') {
-                    
+
                     db.cards[index].cardQuantity += 1;
                     return true;
                 } else {
                     // mode is constructed or brawl mode
                     if (!isLegendary && db.cards[index].cardQuantity === 1) {
-                            
+
                         db.cards[index].cardQuantity += 1;
                         return true;
                     }
                     // increase qty by one
                     if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
-                        
+
                         db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
                         return true;
                     }
@@ -2340,11 +2363,11 @@ var loggedIn = false,
                             label: 'Continue',
                             className: 'btn-danger',
                             callback: function () {
-                                
+
                                 $timeout(function() {
                                     db.cards.splice(index, 1);
                                 });
-                                
+
                                 for(var i = 0; i < db.mulligans.length; i++) {
                                     for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
                                         if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
@@ -2382,7 +2405,7 @@ var loggedIn = false,
                 card.cardQuantity = card.cardQuantity - 1;
             } else {
                 var index = db.cards.indexOf(card);
-                
+
                 db.cards.splice(index, 1);
             }
         };
@@ -3037,11 +3060,11 @@ var loggedIn = false,
                         var where = {};
 
                         if ((!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) && _.isEmpty(filters.heroes)) {
-                            
+
                             if (!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) {
                                 where.or = [];
                             }
-                            
+
                             if (!_.isEmpty(filters.roles)) {
                                 where.or.push({ role: { inq: filters.roles }})
                             }
@@ -3049,7 +3072,7 @@ var loggedIn = false,
                             if (!_.isEmpty(filters.universes)) {
                                 where.or.push({ universe: { inq: filters.universes }})
                             }
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -3057,7 +3080,7 @@ var loggedIn = false,
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
 //                            console.log('where:', where);
                             Hero.find({
                                 filter: {
@@ -3071,10 +3094,10 @@ var loggedIn = false,
                                 console.log(err);
                                 return finalCallback(err);
                             });
-                            
+
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -3082,7 +3105,7 @@ var loggedIn = false,
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
                             where.name = { inq: heroNames };
 
                             Hero.find({
@@ -3098,7 +3121,7 @@ var loggedIn = false,
                                 return finalCallback(err);
                             });
                         } else if (_.isEmpty(filters.heroes)) {
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -3106,7 +3129,7 @@ var loggedIn = false,
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
                             Hero.find({
                                 filter: {
                                     where: where,
@@ -3124,7 +3147,7 @@ var loggedIn = false,
                     },
                     function(heroes, seriesCallback) {
                         var where = {};
-                        
+
                         if (_.isEmpty(filters.heroes)) {
                             where = {
                                 isActive: true,
@@ -3139,9 +3162,9 @@ var loggedIn = false,
                                 }
                             };
                         }
-                        
+
 //                        console.log('where:', where);
-                        
+
                         Article.find({
                             filter: {
                                 where: where,
@@ -3172,7 +3195,7 @@ var loggedIn = false,
                 ])
             },
             topGuide: function (filters, finalCallback) {
-                if ( 
+                if (
                 !_.isUndefined(filters.heroes[0]) ||
                 !_.isEmpty(filters.universes) ||
                 !_.isEmpty(filters.roles) ||
@@ -3187,7 +3210,7 @@ var loggedIn = false,
                 } else {
                     var filter = {}
                 }
-               
+
                 Guide.topGuide(filter)
                 .$promise
                 .then(function (data) {
@@ -3215,7 +3238,7 @@ var loggedIn = false,
                     if (!_.isEmpty(filters.roles)) {
                         heroWhere.and.push({ role: { inq: filters.roles } });
                     }
-                    
+
                     if (!_.isEmpty(filters.search)) {
                         var pattern = '/.*'+filters.search+'.*/i';
                         heroWhere.or = [
@@ -3223,9 +3246,9 @@ var loggedIn = false,
                             { description: { regexp: pattern }}
                         ]
                     }
-                    
+
                 } else if (filters.search != "") {
-                    
+
                     var pattern = '/.*'+filters.search+'.*/i';
                     heroWhere.or = [
                         { name: { regexp: pattern } },
@@ -3237,14 +3260,14 @@ var loggedIn = false,
                     guideWhere.isFeatured = isFeatured;
                     order = "createdDate DESC";
                 }
-                
+
 //                console.log('heroWhere:', heroWhere);
-                
+
                 async.waterfall([
                     function(seriesCallback) {
                         var selectedUniverses = filters.universes,
                             selectedRoles = filters.roles
-                        
+
                         Hero.find({
                             filter: {
                                 fields: ["id"],
@@ -3342,11 +3365,11 @@ var loggedIn = false,
                                 ]
                             }
                         }).$promise.then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideWhere);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -3503,11 +3526,11 @@ var loggedIn = false,
                                 ]
                             }
                         }).$promise.then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideIds);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -3619,11 +3642,11 @@ var loggedIn = false,
                         })
                             .$promise
                             .then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideIds);
                         })
                             .catch(function (err) {
@@ -3653,19 +3676,19 @@ var loggedIn = false,
                 if (_.isEmpty(selectedHeroes)) {
                     return;
                 }
-                
+
                 var where = {}
 
                 if (isFeatured !== null) {
                     where.isFeatured = isFeatured
                 }
-                
+
                 async.waterfall([
                     //get selected heroes
                     function (seriesCallback) {
-                        
+
                         var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
-                        
+
                         Hero.find({
                             filter: {
                                 fields: ["id"],
@@ -3795,11 +3818,11 @@ var loggedIn = false,
                                         ]
                                     }
                                 }).$promise.then(function (guides) {
-                                    
+
                                     _.each(guides, function(guide) {
                                         guide.voteScore = Util.tally(guide.votes, 'direction');
                                     });
-                                    
+
                                     return waterCallback(undefined, guides);
                                 }).catch(function (err) {
                                     return waterCallback(err);

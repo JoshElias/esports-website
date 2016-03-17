@@ -46,13 +46,13 @@ angular.module('app.directives', ['ui.load'])
             var createUUID = function() {
               return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
             }
-            
+
             var tmpUuid = createUUID();
 
             function setTooltip () {
                 var content = $compile('<img ng-src="'+scope.tooltipImg+'" alt="">')(scope);
                 var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
-                
+
                 el.wTooltip({
                   delay: 500,
                   offsetX: xPos,
@@ -123,7 +123,7 @@ angular.module('app.directives', ['ui.load'])
             }
         }],
         link: function($scope, el, attr) {
-            
+
             $scope.setTitle = function(s) {
                 $(".modal-title")[0].innerHTML = s;
             }
@@ -265,7 +265,7 @@ angular.module('app.directives', ['ui.load'])
 
       $scope.signup = function(email, username, password) {
         if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined ) {
-            
+
           User.create({
               email: email,
               username: username,
@@ -284,7 +284,7 @@ angular.module('app.directives', ['ui.load'])
                   msg: 'Unable to Create Account',
                   lbErr: err
               });
-              
+
           });
         }
       }
@@ -373,8 +373,8 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.commentPost = function (c) {
-                $scope.posting = true; 
-                
+                $scope.posting = true;
+
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost(c);
@@ -397,7 +397,7 @@ angular.module('app.directives', ['ui.load'])
                     .$promise
                     .then(function (com) {
                         com.author = LoopBackAuth.currentUserData;
-                        
+
                         $scope.commentable.comments.push(com);
                         $scope.comment = '';
                         commentSuccess();
@@ -418,15 +418,15 @@ angular.module('app.directives', ['ui.load'])
 
                 return voteScore;
             }
-            
+
             function commentSuccess () {
                 $scope.commentSuccess = true;
-                
+
                 $timeout(function () {
                     $scope.commentSuccess = false;
                 }, 5000);
             }
-            
+
             updateCommentVotes();
             function updateCommentVotes() {
                 $scope.commentable.comments.forEach(checkVotes);
@@ -474,14 +474,14 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
-                    
+
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
                         comment.votes.push({
                             direction: direction,
                             userId: LoopBackAuth.currentUserId
                         });
-                        
+
                         Comment.upsert(comment)
                         .$promise
                         .then(function (data) {
@@ -781,7 +781,7 @@ angular.module('app.directives', ['ui.load'])
             var parentId = votable.id;
             var votableType = objType.toString() + 'Id';
             $scope.voteInfo = {};
-            
+
             function getVoteInfo (cb) {
                 async.waterfall([
                     getVotes,
@@ -793,16 +793,16 @@ angular.module('app.directives', ['ui.load'])
                         return cb();
                 })
             }
-            
+
             function getVotes (cb) {
                 var voteOptions = {
                     filter: {
                         where: {
-                            
+
                         }
                     }
                 };
-                
+
                 voteOptions.filter.where[votableType] = parentId;
                 Vote.find(voteOptions)
                 .$promise
@@ -812,31 +812,31 @@ angular.module('app.directives', ['ui.load'])
                     return cb(undefined, votes);
                 });
             }
-            
+
             function calcVotes (votes, cb) {
                 var hasVoted,
                     voteScore = 0;
-                
+
                 Vote.hasVoted({
                     parentId: parentId,
                     uid: LoopBackAuth.currentUserId
                 }).$promise
                 .then(function (data) {
                     hasVoted = data.hasVoted;
-                
+
                     _.each(votes, function(vote) {
                         voteScore += vote.direction;
                     });
-                
+
                     var voteInfo = {
                         score: voteScore,
                         hasVoted: hasVoted
                     };
-                    
+
                     return cb(undefined, voteInfo);
                 });
             }
-            
+
             //initial load
             getVoteInfo();
 
@@ -870,7 +870,7 @@ angular.module('app.directives', ['ui.load'])
                     bootbox.alert("You can't vote for your own content.");
                     return false;
                 } else {
-                    
+
                     if ($scope.voteInfo.hasVoted === direction) {
                         return;
                     } else if ($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) {
@@ -886,25 +886,25 @@ angular.module('app.directives', ['ui.load'])
                         })
                         .$promise
                         .then(function (vote) {
-                            
+
                             vote.direction = direction;
-                            
+
                             Vote.upsert({
                                 id: vote.id
                             }, vote)
                             .$promise
                             .then(function(voteUpdated) {
-                                
+
                                 _.each(votable.votes, function(vote) {
                                     if (voteUpdated.id === vote.id) {
                                         vote.direction = direction;
                                     }
                                 });
-                                
+
                                 getVoteInfo();
                             });
                         });
-                        
+
                     } else {
                         setLoading(true);
                         var newVote = {};
@@ -942,11 +942,11 @@ angular.module('app.directives', ['ui.load'])
         restrict: 'A',
         link: function(scope, element, attrs) {
             var tooltip;
-            
+
             $timeout(function () {
                 tooltip = $(element).tooltip();
             });
-            
+
 //            scope.$on('$destroy', function () {
 //                if (tooltip.next()) {
 //                    tooltip.next().remove();
@@ -1064,7 +1064,7 @@ angular.module('app.directives', ['ui.load'])
                 style: false,
                 className: 'hots-talent-tooltip'
             });
-            
+
             scope.$on('$destroy', function () {
                 $('.hots-talent-tooltip').remove();
             });
@@ -1104,7 +1104,7 @@ angular.module('app.directives', ['ui.load'])
                 style: false,
                 className: 'hots-map-tooltip'
             });
-            
+
             scope.$on('$destroy', function () {
                 $('.hots-map-tooltip').remove();
             });
@@ -1641,7 +1641,7 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/hots.filtering.html',
         link: function (scope, element, attrs) {
             scope.searchHeroes = angular.copy(scope.filters.search);
-            
+
             var initializing = true,
                 randHeroIndex = randomIntFromInterval (0,scope.heroes.length - 1);
 
@@ -1662,10 +1662,10 @@ angular.module('app.directives', ['ui.load'])
 
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
-                
+
                 scope.$parent.searchGuides();
             }
-            
+
             scope.queryOnEmpty = function (str) {
                 if (_.isEmpty(str)) {
                     scope.updateSearch();
@@ -1693,7 +1693,7 @@ angular.module('app.directives', ['ui.load'])
             scope.toggleFilterHero = function (hero) {
 //                var index = scope.filters.heroes.indexOf(hero);
                 var index = _.find(scope.filters.heroes, function (heroFilter) { return heroFilter.id === hero.id });
-                
+
                 if (!index) {
                     if (scope.filters.roles.length && scope.filters.roles.indexOf(hero.role) == -1) {
                         scope.filters.roles.push(hero.role);
@@ -1761,7 +1761,7 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     return false;
                 }
-                
+
             };
 
             scope.hasAnyFilterMap = function () {
@@ -1774,7 +1774,7 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     scope.filters.map = map;
                 }
-                
+
             };
 
             scope.currentMapBack = function () {
@@ -2012,7 +2012,7 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     scope.filters.classes.splice(index, 1);
                 }
-                
+
                 StateParamHelper.updateStateParams({
                     k: scope.filters.classes
                 });
@@ -2065,14 +2065,14 @@ angular.module('app.directives', ['ui.load'])
             scope.getNumber = function (x) {
                 return Util.numberWithCommas(x);
             }
-            
+
             function checkPre (str) {
                 var https = str.slice(0, 5) === "https";
                 var sub = str.substr(5);
-                
+
                 if (!https)
                     return "https:" + sub;
-                
+
                 return str;
             }
 
@@ -2083,7 +2083,7 @@ angular.module('app.directives', ['ui.load'])
 
                 for (var i = 0; i < data.length; i++) {
                     var scr = data[i].screenshotUrl;
-                    
+
                     scr = checkPre(scr);
 
                     data[i].screenshotUrl = scr;
@@ -2306,7 +2306,7 @@ angular.module('app.directives', ['ui.load'])
                 heroTierId : "",
                 guideId    : "",
                 orderNum   : 0
-            }
+            };
 
             function addBufferedHeroes (tier) {
                 var snap = $scope.snapshot;
@@ -2369,8 +2369,9 @@ angular.module('app.directives', ['ui.load'])
                 return $scope.snapshot.addGuideToHero($scope.activeHero, guide);
             }
 
-            $scope.removeHero = function () {
-                return $scope.snapshot.removeHero();
+            $scope.removeHero = function (hero) {
+                $scope.snapshot.removeHero(hero);
+                $scope.snapshot.buildTiers();
             }
 
             $scope.guideDeleteById = function (guideId) {

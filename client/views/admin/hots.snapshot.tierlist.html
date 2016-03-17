@@ -23,7 +23,7 @@
                 ng-class="{ active : hero.hero.id == activeHero.heroId }"
                 >
                     {{hero.hero.name}}
-                    <button class="btn btn-red btn-sm pull-right">
+                    <button ng-click="removeHero(hero)" class="btn btn-red btn-sm pull-right">
                         <i class="fa fa-close"></i>
                     </button>
                 </div>
@@ -63,6 +63,7 @@
                     Associated Guide
                     <div class="input-group">
                         <input class="form-control" ng-model="activeHero.guides[0].guide.name" readonly>
+                        <span style="cursor: pointer;" ng-click="openGuideAdd()" class="input-group-addon"><i class="fa fa-link"></i></span>
                         <span style="cursor: pointer;" ng-click="openGuideAdd()" class="input-group-addon"><i class="fa fa-link"></i></span>
                     </div>
                 </div>
