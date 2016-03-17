@@ -3872,6 +3872,8 @@ angular.module('app.services', [])
                 sb.photoNames = data.photoNames;
                 sb.slug = data.slug;
                 sb.snapNum = data.snapNum;
+                // TODO: remove the "||" patch after updating the db
+                sb.snapshotType = data.snapshotType || defaultSnap.snapshotType;
                 sb.tiers = data.tiers;
                 sb.title = data.title;
                 sb.deckTiers = data.deckTiers;
@@ -4948,7 +4950,7 @@ angular.module('app.services', [])
                         }
                         
                         // check type
-                        if (!sb.snapshotType || !sb.slug.snapshotType.length) {
+                        if (!sb.snapshotType || !sb.snapshotType.length) {
                             return cb("Snapshot doesn't have a type");
                         }
                         
