@@ -3,18 +3,8 @@
         <sub-nav-stream class="pull-left"></sub-nav-stream>
         <div class="sub-nav-links">
             <ul>
-                <li>
-                    <a href="#hs">HEARTHSTONE</a>
-                </li><li>
-                    <a href="#hots">HEROES OF THE STORM</a>
-                </li><li>
-                    <a href="#csgo">CS:GO</a>
-                </li><li>
-                    <a href="#wow">WoW: ARENA</a>
-                </li><li>
-                    <a href="#fgc">FGC</a>
-                </li><li>
-                    <a href="#fifa">FIFA</a>
+                <li ng-repeat="team in teams">
+                    <a href="#{{getSlug(team.game.name)}}">{{team.game.name | uppercase}}</a>
                 </li>
             </ul>
         </div>
@@ -28,13 +18,13 @@
                ng-if="team.teamMembers.length" 
                ng-repeat="team in teams">
                 <div class="team col-lg-12 m-b-lg">
-                    <a id="wow" class="anchor"></a>
-                    <h1>{{team.game.name | uppercase}}</h1>
+                    <a id="{{getSlug(team.game.name)}}" class="anchor"></a>
+                    <h1>{{team.game.name | uppercase}}<span ng-if="team.name.length">: {{team.name | uppercase}}</span></h1>
                     <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none wrapper-none" ng-repeat="member in team.teamMembers">
                         <button ng-click="showMember(member)">
                             <div class="outline">
                                 <img class="img-responsive" 
-                                     ng-src="https://cdn-tempostorm.netdna-ssl.com/team/{{member.photoName}}" />
+                                     ng-src="https://cdn-tempostorm.netdna-ssl.com/team/{{member.photoName}}" ng-if="member.photoName" />
                                 <div class="wrapper-md content-wrapper ">
                                     <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
 

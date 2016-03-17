@@ -3803,18 +3803,23 @@ var app = angular.module('app', [
                             teams: ['Team', function (Team) {
                               return Team.find({
                                     filter: {
+                                        where: {
+                                            isActive: true
+                                        },
                                         fields: ['id', 'name', 'gameId', 'orderNum'],
                                         order: 'orderNum ASC',
                                         include: [
                                             {
                                                 relation: 'teamMembers',
                                                 scope: {
+                                                    where: {
+                                                        isActive: true
+                                                    },
                                                     order: 'orderNum ASC',
                                                     fields: [
                                                       'fullName',
                                                       'screenName',
                                                       'description',
-                                                      'game',
                                                       'photoName',
                                                       'screenName',
                                                       'social',
@@ -3831,10 +3836,7 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function (teamInfo) {
-                                    return teamInfo;
-                                });
+                                .$promise;
                             }]
                         }
                     }
@@ -6774,7 +6776,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            teamInfo: ['Team', function (Team) {
+                            teams: ['Team', function (Team) {
                                 return Team.find({
                                     filter: {
                                         fields: ['id', 'name', 'gameId', 'orderNum'],
@@ -6783,8 +6785,8 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'teamMembers',
                                                 scope: {
-                                                    order: 'orderNum ASC',
-                                                    fields: ['id', 'fullName', 'screenName']
+                                                    fields: ['id', 'fullName', 'screenName', 'orderNum'],
+                                                    order: 'orderNum ASC'
                                                 }
                                             },
                                             {
@@ -6796,11 +6798,8 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function (teamInfo) {
-                                    return teamInfo;
-                                });
-                            }],
+                                .$promise;
+                            }]
                         }
                     }
                 },
