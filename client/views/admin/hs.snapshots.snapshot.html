@@ -27,7 +27,7 @@
                 <div class="form-group snap-title-group">
                     <label for="title" class="control-label pull-left">Title</label>
                     <div class="wrapper-none">
-                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()">
+                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()" required>
                     </div>
                 </div>
                 <!--URL starts -->
@@ -258,19 +258,18 @@
                             </div>
                         </div>
                         <div class="col-md-12 col-lg-6 m-b-sm">
-                            <label for="deckName" class="control-label col-xs-12">Linked Deck</label>
+                            <label for="deckDeckName" class="control-label col-xs-12">Linked Deck</label>
                             <div class="col-xs-12">
                                 <div class="wrapper-none pull-left">
                                     <div class="input-group pull-left">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default active"><i class="fa fa-link"></i></button>
+                                            <button type="button" class="btn btn-default active" ng-click="snapshot.deckChangePrompt(snapshot.activeDeck)">Change</button>
                                         </span>
-                                        <input type="text" id="slug" name="slug" class="form-control wide-input ng-pristine ng-valid ng-valid-required ng-touched">
+                                        <input type="text" id="deckDeckName" name="deckDeckName" class="form-control wide-input" ng-value="snapshot.activeDeck.deck.name">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-6"></div>
                     </div>
 
                     <div class=" m-b-sm row">
