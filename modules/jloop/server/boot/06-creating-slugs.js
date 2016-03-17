@@ -2,6 +2,7 @@ var async = require("async");
 
 
 module.exports = function(server) {
+    return;
 
     var Article = server.models.article;
     var Slug = server.models.slug;
@@ -11,11 +12,18 @@ module.exports = function(server) {
         // Create article
         function (seriesCb) {
             return Article.create({
-                title: "tits-at-the-bar",
+                title: "Tits At The Bar",
                 content: "rip",
                 isActive: true
-            }, seriesCb);
+            }, function(err, article) {
+                if(err) return seriesCb(err);
+
+                return seriesCb(undefined, {
+                    article: article
+                });
+            });
         },
+            /*
         // Add Slug
         function (article, seriesCb) {
             //console.log("new article", article);
@@ -33,6 +41,7 @@ module.exports = function(server) {
                 });
             });
         },
+        */
         // Test the article's include
         function (models, seriesCb) {
             return Article.findById(models.article.id, {
@@ -44,6 +53,7 @@ module.exports = function(server) {
                 return seriesCb(undefined, models);
             });
         },
+            /*
         // Test the slug's include
         function (models, seriesCb) {
             return Slug.findById(models.slug.id, {
@@ -54,7 +64,8 @@ module.exports = function(server) {
                 //console.log("slug include", slug);
                 return seriesCb(undefined, models);
             });
-        },
+        }
+
         // Delete the article's slugs
         function (models, seriesCb) {
             return models.article.slugs.destroyAll(function(err) {
@@ -71,6 +82,7 @@ module.exports = function(server) {
                 return seriesCb(err);
             });
         }
+        */
     ],
     function (err) {
         if(err) console.log("ERR testing slugs", err);

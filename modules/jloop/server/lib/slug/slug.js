@@ -1,6 +1,7 @@
 var async = require("async");
-var requestCrawler = require("./request-crawler");
-var app = require("../../../../server/server");
+var requestCrawler = require("./../request-crawler");
+var slugFuncs = require("./slug-funcs");
+var app = require("../../../../../server/server");
 
 
 var SLUG_GENERATE_FEATURE_KEY = "$slug";
@@ -21,11 +22,21 @@ function handleSlug(ctx, finalCb) {
 function primitiveHandler(state, finalCb) {
 
     var model = state.ctx.model;
-
-    // Get any slug options from the potential client
     var slugOptions = {};
+
+    // Get options from modelConfig
+    var modelSlugOptions = state.modelProperties[SLUG_GENERATE_FEATURE_KEY];
+    if(typeof modelSlugOptions === "object") {
+        for(var key in modelSlugOptions) {
+            slugOptions[key] = modelSlugOptions[key];
+        }
+    }
+
+    // Add any potential options from the client
     if(state.ctx.req && state.ctx.req.body && typeof state.ctx.req.body.slugOptions === "object") {
-        slugOptions = state.ctx.req.body.slugOptions;
+        for(var key in state.ctx.req.body.slugOptions ) {
+            slugOptions[key] = state.ctx.req.body.slugOptions[key];
+        }
     }
 
     // Is this a brand new model being saved
@@ -38,15 +49,13 @@ function primitiveHandler(state, finalCb) {
     if(state.ctx.where && typeof state.ctx.where.id === "string") {
         where.id = state.ctx.where.id;
     }
-    console.log("old where", state.ctx.where);
-    console.log("old data", state.ctx.data);
+
     for(var key in state.ctx.data) {
         where[key] = state.ctx.data[key];
     }
 
     var fields = { id: true };
     fields[state.key] = true;
-    console.log("new where", where);
     var query = {
         where: where,
         fields: fields
@@ -54,10 +63,8 @@ function primitiveHandler(state, finalCb) {
     return model.find(query, function(err, instances) {
         if(err) return finalCb(err);
         else if(!Array.isArray(instances) || instances.length < 1) {
-            console.log("no instances something be fucked");
             return finalCb();
         }
-        console.log("found relevant instances", instances);
 
         return async.each(instances, function(instance, instanceCb) {
             return instance.slugs({
@@ -71,7 +78,7 @@ function primitiveHandler(state, finalCb) {
                 }
 
                 return async.each(slugs, function(slug, slugCb) {
-                    return updateSlug(slug, slugOptions, slugCb);
+                    return updateSlug(slug, instance, state, slugOptions, slugCb);
                 }, instanceCb);
             });
         }, finalCb);
@@ -86,6 +93,14 @@ function createSlug(instance, state, slugOptions, finalCb) {
     var slug = (!linked && typeof slugOptions.slug === "string")
         ? slugOptions.slug : slugify(state.data);
 
+    // Add slug modifiers
+    var prefixFunc = slugFuncs[slugOptions.prefixFunc];
+    if(typeof prefixFunc === "function") {
+        slug = prefixFunc(instance) + slug;
+    } else if(typeof slugOptions.prefix === "string") {
+        slug = slugOptions.prefix + slug;
+    }
+
     return instance.slugs.create({
         slug: slug,
         linked: linked,
@@ -94,7 +109,7 @@ function createSlug(instance, state, slugOptions, finalCb) {
     }, finalCb);
 }
 
-function updateSlug(slug, state, slugOptions, finalCb) {
+function updateSlug(slugInstance, instance, state, slugOptions, finalCb) {
     var changes = {};
 
     // Did the user include linked option?
@@ -104,17 +119,26 @@ function updateSlug(slug, state, slugOptions, finalCb) {
     }
 
     // Has the linked value changed?
-    if(linked !== undefined && linked !== slug.linked) {
+    if(linked !== undefined && linked !== slugInstance.linked) {
         changes.linked = linked;
     } else if(linked === undefined) {
-        linked = slug.linked;
+        linked = slugInstance.linked;
     }
 
     // Has the slug changed?
     var slug = slugify(state.data);
-    if(linked && (slug !== slug.slug)) {
+
+    // Add slug modifiers
+    var prefixFunc = slugFuncs[slugOptions.prefixFunc];
+    if(typeof prefixFunc === "function") {
+        slug += prefixFunc(instance);
+    } else if(typeof slugOptions.prefix === "string") {
+        slug += slugOptions.prefix;
+    }
+
+    if(linked && (slug !== slugInstance.slug)) {
         changes.slug = slug;
-    } else if(!linked && (slugOptions.slug !== slug.slug)) {
+    } else if(!linked && (slugOptions.slug !== slugInstance.slug)) {
         changes.slug = slugOptions.slug;
     }
 
@@ -123,7 +147,7 @@ function updateSlug(slug, state, slugOptions, finalCb) {
         return finalCb();
     }
 
-    return slug.updateAttributes(changes, finalCb);
+    return slugInstance.updateAttributes(changes, finalCb);
 }
 
 

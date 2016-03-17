@@ -6,7 +6,7 @@ var docFilter = require("../lib/filter/doc-filter");
 var fieldFilter = require("../lib/filter/field-filter");
 var scope = require("../lib/scope");
 var relation = require("../lib/relation/relation");
-var slug = require("../lib/slug");
+var slug = require("../lib/slug/slug");
 
 
 

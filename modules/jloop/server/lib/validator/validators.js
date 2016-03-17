@@ -174,12 +174,11 @@ function validateUnique(state, uniqueCb) {
 }
 
 function validateSlug(state, uniqueCb) {
-console.log("validating slug");
+
     var uniqueErr = new Error(state.key + ' is not unique');
     uniqueErr.statusCode = 422;
     uniqueErr.code = 'FIELD NOT UNIQUE';
 
-    console.log("slug where", state.requestData)
     return state.model.find({
         where: state.requestData,
         fields: {
@@ -187,10 +186,9 @@ console.log("validating slug");
             parentModelName: true
         }
     }, function (err, slugs) {
-        console.log("found slugs", slugs);
         if (err) return uniqueCb(err);
 
-        return async.some(slugs, function(slug, slugCb) {
+        return async.each(slugs, function(slug, slugCb) {
             state.model.find({
                 where: {
                     slug: state.data,
@@ -199,20 +197,22 @@ console.log("validating slug");
                 fields: { id: true },
                 limit: 1
             }, function(err, slugMatches) {
-                console.log("slug matches", slugMatches);
                 if (err) return slugCb(err);
-                else if (slugMatches.length === 0)
+                else if (slugMatches.length === 0) {
                     return slugCb();
-                else if (slugMatches.length > 1)
-                    return slugCb(undefined, true);
-                else if (slug.id !== slugMatches[0].id)
-                    return slugCb(undefined, true);
+                } else if (slugMatches.length > 1) {
+                    return slugCb(true);
+                } else if (slug.id !== slugMatches[0].id) {
+                    return slugCb(true);
+                }
 
                 return slugCb();
             });
-        }, function(err, result) {
-            if(err) return uniqueCb(err);
-            else if(result) return uniqueCb(undefined, uniqueErr);
+        }, function(err) {
+            if(err && err !== true) return uniqueCb(err);
+            else if(err) {
+                return uniqueCb(undefined, uniqueErr);
+            }
 
             return uniqueCb();
         });
