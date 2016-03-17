@@ -80,11 +80,11 @@
             
             <div class="m-b-md article-right col-lg-4">
                 
-                <div ng-if="article.deck" class="article-deck" db-deck deck="article.deck"></div>
+                <div ng-if="article.deck" class="article-deck hs-styles m-b-md" db-deck deck="article.deck"></div>
                 
                 <!-- article related -->
     
-                <div class="article-related row" ng-if="article.relatedArticles && article.relatedArticles.length && relatedActive()">
+                <div class="article-related row m-r-none m-l-none" ng-if="article.relatedArticles && article.relatedArticles.length && relatedActive()">
                     <h3>RELATED ARTICLES</h3>
                     <div class="related" ng-repeat="item in article.relatedArticles | orderBy: '-createdDate'" ng-if="item.isActive">
                         <a href="./articles/{{item.slug.url}}" title="{{item.title}}">
