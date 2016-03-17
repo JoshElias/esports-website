@@ -193,11 +193,11 @@
                     <div class="panel-body">
                         <label for="intro" class="col-sm-12 control-label">Introduction</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" rows="11"></textarea>
+                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" rows="10"></textarea>
                         </div>
                         <label for="thoughts" class="col-sm-12 control-label">Thoughts &amp; Observations</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" rows="11"></textarea>
+                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" rows="10"></textarea>
                         </div>
                     </div>
                 </div>
@@ -239,7 +239,7 @@
             <div ng-if="snapshot.activeDeck">
                 <div class="col-xs-5 admin-title">
                     <img src="../img/meta-snapshot/class-icons/{{snapshot.activeDeck.deck.playerClass.toLowerCase()}}.png" class="class-image pull-left m-t-sm">   
-                    <h3 class="dark-title pull-left m-t-md m-l-md">{{snapshot.activeDeck.name}}</h3>
+                    <h3 class="user-section pull-left m-t-md m-l-md">{{snapshot.activeDeck.name}}</h3>
                 </div>
                 <div class="col-xs-7 tier-sub-nav">
                     <ul class="m-b-none">
@@ -260,10 +260,6 @@
                         <div class="col-md-12 col-lg-6 m-b-sm">
                             <label for="deckName" class="control-label col-xs-12">Linked Deck</label>
                             <div class="col-xs-12">
-                                
-                                
-                                
-                                
                                 <div class="wrapper-none pull-left">
                                     <div class="input-group pull-left">
                                         <span class="input-group-btn">
@@ -272,10 +268,6 @@
                                         <input type="text" id="slug" name="slug" class="form-control wide-input ng-pristine ng-valid ng-valid-required ng-touched">
                                     </div>
                                 </div>
-
-                                
-                                
-                                
                             </div>
                         </div>
                         <div class="col-xs-6"></div>
@@ -315,7 +307,7 @@
                 <!-- tech decisions -->
                 <div class="form-group" ng-show="deckPage === 'tech'">
                     <div class="clearfix">
-                        <div class="col-xs-12">
+                        <div class="col-xs-12 padding-none">
                             <div class="col-xs-12 padding-none" ng-repeat="tech in snapshot.activeDeck.deckTech | orderBy: 'title'">
                                 <div class="panel tech-panel panel-default">
                                     <div class="tech-heading">
@@ -362,7 +354,7 @@
                 <!-- matchups -->
                 <div class="form-group" ng-show="deckPage === 'matchups'">
                     <div ng-if="snapshot.activeDeck.tier < 3">
-                        <div class="col-xs-12" ng-repeat="match in snapshot.getMatchupsByDeckId(snapshot.activeDeck.deck.id) | orderBy: snapshot.matchupOrderBy track by $index"> 
+                        <div class="col-xs-12 padding-none" ng-repeat="match in snapshot.getMatchupsByDeckId(snapshot.activeDeck.deck.id) | orderBy: snapshot.matchupOrderBy track by $index"> 
                             <div ng-if="match.forDeck.id === match.againstDeck.id">
                                 <div class="panel matchup-panel read-only-match panel-default m-b-none wrapper-none">
                                     <div class="panel-body">
@@ -416,7 +408,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12" ng-if="snapshot.activeDeck.tier > 2">
+                    <div class="col-xs-12 matchup-warning" ng-if="snapshot.activeDeck.tier > 2">
                         <p class="white">Matchups are only for tier 1 and 2.</p>
                     </div>
                 </div>
