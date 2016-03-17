@@ -5793,21 +5793,90 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminTeamListCtrl', ['$scope', '$window', 'Team', 'TeamMember', 'teamInfo', 'AlertService',
         function ($scope, $window, Team, TeamMember, teamInfo, AlertService) {
-                $scope.teamInfo = teamInfo;
-
-//                console.log(teamMembers);
-
-//                $scope.hsMembers = hsTeam;
-//                $scope.hotsMembers = hotsTeam;
-//                $scope.wowMembers = wowTeam;
-//                $scope.fifaMembers = fifaTeam;
-//                $scope.fgcMembers = fgcTeam;
-
-            $scope.updateDND = function (list, index) {
-                list.splice(index, 1);
-                for (var i = 0; i < list.length; i++) {
-                    list[i].orderNum = i + 1;
+            $scope.teamInfo = teamInfo;
+          
+            $scope.moveTeamUp = function (team, index) {
+              var teamAbove = $scope.teamInfo[index-1];
+              $scope.teamInfo[index-1] = team;
+              $scope.teamInfo[index] = teamAbove;
+              
+              updateTeamOrderNum();
+            };
+          
+            $scope.moveTeamDown = function (team, index) {
+              var teamBelow = $scope.teamInfo[index+1];
+              $scope.teamInfo[index+1] = team;
+              $scope.teamInfo[index] = teamBelow;
+              
+              updateTeamOrderNum();
+              
+            };
+          
+          function updateTeamOrderNum () {
+            async.each($scope.teamInfo, function (team, teamCB) {
+                var teamOrderNum = $scope.teamInfo.indexOf(team);
+                team.orderNum = teamOrderNum + 1;
+                
+                Team.upsert(team)
+                .$promise
+                .then(function (teamUpdated) {
+                  return teamCB();
+                })
+                .catch(function (err) {
+                  return teamCB(err);
+                });
+              }, function (err) {
+                $window.scrollTo(0, 0);
+                $scope.fetching = false;
+                
+                if (err) {
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Unable to update Teams order'
+                  })
                 }
+                
+                return AlertService.setSuccess({
+                  show: true,
+                  msg: 'Teams order updated successfully'
+                })
+              });
+          }
+
+            $scope.updateDND = function (list, index, member) {
+              $scope.fetching = true;
+              console.log('list: ', list);
+              list.splice(index, 1);
+              for (var i = 0; i < list.length; i++) {
+                  list[i].orderNum = i + 1;
+              }
+              
+              async.each(list, function (member, memberCB) {
+                TeamMember.upsert(member)
+                .$promise
+                .then(function (memberUpdated) {
+                  console.log('memberUpdated: ', memberUpdated);
+                  return memberCB();
+                })
+                .catch(function (err) {
+                  return memberCB(err);
+                });;
+              }, function (err) {
+                $scope.fetching = true;
+                $window.scrollTo(0, 0);
+                if (err) {
+                  console.log('err: ', err);
+                  return AlertService.setError({
+                    show: true,
+                    msg: 'Error setting member order',
+                  })
+                }
+                
+                return AlertService.setSuccess({
+                  show: true,
+                  msg: member.screenName + "'s display order updated successfully"
+                })
+              });
             };
             
             // delete team
@@ -5849,29 +5918,6 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
                 box.modal('show');
-//                console.log('clicked');
-//                $scope.fetching = true;
-//                Team.destroyById({
-//                    id: team.id
-//                })
-//                .$promise
-//                .then(function (teamDeleted) {
-//                    $scope.fetching = false;
-//                    var index = $scope.teamInfo.indexOf(team);
-//                    if (index !== -1) {
-//                        $scope.teamInfo.splice(index, 1);
-//                    }
-//                })
-//                .catch(function (err) {
-//                    console.log('err:', err);
-//                    $scope.fetching = false;
-//                    $window.scrollTo(0, 0);
-//                    return AlertService.setError({
-//                        show: true,
-//                        msg: 'Unable to delete Team',
-//                        lbErr: err
-//                    });
-//                });
             };
 
             // delete member
@@ -6001,15 +6047,10 @@ angular.module('app.controllers', ['ngCookies'])
             });
         };
     }])
-    .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam', 'csTeam',
-        function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, hsTeam, hotsTeam, wowTeam, fgcTeam, fifaTeam, csTeam) {
+    .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'teams',
+        function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, teams) {
 
-            $scope.hsMembers = hsTeam;
-            $scope.hotsMembers = hotsTeam;
-            $scope.wowMembers = wowTeam;
-            $scope.csMembers = csTeam;
-            $scope.fgcMembers = fgcTeam;
-            $scope.fifaMembers = fifaTeam;
+            $scope.teams = teams;
 
             if ($location.hash()) {
                 $timeout(function () {
@@ -6055,8 +6096,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminTeamMemberAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService', 'teamOptions', 'Team',
-        function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService, teamOptions, Team) {
+    .controller('AdminTeamMemberAddCtrl', ['$scope', '$q', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService', 'teamOptions', 'Team',
+        function ($scope, $q, $upload, $state, $window, $compile, TeamMember, AlertService, teamOptions, Team) {
             
             $scope.teamOptions = teamOptions;
             
@@ -6113,37 +6154,62 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!$scope.member) { return '/img/blank.png'; }
 //				console.log('$scope.path:', $scope.imgPath);
 //				console.log('$scope.member.photoName:', $scope.member.photoName);
-				        var URL = (tpl === './') ? cdn2 : tpl;
-                return ($scope.member.photoName && $scope.member.photoName === '') ?  '' : URL + $scope.imgPath + $scope.member.photoName;
+                var URL = (tpl === './') ? cdn2 : tpl;
+                    return ($scope.member.photoName && $scope.member.photoName === '') ?  '' : URL + $scope.imgPath + $scope.member.photoName;
             };
-
+          
             // save member
             $scope.saveMember = function (newMember) {
-                $scope.fetching = true;
-                Team.teamMembers.create({
+              $scope.fetching = true;
+              
+              async.series([
+                function (seriesCB) {
+                  TeamMember.count({
+                    where: {
+                      teamId: newMember.teamId
+                    }
+                  })
+                  .$promise
+                  .then(function (memberCount) {
+                    newMember.orderNum = memberCount.count + 1;
+                    return seriesCB();
+                  })
+                  .catch(function (err) {
+                    return seriesCB(err);
+                  });
+                },
+                function (seriesCB) {
+                  Team.teamMembers.create({
                     id: newMember.teamId
-                }, newMember)
-                .$promise
-                .then(function (teams) {
-                    $scope.fetching = false;
-                    $window.scrollTo(0, 0);
-                    AlertService.setSuccess({
-                        show: true,
-                        persist: true,
-                        msg: newMember.screenName + ' added successfully'
-                    });
-                    return $state.transitionTo('app.admin.teams.list');
-                })
-                .catch(function (err) {
-                    console.log('err:', err);
-                    $window.scrollTo(0, 0);
-                    $scope.fetching = false;
-                    return AlertService.setError({
-                        show: true,
-                        msg: 'Unable to Add Team Member',
-                        lbErr: err
-                    });
+                  }, newMember)
+                  .$promise
+                  .then(function (teams) {
+                    return seriesCB();
+                  })
+                  .catch(function (err) {
+                      console.log('err:', err);
+                      return seriesCB(err);
+                  });
+                }
+              ], function (err) {
+                $window.scrollTo(0, 0);
+                $scope.fetching = false;
+                if (err) {
+                  return AlertService.setError({
+                      show: true,
+                      msg: 'Unable to Add Team Member',
+                      lbErr: err
+                  });
+                }
+                
+                AlertService.setSuccess({
+                    show: true,
+                    persist: true,
+                    msg: newMember.screenName + ' added successfully'
                 });
+                return $state.transitionTo('app.admin.teams.list');
+              });
+              
             };
         }
     ])
@@ -6428,6 +6494,23 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.perpage = paginationParams.perpage;
             $scope.total = decksCount.count;
             $scope.search = paginationParams.search;
+            
+            $scope.selectedDecks = [];
+            
+            $scope.toggleSelectedDeck = function (deck) {
+              deck.selected = deck.selected ? true : false;
+              console.log(deck.selected);
+              
+              // check if user is unselecting a deck
+              var index = $scope.selectedDecks.indexOf(deck.id);
+              if (index !== -1) {
+                $scope.selectedDecks.splice(index, 1);
+              } else {
+                // user is adding a deck
+                $scope.selectedDecks.push(deck.id);
+              }
+              console.log('sel decks: ', $scope.selectedDecks);
+            };
 
             // search on keyup
             $scope.searchDecks = function() {

@@ -143,6 +143,24 @@ label p {
 // 6... General Admin
 //*************************************
 
+.admin-list-item .checkbox input {
+  height: 40px;
+  width: 40px;
+  margin-top: 0px;
+}
+
+.admin-order-btns-wrap {
+  i.fa {
+    font-size: 1.75em;
+    transition: color 0.4s ease;
+    color: black;
+    &:hover {
+      color: $ts-blue;
+      cursor: pointer;
+    }
+  }
+}
+
 .admin-article-related-bg {
     background-color: #F5F5F5;
 }
