@@ -4555,7 +4555,12 @@ angular.module('app.services', [])
 
                 return matchups;
             };
-
+            
+            // get the opposing deck for a deck in a matchup
+            sb.getMatchupOpposingDeck = function (deck, matchup) {
+                return (deck.id === matchup.forDeck.id) ? matchup.againstDeck : matchup.forDeck;
+            };
+            
             // photo upload
             sb.photoUpload = function ($files) {
                 if (!$files.length) return false;
