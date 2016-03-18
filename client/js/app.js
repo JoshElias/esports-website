@@ -253,6 +253,7 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'author',
                                                 scope: {
+                                                    fields: ['username']
                                                 }
                                             },
                                             {
@@ -585,127 +586,117 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Slug) {
+                            article: ['$state', '$stateParams', 'Util', 'Slug', function ($state, $stateParams, Util, Slug) {
                                 var slug = $stateParams.slug;
-                                console.log("looking for slug", slug);
-                                Slug.find({
-                                    where: {
-                                        slug: slug,
-                                        parentModelName: "article"
-                                    },
-                                    include: ["articles"]
-                                })
-                                .$promise
-                                .then(function (slug) {
-                                    console.log("slug", slug);
-                                    return slug;
-                                })
-                                .catch(function (err) {
-                                    console.log('ERR finding slug:', err);
-                                    if (err.status === 404) {
-                                        return throw404($state);
-                                    }
-                                });
-
-
-/*
-                                return Article.findOne({
+                                
+                                return Slug.findOne({
                                     filter: {
                                         where: {
-                                            "slug.url": slug
+                                            slug: slug,
+                                            parentModelName: 'article'
                                         },
                                         include: [
                                             {
-                                                relation: "author",
+                                                relation: 'articles',
                                                 scope: {
-                                                    fields: [
-                                                        "username",
-                                                        "about",
-                                                        "providerDescription",
-                                                        "social",
-                                                        "email"
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: "comments",
-                                                scope: {
-                                                    include: [
-                                                        "author"
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: 'votes',
-                                                scope: {
-                                                    fields: {
-                                                        id: true,
-                                                        direction: true,
-                                                        authorId: true
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                relation: "relatedArticles",
-                                                scope: {
-                                                    fields: [
-                                                        "title",
-                                                        "isActive",
-                                                        "photoNames",
-                                                        "authorId",
-                                                        "voteScore",
-                                                        "articleType",
-                                                        "slug"
-                                                    ],
                                                     include: [
                                                         {
-                                                            relation: "author",
+                                                            relation: 'author',
                                                             scope: {
                                                                 fields: [
-                                                                    "username"
+                                                                    'username',
+                                                                    'about',
+                                                                    'providerDescription',
+                                                                    'social',
+                                                                    'email'
                                                                 ]
                                                             }
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: "deck",
-                                                scope: {
-                                                    fields: [
-                                                        'id',
-                                                        'playerClass',
-                                                        'heroName',
-                                                        'dust',
-                                                        'gameModeType',
-                                                        'name',
-                                                        'slug'
-                                                    ],
-                                                    include: {
-                                                        relation: 'cards',
-                                                        scope: {
-                                                            include: {
-                                                                relation: 'card',
-                                                                scope: {
-                                                                    fields: [
-                                                                        'id',
-                                                                        'name',
-                                                                        'cost',
-                                                                        'photoNames'
-                                                                    ]
+                                                        },
+                                                        {
+                                                            relation: 'comments',
+                                                            scope: {
+                                                                include: 'author'
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'votes',
+                                                            scope: {
+                                                                fields: [
+                                                                    'id',
+                                                                    'direction',
+                                                                    'authorId'
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'relatedArticles',
+                                                            scope: {
+                                                                fields: [
+                                                                    'title',
+                                                                    'isActive',
+                                                                    'photoNames',
+                                                                    'authorId',
+                                                                    'articleType'
+                                                                ],
+                                                                include: [
+                                                                    {
+                                                                        relation: 'author',
+                                                                        scope: {
+                                                                            fields: ['username']
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        relation: 'slugs',
+                                                                        scope: {
+                                                                            fields: ['slug']
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: "deck",
+                                                            scope: {
+                                                                fields: [
+                                                                    'id',
+                                                                    'playerClass',
+                                                                    'heroName',
+                                                                    'dust',
+                                                                    'gameModeType',
+                                                                    'name',
+                                                                    'slug'
+                                                                ],
+                                                                include: {
+                                                                    relation: 'cards',
+                                                                    scope: {
+                                                                        include: {
+                                                                            relation: 'card',
+                                                                            scope: {
+                                                                                fields: [
+                                                                                    'id',
+                                                                                    'name',
+                                                                                    'cost',
+                                                                                    'photoNames'
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         ]
                                     }
-                                })
-                                .$promise
-                                .then(function (data) {
-                                    data.voteScore = Util.tally(data.votes, 'direction');
-                                    return data;
+                                }).$promise
+                                .then(function (artSlug) {
+                                    
+                                    artSlug.articles[0].slug = {
+                                        url: slug
+                                    };
+                                    
+                                    return artSlug.articles[0];
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
@@ -713,7 +704,6 @@ var app = angular.module('app', [
                                         return throw404($state);
                                     }
                                 });
-                                */
                             }]
                         }
                     }

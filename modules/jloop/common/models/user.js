@@ -813,7 +813,7 @@ module.exports = function(User) {
                 {arg: 'uid', type: 'string', required:true, http: {source: 'query'}},
                 {arg: 'roleNames', type: 'array', required:true, http: {source: 'query'}},
                 {arg: 'req', type: 'object', description:'http request object. Not read from client', required:true, http: {source: 'req'}},
-                {arg: 'options', type: 'object', required:true, http: {source: 'query'}}
+                {arg: 'options', type: 'object', http: {source: 'query'}}
             ],
             returns: {arg: 'isInRoles', type: 'object'},
             http: {verb: 'get'},
