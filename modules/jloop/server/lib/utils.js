@@ -1,8 +1,6 @@
 var _ = require("underscore");
 var loopback = require("loopback");
 var async = require("async");
-var app = require("../../../../server/server");
-
 
 var ID_SUFFIX = "Id";
 
@@ -80,11 +78,42 @@ function getFirstForeignKey(data) {
 }
 
 
+var pluralDict;
+function getModelPlurals(app) {
+    if(pluralDict) {
+        return pluralDict;
+    }
+
+    pluralDict = {};
+    var cachedModels = {};
+    var model;
+    var plural;
+    for(var key in app.models) {
+        var lowerKey = key.toLowerCase();
+        if (!cachedModels[lowerKey]) {
+            model = app.models[key];
+            cachedModels[lowerKey] = true;
+
+            plural = model.settings.plural;
+            if (typeof plural === "string") {
+                pluralDict[plural] = key;
+            } else {
+                plural = key+"s";
+                pluralDict[plural] = key;
+            }
+        }
+    }
+    return pluralDict;
+}
+
 
 module.exports = {
     getRandomInt : getRandomInt,
     convertMillisecondsToDigitalClock : convertMillisecondsToDigitalClock,
     getForeignKeys: getForeignKeys,
     modelNameFromForeignKey: modelNameFromForeignKey,
-    getFirstForeignKey: getFirstForeignKey
+    getFirstForeignKey: getFirstForeignKey,
+
+    getModelPlurals: getModelPlurals
+
 };

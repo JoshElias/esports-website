@@ -3,6 +3,7 @@ var async = require("async");
 var _ = require("underscore");
 var predicates = require("./predicates");
 var app = require("../../../../../server/server");
+var utils = require("../utils");
 
 
 var FILTER_FEATURE_KEY = "$docFilter";
@@ -10,8 +11,17 @@ var FILTER_FEATURE_KEY = "$docFilter";
 
 function filterDocs(ctx, modelInstance, finalCb) {
 
-    // Attach the active model
+    // Get the parent model
     var modelName = ctx.methodString.split(".")[0];
+
+    // See if we're fulfilling a relation request and get the associated model
+    var methodArr = ctx.methodString.split("__");
+    if(methodArr.length > 1) {
+        var relationName = methodArr[methodArr.length-1];
+        modelName = app.models[modelName].settings.relations[relationName].model;
+    }
+
+    // Attach the active model
     ctx.Model = app.models[modelName];
 
     // Attach active ctx if able
@@ -46,6 +56,7 @@ function filterResults(ctx, filterOptions, finalCb) {
         // Handle predicate
         var predicate = predicates[filterOptions.predicate];
         if (typeof predicate === "function" && !predicate(result)) {
+            console.log("did not pass predicate");
             answer.push(result);
             return resultCb();
         }

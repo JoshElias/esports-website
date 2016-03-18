@@ -502,6 +502,9 @@ var app = angular.module('app', [
                                                 'username'
                                               ]
                                             }
+                                          },
+                                          {
+                                              relation: "slugs"
                                           }
                                         ]
                                     },
@@ -510,6 +513,7 @@ var app = angular.module('app', [
                                 };
                             }],
                             articles: ['paginationParams', 'Article', function (paginationParams, Article) {
+                                console.log("slugs", paginationParams.artParams);
 
                                 return Article.find({
                                     filter: {
@@ -523,6 +527,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
+                                        console.log("articles", articles);
                                     return articles;
                                 });
 
@@ -569,9 +574,30 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
+                            article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Slug) {
                                 var slug = $stateParams.slug;
+                                console.log("looking for slug", slug);
+                                Slug.find({
+                                    where: {
+                                        slug: slug,
+                                        parentModelName: "article"
+                                    },
+                                    include: ["articles"]
+                                })
+                                .$promise
+                                .then(function (slug) {
+                                    console.log("slug", slug);
+                                    return slug;
+                                })
+                                .catch(function (err) {
+                                    console.log('ERR finding slug:', err);
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
+                                });
 
+
+/*
                                 return Article.findOne({
                                     filter: {
                                         where: {
@@ -676,6 +702,7 @@ var app = angular.module('app', [
                                         return throw404($state);
                                     }
                                 });
+                                */
                             }]
                         }
                     }
