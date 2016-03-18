@@ -19,6 +19,9 @@
     "orderNum": {
       "type": "number"
     },
+    "abbreviation": {
+      "type": "string"
+    },
     "gameId": {
       "type": {}
     }

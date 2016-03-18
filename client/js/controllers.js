@@ -6125,6 +6125,7 @@ angular.module('app.controllers', ['ngCookies'])
                         gameId: newTeam.gameId,
                         name: newTeam.name,
                         isActive: newTeam.isActive,
+                        abbreviation: newTeam.abbreviation,
                         orderNum: count + 1
                     })
                     .$promise
@@ -6172,6 +6173,7 @@ angular.module('app.controllers', ['ngCookies'])
         ];
         
         $scope.editTeam = function () {
+            $scope.fetching = true;
             var team = $scope.team;
             Team.update({
                 where: {
@@ -6180,7 +6182,8 @@ angular.module('app.controllers', ['ngCookies'])
             }, {
                 gameId: team.gameId,
                 name: team.name,
-                isActive: team.isActive
+                isActive: team.isActive,
+                abbreviation: team.abbreviation
             })
             .$promise
             .then(function (updatedTeam) {
@@ -6373,14 +6376,14 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTeamMemberEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image', 'teamOptions',
-        function ($scope, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image, teamOptions) {
+    .controller('AdminTeamMemberEditCtrl', ['$scope', '$timeout', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image', 'teamOptions',
+        function ($scope, $timeout, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image, teamOptions) {
             
             $scope.teamOptions = teamOptions;
             
             $scope.member = member;
-            $scope.memberImg = $scope.member.photoName.length > 0 ? 'https://staging-cdn-tempostorm.netdna-ssl.com/team/' + $scope.member.photoName : 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
-
+//            $scope.memberImg = $scope.member.photoName.length > 0 ? 'https://staging-cdn-tempostorm.netdna-ssl.com/team/' + $scope.member.photoName : 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            
             // photo upload
             $scope.photoUpload = function ($files) {
                 if (!$files.length) return false;
@@ -6400,20 +6403,20 @@ angular.module('app.controllers', ['ngCookies'])
                     }).progress(function(evt) {
                         $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
-//                        console.log('data:', data);
-                        $scope.member.photoName = data.photo;
-//                        $scope.memberImg = $scope.app.cdn + data.path + data.photo;
-						var URL = (tpl === './') ? cdn2 : tpl;
-                        $scope.memberImg = URL + data.path + data.photo;
+                        $timeout(function (){
+                            $scope.member.photoName = data.photo;
+                        });
                         box.modal('hide');
                     });
                 }
             };
 
             $scope.getImage = function () {
-                $scope.imgPath = '/team/';
-                if (!$scope.team) { return '/img/blank.png'; }
-                return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
+                if (!$scope.member || !$scope.member.photoName || !$scope.member.photoName.length) { return $scope.app.cdn + 'img/blank.png'; }
+
+                var imgPath = 'team/';
+                var URL = (tpl !== './') ? $scope.app.cdn + imgPath : cdn2 + imgPath;
+                return URL + $scope.member.photoName;
             };
 
             // save member

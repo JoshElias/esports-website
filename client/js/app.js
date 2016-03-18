@@ -3806,7 +3806,13 @@ var app = angular.module('app', [
                                         where: {
                                             isActive: true
                                         },
-                                        fields: ['id', 'name', 'gameId', 'orderNum'],
+                                        fields: [
+                                            'id', 
+                                            'name', 
+                                            'gameId', 
+                                            'orderNum',
+                                            'abbreviation'
+                                        ],
                                         order: 'orderNum ASC',
                                         include: [
                                             {
@@ -3823,7 +3829,7 @@ var app = angular.module('app', [
                                                       'photoName',
                                                       'screenName',
                                                       'social',
-                                                      'orderNum'
+                                                      'orderNum',
                                                     ]
                                                 }
                                             },
@@ -6978,12 +6984,7 @@ var app = angular.module('app', [
                                 return TeamMember.findById({
                                     id: memberID,
                                 })
-                                .$promise
-                                .then(function(teamMember) {
-                                    return teamMember;
-                                }).catch(function(err){
-                                    console.log(err);
-                                });
+                                .$promise;
                             }]
                         }
                     }
