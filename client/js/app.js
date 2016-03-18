@@ -3800,118 +3800,49 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
-                            teams: ['TeamMember', function (TeamMember) {
-                                TeamMember.find({})
-                                .$promise
-                                .then(function (t) {
-                                    async.each(t, function (tm, eachCb) {
-                                        if (typeof tm.isActive === 'string') {
-                                            tm.isActive = true;
-
-                                            TeamMember.update({
-                                                where: {
-                                                    id: tm.id
+                            teams: ['Team', function (Team) {
+                              return Team.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: [
+                                            'id', 
+                                            'name', 
+                                            'gameId', 
+                                            'orderNum',
+                                            'abbreviation'
+                                        ],
+                                        order: 'orderNum ASC',
+                                        include: [
+                                            {
+                                                relation: 'teamMembers',
+                                                scope: {
+                                                    where: {
+                                                        isActive: true
+                                                    },
+                                                    order: 'orderNum ASC',
+                                                    fields: [
+                                                      'fullName',
+                                                      'screenName',
+                                                      'description',
+                                                      'photoName',
+                                                      'screenName',
+                                                      'social',
+                                                      'orderNum',
+                                                    ]
                                                 }
-                                            }, tm)
-                                            .$promise
-                                            .then(function (data) {
-                                                return eachCb();
-                                            })
-                                        } else {
-                                            return eachCb();
-                                        }
-                                    });
-                                });
-                            }],
-                            hsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hs',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
+                                            },
+                                            {
+                                                relation: 'game',
+                                                scope: {
+                                                    fields: ['id', 'name']
+                                                }
+                                            }
+                                        ]
                                     }
                                 })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            hotsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hots',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            wowTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'wow',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            csTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'cs',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            fifaTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fifa',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            fgcTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fgc',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
+                                .$promise;
                             }]
                         }
                     }
@@ -6851,15 +6782,17 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            teamInfo: ['Team', function (Team) {
+                            teams: ['Team', function (Team) {
                                 return Team.find({
                                     filter: {
-                                        fields: ['id', 'name', 'gameId'],
+                                        fields: ['id', 'name', 'gameId', 'orderNum'],
+                                        order: 'orderNum ASC',
                                         include: [
                                             {
                                                 relation: 'teamMembers',
                                                 scope: {
-                                                    fields: ['id', 'fullName', 'screenName']
+                                                    fields: ['id', 'fullName', 'screenName', 'orderNum'],
+                                                    order: 'orderNum ASC'
                                                 }
                                             },
                                             {
@@ -6871,11 +6804,8 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function (teamInfo) {
-                                    return teamInfo;
-                                });
-                            }],
+                                .$promise;
+                            }]
                         }
                     }
                 },
@@ -7054,12 +6984,7 @@ var app = angular.module('app', [
                                 return TeamMember.findById({
                                     id: memberID,
                                 })
-                                .$promise
-                                .then(function(teamMember) {
-                                    return teamMember;
-                                }).catch(function(err){
-                                    console.log(err);
-                                });
+                                .$promise;
                             }]
                         }
                     }

@@ -21,6 +21,12 @@
     "isActive": {
       "type": "boolean"
     },
+    "orderNum": {
+      "type": "number"
+    },
+    "abbreviation": {
+      "type": "string"
+    },
     "gameId": {}
   },
   "validations": [],
