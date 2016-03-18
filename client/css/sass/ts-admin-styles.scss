@@ -24,6 +24,9 @@ body.admin {
         }
     }
     
+    .flex-check {
+        display: flex;
+    }
     
     //-------------------------------------------
     //              Utility Classes 
@@ -571,7 +574,12 @@ body.admin {
             margin: 0px !important;
             min-height: 628px;
             padding-bottom: 20px;
-        
+            top: 0;
+            flex-direction: column;
+            display: flex;
+            position: relative;
+            bottom: 0px;
+
         .form-group {
             margin-left: 0px !important;
             margin-right: 0px !important;
