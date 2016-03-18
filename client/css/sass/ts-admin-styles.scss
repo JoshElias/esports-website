@@ -850,12 +850,27 @@ body.admin {
             
             input  { cursor: not-allowed !important; }
             
-            input[type=range]::-webkit-slider-thumb { cursor: not-allowed !important; }
-            input[type=range]::-webkit-slider-runnable-track { cursor: not-allowed !important; }
-            input[type=range]::-moz-range-track { cursor: not-allowed !important; }
-            input[type=range]::-moz-range-thumb { cursor: not-allowed !important; }
-            input[type=range]::-ms-thumb { cursor: not-allowed !important; }
-            input[type=range]::-ms-track { cursor: not-allowed !important; }
+            input[type=range]::-webkit-slider-thumb { 
+                cursor: not-allowed !important; 
+            }
+            input[type=range]::-webkit-slider-runnable-track { 
+                cursor: not-allowed !important; 
+                background: rgba($admin-blue, 1);
+            }
+            input[type=range]::-moz-range-track { 
+                cursor: not-allowed !important; 
+                background: rgba($admin-blue, 1);
+            }
+            input[type=range]::-moz-range-thumb { 
+                cursor: not-allowed !important; 
+            }
+            input[type=range]::-ms-thumb { 
+                cursor: not-allowed !important;
+            }
+            input[type=range]::-ms-track { 
+                cursor: not-allowed !important; 
+                background: rgba($admin-blue, 1);
+            }
             
         }
         
@@ -979,6 +994,8 @@ body.admin {
     
     .tier-section {
         
+        
+        
         .tier-top {
             position: relative;
             
@@ -1068,6 +1085,13 @@ body.admin {
     
     .tier-right-section {
         
+        .tier-class-icon {
+            width: 30px;
+            height: auto;
+            margin-top: -6px;
+            margin-right: 20px;
+        }
+        
         .form-group {
             margin-right: 0;
             margin-left: 0;
@@ -1150,6 +1174,8 @@ body.admin {
           -webkit-appearance: none;
           margin: 18px 0;
           width: 100%;
+            border: none;
+            outline: none;
         }
         input[type=range]:focus {
           outline: none;
@@ -1161,8 +1187,10 @@ body.admin {
           animate: 0.2s;
           box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
           background: rgba($ts-blue, 1);
-          border-radius: 1.3px;
+          border-radius: 0px;
           border: 0.2px solid #010101;
+              border: none;
+            outline: none;
         }
         input[type=range]::-webkit-slider-thumb {
           box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;

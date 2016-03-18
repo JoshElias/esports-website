@@ -4558,7 +4558,7 @@ angular.module('app.services', [])
             
             // get the opposing deck for a deck in a matchup
             sb.getMatchupOpposingDeck = function (deck, matchup) {
-                return (deck.id === matchup.forDeck.id) ? matchup.againstDeck : matchup.forDeck;
+                return (deck.deck.id === matchup.forDeck.id) ? sb.getTierDeckByDeckId(matchup.againstDeck.id) : sb.getTierDeckByDeckId(matchup.forDeck.id);
             };
             
             // photo upload
