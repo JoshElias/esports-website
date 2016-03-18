@@ -10,7 +10,8 @@
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
     },
-    "$destroyOnDelete": true
+    "$destroyOnDelete": true,
+    "$spam": true
   },
   "properties": {
     "__v": {
@@ -28,13 +29,11 @@
     },
     "title": {
       "type": "string",
-      "$validate": ["spam"]
+      "$validate": ["spam"],
+      "$spam": true
     },
     "viewCount": {
       "type": "number"
-    },
-    "slug": {
-      "type": "object"
     },
     "voteScore": {
       "type": "number"
@@ -64,7 +63,7 @@
       "foreignKey": "forumPostId",
       "$destroyOnDelete": true
     },
-    "slug": {
+    "slugs": {
       "type": "hasMany",
       "model": "slug",
       "foreignKey": "forumPostId",

@@ -12,7 +12,8 @@
       "acceptedRoles": ["$owner", "$admin"],
       "predicate": "private"
     },
-    "$destroyOnDelete": true
+    "$destroyOnDelete": true,
+    "$slug": true
   },
   "properties": {
     "against": {
@@ -62,7 +63,8 @@
     "name": {
       "type": "string",
       "required": true,
-      "$validate": ["spam"]
+      "$validate": ["spam"],
+      "$slug": true
     },
     "heroName": {
       "type": "string"
@@ -77,10 +79,6 @@
     "isPublic": {
       "type": "boolean",
       "required": true
-    },
-    "slug": {
-      "type": "string",
-      "$validate": ["unique"]
     },
     "viewCount": {
       "type": "number"
@@ -153,6 +151,12 @@
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "deckId"
+    },
+    "slugs": {
+      "type": "hasMany",
+      "model": "slug",
+      "foreignKey": "deckId",
+      "through": "sluggable"
     }
   },
   "acls": [

@@ -11,7 +11,8 @@
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
     },
-    "$destroyOnDelete": true
+    "$destroyOnDelete": true,
+    "$slug": true
   },
   "properties": {
     "__v": {
@@ -26,16 +27,8 @@
     },
     "title": {
       "type": "string",
-      "$validate": ["spam"]
-    },
-    "slug": {
-        "url": {
-          "type": "string",
-          "$validate": ["unique"]
-        },
-        "linked": {
-          "type": "boolean"
-        }
+      "$validate": ["spam"],
+      "$slug": true
     },
     "forumCategoryId": {}
   },
@@ -52,7 +45,7 @@
       "model": "forumCategory",
       "foreignKey": "forumCategoryId"
     },
-    "slug": {
+    "slugs": {
       "type": "hasMany",
       "model": "slug",
       "foreignKey": "forumThreadId",

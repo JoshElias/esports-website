@@ -10,22 +10,17 @@
       "acceptedRoles": ["$admin"],
       "predicate": "inactive"
     },
-    "$destroyOnDelete": true
+    "$destroyOnDelete": true,
+    "$slug": true
   },
   "properties": {
     "snapNum": {
       "type": "number"
     },
     "title": {
-      "type": "string"
-    },
-    "slug": {
-      "url": {
-        "type": "string",
-        "$validate": ["unique"]
-      },
-      "linked": {
-        "type": "boolean"
+      "type": "string",
+      "$slug": {
+        "prefixFunc": "metaSnapshot"
       }
     },
     "content": {
@@ -89,7 +84,7 @@
       "model": "vote",
       "foreignKey": "snapshotId"
     },
-    "slug": {
+    "slugs": {
       "type": "hasMany",
       "model": "slug",
       "foreignKey": "snapshotId",

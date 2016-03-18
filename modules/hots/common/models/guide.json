@@ -11,17 +11,14 @@
       "acceptedRoles": ["$admin", "$owner"],
       "predicate": "private"
     },
-    "$destroyOnDelete": true
+    "$destroyOnDelete": true,
+    "$slug": true
   },
   "properties": {
     "name": {
       "type": "string",
-      "required": true
-    },
-    "slug": {
-      "type": "string",
       "required": true,
-      "$validate": ["unique"]
+      "$slug": true
     },
     "guideType": {
       "type": "string",
@@ -127,7 +124,7 @@
       "model": "vote",
       "foreignKey": "guideId"
     },
-    "slug": {
+    "slugs": {
       "type": "hasMany",
       "model": "slug",
       "foreignKey": "guideId",
