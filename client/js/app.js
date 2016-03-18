@@ -247,10 +247,21 @@ var app = angular.module('app', [
                                             isActive: true
                                         },
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            content: false
                                         },
-                                        include: ['author'],
+                                        include: [
+                                            {
+                                                relation: 'author',
+                                                scope: {
+                                                }
+                                            },
+                                            {
+                                                relation: 'slugs',
+                                                scope: {
+                                                    fields: ['slug']
+                                                }
+                                            }
+                                        ],
                                         order: "createdDate DESC",
                                         skip: (offset * num) - num,
                                         limit: num
