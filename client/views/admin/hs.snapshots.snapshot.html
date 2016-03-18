@@ -359,8 +359,8 @@
                                     <div class="panel-body">
                                         <div class="col-sm-12 wrapper-none">
                                             <div class="col-sm-4 read-only-panel m-t-sm">
-                                                <img src="./img/meta-snapshot/class-icons/{{snapshot.activeDeck.deck.playerClass.toLowerCase()}}.png" class="pull-left tier-class-icon">
-                                                <span class="pull-left">{{match.againstDeck.name}}</span>
+                                                <img src="{{app.cdn}}img/meta-snapshot/class-icons/{{snapshot.getMatchupOpposingDeck(snapshot.activeDeck, match).deck.playerClass.toLowerCase()}}.png" class="pull-left tier-class-icon">
+                                                <span class="pull-left">{{snapshot.getMatchupOpposingDeck(snapshot.activeDeck, match).name}}</span>
                                             </div>
                                             <div class="col-sm-7 pull-left read-only-panel">
                                                 <input ng-change="snapshot.matchupChangeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5" readonly>
@@ -377,8 +377,8 @@
                                     <div class="panel-body">
                                         <div class="col-sm-12 wrapper-none">
                                             <div class="col-sm-4 m-t-sm">
-                                                <img src="./img/meta-snapshot/class-icons/druid.png" class="pull-left tier-class-icon">
-                                                <span class="pull-left">{{match.againstDeck.name}}</span>
+                                                <img src="{{app.cdn}}img/meta-snapshot/class-icons/{{snapshot.getMatchupOpposingDeck(snapshot.activeDeck, match).deck.playerClass.toLowerCase()}}.png" class="pull-left tier-class-icon">
+                                                <span class="pull-left">{{snapshot.getMatchupOpposingDeck(snapshot.activeDeck, match).name}}</span>
                                             </div>
                                             <div class="col-sm-7 pull-left">
                                                 <input ng-change="snapshot.matchupChangeForChance(match)" ng-model="match.forChance" type="range" min="0" max="100" step="5">
@@ -395,8 +395,8 @@
                                     <div class="panel-body">
                                         <div class="col-sm-12 wrapper-none">
                                             <div class="col-sm-4 m-t-sm">
-                                                <img src="./img/meta-snapshot/class-icons/paladin.png" class="pull-left tier-class-icon">
-                                                <span class="pull-left">{{match.forDeck.name}}</span>
+                                                <img src="{{app.cdn}}img/meta-snapshot/class-icons/{{snapshot.getMatchupOpposingDeck(snapshot.activeDeck, match).deck.playerClass.toLowerCase()}}.png" class="pull-left tier-class-icon">
+                                                <span class="pull-left">{{snapshot.getMatchupOpposingDeck(snapshot.activeDeck, match).name}}</span>
                                             </div>
                                             <div class="col-sm-7 pull-left">
                                                 <input ng-change="snapshot.matchupChangeAgainstChance(match)" ng-model="match.againstChance" type="range" min="0" max="100" step="5">
