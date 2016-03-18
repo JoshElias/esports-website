@@ -3,7 +3,7 @@
         <div class="form-group">
             <label class="control-label" for="title">Title</label>
             <div class="input-group">
-                <input ng-model="snapshot.subtitle" class="form-control" id="title" type="text" />
+                <input ng-model="snapshot.title" class="form-control" id="title" type="text" />
             </div>
         </div>
 
@@ -11,13 +11,13 @@
             <label for="url">URL</label>
             <div class="input-group">
                 <span class="input-group-btn">
-                    <button ng-click="snapshot.url.linked = !snapshot.url.linked"
-                            ng-class="{ 'active': !!snapshot.url.linked }"
+                    <button ng-click="snapshot.slug.linked = !snapshot.slug.linked"
+                            ng-class="{ 'active': !!snapshot.slug.linked }"
                             class="btn btn-default"
                             type="button"
                     ><i class="fa fa-link"></i></button>
                 </span>
-                <input ng-model="snapshot.url.slug" class="form-control" id="url" type="text" />
+                <input ng-model="snapshot.slug.url" class="form-control" id="url" type="text" />
             </div>
         </div>
 

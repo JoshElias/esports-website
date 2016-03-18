@@ -10,7 +10,7 @@
     "snapNum": {
       "type": "number"
     },
-    "subtitle": {
+    "title": {
       "type": "string"
     },
     "intro": {
@@ -21,6 +21,17 @@
     },
     "isActive": {
         "type": "boolean"
+    },
+    "slug": {
+      "url": {
+        "type": "string",
+        "validators": [
+          "unique"
+        ]
+      },
+      "linked": {
+        "type": "boolean"
+      }
     }
   },
   "validations": [],

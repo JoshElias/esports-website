@@ -464,12 +464,12 @@ var loggedIn = false,
 
             var defaultSnapshot = {
                 snapNum: 0,
-                subtitle: "default title",
+                title: "default title",
                 intro: "default intro",
                 thoughts: "default thoughts",
-                url: {
+                slug: {
                     linked: true,
-                    slug: "default slug"
+                    url: "default slug"
                 },
                 authors: [],
                 isActive: false
@@ -493,21 +493,22 @@ var loggedIn = false,
             var exists = new Object();
 
             var HOTSSnapshot = function (snapshot) {
-                if (!snapshot)
+                if (!snapshot) {
                     snapshot = angular.copy(defaultSnapshot);
+                }
 
                 exists['authors'] = angular.copy(defaultCrud);
                 exists['heroTiers'] = angular.copy(defaultCrud);
                 exists['guideTiers'] = angular.copy(defaultCrud);
 
-                this.snapNum   = snapshot.snapNum || 0;
-                this.subtitle  = snapshot.subtitle || "";
-                this.intro     = snapshot.intro || "";
-                this.thoughts  = snapshot.thoughts || "";
-                this.url       = snapshot.url || defaultSnapshot.url;
-                this.authors   = snapshot.authors || [];
-                this.heroTiers = snapshot.heroTiers || [];
-                this.isActive  = snapshot.isActive || false;
+                this.snapNum   = snapshot.snapNum;
+                this.title     = snapshot.title;
+                this.intro     = snapshot.intro;
+                this.thoughts  = snapshot.thoughts;
+                this.slug      = snapshot.slug;
+                this.authors   = snapshot.authors;
+                this.heroTiers = snapshot.heroTiers;
+                this.isActive  = snapshot.isActive;
                 this.tiers     = new Array();
 
                 if(!!snapshot.id) {
@@ -516,24 +517,6 @@ var loggedIn = false,
                     exists['authors'].exists = angular.copy(this.authors);
                     exists['heroTiers'].exists = angular.copy(this.heroTiers);
                 }
-
-                console.log(exists);
-                console.log(snapshot);
-                function validate (obj) {
-                    var arr = [];
-
-                    _.each(obj, function (item, key) {
-                        if (typeof item === 'undefined') {
-                            arr.push(key);
-                        }
-                    });
-
-                    return arr;
-                }
-
-                //this.buildTiers();
-
-                //return this;
             };
 
             //begin method definitions
@@ -629,9 +612,38 @@ var loggedIn = false,
                     });
                 }
 
+                if (!hero.guides)
+                    hero.guides = [];
+
                 hero.guides.push(tierGuide);
 
                 console.log(exists);
+            };
+
+            HOTSSnapshot.prototype.removeTier = function (tier) {
+                var that = this;
+                var heroes = this.heroTiers;
+                var tiers = this.tiers;
+                var tierToRemove = tier;
+
+                if (typeof tier == "number") {
+                    tierToRemove = _.find(tiers, function (fTier) {
+                        return tier == fTier.tier;
+                    });
+                }
+
+                _.each(tierToRemove.heroes, function (hero) {
+                    return that.removeHero(hero);
+                });
+
+                _.each(heroes, function (hero) {
+                    var heroTier = hero.tier;
+
+                    if (heroTier > tier)
+                        hero.tier = heroTier - 1;
+                });
+
+                tiers.splice(tiers.length-1, 1);
             };
 
             HOTSSnapshot.prototype.removeHero = function (hero) {

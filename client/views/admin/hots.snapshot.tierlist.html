@@ -63,8 +63,20 @@
                     Associated Guide
                     <div class="input-group">
                         <input class="form-control" ng-model="activeHero.guides[0].guide.name" readonly>
-                        <span style="cursor: pointer;" ng-click="openGuideAdd()" class="input-group-addon"><i class="fa fa-link"></i></span>
-                        <span style="cursor: pointer;" ng-click="openGuideAdd()" class="input-group-addon"><i class="fa fa-link"></i></span>
+                        <span class="input-group-btn">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    ng-click="openGuideAdd()">
+                                <i class="fa fa-link"></i>
+                            </button>
+                        </span>
+                        <span ng-if="!!activeHero.guides[0]" class="input-group-btn">
+                            <button type="button"
+                                    class="btn btn-secondary btn-danger"
+                                    ng-click="guideDeleteById(activeHero.guides[0].id)">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </span>
                     </div>
                 </div>
                 <div class="col-md-1"></div>

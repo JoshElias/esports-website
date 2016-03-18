@@ -5933,7 +5933,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                 AlertService.setSuccess({
                     show: true,
-                    msg: $scope.snapshot.subtitle + ' has been added successfully.'
+                    msg: $scope.snapshot.title + ' has been added successfully.'
                 });
                 $state.go('app.admin.hots.snapshots.list');
             });

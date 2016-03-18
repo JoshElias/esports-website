@@ -1366,7 +1366,7 @@ angular.module('app.directives', ['ui.load'])
 
             // pagination
             $scope.page = 1;
-            $scope.perpage = 10;
+            $scope.perpage = 100;
             var pOptions = {
                 page: $scope.page,
                 perpage: $scope.perpage
@@ -2398,6 +2398,13 @@ angular.module('app.directives', ['ui.load'])
 
                 return _.find(allHeroes, function (hero) { return heroId == hero.hero.id });
             };
+
+            //remove funcs
+            $scope.removeTier = function (tier) {
+                $scope.snapshot.removeTier(tier);
+
+                $scope.snapshot.buildTiers();
+            }
 
             $scope.snapshot.buildTiers();
             //$scope.$watch($scope.snapshot.heroTiers, $scope.snapshot.buildTiers);
