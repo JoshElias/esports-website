@@ -1879,7 +1879,7 @@ var loggedIn = false,
         Shaman: ['Thrall'],
         Warrior: ['Garrosh','Magni'],
         Rogue: ['Valeera'],
-        Paladin: ['Uther'],
+        Paladin: ['Uther', 'Liadrin'],
         Priest: ['Anduin'],
         Warlock: ['Guldan'],
         Hunter: ['Rexxar', 'Alleria'],
@@ -1953,7 +1953,6 @@ var loggedIn = false,
             description: data.description || '',
             chapters: data.chapters || [],
             deckType: data.deckType || 'None',
-            isCommentable: data.isCommentable,
             gameModeType: data.gameModeType || 'constructed',
             basic: _.isUndefined(data.basic) ? false : data.basic,
             matchups: data.matchups || [],
@@ -2035,7 +2034,7 @@ var loggedIn = false,
                     mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
-                },
+                }
             ]
         };
 
@@ -4115,4 +4114,3 @@ var loggedIn = false,
         return factory;
     }
 ]);
-;

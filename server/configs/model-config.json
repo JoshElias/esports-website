@@ -4,10 +4,7 @@
       "loopback/common/models",
       "loopback/server/models",
       "../common/models",
-      "./models",
-      "../node_modules/loopback-component-passport/lib/models",
-      "../../modules/redbull/common/models",
-      "../../modules/hotsSnapshot/common/models"
+      "./models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -302,5 +299,13 @@
     "guideTier": {
         "dataSource": "mongodb",
         "public": true
-    }
+    },
+  "slug": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "sluggable": {
+    "dataSource": "mongodb",
+    "public": true
+  }
 }

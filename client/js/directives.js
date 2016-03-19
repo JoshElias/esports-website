@@ -1582,6 +1582,7 @@ angular.module('app.directives', ['ui.load'])
                 for (var i = 0; i < $scope.deck.cards.length; i++) {
                     dust += $scope.deck.cards[i].cardQuantity * $scope.deck.cards[i].card.dust;
                 }
+
                 return dust;
             };
         }],

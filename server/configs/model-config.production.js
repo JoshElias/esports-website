@@ -4,10 +4,6 @@ module.exports = {
             "loopback/common/models",
             "loopback/server/models",
             "../../common/models",
-            "./../models",
-            "../../node_modules/loopback-component-passport/lib/models",
-            "../../modules/redbull/common/models",
-            "../../modules/hotsSnapshot/common/models"
         ],
         "mixins": [
             "loopback/common/mixins",
@@ -68,16 +64,16 @@ module.exports = {
         "public": true
     },
     "game": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "hsClass": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "team": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "teamMember": {
         "dataSource": "mongodb",
@@ -300,6 +296,14 @@ module.exports = {
         "public": true
     },
     "guideTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "slug": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "sluggable": {
         "dataSource": "mongodb",
         "public": true
     }

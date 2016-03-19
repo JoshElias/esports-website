@@ -225,6 +225,35 @@ label p {
 // 6... General Admin
 //*************************************
 
+.admin-list-item .checkbox input {
+  height: 40px;
+  width: 40px;
+  margin-top: 0px;
+}
+
+.admin-order-btns-wrap {
+    .fa {
+        font-size: 15px;
+        transition: color 0.4s ease;
+        color: black;
+        
+        &:hover {
+            color: $ts-blue;
+            cursor: pointer;
+        }
+        
+        &.disabled {
+            color: grey;
+            opacity: .5;
+            
+            &:hover {
+                color: grey;
+                cursor: default;
+            }
+        }
+    }
+}
+
 .admin-article-related-bg {
     background-color: #F5F5F5;
 }
@@ -329,7 +358,13 @@ label p {
 
 .nav li > a:hover, .nav  li > a:focus { background: inherit; }
 
+.admin-list-heading h4 {
+    line-height: 45px;
+}
 
+.panel-heading .btn-toolbar {
+    margin-top: 6px;
+}
 
 /* dnd lists */
 ul[dnd-list] > li {

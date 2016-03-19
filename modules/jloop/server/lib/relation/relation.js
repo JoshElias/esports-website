@@ -1,0 +1,263 @@
+var async = require("async");
+var utils = require("../utils");
+var deleteHandlers = require("./delete-handlers");
+
+var DESTROY_CHILDREN_FEATURE_KEY = "$destroyOnDelete";
+
+
+function destroyChildren(ctx, finalCb) {
+
+    // Check for the feature key in the model's settings
+    if (!ctx.Model.definition.settings[DESTROY_CHILDREN_FEATURE_KEY]) {
+        return finalCb();
+    }
+
+    var relations = ctx.Model.settings.relations;
+
+    // Create query to retrieve the objectId(s) of the instances we are deleting
+    var query = {
+        where: ctx.where,
+        fields:{ id:true }
+    };
+
+    // Append all foreing keys to the query fields
+    var foreignKeys = utils.getForeignKeys(ctx.Model.definition.rawProperties);
+    for(var key in foreignKeys) {
+        query.fields[foreignKeys[key]] = true;
+    }
+
+    ctx.Model.find(query, function(err, instances) {
+        if(err) return finalCb(err);
+
+        async.each(instances, function(instance, instanceCb) {
+            async.forEachOf(relations, function(relationData, relationName, relationCb) {
+
+                if(!relationData[DESTROY_CHILDREN_FEATURE_KEY]) {
+                    return relationCb();
+                }
+
+                var deleteHandler = deleteHandlers[relationData.type];
+                if(!deleteHandler) {
+                    return relationCb();
+                }
+
+                return deleteHandler(ctx, instance, relationData, relationName, relationCb);
+
+            }, instanceCb);
+        }, function(err) {
+            finalCb(err);
+        });
+    });
+};
+
+
+
+module.exports = {
+    destroyChildren: destroyChildren
+};
+
+
+
+
+/*
+    HERE LIES SAVE CHILDREN. GONE BUT NEVER FORGOTTEN
+
+
+function saveChildren(ctx, next) {
+    var parentRelations = ctx.Model.settings.relations;
+    var parentOptions = ctx.options || {};
+    var loopbackContext = loopback.getCurrentContext();
+    if (!loopbackContext || !loopbackContext.active || !loopbackContext.active.http) {
+        return next();
+    }
+    var body = loopbackContext.active.http.req.body;
+
+    var changes = {
+        creates: {},
+        updates: {}
+    };
+
+    var where = {};
+    if(ctx.instance && ctx.instance.id) {
+        where.id = ctx.instance.id.toString()
+    } else if(typeof ctx.where === "object") {
+        where = ctx.where;
+    } else {
+        return next();
+    }
+
+    ctx.Model.find({where: where}, function (err, parentInstances) {
+        if (err) return revertUpserts(err);
+        else if (parentInstances.length < 1) {
+            return next();
+        }
+
+        // Iterate through all the relationships of the model instance
+        async.forEachOf(parentRelations, function (parentRelationObj, parentRelationName, parentRelationCb) {
+            if(!parentRelationObj.isChild) {
+                return parentRelationCb();
+            }
+
+            async.each(parentInstances, function(parentInstance, parentInstanceCb) {
+
+                // Check if the relationship instance exists on the parent
+                var relationInstance = parentInstance[parentRelationName];
+                if (!relationInstance) {
+                    return parentInstanceCb();
+                }
+
+                // Get the model from the relationship in order to get it's relations
+
+                var relationModel = ctx.Model.app.models[parentRelationObj.model];
+                var relationModelRelations = relationModel.settings.relations;
+
+                // See if there's any extra data in the options or body
+                var relationData = parentOptions[parentRelationName] || body[parentRelationName];
+                if(typeof relationData === "undefined") {
+                    return parentInstanceCb();
+                }
+
+
+                if(Array.isArray(relationData)) {
+                    async.each(relationData, upsertChild(relationInstance, relationModel), parentInstanceCb);
+                } else if(typeof relationData === "object") {
+                    upsertChild(relationInstance, relationModel)(relationData, parentInstanceCb);
+                }
+
+                function upsertChild(relationInstance, relationModel) {
+                    return function (childData, childCb) {
+
+                        // Iterate through the relation's relations and see if there are any fields to append to options
+                        var childOptions = {};
+                        for (var childRelationName in relationModelRelations) {
+
+                            // If the child data contains no data or shouldn't be added (!isChild)
+                            var childRelationObj = relationModelRelations[childRelationName];
+                            var value = childData[childRelationName];
+                            if (typeof value !== "undefined" && childRelationObj.isChild) {
+                                childOptions[childRelationName] = value;
+                            }
+                        }
+
+                        relationModel.find({
+                            where: {
+                                id: childData.id || ""
+                            }
+                        }, function(err, childInstance) {
+                            if(err) return revertUpserts(err);
+                            else if(childInstance.length < 1) {
+                                createChild(childData, childOptions, relationInstance, childCb);
+                            } else {
+                                updateChild(childData, childOptions, childInstance[0], childCb);
+                            }
+                        });
+
+
+                        function createChild(childData, childOptions, relationInstance, createCb) {
+                            relationInstance.create(childData, childOptions, function (err, childInstance) {
+                                if(err) return revertUpserts(err);
+
+                                // Keep track of all children created just in case we need to delete
+                                var modelName = relationModel.definition.name;
+                                if(!changes.creates[modelName]) {
+                                    changes.creates[modelName] = {};
+                                    changes.creates[modelName].collection = relationModel;
+                                    changes.creates[modelName].children = [];
+                                }
+                                changes.creates[modelName].children.push(childInstance.id);
+                                childCb();
+                            });
+                        }
+
+                        function updateChild(childData, childOptions, childInstance, updateCb) {
+                            childInstance.updateAttributes(childData, childOptions, function (err, newChildInstance) {
+                                if(err) return revertUpserts(err);
+
+                                // Keep track of all children created just in case we need to delete
+                                var modelName = relationModel.definition.name;
+                                if(!changes.updates[modelName]) {
+                                    changes.updates[modelName] = {};
+                                    changes.updates[modelName].collection = relationModel;
+                                    changes.updates[modelName].children = [];
+                                }
+                                changes.updates[modelName].children.push({
+                                    id: childInstance,
+                                    oldData: childInstance.toJSON()
+                                });
+                                updateCb();
+                            });
+                        }
+                    }
+                }
+
+            }, parentRelationCb);
+
+        }, function (err) {
+            next(err);
+        });
+
+
+        function revertUpserts(createErr) {
+            return next(createErr);
+            async.parallel([
+                // Destroy Parent
+                function(seriesCb) {
+                    ctx.Model.destroyById(ctx.instance.id.toString(), function(err) {
+                        if(err) {
+                            // append to errors
+                        }
+                        seriesCb();
+                    });
+                },
+                // Delete all the children
+                function(seriesCb) {
+                    async.forEachOf(changes.creates, function(child, childKey, childCb) {
+                        child.collection.destroyAll({where:{id:{inq:child.children}}}, function(err) {
+                            if(err) {
+                                // append to errors
+                            }
+                            childCb();
+                        });
+
+                    }, function(err) {
+                        if(err) {
+                            // append to errors
+                        }
+                        seriesCb();
+                    });
+                },
+                // Undo all updates
+                function(seriesCb) {
+                    async.forEachOf(changes.updates, function(update, updateKey, childCb) {
+                        async.forEachOf(update.children, function (updateChild, updateChildKey, updateChildCb) {
+                            undoUpdates(update, updateChild, updateChildCb);
+                        }, childCb)
+                    }, function(err) {
+                        if(err) {
+                            // append to errors
+                        }
+                        seriesCb();
+                    });
+
+                    // Maintain state
+                    function undoUpdates(update, updateChild, undoCb) {
+                        update.collection.update({
+                            id: updateChild.id,
+                        }, updateChild.oldData, function(err) {
+                            if(err) {
+                                // append to errors
+                            }
+                            undoCb();
+                        })
+                    }
+                }
+            ], function(err) {
+                if(err) {
+                    // append to errors
+                }
+                next(createErr);
+            })
+        }
+    });
+}
+*/

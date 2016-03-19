@@ -8,9 +8,9 @@
   },
   "properties": {
     "snapNum": {
-      "type": "string"
+      "type": "number"
     },
-    "subtitle": {
+    "title": {
       "type": "string"
     },
     "intro": {
@@ -18,6 +18,9 @@
     },
     "thoughts": {
         "type": "string"
+    },
+    "isActive": {
+        "type": "boolean"
     }
   },
   "validations": [],
@@ -26,6 +29,17 @@
           "type": "hasMany",
           "model": "heroTier",
           "foreignKey": "snapshotId"
+      },
+      "authors": {
+          "type": "hasMany",
+          "model": "snapshotAuthor",
+          "foreignKey": "hotsSnapshotId"
+      },
+      "slugs": {
+        "type": "hasMany",
+        "model": "slug",
+        "foreignKey": "hotsSnapshotId",
+        "through": "sluggable"
       }
   },
   "acls": [

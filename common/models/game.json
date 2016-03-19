@@ -4,7 +4,12 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "$destroyOnDelete": true
   },
   "properties": {
     "__v": {
@@ -24,13 +29,13 @@
       "type": "hasMany",
       "model": "team",
       "foreignKey": "gameId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "hsClasses": {
       "type": "hasMany",
       "model": "hsClass",
       "foreignKey": "gameId",
-      "isChild": true
+      "$destroyOnDelete": true
     }
   },
   "acls": [

@@ -1,0 +1,112 @@
+{
+  "name": "forumPost",
+  "plural": "forumPosts",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "$destroyOnDelete": true,
+    "$spam": true
+  },
+  "properties": {
+    "__v": {
+      "type": "number"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "content": {
+      "type": "string",
+      "$validate": ["spam"]
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "title": {
+      "type": "string",
+      "$validate": ["spam"],
+      "$spam": true
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "voteScore": {
+      "type": "number"
+    },
+    "votes": {
+      "type": "object"
+    },
+    "forumThreadId": {},
+    "authorId": {}
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "forumThread": {
+      "type": "belongsTo",
+      "model": "forumThread",
+      "foreignKey": "forumThreadId",
+      "$destroyOnDelete": true
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "forumPostId",
+      "$destroyOnDelete": true
+    },
+    "slugs": {
+      "type": "hasMany",
+      "model": "slug",
+      "foreignKey": "forumPostId",
+      "through": "sluggable"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__comments"
+    }
+  ],
+  "methods": {}
+}

@@ -4,14 +4,13 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true
   },
   "properties": {
     "text": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "$validate": ["spam"]
     },
     "votes": {
       "type": [

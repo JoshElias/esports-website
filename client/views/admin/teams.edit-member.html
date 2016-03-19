@@ -93,7 +93,7 @@
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-team">
                         <div class="upload-drop" ng-show="member.photoName === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img src="{{memberImg}}" alt="" ng-show="member.photoName !== ''">
+                        <img src="{{getImage()}}" alt="" ng-show="member.photoName !== ''">
                     </div>
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">

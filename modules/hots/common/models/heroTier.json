@@ -31,6 +31,9 @@
     "utilityScore": {
       "type": "number"
     },
+    "orderNum": {
+      "type": "number"
+    },
     "heroId": {},
     "snapshotId": {}
   },
@@ -42,7 +45,7 @@
           "foreignKey": "snapshotId"
       },
       "hero": {
-          "type": "hasOne",
+          "type": "belongsTo",
           "model": "hero",
           "foreignKey": "heroId"
       },

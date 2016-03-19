@@ -1,103 +1,194 @@
-angular.module('hotsModule', [
-    'hotsSnapshot'
-])
+angular.module('hotsSnapshot', [])
 .run(
     ['$rootScope', '$window',
         function ($rootScope, $window) {
-            
-            console.log('sup');
-            
+
+
         }
     ]
 )
-.config(
-    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider',
-    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
+.controller('hotsSnapshotCtrl', ['$scope', 'HOTSSnapshot', 'snapshot', 'HOTS', function ($scope, HOTSSnapshot, snapshot, HOTS) {
+    var activeFilters = {
+        role: [],
+        universe: []
+    }
+    $scope.heroAnim = {}
 
-        app.controller = $controllerProvider.register;
-        app.directive  = $compileProvider.directive;
-        app.filter     = $filterProvider.register;
-        app.factory    = $provide.factory;
-        app.service    = $provide.service;
-        app.constant   = $provide.constant;
-        app.value      = $provide.value;
+    function find (arr, obj) {
+        return _.find(activeFilters[arr], function (val) { return val == obj });
+    }
 
-        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
+    $scope.HOTS = HOTS;
+    $scope.snapshot = HOTSSnapshot(snapshot.hotsSnapshots[0]);
+    $scope.snapshot.buildTiers();
 
-        $bootboxProvider.setDefaults({ locale: "en" });
+    _.each($scope.snapshot.heroTiers, function (val) {
+        var tempScores = {
+            burstScore: val.burstScore,
+            pushScore: val.pushScore,
+            surviveScore: val.surviveScore,
+            scaleScore: val.scaleScore,
+            utilityScore: val.utilityScore
+        };
 
-        $locationProvider.html5Mode(true);
-        $httpProvider.interceptors.push('AuthInterceptor');
+        $scope.heroAnim[val.id] = tempScores;
 
-        // cdn templates
-        tpl = tpl || '';
+        val.burstScore = 0;
+        val.pushScore = 0;
+        val.surviveScore = 0;
+        val.scaleScore = 0;
+        val.utilityScore = 0;
+    });
 
-        $sceDelegateProvider.resourceUrlWhitelist([
-            'self',
-            tpl + '**'
-        ]);
+    $scope.selectFilter = function ($event, arr, obj) {
+        $event.stopPropagation();
+        var filt = activeFilters[arr];
 
-        var throw404 = function ($state) {
-            var options = {
-                location: "replace",
-                inherit: true,
-                notify: true,
-                relative: $state.$current
-            }
+        if (!find(arr, obj)) {
+            filt.push(obj);
+        } else {
+            var idx = filt.indexOf(obj);
 
-            $state.transitionTo('app.404', {}, options);
+            filt.splice(idx,1);
         }
+    }
 
-        // ignore ng-animate on font awesome spin
-        //$animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
+    $scope.triggerAnimation = function (hero) {
+        var s = $scope.heroAnim[hero.id];
 
-        $urlRouterProvider.otherwise(function ($injector, $location) {
-            $injector.invoke(['$state', function ($state) {
-                return throw404($state)
-            }]);
-        });
+        hero.burstScore = s.burstScore;
+        hero.pushScore = s.pushScore;
+        hero.surviveScore = s.surviveScore;
+        hero.scaleScore = s.scaleScore;
+        hero.utilityScore = s.utilityScore;
+    }
+
+    $scope.getFilters = function () {
+        var filt = activeFilters;
+
+
+        return filt['role'] + filt['universe'];
+    }
+
+    $scope.getIsActive = function (arr, obj) {
+        return !!_.find(activeFilters[arr], function (val) { return val == obj; });
+    }
+}])
+.filter('inArray', function($filter){
+    return function(list, arrayFilter, element){
+        if(arrayFilter){
+            return $filter("filter")(list, function(listItem){
+                return arrayFilter.indexOf(listItem[element]) != -1;
+            });
+        }
+    };
+})
+.config(['$locationProvider', '$stateProvider',
+    function ($locationProvider, $stateProvider) {
+        var moduleTpl = (tpl !== './') ? tpl + 'views/hotsSnapshot/client/views/' : 'dist/views/hotsSnapshot/client/views/';
 
         $stateProvider
-        .state('app', {
-            abstract: true,
-            url: '/',
+        .state('app.hots.snapshots', {
+            abstract: 'true',
+            url: '/meta-snapshot',
             views: {
-                root: {
-                    templateUrl: tpl + 'views/frontend/index.html',
-                    controller: 'RootCtrl'
+                hots: {
+                    templateUrl: moduleTpl + 'snapshots.html'
                 }
-            },
+            }
+        })
+        .state('app.hots.snapshots.redirect', {
+            url: '',
             resolve: {
-              // Load the current user data if we don't have it
-                currentUser: ['User', 'LoopBackAuth',
-                    function(User, LoopBackAuth) {
-                        if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
-                          return User.getCurrent().$promise;
+                data: ['HotsSnapshot', function (HotsSnapshot) {
+                    console.log('1');
+                    return HotsSnapshot.find({
+                        filter: {
+                            order: "createdDate DESC",
+                            where: { isActive: true },
+                            fields: ['id'],
+                            include: ['slugs']
                         }
-                        return LoopBackAuth.currentUserData;
-                    }
-                ]
-            },
-            onEnter: ['$cookies', '$state', 'EventService', 'LoginModalService', 'AlertService', 'Util', function($cookies, $state, EventService, LoginModalService, AlertService, Util) {
-                // look for redirect cookie
-                var redirectState = $cookies.get("redirectStateString");
-                if(redirectState) {
-                    redirectState = JSON.parse(redirectState);
-                    $cookies.remove("redirectStateString");
-                    $state.go(redirectState.name, redirectState.params);
-                    return;
-                }
+                    })
+                    .$promise
+                    .then(function (data) {
+                        console.log('2', data);
+                        return data;
+                    });
+                }],
+                redirect: ['$q', '$state', 'data', function ($q, $state, data) {
+                    console.log('3', data);
+                    $state.go('app.hots.snapshots.snapshot', { slug: data });
+                    return $q.reject();
+                }]
+            }
+        })
+        .state('app.hots.snapshots.snapshot', {
+            url: '/:slug',
+            views: {
+                hotsSnapshots: {
+                    controller: 'hotsSnapshotCtrl',
+                    templateUrl: moduleTpl + 'snapshot.html',
+                    resolve: {
+                        snapshot: ['$stateParams', '$state', 'Slug', function ($stateParams, $state, Slug) {
+                            var slug = $stateParams.slug;
 
-                var thirdPartyError = Util.getAuthCookie("thirdPartyError");
-                if(thirdPartyError) {
-                    if (!redirectState) {
-                        $cookies.remove("thirdPartyError");
-                        LoginModalService.showModal('login');
+                            return Slug.findOne({
+                                filter: {
+                                    where: {
+                                        slug: slug,
+                                        parentModelName: "hotsSnapshot"
+                                    },
+                                    include: [
+                                        {
+                                            relation: "hotsSnapshots",
+                                            scope: {
+                                                include: [
+                                                    {
+                                                        relation: "heroTiers",
+                                                        scope: {
+                                                            include: [
+                                                                {
+                                                                    relation: "guides",
+                                                                    scope: {
+                                                                        include: [
+                                                                            {
+                                                                                relation: "guide",
+                                                                                include: ["slugs"]
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                {
+                                                                    relation: "hero"
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        relation: "authors",
+                                                        scope: {
+                                                            include: ["user"]
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            })
+                            .$promise
+                            .then(function (data) {
+                                return data;
+                            })
+                            .catch(function (e) {
+                                console.log("ERR", e);
+                                $state.transitionTo('otherwise');
+                            });
+                        }]
                     }
-
-                    AlertService.setError({ persist: true, show: true, msg: thirdPartyError });
                 }
-            }]
+            }
         })
     }]
 )
