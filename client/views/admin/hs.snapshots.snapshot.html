@@ -14,7 +14,7 @@
             </div>
         </div>
     </div> <!--panel header ends -->
-    <div class="panel-body padding-none p-t-none p-b-none">
+    <div class="panel-body padding-none p-t-none p-b-none flex-check">
         <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
             <ul class="edit-nav m-b-md">
                 <li class="pull-left" ng-class="{selected: page==='general'}"><a href="#" ng-click="page = 'general'" >General</a></li>
@@ -33,7 +33,7 @@
                 <!--URL starts -->
                 <div class="form-group ">
                     <label for="slug" class="control-label pull-left">URL</label>
-                    <div class="wrapper-none pull-left">
+                    <div class="wrapper-none">
                         <div class="input-group pull-left">
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default" ng-class="{active: snapshot.slug.linked}" ng-click="snapshot.slugToggleLink()"><i class="fa" ng-class="{'fa-link': snapshot.slug.linked, 'fa-unlink': !snapshot.slug.linked}"></i></button>
