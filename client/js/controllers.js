@@ -14889,6 +14889,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var cleanGuide = angular.copy($scope.guide);
                 cleanGuide.slug = Util.slugify(cleanGuide.name);
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
+                cleanGuide.authorId = User.getCurrentId();
 
                 var keys = ['name',
                             'authorId',
@@ -17134,6 +17135,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var cleanGuide = angular.copy($scope.guide);
                 cleanGuide.slug = Util.slugify(cleanGuide.name);
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
+                cleanGuide.authorId = User.getCurrentId();
 
                 var keys = ['name',
                             'against',
@@ -17432,6 +17434,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.fetching = true;
                     
                     $scope.guide.slug = Util.slugify($scope.guide.name);
+                    $scope.guide.authorId = User.getCurrentId();
 //                    $scope.authorId = LoopBackAuth.currentUserId;
 
                     $scope.guide.voteScore = 1;
