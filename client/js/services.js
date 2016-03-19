@@ -4254,7 +4254,20 @@ angular.module('app.services', [])
                     console.log(newDeck);
                 }
             };
-
+            
+            // change the deck
+            sb.deckChange = function (deckTier, newDeck) {
+                var oldDeckId = deckTier.deck.id;
+                var newDeckId = newDeck.id;
+                
+                // update all matchups to new deck id
+                
+                // change deck
+                deckTier.deck = newDeck;
+                
+                // flag deck as updated
+            };
+            
             // delete deck
             sb.deckDelete = function (tier, deck) {
                 var index = tier.decks.indexOf(deck);
@@ -4696,6 +4709,41 @@ angular.module('app.services', [])
                                 
                                 $timeout(function () {
                                     sb.deckAdd(tier, newScope.deck.name, newScope.deck);
+                                });
+                                
+                                box.modal('hide');
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    show: false,
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
+                });
+                box.modal('show');
+            };
+            
+            // prompt for changing a deck
+            sb.deckChangePrompt = function (deck) {
+                var newScope = $rootScope.$new(true);
+                
+                var box = bootbox.dialog({
+                    title: "Decks",
+                    message: $compile('<div snapshot-add-deck></div>')(newScope),
+                    buttons: {
+                        submit: {
+                            label: 'Change Deck',
+                            className: 'btn-success',
+                            callback: function () {
+                                if (!newScope.deck) { return false; }
+                                
+                                $timeout(function () {
+                                    sb.deckChange(deck, newScope.deck);
                                 });
                                 
                                 box.modal('hide');
