@@ -14889,6 +14889,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var cleanGuide = angular.copy($scope.guide);
                 cleanGuide.slug = Util.slugify(cleanGuide.name);
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
+                cleanGuide.authorId = User.getCurrentId();
 
                 var keys = ['name',
                             'authorId',
@@ -15150,25 +15151,83 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             };
+            
+            // save guide
+            $scope.saveGuide = function () {
+//              console.log('okay...here we go...');
+                if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
+                    return false;
+                }
+                if (!User.isAuthenticated()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.saveGuide();
+                    });
+                } else {
+                    $scope.fetching = true;
+                    
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+//                    $scope.authorId = LoopBackAuth.currentUserId;
+                    $scope.guide.authorId = User.getCurrentId();
 
-//            // save guide
-//            $scope.saveGuide = function () {
-//                if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
-//                    return false;
-//                }
-//
-//                AdminHOTSGuideService.addGuide($scope.guide).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        $scope.app.settings.guide = null;
-//                        AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been added successfully.' });
-//                        $state.go('app.admin.hots.guides.list');
-//                    }
-//                });
-//            };
+                    $scope.guide.voteScore = 1;
+//                    console.log('saving $scope.guide:', $scope.guide);
+                    
+                    var guideCreated;
+                    async.waterfall([
+                        function (waterCB) {
+                            Guide.create($scope.guide)
+                            .$promise
+                            .then(function (createdGuide) {
+                                guideCreated = createdGuide;
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        },
+                        function(waterCB) {
+                            Guide.maps.link({
+                                id: guideCreated.id,
+                                fk: $scope.maps[0].id
+                            }, null)
+                            .$promise
+                            .then(function (mapLinkData) {
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        },
+                        function (waterCB) {
+                            Vote.create({
+                                direction: 1,
+                                createdDate: new Date().toISOString(),
+                                authorId: User.getCurrentId(),
+                                guideId: guideCreated.id
+                            })
+                            .$promise
+                            .then(function (voteCreated) {
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        }
+                    ], function (err) {
+                        $window.scrollTo(0, 0);
+                        $scope.fetching = false;
+                        if (err) {
+                            return AlertService.setError({
+                                show: true,
+                                msg: 'Unable to Save Guide',
+                                lbErr: err
+                            });
+                        }
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
+                    });
+                }
+            };
         }
     ])
     .controller('AdminHOTSGuideEditStep1Ctrl', ['$scope', 'guide',
@@ -17134,6 +17193,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var cleanGuide = angular.copy($scope.guide);
                 cleanGuide.slug = Util.slugify(cleanGuide.name);
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
+                cleanGuide.authorId = User.getCurrentId();
 
                 var keys = ['name',
                             'against',
@@ -17433,6 +17493,7 @@ angular.module('app.controllers', ['ngCookies'])
                     
                     $scope.guide.slug = Util.slugify($scope.guide.name);
 //                    $scope.authorId = LoopBackAuth.currentUserId;
+                    $scope.guide.authorId = User.getCurrentId();
 
                     $scope.guide.voteScore = 1;
 //                    console.log('saving $scope.guide:', $scope.guide);
