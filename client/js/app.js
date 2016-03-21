@@ -502,8 +502,7 @@ var app = angular.module('app', [
                                         where: artWhere,
                                         order: 'createdDate DESC',
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            content: false
                                         },
                                         include: [
                                           {
@@ -516,7 +515,10 @@ var app = angular.module('app', [
                                             }
                                           },
                                           {
-                                              relation: "slugs"
+                                            relation: 'slugs',
+                                              scope: {
+                                                  fields: ['slug']
+                                              }
                                           }
                                         ]
                                     },
@@ -525,8 +527,6 @@ var app = angular.module('app', [
                                 };
                             }],
                             articles: ['paginationParams', 'Article', function (paginationParams, Article) {
-                                console.log("slugs", paginationParams.artParams);
-
                                 return Article.find({
                                     filter: {
                                         where: paginationParams.artParams.where,
@@ -539,7 +539,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
-                                        console.log("articles", articles);
                                     return articles;
                                 });
 
@@ -790,7 +789,6 @@ var app = angular.module('app', [
                                                     createdDate: true,
                                                     description: true,
                                                     photoNames: true,
-                                                    slug: true,
                                                     themeName: true,
                                                     title: true,
                                                     premium: true
@@ -800,6 +798,12 @@ var app = angular.module('app', [
                                                         relation: "author",
                                                         scope: {
                                                             fields: ['username']
+                                                        }
+                                                    },
+                                                    {
+                                                        relation: "slugs",
+                                                        scope: {
+                                                            fields: ['slug']
                                                         }
                                                     }
                                                 ]
@@ -819,7 +823,6 @@ var app = angular.module('app', [
                                                 heroName: true,
                                                 premium: true,
                                                 authorId: true,
-                                                slug: true,
                                                 createdDate: true
                                               },
                                               include: [
@@ -833,6 +836,12 @@ var app = angular.module('app', [
                                                       relation: "votes",
                                                       scope: {
                                                           fields: ['authorId', 'direction']
+                                                      }
+                                                  },
+                                                  {
+                                                      relation: "slugs",
+                                                      scope: {
+                                                          fields: ['slug']
                                                       }
                                                   }
                                               ]
@@ -852,7 +861,6 @@ var app = angular.module('app', [
                                                 heroName: true,
                                                 premium: true,
                                                 authorId: true,
-                                                slug: true,
                                                 createdDate: true
                                               },
                                               include: [
@@ -866,6 +874,12 @@ var app = angular.module('app', [
                                                       relation: "votes",
                                                       scope: {
                                                           fields: ['direction']
+                                                      }
+                                                  },
+                                                  {
+                                                      relation: "slugs",
+                                                      scope: {
+                                                          fields: ['slug']
                                                       }
                                                   }
                                               ]
@@ -978,7 +992,6 @@ var app = angular.module('app', [
                                         fields: {
                                             id: true,
                                             name: true,
-                                            slug: true,
                                             heroName: true,
                                             authorId: true,
                                             playerClass: true,
@@ -999,6 +1012,12 @@ var app = angular.module('app', [
                                             relation: "votes",
                                             scope: {
                                               fields: ['direction']
+                                            }
+                                          },
+                                          {
+                                            relation: "slugs",
+                                            scope: {
+                                              fields: ['slug']
                                             }
                                           }
                                         ]
