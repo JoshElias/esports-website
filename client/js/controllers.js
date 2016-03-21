@@ -17437,6 +17437,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
                 var cleanGuide = angular.copy($scope.guide);
                 cleanGuide.slug = Util.slugify(cleanGuide.name);
+                cleanGuide.authorId = User.getCurrentId();
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
                 cleanGuide.authorId = User.getCurrentId();
 
