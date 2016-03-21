@@ -14549,7 +14549,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.editMap = function () {
                 $scope.showError = false;
-
                 Map.update({
                     where: {
                         id: $scope.map.id
@@ -15784,7 +15783,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.guide.slug = Util.slugify($scope.guide.name);
                     $scope.fetching = true;
 
-                    async.parallel([
+                    async.series([
                         function(paraCB){
                             Guide.upsert($scope.guide)
                             .$promise
@@ -17492,6 +17491,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.fetching = true;
                     
                     $scope.guide.slug = Util.slugify($scope.guide.name);
+                    $scope.guide.authorId = User.getCurrentId();
 //                    $scope.authorId = LoopBackAuth.currentUserId;
                     $scope.guide.authorId = User.getCurrentId();
 
@@ -18114,7 +18114,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.guide.slug = Util.slugify($scope.guide.name);
                     $scope.fetching = true;
 
-                    async.parallel([
+                    async.series([
                         function(paraCB){
                             Guide.upsert($scope.guide)
                             .$promise
