@@ -143,12 +143,13 @@
 </div>
 <div class="container" ng-show="step === 6">
     <div class="guide-text hero-discussion"></div>
-    <div class="db-section m-b-md" 
-         ng-repeat="content in guide.content | orderBy: 'orderNum' track by $index">
+    <div class="db-section m-b-md" ng-repeat="content in guide.content | orderBy: 'orderNum' track by $index">
         <div class="gb-content-title">
-            <div class="gb-content-btns clearfix">
+            <div class="gb-chapter-carets">
                 <a href="#" class="gb-content-down m-r-xs" ng-class="{ 'disabled': $index == (guide.content.length - 1) }" ng-show="guide.content.length > 1" ng-click="guide.moveContentDown(content)"><i class="fa fa-caret-down"></i></a>
                 <a href="#" class="gb-content-up m-r-md" ng-class="{ 'disabled': $index == 0 }" ng-show="guide.content.length > 1" ng-click="guide.moveContentUp(content)"><i class="fa fa-caret-up"></i></a>
+            </div>
+            <div class="gb-content-btns clearfix">
                 <a href="#" class="gb-content-delete" ng-show="guide.content.length" ng-click="guide.deleteContent(content)"><i class="fa fa-times"></i></a>
             </div>
             <input type="text" name="contentTitle{{$index}}" class="form-control input-content-title" value="" ng-model="content.title">

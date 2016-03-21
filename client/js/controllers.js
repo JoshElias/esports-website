@@ -7590,8 +7590,6 @@ angular.module('app.controllers', ['ngCookies'])
                             .$promise
                             .then(function (newDeckMulligan) {
 
-//                                console.log('newDeckMulligan:', newDeckMulligan);
-
                                 async.parallel([
                                     function(paraCB){
                                         Mulligan.mulligansWithCoin.createMany({
@@ -7625,6 +7623,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     if (err) return deckMulliganCB(err);
                                     return deckMulliganCB();
                                 });
+                                
                             })
                             .catch(function (err) {
                                 console.log('deckMulligan err:', err);
