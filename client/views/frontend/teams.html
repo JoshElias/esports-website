@@ -4,7 +4,7 @@
         <div class="sub-nav-links">
             <ul>
                 <li ng-repeat="team in teams">
-                    <a href="#{{getSlug(team.game.name)}}">{{team.abbreviation}}</a>
+                    <a href="#{{getSlug(team.abbreviation)}}">{{team.abbreviation}}</a>
                 </li>
             </ul>
         </div>
@@ -18,7 +18,7 @@
                ng-if="team.teamMembers.length" 
                ng-repeat="team in teams">
                 <div class="team col-lg-12 m-b-lg">
-                    <a id="{{getSlug(team.game.name)}}" class="anchor"></a>
+                    <a id="{{getSlug(team.abbreviation)}}" class="anchor"></a>
                     <h1>{{team.game.name | uppercase}}<span ng-if="team.name.length">: {{team.name | uppercase}}</span></h1>
                     <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none wrapper-none" ng-repeat="member in team.teamMembers">
                         <button ng-click="showMember(member)">
