@@ -2969,7 +2969,6 @@ var app = angular.module('app', [
                                     }
                                   }).$promise
                                   .then(function(heroData) {
-                                    console.log('heroData:', heroData);
                                     return waterCB(null, heroData);
                                   })
                                   .catch(function (err) {
