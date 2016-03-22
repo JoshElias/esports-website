@@ -67,27 +67,34 @@
                                 <a
                                         ng-repeat="role in HOTS.roles"
                                         class="filter filter-{{role.toLowerCase()}}"
-                                        ng-class="{'active':getIsActive('role', role)}"
-                                        ng-click="selectFilter($event, 'role', role)"
+                                        ng-class="{'active':getIsActive('role', role, tier.tier)}"
+                                        ng-click="selectFilter($event, 'role', role, tier.tier, tier.heroes)"
                                 ></a>
                                 <a
                                         ng-repeat="universe in HOTS.universes"
                                         class="filter filter-universe-{{universe.toLowerCase()}}"
-                                        ng-class="{'active':getIsActive('universe', universe)}"
-                                        ng-click="selectFilter($event, 'universe', universe)"
+                                        ng-class="{'active':getIsActive('universe', universe, tier.tier)}"
+                                        ng-click="selectFilter($event, 'universe', universe, tier.tier, tier.heroes)"
                                 ></a>
                             </div>
                         </div>
 
 
                         <div class="tier-body collapse" id="collapseTier{{tier.tier}}">
-                            <div ng-repeat="hero in tier.heroes" id="Hero{{hero.id}}" class="tier-hero tier-hero-{{hero.hero.className}}"> <!-- Hero start -->
-                            <!--<div ng-repeat="hero in tier.heroes | inArray:getFilters():'hero.hero.role'" id="Hero{{hero.id}}" class="tier-hero tier-hero-{{hero.hero.className}}"> &lt;!&ndash; Hero start &ndash;&gt;-->
+                            <!-- Hero start -->
+                            <div ng-repeat="hero in activeFilters[tier.tier].filtered"
+                                id="Hero{{hero.id}}"
+                                class="tier-hero tier-hero-{{hero.hero.className}}"
+                            >
                                 <div class="tier-hero-heading clearfix" ng-click="triggerAnimation(hero)" role="button" data-toggle="collapse" ng-href="#collapseHero-{{hero.id}}" aria-expanded="false" aria-controls="collapseHero-{{hero.id}}">
                                     <h4>{{hero.hero.name}}</h4>
                                     <div class="filter filter-role {{hero.hero.role.toLowerCase()}}" ></div>
                                     <div class="filter filter-universe filter-universe-{{hero.hero.universe.toLowerCase()}} active" ></div>
-                                    <button class="hero-button hidden-xs" >VIEW GUIDE</button>
+                                    <a ui-sref="app.hots.guides.guide({ slug: hero.guides[0].guide.slugs[0].slug })"
+                                       target="_blank"
+                                       class="hero-button hidden-xs"
+                                       ng-if="hero.guides.length > 0"
+                                    >VIEW GUIDE</a>
                                 </div>
                                 <div class="tier-hero-body collapse" id="collapseHero-{{hero.id}}">
                                     <div class="">
@@ -231,42 +238,42 @@
                                                             <g class="bar burst">
                                                                 <rect width="100%" height="30" class="bar-back"></rect> <!-- Black bar -->
                                                                 <rect width="15px" height="30" ></rect> <!-- left color block -->
-                                                                <rect width="70%" ry="0" rx="0" height="30"></rect> <!-- long color block -->
-                                                                <circle cx="70%" cy="15" r="15"></circle> <!-- right circle -->
+                                                                <rect ng-attr-width="{{hero.burstScore*10}}%" ry="0" rx="0" height="30"></rect> <!-- long color block -->
+                                                                <circle ng-attr-cx="{{hero.burstScore*10}}%" cy="15" r="15"></circle> <!-- right circle -->
                                                                 <text x="5" y="15" dy=".35em">Burst</text> <!-- text left -->
-                                                                <text x="69%" y="15" dy=".35em">7</text> <!-- number -->
+                                                                <text ng-attr-x="{{(hero.burstScore * 10) - 1}}%" y="15" dy=".35em">{{hero.burstScore}}</text> <!-- number -->
                                                             </g>
                                                             <g class="bar push">
                                                                 <rect width="100%" height="30" y="32" class="bar-back"></rect> <!-- Black bar -->
                                                                 <rect width="15px" height="30" y="32" ></rect> <!-- left color block -->
-                                                                <rect width="60%" ry="0" rx="0" height="30" y="32" ></rect> <!-- long color block -->
-                                                                <circle cx="60%" cy="47" r="15"></circle> <!-- right circle -->
+                                                                <rect ng-attr-width="{{hero.pushScore*10}}%" ry="0" rx="0" height="30" y="32" ></rect> <!-- long color block -->
+                                                                <circle ng-attr-cx="{{hero.pushScore*10}}%" cy="47" r="15"></circle> <!-- right circle -->
                                                                 <text x="5" y="47" dy=".35em">Push</text> <!-- text left -->
-                                                                <text x="59%" y="47" dy=".35em">6</text> <!-- number -->
+                                                                <text ng-attr-x="{{(hero.pushScore * 10) - 1}}%" y="47" dy=".35em">{{hero.pushScore}}</text> <!-- number -->
                                                             </g>
                                                             <g class="bar survive">
                                                                 <rect width="100%" height="30" y="64" class="bar-back"></rect> <!-- Black bar -->
                                                                 <rect width="15px" height="30" y="64" ></rect> <!-- left color block -->
-                                                                <rect width="30%" ry="0" rx="0" height="30" y="64" ></rect> <!-- long color block -->
-                                                                <circle cx="30%" cy="79" r="15"></circle> <!-- right circle -->
+                                                                <rect ng-attr-width="{{hero.surviveScore*10}}%" ry="0" rx="0" height="30" y="64" ></rect> <!-- long color block -->
+                                                                <circle ng-attr-cx="{{hero.surviveScore*10}}%" cy="79" r="15"></circle> <!-- right circle -->
                                                                 <text x="5" y="79" dy=".35em">Survive</text> <!-- text left -->
-                                                                <text x="29%" y="79" dy=".35em">1</text> <!-- number -->
+                                                                <text ng-attr-x="{{(hero.surviveScore * 10) - 1}}%" y="79" dy=".35em">{{hero.surviveScore}}</text> <!-- number -->
                                                             </g>
                                                             <g class="bar scale">
                                                                 <rect width="100%" height="30" y="96" class="bar-back"></rect> <!-- Black bar -->
                                                                 <rect width="15px" height="30" y="96" ></rect> <!-- left color block -->
-                                                                <rect width="80%" ry="0" rx="0" height="30" y="96" ></rect> <!-- long color block -->
-                                                                <circle cx="80%" cy="111" r="15"></circle> <!-- right circle -->
+                                                                <rect ng-attr-width="{{hero.scaleScore*10}}%" ry="0" rx="0" height="30" y="96" ></rect> <!-- long color block -->
+                                                                <circle ng-attr-cx="{{hero.scaleScore*10}}%" cy="111" r="15"></circle> <!-- right circle -->
                                                                 <text x="5" y="111" dy=".35em">Scale</text> <!-- text left -->
-                                                                <text x="79%" y="111" dy=".35em">8</text> <!-- number -->
+                                                                <text ng-attr-x="{{(hero.scaleScore * 10) - 1}}%" y="111" dy=".35em">{{hero.scaleScore}}</text> <!-- number -->
                                                             </g>
                                                             <g class="bar utility">
                                                                 <rect width="100%" height="30" y="128" class="bar-back"></rect> <!-- Black bar -->
                                                                 <rect width="15px" height="30" y="128" ></rect> <!-- left color block -->
-                                                                <rect width="96%" ry="0" rx="0" height="30" y="128" ></rect> <!-- long color block -->
-                                                                <circle cx="96%" cy="143" r="15"></circle> <!-- right circle -->
+                                                                <rect ng-attr-width="{{hero.utilityScore*10}}%" ry="0" rx="0" height="30" y="128" ></rect> <!-- long color block -->
+                                                                <circle ng-attr-cx="{{hero.utilityScore*10}}%" cy="143" r="15"></circle> <!-- right circle -->
                                                                 <text x="5" y="143" dy=".35em">Utility</text> <!-- text left -->
-                                                                <text x="92%" y="143" dy=".35em">10</text> <!-- number -->
+                                                                <text ng-attr-x="{{(hero.utilityScore * 10) - 1}}%" y="143" dy=".35em">{{hero.utilityScore}}</text> <!-- number -->
                                                             </g>
                                                         </svg>
                                                     </div>

@@ -117,6 +117,10 @@
 
         position: relative;
 
+		&:not(:last-child) {
+			border-bottom: 2px solid black;
+		}
+
         .tier-heading {
             background: -webkit-linear-gradient(left, #1F2650, #20365F);
             background: -o-linear-gradient(right, #1F2650, #20365F);

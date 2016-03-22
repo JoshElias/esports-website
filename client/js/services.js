@@ -472,6 +472,7 @@ var loggedIn = false,
                     url: "default slug"
                 },
                 authors: [],
+                heroTiers: [],
                 isActive: false
             };
             var defaultAuthor = {

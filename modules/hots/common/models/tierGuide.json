@@ -21,7 +21,7 @@
           "foreignKey": "heroTierId"
       },
       "guide": {
-          "type": "hasOne",
+          "type": "belongsTo",
           "model": "guide",
           "foreignKey": "guideId"
       }
