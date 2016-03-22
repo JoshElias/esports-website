@@ -60,7 +60,7 @@ module.exports = function(server) {
 
 
         // Filtering
-        var afterRemoteFuncs = [docFilter.filterDocs, fieldFilter.filterFields];
+        var afterRemoteFuncs = [/*docFilter.filterDocs,*/ fieldFilter.filterFields];
         model.afterRemote("**", function (ctx, modelInstance, next) {
             attachLoopbackContext(ctx);
             async.eachSeries(afterRemoteFuncs, function(afterRemoteFunc, remoteCb) {

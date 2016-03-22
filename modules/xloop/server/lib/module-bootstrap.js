@@ -5,23 +5,34 @@ var async = require("async");
 
 function generateBootOptions(app, finalCb) {
 
-    // Initialize app.bootin
 
+    var appDir = path.dirname(require.main.filename);
+    console.log("this is my app dir");
 
     // Initialize the boot options
     var loopbackBootOptions = {
         bootDirs: [],
-        modelSources: []
+        modelSources: [],
+        mixinSources: []
     };
+
+    var configsPath = path.join(__dirname, "..", "..", "..", "..", "server", "configs")
 
     // Add default loopback directories
     loopbackBootOptions.appRootDir = path.join(__dirname, "..", "..", "..", "..", "server");
-    loopbackBootOptions.appConfigRootDir = path.join(__dirname, "..", "..", "..", "..", "server", "configs");
-    loopbackBootOptions.modelsRootDir = path.join(__dirname, "..", "..", "..", "..", "server", "configs");
-    loopbackBootOptions.dsRootDir = path.join(__dirname, "..", "..", "..", "..", "server", "configs");
+    loopbackBootOptions.appConfigRootDir = configsPath;
+    loopbackBootOptions.modelsRootDir = configsPath;
+    loopbackBootOptions.dsRootDir = configsPath;
     loopbackBootOptions.middleware = require(path.join(__dirname, "..", "..", "..", "..", "server", "configs", "middleware"));
     loopbackBootOptions.bootDirs.push(path.join(__dirname, "..", "..", "..", "..", "server", "boot"));
     loopbackBootOptions.modelSources.push(path.join(__dirname, "..", "..", "..", "..", "common", "models"));
+    loopbackBootOptions.mixinSources.push(path.join(__dirname, "..", "..", "..", "..", "server", "mixins"));
+    loopbackBootOptions.mixinSources.push(path.join(__dirname, "..", "..", "..", "..", "common", "mixins"));
+
+    // Add directories listed in the model-config
+    loopbackBootOptions.modelSources.push( path.join(__dirname, "..", "..", "..", "..", "common", "models"));
+
+
 
     // Get module dirs
     async.waterfall([
@@ -109,7 +120,9 @@ function generateBootOptions(app, finalCb) {
 
                     // Handlers
                     if (file === "boot") {
-                        return bootHandler(newPath, eachCb);
+                        bootHandler(newPath, eachCb);
+                    } else if(file === "mixins") {
+                        mixinsHandler(newPath, eachCb);
                     }
 
                     return eachCb();
@@ -120,6 +133,11 @@ function generateBootOptions(app, finalCb) {
 
     function bootHandler(bootPath, finalCb) {
         loopbackBootOptions.bootDirs.push(bootPath);
+        return finalCb();
+    }
+
+    function mixinsHandler(bootPath, finalCb) {
+        loopbackBootOptions.mixinSources.push(bootPath);
         return finalCb();
     }
 
