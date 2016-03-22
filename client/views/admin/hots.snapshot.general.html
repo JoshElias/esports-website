@@ -1,29 +1,37 @@
-<div>
-    <div class="col-md-4 m-t-lg">
-        <div class="form-group">
+<div class="row">
+    <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
+        <ul class="edit-nav m-b-md">
+            <li class="pull-left selected" ><a ui-sref="app.admin.hots.snapshots.snapshot.general">General</a></li>
+            <li class="pull-left" ><a ui-sref="app.admin.hots.snapshots.snapshot.authors">Authors</a></li>
+            <li class="pull-left" ><a ui-sref="app.admin.hots.snapshots.snapshot.tierlist">tierlist</a></li>
+        </ul>
+        
+        <div class="form-group snap-title-group">
             <label class="control-label" for="title">Title</label>
-            <div class="input-group">
-                <input ng-model="snapshot.title" class="form-control" id="title" type="text" />
+             <div class="wrapper-none">
+                <input ng-model="snapshot.title" class="form-control wide-input" id="title" type="text" />
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="url">URL</label>
-            <div class="input-group">
-                <span class="input-group-btn">
-                    <button ng-click="snapshot.slug.linked = !snapshot.slug.linked"
-                            ng-class="{ 'active': !!snapshot.slug.linked }"
-                            class="btn btn-default"
-                            type="button"
-                    ><i class="fa fa-link"></i></button>
-                </span>
-                <input ng-model="snapshot.slug.url" class="form-control" id="url" type="text" />
+        <div class="form-group m-t-md">
+            <label for="url" class="control-label pull-left">URL</label>
+            <div class="wrapper-none">
+                <div class="input-group pull-left">
+                    <span class="input-group-btn">
+                        <button ng-click="snapshot.slug.linked = !snapshot.slug.linked"
+                                ng-class="{ 'active': !!snapshot.slug.linked }"
+                                class="btn btn-default"
+                                type="button"
+                        ><i class="fa fa-link"></i></button>
+                    </span>
+                    <input ng-model="snapshot.slug.url" class="form-control" id="url" type="text" />
+                </div>
             </div>
         </div>
 
-        <div class="form-group">
-            <label>Snapshot Header Image</label>
-            <div class="input-group">
+        <div class="form-group m-t-md">
+            <label class="control-label">Snapshot Header Image</label>
+            <div>
                 <input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photoNames.small">
                 <input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photoNames.medium">
                 <input type="hidden" id="snapshotPhotoLarge" name="snapshotPhotoLarge" value="" ng-model="snapshot.photoNames.large">
@@ -33,18 +41,18 @@
                         <img src="{{getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
                     </div>
                     <div class="btn-toolbar">
-                        <button class="btn btn-default" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">
+                        <button class="btn btn-change" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">
                             <span ng-show="snapshot.photoNames.large === ''">Select image</span>
                             <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
                         </button>
-                        <a href="#" class="btn btn-danger" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
+                        <a href="#" class="btn btn-danger pull-right" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-12">
-            <button class="btn active-btn"
+        <div class="form-group m-b-lg">
+            <button class="btn btn-default control-btn"
                     ng-class="{ active: snapshot.isActive }"
                     ng-click="snapshot.isActive = !snapshot.isActive"
                     ng-mouseover="activeHover = true"
@@ -56,18 +64,16 @@
                 <span ng-if="!snapshot.isActive && !activeHover">inactive</span>
                 <span ng-if="snapshot.isActive && !activeHover">active</span>
             </button>
-
-            {{snapshot.isActive}}
         </div>
     </div>
-    <div class="col-md-8">
-        <div class="form-group">
+    <div class="col-sm-12 col-md-8 col-lg-9 general-section ">
+        <div class="form-group m-t-sm">
             <label for="introduction" class="control-label">INTRODUCTION</label>
-            <textarea ng-model="snapshot.intro" id="introduction" rows="10" class="form-control"></textarea>
+            <textarea ng-model="snapshot.intro" id="introduction" rows="12" class="form-control"></textarea>
         </div>
-        <div class="form-group">
+        <div class="form-group m-t-sm">
             <label for="thoughts" class="control-label">THOUGHTS AND OBSERVATIONS</label>
-            <textarea ng-model="snapshot.thoughts" id="thoughts" rows="10" class="form-control"></textarea>
+            <textarea ng-model="snapshot.thoughts" id="thoughts" rows="12" class="form-control"></textarea>
         </div>
     </div>
 </div>

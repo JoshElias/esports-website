@@ -1,31 +1,56 @@
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
+        <ul class="edit-nav m-b-none">
+            <li class="pull-left" ><a ui-sref="app.admin.hots.snapshots.snapshot.general">General</a></li>
+            <li class="pull-left selected" ><a ui-sref="app.admin.hots.snapshots.snapshot.authors">Authors</a></li>
+            <li class="pull-left" ><a ui-sref="app.admin.hots.snapshots.snapshot.tierlist">tierlist</a></li>
+        </ul>
+        
+        
+        
+        <ul class="admin-list m-b-none padding-none" ng-if="snapshot.authors.length!=0">
 
-        <div>AUTHOR</div>
-        <div
-        class="clearfix"
-        ng-if="!!snapshot.authors.length"
-        ng-repeat="author in snapshot.authors"
-        ng-click="setActiveAuthor(author)"
-        >
-            <span ng-class="{ 'mark': activeAuthor.user.id == author.user.id }">
-                {{author.user.username}}
-            </span>
-            <span ng-click="authorDeleteById(author.user.id)" class="pull-right"><i class="fa fa-close"></i></span>
+            <li
+            class="admin-list-item gradient-add admin-list-item"
+            ng-if="!!snapshot.authors.length"
+            ng-repeat="author in snapshot.authors"
+            ng-click="setActiveAuthor(author)"
+            ng-class="{ 'active': activeAuthor.user.id == author.user.id }"
+            >
+                <div class="list-accent-div">  
+                    <span  class="full-div">
+                        {{author.user.username}}
+                    </span>
+                    
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-remove btn-xs" ng-click="authorDeleteById(author.user.id)" >
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </div>
+                    
+                </div>            
+            </li>
+        </ul>
+        
+        <div ng-if="!snapshot.authors.length">
+            <div class="admin-list m-b-none">
+                No authors have been added yet.
+            </div>
         </div>
-        <div ng-if="!snapshot.authors.length">No authors have been added yet.</div>
-        <div ng-click="openAuthorAdd()">
-            <i class="fa fa-plus-circle"></i> Add Author
+        <div class="admin-list m-b-none">
+            <div class="admin-list-item gradient-add admin-list-item">
+                <div class="list-accent-div">
+                    <a ng-click="openAuthorAdd()" class="add-element"><i class="fa fa-plus-circle"></i>Add Author</a>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="col-md-8" ng-if="!!activeAuthor">
-        <div class="row">
-            <div class="col-md-12 clearfix">
-                <span>DESCRIPTION - {{activeAuthor.user.username}}</span>
+    <div class="col-sm-12 col-md-8 col-lg-9 author-right-section clearfix" ng-if="!!activeAuthor">
+        <div class="row clearfix">
+            <div class="col-xs-12">
+                <label class="control-label m-t-md">{{activeAuthor.user.username}}</label>
                 <ul class="pull-right hero-roles clearfix">
-                    <span class="pull-left">ROLE(S) OF EXPERTISE</span>
-                    <li class="pull-left" ng-repeat="role in roles">
+                    <li class="pull-left m-t-sm" ng-repeat="role in roles">
                         <button
                         ng-click="toggleActiveExpert(role)"
                         ng-class="{ active: isExpert(role) }"
@@ -35,8 +60,10 @@
                 </ul>
             </div>
         </div>
-        <div class="row">
-            <textarea ng-model="activeAuthor.description"></textarea>
+        <div class="row clearfix">
+            <div class="col-xs-12 m-t-md">
+                <textarea ng-model="activeAuthor.description" class="form-control m-b-lg" rows="15"></textarea>
+            </div>
         </div>
     </div>
 </div>

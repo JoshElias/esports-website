@@ -471,6 +471,7 @@ var loggedIn = false,
                     linked: true,
                     url: "default slug"
                 },
+                heroTiers: [],
                 authors: [],
                 isActive: false
             };

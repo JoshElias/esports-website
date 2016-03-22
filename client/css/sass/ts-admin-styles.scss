@@ -10,6 +10,8 @@ body.admin {
 }
 
 
+//ts admin styles for hots and hs snapshots
+
 .ts-admin-styles { // ---- bookend class ----
 
 	.admin-title {
@@ -938,8 +940,13 @@ body.admin {
 	}
 	.author-section,
 	.tier-section {
-
+        
 		margin-top: -20px;
+        
+        &.hero-tiers {
+            margin-top: 0px;
+        }
+        
 		> .form-group {
 			padding: 0px;
 			.panel {
@@ -1064,7 +1071,8 @@ body.admin {
 						}
 					}
 
-					a {
+					a,
+                    button {
 
 						h4 {
 							line-height: 50px;
@@ -1388,4 +1396,15 @@ body.admin {
 
 	} // admin-list
 
+    .hero-tiers {
+    
+        .hero-tier {
+            width: 100%;
+            text-align: left;
+            background-color: transparent;
+            border: 0px;
+            outline: 0px;
+        }
+    }
+    
 } // ts-admin-styles
