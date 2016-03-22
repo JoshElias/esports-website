@@ -1,12 +1,8 @@
 {
   "name": "topic",
   "plural": "topics",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
+  "options": {},
   "properties": {
     "path": {
       "type": "string"
@@ -19,13 +15,8 @@
     },
     "active": {
       "type": "boolean"
-    },
-    "createdDate": {
-      "type": "date"
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -50,6 +41,5 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

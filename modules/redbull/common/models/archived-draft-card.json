@@ -1,11 +1,6 @@
 {
   "name": "archivedDraftCard",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "cardId": {},
     "redbullDraftId": {},
@@ -13,7 +8,6 @@
       "type": "number"
     }
   },
-  "validations": [],
   "relations": {
     "card": {
       "type": "belongsTo",
@@ -48,6 +42,5 @@
       "principalId": "$redbullAdmin",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

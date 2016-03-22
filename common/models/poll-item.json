@@ -1,12 +1,7 @@
 {
   "name": "pollItem",
   "plural": "pollItems",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "name": {
       "type": "string"
@@ -22,7 +17,6 @@
     },
     "pollId": {}
   },
-  "validations": [],
   "relations": {
     "poll": {
       "type": "belongsTo",
@@ -37,6 +31,5 @@
       "principalId": "$everyone",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

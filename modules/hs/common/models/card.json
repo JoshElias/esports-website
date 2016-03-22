@@ -1,16 +1,7 @@
 {
   "name": "card",
   "plural": "cards",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    }
-  },
+  "base": "xModel",
   "properties": {
     "name": {
       "type": "string",
@@ -77,7 +68,6 @@
       "required": true
     }
   },
-  "validations": [],
   "relations": {
     "decks": {
       "type": "hasMany",
@@ -116,5 +106,10 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DocFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    }
+  }
 }

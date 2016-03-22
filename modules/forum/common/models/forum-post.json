@@ -1,18 +1,7 @@
 {
   "name": "forumPost",
   "plural": "forumPosts",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true,
-    "$spam": true
-  },
+  "base": "xModel",
   "properties": {
     "__v": {
       "type": "number"
@@ -24,13 +13,10 @@
       "type": "string",
       "$validate": ["spam"]
     },
-    "createdDate": {
-      "type": "date"
-    },
     "title": {
       "type": "string",
-      "$validate": ["spam"],
-      "$spam": true
+      "Validate": ["spam"],
+      "Spam": true
     },
     "viewCount": {
       "type": "number"
@@ -44,7 +30,6 @@
     "forumThreadId": {},
     "authorId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -55,13 +40,13 @@
       "type": "belongsTo",
       "model": "forumThread",
       "foreignKey": "forumThreadId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "forumPostId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "slugs": {
       "type": "hasMany",
@@ -108,5 +93,12 @@
       "property": "__create__comments"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DocFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "DestroyOnDelete": true,
+    "Spam": true
+  }
 }

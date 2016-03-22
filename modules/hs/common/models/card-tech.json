@@ -1,12 +1,7 @@
 {
   "name": "cardTech",
   "plural": "cardTechs",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "orderNum": {
       "type": "number"
@@ -20,7 +15,6 @@
     "cardId": {},
     "deckTechId": {}
   },
-  "validations": [],
   "relations": {
     "deckTech": {
       "type": "belongsTo",
@@ -51,6 +45,5 @@
       "principalId": "$admin",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

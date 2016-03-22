@@ -1,13 +1,7 @@
 {
   "name": "guideHero",
   "plural": "guideHeroes",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$destroyOnDelete": true
-  },
+  "base": "xModel",
   "properties": {
     "guideId": {},
     "heroId": {}
@@ -35,9 +29,10 @@
       "type": "hasMany",
       "model": "guideTalent",
       "foreignKey": "guideHeroId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     }
   },
-  "acls": [],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true
+  }
 }

@@ -1,11 +1,6 @@
 {
   "name": "redbullDraftSettings",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "name": {
       "type": "string"
@@ -30,8 +25,6 @@
       "type": "boolean"
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -79,6 +72,5 @@
       "principalId": "$redbullAdmin",
       "permission": "ALLOW",
       "accessType": "WRITE"
-    }],
-  "methods": {}
+    }]
 }

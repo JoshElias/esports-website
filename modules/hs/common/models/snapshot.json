@@ -1,25 +1,13 @@
 {
   "name": "snapshot",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true,
-    "$slug": true
-  },
+  "base": "xModel",
   "properties": {
     "snapNum": {
       "type": "number"
     },
     "title": {
       "type": "string",
-      "$slug": {
+      "Slug": {
         "prefixFunc": "metaSnapshot"
       }
     },
@@ -59,25 +47,25 @@
       "type": "hasMany",
       "model": "deckMatchup",
       "foreignKey": "snapshotId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "authors": {
       "type": "hasMany",
       "model": "snapshotAuthor",
       "foreignKey": "snapshotId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "snapshotId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "deckTiers": {
       "type": "hasMany",
       "model": "deckTier",
       "foreignKey": "snapshotId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "votes": {
       "type": "hasMany",
@@ -152,5 +140,13 @@
       "property": "__edit__votes"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "DocFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "DestroyOnDelete": true,
+    "Slug": true
+  }
 }

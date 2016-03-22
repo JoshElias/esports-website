@@ -1,11 +1,6 @@
 {
   "name": "articleArticle",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "parentArticleId": {
       "required": true
@@ -45,6 +40,5 @@
       "principalId": "$admin",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

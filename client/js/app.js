@@ -247,10 +247,16 @@ var app = angular.module('app', [
                                             isActive: true
                                         },
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            content: false
                                         },
-                                        include: ['author'],
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            },
+                                            {
+                                                relation: 'slugs'
+                                            }
+                                        ],
                                         order: "createdDate DESC",
                                         skip: (offset * num) - num,
                                         limit: num
@@ -258,6 +264,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
+                                        console.log(articles);
                                     return articles;
                                 })
                                 .catch(function (err) {

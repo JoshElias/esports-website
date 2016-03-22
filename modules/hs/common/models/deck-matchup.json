@@ -1,11 +1,6 @@
 {
   "name": "deckMatchup",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "deckName": {
       "type": "string"
@@ -23,7 +18,6 @@
     "againstDeckId": {},
     "snapshotId": {}
   },
-  "validations": [],
   "relations": {
     "forDeck": {
       "type": "belongsTo",
@@ -77,6 +71,5 @@
       "permission": "ALLOW",
       "property": "upsert"
     }
-  ],
-  "methods": {}
+  ]
 }

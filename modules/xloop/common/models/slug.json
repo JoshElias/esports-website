@@ -1,0 +1,62 @@
+{
+  "name": "slug",
+  "base": "xModel",
+  "strict": true,
+  "idInjection": true,
+  "properties": {
+    "slug": {
+      "type": "string",
+      "Validate": ["slug"]
+    },
+    "linked": {
+      "type": "boolean"
+    },
+    "baseKey": {
+      "type": "string"
+    },
+    "parentModelName": {
+      "type": "string"
+    }
+  },
+  "relations": {
+    "sluggables": {
+      "type": "hasMany",
+      "model": "sluggable",
+      "foreignKey": "slugId"
+    },
+    "articles": {
+      "type": "hasMany",
+      "model": "article",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "forumPosts": {
+      "type": "hasMany",
+      "model": "forumPost",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "forumThreads": {
+      "type": "hasMany",
+      "model": "forumThread",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "guides": {
+      "type": "hasMany",
+      "model": "guide",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "snapshots": {
+      "type": "hasMany",
+      "model": "snapshot",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    }
+  },
+  "acls": [],
+  "mixins": {
+    "Validate": true
+  }
+}

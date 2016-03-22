@@ -1,11 +1,6 @@
 {
   "name": "deckCard",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "cardQuantity": {
       "required": true,
@@ -18,7 +13,6 @@
       "required": true
     }
   },
-  "validations": [],
   "relations": {
     "card": {
       "type": "belongsTo",
@@ -61,6 +55,5 @@
       "permission": "ALLOW",
       "property": "create"
     }
-  ],
-  "methods": {}
+  ]
 }

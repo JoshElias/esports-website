@@ -1,11 +1,6 @@
 {
   "name": "redbullPack",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "orderNum": {
       "type": "number"
@@ -14,7 +9,6 @@
     "redbullExpansionId": {},
     "ownerId": {}
   },
-  "validations": [],
   "relations": {
     "draft": {
       "type": "belongsTo",
@@ -44,7 +38,6 @@
     "principalId": "$everyone",
     "permission": "DENY"
   },
-
   {
     "accessType": "EXECUTE",
     "principalType": "ROLE",
@@ -84,6 +77,5 @@
     "principalId": "$redbullAdmin",
     "permission": "ALLOW",
     "accessType": "WRITE"
-  }],
-  "methods": {}
+  }]
 }

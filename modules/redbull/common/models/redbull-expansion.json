@@ -1,11 +1,6 @@
 {
   "name": "redbullExpansion",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "name": {
       "type": "string"
@@ -20,7 +15,6 @@
       "type": "string"
     }
   },
-  "validations": [],
   "relations": {
     "packs": {
       "type": "hasMany",
@@ -90,6 +84,5 @@
     "permission": "ALLOW",
     "accessType": "WRITE"
   }
- ],
-  "methods": {}
+ ]
 }

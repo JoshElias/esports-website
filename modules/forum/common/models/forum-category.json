@@ -1,22 +1,11 @@
 {
   "name": "forumCategory",
   "plural": "forumCategories",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true
-  },
+  "base": "xModel",
   "properties": {
     "title": {
       "type": "string",
-      "$validate": ["spam"]
+      "Validate": ["spam"]
     },
     "isActive": {
       "type": "boolean"
@@ -25,13 +14,12 @@
       "type": "number"
     }
   },
-  "validations": [],
   "relations": {
     "forumThreads": {
       "type": "hasMany",
       "model": "forumThread",
       "foreignKey": "forumCategoryId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     }
   },
   "acls": [
@@ -59,5 +47,12 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "DocFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "DestroyOnDelete": true
+  }
 }

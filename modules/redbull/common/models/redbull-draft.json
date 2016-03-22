@@ -1,15 +1,6 @@
 {
   "name": "redbullDraft",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$redbullAdmin", "$admin", "$owner"],
-      "predicate": "official"
-    }
-  },
+  "base": "xModel",
   "properties": {
     "draftStartTime": {
       "type": "number"
@@ -55,7 +46,6 @@
     "authorId": {},
     "redbullDraftSettingsId": {}
   },
-  "validations": [],
   "relations": {
     "cards": {
       "type": "hasMany",
@@ -67,19 +57,19 @@
       "type": "hasMany",
       "model": "redbullPackCard",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "packs": {
       "type": "hasMany",
       "model": "redbullPack",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "decks": {
       "type": "hasMany",
       "model": "redbullDeck",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "archivedCards": {
       "type": "hasMany",
@@ -214,5 +204,11 @@
     }
 
   ],
-  "methods": {}
+  "mixins": {
+    "DocFilter": {
+      "acceptedRoles": ["$redbullAdmin", "$admin", "$owner"],
+      "predicate": "official"
+    },
+    "DestroyOnDelete": true
+  }
 }

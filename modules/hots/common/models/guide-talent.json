@@ -1,11 +1,6 @@
 {
   "name": "guideTalent",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "tier": {
       "type": "number"
@@ -31,7 +26,5 @@
       "model": "talent",
       "foreignKey": "talentId"
     }
-  },
-  "acls": [],
-  "methods": {}
+  }
 }

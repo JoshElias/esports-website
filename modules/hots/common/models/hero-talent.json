@@ -1,11 +1,6 @@
 {
   "name": "heroTalent",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "tier": {
       "type": "number"
@@ -18,7 +13,6 @@
     "talentId": {},
     "abilityId": {}
   },
-  "validations": [],
   "relations": {
     "hero": {
       "type": "belongsTo",
@@ -35,7 +29,5 @@
       "model": "ability",
       "foreignKey": "abilityId"
     }
-  },
-  "acls": [],
-  "methods": {}
+  }
 }

@@ -1,12 +1,7 @@
 {
   "name": "post",
   "plural": "posts",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "path": {
       "type": "string"
@@ -26,9 +21,5 @@
     "active": {
       "type": "boolean"
     }
-  },
-  "validations": [],
-  "relations": {},
-  "acls": [],
-  "methods": {}
+  }
 }

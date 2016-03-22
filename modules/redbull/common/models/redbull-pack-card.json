@@ -1,11 +1,6 @@
 {
   "name": "redbullPackCard",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "orderNum": {
       "type": "number"
@@ -15,7 +10,6 @@
     "redbullExpansionId": {},
     "redbullDraftId": {}
   },
-  "validations": [],
   "relations": {
     "card": {
       "type": "belongsTo",
@@ -44,7 +38,6 @@
       "principalId": "$everyone",
       "permission": "DENY"
     },
-
     {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
@@ -85,6 +78,5 @@
       "permission": "ALLOW",
       "accessType": "WRITE"
     }
-  ],
-  "methods": {}
+  ]
 }

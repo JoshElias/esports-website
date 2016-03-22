@@ -1,24 +1,11 @@
 {
   "name": "guide",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$fieldFilter": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin", "$owner"],
-      "predicate": "private"
-    },
-    "$destroyOnDelete": true,
-    "$slug": true
-  },
+  "base": "xModel",
   "properties": {
     "name": {
       "type": "string",
       "required": true,
-      "$slug": true
+      "Slug": true
     },
     "guideType": {
       "type": "string",
@@ -26,14 +13,14 @@
     },
     "description": {
       "type": "string",
-      "$fieldFilter": {
+      "FieldFilter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
     },
     "youtubeId": {
       "type": "string",
-      "$validate": ["youtubeId"]
+      "Validate": ["youtubeId"]
     },
     "createdDate": {
       "type": "date"
@@ -62,18 +49,18 @@
         {
           "title": {
             "type": "string",
-            "$validate": ["spam"]
+            "Validate": ["spam"]
           },
           "orderNum": {
             "type": "number"
           },
           "body": {
             "type": "string",
-            "$validate": ["spam"]
+            "Validate": ["spam"]
           }
         }
       ],
-      "$fieldFilter": {
+      "FieldFilter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
@@ -91,7 +78,6 @@
     },
     "authorId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -102,7 +88,7 @@
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "guideId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "maps": {
       "type": "hasAndBelongsToMany",
@@ -112,7 +98,7 @@
       "type": "hasMany",
       "model": "guideHero",
       "foreignKey": "guideId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "guideTalents": {
       "type": "hasMany",
@@ -200,5 +186,14 @@
       "property": "__create__guideTalents"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "FieldFilter": true,
+    "DocFilter": {
+      "acceptedRoles": ["$admin", "$owner"],
+      "predicate": "private"
+    },
+    "DestroyOnDelete": true,
+    "Slug": true
+  }
 }

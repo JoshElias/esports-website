@@ -1,25 +1,15 @@
 {
   "name": "comment",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$validate": true
-  },
+  "base": "xModel",
   "properties": {
     "text": {
       "type": "string",
-      "$validate": ["spam"]
+      "Validate": ["spam"]
     },
     "votes": {
       "type": [
         "object"
       ]
-    },
-    "createdDate": {
-      "type": "date",
-      "required": true
     },
     "voteScore": {
       "type": "number"
@@ -33,7 +23,6 @@
     "parentCommentId": {},
     "redbullDeckId": {}
   },
-  "validations": [],
   "relations": {
     "article": {
       "type": "belongsTo",
@@ -94,5 +83,7 @@
       "property": "*"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true
+  }
 }

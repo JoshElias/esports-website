@@ -1,12 +1,7 @@
 {
   "name": "ability",
   "plural": "abilities",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "name": {
       "type": "string"
@@ -54,7 +49,5 @@
       "through": "heroTalent",
       "keyThrough": "talentId"
     }
-  },
-  "acls": [],
-  "methods": {}
+  }
 }

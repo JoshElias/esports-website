@@ -1,16 +1,7 @@
 {
   "name": "hero",
   "plural": "heroes",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    }
-  },
+  "base": "xModel",
   "properties": {
     "isActive": {
       "type": "boolean"
@@ -59,7 +50,6 @@
       ]
     }
   },
-  "validations": [],
   "relations": {
     "talents": {
       "type": "hasMany",
@@ -104,5 +94,10 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DocFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    }
+  }
 }

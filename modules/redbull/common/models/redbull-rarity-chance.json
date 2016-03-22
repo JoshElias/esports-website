@@ -1,11 +1,6 @@
 {
   "name": "redbullRarityChance",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "rarity": {
       "type": "string"
@@ -72,6 +67,5 @@
       "permission": "ALLOW",
       "accessType": "WRITE"
     }
-  ],
-  "methods": {}
+  ]
 }

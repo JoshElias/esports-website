@@ -1,15 +1,6 @@
 {
   "name": "map",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    }
-  },
+  "base": "xModel",
   "properties": {
     "name": {
       "type": "string"
@@ -59,5 +50,10 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DocFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    }
+  }
 }

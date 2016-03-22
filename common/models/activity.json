@@ -1,18 +1,10 @@
 {
   "name": "activity",
   "plural": "activities",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "activityType": {
       "type": "string"
-    },
-    "createdDate": {
-      "type": "date"
     },
     "isActive": {
       "type": "boolean"
@@ -24,7 +16,6 @@
     "forumPostId": {},
     "guideId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -75,6 +66,5 @@
       "principalId": "$admin",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

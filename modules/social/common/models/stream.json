@@ -1,11 +1,7 @@
 {
   "name": "stream",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
+  "options": {},
   "properties": {
     "username": {
       "type": "string",

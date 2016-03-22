@@ -1,0 +1,48 @@
+{
+  "name": "sluggable",
+  "base": "xModel",
+  "properties": {
+    "slugId": {},
+    "articleId": {},
+    "forumPostId": {},
+    "forumThreadId": {},
+    "guideId": {},
+    "snapshotId": {}
+  },
+  "relations": {
+    "slug": {
+      "type": "belongsTo",
+      "model": "slug",
+      "foreignKey": "slugId",
+      "DestroyOnDelete": true
+    },
+    "article": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "articleId"
+    },
+    "forumPost": {
+      "type": "belongsTo",
+      "model": "forumPost",
+      "foreignKey": "forumPostId"
+    },
+    "forumThread": {
+      "type": "belongsTo",
+      "model": "forumThread",
+      "foreignKey": "forumThreadId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
+    }
+  },
+  "mixins": {
+    "DestroyOnDelete": true
+  }
+}

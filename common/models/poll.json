@@ -1,11 +1,6 @@
 {
   "name": "poll",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "title": {
       "type": "string",
@@ -25,12 +20,8 @@
     },
     "viewType": {
       "type": "string"
-    },
-    "createdDate": {
-      "type": "date"
     }
   },
-  "validations": [],
   "relations": {
     "items": {
       "type": "hasMany",
@@ -63,6 +54,5 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

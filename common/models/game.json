@@ -1,16 +1,6 @@
 {
   "name": "game",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true
-  },
+  "base": "xModel",
   "properties": {
     "__v": {
       "type": "number"
@@ -23,19 +13,18 @@
       "type": "boolean"
     }
   },
-  "validations": [],
   "relations": {
     "teams": {
       "type": "hasMany",
       "model": "team",
       "foreignKey": "gameId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "hsClasses": {
       "type": "hasMany",
       "model": "hsClass",
       "foreignKey": "gameId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     }
   },
   "acls": [
@@ -57,5 +46,11 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DocFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "DestroyOnDelete": true
+  }
 }

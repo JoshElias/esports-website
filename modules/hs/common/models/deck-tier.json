@@ -1,12 +1,6 @@
 {
   "name": "deckTier",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$destroyOnDelete": true
-  },
+  "base": "xModel",
   "properties": {
     "description": {
       "type": "string"
@@ -28,7 +22,6 @@
     "deckId": {},
     "snapshotId": {}
   },
-  "validations": [],
   "relations": {
     "deck": {
       "type": "belongsTo",
@@ -39,7 +32,7 @@
       "type": "hasMany",
       "model": "deckTech",
       "foreignKey": "deckTierId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "snapshot": {
       "type": "belongsTo",
@@ -78,5 +71,7 @@
       "property": "__create__deckTechs"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true
+  }
 }

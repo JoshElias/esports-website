@@ -204,10 +204,6 @@ module.exports = {
         "dataSource":"mongodb",
         "public": true
     },
-    "container": {
-        "dataSource":"s3",
-        "public": true
-    },
     "image": {
         "dataSource":"s3",
         "public": true

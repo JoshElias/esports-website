@@ -1,11 +1,6 @@
 {
   "name": "tournamentDeckCard",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "cardId": {
       "required": true
@@ -61,6 +56,5 @@
       "permission": "ALLOW",
       "property": "create"
     }
-  ],
-  "methods": {}
+  ]
 }

@@ -1,12 +1,6 @@
 {
   "name": "mulligan",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true,
-    "$destroyOnDelete": true
-  },
+  "base": "xModel",
   "properties": {
     "className": {
       "type": "string",
@@ -22,7 +16,6 @@
         "required": true
     }
   },
-  "validations": [],
   "relations": {
     "cardsWithCoin": {
       "type": "hasMany",
@@ -40,13 +33,13 @@
       "type": "hasMany",
       "model": "cardWithCoin",
       "foreignKey": "mulliganId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "mulligansWithoutCoin": {
       "type": "hasMany",
       "model": "cardWithoutCoin",
       "foreignKey": "mulliganId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "deck": {
       "type": "belongsTo",
@@ -139,5 +132,7 @@
       "property": "__create__mulligansWithoutCoin"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true
+  }
 }

@@ -1,17 +1,9 @@
 {
   "name": "vote",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+  "base": "xModel",
   "properties": {
     "direction": {
       "type": "number"
-    },
-    "createdDate": {
-      "type": "date"
     },
     "authorId": {},
     "articleId": {},
@@ -20,7 +12,6 @@
     "snapshotId": {},
     "commentId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -92,6 +83,5 @@
       "permission": "ALLOW",
       "property": "hasVoted"
     }
-  ],
-  "methods": {}
+  ]
 }
