@@ -3797,7 +3797,9 @@ angular.module('app.services', [])
             loaded: false,
             saving: false,
             activeDeck: null,
-            activeAuthor: null
+            activeAuthor: null,
+            currentChartTier: 1,
+            chartTierRanges: []
         };
         var defaultAuthor = {
             id: null,
@@ -3858,7 +3860,11 @@ angular.module('app.services', [])
             sb.init = function(data) {
                 // if we have data, load it
                 if (data) {
+                    // load data
                     sb.load(data);
+                    
+                    // generate tier ranges for charts
+                    sb.chartGenerateTierRanges();
                 }
             };
 
@@ -3879,11 +3885,16 @@ angular.module('app.services', [])
                 sb.deckTiers = data.deckTiers;
                 sb.tiers = sb.generateTiers(data.deckTiers);
                 
+                // set slug
+                if (sb.slug.linked) {
+                    sb.setSlug();
+                }
+                
                 sb.loaded = true;
             };
 
             // load latest snapshot and increment snapshot number / shift trends
-            sb.loadPrevious = function () {
+            sb.loadPrevious = function (snapshotType) {
                 // set loading
                 sb.loading = true;
                 
@@ -3891,6 +3902,7 @@ angular.module('app.services', [])
                 Snapshot.findOne({
                     filter: {
                         where: {
+                            snapshotType: snapshotType,
                             isActive: true
                         },
                         fields: {
@@ -3916,7 +3928,7 @@ angular.module('app.services', [])
                                         {
                                             relation: "deck",
                                             scope: {
-                                                fields: ["name"]
+                                                fields: ["name", "playerClass"]
                                             }
                                         },
                                         {
@@ -4018,7 +4030,7 @@ angular.module('app.services', [])
                     sb.loading = false;
                 });
             };
-
+            
             // generate tiers from deckTiers data
             sb.generateTiers = function (deckTiers) {
                 var tiers = [];
@@ -4041,6 +4053,38 @@ angular.module('app.services', [])
                 });
 
                 return tiers;
+            };
+            
+            // generate tier range for charts
+            sb.chartGenerateTierRanges = function () {
+                // loop through each tier
+                _.each(sb.tiers, function (tier) {
+                    var out = [],
+                        highestRank = 0,
+                        lowestRank = 0;
+
+                    // find highest and lowest in tier
+                    for (var i = 0; i < tier.decks.length; i++) {
+                        var history = tier.decks[i].ranks;
+                        for (var j = 0; j < history.length; j++) {
+                            if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
+                            if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
+                        }
+                    }
+
+                    // generate range
+                    for (var i = lowestRank; i <= highestRank; i++) {
+                        out.push(i);
+                    }
+
+                    // set chart tier range
+                    sb.chartTierRanges[tier.tier] = out;
+                });
+            };
+            
+            // get tier range
+            sb.getChartTierRange = function (tierNum) {
+                return sb.chartTierRanges[tierNum];
             };
             
             // get snapshot types
@@ -4259,13 +4303,33 @@ angular.module('app.services', [])
             sb.deckChange = function (deckTier, newDeck) {
                 var oldDeckId = deckTier.deck.id;
                 var newDeckId = newDeck.id;
+                var matchups = sb.getMatchupsByDeckId(oldDeckId);
+                
+                console.log('updating deck ', oldDeckId, ' to ', newDeckId);
                 
                 // update all matchups to new deck id
+                for (var i = 0; i < matchups.length; i++) {
+                    // swap out deck
+                    if (matchups[i].forDeck.id === oldDeckId) {
+                        matchups[i].forDeck = newDeck;
+                        matchups[i].forDeck = newDeck;
+                        matchups[i].forDeckId = newDeckId;
+                    }
+                    if (matchups[i].againstDeck.id === oldDeckId) {
+                        matchups[i].againstDeck = newDeck;
+                        matchups[i].againstDeckId = newDeckId;
+                    }
+                    
+                    // mark matchup as updated
+                    sb.matchupUpdated(matchups[i]);
+                }
                 
                 // change deck
                 deckTier.deck = newDeck;
+                deckTier.deckId = newDeckId;
                 
-                // flag deck as updated
+                // flag deck tier as updated
+                sb.deckTierUpdated(deckTier);
             };
             
             // delete deck
@@ -4865,6 +4929,34 @@ angular.module('app.services', [])
                         }
                     },
                     className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // prompt for load previous
+            sb.loadPreviousPrompt = function () {
+                var box;
+                var newScope = $rootScope.$new(true);
+                newScope.snapshotTypes = sb.getSnapshotTypes;
+                newScope.loadPrevious = function (snapshotType) {
+                    sb.loadPrevious(snapshotType);
+                    box.modal('hide');
+                }
+                
+                box = bootbox.dialog({
+                    title: "Load Previous Snapshot",
+                    message: $compile('<div hs-snapshot-load-previous></div>')(newScope),
+                    buttons: {
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin',
                     show: false
                 });
                 box.modal('show');

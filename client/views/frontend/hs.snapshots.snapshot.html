@@ -21,7 +21,7 @@
             <div class="row no-pad clearfix">
 
                 <div class="col-xs-12 col-lg-push-8 col-lg-4 rightSide clearfix m-b-md">
-                    <div class="sideTier" ng-repeat="tier in deckTiers | orderBy: 'tier'">
+                    <div class="sideTier" ng-repeat="tier in snapshot.tiers | orderBy: 'tier'">
                         <button ng-click="show[tier.tier] = !show[tier.tier]" class="btn-block sideTier" role="button" data-toggle="collapse" href="#collapseSideTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseSideTier{{tier.tier}}">
                             <div class="sideTierHead">
                                 <div class="inner">
@@ -85,22 +85,22 @@
                                 <svg width="90%" height="100%" x="5%" y="5%" style="overflow: visible">
                                     <text transform="rotate(270, 0, 210)" x="0" y="200" fill="white" text-anchor="end">Rank</text>
                                     <text x="50%" y="100%" fill="white" text-anchor="middle">Meta Snapshot #</text>
-                                    <g ng-repeat="num in tierRange[currentTier] track by $index">
+                                    <g ng-repeat="num in snapshot.getChartTierRanges(snapshot.currentChartTier) track by $index">
                                         
-                                        <text ng-if="(tierRange[currentTier].length > 20) ? ($index%2 == 0) : true;" height="15" x="4%" ng-attr-y="{{getPositionY(currentTier, $index, 410, 20) + 4}}" fill="white" text-anchor="end">{{num}}</text>                                
+                                        <text ng-if="(tierRange[snapshot.currentChartTier].length > 20) ? ($index%2 == 0) : true;" height="15" x="4%" ng-attr-y="{{getPositionY(snapshot.currentChartTier, $index, 410, 20) + 4}}" fill="white" text-anchor="end">{{num}}</text>
                                         
 
-                                        <line ng-attr-x1="{{getPositionX(0, 10)}}%" ng-attr-y1="{{getPositionY(currentTier, $index, 410, 20)}}" ng-attr-x2="{{getPositionX(12, 10)}}%"  ng-attr-y2="{{getPositionY(currentTier, $index, 410, 20)}}" style="stroke:rgba(255,255,255,.4)"/>
+                                        <line ng-attr-x1="{{getPositionX(0, 10)}}%" ng-attr-y1="{{getPositionY(snapshot.currentChartTier, $index, 410, 20)}}" ng-attr-x2="{{getPositionX(12, 10)}}%"  ng-attr-y2="{{getPositionY(snapshot.currentChartTier, $index, 410, 20)}}" style="stroke:rgba(255,255,255,.4)"/>
                                     </g>
 
                                     <line ng-attr-x1="{{getPositionX($index, 10)}}%" y1="0" ng-attr-x2="{{getPositionX($index, 10)}}%" y2="410" style="stroke:rgba(255,255,255,.4)" ng-repeat="moment in snapshotTimeline() track by $index"/>
                                     <line x1="5%" y1="410" x2="95%" y2="410" style="stroke:rgba(255,255,255,.4)"/>
                                     <text height="15" ng-attr-x="{{getPositionX($index, 10)}}%" y="425" fill="white" text-anchor="middle" ng-class="{ 'hidden-xs' : $index%2 == 1 }" ng-repeat="moment in snapshotTimeline() track by $index">{{moment}}</text>
 
-                                    <g ng-repeat="deck in getTier(currentTier).decks track by $index" class="deck" ng-class="{ 'not-selected': hasDeckSelected() && currentDeck != deck.ranks[0] }">
+                                    <g ng-repeat="deck in getTier(snapshot.currentChartTier).decks track by $index" class="deck" ng-class="{ 'not-selected': hasDeckSelected() && currentDeck != deck.ranks[0] }">
                                         <g ng-repeat="rank in deck.ranks track by $index" ng-if="rank > 0">
-                                            <circle class="dot-{{deck.deck.playerClass}}" ng-attr-cx="{{getPositionX($index, 10)}}%" ng-attr-cy="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" r="5" stroke-width="2" fill="transparent" ng-if="rank > 0"/>
-                                            <line class="dot-{{deck.deck.playerClass}}" ng-attr-x1="{{getPositionX($index, 10)}}%" ng-attr-y1="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" ng-attr-x2="{{getPositionX($index + 1, 10)}}%" ng-attr-y2="{{getPositionY(currentTier, getRankIndex(currentTier, getNextRank(deck, $index)), 410, 20)}}" stroke-width="2" ng-if="hasNextRank(deck, $index)" />
+                                            <circle class="dot-{{deck.deck.playerClass}}" ng-attr-cx="{{getPositionX($index, 10)}}%" ng-attr-cy="{{getPositionY(snapshot.currentChartTier, getRankIndex(snapshot.currentChartTier, rank), 410, 20)}}" r="5" stroke-width="2" fill="transparent" ng-if="rank > 0"/>
+                                            <line class="dot-{{deck.deck.playerClass}}" ng-attr-x1="{{getPositionX($index, 10)}}%" ng-attr-y1="{{getPositionY(snapshot.currentChartTier, getRankIndex(snapshot.currentChartTier, rank), 410, 20)}}" ng-attr-x2="{{getPositionX($index + 1, 10)}}%" ng-attr-y2="{{getPositionY(snapshot.currentChartTier, getRankIndex(snapshot.currentChartTier, getNextRank(deck, $index)), 410, 20)}}" stroke-width="2" ng-if="hasNextRank(deck, $index)" />
                                         </g>
                                     </g>
                                     
@@ -108,11 +108,11 @@
                                 
                             </svg>
                             <ul class="snapshot-trends-tiers m-t-lg">
-                                <li ng-repeat="tier in deckTiers | orderBy: 'tier'"><a href="#" ng-class="{ 'active': tier.tier == currentTier }" ng-click="setCurrentTier(tier.tier)">TIER {{tier.tier}}</a></li>
+                                <li ng-repeat="tier in snapshot.tiers | orderBy: 'tier'"><a href="#" ng-class="{ 'active': tier.tier === snapshot.trendsTier }" ng-click="snapshot.setTrendsTier(tier.tier)">TIER {{tier.tier}}</a></li>
                             </ul>
 
                             <div class="row snapshot-trends-keys">
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="deck in getTier(currentTier).decks track by $index"><a href="#" ng-class="{ 'active': deck.ranks[0] == currentDeck }" ng-click="toggleCurrentDeck(deck.ranks[0])"><span class="trends-key {{deck.deck.playerClass}} m-r-sm"></span>{{deck.name}}</a></div>
+                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="deck in snapshot.getTier(snapshot.currentChartTier).decks track by $index"><a href="#" ng-class="{ 'active': deck.ranks[0] == currentDeck }" ng-click="toggleCurrentDeck(deck.ranks[0])"><span class="trends-key {{deck.deck.playerClass}} m-r-sm"></span>{{deck.name}}</a></div>
                             </div>
 
                         </div>
@@ -123,7 +123,7 @@
             
             <!-- TIERS -->
             <div class="tiers m-b-md">
-                <div id="tier{{tier.tier}}" ng-repeat="tier in deckTiers | orderBy: 'tier'" class="tier clearfix">
+                <div id="tier{{tier.tier}}" ng-repeat="tier in snapshot.tiers | orderBy: 'tier'" class="tier clearfix">
                     <button class="btn btn-block btn-tier-collapse" role="button" data-toggle="collapse" href="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
                         <div class="tier-heading clearfix">
                             <h2 class="pull-left">TIER {{tier.tier}}</h2>
@@ -225,7 +225,7 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                                                     <div class="deck-techs" ng-if="deck.deckTech.length">
                                                         <h3 class="m-b-lg">TECH DECISION</h3>
-                                                        <div class="tech" ng-repeat="tech in deck.deckTech | orderBy: 'orderNum'">
+                                                        <div class="tech" ng-repeat="tech in deck.deckTech | orderBy: 'title'">
                                                             <div class="tech-heading">
                                                                 <span ng-if="tech.title">
                                                                     VERSUS {{tech.title}}
@@ -234,8 +234,7 @@
                                                                     GENERAL
                                                                 </span>
                                                             </div>
-                                                            <div class="tech-card" ng-repeat="card in tech.cardTech | orderBy: 'orderNum'" hs-card tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large"
-                             data-tooltip-pos="right" hs-card>
+                                                            <div class="tech-card" ng-repeat="card in tech.cardTech | orderBy: ['-toss', 'card.name']" hs-card tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" data-tooltip-pos="right" hs-card>
                                                                 <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style='background-image: url("https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}")'>
                                                                     <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
                                                                     <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>

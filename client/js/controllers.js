@@ -8682,71 +8682,24 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HearthstoneSnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'dataSnapshot', 'LoginModalService', 'User', 'Snapshot', 'LoopBackAuth',
-        function ($scope, $state, $rootScope, $compile, $window, dataSnapshot, LoginModalService, User, Snapshot, LoopBackAuth) {
+    .controller('HearthstoneSnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'LoginModalService', 'User', 'LoopBackAuth', 'HearthstoneSnapshotBuilder', 'snapshot',
+        function ($scope, $state, $rootScope, $compile, $window, LoginModalService, User, LoopBackAuth, HearthstoneSnapshotBuilder, snapshot) {
 
-//            console.log('snapshot: ', dataSnapshot);
-            $scope.snapshot = dataSnapshot;
-            // New decktiers array from snapshot.deckTiers
-            $scope.deckTiers = getAllDecksByTier();
-            $scope.SnapshotService = Snapshot;
+            // load snapshot
+            $scope.snapshot = HearthstoneSnapshotBuilder.new(snapshot);
+            
+//            $scope.SnapshotService = Snapshot;
             $scope.votableSnapshot = {
                 snapshot: $scope.snapshot
             };
 
-//            console.log('new deckTiers: ', $scope.deckTiers);
-
             $scope.show = [];
             $scope.matchupName = [];
             $scope.voted = false;
-//            $scope.hasVoted = checkVotes();
-
-            function getAllDecksByTier() {
-                var uniqueTiers = {};
-                var outArr = [];
-
-                // loop through all deck tiers
-                // create an object for each tier
-                // determine the tier of the deck
-                // push the deck to the corresponding tier obj
-
-                for(var i = 0, j = $scope.snapshot.deckTiers.length; i < j; i++) {
-                    var currentDeckTier = $scope.snapshot.deckTiers[i].tier;
-                    var uniqueTier = true;
-                    for(var k = 0, l = outArr.length; k < l; k++) {
-                        if(outArr[k].tier === currentDeckTier) {
-                            uniqueTier = false;
-                            outArr[k].decks.push($scope.snapshot.deckTiers[i]);
-                        }
-                    }
-
-                    if(uniqueTier) {
-                        var newTier = {
-                            id: $scope.snapshot.deckTiers[i].id,
-                            tier: currentDeckTier,
-                            decks: [$scope.snapshot.deckTiers[i]],
-                        };
-                        outArr.push(newTier);
-                    }
-                }
-
-                return outArr;
-
-            }
-
-//        $scope.show.comments = SnapshotService.getStorage();
-//        $scope.$watch('User.isAuthenticated()', function() {
-//            $scope.hasVoted();
-//        });
 
             var mouseOver = [],
-                charts = [],
                 viewHeight = 0,
                 box = undefined;
-
-            $scope.getImage = function () {
-                return ($scope.snapshot.photos.large == "") ? $scope.app.cdn + 'snapshots/default-banner.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.large;
-            }
 
             $scope.getMouseOver = function (deckID) {
                 return mouseOver[deckID] || false;
@@ -8756,17 +8709,17 @@ angular.module('app.controllers', ['ngCookies'])
                 mouseOver[deckID] = isOver;
                 $scope.matchupName[deckID] = deckName || false;
             }
-
+            
+            // meta service
             $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
-
-//            console.log('square: ', $scope.snapshot.photoNames.square);
-
             var ogImg = ($scope.snapshot.photoNames.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photoNames.square;
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
 
+/*
             for (var i = 0; i < $scope.deckTiers.length; i++) {
                 $scope.show[i+1] = false;
             }
+*/
 
             $scope.setView = function (height) {
                 viewHeight = height*350;
@@ -8787,24 +8740,6 @@ angular.module('app.controllers', ['ngCookies'])
                     out.push(i);
                 }
                 return out;
-            }
-
-//        $scope.getTier = function (tier) {
-//            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-//                if ($scope.snapshot.tiers[i].tier == tier) {
-//                    return $scope.snapshot.tiers[i];
-//                }
-//            }
-//            return false;
-//        }
-
-            $scope.getTier = function (tier) {
-                for (var i = 0; i < $scope.deckTiers.length; i++) {
-                    if ($scope.deckTiers[i].tier == tier) {
-                        return $scope.deckTiers[i];
-                    }
-                }
-                return false;
             }
 
             function getTierRange (tierNum) {
@@ -8831,10 +8766,12 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // init tier ranges
+/*
             for (var i = 0; i < $scope.deckTiers.length; i++) {
                 var tierNum = $scope.deckTiers[i].tier;
                 $scope.tierRange[tierNum] = getTierRange(tierNum);
             }
+*/
 
             $scope.toggleCurrentDeck = function (deckNum) {
                 $scope.currentDeck = ($scope.currentDeck == deckNum) ? false : deckNum;
@@ -8876,154 +8813,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return (deck.ranks[index + 1]);
             };
 
-//            function checkVotes () {
-//                for (var i = 0; i < $scope.snapshot.votes.length; i++) {
-//                    if (typeof($scope.snapshot.votes[i]) === 'object') {
-//                        if ($scope.snapshot.votes[i].userID == LoopBackAuth.currentUserId) {
-//                            $scope.hasVoted = true;
-//                            break;
-//                        }
-//                    } else {
-//                        if ($scope.snapshot.votes[i] == LoopBackAuth.currentUserId) {
-//                            $scope.hasVoted = true;
-//                            break;
-//                        }
-//                    }
-//                }
-//                return $scope.hasVoted
-//            }
-//            console.log(LoopBackAuth.currentUserId);
-//            $scope.voteSnapshot = function (snapshot) {
-//
-//                if (!LoopBackAuth.currentUserId) {
-//                    LoginModalService.showModal('login', function() {
-//                        vote(snapshot);
-//                    });
-//                } else {
-//                    if (!$scope.hasVoted) {
-//                        console.log(snapshot);
-//                        $scope.processingVote = true;
-//                        Snapshot.findOne({
-//                            filter: {
-//                                where: {
-//                                    id: $scope.snapshot.id
-//                                },
-//                                fields: ["votes", "votesCount"]
-//                            }
-//                        })
-//                        .$promise
-//                        .then(function (snapshot) {
-//                            async.waterfall([
-//                                function(seriesCallback) {
-//                                    snapshot.votes.push(LoopBackAuth.currentUserId);
-//                                    snapshot.votesCount += 1;
-//                                    return seriesCallback(undefined, snapshot)
-//                                },
-//                                function(snapshot, seriesCallback) {
-//
-//                                    Snapshot.update({
-//                                        where: {
-//                                            id: $scope.snapshot.id
-//                                        }
-//                                    }, {
-//                                        votes: snapshot.votes,
-//                                        votesCount: snapshot.votesCount
-//                                    }, function (data) {
-//                                        $scope.snapshot.votes = data.votes;
-//                                        $scope.snapshot.votesCount = data.votesCount;
-//                                        checkVotes();
-//                                        $scope.processingVote = false;
-//                                    });
-//                                }
-//                            ]);
-//                        });
-//                    }
-//                }
-//            };
-
-            // check for custom deck name or load normal name
-//        function getDeckName (deckID) {
-//            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-//                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-//                    if ($scope.snapshot.tiers[i].decks[j].deck._id == deckID) {
-//                        return ($scope.snapshot.tiers[i].decks[j].name.length) ? $scope.snapshot.tiers[i].decks[j].name : $scope.snapshot.tiers[i].decks[j].deck.name;
-//                    }
-//                }
-//            }
-//            return false;
-//        }
-
-            // check for custom deck name or load normal name
-            function getDeckName (deckID) {
-                for (var i = 0; i < $scope.deckTiers.length; i++) {
-                    for (var j = 0; j < $scope.deckTiers[i].decks.length; j++) {
-                        if ($scope.deckTiers[i].decks[j].deck.id == deckID) {
-                            return ($scope.deckTiers[i].decks[j].name.length) ? $scope.deckTiers[i].decks[j].name : $scope.deckTiers[i].decks[j].deck.name;
-                        }
-                    }
-                }
-                return false;
-            }
-
-//        function init () {
-//            var tierLength = $scope.snapshot.tiers.length,
-//                maxTierLength = (tierLength > 2) ? 2 : tierLength;
-//
-//            /******************************************* HAS VOTED *******************************************/
-//
-//
-//
-//            /******************************************* BUILD TIER MATCHES *******************************************/
-//            for (var j = 0; j < maxTierLength; j++) {
-//                for (var k = 0; k < $scope.snapshot.tiers[j].decks.length; k++) {
-//                    var matches = [];
-//                    for (var i = 0; i < $scope.snapshot.matches.length; i++) {
-//                        if($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].for._id || $scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) {
-//                            var newObj = {
-//                                against: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for._id : $scope.snapshot.matches[i].against._id,
-//                                chance: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].forChance : $scope.snapshot.matches[i].againstChance,
-//                                playerClass: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.playerClass : $scope.snapshot.matches[i].against.playerClass,
-//                                //name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
-//                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? getDeckName($scope.snapshot.matches[i].for._id) : getDeckName($scope.snapshot.matches[i].against._id)
-//                            };
-//                            matches.push(newObj);
-//                        }
-//                    }
-//                    charts[$scope.snapshot.tiers[j].decks[k].deck._id] = matches;
-//                }
-//            }
-//
-//        }
-
-            function init () {
-                var tierLength = $scope.deckTiers.length,
-                    maxTierLength = (tierLength > 2) ? 2 : tierLength;
-
-                /******************************************* HAS VOTED *******************************************/
-
-
-
-                /******************************************* BUILD TIER MATCHES *******************************************/
-                for (var j = 0; j < tierLength; j++) {
-                    for (var k = 0; k < $scope.deckTiers[j].decks.length; k++) {
-                        var matches = [];
-                        for (var i = 0; i < $scope.snapshot.deckMatchups.length; i++) {
-                            if($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].forDeckId || $scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) {
-                                var newObj = {
-                                    against: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forDeckId : $scope.snapshot.deckMatchups[i].againstDeckId,
-                                    chance: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forChance : $scope.snapshot.deckMatchups[i].againstChance,
-                                    playerClass: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forDeck.playerClass : $scope.snapshot.deckMatchups[i].againstDeck.playerClass,
-                                    name: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? getDeckName($scope.snapshot.deckMatchups[i].forDeck.id) : getDeckName($scope.snapshot.deckMatchups[i].againstDeck.id)
-                                };
-                                matches.push(newObj);
-                            }
-                        }
-                        charts[$scope.deckTiers[j].decks[k].deck.id] = matches;
-                    }
-                }
-
-            }
-
             $scope.scrollToDeck = function (deck) {
                 $('html, body').animate({
                     scrollTop: (deck.offset().top - 100)
@@ -9040,7 +8829,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.goToTwitch = function ($event, usr) {
                 event = event || window.event;
-//                console.log('$event:', $event);
                 $event.stopPropagation();
                 var url = 'http://twitch.tv/' + usr
                 window.open(url, '_blank');
@@ -9052,20 +8840,7 @@ angular.module('app.controllers', ['ngCookies'])
                 window.open(url, '_blank');
             }
 
-            $scope.getMatches = function (id) {
-                return charts[id];
-            }
-
-            function getClass(deck) {
-                return deck.playerClass;
-            }
-
-            $scope.getMatchClass = function (match, id) {
-                return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
-            }
-
             $scope.goToDeck = function ($event, slug) {
-//                console.log(slug);
                 $event.stopPropagation();
                 var url = $state.href('app.hs.decks.deck', { slug: slug });
                 window.open(url,'_blank');
@@ -9083,6 +8858,7 @@ angular.module('app.controllers', ['ngCookies'])
                 window.open(url, '_blank');
             }
 
+/*
             $scope.toggleComments = function () {
                 if (!SnapshotService.getStorage()) {
                     SnapshotService.setStorage(true);
@@ -9091,8 +8867,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.show.comments = SnapshotService.getStorage();
             }
-
-            init();
+*/
         }
     ])
     .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',

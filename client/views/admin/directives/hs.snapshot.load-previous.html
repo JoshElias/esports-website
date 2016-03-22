@@ -1,0 +1,8 @@
+<div class="wrapper-md">
+    <p class="white text-center">Select the type of snapshot you would like to load by clicking the button below.</p>
+    <div class="row">
+        <div class="col-sm-4 text-center" ng-repeat="snapshotType in snapshotTypes()">
+            <button type="button" class="btn btn-primary" ng-click="loadPrevious(snapshotType.value)" ng-disabled="snapshotType.value !== 'legacy'">{{snapshotType.key}}</button>
+        </div>
+    </div>
+</div>

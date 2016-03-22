@@ -2066,5 +2066,14 @@ angular.module('app.directives', ['ui.load'])
     return {
         templateUrl: tpl + 'views/admin/overwatch.heroes.ability.edit.html'
     };
-});
+})
+.directive('hsSnapshotLoadPrevious', function () {
+    return {
+        restict: 'A',
+        templateUrl: tpl + 'views/admin/directives/hs.snapshot.load-previous.html',
+        controller: ['$scope', function ($scope) {
+            
+        }]
+    };
+})
 ;

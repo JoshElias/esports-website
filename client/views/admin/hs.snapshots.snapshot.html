@@ -3,7 +3,7 @@
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading wrapper-md clearfix">
         <h3 class="pull-left"><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot</h3>
-        <button type="button" ng-click="snapshot.loadPrevious()" ng-if="mode === 'add' && !snapshot.loaded" ng-disabled="snapshot.loading" class="btn admin-btn-blue pull-right m-r-sm ">
+        <button type="button" ng-click="snapshot.loadPreviousPrompt()" ng-if="mode === 'add' && !snapshot.loaded" ng-disabled="snapshot.loading" class="btn admin-btn-blue pull-right m-r-sm ">
             Load Previous<i class="fa fa-refresh fa-spin m-l-sm" ng-if="snapshot.loading"></i>
         </button>
    

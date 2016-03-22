@@ -1535,7 +1535,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.snapshots.snapshot.html',
                         controller: 'HearthstoneSnapshotCtrl',
                         resolve: {
-                            dataSnapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
+                            snapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
                                 var slug = $stateParams.slug;
                                 return Snapshot.findOne({
                                     filter: {
@@ -1543,18 +1543,7 @@ var app = angular.module('app', [
                                             'slug.url': slug
                                         },
                                         fields: {
-                                            id: true,
-                                            authorId: true,
-                                            deckId: true,
-                                            active: true,
-                                            snapNum: true,
-                                            votes: true,
-                                            voteScore: true,
-                                            title: true,
-                                            content: true,
-                                            slug: true,
-                                            photoNames: true,
-                                            createdDate: true
+                                            tiers: false
                                         },
                                         include: [
                                             {
@@ -1564,11 +1553,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'author',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    username: true,
-                                                                    email: true
-                                                                }
+                                                                fields: ['username', 'email']
                                                             }
                                                         }
                                                     ]
@@ -1581,19 +1566,13 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'forDeck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true
-                                                                }
+                                                                fields: ['playerClass']
                                                             }
                                                         },
                                                         {
                                                             relation: 'againstDeck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true
-                                                                }
+                                                                fields: ['playerClass']
                                                             }
                                                         }
                                                     ]
@@ -1606,12 +1585,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'deck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true,
-                                                                    name: true,
-                                                                    slug: true,
-                                                                }
+                                                                fields: ['id', 'name', 'slug', 'playerClass']
                                                             }
                                                         },
                                                         {
@@ -1623,7 +1597,10 @@ var app = angular.module('app', [
                                                                         scope: {
                                                                             include: [
                                                                                 {
-                                                                                    relation: 'card'
+                                                                                    relation: 'card',
+                                                                                    scope: {
+                                                                                        fields: ['name', 'photoNames']
+                                                                                    }
                                                                                 }
                                                                             ]
                                                                         }
@@ -1636,22 +1613,12 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: 'authors',
-                                                fields: {
-                                                  description: true,
-                                                  expertClasses: true,
-                                                  id: true,
-                                                  userId: true
-                                                },
                                                 scope: {
                                                     include: [
                                                         {
                                                             relation: 'user',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    social: true,
-                                                                    username: true
-                                                                }
+                                                                fields: ['username', 'social']
                                                             }
                                                         }
                                                     ],
@@ -1660,11 +1627,7 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'votes',
                                                 scope: {
-                                                    fields: {
-                                                        id: true,
-                                                        direction: true,
-                                                        authorId: true
-                                                    }
+                                                    fields: ['direction', 'authorId']
                                                 }
                                             }
                                         ]
