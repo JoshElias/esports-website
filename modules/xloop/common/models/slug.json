@@ -30,6 +30,12 @@
       "foreignKey": "slugId",
       "through": "sluggable"
     },
+    "decks": {
+      "type": "hasMany",
+      "model": "deck",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
     "forumPosts": {
       "type": "hasMany",
       "model": "forumPost",

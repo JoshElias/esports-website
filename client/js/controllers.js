@@ -2148,10 +2148,10 @@ angular.module('app.controllers', ['ngCookies'])
 
             //change the article item
             $scope.modifyItem = function (item) {
-				switch($scope.article.articleType[0]) {
-					case 'hs': $scope.article.deck = item; break;
-					case 'hots': $scope.article.guide = item; break;
-				}
+                switch($scope.article.articleType[0]) {
+                  case 'hs': $scope.article.deck = item; break;
+                  case 'hots': $scope.article.guide = item; break;
+                }
                 itemAddBox.modal('hide');
             };
 
@@ -5905,7 +5905,6 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (memberUpdated) {
-                        console.log('memberUpdated: ', memberUpdated);
                         return memberCB();
                     })
                     .catch(function (err) {
