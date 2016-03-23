@@ -8688,28 +8688,17 @@ angular.module('app.controllers', ['ngCookies'])
             // load snapshot
             $scope.snapshot = HearthstoneSnapshotBuilder.new(snapshot);
             
+            // vote
+            $scope.voted = false;
             $scope.SnapshotService = Snapshot;
             $scope.votableSnapshot = {
                 votable: snapshot
             };
 
-            $scope.show = [];
-            $scope.voted = false;
-
-            var viewHeight = 0;
-
             // meta service
             $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
             var ogImg = ($scope.snapshot.photoNames.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photoNames.square;
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
-
-            $scope.setView = function (height) {
-                viewHeight = height*350;
-            }
-
-            $scope.getView = function () {
-                return viewHeight;
-            }
 
             $scope.scrollToDeck = function (deck) {
                 $('html, body').animate({
@@ -8755,17 +8744,6 @@ angular.module('app.controllers', ['ngCookies'])
                 var url = 'http://twitter.com/' + usr;
                 window.open(url, '_blank');
             }
-
-/*
-            $scope.toggleComments = function () {
-                if (!SnapshotService.getStorage()) {
-                    SnapshotService.setStorage(true);
-                } else {
-                    SnapshotService.setStorage(false);
-                }
-                $scope.show.comments = SnapshotService.getStorage();
-            }
-*/
         }
     ])
     .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',

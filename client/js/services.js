@@ -3796,6 +3796,7 @@ angular.module('app.services', [])
             loading: false,
             loaded: false,
             saving: false,
+            tierShow: [],
             activeDeck: null,
             activeAuthor: null,
             currentChartTier: 1,
@@ -4243,6 +4244,8 @@ angular.module('app.services', [])
 
             // delete author
             sb.authorDeleteById = function (authorId) {
+                console.log(authorId);
+                
                 var index = -1;
                 for (var i = 0; i < sb.authors.length; i++) {
                     if (sb.authors[i].user.id === authorId) {
@@ -4260,7 +4263,7 @@ angular.module('app.services', [])
                     }
                     
                     // make sure active author isn't deleted author
-                    if (sb.activeAuthor.user.id === authorId) {
+                    if (sb.activeAuthor && sb.activeAuthor.user.id === authorId) {
                         sb.activeAuthor = null;
                     };
                     
@@ -5933,7 +5936,8 @@ angular.module('app.services', [])
                     if (err) {
                         if (typeof err === 'string') {
                             AlertService.setError({
-                                msg: err,
+                                msg: 'Snapshot Error',
+                                errorList: [err],
                                 show: true
                             });
                         } else {
