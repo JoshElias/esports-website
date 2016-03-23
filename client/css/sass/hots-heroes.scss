@@ -195,8 +195,8 @@
 @include hots-hero-filters-image (kharazim, 20);
 @include hots-hero-filters-image (leoric, 21);
 @include hots-hero-filters-image (lili, 22);
-@include hots-hero-filters-image (malfurion, 23);
-@include hots-hero-filters-image (lunara, 24);
+@include hots-hero-filters-image (malfurion, 24);
+@include hots-hero-filters-image (lunara, 23);
 @include hots-hero-filters-image (morales, 25);
 @include hots-hero-filters-image (muradin, 26);
 @include hots-hero-filters-image (murky, 27);
@@ -221,6 +221,7 @@
 @include hots-hero-filters-image (zagara, 46);
 @include hots-hero-filters-image (zeratul, 47);
 @include hots-hero-filters-image (li-ming, 48);
+@include hots-hero-filters-image (xul, 49);
 
 
 
@@ -349,6 +350,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(tyrande);
 @include hots-hero(uther);
 @include hots-hero(valla);
+@include hots-hero(xul);
 @include hots-hero(zagara);
 @include hots-hero(zeratul);
 @include hots-hero(lunara);
@@ -1383,6 +1385,22 @@ This is the template for hots-hero-talents.
     ( class: (bolt-of-the-storm), pos: 15 ) // -450
 ) );
 
+//talents: xul
+
+@include hots-hero-talents ( xul, (
+    ( class: (backlash), pos: 0 ), // 0
+    ( class: (shackler), pos: 1 ), // -30
+    ( class: (shade), pos: 2 ), // -60
+    ( class: (deaths-reach, decrepify, flowing-wounds, mortal-wound), pos: 3 ), // -90
+    ( class: (jailors, amplify-damage), pos: 4 ), // -120
+    ( class: (tragouls-essence, rathmas-blessing, corpse-explosion, skeleton-mastery), pos: 5 ), // -150
+    ( class: (harvest-vitality, giants-curse), pos: 6 ), // -180
+    ( class: (weaken), pos: 7 ), // -210
+    ( class: (poison-nova, call-of-the-grave), pos: 8 ), // -240
+    ( class: (skeletal-mages, raised-mage), pos: 9 ), // -270
+    ( class: (executioner), pos: 10 ), // -300
+    ( class: (bone-spear), pos: 11 ) // -330
+) );
 
 //talents: zagara
 
@@ -1667,6 +1685,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(tyrande, -25, -89, -60, 35);
 @include hots-snapshot-hero(uther, -25, -48, -70, 61);
 @include hots-snapshot-hero(valla, -25, -22, -70, 96);
+//@include hots-snapshot-hero(xul, -25, -22, -70, 96);
 @include hots-snapshot-hero(zagara, -25, -22, -70, 96);
 @include hots-snapshot-hero(zeratul, -25, -5, -70, 96);
 @include hots-snapshot-hero(lunara, -25, -5, -70, 96);

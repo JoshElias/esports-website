@@ -481,7 +481,7 @@ module.exports = function(User) {
                 isInRoles[key] = currentRoles[key];
             }
         }
-
+        
         // Re evaluate isInRole report
         if (Object.keys(isInRoles).length > 0) {
             var all = true;
@@ -501,7 +501,7 @@ module.exports = function(User) {
             isInRoles.all = true;
             isInRoles.none = true;
         }
-
+        
         async.eachSeries(roleNames, function (roleName, eachCb) {
 
             if (typeof isInRoles[roleName] !== "undefined") {

@@ -1,6 +1,7 @@
 <div class="verify-form row">
     <div class="col-sm-12">
         <h2 class="m-b-lg">Verification Required</h2>
+        <i ng-if="!!state" class="fa fa-close closing-x" ng-click="cancel()"></i>
         <p class="white">You should receive an email shortly with a link to verify your account and log you in.</p>
 <!--
         <div class="panel panel-danger error-modal animated" ng-show="showError">

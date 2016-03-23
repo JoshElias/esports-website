@@ -1,0 +1,56 @@
+{
+  "name": "game",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "__v": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "isActive": {
+      "type": "boolean"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "teams": {
+      "type": "hasMany",
+      "model": "team",
+      "foreignKey": "gameId",
+      "isChild": true
+    },
+    "hsClasses": {
+      "type": "hasMany",
+      "model": "hsClass",
+      "foreignKey": "gameId",
+      "isChild": true
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

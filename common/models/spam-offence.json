@@ -7,12 +7,6 @@
     "validateUpsert": true
   },
   "properties": {
-    "spamRegexId": {
-      "type": {}
-    },
-    "userId": {
-      "type": {}
-    },
     "userAgent": {
       "type": "string"
     },
@@ -35,7 +29,9 @@
     },
     "propertyName": {
       "type": "string"
-    }
+    },
+    "spamRegexId": {},
+    "userId": {}
   },
   "validations": [],
   "relations": {

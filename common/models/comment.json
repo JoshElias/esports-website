@@ -18,9 +18,6 @@
         "object"
       ]
     },
-    "oldReplies": {
-      "type": {}
-    },
     "createdDate": {
       "type": "date",
       "required": true

@@ -42,6 +42,9 @@
       "type": "string",
       "required": true
     },
+    "isCommentable": {
+      "type": "boolean"
+    },
     "description": {
       "type": "string",
       "validators": [
@@ -81,34 +84,15 @@
     "viewCount": {
       "type": "number"
     },
-    "authorId": {
-      "type": {}
-    },
-    "cardIds": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldComments": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldMulligans": {
-      "type": [
-        "object"
-      ]
-    },
-    "oldCards": {
-      "type": [
-        "object"
-      ]
-    },
     "youtubeId": {
       "type": "string",
       "validators": [
         "youtubeId"
       ]
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
     },
     "chapters": {
       "type": [
@@ -133,7 +117,8 @@
     },
     "dust": {
       "type": "number"
-    }
+    },
+    "authorId": {}
   },
   "validations": [],
   "relations": {
@@ -264,7 +249,7 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__create__comments"
     },

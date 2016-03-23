@@ -27,18 +27,20 @@
     <link rel="stylesheet" href="./css/vendor/animations/animation.css" type="text/css" />
     <link rel="stylesheet" href="./css/vendor/animate.css" type="text/css" />
     <link rel="stylesheet" href="./dist/css/style.css" type="text/css" />
-    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./dist/css/modules.css" type="text/css" />
+    
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
 
     <div class="app" id="app" ui-view="root" bootstrap-width></div>
     <script>
-        var tpl = '{cdnUrl}';
-        var cdn2 = '{cdnUrl2}';
+        var tpl = '{cdnUrl}',
+            cdn2 = '{cdnUrl2}';
     </script>
 
-    <!-- d3 -->
-
+    <!-- ad check -->
+    <script src="./js/showads.js"></script>
+    
     <!-- vendor -->
     <script src="./vendor/jquery/dist/jquery.min.js"></script>
     <script src="./vendor/jquery-ui/jquery-ui.min.js"></script>
@@ -50,6 +52,7 @@
     <script src="./js/vendor/angular-file-upload-shim.min.js"></script>
     <script src="./vendor/underscore/underscore-min.js"></script>
     <script src="./vendor/async/dist/async.min.js"></script>
+    <script src="./vendor/jrumble/jquery.jrumble.min.js"></script>
     <script src="./js/vendor/iscroll.js"></script>
     <script src="./vendor/jqueryui-touch-punch/jquery.ui.touch-punch.min.js"></script>
 
@@ -62,7 +65,8 @@
     <script src="./vendor/angular-ui-utils/jq.min.js"></script>
     <script src="./vendor/angular-ui-load/ui-load.js"></script>
     <script src="./vendor/angular-ui-validate/dist/validate.min.js"></script>
-    <script src="./vendor/angular-animate/angular-animate.min.js"></script>
+    <!--<script src="./vendor/angular-animate/angular-animate.min.js"></script>-->
+    <script src="./vendor/angular-google-adsense/dist/angular-google-adsense.js"></script>
     <script src="./vendor/angular-route/angular-route.min.js"></script>
     <script src="./js/vendor/angular-bootbox.js"></script>
     <script src="./vendor/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"></script>
@@ -77,9 +81,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
     <script src="./vendor/angular-iscroll/dist/lib/angular-iscroll.js"></script>
-    
-    <!-- stripe -->
-    <script src="https://js.stripe.com/v2/"></script>
+    <script src="./vendor/angular-recaptcha/release/angular-recaptcha.min.js"></script>
 
     <!-- app -->
     <script src="./dist/js/services/lb-services.js"></script>
@@ -90,5 +92,9 @@
     <script src="./js/filters.js"></script>
     <script src="./js/animations.js"></script>
     <script src="./dist/js/modules.js"></script>
+
+    <!-- stripe -->
+    <script src="https://js.stripe.com/v2/"></script>
+    
 </body>
 </html>

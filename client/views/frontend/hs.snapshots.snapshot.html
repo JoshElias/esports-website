@@ -18,6 +18,12 @@
     <div class="container meta-container sideBorders">
         <div class="m-t-md">
             
+            <!-- first fullwidth plg -->
+            
+            <ts-ad class="m-b-md" structure="single" theme="hs-snapshot"></ts-ad>
+            
+            <!-- first fullwidth plg ends -->
+            
             <div class="row no-pad clearfix">
 
                 <div class="col-xs-12 col-lg-push-8 col-lg-4 rightSide clearfix m-b-md">
@@ -44,6 +50,12 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- sidebar plg -->
+                    
+                    <ts-ad h="280" w="336" ad-slot="9633995889" class="m-t-md" structure="sidebar" theme="hs-snapshot"></ts-ad>
+                    
+                    <!-- sidebar plg ends-->
                 </div>
 
                 <div class="col-xs-12 col-lg-pull-4 col-lg-8 leftSide m-b-md">
@@ -74,7 +86,7 @@
                 
             </div>
             
-            <div class="row no-pad m-b-md">
+            <div class="row no-pad">
                 <div class="col-xs-12">
                     <div class="trends-wrapper pos-rl">
                         <div class="inner">
@@ -89,7 +101,6 @@
                                         
                                         <text ng-if="(snapshot.getChartTierRange[snapshot.currentChartTier].length > 20) ? ($index%2 == 0) : true;" height="15" x="4%" ng-attr-y="{{snapshot.getChartPositionY(snapshot.currentChartTier, $index, 410, 20) + 4}}" fill="white" text-anchor="end">{{num}}</text>
                                         
-
                                         <line ng-attr-x1="{{snapshot.getChartPositionX(0, 10)}}%" ng-attr-y1="{{snapshot.getChartPositionY(snapshot.currentChartTier, $index, 410, 20)}}" ng-attr-x2="{{snapshot.getChartPositionX(12, 10)}}%"  ng-attr-y2="{{snapshot.getChartPositionY(snapshot.currentChartTier, $index, 410, 20)}}" style="stroke:rgba(255,255,255,.4)"/>
                                     </g>
 
@@ -117,6 +128,13 @@
 
                         </div>
                     </div>
+                    
+                    <!-- second fullwidth plg -->
+                    
+                    <ts-ad class="m-t-md m-b-md" structure="single" theme="hs-snapshot"></ts-ad>
+                    
+                    <!-- second fullwidth plg ends-->
+                    
                 </div>
             </div>
             

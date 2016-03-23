@@ -9,7 +9,6 @@ module.exports = function(Deck) {
         }, next);
     });
 
-
     var fieldFilter =  {
         fieldNames: ["chapters", "oldCards", "oldComments", "oldMulligans"],
         acceptedRoles: ["$owner", "$admin", "$premium", "$contentProvider"]
@@ -26,5 +25,5 @@ module.exports = function(Deck) {
     Deck.observe("access", utils.filterDocs(docFilter));
 */
 
-    //Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
+    Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
 };

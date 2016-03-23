@@ -1,14 +1,11 @@
 {
   "mongodb": {
-  "host": "54.68.67.60",
-  "port": 27017,
-  "database": "tempostorm",
-  "name": "mongodb",
-  "connector": "mongodb",
-  "server": {
-    "auto_reconnect": true,
-    "reconnectTries": 100,
-    "reconnectInterval": 1000
+    "url": "mongodb://localhost:27017/tempostorm",
+    "connector": "loopback-connector-mongodb",
+    "server": {
+      "auto_reconnect": true,
+      "reconnectTries": 100,
+      "reconnectInterval": 1000
     },
     "allowExtendedOperators": true
   },

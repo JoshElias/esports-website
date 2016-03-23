@@ -17,16 +17,14 @@
       "type": "string"
     },
     "slug": {
-      "type": {
-        "url": {
-          "type": "string",
-          "validators": [
-            "unique"
-          ]
-        },
-        "linked": {
-          "type": "boolean"
-        }
+      "url": {
+        "type": "string",
+        "validators": [
+          "unique"
+        ]
+      },
+      "linked": {
+        "type": "boolean"
       }
     },
     "content": {
@@ -34,11 +32,6 @@
     },
     "tiers": {
       "type": "object"
-    },
-    "oldMatches": {
-      "type": [
-        "object"
-      ]
     },
     "createdDate": {
       "type": "date"
@@ -58,6 +51,10 @@
       "type": [
         "string"
       ]
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
     }
   },
   "validations": [],
@@ -118,7 +115,7 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__create__comments"
     },

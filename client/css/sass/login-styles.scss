@@ -1,0 +1,604 @@
+@import 'ts-colors.scss';
+@import 'ts-mixins.scss';
+
+//*************************************
+// 19... login/signup
+//*************************************
+
+.backdrop-blur {
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+}
+
+/* login / signup */
+.login-form,
+.signup-form { margin: 0 auto; max-width: 620px; }
+
+.page .login-form,
+.page .signup-form,
+.page .forgot-form,
+.page .verify-form { 
+    text-align: center; 
+    margin: 0 auto; 
+    max-width: 360px; 
+    height:592px; 
+    background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.45), rgba($gradient-grey,0.90)); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.45)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
+
+}
+
+.page .user-form { 
+    color: white; 
+    padding: 65px 0px; 
+    background: rgba(0,0,0,.6) 
+}
+
+.page .user-form .form-group { 
+    position: relative;
+    border: 0px solid #fbfbfb;
+    margin-bottom: 20px;
+    color: $dark-font;
+}
+
+//.page .user-form .login-email { width:85%; background: none; }
+.page .user-form .form-group input { color: white; margin-bottom: 0px;}
+.page .user-form .form-group .form-control { border: none; }
+.page .user-form .form-group .form-control:focus { border: none; box-shadow: none; }
+
+.page .user-form .or { text-align: center; line-height: 3; font-weight: bold; }
+.page .user-form .remember-me .fa-square-o {
+    margin-top: 7px;
+    font-size: 1.5em;
+}
+.page .user-form .remember-me .fa-check {
+    font-size: .8em;
+}
+.page .user-form .remember-me .remember-me-i:hover,
+.page .user-form .remember-me .remember-me-i:focus,
+.page .user-form .remember-me .remember-me-i {
+    color: white;
+    text-decoration: none;
+}
+.page .user-form .remember-me .forgot-password {
+    line-height: 2.5;
+    margin: 0;
+}
+
+.page .user-form .sign-up {
+    width: 100%;
+}
+
+
+/*
+.btn-twitch { position: relative; padding: 12px 12px; font-size: 20px; color: #FFF !important; background: #6441a5; }
+.btn-twitch:hover,
+.btn-twitch:active { color: #FFF; }
+.btn-twitch i { position: absolute; left: 15px; top: 13px; font-size: 30px; }
+*/
+
+
+
+.login-form .btn-bnet:hover,
+.login-form .btn-bnet:active { color: #FFF; }
+.login-form .btn-bnet .bnet-logo { position: absolute; left: 15px; top: 13px; font-size: 30px; width: 30px; height: 30px; background-image: url(../img/BattleNet.png); background-size: 100% 100%; }
+
+.login-modal {}
+.login-modal .modal-dialog {
+    width: 360px;
+/*    height:500px;*/
+}
+
+.login-modal .modal-content .modal-header {
+    border: 0;
+    padding: 25px;
+}
+.login-modal .modal-content .modal-header .bootbox-close-button {
+    font-size: 22px;
+    line-height: 1.25;
+    opacity: 1;
+}
+.login-modal .modal-content .modal-header .modal-title {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.login-modal .or { text-align: center; line-height: 3; font-weight: bold; }
+//.login-modal .modal-content .modal-body {
+//    padding: 25px;
+//}
+.login-modal .modal-content .modal-body .form-group {
+    margin-bottom: 10px;
+    position: relative;
+    border: 1px solid #FBFBFB;
+}
+.login-modal .modal-content .modal-body .form-group input {
+    color: white
+}
+.login-modal .modal-content .modal-body .form-group .form-control {
+    border: none;
+}
+.login-modal .modal-content .modal-body .form-group .form-control:focus {
+    border: none;
+    box-shadow: none;
+}
+.login-modal .modal-content .modal-body .login-email {
+    width: 85%;
+    background: none;
+}
+.login-modal .modal-content .modal-body .login-password {
+    background: none !important;
+}
+
+
+.login-modal .sign-up {
+    width: 100%;
+}
+
+//styles that affect only the bootbox modal
+
+.login-modal {
+    .modal-content {
+            border: 0px;
+            height:100%;
+            border-radius: 0;
+            //background-color: rgba(31,31,31,.9);
+        
+            //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
+            background: -moz-linear-gradient(to bottom,rgba(10,10,10,.80),rgba(10,10,10,.95)); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba(10,10,10,.80)), color-stop(rgba(10,10,10,.95))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, rgba(10,10,10,.80), rgba(10,10,10,.95)); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, rgba(10,10,10,.80), rgba(10,10,10,.95)); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, rgba(10,10,10,.80), rgba(10,10,10,.95)); /* IE10+ */
+            background: linear-gradient(to bottom, rgba(10,10,10,.80), rgba(10,10,10,.95)); /* W3C */
+        .modal-header {
+            display: none;
+        }
+        .modal-body {
+            padding: 0px;
+//            margin-top: 80px;
+            
+            .form-group {
+                background-color: rgba($white, 0.04);
+                border: 0px solid black; 
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
+
+.login-charm {
+    z-index: 10;
+}
+
+//general styles that affect both the modal content and /login
+
+.forgot-form,
+.login-modal .forgot-form {
+    
+    margin-left: 0px;
+    margin-right: 0px;
+    
+    .reset-text {
+        color: $light-font;
+        font-size: 12px;
+        padding-left: 40px;
+        padding-right: 40px;
+        margin-bottom: 40px;
+    }
+    
+    .form-modal {
+
+        input {
+            padding: 12px 12px 12px 50px !important;
+            font-size: 12px;
+        }
+
+        button {
+            margin-top: 0px !important;
+        }
+        
+        .btn-group {
+            width: 280px;
+            margin-left: 40px;
+            margin-right: 40px;
+            margin-bottom: 20px;
+            
+            .btn-login {
+                background-color: rgba($ts-blue, 0.7);
+            }
+            
+            button {
+                width: 130px;
+                height: 40px;
+                border-radius: 0px;
+                background-color: rgba(255,255,255,0.08);
+                font-size: 12px;
+                transition: .5s ease-in-out;
+                color: $light-font;
+                
+                @media screen and (max-width:767px) { 
+                    background-color: $ts-blue;
+                    color: $white;
+                }
+                
+                &:hover,
+                &:focus {
+                    background-color: $ts-blue;
+                    transition: .5s ease-in-out;
+                    color: $white;
+                }
+                
+                
+                &:active {
+                    background-color: rgba(255,255,255,0.05);
+                }
+                
+                &:first-of-type {
+                    margin-right: 20px;
+                }
+                
+            }
+        }
+        
+        .form-group { 
+            position: relative;
+            border: 0px solid black;
+            margin-bottom: 20px;
+            width: 280px;
+            margin-left: 40px !important;
+            margin-right: 40px !important;
+            font-size: 10px;
+            //background-color: rgba(255,255,255,0.05);
+            color: $dark-font;
+
+            .login-charm {   
+                position:absolute;
+                top: 10px;
+                left: 15px;
+                font-size: 12px; 
+                color: $light-font;
+            }
+
+            .form-control {
+                background-color: rgba(255,255,255,0.08);
+                width: 100%;
+            }  
+        }
+    }
+}
+
+
+.login-modal .signup-form,
+.signup-form,
+.login-modal .forgot-form,
+.forgot-form {
+    .login-form-header {
+        margin-bottom: 40px;
+        
+    }
+    
+    button[type=submit] {
+        width: 130px;
+        height: 40px;
+        border-radius: 0px;
+        background-color: rgba($ts-blue, 0.7);
+        font-size: 12px;
+        transition: .5s ease-in-out;
+        color: $light-font;
+        margin: 0 auto;
+        display: block;
+        
+        @media screen and (max-width:767px) { 
+            background-color: $ts-blue;
+            color: $white;
+        }
+        
+        
+        &:hover,
+        &:focus {
+            background-color: $ts-blue;
+            transition: .5s ease-in-out;
+            color: $white;
+        }
+
+        &:active {
+           // background-color: rgba(255,255,255,0.05);
+        }
+        
+    }
+}
+
+.login-form,
+.login-modal .signup-form,
+.signup-form,
+.forgot-form,
+.login-modal .forgot-form {
+    
+    .login-form-header {
+        background-image: url(../img/login-bg.jpg);
+        height: 170px;
+        width: 100%;
+        padding-top: 32px;
+        text-shadow: 1px 1px 1px rgba($black, .75);
+        text-align: center;
+        
+        
+        .closing-x {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: rgba($light-font, .5);
+            font-size: 18px;
+            font-weight: 100;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+            
+            &:hover {
+                color: rgba($light-font, 1);
+            }
+        }
+        
+        
+        h1 {
+            margin-top: 10px;
+            font-size: 20px;
+            
+        }
+        
+        .key-border {
+            border: 2px white solid;
+            border-radius: 50% 50%;
+            height: 72px;
+            width: 72px;
+            margin: 0px auto;
+            padding-top: 13px;
+            box-shadow: 1px 1px 1px rgba($black, .75);
+            
+            i {
+                font-size: 38px;
+            }
+        }
+    }
+    .login-form-auth {
+        //max-height: 40px;
+        margin-bottom: 40px;
+        min-width: 100%;
+        float: left;
+        
+        .btn-twitch { 
+            position: relative; 
+           
+            padding: 8px 10px; 
+            
+            color: #FFF !important; 
+            background: #6441a5; 
+            border-radius: 0; 
+            text-align: left; 
+            font-size: 12px; 
+            height: 50px;
+            width: 50%;
+            float: left;
+            display: block;
+            
+            @media screen and (min-width: 767px) {
+                &:hover,
+                &:active {
+                    color: rgba(255,255,255,0.5) !important;
+                    i {
+                        color: #fff !important;
+                    }
+                }
+            }
+            
+            i {    
+                position: absolute; 
+                right: 15px;
+                top: 13px;
+                font-size: 24px;
+                
+                &:hover,
+                &:active {
+                    //color: #fff !important;
+                }
+            }
+        }
+        
+        .btn-bnet { 
+            position: relative; 
+            padding: 8px 10px; 
+ 
+            color: #FFF !important; 
+            background: #22324B; 
+            border-radius: 0; 
+            text-align: right; 
+            font-size: 12px; 
+            height: 50px;
+            width: 50%;
+            float: left;
+            display: block;
+            
+        @media screen and (min-width: 767px) {
+            &:hover,
+            &:active {
+                color: rgba(255,255,255,0.5) !important;
+            }
+        }
+        
+        .bat-net-img {
+            position: absolute;
+            top: 13px;
+            left: 13px;
+            width: 24px;
+            height: auto;
+            }
+        } 
+    }
+
+    
+    .login-form-email {
+        
+        .form-modal { 
+            input {
+                padding: 12px 12px 12px 50px !important;
+                //background-color: aqua !important;
+                font-size: 12px;
+            }
+            
+            button {
+                margin-top: 0px !important;
+            }
+        }
+        
+        .btn-group {
+            width: 280px;
+            margin-left: 40px;
+            margin-right: 40px;
+            margin-bottom: 20px;
+                        
+            .btn-login {
+                
+                background-color: rgba($ts-blue, 0.7);
+                
+                @media screen and (max-width:767px) { 
+                    background-color: $ts-blue;
+                    color: $white;
+                }                
+            }
+            
+            button {
+                width: 130px;
+                height: 40px;
+                border-radius: 0px;
+                background-color: rgba(255,255,255,0.08);
+                font-size: 12px;
+                transition: .5s ease-in-out;
+                color: $light-font;
+                
+                &:hover,
+                &:focus {
+                    background-color: $ts-blue;
+                    transition: .5s ease-in-out;
+                    color: $white;
+                }
+                
+                &:active {
+                    background-color: rgba(255,255,255,0.05);
+                }
+                
+                &:first-of-type {
+                    margin-right: 20px;
+                }
+                
+            }
+        }
+        
+        .form-group { 
+            position: relative;
+            border: 0px solid black;
+            margin-bottom: 20px;
+            width: 280px;
+            margin-left: 40px !important;
+            margin-right: 40px !important;
+            font-size: 10px;
+            //background-color: rgba(255,255,255,0.05);
+            color: $dark-font;
+            
+            .login-charm {   
+                position:absolute;
+                top: 10px;
+                left: 15px;
+                font-size: 12px; 
+                color: $light-font;
+                z-index: 10;
+            }
+            
+            .form-control {
+                background-color: rgba(255,255,255,0.08);
+                width: 100%;
+            }  
+        }
+    }
+    
+    .remember-me {
+
+        font-size: 12px !important;
+        padding: 0 40px;
+        height: 20px;
+        position: relative;
+
+        .fa-stack {
+            left: -10px;
+            color: $light-font;
+
+            .fa-square-o {
+                margin-top: 3px !important;
+                font-size: 1em !important;
+                color: $light-font;
+            }
+
+            .fa-check {
+                font-size: .8em;
+                margin-top: -4px !important;
+                color: $light-font;
+            }
+        }
+
+        .remember-text {
+            top: 2px;
+            position: absolute;
+            left: 65px;
+            color: $light-font;
+        }    
+        
+        .remember-me-i {
+            color: $light-font;
+            
+            &:hover,
+            &:focus{
+                color: $ts-blue;
+                text-decoration: none;
+            }   
+        }
+        
+        .forgot-password {
+            line-height: 20px !important;
+            margin: 0;
+
+            a {
+                font-weight: 100;
+                color: $dark-font;
+
+                &:hover,
+                &:focus {
+                    font-weight: bold;
+                    color: $light-font;
+                }
+            }
+        }
+    }
+    
+    .sign-up {
+        font-size: 12px;
+        color: $light-font;
+        padding-left: 40px;
+        padding-right: 40px;
+        margin-top: 50px;
+        margin-bottom: 40px;
+        height: 50px;
+        
+        a {
+            color: $dark-font;
+            
+            &:hover,
+            &:focus {
+                color: $light-font;
+                font-weight: bold;
+            }
+        }
+    }
+}

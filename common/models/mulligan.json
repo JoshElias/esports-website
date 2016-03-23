@@ -18,9 +18,7 @@
       "type": "string"
     },
     "deckId": {
-      "type": {
         "required": true
-      }
     }
   },
   "validations": [],
