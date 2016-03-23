@@ -1,10 +1,4 @@
 module.exports = {
-  "_meta": {
-    "sources": [
-      "../../node_modules/loopback-component-passport/lib/models"
-    ],
-    "mixins": []
-  },
   "AccessToken": {
     "dataSource": "mongodb",
     "public": false

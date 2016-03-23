@@ -1,17 +1,17 @@
+/*
 var async = require("async");
 var loopback = require("loopback");
 var _ = require("underscore");
-var validator = require("./validator");
 var docFilter = require("./doc-filter");
 var fieldFilter = require("./field-filter");
 var scope = require("../mixins/scope/scope");
 var relation = require("./relation");
 var slug = require("./slug");
-
+*/
 
 
 module.exports = function(server) {
-
+    return;
     var cleanModels = {};
     for(var key in server.models) {
         var lowerKey = key.toLowerCase();

@@ -6,7 +6,7 @@ var validators = require("./validators");
 var requestCrawler = require("../request-crawler");
 
 
-var VALIDATE_FEATURE_KEY = "$validate";
+var VALIDATE_FEATURE_KEY = "Validate";
 
 
 

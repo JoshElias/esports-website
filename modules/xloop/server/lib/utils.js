@@ -62,6 +62,5 @@ function getFirstForeignKey(data) {
 module.exports = {
     getRandomInt : getRandomInt,
     convertMillisecondsToDigitalClock : convertMillisecondsToDigitalClock,
-    getForeignKeys: getForeignKeys,
-    modelNameFromForeignKey: modelNameFromForeignKey,
+    modelNameFromForeignKey: modelNameFromForeignKey
 };

@@ -29,6 +29,11 @@ module.exports = function(Model) {
         handleSlug(Model)(ctx, next);
     });
 
+
+    // If slugs is included as a field, include it in the results
+        // Add slugs as an include
+    // If model.find({slug:slug} is found then resolve the slug and
+
 };
 
 

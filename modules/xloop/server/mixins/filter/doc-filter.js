@@ -10,7 +10,7 @@ var FILTER_FEATURE_KEY = "DocFilter";
 
 module.exports = function filterDocs(Model) {
     return function(ctx, modelInstance, finalCb) {
-
+console.log("FML RIIIGHT?")
         // Get the parent model
         var modelName = ctx.methodString.split(".")[0];
 

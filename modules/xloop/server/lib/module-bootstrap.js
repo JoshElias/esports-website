@@ -3,36 +3,29 @@ var fs = require("fs");
 var async = require("async");
 
 
-function generateBootOptions(app, finalCb) {
-
-
-    var appDir = path.dirname(require.main.filename);
-    console.log("this is my app dir");
+function generateBootOptions(app, options, finalCb) {
 
     // Initialize the boot options
     var loopbackBootOptions = {
         bootDirs: [],
-        modelSources: [],
-        mixinSources: []
+        modelSources: options.modelSources || [],
+        mixinSources: options.mixinSources || []
     };
 
-    var configsPath = path.join(__dirname, "..", "..", "..", "..", "server", "configs")
+    // Get the root app directory
+    var appDir = path.dirname(require.main.filename);
+    var configsPath = path.join(appDir, "configs")
 
     // Add default loopback directories
-    loopbackBootOptions.appRootDir = path.join(__dirname, "..", "..", "..", "..", "server");
+    loopbackBootOptions.appRootDir = path.join(appDir);
     loopbackBootOptions.appConfigRootDir = configsPath;
     loopbackBootOptions.modelsRootDir = configsPath;
     loopbackBootOptions.dsRootDir = configsPath;
-    loopbackBootOptions.middleware = require(path.join(__dirname, "..", "..", "..", "..", "server", "configs", "middleware"));
-    loopbackBootOptions.bootDirs.push(path.join(__dirname, "..", "..", "..", "..", "server", "boot"));
-    loopbackBootOptions.modelSources.push(path.join(__dirname, "..", "..", "..", "..", "common", "models"));
-    loopbackBootOptions.mixinSources.push(path.join(__dirname, "..", "..", "..", "..", "server", "mixins"));
-    loopbackBootOptions.mixinSources.push(path.join(__dirname, "..", "..", "..", "..", "common", "mixins"));
-
-    // Add directories listed in the model-config
-    loopbackBootOptions.modelSources.push( path.join(__dirname, "..", "..", "..", "..", "common", "models"));
-
-
+    loopbackBootOptions.middleware = require(path.join(appDir, "configs", "middleware"));
+    loopbackBootOptions.bootDirs.push(path.join(appDir, "boot"));
+    loopbackBootOptions.modelSources.push(path.join(appDir, "..", "common", "models"));
+    loopbackBootOptions.mixinSources.push(path.join(appDir, "mixins"));
+    loopbackBootOptions.mixinSources.push(path.join(appDir, "..", "common", "mixins"));
 
     // Get module dirs
     async.waterfall([
@@ -120,9 +113,9 @@ function generateBootOptions(app, finalCb) {
 
                     // Handlers
                     if (file === "boot") {
-                        bootHandler(newPath, eachCb);
+                        bootHandler(newPath);
                     } else if(file === "mixins") {
-                        mixinsHandler(newPath, eachCb);
+                        return mixinsHandler(newPath, eachCb);
                     }
 
                     return eachCb();
@@ -131,14 +124,28 @@ function generateBootOptions(app, finalCb) {
         });
     }
 
-    function bootHandler(bootPath, finalCb) {
+    function bootHandler(bootPath) {
         loopbackBootOptions.bootDirs.push(bootPath);
-        return finalCb();
     }
 
     function mixinsHandler(bootPath, finalCb) {
-        loopbackBootOptions.mixinSources.push(bootPath);
-        return finalCb();
+        return fs.readdir(bootPath, function (err, files) {
+            if (err) return finalCb(err);
+            return async.eachSeries(files, function (file, eachCb) {
+                var newPath = path.join(bootPath, file);
+                return fs.stat(newPath, function (err, stats) {
+                    if (err) return eachCb(err);
+
+                    if (!stats.isDirectory()) {
+                        return eachCb();
+                    }
+
+                    loopbackBootOptions.mixinSources.push(newPath);
+
+                    return eachCb();
+                });
+            }, finalCb);
+        });
     }
 
 
