@@ -3799,6 +3799,8 @@ angular.module('app.services', [])
             activeDeck: null,
             activeAuthor: null,
             currentChartTier: 1,
+            currentChartDeck: null,
+            currentMatchupDeck: [],
             chartTierRanges: []
         };
         var defaultAuthor = {
@@ -3884,6 +3886,10 @@ angular.module('app.services', [])
                 sb.title = data.title;
                 sb.deckTiers = data.deckTiers;
                 sb.tiers = sb.generateTiers(data.deckTiers);
+                
+                // comments for frontend
+                sb.comments = data.comments || [];
+                sb.votes = data.votes || [];
                 
                 // set slug
                 if (sb.slug.linked) {
@@ -4087,6 +4093,78 @@ angular.module('app.services', [])
                 return sb.chartTierRanges[tierNum];
             };
             
+            // get current chart tier
+            sb.getCurrentChartTier = function () {
+                return sb.currentChartTier;
+            };
+            
+            // set current chart tier
+            sb.setCurrentChartTier = function (tierNum) {
+                // don't update if the current tier is already tierNum
+                if (sb.getCurrentChartTier() === tierNum) { return false; }
+                
+                // set tier
+                sb.currentChartTier = tierNum;
+                
+                // unset current chart deck
+                sb.currentChartDeck = null;
+            };
+            
+            // get chart position x
+            sb.getChartPositionX = function (index, padding) {
+                return Math.round(100 - padding - ((100 - padding)/12*index) + (padding / 2), 2);
+            };
+            
+            // get chart position y
+            sb.getChartPositionY = function (tierNum, deckIndex, height, padding) {
+                var size = sb.getChartTierRange(tierNum).length;
+                return Math.round(((height - padding)/size*deckIndex) + padding, 2);
+            };
+            
+            // get chart rank index
+            sb.getChartRankIndex = function (tierNum, rank) {
+                var range = sb.getChartTierRange(tierNum);
+                return range.indexOf(rank);
+            };
+
+            // get chart next rank
+            sb.getChartNextRank = function (deck, index) {
+                return deck.ranks[index + 1];
+            };
+
+            // check if chart has next rank
+            sb.hasChartNextRank = function (deck, index) {
+                return (deck.ranks[index + 1]);
+            };
+            
+            // get timeline for chart
+            sb.getChartTimeline = function () {
+                var out = [];
+                for (var i = sb.snapNum; i > sb.snapNum - 13; i--) {
+                    out.push(i);
+                }
+                return out;
+            };
+            
+            // check if has current chart deck
+            sb.hasCurrentChartDeck = function () {
+                return (!!sb.getCurrentChartDeck());
+            };
+            
+            // return current chart deck
+            sb.getCurrentChartDeck = function () {
+                return sb.currentChartDeck;
+            };
+            
+            // toggle current chart deck
+            sb.toggleCurrentChartDeck = function (deck) {
+                if (sb.hasCurrentChartDeck() && sb.getCurrentChartDeck() === deck) {
+                    sb.currentChartDeck = null;
+                } else {
+                    sb.currentChartDeck = deck;
+                }
+            };
+            
             // get snapshot types
             sb.getSnapshotTypes = function () {
                 return snapshotTypes;
@@ -4216,6 +4294,17 @@ angular.module('app.services', [])
                 return (index !== -1);
             };
             
+            // get tier
+            sb.getTier = function (tierNum) {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    if (sb.tiers[i].tier === tierNum) {
+                        return sb.tiers[i];
+                    }
+                }
+                     
+                return false;
+            };
+            
             // add tier
             sb.tierAdd = function () {
                 var newTier = angular.copy(defaultTier);
@@ -4233,6 +4322,7 @@ angular.module('app.services', [])
                 }
             };
 
+            // update all tier nums
             sb.tierUpdateNumbers = function () {
                 var tierNum = 1;
                 var oldTier;
@@ -4636,6 +4726,31 @@ angular.module('app.services', [])
             // get the opposing deck for a deck in a matchup
             sb.getMatchupOpposingDeck = function (deck, matchup) {
                 return (deck.deck.id === matchup.forDeck.id) ? sb.getTierDeckByDeckId(matchup.againstDeck.id) : sb.getTierDeckByDeckId(matchup.forDeck.id);
+            };
+            
+            // get the opposing chance for a deck in a matchup
+            sb.getMatchupOpposingChance = function (deck, matchup) {
+                return (deck.deck.id === matchup.forDeck.id) ? matchup.againstChance : matchup.forChance;
+            };
+            
+            // get current matchup deck
+            sb.getCurrentMatchupDeck = function (deck) {
+                return sb.currentMatchupDeck[deck.id];
+            };
+            
+            // set current matchup deck
+            sb.setCurrentMatchupDeck = function (deck, matchup) {
+                sb.currentMatchupDeck[deck.id] = sb.getMatchupOpposingDeck(deck, matchup);
+            };
+            
+            // unset current matchup deck
+            sb.unsetCurrentMatchupDeck = function (deck) {
+                sb.currentMatchupDeck[deck.id] = null;
+            };
+            
+            // check if current matchup deck exists
+            sb.hasCurrentMatchupDeck = function (deck) {
+                return (!!sb.currentMatchupDeck[deck.id]);
             };
             
             // photo upload

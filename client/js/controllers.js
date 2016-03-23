@@ -8682,44 +8682,26 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HearthstoneSnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'LoginModalService', 'User', 'LoopBackAuth', 'HearthstoneSnapshotBuilder', 'snapshot',
-        function ($scope, $state, $rootScope, $compile, $window, LoginModalService, User, LoopBackAuth, HearthstoneSnapshotBuilder, snapshot) {
+    .controller('HearthstoneSnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'LoginModalService', 'User', 'LoopBackAuth', 'HearthstoneSnapshotBuilder', 'Snapshot', 'snapshot',
+        function ($scope, $state, $rootScope, $compile, $window, LoginModalService, User, LoopBackAuth, HearthstoneSnapshotBuilder, Snapshot, snapshot) {
 
             // load snapshot
             $scope.snapshot = HearthstoneSnapshotBuilder.new(snapshot);
             
-//            $scope.SnapshotService = Snapshot;
+            $scope.SnapshotService = Snapshot;
             $scope.votableSnapshot = {
-                snapshot: $scope.snapshot
+                votable: snapshot
             };
 
             $scope.show = [];
-            $scope.matchupName = [];
             $scope.voted = false;
 
-            var mouseOver = [],
-                viewHeight = 0,
-                box = undefined;
+            var viewHeight = 0;
 
-            $scope.getMouseOver = function (deckID) {
-                return mouseOver[deckID] || false;
-            }
-
-            $scope.setMouseOver = function (deckID, isOver, deckName) {
-                mouseOver[deckID] = isOver;
-                $scope.matchupName[deckID] = deckName || false;
-            }
-            
             // meta service
             $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
             var ogImg = ($scope.snapshot.photoNames.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photoNames.square;
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
-
-/*
-            for (var i = 0; i < $scope.deckTiers.length; i++) {
-                $scope.show[i+1] = false;
-            }
-*/
 
             $scope.setView = function (height) {
                 viewHeight = height*350;
@@ -8728,90 +8710,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getView = function () {
                 return viewHeight;
             }
-
-            // trends
-            $scope.currentTier = 1;
-            $scope.currentDeck = false;
-            $scope.tierRange = [];
-
-            $scope.snapshotTimeline = function () {
-                var out = [];
-                for (var i = $scope.snapshot.snapNum; i > $scope.snapshot.snapNum - 13; i--) {
-                    out.push(i);
-                }
-                return out;
-            }
-
-            function getTierRange (tierNum) {
-                var tier = $scope.getTier(tierNum),
-                    out = [],
-                    highestRank = 0,
-                    lowestRank = 0;
-
-                // find highest and lowest in tier
-                for (var i = 0; i < tier.decks.length; i++) {
-                    var history = tier.decks[i].ranks;
-                    for (var j = 0; j < history.length; j++) {
-                        if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
-                        if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
-                    }
-                }
-
-                // generate range
-                for (var i = lowestRank; i <= highestRank; i++) {
-                    out.push(i);
-                }
-
-                return out;
-            };
-
-            // init tier ranges
-/*
-            for (var i = 0; i < $scope.deckTiers.length; i++) {
-                var tierNum = $scope.deckTiers[i].tier;
-                $scope.tierRange[tierNum] = getTierRange(tierNum);
-            }
-*/
-
-            $scope.toggleCurrentDeck = function (deckNum) {
-                $scope.currentDeck = ($scope.currentDeck == deckNum) ? false : deckNum;
-            };
-
-            $scope.hasDeckSelected = function () {
-                return $scope.currentDeck;
-            };
-
-            $scope.setCurrentTier = function (tierNum) {
-                $scope.currentTier = tierNum;
-                $scope.toggleCurrentDeck(false);
-            };
-
-            $scope.getPositionY = function (tierNum, deckIndex, height, padding) {
-                var size = $scope.tierRange[tierNum].length;
-                return Math.round(((height - padding)/size*deckIndex) + padding, 2);
-            }
-
-            $scope.getPositionX = function (index, padding) {
-                return Math.round(100 - padding - ((100 - padding)/12*index) + (padding / 2), 2);
-            }
-
-            $scope.getRanks = function (deck) {
-                var ranks = deck.ranks;
-                return ranks;
-            };
-
-            $scope.getRankIndex = function (tierNum, rank) {
-                var range = $scope.tierRange[tierNum];
-                return range.indexOf(rank);
-            };
-
-            $scope.getNextRank = function (deck, index) {
-                return deck.ranks[index + 1];
-            };
-
-            $scope.hasNextRank = function (deck, index) {
-                return (deck.ranks[index + 1]);
-            };
 
             $scope.scrollToDeck = function (deck) {
                 $('html, body').animate({
