@@ -6087,6 +6087,9 @@ var app = angular.module('app', [
                                                 scope: {
                                                     include: ['user']
                                                 }
+                                            },
+                                            {
+                                                relation: 'slugs'
                                             }
                                         ]
                                     }

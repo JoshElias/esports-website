@@ -21,7 +21,7 @@ function handleSlug(ctx, finalCb) {
 
 function primitiveHandler(state, finalCb) {
 
-    var model = state.ctx.model;
+    var model = state.model;
     var slugOptions = {};
 
     // Get options from modelConfig
@@ -46,12 +46,10 @@ function primitiveHandler(state, finalCb) {
 
     // Query all the relevant models
     var where = {};
-    if(state.ctx.where && typeof state.ctx.where.id === "string") {
-        where.id = state.ctx.where.id;
-    }
-
-    for(var key in state.ctx.data) {
-        where[key] = state.ctx.data[key];
+    if(state.ctx.where && typeof state.ctx.where === "object") {
+        where = state.ctx.where;
+    } else if(typeof state.requestData === "object") {
+        where = state.requestData;
     }
 
     var fields = { id: true };

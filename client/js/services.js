@@ -459,26 +459,29 @@ var loggedIn = false,
             }
         }
     }])
-    .service('HOTSSnapshot', ['HotsSnapshot', 'HotsSnapshotAuthor', 'HeroTier', 'GuideTier',
-        function (HotsSnapshot, HotsSnapshotAuthor, HeroTier, GuideTier) {
+    .service('HOTSSnapshot', ['HotsSnapshot', 'SnapshotAuthor', 'HeroTier', 'GuideTier',
+        function (HotsSnapshot, SnapshotAuthor, HeroTier, GuideTier) {
 
             var defaultSnapshot = {
                 snapNum: 0,
                 title: "default title",
                 intro: "default intro",
                 thoughts: "default thoughts",
-                slug: {
-                    linked: true,
-                    url: "default slug"
-                },
+                slugs: [
+                    {
+                        linked: true,
+                        slug: "default slug"
+                    }
+                ],
                 authors: [],
                 heroTiers: [],
-                isActive: false
+                isActive: false,
+                createdDate: new Date().toISOString()
             };
             var defaultAuthor = {
                 description: "",
                 expertClasses: [],
-                snapshotId: "",
+                hotsSnapshotId: "",
                 authorId: ""
             };
             var defaultGuideTier = {
@@ -502,15 +505,16 @@ var loggedIn = false,
                 exists['heroTiers'] = angular.copy(defaultCrud);
                 exists['guideTiers'] = angular.copy(defaultCrud);
 
-                this.snapNum   = snapshot.snapNum;
-                this.title     = snapshot.title;
-                this.intro     = snapshot.intro;
-                this.thoughts  = snapshot.thoughts;
-                this.slug      = snapshot.slug;
-                this.authors   = snapshot.authors;
-                this.heroTiers = snapshot.heroTiers;
-                this.isActive  = snapshot.isActive;
-                this.tiers     = new Array();
+                this.snapNum     = snapshot.snapNum;
+                this.title       = snapshot.title;
+                this.intro       = snapshot.intro;
+                this.thoughts    = snapshot.thoughts;
+                this.slugs       = snapshot.slugs;
+                this.authors     = snapshot.authors;
+                this.heroTiers   = snapshot.heroTiers;
+                this.isActive    = snapshot.isActive;
+                this.createdDate = snapshot.createdDate;
+                this.tiers       = new Array();
 
                 if(!!snapshot.id) {
                     this.id = snapshot.id;
@@ -591,7 +595,7 @@ var loggedIn = false,
                 var author = {
                     description: obj.description,
                     expertClasses: obj.expertClasses,
-                    snapshotId: obj.snapshotId,
+                    hotsSnapshotId: obj.hotsSnapshotId,
                     authorId: obj.authorId,
                     user: obj.user
                 };
@@ -680,9 +684,10 @@ var loggedIn = false,
             HOTSSnapshot.prototype.removeAuthor = function (obj) {
                 var authors = this.authors;
 
-                exists.authors.toDelete.push(obj);
-
                 this.authors = _.difference(authors, [obj]);
+
+                if(!!obj.id)
+                    exists.authors.toDelete.push(obj);
             };
 
             HOTSSnapshot.prototype.newTier = function () {
@@ -693,6 +698,11 @@ var loggedIn = false,
             HOTSSnapshot.prototype.submit = function (cb) {
                 var arrs = exists;
                 var snapshot = angular.copy(this);
+
+                snapshot.slugOptions = {
+                    slug: snapshot.slugs[0].slug,
+                    linked: snapshot.slugs[0].linked
+                }
 
                 //build our crudman toWrite arrays
                 _.each(arrs, function (arr, key) {
@@ -719,19 +729,25 @@ var loggedIn = false,
                         .$promise
                         .then(function (data) {
                             return seriesCb(undefined, data);
-                        });
+                        })
+                        .catch(seriesCb);
                     }, function (newSnapshot, seriesCb) {
                         var authors = arrs.authors;
-                        var snapshotId = newSnapshot.id;
+                        var hotsSnapshotId = newSnapshot.id;
 
                         async.forEach(authors.toWrite, function (author, eachCb) {
-                            author.snapshotId = snapshotId;
+                            author.hotsSnapshotId = hotsSnapshotId;
 
-                            HotsSnapshotAuthor.upsert(author)
+                            SnapshotAuthor.upsert(author)
                             .$promise
                             .then(function (data) {
                                 console.log('successfully submitted author:', data);
                                 return eachCb(undefined);
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+
+                                return eachCb(err);
                             })
                         }, function () {
                             //if (err)
@@ -780,7 +796,7 @@ var loggedIn = false,
                         var objs = {
                             guideTiers: GuideTier,
                             heroTiers: HeroTier,
-                            authors: HotsSnapshotAuthor
+                            authors: SnapshotAuthor
                         };
 
                         async.forEachOf(objs, function (obj, key, forEachCb) {
@@ -792,6 +808,17 @@ var loggedIn = false,
                                 .then(function () {
                                     console.log('delete ' + key);
                                     return eachCb();
+                                })
+                                .catch(function (e) {
+                                    if(e.status == 404) {
+                                        console.error("An error occured:");
+                                        console.error(e);
+                                        console.error("Continuing...");
+
+                                        return eachCb();
+                                    }
+
+                                    return eachCb(e);
                                 });
                             }, forEachCb);
                         }, seriesCb);

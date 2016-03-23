@@ -5933,7 +5933,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.submit = function () {
             return $scope.snapshot.submit(function (err) {
                 if (err) {
-                    //TODO HANDLE ERRORS
+                    console.log("Err", err);
+
+                    AlertService.setError({
+                        show: true,
+                        msg: 'Error: '
+                    });
+                    return;
                 }
 
                 AlertService.setSuccess({

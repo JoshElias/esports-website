@@ -88,13 +88,13 @@
                             >
                                 <div class="tier-hero-heading clearfix" ng-click="triggerAnimation(hero)" role="button" data-toggle="collapse" ng-href="#collapseHero-{{hero.id}}" aria-expanded="false" aria-controls="collapseHero-{{hero.id}}">
                                     <h4>{{hero.hero.name}}</h4>
-                                    <div class="filter filter-role {{hero.hero.role.toLowerCase()}}" ></div>
-                                    <div class="filter filter-universe filter-universe-{{hero.hero.universe.toLowerCase()}} active" ></div>
                                     <a ui-sref="app.hots.guides.guide({ slug: hero.guides[0].guide.slugs[0].slug })"
                                        target="_blank"
                                        class="hero-button hidden-xs"
                                        ng-if="hero.guides.length > 0"
                                     >VIEW GUIDE</a>
+                                    <div class="filter filter-role {{hero.hero.role.toLowerCase()}}" ></div>
+                                    <div class="filter filter-universe filter-universe-{{hero.hero.universe.toLowerCase()}} active" ></div>
                                 </div>
                                 <div class="tier-hero-body collapse" id="collapseHero-{{hero.id}}">
                                     <div class="">
@@ -132,7 +132,7 @@
                                                          rounded="false"
                                                          clockwise="true"
                                                          responsive="true"
-                                                         duration="2500"
+                                                         duration="1500"
                                                          animation="easeInOutQuart"
                                                          class="round-progress-bar">
                                                     </div><h3 class="value-centered">{{hero.burstScore}}</h3>
@@ -154,7 +154,7 @@
                                                          rounded="false"
                                                          clockwise="true"
                                                          responsive="true"
-                                                         duration="2500"
+                                                         duration="1500"
                                                          animation="easeInOutQuart"
                                                          class="round-progress-bar">
                                                     </div><h3 class="value-centered">{{hero.pushScore}}</h3>
@@ -176,7 +176,7 @@
                                                          rounded="false"
                                                          clockwise="true"
                                                          responsive="true"
-                                                         duration="2500"
+                                                         duration="1500"
                                                          animation="easeInOutQuart"
                                                          class="round-progress-bar">
                                                     </div><h3 class="value-centered">{{hero.surviveScore}}</h3>
@@ -198,7 +198,7 @@
                                                          rounded="false"
                                                          clockwise="true"
                                                          responsive="true"
-                                                         duration="2500"
+                                                         duration="1500"
                                                          animation="easeInOutQuart"
                                                          class="round-progress-bar">
                                                     </div><h3 class="value-centered">{{hero.scaleScore}}</h3>
@@ -220,7 +220,7 @@
                                                          rounded="false"
                                                          clockwise="true"
                                                          responsive="true"
-                                                         duration="2500"
+                                                         duration="1500"
                                                          animation="easeInOutQuart"
                                                          class="round-progress-bar">
                                                     </div><h3 class="value-centered">{{hero.utilityScore}}</h3>

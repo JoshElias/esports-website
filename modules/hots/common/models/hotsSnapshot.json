@@ -4,14 +4,16 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$slug": true
   },
   "properties": {
     "snapNum": {
       "type": "number"
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "$slug": true
     },
     "intro": {
         "type": "string"
@@ -21,6 +23,9 @@
     },
     "isActive": {
         "type": "boolean"
+    },
+    "createdDate": {
+        "type": "date"
     }
   },
   "validations": [],

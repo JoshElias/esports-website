@@ -183,6 +183,7 @@ function validateSlug(state, uniqueCb) {
         where: state.requestData,
         fields: {
             id: true,
+            slug: true,
             parentModelName: true
         }
     }, function (err, slugs) {
@@ -191,7 +192,7 @@ function validateSlug(state, uniqueCb) {
         return async.each(slugs, function(slug, slugCb) {
             state.model.find({
                 where: {
-                    slug: state.data,
+                    slug: slug.slug,
                     parentModelName: slug.parentModelName
                 },
                 fields: { id: true },

@@ -141,8 +141,6 @@ angular.module('hotsSnapshot', [])
                 }],
                 redirect: ['$q', '$state', 'data', function ($q, $state, data) {
                     var slug = data[0].slugs[0].slug;
-                    console.log(data);
-
 
                     $state.go('app.hots.snapshots.snapshot', { slug: slug });
                     return $q.reject();

@@ -1,10 +1,10 @@
 var async = require("async");
 var util = require("util");
 var loopback = require("loopback");
-var app = require("../../../../server/server");
 
 
 function crawl(ctx, options, finalCb) {
+    var app = require("../../../../server/server");
 
     // Get the model properties
     var modelName = (ctx.Model) ? ctx.Model.definition.name : ctx.methodString.split(".")[0];

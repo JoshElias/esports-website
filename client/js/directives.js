@@ -2156,8 +2156,26 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'E',
         templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
-        controller: ['$scope', function ($scope) {
+        controller: ['$scope', 'Util', function ($scope, Util) {
             $scope.snapshot = $scope.$parent.snapshot;
+            var sl = $scope.snapshot.slugs[0];
+
+            $scope.toggleLinked = function () {
+                sl.linked = !sl.linked;
+
+                return $scope.slugifyUrl($scope.snapshot.title);
+            }
+
+            $scope.slugifyUrl = function (str) {
+                if (!sl.linked)
+                    return;
+
+                sl.slug = slugify(str);
+            }
+
+            function slugify (str) {
+                return Util.slugify(str);
+            }
         }]
     }
 })
@@ -2171,7 +2189,7 @@ angular.module('app.directives', ['ui.load'])
             var defaultAuthor = {
                 description: "",
                 expertClasses: [],
-                snapshotId: "",
+                hotsSnapshotId: "",
                 authorId: ""
             }
 
