@@ -63,6 +63,11 @@
       "type": "hasMany",
       "model": "overwatchAbility",
       "foreignKey": "heroId"
+    },
+    "heroTier": {
+        "type": "hasMany",
+        "model": "overwatchSnapshotHeroTiers",
+        "foreignKey": "overwatchHeroId"
     }
   },
   "acls": [
