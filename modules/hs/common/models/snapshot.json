@@ -144,6 +144,7 @@
     "DestroyOnDelete": true,
     "Slug": true,
     "Scope": true,
+    "Authored": true,
     "Filter": {
       "acceptedRoles": ["$admin"],
       "predicate": "inactive",

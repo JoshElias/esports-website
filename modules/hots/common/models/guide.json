@@ -80,15 +80,9 @@
       "type": [
         "string"
       ]
-    },
-    "authorId": {}
+    }
   },
   "relations": {
-    "author": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "authorId"
-    },
     "comments": {
       "type": "hasMany",
       "model": "comment",
@@ -190,6 +184,7 @@
     "DestroyOnDelete": true,
     "Slug": true,
     "Scope": true,
+    "Authored": true,
     "Filter": {
       "fieldFilters": true,
       "acceptedRoles": ["$admin", "$owner"],

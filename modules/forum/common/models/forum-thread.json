@@ -66,6 +66,7 @@
     "Validate": true,
     "DestroyOnDelete": true,
     "Scope": true,
+    "Authored": true,
     "Filter": {
       "acceptedRoles": ["$admin"],
       "predicate": "inactive",

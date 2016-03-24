@@ -103,15 +103,9 @@
     },
     "dust": {
       "type": "number"
-    },
-    "authorId": {}
+    }
   },
   "relations": {
-    "author": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "authorId"
-    },
     "cards": {
       "type": "hasMany",
       "model": "deckCard",
@@ -256,6 +250,7 @@
     "DestroyOnDelete": true,
     "Slug": true,
     "Scope": true,
+    "Authored": true,
     "Filter": {
       "fieldFilters": true,
       "acceptedRoles": ["$admin", "$owner"],

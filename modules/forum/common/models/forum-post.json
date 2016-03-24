@@ -31,15 +31,9 @@
     "votes": {
       "type": "object"
     },
-    "forumThreadId": {},
-    "authorId": {}
+    "forumThreadId": {}
   },
   "relations": {
-    "author": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "authorId"
-    },
     "forumThread": {
       "type": "belongsTo",
       "model": "forumThread",
@@ -95,6 +89,7 @@
     "Validate": true,
     "DestroyOnDelete": true,
     "Scope": true,
+    "Authored": true,
     "Filter": {
       "acceptedRoles": ["$admin"],
       "predicate": "inactive",
