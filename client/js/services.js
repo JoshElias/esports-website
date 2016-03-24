@@ -3931,7 +3931,7 @@ angular.module('app.services', [])
                         },
                         continue: {
                             label: 'Continue',
-                            className: 'btn-primary pull-right',
+                            className: 'btn-danger pull-right',
                             callback: function () {
                                 sb.loadPrevious();
                             }

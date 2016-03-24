@@ -48,6 +48,7 @@
             <!-- general section -->
             <div ng-show="page === 'general'" class="col-sm-12">
                 
+                <!-- start title -->
                 <div class="form-group snap-title-group">
                     <label for="title" class="control-label pull-left">Title</label>
                     <div class="wrapper-none">
@@ -56,10 +57,10 @@
                                ng-model="snapshot.title"
                                ng-keyup="snapshot.setSlug()" required>
                     </div>
-                </div>
+                </div><!-- end title -->
                 
                 <!--URL starts -->
-                <div class="form-group ">
+                <div class="form-group">
                     <label for="slug" class="control-label pull-left">URL</label>
                     <div class="wrapper-none">
                         <div class="input-group pull-left">
@@ -77,42 +78,74 @@
                                    ng-readonly="snapshot.slug.linked" required>
                         </div>
                     </div>
-                </div>
+                </div><!-- end form-group -->
                 
-                <!-- snapshot type starts -->
-                <div class="form-group snap-title-group">
-                    <label for="snapshotType" class="control-label pull-left">Type</label>
+                <!-- start intro -->
+                <div class="form-group snap-intro-group">
+                    <label for="title" class="control-label pull-left">Intro</label>
                     <div class="wrapper-none">
-                        <select id="snapshotType" name="snapshotType" 
-                                class="form-control wide-input" 
-                                ng-options="type.value as type.key for type in snapshot.getSnapshotTypes()" 
-                                ng-model="snapshot.snapshotType"></select>
+                        <textarea id="intro" name="intro" 
+                                  class="form-control wide-input" 
+                                  ng-model="snapshot.intro"
+                                  rows="4" required>
+                        </textarea>
                     </div>
-                </div>
+                </div><!-- end intro -->
                 
                 <!-- image starts -->
                 <div class="form-group">
                     <label for="snapshotPhoto" class="control-label">Snapshot Image</label>
                     <div class="">
-                        <input type="hidden" id="snapshotPhotoSquare" name="snapshotPhotoSquare" value="" ng-model="snapshot.photoNames.square">
-                        <input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photoNames.small">
-                        <input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photoNames.medium">
-                        <input type="hidden" id="snapshotPhotoLarge" name="snapshotPhotoLarge" value="" ng-model="snapshot.photoNames.large">
+                        
+                        <input type="hidden" id="snapshotPhotoSquare" 
+                               name="snapshotPhotoSquare" value="" 
+                               ng-model="snapshot.photoNames.square">
+                        
+                        <input type="hidden" id="snapshotPhotoSmall" 
+                               name="snapshotPhotoSmall" value="" 
+                               ng-model="snapshot.photoNames.small">
+                        
+                        <input type="hidden" id="snapshotPhotoMedium" 
+                               name="snapshotPhotoMedium" value="" 
+                               ng-model="snapshot.photoNames.medium">
+                        
+                        <input type="hidden" id="snapshotPhotoLarge" 
+                               name="snapshotPhotoLarge" value=""
+                               ng-model="snapshot.photoNames.large">
+                        
                         <div class="photo-input">
                             <div class="upload-thumbnail upload-thumbnail-article">
-                                <div class="upload-drop" ng-show="snapshot.photoNames.large === ''" ng-file-drop="snapshot.photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                                <img ng-src="{{snapshot.getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
-                            </div>
+                                
+                                <div class="upload-drop" 
+                                     ng-show="snapshot.photoNames.large === ''" 
+                                     ng-file-drop="snapshot.photoUpload($files)" 
+                                     ng-file-drag-over-class="active">
+                                    Drop image here
+                                </div>
+                                
+                                <img ng-src="{{snapshot.getImage()}}" alt="" 
+                                     ng-show="snapshot.photoNames.large !== ''">
+                                
+                            </div><!-- end upload-thumbnail -->
+                            
                             <div class="btn-toolbar">
-                                <button class="btn btn-change" ng-file-select="snapshot.photoUpload($files)" onclick="this.value=null" accept="image/*">
+                                <button class="btn btn-change" 
+                                        ng-file-select="snapshot.photoUpload($files)" 
+                                        onclick="this.value=null" accept="image/*">
                                     <span ng-show="snapshot.photoNames.large === ''">Select image</span>
                                     <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
                                 </button>
-                                <a href="#" class="btn btn-danger pull-right" ng-click="snapshot.removeImage()" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
-                            </div>
-                        </div>
+                                <a href="#" class="btn btn-danger pull-right"
+                                   ng-click="snapshot.removeImage()" 
+                                   ng-show="snapshot.photoNames.large !== ''">
+                                    Remove image
+                                </a>
+                            </div><!-- end btn-toolbar -->
+                            
+                        </div><!-- end photo-input -->
                     </div>
-                </div>
+                </div><!-- end form-group -->
+                
                 <!-- Is active starts -->
                 <div class="form-group m-b-lg">
                     <button class="btn btn-default control-btn"
@@ -129,8 +162,8 @@
                     </button>
                 </div>
                 
-            </div>
-            <!-- / general nav -->
+            </div><!-- end general-page -->
+            
             <!-- authors nav -->
             <div ng-show="page === 'authors'" class="author-section">
                 <div class="form-group">
