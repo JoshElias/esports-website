@@ -13,6 +13,9 @@
     "title": {
       "type": "string"
     },
+    "snapshotType": {
+      "type": "string"
+    },
     "slug": {
       "url": {
         "type": "string",

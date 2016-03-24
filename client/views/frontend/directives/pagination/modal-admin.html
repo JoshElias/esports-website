@@ -1,0 +1,9 @@
+<div class="page-flipper page-flipper-top clearfix" ng-if="pagination.totalPages() > 1">
+  <div>
+    <span class="btn-group">
+      <button class="btn btn-sm btn-pagination-nav" ng-disabled="pagination.getPage() == 1" ng-click="pagination.setPage(pagination.getPage() - 1)" disabled="disabled"><div class="inner">previous</div></button>
+      <button class="btn btn-sm btn-pagination" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}"><div class="inner">{{i}}</div></button>
+      <button class="btn btn-sm btn-pagination-nav" ng-disabled="pagination.getPage() + 1 > pagination.totalPages() || pagination.getTotal() == 0" ng-click="pagination.setPage(pagination.getPage() + 1)" disabled="disabled"><div class="inner">next</div></button>  
+    </span>
+  </div>
+</div>
