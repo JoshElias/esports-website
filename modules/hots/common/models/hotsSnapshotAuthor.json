@@ -1,5 +1,5 @@
 {
-  "name": "snapshotAuthor",
+  "name": "hotsSnapshotAuthor",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -15,9 +15,14 @@
         "string"
       ]
     },
-    "snapshotId": {},
-    "authorId": {}
+    "snapshotId": {
+      "type": {}
+    },
+    "authorId": {
+      "type": {}
+    }
   },
+  "validations": [],
   "relations": {
     "user": {
       "type": "belongsTo",
@@ -26,7 +31,7 @@
     },
     "snapshot": {
       "type": "belongsTo",
-      "model": "snapshot",
+      "model": "hotsSnapshot",
       "foreignKey": "snapshotId"
     }
   },
@@ -55,7 +60,5 @@
       "permission": "ALLOW"
     }
   ],
-  "mixins": {
-    "Scope": true
-  }
+  "methods": {}
 }

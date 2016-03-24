@@ -72,6 +72,11 @@
       "type": "hasMany",
       "model": "ability",
       "foreignKey": "heroId"
+    },
+    "heroTier": {
+      "type": "hasMany",
+      "model": "heroTier",
+      "foreignKey": "heroId"
     }
   },
   "acls": [

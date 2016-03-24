@@ -106,7 +106,8 @@
     $smallOffsetInc: 47;
 
 
-    .hero-filters li button {
+    .hero-filters li button,
+    .hots-styles .hots-guide-styles-new .guide-hero-image {
 
         &.#{$hero} { 
 
@@ -1662,7 +1663,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(kharazim, -25, -54, -60, 50);
 @include hots-snapshot-hero(leoric, -25, -54, -60, 50);
 @include hots-snapshot-hero(lili, -35, -40, -40, 100);
-//@include hots-snapshot-hero(li-ming, -80, -23, -40, 50);
+@include hots-snapshot-hero(li-ming, -80, -23, -40, 50);
 @include hots-snapshot-hero(morales, -25, -54, -60, 50);
 @include hots-snapshot-hero(malfurion, -25, -80, -60, 50);
 @include hots-snapshot-hero(muradin,  -25, -55, -60, 68);
@@ -1685,7 +1686,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(tyrande, -25, -89, -60, 35);
 @include hots-snapshot-hero(uther, -25, -48, -70, 61);
 @include hots-snapshot-hero(valla, -25, -22, -70, 96);
-//@include hots-snapshot-hero(xul, -25, -22, -70, 96);
+@include hots-snapshot-hero(xul, -25, -22, -70, 96);
 @include hots-snapshot-hero(zagara, -25, -22, -70, 96);
 @include hots-snapshot-hero(zeratul, -25, -5, -70, 96);
 @include hots-snapshot-hero(lunara, -25, -5, -70, 96);

@@ -124,11 +124,24 @@ $bright-red: #d62a28;
 $bright-orange: #fba31b;
 
 //*************************************
-// 12... Modal colors
+// 12... New ts admin colors
 //*************************************
 
-$light-font: rgba(179, 179, 177, 1); //#B3B3B1
+//$light-font: rgba(179, 179, 177, 1); //#B3B3B1
+
+$light-font: rgba(170, 170, 170, 1.0); //#aaaaaa
 $dark-font: rgba(91, 91, 91, 1); //#5b5b5b
 $gradient-grey: rgba(19,19,19, 1);
 $btn-green: rgba(52,180,74,1); //#34b44a
 $btn-red: rgba(239,67,35,1);//#ef4323
+
+$admin-gold: #febe10;
+$admin-blue: #2e4362;
+$black-50: rgba(0,0,0,.5);//#
+$black-20: rgba(0,0,0,.2);//#
+$white-15: rgba(255,255,255,.15);
+$white-02: rgba(255,255,255,.02);
+$white-04: rgba(255,255,255,.04);
+$white-08: rgba(255,255,255,.08);
+$white-50: rgba(255,255,255,.5);
+$white-80: rgba(255,255,255,.80);

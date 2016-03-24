@@ -2,6 +2,10 @@ var async = require("async");
 var utils = require("../../../../modules/xloop").utils;
 
 module.exports = function(server) {
+    if(server.models.length < 1) {
+        return;
+    }
+
     var RedbullDraftSettings = server.models.redbullDraftSettings;
     var RedbullExpansion = server.models.redbullExpansion;
     var RedbullRarityChance = server.models.redbullRarityChance;

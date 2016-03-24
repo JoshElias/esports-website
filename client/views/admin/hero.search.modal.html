@@ -7,14 +7,14 @@
     <div class="text-center big-spin" ng-if="loading">
         <i class="fa fa-refresh fa-spin fa-5x"></i>
     </div>
-    <ul class="list-group m-b-none" ng-if="!loading && authors.length">
-        <li class="clearfix" ng-class="{ active: authorExistsById(author.id) }" ng-repeat="author in authors">
+    <ul class="list-group m-b-none" ng-if="!loading && heroes.length">
+        <li class="clearfix" ng-class="{ active: heroExistsById(hero.id) }" ng-repeat="hero in heroes">
             <div class="pull-right">
-                <button type="button" class="btn btn-success" ng-click="authorAdd(author)" ng-if="!authorExistsById(author.id)">Add</button>
-                <button type="button" class="btn btn-danger" ng-click="authorDeleteById(author.id)" ng-if="authorExistsById(author.id)">Remove</button>
+                <button type="button" class="btn btn-success" ng-click="heroAdd(hero)" ng-if="!heroExistsById(hero.id)">Add</button>
+                <button type="button" class="btn btn-danger" ng-click="heroDeleteById(hero.id)" ng-if="heroExistsById(hero.id)">Remove</button>
             </div>
             <div class="authour pull-left">
-                {{author.username}}
+                {{hero.name}}
             </div>
         </li>
     </ul>

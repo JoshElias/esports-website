@@ -268,11 +268,23 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
+    "hotsSnapshot": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "heroTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "hotsSnapshotAuthor": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "guideTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
   "slug": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "sluggable": {
     "dataSource": "mongodb",
     "public": true
   }

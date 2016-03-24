@@ -1,0 +1,65 @@
+<alert-box theme="admin"></alert-box>
+
+<div class="panel panel-default br-none">
+    <form name="form" role="form" class="form-horizontal" novalidate>
+    <div class="panel-heading">
+        Add Heroes of the Storm Snapshot
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label for="vodDate" class="col-sm-2 control-label">Meta Snapshot #</label>
+            <div class="col-sm-10">
+                <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="vodDate" class="col-sm-2 control-label">Subtitle</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" ng-model="snapshot.title">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="vodDate" class="col-sm-2 control-label">Into</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" type="text" ng-model="snapshot.intro"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="vodDate" class="col-sm-2 control-label">Thoughts</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" type="text" ng-model="snapshot.thoughts"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <ul class="tier-list">
+                    <div class="tier-list-head">Tier 1</div>
+                    <li>yes</li>
+                    <li>yes</li>
+                    <li>yes</li>
+                    <li>yes</li>
+                    <li>yes</li>
+                </ul>
+                <ul class="tier-list">
+                    <div class="tier-list-head">Tier 2</div>
+                    <li>yes</li>
+                    <li>yes</li>
+                    <li>yes</li>
+                    <li>yes</li>
+                    <li>yes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="col-sm-10 col-sm-offset-2">
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || !vod.displayDate || fetching" ng-click="saveVod(vod)">
+				<span ng-if="!fetching">Add Snapshot</span>
+				<span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
+			</button>
+        </div>
+    </div>
+    </form>
+    </div>
+</div>

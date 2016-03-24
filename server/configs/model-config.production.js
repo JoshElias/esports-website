@@ -4,7 +4,6 @@ module.exports = {
             "loopback/common/models",
             "loopback/server/models",
             "../../common/models",
-            "./../models"
         ],
         "mixins": [
             "loopback/common/mixins",
@@ -57,16 +56,16 @@ module.exports = {
         }
     },
     "game": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "hsClass": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "team": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "teamMember": {
         "dataSource": "mongodb",
@@ -272,11 +271,23 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
-    "slug": {
+    "hotsSnapshot": {
         "dataSource": "mongodb",
         "public": true
     },
-    "sluggable": {
+    "heroTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "hotsSnapshotAuthor": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "guideTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "slug": {
         "dataSource": "mongodb",
         "public": true
     }

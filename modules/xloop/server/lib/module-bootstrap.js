@@ -21,19 +21,13 @@ function generateBootOptions(app, options, finalCb) {
     loopbackBootOptions.appConfigRootDir = configsPath;
     loopbackBootOptions.modelsRootDir = configsPath;
     loopbackBootOptions.dsRootDir = configsPath;
-    loopbackBootOptions.middleware = require(path.join(appDir, "configs", "middleware"));
+    loopbackBootOptions.middleware = require(path.join(__dirname, "..", "..", "..", "..", "server", "configs", "middleware"));
     loopbackBootOptions.bootDirs.push(path.join(appDir, "boot"));
     loopbackBootOptions.modelSources.push(path.join(appDir, "..", "common", "models"));
 
     // MIXIN PATHS ARE ALL RELATIVE TO tempostorm/server
     loopbackBootOptions.mixinSources.push(path.join("mixins"));
     loopbackBootOptions.mixinSources.push(path.join("..", "common", "mixins"));
-
-    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "filter"));
-    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "relation"));
-    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "scope"));
-    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "slug"));
-    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "validator"));
 
     // Get module dirs
     async.waterfall([

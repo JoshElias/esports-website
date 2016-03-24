@@ -8,6 +8,7 @@ var app = angular.module('app', [
     'angular-iscroll',
     'angularMoment',
     'angularPayments',
+    'angular-svg-round-progress',
     'youtube-embed',
     'dndLists',
     'ngCookies',
@@ -25,7 +26,8 @@ var app = angular.module('app', [
     'app.directives',
     'app.animations',
     'app.redbull',
-    'tsAdSense'
+    'hotsSnapshot',
+    //'tsAdSense'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
@@ -3445,24 +3447,6 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Talent Calculator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
             })
-            .state('app.hots.snapshot', {
-                abstract: 'true',
-                url: '/meta-snapshot',
-                views: {
-                    hots: {
-                        templateUrl: tpl + 'views/frontend/hots.snapshots.html'
-                    }
-                }
-            })
-            .state('app.hots.snapshot.snapshot', {
-                url: '/test',
-                views: {
-                    hotsSnapshots: {
-                        templateUrl: tpl + 'views/frontend/hots.snapshots.snapshot.html',
-//                        controller: 'SnapshotCtrl',
-                    }
-                }
-            })
             .state('app.forum', {
                 abstract: true,
                 url: 'forum',
@@ -6066,6 +6050,124 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
+            .state('app.admin.hots.snapshots', {
+                abstract: true,
+                url: '/snapshots',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/admin/hots.snapshot.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.hots.snapshots.list', {
+                url: '',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/hots.snapshot.list.html',
+                        controller: 'AdminHOTSSnapshotListCtrl',
+                        resolve: {
+                            hotsSnapshots: ['HotsSnapshot', function (HotsSnapshot) {
+                                return HotsSnapshot.find({
+                                    filter: {
+                                        order: "snapNum DESC"
+                                    }
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                    return data;
+                                })
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.snapshot', {
+                abstract: true,
+                url: '/snapshot/:snapshotId',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/hots.snapshot.build.html',
+                        controller: 'AdminHOTSSnapshotBuildCtrl',
+                        resolve: {
+                            //cacheTemplates: ['$templateCache', function ($templateCache) {
+                            //    $templateCache.put(tpl + 'views/admin/hots.snapshot.general.html');
+                            //    $templateCache.put('authors', tpl + 'views/admin/hots.snapshot.authors.html');
+                            //    $templateCache.put(tpl + 'views/admin/hots.snapshot.tierlist.html');
+                            //}],
+                            hotsSnapshot: ['HotsSnapshot', '$stateParams', function (HotsSnapshot, $stateParams) {
+                                var snapshotId = $stateParams.snapshotId;
+                                if (!snapshotId)
+                                    return;
+
+                                return HotsSnapshot.findById({
+                                    id: snapshotId,
+                                    filter: {
+                                        include: [
+                                            {
+                                                relation: 'heroTiers',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'hero'
+                                                        },
+                                                        {
+                                                            relation: 'guides',
+                                                            scope: {
+                                                                include: ['guide']
+                                                            }
+                                                        }
+                                                    ],
+                                                    order: 'orderNum ASC'
+                                                }
+                                            },
+                                            {
+                                                relation: 'authors',
+                                                scope: {
+                                                    include: ['user']
+                                                }
+                                            },
+                                            {
+                                                relation: 'slugs'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    return data;
+                                })
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.snapshot.general', {
+                url: '',
+                views: {
+                    "hots-admin-snapshot": {
+                        template: "<hots-snapshot-general>"
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.snapshot.authors', {
+                url: '',
+                views: {
+                    "hots-admin-snapshot": {
+                        template: "<hots-snapshot-authors>"
+                    }
+                }
+            })
+            .state('app.admin.hots.snapshots.snapshot.tierlist', {
+                url: '',
+                views: {
+                    "hots-admin-snapshot": {
+                        template: "<hots-snapshot-tierlist>"
+                    }
+                }
+            })
             .state('app.admin.forum', {
                 abstract: true,
                 url: '/forum',
@@ -7269,6 +7371,128 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
+            }).state('app.hots.guides.guide_new', {
+                url: '/new/:slug',
+                views: {
+                    guides: {
+                        templateUrl: tpl + 'views/frontend/hots.guides.guide_new.html',
+                        controller: 'HOTSGuideCtrl',
+                        resolve: {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider', '$premium']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                                var slug = $stateParams.slug;
+                                console.log('slug: ', slug);
+                                return Guide.findOne({
+                                    filter: {
+                                        where: {
+                                            slug: slug
+                                        },
+                                        include: [
+                                          {
+                                            relation: 'author'
+                                          },
+                                          {
+                                          relation: 'guideHeroes',
+                                          scope: {
+                                            include: [
+                                              {
+                                                relation: 'talents'
+                                              },
+                                              {
+                                                relation: 'hero',
+                                                scope: {
+                                                  include: [
+                                                    {
+                                                      relation: 'talents',
+                                                      scope: {
+                                                        include: {
+                                                          relation: 'talent',
+                                                          scope: {
+                                                            fields: ['orderNum']
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          relation: 'guideTalents',
+                                          scope: {
+                                            include: ['talent']
+                                          }
+                                        },
+                                        {
+                                          relation: 'maps'
+                                        },
+                                        {
+                                          relation: 'comments',
+                                          scope: {
+                                            include: ['author']
+                                          }
+                                        }
+                                      ]
+                                    }
+                                }).$promise.then(function (data) {
+                                    console.log("tojson", data.toJSON());
+                                    return data;
+                                })
+                                .catch(function (err) {
+                                    console.log('err: ', err);
+                                });
+                            }],
+                            heroes: ['Hero', function(Hero) {
+
+                                return Hero.find({
+                                  filter: {
+                                    fields: {
+                                      oldTalents: false,
+                                      oldAbilities: false
+                                    }
+                                  }
+                                })
+                                .$promise
+
+                            }],
+                            maps: ['Map', function(Map) {
+
+                                return Map.find({
+
+                                })
+                                .$promise;
+                            }]
+                        }
+                    }
+                },
+                og: true
+            })
+            .state("app.otherwise", {
+                url: "*path",
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/404.html'
+                    }
+                }
             });
 
 
