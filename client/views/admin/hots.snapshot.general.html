@@ -14,19 +14,19 @@
 
         <div class="form-group">
             <label for="url">URL</label>
-            <div class="input-group">
+            <div class="input-group" ng-repeat="slug in snapshot.slugs">
                 <span class="input-group-btn">
                     <button ng-click="toggleLinked()"
-                            ng-class="{ 'active': !!snapshot.slugs[0].linked }"
+                            ng-class="{ 'active': slug.linked }"
                             class="btn btn-default"
                             type="button"
                     ><i class="fa fa-link"></i></button>
                 </span>
-                <input ng-model="snapshot.slugs[0].slug"
+                <input ng-model="slug.slug"
                        class="form-control"
                        id="url"
                        type="text"
-                       ng-readonly="!!snapshot.slugs[0].linked"
+                       ng-readonly="slug.linked"
                 />
             </div>
         </div>

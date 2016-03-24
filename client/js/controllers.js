@@ -5926,29 +5926,95 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminHOTSSnapshotAddCtrl', ['$scope', function ($scope) {
         console.log('were in add');
     }])
-    .controller('AdminHOTSSnapshotBuildCtrl', ['$scope', '$state', 'hotsSnapshot', 'HOTSSnapshot', 'AlertService',
-        function ($scope, $state, hotsSnapshot, HOTSSnapshot, AlertService) {
-        $scope.snapshot = new HOTSSnapshot(hotsSnapshot);
+    .controller('AdminHOTSSnapshotBuildCtrl', ['$scope', '$state', 'hotsSnapshot', 'HOTSSnapshot', 'HotsSnapshot', 'AlertService',
+        function ($scope, $state, hotsSnapshot, HOTSSnapshot, HotsSnapshot, AlertService) {
+            $scope.snapshot = new HOTSSnapshot(hotsSnapshot);
 
-        $scope.submit = function () {
-            return $scope.snapshot.submit(function (err) {
-                if (err) {
-                    console.log("Err", err);
+            function cleanIds (obj, arr, root) {
+                var toClean = obj;
 
-                    AlertService.setError({
-                        show: true,
-                        msg: 'Error: '
-                    });
-                    return;
+                if (root) {
+                    delete toClean['id'];
                 }
 
-                AlertService.setSuccess({
-                    show: true,
-                    msg: $scope.snapshot.title + ' has been added successfully.'
+                _.each(arr, function (oVal) {
+                    _.each(toClean[oVal], function (iVal) {
+                        delete iVal['id'];
+                    });
                 });
-                $state.go('app.admin.hots.snapshots.list');
-            });
-        }
+
+                return toClean;
+            }
+
+            $scope.loadPrevious = function () {
+                HotsSnapshot.findOne({
+                    filter: {
+                        order: "createdDate DESC",
+                        include: [
+                            {
+                                relation: 'heroTiers',
+                                scope: {
+                                    include: [
+                                        {
+                                            relation: 'hero'
+                                        },
+                                        {
+                                            relation: 'guides',
+                                            scope: {
+                                                include: ['guide']
+                                            }
+                                        }
+                                    ],
+                                    order: 'orderNum ASC'
+                                }
+                            },
+                            {
+                                relation: 'authors',
+                                scope: {
+                                    include: ['user']
+                                }
+                            },
+                            {
+                                relation: 'slugs'
+                            }
+                        ]
+                    }
+                })
+                .$promise
+                .then(function (data) {
+                    var cleanData = cleanIds(data, [
+                        'heroTiers',
+                        'authors',
+                        'slugs'
+                    ], true);
+
+                    _.each(cleanData.heroTiers, function (val) {
+                        val.previousTiers.push(val.tier);
+                    });
+
+                    $scope.snapshot.load(cleanData);
+                });
+            };
+
+            $scope.submit = function () {
+                return $scope.snapshot.submit(function (err) {
+                    if (err) {
+                        console.log("Err", err);
+
+                        AlertService.setError({
+                            show: true,
+                            msg: 'Error: '
+                        });
+                        return;
+                    }
+
+                    AlertService.setSuccess({
+                        show: true,
+                        msg: $scope.snapshot.title + ' has been added successfully.'
+                    });
+                    $state.go('app.admin.hots.snapshots.list');
+                });
+            };
 
         //$scope.on('destroy', function () {
         //    console.log('sup');

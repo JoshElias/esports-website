@@ -2157,21 +2157,23 @@ angular.module('app.directives', ['ui.load'])
         restrict: 'E',
         templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
         controller: ['$scope', 'Util', function ($scope, Util) {
-            $scope.snapshot = $scope.$parent.snapshot;
+            //$scope.snapshot = $scope.$parent.snapshot;
             var sl = $scope.snapshot.slugs[0];
 
             $scope.toggleLinked = function () {
-                sl.linked = !sl.linked;
+                $scope.snapshot.slugs[0].linked = !$scope.snapshot.slugs[0].linked;
 
                 return $scope.slugifyUrl($scope.snapshot.title);
-            }
+            };
 
             $scope.slugifyUrl = function (str) {
-                if (!sl.linked)
+                console.log(str);
+                console.log(sl);
+                if (!$scope.snapshot.slugs[0].linked)
                     return;
 
-                sl.slug = slugify(str);
-            }
+                $scope.snapshot.slugs[0].slug = slugify(str);
+            };
 
             function slugify (str) {
                 return Util.slugify(str);
@@ -2352,6 +2354,31 @@ angular.module('app.directives', ['ui.load'])
 
             if (!!$scope.snapshot.heroTiers)
                 $scope.activeHero = $scope.snapshot.heroTiers[0];
+
+            $scope.numOfTiers = 12;
+            $scope.pastTiers = function (num) {
+                return new Array(num);
+            }
+
+            $scope.updateDND = function ($index, list, tier) {
+                list.splice($index, 1);
+
+                var idx = 0;
+                _.each($scope.snapshot.tiers, function (tier) {
+                    _.each(tier.heroes, function (hero) {
+                        hero.orderNum = idx++;
+
+                        //gross
+                        var toChange = _.find($scope.snapshot.heroTiers, function (val) {
+                            return val.hero.className == hero.hero.className;
+                        });
+
+                        
+                        toChange.orderNum = hero.orderNum;
+                        toChange.tier = tier.tier;
+                    });
+                });
+            };
 
             $scope.openHeroAdd = function (tier) {
                 var dialog = box({

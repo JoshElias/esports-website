@@ -476,7 +476,7 @@ var loggedIn = false,
                 authors: [],
                 heroTiers: [],
                 isActive: false,
-                createdDate: new Date().toISOString()
+                createdDate: undefined
             };
             var defaultAuthor = {
                 description: "",
@@ -501,6 +501,14 @@ var loggedIn = false,
                     snapshot = angular.copy(defaultSnapshot);
                 }
 
+                if (snapshot.heroTiers) {
+                    snapshot.heroTiers = _.sortBy(snapshot.heroTiers, function (val) { return val.orderNum });
+                }
+
+                this.load(snapshot);
+            };
+
+            HOTSSnapshot.prototype.load = function (snapshot) {
                 exists['authors'] = angular.copy(defaultCrud);
                 exists['heroTiers'] = angular.copy(defaultCrud);
                 exists['guideTiers'] = angular.copy(defaultCrud);
@@ -522,6 +530,8 @@ var loggedIn = false,
                     exists['authors'].exists = angular.copy(this.authors);
                     exists['heroTiers'].exists = angular.copy(this.heroTiers);
                 }
+
+                console.log(exists);
             };
 
             //begin method definitions
@@ -699,10 +709,13 @@ var loggedIn = false,
                 var arrs = exists;
                 var snapshot = angular.copy(this);
 
+                if (!snapshot.id)
+                    snapshot.createdDate = new Date().toISOString();
+
                 snapshot.slugOptions = {
                     slug: snapshot.slugs[0].slug,
                     linked: snapshot.slugs[0].linked
-                }
+                };
 
                 //build our crudman toWrite arrays
                 _.each(arrs, function (arr, key) {
@@ -728,6 +741,13 @@ var loggedIn = false,
                         HotsSnapshot.upsert(snapshot)
                         .$promise
                         .then(function (data) {
+
+                            //gross, patch me please
+                            if (data._id) {
+                                data.id = data._id;
+                                delete data._id;
+                            }
+
                             return seriesCb(undefined, data);
                         })
                         .catch(seriesCb);

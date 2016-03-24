@@ -13,9 +13,11 @@
     "tier": {
       "type": "number"
     },
-    "previousTier": {
-      "type": "number"
-    },
+    "previousTiers": [
+      {
+        "type": "number"
+      }
+    ],
     "burstScore": {
       "type": "number"
     },
