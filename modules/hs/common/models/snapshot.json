@@ -76,12 +76,6 @@
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "snapshotId"
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "snapshotId",
-      "through": "sluggable"
     }
   },
   "acls": [

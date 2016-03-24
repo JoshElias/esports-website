@@ -51,12 +51,6 @@
       "model": "comment",
       "foreignKey": "forumPostId",
       "DestroyOnDelete": true
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "forumPostId",
-      "through": "sluggable"
     }
   },
   "acls": [

@@ -35,12 +35,6 @@
       "type": "belongsTo",
       "model": "forumCategory",
       "foreignKey": "forumCategoryId"
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "forumThreadId",
-      "through": "sluggable"
     }
   },
   "acls": [

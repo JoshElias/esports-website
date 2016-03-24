@@ -35,7 +35,7 @@ module.exports = function(Model, mixinOptions) {
     Model.observe("access", function(ctx, next) {
         ctx.req = reqCache.getRequest();
         async.series([
-            includeSlug(Model, ctx)
+            findParent(Model, ctx)
         ], next);
     });
 
@@ -100,12 +100,6 @@ module.exports = function(Model, mixinOptions) {
             isStatic: true
         }
     );
-
-
-    // add slug properties
-    // add find by slug method
-    // replace slug in where with findBySLug
-    // include slugs
 };
 
 
@@ -115,14 +109,12 @@ function watchSlug(Model, mixinOptions, ctx) {
         mixinOptions.mixinName = packageJSON.mixinName;
         mixinOptions.primitiveHandler = primitiveHandler;
 
-        console.log("SLUG MIXINS", mixinOptions.mixinName);
         return resultCrawler.crawl(Model, mixinOptions, ctx, null, finalCb);
     }
 }
 
 
 function primitiveHandler(state, mixinOptions, finalCb) {
-console.log("handling slug")
     var model = state.ctx.model;
     var slugOptions = {};
 
@@ -257,7 +249,7 @@ function slugify(string) {
 
 
 
-function includeSlug(Model, ctx) {
+function findParent(Model, ctx) {
     return function(finalCb) {
 
         if(!ctx.query.where || typeof ctx.query.where.slug !== "string") {

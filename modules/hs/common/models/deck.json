@@ -139,17 +139,6 @@
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "deckId"
-    },
-    "sluggables": {
-      "type": "hasMany",
-      "model": "sluggable",
-      "foreignKey": "deckId"
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "deckId",
-      "through": "sluggable"
     }
   },
   "acls": [
