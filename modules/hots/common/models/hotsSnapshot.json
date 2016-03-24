@@ -4,8 +4,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$slug": true
+    "validateUpsert": true
   },
   "properties": {
     "snapNum": {
@@ -13,7 +12,7 @@
     },
     "title": {
       "type": "string",
-      "$slug": true
+      "Slug": true
     },
     "intro": {
         "type": "string"
@@ -39,12 +38,6 @@
           "type": "hasMany",
           "model": "snapshotAuthor",
           "foreignKey": "hotsSnapshotId"
-      },
-      "slugs": {
-        "type": "hasMany",
-        "model": "slug",
-        "foreignKey": "hotsSnapshotId",
-        "through": "sluggable"
       }
   },
   "acls": [
@@ -72,5 +65,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Slug": true
+  }
 }

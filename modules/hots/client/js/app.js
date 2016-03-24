@@ -154,15 +154,12 @@ angular.module('hotsSnapshot', [])
                     controller: 'hotsSnapshotCtrl',
                     templateUrl: moduleTpl + 'snapshot.html',
                     resolve: {
-                        snapshot: ['$stateParams', '$state', 'Slug', function ($stateParams, $state, Slug) {
+                        snapshot: ['$stateParams', '$state', 'HotsSnapshot', function ($stateParams, $state, HotsSnapshot) {
                             var slug = $stateParams.slug;
 
-                            return Slug.findOne({
+                            return HotsSnapshot.findBySlug({
+                                slug: slug,
                                 filter: {
-                                    where: {
-                                        slug: slug,
-                                        parentModelName: "hotsSnapshot"
-                                    },
                                     include: [
                                         {
                                             relation: "hotsSnapshots",

@@ -50,17 +50,17 @@ module.exports = function(Model, mixinOptions) {
 
 
 
-    Model.findBySlug = function(slug, options, finalCb) {
-        if (finalCb === undefined && typeof options === "function") {
-            finalCb = options;
-            options = undefined;
+    Model.findBySlug = function(slug, filter, finalCb) {
+        if (finalCb === undefined && typeof filter === "function") {
+            finalCb = filter;
+            filter = undefined;
         }
 
         finalCb = finalCb || new Promise();
 
-        options = options || {};
-        options.where = {};
-        console.log("slug scope", options);
+        filter = filter || {};
+        filter.where = {};
+        console.log("slug scope", filter);
         var Slug = Model.app.models.slug;
         Slug.findOne({
             where: {
@@ -69,7 +69,7 @@ module.exports = function(Model, mixinOptions) {
             },
             include: {
                 relation: "parent",
-                scope: options
+                scope: filter
             }
         }, function(err, instance) {
             if(err) return finalCb(err);
@@ -93,7 +93,7 @@ module.exports = function(Model, mixinOptions) {
             description: "Finds model by slug",
             accepts: [
                 {arg: "slug", type: "string", required:true, http: {source: 'query'}},
-                {arg: "options", type: "object", http: {source: 'query'}},
+                {arg: "filter", type: "object", http: {source: 'query'}},
             ],
             returns: { type: "object", root: true },
             http: {verb: 'get'},

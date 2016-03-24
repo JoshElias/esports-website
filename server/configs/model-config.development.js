@@ -277,9 +277,5 @@ module.exports = {
   "slug": {
     "dataSource": "mongodb",
     "public": true
-  },
-  "sluggable": {
-    "dataSource": "mongodb",
-    "public": true
   }
 };
