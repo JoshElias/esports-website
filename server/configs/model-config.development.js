@@ -190,6 +190,10 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
+  "overwatchSnapshot": {
+    "dataSource": "mongodb",
+    "public": true
+  },
   "deckCard": {
     "dataSource":"mongodb",
     "public": true

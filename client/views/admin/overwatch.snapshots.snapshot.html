@@ -1,0 +1,41 @@
+<alert-box theme="admin"></alert-box>
+
+<div class="panel panel-default br-none">
+    
+    <form name="form" role="form" class="form-horizontal">
+        
+        <div class="panel-heading wrapper-md clearfix">
+            
+            <h3 class="pull-left">
+                <span ng-if="mode === 'add'">Add</span>
+                <span ng-if="mode === 'edit'">Edit</span>
+                Meta Snapshot
+            </h3>
+            
+            <button type="button"
+                    ng-click="snapshot.loadPreviousPrompt()"
+                    ng-if="mode === 'add' && !snapshot.loaded"
+                    ng-disabled="snapshot.loading"
+                    class="btn admin-btn-blue pull-right m-r-sm">
+                Load Previous
+            </button>
+            
+            <div class="form-group pull-left">
+                
+                <label for="title" 
+                       class="control-label pull-left snap-num-title">#</label>
+                
+                <div class="wrapper-none pull-left">
+                    <input class="form-control snap-num"
+                           type="text"
+                           ng-model="snapshot.snapNum"
+                           ng-keyup="snapshot.setSlug()">
+                </div>
+                
+            </div><!-- end form-group -->
+            
+        </div><!-- end panel-heading -->
+        
+    </form><!-- end form -->
+    
+</div><!-- end panel -->

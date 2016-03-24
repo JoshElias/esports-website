@@ -3734,20 +3734,56 @@ angular.module('app.services', [])
         }
     ])
     .factory('markitupSettings', [
-    function() {
-        var factory, markset;
-        markset = [
-            //here goes your usual markItUp layout
-        ];
-        factory = {};
-        factory.create = function(callback) {
-            return {
-                afterInsert: callback,
-                previewParserPath: '',
-                markupSet: markset
+        function() {
+            var factory, markset;
+            markset = [
+                //here goes your usual markItUp layout
+            ];
+            factory = {};
+            factory.create = function(callback) {
+                return {
+                    afterInsert: callback,
+                    previewParserPath: '',
+                    markupSet: markset
+                };
             };
+            return factory;
+        }
+    ])
+    .factory('OverwatchSnapshotBuilder', ['$q', 'OverwatchHero', function ($q, OverwatchHero) {
+        var snapshot = {};
+        
+//        // query all heroes
+//        snapshot.loadHeroes = function () {
+//            var d = $q.defer();
+//        
+//            OverwatchHero.find({
+//                filter: {
+//                    fields: [
+//                        'heroName'
+//                    ]
+//                }
+//            })
+//            .$promise
+//            .then(function (owHeroes) {
+//                return d.resolve(owHeroes);
+//            });
+//
+//            return d.promise;
+//        };
+//        
+//        // init default values
+//        var owHeroes = snapshot.loadHeroes().then(function (owHeroes) {
+//            console.log('owHeroes:', owHeroes);
+//            return owHeroes;
+//        });
+        
+        snapshot.new = function (snapshotData) {
+            
+            var sb = 'whatever';
+            
+            return sb;
         };
-        return factory;
-    }
-]);
-;
+        
+        return snapshot;
+    }]);

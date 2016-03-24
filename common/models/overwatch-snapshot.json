@@ -1,39 +1,38 @@
 {
-  "name": "snapshotAuthor",
+  "name": "overwatchSnapshot",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$slug": true
   },
   "properties": {
-    "description": {
-      "type": "string"
+    "snapNum": {
+      "type": "number"
     },
-    "expertClasses": {
-      "type": [
-        "string"
-      ]
+    "title": {
+      "type": "string",
+      "$slug": true
     },
-    "snapshotId": {},
-    "overwatchSnapshotId": {},
-    "authorId": {}
+    "intro": {
+        "type": "string"
+    },
+    "thoughts": {
+        "type": "string"
+    },
+    "isActive": {
+        "type": "boolean"
+    },
+    "createdDate": {
+        "type": "date"
+    }
   },
   "validations": [],
   "relations": {
-    "user": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "authorId"
-    },
-    "snapshot": {
-      "type": "belongsTo",
-      "model": "snapshot",
-      "foreignKey": "snapshotId"
-    },
-    "overwatchSnapshot": {
-      "type": "belongsTo",
-      "model": "overwatchSnapshot",
+    "authors": {
+      "type": "hasMany",
+      "model": "snapshotAuthor",
       "foreignKey": "overwatchSnapshotId"
     }
   },
