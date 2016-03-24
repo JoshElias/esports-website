@@ -3805,7 +3805,7 @@ angular.module('app.services', [])
                 intro: "",
                 thoughts: ""
             },
-            matches: [],
+            matchups: [],
             tiers: [],
             photoNames: {
                 large: "",
