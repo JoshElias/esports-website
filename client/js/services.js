@@ -572,11 +572,6 @@ var loggedIn = false,
             };
 
             HOTSSnapshot.prototype.newHero = function (obj) {
-                //if (!_.isEmpty(validate(obj))) {
-                //    console.log("error!");
-                //    return;
-                //}
-
                 var hero = {
                     summary      : obj.summary,
                     tier         : obj.tier,
@@ -597,11 +592,6 @@ var loggedIn = false,
             };
 
             HOTSSnapshot.prototype.newAuthor = function (obj) {
-                //if (!_.isEmpty(validate(obj))) {
-                //    console.log("error!");
-                //    return;
-                //}
-
                 var author = {
                     description: obj.description,
                     expertClasses: obj.expertClasses,

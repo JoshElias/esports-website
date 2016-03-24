@@ -13,11 +13,10 @@
     "tier": {
       "type": "number"
     },
-    "previousTiers": [
-      {
-        "type": "number"
-      }
-    ],
+    "previousTiers": {
+      "type": ["number"],
+      "default": []
+    },
     "burstScore": {
       "type": "number"
     },
