@@ -1,6 +1,11 @@
 {
   "name": "game",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "__v": {
       "type": "number"
@@ -47,10 +52,17 @@
     }
   ],
   "mixins": {
-    "DocFilter": {
+    "Scope": true,
+    "Filter": {
       "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
     },
-    "DestroyOnDelete": true
+    "DestroyOnDelete": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

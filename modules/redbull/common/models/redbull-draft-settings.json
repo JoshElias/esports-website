@@ -1,6 +1,11 @@
 {
   "name": "redbullDraftSettings",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "name": {
       "type": "string"
@@ -72,5 +77,8 @@
       "principalId": "$redbullAdmin",
       "permission": "ALLOW",
       "accessType": "WRITE"
-    }]
+    }],
+  "mixins": {
+    "Scope": true
+  }
 }

@@ -1,7 +1,12 @@
 {
   "name": "hero",
   "plural": "heroes",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "isActive": {
       "type": "boolean"
@@ -95,9 +100,16 @@
     }
   ],
   "mixins": {
-    "DocFilter": {
+    "Scope": true,
+    "Filter": {
       "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp": {
+      "createdAt": "createdDate",
+      "updatedAt": "updatedDate",
+      "required": true
     }
   }
 }

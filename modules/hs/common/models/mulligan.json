@@ -1,6 +1,11 @@
 {
   "name": "mulligan",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "className": {
       "type": "string",
@@ -133,6 +138,7 @@
     }
   ],
   "mixins": {
-    "DestroyOnDelete": true
+    "DestroyOnDelete": true,
+    "Scope": true
   }
 }

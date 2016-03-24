@@ -1,6 +1,11 @@
 {
   "name": "spamRegex",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "regex": {
       "type": "string"
@@ -42,9 +47,11 @@
     }
   ],
   "mixins": {
-    "DocFilter": {
+    "Scope": true,
+    "Filter": {
       "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
     }
   }
 }

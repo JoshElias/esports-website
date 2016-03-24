@@ -1,7 +1,12 @@
 {
   "name": "cardWithCoin",
   "plural": "cardsWithCoin",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "cardId": {
       "required": true
@@ -46,5 +51,8 @@
       "permission": "ALLOW",
       "property": "create"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true
+  }
 }

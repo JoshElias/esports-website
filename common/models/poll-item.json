@@ -1,7 +1,12 @@
 {
   "name": "pollItem",
   "plural": "pollItems",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "name": {
       "type": "string"
@@ -31,5 +36,13 @@
       "principalId": "$everyone",
       "permission": "ALLOW"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

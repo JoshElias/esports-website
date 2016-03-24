@@ -24,8 +24,16 @@ function generateBootOptions(app, options, finalCb) {
     loopbackBootOptions.middleware = require(path.join(appDir, "configs", "middleware"));
     loopbackBootOptions.bootDirs.push(path.join(appDir, "boot"));
     loopbackBootOptions.modelSources.push(path.join(appDir, "..", "common", "models"));
-    loopbackBootOptions.mixinSources.push(path.join(appDir, "mixins"));
-    loopbackBootOptions.mixinSources.push(path.join(appDir, "..", "common", "mixins"));
+
+    // MIXIN PATHS ARE ALL RELATIVE TO tempostorm/server
+    loopbackBootOptions.mixinSources.push(path.join("mixins"));
+    loopbackBootOptions.mixinSources.push(path.join("..", "common", "mixins"));
+
+    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "filter"));
+    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "relation"));
+    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "scope"));
+    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "slug"));
+    //loopbackBootOptions.mixinSources.push(path.join("..", "modules", "xloop", "server", "mixins", "validator"));
 
     // Get module dirs
     async.waterfall([
@@ -66,14 +74,15 @@ function generateBootOptions(app, options, finalCb) {
                         return eachCb();
                     }
 
-                    return crawlModuleDir(newPath, eachCb);
+                    var mixinPath = path.join("..", "modules", file);
+                    return crawlModuleDir(newPath, mixinPath, eachCb);
                 });
 
             }, modulesCb);
         });
     }
 
-    function crawlModuleDir(modulePath, moduleCb) {
+    function crawlModuleDir(modulePath, mixinPath, moduleCb) {
         return fs.readdir(modulePath, function (err, files) {
             if (err) return moduleCb(err);
             return async.eachSeries(files, function (file, eachCb) {
@@ -85,9 +94,11 @@ function generateBootOptions(app, options, finalCb) {
                         return eachCb();
                     }
 
+                    var newMixinPath = path.join(mixinPath, file);
+
                     // Handlers
                     if (file === "server") {
-                        return serverHandler(newPath, eachCb);
+                        return serverHandler(newPath, newMixinPath, eachCb);
                     } else if(file === "common") {
                         return commonHandler(newPath, eachCb);
                     }
@@ -99,11 +110,11 @@ function generateBootOptions(app, options, finalCb) {
         });
     }
 
-    function serverHandler(serverPath, serverCb) {
+    function serverHandler(serverPath, mixinPath, serverCb) {
         return fs.readdir(serverPath, function (err, files) {
             if (err) return serverCb(err);
             return async.eachSeries(files, function (file, eachCb) {
-                var newPath = path.join(serverPath, file)
+                var newPath = path.join(serverPath, file);
                 return fs.stat(newPath, function (err, stats) {
                     if (err) return eachCb(err);
 
@@ -111,11 +122,13 @@ function generateBootOptions(app, options, finalCb) {
                         return eachCb();
                     }
 
+
                     // Handlers
                     if (file === "boot") {
                         bootHandler(newPath);
                     } else if(file === "mixins") {
-                        return mixinsHandler(newPath, eachCb);
+                        var newMixinPath = path.join(mixinPath, file);
+                        return mixinsHandler(newPath, newMixinPath, eachCb);
                     }
 
                     return eachCb();
@@ -128,7 +141,7 @@ function generateBootOptions(app, options, finalCb) {
         loopbackBootOptions.bootDirs.push(bootPath);
     }
 
-    function mixinsHandler(bootPath, finalCb) {
+    function mixinsHandler(bootPath, mixinPath, finalCb) {
         return fs.readdir(bootPath, function (err, files) {
             if (err) return finalCb(err);
             return async.eachSeries(files, function (file, eachCb) {
@@ -140,7 +153,8 @@ function generateBootOptions(app, options, finalCb) {
                         return eachCb();
                     }
 
-                    loopbackBootOptions.mixinSources.push(newPath);
+                    var newMixinPath = path.join(mixinPath, file);
+                    loopbackBootOptions.mixinSources.push(newMixinPath);
 
                     return eachCb();
                 });

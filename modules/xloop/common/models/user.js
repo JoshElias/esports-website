@@ -1,5 +1,5 @@
 var async = require("async");
-var Promise = require("bluebird")
+var Promise = require("bluebird");
 var uuid = require("node-uuid");
 var loopback = require("loopback");
 var bcrypt = require('bcrypt-nodejs');
@@ -30,6 +30,7 @@ module.exports = function(User) {
 
     
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
+        ctx.method.skipFilter = true;
         ctx.req.logIn(ctx.result.toJSON().user, function (err) {
             next(err);
         });
@@ -804,7 +805,9 @@ module.exports = function(User) {
     };
 
     
-    
+
+
+
     User.remoteMethod(
         'isInRoles',
         {

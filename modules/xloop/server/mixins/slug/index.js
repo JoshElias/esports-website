@@ -1,4 +1,6 @@
+var packageJSON = require("./package");
+
+
 module.exports = function mixin (app) {
-    console.log("FUCK");
-    app.loopback.modelBuilder.mixins.define("Slug", require("./slug"));
+    app.loopback.modelBuilder.mixins.define(packageJSON.mixinName, require("./slug"));
 };

@@ -3,7 +3,7 @@ var util = require("util");
 var loopback = require("loopback");
 
 
-function crawl(ctx, Model, options, finalCb) {
+function crawlResult(Model, mixinOptions, ctx, modelInstance, finalCb) {
 
     // Keep a reference to each possible state of the model's config, client data and the reportObj
     var parentState = {
@@ -18,43 +18,40 @@ function crawl(ctx, Model, options, finalCb) {
         models: Model.app.models
     };
 
-    // Get the data depending on the type of request made by the user
-    if(ctx.data) {
-        parentState.requestData = parentState.data = ctx.data;
-    } else if(ctx.instance) {
-        parentState.requestData = parentState.data = ctx.instance["__data"];
-    } else if(ctx.result) {
-        parentState.requestData = parentState.data = ctx.result;
-    }
-
     // Attach ctx specific vars to state obj
-    if(options && typeof options.stateVars === "object") {
-        for(var key in options.stateVars) {
-            parentState[key] = options.stateVars[key];
+    if(mixinOptions && typeof mixinOptions.stateVars === "object") {
+        for(var key in mixinOptions.stateVars) {
+            parentState[key] = mixinOptions.stateVars[key];
         }
     }
 
-    // If the client data came together in an array
-    if(Array.isArray(parentState.requestData)) {
-        return async.each(parentState.requestData, function(data, eachCb) {
-            parentState.requestData = parentState.data = data;
-            return crawlContainer("object", parentState, options, eachCb);
+    // Process array of results
+    if(modelInstance && Array.isArray(modelInstance)) {
+        return async.each(ctx.result, function(instance, eachCb) {
+            parentState.requestData = parentState.data = instance["__data"];
+            return crawlContainer("object", parentState, mixinOptions, eachCb);
         }, doneCrawling);
 
-    // Or a single object
-    } else {
-        return crawlContainer("object", parentState, options, doneCrawling);
+    // Process Single Results
+    } else if(modelInstance) {
+        parentState.requestData = parentState.data = ctx.result["__data"];
+    } else if(ctx.data) {
+        parentState.requestData = parentState.data = ctx.data;
+    } else if(ctx.instance) {
+        parentState.requestData = parentState.data = ctx.instance["__data"];
     }
+    return crawlContainer("object", parentState, mixinOptions, doneCrawling);
+
 
     function doneCrawling(err, state) {
         if(err) return finalCb(err);
-        else if(!options.postHandler) return finalCb();
-        else return options.postHandler(state, finalCb);
+        else if(!mixinOptions.postHandler) return finalCb();
+        else return mixinOptions.postHandler(state, mixinOptions, finalCb);
     }
 }
 
 
-function buildNextState(value, key, oldState, options) {
+function buildNextState(value, key, oldState, mixinOptions) {
 
     // Populate the next level of the validation state
     var newState                =   {};
@@ -85,24 +82,23 @@ function buildNextState(value, key, oldState, options) {
     }
 
     // Handler options for new state
-    if(!options.newStateHandler) {
+    if(!mixinOptions.newStateHandler) {
         return newState;
     }
 
-    options.newStateHandler(oldState, newState);
+    mixinOptions.newStateHandler(oldState, newState, mixinOptions);
     return newState;
 }
 
 
-function crawlContainer(type, state, options, finalCb) {
-    //console.log("crawling container")
+function crawlContainer(type, state, mixinOptions, finalCb) {
     async.series([
 
         // Check if we should call the object hook
         function(seriesCb) {
             var handlerName = type+"Handler";
-            if(state.modelProperties[options.featureKey] && options[handlerName]) {
-                return options.objectHandler(state, seriesCb);
+            if(state.modelProperties[mixinOptions.mixinName] && mixinOptions[handlerName]) {
+                return mixinOptions.objectHandler(state, mixinOptions, seriesCb);
             }
             return seriesCb();
         },
@@ -113,7 +109,7 @@ function crawlContainer(type, state, options, finalCb) {
             return async.forEachOf(state.modelProperties, function(value, key, eachCb) {
 
                 // Update the validation state with this level of object
-                var newState = buildNextState(value, key, state, options);
+                var newState = buildNextState(value, key, state, mixinOptions);
 
                 // Return if no data to validate
                 if(newState.data === null || newState.data === undefined) {
@@ -124,18 +120,18 @@ function crawlContainer(type, state, options, finalCb) {
                 var type = newState.modelProperties["type"];
                 if(Array.isArray(newState.modelProperties) || Array.isArray(type)) {
 
-                    return crawlContainer("array", newState, options, eachCb);
+                    return crawlContainer("array", newState, mixinOptions, eachCb);
 
                 } else if(typeof newState.modelProperties === "object") {
 
                     // Is there a type defined?
                     if(typeof type === "string" && (type === "string" || type === "number" || type === "boolean")) {
-                        return crawlPrimitive(newState, options, eachCb);
+                        return crawlPrimitive(newState, mixinOptions, eachCb);
                     } else if(typeof type === "function") {
-                        return crawlPrimitive(newState, options, eachCb);
+                        return crawlPrimitive(newState, mixinOptions, eachCb);
                     }
                     else {
-                        return crawlContainer("object", newState, options, eachCb);
+                        return crawlContainer("object", newState, mixinOptions, eachCb);
                     }
                 }
 
@@ -151,10 +147,10 @@ function crawlContainer(type, state, options, finalCb) {
 }
 
 
-function crawlPrimitive(state, options, finalCb) {
+function crawlPrimitive(state, mixinOptions, finalCb) {
 
     // Check if the tag for the current function exists
-    if(!state.modelProperties[options.featureKey]) {
+    if(!state.modelProperties[mixinOptions.mixinName]) {
         return finalCb();
     }
 
@@ -164,14 +160,14 @@ function crawlPrimitive(state, options, finalCb) {
     }
 
     // Check for a primitive handler
-    if(!options.primitiveHandler) {
+    if(!mixinOptions.primitiveHandler) {
         return finalCb();
     }
 
-    return options.primitiveHandler(state, finalCb);
+    return mixinOptions.primitiveHandler(state, mixinOptions, finalCb);
 }
 
 
 module.exports = {
-    crawl : crawl
+    crawl : crawlResult
 };

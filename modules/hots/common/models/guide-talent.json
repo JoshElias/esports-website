@@ -1,6 +1,11 @@
 {
   "name": "guideTalent",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "tier": {
       "type": "number"
@@ -9,7 +14,6 @@
     "heroId": {},
     "talentId": {}
   },
-  "validations": [],
   "relations": {
     "guide": {
       "type": "belongsTo",
@@ -26,5 +30,8 @@
       "model": "talent",
       "foreignKey": "talentId"
     }
+  },
+  "mixins": {
+    "Scope": true
   }
 }

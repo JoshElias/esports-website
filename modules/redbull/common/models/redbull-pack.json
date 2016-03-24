@@ -1,6 +1,11 @@
 {
   "name": "redbullPack",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "orderNum": {
       "type": "number"
@@ -77,5 +82,8 @@
     "principalId": "$redbullAdmin",
     "permission": "ALLOW",
     "accessType": "WRITE"
-  }]
+  }],
+  "mixins": {
+    "Scope": true
+  }
 }

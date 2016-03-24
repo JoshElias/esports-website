@@ -1,6 +1,11 @@
 {
   "name": "vote",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "direction": {
       "type": "number"
@@ -83,5 +88,13 @@
       "permission": "ALLOW",
       "property": "hasVoted"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

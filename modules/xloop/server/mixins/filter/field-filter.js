@@ -1,30 +1,43 @@
 var async = require("async");
 var predicates = require("./predicates");
-var requestCrawler = require("../request-crawler");
-
-
-var FILTER_FEATURE_KEY = "FieldFilter";
+var resultCrawler = require("../../lib/result-crawler");
+var packageJSON = require("./package");
 
 
 
-module.exports = function filterFields(Model) {
-    return function(ctx, modelInstance, finalCb) {
+function filterFields(Model, mixinOptions, ctx, modelInstance) {
+    return function(finalCb) {
 
-        var filterOptions = {
-            featureKey: FILTER_FEATURE_KEY
-        };
-        filterOptions.objectHandler = filterHandler;
-        filterOptions.arrayHandler = filterHandler;
-        filterOptions.primitiveHandler = filterHandler;
+        // Get the parent model
+        var modelName = ctx.methodString.split(".")[0];
 
-        return requestCrawler.crawl(ctx, Model, filterOptions, finalCb);
+        // See if we're fulfilling a relation request and get the associated model
+        var methodArr = ctx.methodString.split("__");
+        if (methodArr.length > 1) {
+            var relationName = methodArr[methodArr.length - 1];
+            modelName = Model.app.models[modelName].settings.relations[relationName].model;
+        }
+        Model = Model.app.models[modelName];
+
+        // Check for the mixin key in the model's settings
+        mixinOptions = Model.definition.settings.mixins[packageJSON.mixinName];
+        if (typeof mixinOptions !== "object" || !mixinOptions.fieldFilters) {
+            return finalCb();
+        }
+
+        mixinOptions.mixinName = packageJSON.mixinName;
+        mixinOptions.objectHandler = filterHandler;
+        mixinOptions.arrayHandler = filterHandler;
+        mixinOptions.primitiveHandler = filterHandler;
+
+        return resultCrawler.crawl(Model, mixinOptions, ctx, modelInstance, finalCb);
     }
 };
 
 
-function filterHandler(state, finalCb) {
+function filterHandler(state, mixinOptions, finalCb) {
 
-    var filters = state.modelProperties[FILTER_FEATURE_KEY];
+    var filters = state.modelProperties[mixinOptions.mixinName];
     if(Array.isArray(filters)) {
         return async.each(filters, applyFilter, finalCb);
     } else {
@@ -78,3 +91,8 @@ function filterHandler(state, finalCb) {
         return removeCb();
     }
 }
+
+
+module.exports = {
+    filter: filterFields
+};

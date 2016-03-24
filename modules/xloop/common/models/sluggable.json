@@ -1,6 +1,11 @@
 {
   "name": "sluggable",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "slugId": {},
     "articleId": {},
@@ -43,6 +48,7 @@
     }
   },
   "mixins": {
-    "DestroyOnDelete": true
+    "DestroyOnDelete": true,
+    "Scope": true
   }
 }

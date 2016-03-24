@@ -3,32 +3,40 @@ var async = require("async");
 var _ = require("underscore");
 var docFilter =  require("./doc-filter");
 var fieldFilter =  require("./field-filter");
+var reqCache = require("../../lib/req-cache");
 
 
-module.exports = function(Model) {
+module.exports = function(Model, mixinOptions) {
 
     // Ensure the request object on every type of hook
     Model.beforeRemote('**', function(ctx, modelInstance, next) {
-
-        // Set loopback Context
-        loopback.getCurrentContext().set('req', ctx.req);
+        reqCache.setRequest(ctx);
         next();
     });
 
-    function attachLoopbackContext(ctx) {
-        var loopbackContext = loopback.getCurrentContext();
-        if (loopbackContext && !ctx.req) {
-            ctx.req = loopback.getCurrentContext().get("req");
-        }
-    }
+
+    // Make sure that we include the necessary predicate fields to the query
+    Model.observe("access", function(ctx, next) {
+        ctx.req = reqCache.getRequest();
+        async.series([
+            docFilter.addPredicateFields(mixinOptions, ctx)
+        ], next);
+    });
+
+
+    // Do not filter count query
+    Model.afterRemote("count", function (ctx, modelInstance, next) {
+        ctx.method.skipFilter = true;
+        return next();
+    });
 
 
     // Run the filter middleware on after every remote request
-    var filterFuncs = [docFilter(Model), fieldFilter];
     Model.afterRemote("**", function (ctx, modelInstance, next) {
-        attachLoopbackContext(ctx);
-        async.eachSeries(filterFuncs, function(filterFunc, filterCb) {
-            filterFunc(ctx, modelInstance, filterCb);
-        }, next);
+        async.series([
+            docFilter.filter(Model, mixinOptions, ctx, modelInstance),
+            fieldFilter.filter(Model, mixinOptions, ctx, modelInstance),
+            docFilter.cleanPredicateFields(ctx, modelInstance)
+        ], next);
     });
 };

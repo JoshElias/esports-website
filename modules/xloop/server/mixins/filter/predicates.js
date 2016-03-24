@@ -1,7 +1,6 @@
 
-
 function isPremium(data) {
-    if(!data || !data.premium || !data.premium.isPremium || !data.premium.expiryDate)
+    if (!data || !data.premium || !data.premium.isPremium || !data.premium.expiryDate)
         return false;
 
     var now = new Date();
@@ -10,7 +9,7 @@ function isPremium(data) {
 }
 
 function isPrivate(data) {
-    if(!data || data.isPublic)
+    if (!data || data.isPublic)
         return false;
 
     return true

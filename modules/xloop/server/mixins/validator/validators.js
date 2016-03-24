@@ -1,7 +1,6 @@
 var async = require("async");
 var loopback = require("loopback");
 var _ = require("underscore");
-var utils = require("./../utils");
 
 
 var youtubeRegex = /^[a-zA-Z0-9_-]{11}$/;
@@ -202,7 +201,7 @@ function validateSlug(state, uniqueCb) {
                     return slugCb();
                 } else if (slugMatches.length > 1) {
                     return slugCb(true);
-                } else if (slug.id !== slugMatches[0].id) {
+                } else if (slug.id.toString() !== slugMatches[0].id.toString()) {
                     return slugCb(true);
                 }
 

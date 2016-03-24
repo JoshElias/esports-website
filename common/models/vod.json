@@ -1,6 +1,11 @@
 {
   "name": "vod",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "displayDate": {
       "type": "date",
@@ -43,6 +48,12 @@
     }
   ],
   "mixins": {
-    "Validate": true
+    "Validate": true,
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

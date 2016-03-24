@@ -1,7 +1,12 @@
 {
   "name": "forumCategory",
   "plural": "forumCategories",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "title": {
       "type": "string",
@@ -49,10 +54,17 @@
   ],
   "mixins": {
     "Validate": true,
-    "DocFilter": {
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Filter": {
       "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
     },
-    "DestroyOnDelete": true
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

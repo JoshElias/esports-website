@@ -1,6 +1,11 @@
 {
   "name": "heroTalent",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "tier": {
       "type": "number"
@@ -29,5 +34,8 @@
       "model": "ability",
       "foreignKey": "abilityId"
     }
+  },
+  "mixins": {
+    "Scope": true
   }
 }

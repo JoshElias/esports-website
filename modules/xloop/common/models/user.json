@@ -2,6 +2,11 @@
   "name": "user",
   "plural": "users",
   "base": "User",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "isActive": {
       "type": "boolean",
@@ -25,13 +30,13 @@
     "subscription": {
       "type": "object",
       "default": {},
-      "FieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin"]
       }
     },
     "isProvider": {
       "type": "boolean",
-      "FieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin"]
       }
     },
@@ -49,7 +54,7 @@
     },
     "resetPasswordCode": {
       "type": "string",
-      "FieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin"]
       }
     },
@@ -201,6 +206,14 @@
     }
   ],
   "mixins": {
-    "FieldFilter": true
+    "Scope": true,
+    "Filter": {
+      "fieldFilters": true
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

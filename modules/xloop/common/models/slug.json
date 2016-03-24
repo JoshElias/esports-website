@@ -1,8 +1,11 @@
 {
   "name": "slug",
-  "base": "xModel",
+  "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "slug": {
       "type": "string",
@@ -61,8 +64,13 @@
       "through": "sluggable"
     }
   },
-  "acls": [],
   "mixins": {
-    "Validate": true
+    "Validate": true,
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

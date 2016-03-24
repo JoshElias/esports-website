@@ -1,7 +1,12 @@
 {
   "name": "overwatchAbility",
   "plural": "overwatchAbilities",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "name": {
       "type": "string",
@@ -55,5 +60,13 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

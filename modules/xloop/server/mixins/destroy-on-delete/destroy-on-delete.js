@@ -1,8 +1,8 @@
 var async = require("async");
+var loopback = require("loopback");
 var deleteHandlers = require("./delete-handlers");
-
-
-var DESTROY_CHILDREN_FEATURE_KEY = "DestroyOnDelete";
+var reqCache = require("../../lib/req-cache");
+var packageJSON = require("./package");
 
 
 
@@ -10,30 +10,24 @@ module.exports = function(Model) {
 
     // Ensure the request object on every type of hook
     Model.beforeRemote('**', function(ctx, modelInstance, next) {
-
-        // Set loopback Context
-        loopback.getCurrentContext().set('req', ctx.req);
+        reqCache.setRequest(ctx);
         next();
     });
-
-    function attachLoopbackContext(ctx) {
-        var loopbackContext = loopback.getCurrentContext();
-        if (loopbackContext && !ctx.req) {
-            ctx.req = loopback.getCurrentContext().get("req");
-        }
-    }
 
 
     // Destroy any relations upon relations
     Model.observe('before delete', function(ctx, next) {
-        attachLoopbackContext(ctx);
-        destroyOnDelete(Model)(ctx, next);
+        ctx.req = reqCache.getRequest();
+        async.series([
+            destroyOnDelete(Model, ctx)
+        ], next);
     });
 };
 
 
-function destroyOnDelete(Model) {
-    return function(ctx, finalCb) {
+
+function destroyOnDelete(Model, ctx) {
+    return function(finalCb) {
 
         var relations = Model.settings.relations;
 
@@ -55,7 +49,7 @@ function destroyOnDelete(Model) {
             async.each(instances, function (instance, instanceCb) {
                 async.forEachOf(relations, function (relationData, relationName, relationCb) {
 
-                    if (!relationData[DESTROY_CHILDREN_FEATURE_KEY]) {
+                    if (!relationData[packageJSON.mixinName]) {
                         return relationCb();
                     }
 

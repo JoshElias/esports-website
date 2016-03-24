@@ -1,6 +1,11 @@
 {
   "name": "redbullPackCard",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "orderNum": {
       "type": "number"
@@ -78,5 +83,8 @@
       "permission": "ALLOW",
       "accessType": "WRITE"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true
+  }
 }

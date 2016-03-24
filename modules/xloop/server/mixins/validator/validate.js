@@ -3,60 +3,51 @@ var loopback = require("loopback");
 var util = require("util");
 var _ = require('underscore');
 var validators = require("./validators");
-var requestCrawler = require("../request-crawler");
+var resultCrawler = require("../../lib/result-crawler");
+var reqCache = require("../../lib/req-cache");
+var packageJSON = require("./package");
 
 
-var VALIDATE_FEATURE_KEY = "Validate";
 
-
-
-module.exports = function(Model) {
+module.exports = function(Model, mixinOptions) {
 
     // Ensure the request object on every type of hook
     Model.beforeRemote('**', function(ctx, modelInstance, next) {
-
-        // Set loopback Context
-        loopback.getCurrentContext().set('req', ctx.req);
+        reqCache.setRequest(ctx);
         next();
     });
 
-    function attachLoopbackContext(ctx) {
-        var loopbackContext = loopback.getCurrentContext();
-        if (loopbackContext && !ctx.req) {
-            ctx.req = loopback.getCurrentContext().get("req");
-        }
-    }
 
-    model.observe("before save", function(ctx, next) {
-        attachLoopbackContext(ctx);
-        validate(Model)(ctx, next);
+    Model.observe("after save", function(ctx, next) {
+        ctx.req = reqCache.getRequest();
+        async.series([
+            validate(Model, mixinOptions, ctx)
+        ], next);
     });
 };
 
 
 
-function validate(Model) {
-    return function (ctx, finalCb) {
+function validate(Model, mixinOptions, ctx) {
+    return function (finalCb) {
 
-        var crawlOptions = {
-            featureKey: VALIDATE_FEATURE_KEY,
-            stateVars: {
-                report: {
-                    passed: true,
-                    elements: {},
-                    errors: {}
-                }
+        mixinOptions.stateVars = {
+            report: {
+                passed: true,
+                elements: {},
+                errors: {}
             }
         };
-        crawlOptions.newStateHandler = newStateHandler;
-        crawlOptions.primitiveHandler = primitiveHandler;
-        crawlOptions.postHandler = postHandler;
+        mixinOptions.mixinName = packageJSON.mixinName;
+        mixinOptions.newStateHandler = newStateHandler;
+        mixinOptions.primitiveHandler = primitiveHandler;
+        mixinOptions.postHandler = postHandler;
 
-        return requestCrawler.crawl(ctx, Model, crawlOptions, finalCb);
+        return resultCrawler.crawl(Model, mixinOptions, ctx, null, finalCb);
     }
 }
 
-function newStateHandler(oldState, newState) {
+function newStateHandler(oldState, newState, mixinOptions) {
 
     // Create new report
     newState.report = {
@@ -77,8 +68,8 @@ function newStateHandler(oldState, newState) {
     }
 }
 
-function primitiveHandler(state, finalCb) {
-    var validators = state.modelProperties[VALIDATE_FEATURE_KEY];
+function primitiveHandler(state,  mixinOptions, finalCb) {
+    var validators = state.modelProperties[mixinOptions.mixinName];
     if(!Array.isArray(validators)) {
         return finalCb();
     }
@@ -86,7 +77,7 @@ function primitiveHandler(state, finalCb) {
     runValidators(validators, state, finalCb);
 }
 
-function postHandler(state, finalCb) {
+function postHandler(state, mixinOptions, finalCb) {
     var validationErr;
     if(!state.report.passed) {
         validationErr = new Error('Invalid model');
@@ -139,9 +130,3 @@ function updateReport(key, state, validationErr, finalCb) {
 
     return updateReport(key, state.parent, validationErr, finalCb);
 }
-
-
-
-module.exports = {
-    validate: validate
-};

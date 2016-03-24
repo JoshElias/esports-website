@@ -1,6 +1,11 @@
 {
   "name": "redbullRarityChance",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "rarity": {
       "type": "string"
@@ -12,7 +17,6 @@
       "type": {}
     }
   },
-  "validations": [],
   "relations": {
     "expansion": {
       "type": "belongsTo",
@@ -67,5 +71,8 @@
       "permission": "ALLOW",
       "accessType": "WRITE"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true
+  }
 }

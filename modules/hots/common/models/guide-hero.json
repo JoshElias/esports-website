@@ -1,7 +1,12 @@
 {
   "name": "guideHero",
   "plural": "guideHeroes",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "guideId": {},
     "heroId": {}
@@ -33,6 +38,7 @@
     }
   },
   "mixins": {
-    "DestroyOnDelete": true
+    "DestroyOnDelete": true,
+    "Scope": true
   }
 }

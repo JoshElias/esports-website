@@ -1,62 +1,133 @@
 var async = require("async");
-var requestCrawler = require("./../request-crawler");
+var Promise = require("bluebird");
+var resultCrawler = require("../../lib/result-crawler");
+var reqCache = require("../../lib/req-cache");
 var slugFuncs = require("./slug-funcs");
-
-
-var SLUG_GENERATE_FEATURE_KEY = "Slug";
+var packageJSON = require("./package");
 
 
 
-module.exports = function(Model) {
+module.exports = function(Model, mixinOptions) {
+
+    Model.on("attached", function (obj) {
+        Model.app.on("booted", function() {
+            var ObjectId = Model.dataSource.connector.getDefaultIdType();
+            var Slug = Model.app.models.slug;
+            var foreignKeyName = Model.definition.name+"Id";
+
+            // Add relation to slug model
+            Model.hasMany(Slug, {as: "slugs", foreignKey: foreignKeyName});
+
+            // Add properties and relations to slug model
+            Slug.defineProperty(foreignKeyName, { type: ObjectId });
+            Slug.belongsTo(Model, {as: "parent", foreignKey: foreignKeyName});
+        });
+    });
+
 
     // Ensure the request object on every type of hook
     Model.beforeRemote('**', function(ctx, modelInstance, next) {
-
-        // Set loopback Context
-        loopback.getCurrentContext().set('req', ctx.req);
+        reqCache.setRequest(ctx);
         next();
     });
 
-    function attachLoopbackContext(ctx) {
-        var loopbackContext = loopback.getCurrentContext();
-        if (loopbackContext && !ctx.req) {
-            ctx.req = loopback.getCurrentContext().get("req");
-        }
-    }
 
-    Model.observe("after save", function(ctx, next) {
-        attachLoopbackContext(ctx);
-        handleSlug(Model)(ctx, next);
+    Model.observe("access", function(ctx, next) {
+        ctx.req = reqCache.getRequest();
+        async.series([
+            includeSlug(Model, ctx)
+        ], next);
     });
 
 
-    // If slugs is included as a field, include it in the results
-        // Add slugs as an include
-    // If model.find({slug:slug} is found then resolve the slug and
+    Model.observe("after save", function(ctx, next) {
+        ctx.req = reqCache.getRequest();
+        async.series([
+            watchSlug(Model, mixinOptions, ctx)
+        ], next);
+    });
 
+
+
+
+    Model.findBySlug = function(slug, options, finalCb) {
+        if (finalCb === undefined && typeof options === "function") {
+            finalCb = options;
+            options = undefined;
+        }
+
+        finalCb = finalCb || new Promise();
+
+        options = options || {};
+        options.where = {};
+        console.log("slug scope", options);
+        var Slug = Model.app.models.slug;
+        Slug.findOne({
+            where: {
+                "parentModelName": Model.definition.name,
+                "slug": slug
+            },
+            include: {
+                relation: "parent",
+                scope: options
+            }
+        }, function(err, instance) {
+            if(err) return finalCb(err);
+            if(!instance || !instance.parent) {
+                var noModelErr = new Error('unable to find model');
+                noModelErr.statusCode = 404;
+                noModelErr.code = 'MODEL_NOT_FOUND';
+                return finalCb(noModelErr)
+            }
+
+            return finalCb(undefined, instance.parent);
+        });
+
+        return finalCb.promise;
+    };
+
+
+    Model.remoteMethod(
+        "findBySlug",
+        {
+            description: "Finds model by slug",
+            accepts: [
+                {arg: "slug", type: "string", required:true, http: {source: 'query'}},
+                {arg: "options", type: "object", http: {source: 'query'}},
+            ],
+            returns: { type: "object", root: true },
+            http: {verb: 'get'},
+            isStatic: true
+        }
+    );
+
+
+    // add slug properties
+    // add find by slug method
+    // replace slug in where with findBySLug
+    // include slugs
 };
 
 
-function handleSlug(Model) {
-    return function(ctx, finalCb) {
+function watchSlug(Model, mixinOptions, ctx) {
+    return function(finalCb) {
 
-        var filterOptions = {
-            featureKey: SLUG_GENERATE_FEATURE_KEY
-        };
-        filterOptions.primitiveHandler = primitiveHandler;
+        mixinOptions.mixinName = packageJSON.mixinName;
+        mixinOptions.primitiveHandler = primitiveHandler;
 
-        return requestCrawler.crawl(ctx, Model, filterOptions, finalCb);
+        console.log("SLUG MIXINS", mixinOptions.mixinName);
+        return resultCrawler.crawl(Model, mixinOptions, ctx, null, finalCb);
     }
 }
 
 
-function primitiveHandler(state, finalCb) {
-
+function primitiveHandler(state, mixinOptions, finalCb) {
+console.log("handling slug")
     var model = state.ctx.model;
     var slugOptions = {};
 
     // Get options from modelConfig
-    var modelSlugOptions = state.modelProperties[SLUG_GENERATE_FEATURE_KEY];
+    var modelSlugOptions = state.modelProperties[mixinOptions.mixinName];
     if(typeof modelSlugOptions === "object") {
         for(var key in modelSlugOptions) {
             slugOptions[key] = modelSlugOptions[key];
@@ -65,7 +136,7 @@ function primitiveHandler(state, finalCb) {
 
     // Add any potential options from the client
     if(state.ctx.req && state.ctx.req.body && typeof state.ctx.req.body.slugOptions === "object") {
-        for(var key in state.ctx.req.body.slugOptions ) {
+        for(var key in state.ctx.req.body.slugOptions) {
             slugOptions[key] = state.ctx.req.body.slugOptions[key];
         }
     }
@@ -77,12 +148,10 @@ function primitiveHandler(state, finalCb) {
 
     // Query all the relevant models
     var where = {};
-    if(state.ctx.where && typeof state.ctx.where.id === "string") {
-        where.id = state.ctx.where.id;
-    }
-
-    for(var key in state.ctx.data) {
-        where[key] = state.ctx.data[key];
+    if(state.ctx.where && typeof state.ctx.where === "object") {
+        where = state.ctx.where;
+    } else if(typeof state.requestData === "object") {
+        where = state.requestData;
     }
 
     var fields = { id: true };
@@ -188,7 +257,13 @@ function slugify(string) {
 
 
 
-module.exports = {
-    handleSlug: handleSlug,
-    slugify: slugify
-};
+function includeSlug(Model, ctx) {
+    return function(finalCb) {
+
+        if(!ctx.query.where || typeof ctx.query.where.slug !== "string") {
+            return finalCb();
+        }
+
+        return Model.findBySlug(ctx.query.where.slug, ctx.query, finalCb);
+    }
+}

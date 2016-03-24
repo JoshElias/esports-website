@@ -1,7 +1,11 @@
 {
   "name": "stream",
-  "base": "xModel",
-  "options": {},
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "username": {
       "type": "string",
@@ -43,8 +47,6 @@
       "required": true
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -70,5 +72,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

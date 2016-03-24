@@ -1,6 +1,11 @@
 {
   "name": "poll",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "title": {
       "type": "string",
@@ -54,5 +59,13 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

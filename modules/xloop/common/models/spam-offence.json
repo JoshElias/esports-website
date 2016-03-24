@@ -1,6 +1,11 @@
 {
   "name": "spamOffence",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "userAgent": {
       "type": "string"
@@ -64,5 +69,8 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true
+  }
 }

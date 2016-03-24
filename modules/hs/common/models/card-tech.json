@@ -1,7 +1,12 @@
 {
   "name": "cardTech",
   "plural": "cardTechs",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "orderNum": {
       "type": "number"
@@ -45,5 +50,8 @@
       "principalId": "$admin",
       "permission": "ALLOW"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true
+  }
 }

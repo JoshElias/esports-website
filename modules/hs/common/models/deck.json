@@ -1,7 +1,12 @@
 {
   "name": "deck",
   "plural": "decks",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "against": {
       "type": "object"
@@ -91,7 +96,7 @@
           }
         }
       ],
-      "FieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
@@ -122,7 +127,7 @@
       "type": "hasMany",
       "model": "deckMatchup",
       "foreignKey": "deckId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "mulligans": {
       "type": "hasMany",
@@ -259,12 +264,19 @@
   ],
   "mixins": {
     "Validate": true,
-    "FieldFilter": true,
-    "DocFilter": {
-      "acceptedRoles": ["$owner", "$admin"],
-      "predicate": "private"
-    },
     "DestroyOnDelete": true,
-    "Slug": true
+    "Slug": true,
+    "Scope": true,
+    "Filter": {
+      "fieldFilters": true,
+      "acceptedRoles": ["$admin", "$owner"],
+      "predicate": "private",
+      "requiredFields": ["isPublic", "premium"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

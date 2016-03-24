@@ -14,7 +14,7 @@ async.series([
 
         var options = {};
         // Add third-party mixins
-        options.mixinSources = [];
+        options.mixinDirs = [];
 
         // Add third-party models
         options.modelSources = [path.join(__dirname, "..", "node_modules", "loopback-component-passport", "lib", "models")];

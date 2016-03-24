@@ -1,6 +1,11 @@
 {
   "name": "comment",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "text": {
       "type": "string",
@@ -84,6 +89,12 @@
     }
   ],
   "mixins": {
-    "Validate": true
+    "Scope": true,
+    "Validate": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

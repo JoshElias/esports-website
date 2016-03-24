@@ -56,14 +56,6 @@ module.exports = {
             "emailVerificationRequired": true
         }
     },
-    "topic": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "post": {
-        "dataSource": "mongodb",
-        "public": true
-    },
     "game": {
       "dataSource": "mongodb",
       "public": true

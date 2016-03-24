@@ -1,7 +1,12 @@
 {
   "name": "forumPost",
   "plural": "forumPosts",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "__v": {
       "type": "number"
@@ -11,12 +16,11 @@
     },
     "content": {
       "type": "string",
-      "$validate": ["spam"]
+      "Validate": ["spam"]
     },
     "title": {
       "type": "string",
-      "Validate": ["spam"],
-      "Spam": true
+      "Validate": ["spam"]
     },
     "viewCount": {
       "type": "number"
@@ -94,11 +98,18 @@
     }
   ],
   "mixins": {
-    "DocFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
+    "Validate": true,
     "DestroyOnDelete": true,
-    "Spam": true
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

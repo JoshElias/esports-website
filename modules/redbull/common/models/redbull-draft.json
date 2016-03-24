@@ -1,6 +1,11 @@
 {
   "name": "redbullDraft",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "draftStartTime": {
       "type": "number"
@@ -159,7 +164,6 @@
       "permission": "ALLOW",
       "property": "submitDecks"
     },
-
     {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
@@ -205,10 +209,17 @@
 
   ],
   "mixins": {
-    "DocFilter": {
-      "acceptedRoles": ["$redbullAdmin", "$admin", "$owner"],
-      "predicate": "official"
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "official",
+      "requiredFields": ["isOfficial"]
     },
-    "DestroyOnDelete": true
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

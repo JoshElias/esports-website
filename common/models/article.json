@@ -1,6 +1,11 @@
 {
   "name": "article",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "title": {
       "type": "string",
@@ -12,7 +17,7 @@
     },
     "content": {
       "type": "string",
-      "FieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
@@ -158,12 +163,19 @@
   ],
   "mixins": {
     "Validate": true,
-    "FieldFilter": true,
-    "DocFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
     "DestroyOnDelete": true,
-    "Slug": true
+    "Slug": true,
+    "Scope": true,
+    "Filter": {
+      "fieldFilters": true,
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive", "premium"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

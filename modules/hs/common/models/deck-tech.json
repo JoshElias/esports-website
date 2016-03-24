@@ -1,7 +1,12 @@
 {
   "name": "deckTech",
   "plural": "deckTechs",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "title": {
       "type": "string"
@@ -62,6 +67,7 @@
     }
   ],
   "mixins": {
-    "DestroyOnDelete": true
+    "DestroyOnDelete": true,
+    "Scope": true
   }
 }

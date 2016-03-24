@@ -1,36 +1,24 @@
+var async = require("async");
+
 var DEFAULT_MAX_LIMIT = 100;
 var ADMIN_MAX_LIMIT = 1000;
 
 
+
 module.exports = function(Model) {
 
-    // Ensure the request object on every type of hook
-    Model.beforeRemote('**', function(ctx, modelInstance, next) {
-
-        // Set loopback Context
-        loopback.getCurrentContext().set('req', ctx.req);
-        next();
-    });
-
-    function attachLoopbackContext(ctx) {
-        var loopbackContext = loopback.getCurrentContext();
-        if (loopbackContext && !ctx.req) {
-            ctx.req = loopback.getCurrentContext().get("req");
-        }
-    }
-
-
     // Add scope to model depending on user
-    model.beforeRemote("find", function(ctx, unused, next) {
-        attachLoopbackContext(ctx);
-        addMaxScope(Model)(ctx, next);
+    Model.beforeRemote("find", function(ctx, unused, next) {
+        async.series([
+            addMaxScope(Model, ctx)
+        ], next);
     });
 };
 
 
 
-function addMaxScope(Model) {
-    return function(ctx, unused, finalCb) {
+function addMaxScope(Model, ctx) {
+    return function(finalCb) {
 
         // If the user is not logged in, apply default limit
         if(!ctx.req || !ctx.req.accessToken) {

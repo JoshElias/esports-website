@@ -1,7 +1,11 @@
 {
   "name": "twitchfeeds",
-  "base": "xModel",
-  "options": {},
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "feedId": {
       "type": "string",
@@ -13,8 +17,6 @@
       ]
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -40,5 +42,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

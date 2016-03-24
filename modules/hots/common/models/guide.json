@@ -1,6 +1,11 @@
 {
   "name": "guide",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "name": {
       "type": "string",
@@ -13,7 +18,7 @@
     },
     "description": {
       "type": "string",
-      "FieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
@@ -60,7 +65,7 @@
           }
         }
       ],
-      "FieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
@@ -188,12 +193,19 @@
   ],
   "mixins": {
     "Validate": true,
-    "FieldFilter": true,
-    "DocFilter": {
-      "acceptedRoles": ["$admin", "$owner"],
-      "predicate": "private"
-    },
     "DestroyOnDelete": true,
-    "Slug": true
+    "Slug": true,
+    "Scope": true,
+    "Filter": {
+      "fieldFilters": true,
+      "acceptedRoles": ["$admin", "$owner"],
+      "predicate": "private",
+      "requiredFields": ["isPublic", "premium"]
+    },
+    "TimeStamp": {
+      "createdAt": "createdDate",
+      "updatedAt": "updatedDate",
+      "required": true
+    }
   }
 }

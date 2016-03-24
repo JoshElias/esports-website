@@ -1,7 +1,12 @@
 {
   "name": "userIdentity",
   "plural": "userIdentities",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "userId": {}
   },
@@ -36,5 +41,8 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true
+  }
 }

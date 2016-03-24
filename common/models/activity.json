@@ -1,7 +1,12 @@
 {
   "name": "activity",
   "plural": "activities",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "activityType": {
       "type": "string"
@@ -66,5 +71,8 @@
       "principalId": "$admin",
       "permission": "ALLOW"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true
+  }
 }

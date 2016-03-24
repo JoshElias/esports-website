@@ -1,7 +1,12 @@
 {
   "name": "overwatchHero",
   "plural": "overwatchHeroes",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "heroName": {
       "type": "string",
@@ -53,7 +58,6 @@
       "required": true
     }
   },
-  "validations": [],
   "relations": {
     "overwatchAbilities": {
       "type": "hasMany",
@@ -88,9 +92,16 @@
   ],
   "mixins": {
     "Validate": true,
-    "DocFilter": {
+    "Scope": true,
+    "Filter": {
       "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
     }
   }
 }

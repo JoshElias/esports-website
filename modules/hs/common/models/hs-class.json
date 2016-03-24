@@ -1,7 +1,12 @@
 {
   "name": "hsClass",
   "plural": "hsClasses",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "playerClass": {
       "type": "string",
@@ -35,5 +40,8 @@
       "principalId": "$admin",
       "permission": "ALLOW"
     }
-  ]
+  ],
+  "mixins": {
+    "Scope": true
+  }
 }

@@ -1,7 +1,12 @@
 {
   "name": "forumThread",
   "plural": "forumThreads",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "__v": {
       "type": "number"
@@ -11,12 +16,11 @@
     },
     "description": {
       "type": "string",
-      "$validate": ["spam"]
+      "Validate": ["spam"]
     },
     "title": {
       "type": "string",
-      "Validate": ["spam"],
-      "Slug": true
+      "Validate": ["spam"]
     },
     "forumCategoryId": {}
   },
@@ -25,7 +29,7 @@
       "type": "hasMany",
       "model": "forumPost",
       "foreignKey": "forumThreadId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "forumCategory": {
       "type": "belongsTo",
@@ -66,11 +70,17 @@
   ],
   "mixins": {
     "Validate": true,
-    "DocFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
     "DestroyOnDelete": true,
-    "Slug": true
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }

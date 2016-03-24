@@ -1,6 +1,11 @@
 {
   "name": "snapshot",
-  "base": "xModel",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "properties": {
     "snapNum": {
       "type": "number"
@@ -142,11 +147,18 @@
   ],
   "mixins": {
     "Validate": true,
-    "DocFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
     "DestroyOnDelete": true,
-    "Slug": true
+    "Slug": true,
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
   }
 }
