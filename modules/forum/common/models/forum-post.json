@@ -5,13 +5,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true,
-    "$spam": true
+    "validateUpsert": true
   },
   "properties": {
     "__v": {
@@ -22,15 +16,11 @@
     },
     "content": {
       "type": "string",
-      "$validate": ["spam"]
-    },
-    "createdDate": {
-      "type": "date"
+      "Validate": ["spam"]
     },
     "title": {
       "type": "string",
-      "$validate": ["spam"],
-      "$spam": true
+      "Validate": ["spam"]
     },
     "viewCount": {
       "type": "number"
@@ -44,7 +34,6 @@
     "forumThreadId": {},
     "authorId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -55,19 +44,13 @@
       "type": "belongsTo",
       "model": "forumThread",
       "foreignKey": "forumThreadId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "forumPostId",
-      "$destroyOnDelete": true
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "forumPostId",
-      "through": "sluggable"
+      "DestroyOnDelete": true
     }
   },
   "acls": [
@@ -108,5 +91,19 @@
       "property": "__create__comments"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

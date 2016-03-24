@@ -4,12 +4,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true
+    "validateUpsert": true
   },
   "properties": {
     "__v": {
@@ -23,19 +18,18 @@
       "type": "boolean"
     }
   },
-  "validations": [],
   "relations": {
     "teams": {
       "type": "hasMany",
       "model": "team",
       "foreignKey": "gameId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "hsClasses": {
       "type": "hasMany",
       "model": "hsClass",
       "foreignKey": "gameId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     }
   },
   "acls": [
@@ -57,5 +51,18 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "DestroyOnDelete": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

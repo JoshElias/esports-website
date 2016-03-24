@@ -13,7 +13,6 @@
       "type": "number"
     }
   },
-  "validations": [],
   "relations": {
     "card": {
       "type": "belongsTo",
@@ -49,5 +48,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

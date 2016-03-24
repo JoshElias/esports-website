@@ -23,7 +23,6 @@
     "againstDeckId": {},
     "snapshotId": {}
   },
-  "validations": [],
   "relations": {
     "forDeck": {
       "type": "belongsTo",
@@ -78,5 +77,7 @@
       "property": "upsert"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

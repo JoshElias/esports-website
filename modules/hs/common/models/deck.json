@@ -5,15 +5,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$fieldFilter": true,
-    "$docFilter": {
-      "acceptedRoles": ["$owner", "$admin"],
-      "predicate": "private"
-    },
-    "$destroyOnDelete": true,
-    "$slug": true
+    "validateUpsert": true
   },
   "properties": {
     "against": {
@@ -43,9 +35,6 @@
     "contentMid": {
       "type": "string"
     },
-    "createdDate": {
-      "type": "date"
-    },
     "deckType": {
       "type": "string",
       "required": true
@@ -55,7 +44,7 @@
     },
     "description": {
       "type": "string",
-      "$validate": ["spam"]
+      "Validate": ["spam"]
     },
     "isFeatured": {
       "type": "boolean"
@@ -63,8 +52,8 @@
     "name": {
       "type": "string",
       "required": true,
-      "$validate": ["spam"],
-      "$slug": true
+      "Validate": ["spam"],
+      "Slug": true
     },
     "heroName": {
       "type": "string"
@@ -85,7 +74,7 @@
     },
     "youtubeId": {
       "type": "string",
-      "$validate": ["youtubeId"]
+      "Validate": ["youtubeId"]
     },
     "isCommentable": {
       "type": "boolean",
@@ -96,18 +85,18 @@
         {
           "title": {
             "type": "string",
-            "$validate": ["spam"]
+            "Validate": ["spam"]
           },
           "orderNum": {
             "type": "number"
           },
           "content": {
             "type": "string",
-            "$validate": ["spam"]
+            "Validate": ["spam"]
           }
         }
       ],
-      "$fieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
@@ -117,7 +106,6 @@
     },
     "authorId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -128,7 +116,7 @@
       "type": "hasMany",
       "model": "deckCard",
       "foreignKey": "deckId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "comments": {
       "type": "hasMany",
@@ -139,24 +127,18 @@
       "type": "hasMany",
       "model": "deckMatchup",
       "foreignKey": "deckId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "mulligans": {
       "type": "hasMany",
       "model": "mulligan",
       "foreignKey": "deckId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "votes": {
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "deckId"
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "deckId",
-      "through": "sluggable"
     }
   },
   "acls": [
@@ -269,5 +251,21 @@
       "property": "__edit__votes"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Slug": true,
+    "Scope": true,
+    "Filter": {
+      "fieldFilters": true,
+      "acceptedRoles": ["$admin", "$owner"],
+      "predicate": "private",
+      "requiredFields": ["isPublic", "premium"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

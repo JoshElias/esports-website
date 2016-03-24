@@ -19,7 +19,6 @@
     "hotsSnapshotId": {},
     "authorId": {}
   },
-  "validations": [],
   "relations": {
     "user": {
       "type": "belongsTo",
@@ -62,5 +61,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

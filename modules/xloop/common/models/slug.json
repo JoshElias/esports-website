@@ -1,0 +1,33 @@
+{
+  "name": "slug",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "slug": {
+      "type": "string",
+      "Validate": ["slug"]
+    },
+    "linked": {
+      "type": "boolean"
+    },
+    "baseKey": {
+      "type": "string"
+    },
+    "parentModelName": {
+      "type": "string"
+    }
+  },
+  "mixins": {
+    "Validate": true,
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
+}

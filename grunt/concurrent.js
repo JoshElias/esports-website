@@ -11,5 +11,5 @@ module.exports = {
     modules3: ['newer:uglify:modules_', 'newer:cssmin:modules_'],
     modules4: ['hash:modules_', 'newer:copy:modules_audio'],
     /* images */
-    images1: ['newer:imagemin'],
+    images1: ['newer:imagemin']
 };
