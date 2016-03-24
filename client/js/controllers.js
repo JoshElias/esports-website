@@ -4290,21 +4290,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = paginationParams.search;
             
             $scope.selectedDecks = [];
-            
-            $scope.toggleSelectedDeck = function (deck) {
-              deck.selected = deck.selected ? true : false;
-              console.log(deck.selected);
-              
-              // check if user is unselecting a deck
-              var index = $scope.selectedDecks.indexOf(deck.id);
-              if (index !== -1) {
-                $scope.selectedDecks.splice(index, 1);
-              } else {
-                // user is adding a deck
-                $scope.selectedDecks.push(deck.id);
-              }
-              console.log('sel decks: ', $scope.selectedDecks);
-            };
 
             // search on keyup
             $scope.searchDecks = function() {

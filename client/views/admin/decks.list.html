@@ -33,14 +33,6 @@
             <span>{{deck.name}}</span>
             <div class="pull-right btn-toolbar">
                 
-                <div class="checkbox pull-left">
-                    <label>
-                        <input type="checkbox"
-                               ng-click="toggleSelectedDeck(deck)"
-                               ng-model="deck.selected"> Select Deck &nbsp;
-                    </label>
-                </div>
-                
                 <a ui-sref="app.admin.hearthstone.decks.edit({ deckID: deck.id })" 
                    class="btn btn-default">Edit</a>
                 
