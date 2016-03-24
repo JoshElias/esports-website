@@ -11,6 +11,20 @@
     "snapNum": {
       "type": "number"
     },
+    "slug": {
+        "url": {
+          "type": "string",
+          "validators": [
+            "unique"
+          ]
+        },
+        "linked": {
+          "type": "boolean"
+        }
+    },
+    "photoNames": {
+      "type": "object"
+    },
     "title": {
       "type": "string",
       "$slug": true
@@ -39,6 +53,17 @@
       "type": "hasMany",
       "model": "overwatchSnapshotHeroTier",
       "foreignKey": "overwatchSnapshotId"
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "overwatchSnapshotId",
+      "isChild": true
     }
   },
   "acls": [

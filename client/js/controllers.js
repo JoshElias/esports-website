@@ -18869,12 +18869,13 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminOverwatchSnapshotAddCtrl', ['$scope', 'OverwatchSnapshotBuilder', function ($scope, OverwatchSnapshotBuilder) {
         
         // set default page
-        $scope.page
+        $scope.page = 'general';
         
         // set mode to add
         $scope.mode = 'add';
         
         // init snapshot
         $scope.snapshot = OverwatchSnapshotBuilder.new();
+        console.log('$scope.snapshot:', $scope.snapshot);
         
     }]);

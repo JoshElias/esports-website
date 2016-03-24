@@ -35,7 +35,8 @@
     "snapshotId": {},
     "forumPostId": {},
     "parentCommentId": {},
-    "redbullDeckId": {}
+    "redbullDeckId": {},
+    "overwatchSnapshotId": {}
   },
   "validations": [],
   "relations": {
@@ -63,6 +64,11 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
+    },
+    "owSnapshot": {
+      "type": "belongsTo",
+      "model": "overwatchSnapshot",
+      "foreignKey": "overwatchSnapshotId"
     },
     "forumPost": {
       "type": "belongsTo",

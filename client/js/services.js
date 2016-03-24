@@ -3750,8 +3750,42 @@ angular.module('app.services', [])
             return factory;
         }
     ])
-    .factory('OverwatchSnapshotBuilder', ['$q', 'OverwatchHero', function ($q, OverwatchHero) {
+    .factory('OverwatchSnapshotBuilder', ['$q', '$compile', '$rootScope', 'bootbox', 'OverwatchSnapshot', function ($q, $compile, $rootScope, bootbox, OverwatchSnapshot) {
         var snapshot = {};
+            
+        var defaultSnap = {
+            snapNum: 1,
+            title: "",
+            authors: [],
+            slug: {
+                url: "",
+                linked: true,
+            },
+            content: {
+                intro: "",
+                thoughts: ""
+            },
+            matches: [],
+            tiers: [],
+            photoNames: {
+                large: "",
+                medium: "",
+                small: "",
+                square: ""
+            },
+            votes: 0,
+            active: false,
+            loading: false,
+            loaded: false,
+            saving: false,
+            tierShow: [],
+            activeDeck: null,
+            activeAuthor: null,
+            currentChartTier: 1,
+            currentChartDeck: null,
+            currentMatchupDeck: [],
+            chartTierRanges: []
+        };
         
 //        // query all heroes
 //        snapshot.loadHeroes = function () {
@@ -3780,7 +3814,134 @@ angular.module('app.services', [])
         
         snapshot.new = function (snapshotData) {
             
-            var sb = 'whatever';
+            var sb = angular.copy(new Object);
+            
+            // load snapshot data
+            sb.load = function (owSnapshot) {
+                // parent model
+                sb.id           = owSnapshot.id;
+                sb.snapNum      = owSnapshot.snapNum;
+                sb.title        = owSnapshot.title;
+                sb.intro        = owSnapshot.intro;
+                sb.thoughts     = owSnapshot.thoughts;
+                sb.isActive     = owSnapshot.isActive;
+                sb.createdDate  = owSnapshot.createdDate;
+                
+                // relations
+                sb.authors      = owSnapshot.authors;
+                sb.heroTiers    = owSnapshot.heroTiers;
+            };
+            
+            // load latest snapshot and increment snapshot number
+            sb.loadPrevious = function () {
+                // set loading
+                sb.loading = true;
+                
+                // get latest snapshot
+                OverwatchSnapshot.findOne({
+                    filter: {
+                        where: {
+                            isActive: true
+                        },
+                        fields: [],
+                        order: 'createdDate DESC',
+                        include: [
+                            {
+                                relation: 'authors',
+                                scope: {
+                                    include: {
+                                        relation: 'user',
+                                        scope: {
+                                            fields: ['username']
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                relation: 'heroTiers',
+                                scope: {
+                                    include: {
+                                        relation: 'heros',
+                                        scope: {
+                                            fields: ['heroName']
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                })
+                .$promise
+                .then(function (owSnapshot) {
+                    console.log('owSnapshot:', owSnapshot);
+                    // strip ids from old data so new items get created
+                    
+                    // snapshotId
+                    delete owSnapshot.id;
+                    
+                    // authors
+                    _.each(owSnapshot.authors, function (author) {
+                        delete author.id;
+                        delete author.overwatchSnapshotId;
+                    });
+                    
+                    // hero tiers
+                    _.each(owSnapshot.heroTiers, function (heroTier) {
+                        delete heroTier.id;
+                        delete heroTier.overwatchSnapshotId;
+                    });
+                    
+                    // inc snapshot num
+                    owSnapshot.snapNum++;
+                    
+                    // init comments/votes
+                    sb.comments = owSnapshot.comments || [];
+                    sb.votes = owSnapshot.votes || [];
+                    
+                    // ... do more stuff ...
+                    
+                    // load snapshot data
+                    sb.load(owSnapshot);
+                    
+                    // set loading
+                    sb.loading = false;
+                });
+            };
+            
+            // prompt for load previous
+            sb.loadPreviousPrompt = function () {
+                var box;
+                var newScope = $rootScope.$new(true);
+                
+//                newScope.loadPrevious = function (snapshotType) {
+//                    sb.loadPrevious(snapshotType);
+//                    box.modal('hide');
+//                }
+                
+                box = bootbox.dialog({
+                    title: 'Load Previous Snapshot',
+                    message: 'Current snapshot data will be replaced with the most recent saved snapshot',
+                    buttons: {
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        },
+                        continue: {
+                            label: 'Continue',
+                            className: 'btn-primary pull-right',
+                            callback: function () {
+                                sb.loadPrevious();
+                            }
+                        }
+                    },
+                    className: 'modal-admin',
+                    show: false
+                });
+                box.modal('show');
+            };
             
             return sb;
         };
