@@ -148,7 +148,7 @@ function generateBootOptions(app, options, finalCb) {
                     }
 
                     var newMixinPath = path.join(mixinPath, file);
-                    //loopbackBootOptions.mixinSources.push(newMixinPath);
+                    loopbackBootOptions.mixinSources.push(newMixinPath);
 
                     return eachCb();
                 });

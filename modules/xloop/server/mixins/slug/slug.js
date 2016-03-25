@@ -8,6 +8,7 @@ var packageJSON = require("./package");
 
 
 module.exports = function(Model, mixinOptions) {
+    console.log('were doing things');
 
     Model.on("attached", function (obj) {
         Model.app.on("booted", function() {
