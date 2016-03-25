@@ -1587,11 +1587,11 @@ angular.module('app.services', [])
             ]
         };
 
-        db.init = function() {
-            if (db.cards.length) {
-                db.sortDeck();
-            }
-        };
+            db.init = function() {
+                if (db.cards.length) {
+                    db.sortDeck();
+                }
+            };
 
             db.validVideo = function () {
                 //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -3750,41 +3750,36 @@ angular.module('app.services', [])
             return factory;
         }
     ])
-    .factory('OverwatchSnapshotBuilder', ['$q', '$compile', '$rootScope', 'bootbox', 'OverwatchSnapshot', function ($q, $compile, $rootScope, bootbox, OverwatchSnapshot) {
+    .factory('OverwatchSnapshotBuilder', ['$q', '$upload', '$timeout', '$window', '$compile', '$state', '$rootScope', 'bootbox', 'OverwatchSnapshot', 'AlertService', 'Util', function ($q, $upload, $timeout, $window, $compile, $state, $rootScope, bootbox, OverwatchSnapshot, AlertService, Util) {
         var snapshot = {};
             
         var defaultSnap = {
+            // parent model
             snapNum: 1,
             title: "",
-            authors: [],
             slug: {
                 url: "",
                 linked: true,
             },
-            content: {
-                intro: "",
-                thoughts: ""
-            },
-            matches: [],
-            tiers: [],
+            intro: "",
+            thoughts: "",
             photoNames: {
                 large: "",
                 medium: "",
                 small: "",
                 square: ""
             },
-            votes: 0,
-            active: false,
+            isActive: true,
+            
+            // relationships
+            authors: [],
+            heroTiers: [],
+            
+            // template things
             loading: false,
             loaded: false,
             saving: false,
-            tierShow: [],
-            activeDeck: null,
-            activeAuthor: null,
-            currentChartTier: 1,
-            currentChartDeck: null,
-            currentMatchupDeck: [],
-            chartTierRanges: []
+            activeAuthor: null
         };
         
 //        // query all heroes
@@ -3814,7 +3809,32 @@ angular.module('app.services', [])
         
         snapshot.new = function (snapshotData) {
             
-            var sb = angular.copy(new Object);
+            var sb = angular.copy(defaultSnap);
+            
+            // track deletable 
+            sb.deleted = {
+                authors: [],
+                heroTiers: []
+            };
+            
+            // track updatable
+            sb.updated = {
+                snapshot: false,
+                authors: [],
+                heroTiers: []
+            };
+            
+            // init
+            sb.init = function(data) {
+                // if we have data, load it
+                if (data) {
+                    // load data
+                    sb.load(data);
+                    
+                    // generate tier ranges for charts
+//                    sb.chartGenerateTierRanges();
+                }
+            };
             
             // load snapshot data
             sb.load = function (owSnapshot) {
@@ -3830,6 +3850,17 @@ angular.module('app.services', [])
                 // relations
                 sb.authors      = owSnapshot.authors;
                 sb.heroTiers    = owSnapshot.heroTiers;
+            };
+            
+            // flag snapshot as updated
+            sb.snapshotUpdated = function () {
+                console.log('snapshot updated');
+                
+                // don't flag for update if new
+                if (!sb.id) { return false; }
+                
+                // flag for update
+                sb.updated.snapshot = true;
             };
             
             // load latest snapshot and increment snapshot number
@@ -3908,10 +3939,85 @@ angular.module('app.services', [])
                 });
             };
             
+            // photo uploading
+            sb.photoUpload = function ($files) {
+                console.log('inside photo upload');
+                console.log('$files:', $files);
+                if (!$files.length) return false;
+                
+                // create new $scope
+                var newScope = $rootScope.$new(true);
+                newScope.uploading = 0;
+                
+                // bootbox prompt
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')(newScope),
+                    closeButton: false,
+                    animate: false
+                });
+                
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    newScope.upload = $upload.upload({
+                        url: '/api/images/uploadSnapshot',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        newScope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        sb.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
+                        var URL = (tpl === './') ? cdn2 : tpl;
+                        sb.snapshotImg = URL + data.path + data.small;
+                        box.modal('hide');
+                        
+                        // mark snapshot as updated
+                        sb.snapshotUpdated();
+                    });
+                }
+            };
+            
+            // get snapshot image url
+            sb.getImage = function () {
+                var URL = (tpl === './') ? cdn2 : tpl;
+                var imgPath = 'snapshots/';
+                return (sb.photoNames && sb.photoNames.small === '') ?  URL + 'img/blank.png' : URL + imgPath + sb.photoNames.small;
+            };
+            
+            // remove image
+            sb.removeImage = function () {
+                sb.photoNames.square = '';
+                sb.photoNames.small = '';
+                sb.photoNames.medium = '';
+                sb.photoNames.large = '';
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
+            // set slug
+            sb.setSlug = function () {
+                if (!sb.slug.linked) { return false; }
+                sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
+            };
+
+            // toggle if slug is linked to title
+            sb.slugToggleLink = function () {
+                sb.slug.linked = !sb.slug.linked;
+                sb.setSlug();
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
             // prompt for load previous
             sb.loadPreviousPrompt = function () {
                 var box;
-                var newScope = $rootScope.$new(true);
                 
 //                newScope.loadPrevious = function (snapshotType) {
 //                    sb.loadPrevious(snapshotType);
@@ -3943,6 +4049,230 @@ angular.module('app.services', [])
                 box.modal('show');
             };
             
+            sb.saveCheck = function (callback) {
+                console.log('callback:', callback);
+                console.log('inside save check');
+                async.series([
+                    function (seriesCB) {
+                        // check title
+                        if (!sb.title || !sb.title.length) {
+                            console.log(1);
+                            return seriesCB("Snapshot doesn't have a title");
+                        }
+                        
+                        // check url
+                        if (!sb.slug || !sb.slug.url || !sb.slug.url.length) {
+                            return seriesCB("Snapshot doesn't have a url");
+                        }
+                        
+                        // check image
+                        if (!sb.photoNames 
+                            || !sb.photoNames.square 
+                            || !sb.photoNames.square.length 
+                            || !sb.photoNames.small 
+                            || !sb.photoNames.small.length
+                            || !sb.photoNames.medium
+                            || !sb.photoNames.medium.length
+                            || !sb.photoNames.large
+                            || !sb.photoNames.large.length) {
+                            return seriesCB("Snapshot doesn't have an image");
+                        }
+                        
+                        // check active
+                        if (sb.isActive === undefined || (sb.isActive !== true && sb.isActive !== false)) {
+                            return seriesCB("Snapshot active field is set to an invalid value");
+                        }
+                        
+                        // check intro
+                        if (!sb.intro || !sb.intro.length) {
+                            return seriesCB("Snapshot does not have an introduction");
+                        }
+                        
+                        // check thoughts
+                        if (!sb.thoughts || !sb.thoughts.length) {
+                            return seriesCB("Snapshot does not have thoughts");
+                        }
+                        
+                        // all tests passed
+                        return seriesCB();
+                    }
+                ], function (err) {
+                    console.log('end save check', err);
+                    return callback(err);
+                });
+            };
+            
+            sb.saveDelete = function (callback) {
+                console.log('inside saveDelete');
+                return callback(undefined);
+            };
+            
+            sb.saveUpdate = function (callback) {
+                console.log('inside saveUpdate');
+                return callback(undefined);
+            };
+            
+            sb.saveCreate = function (callback) {
+                console.log('inside saveCreate');
+                async.waterfall([
+                    // create snapshot
+                    function (waterCB) {
+                        console.log('got here?');
+                        if (sb.id) { return waterCB(null, sb.id); }
+                        
+                        OverwatchSnapshot.create({
+                            snapNum: sb.snapNum,
+                            title: sb.title,
+                            slug: {
+                                url: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
+                            intro: sb.intro,
+                            thoughts: sb.thoughts,
+                            createdDate: new Date().toISOString(),
+                            photoNames: {
+                                square: sb.photoNames.square || '',
+                                small: sb.photoNames.small || '',
+                                medium: sb.photoNames.medium || '',
+                                large: sb.photoNames.large || ''
+                            },
+                            isActive: sb.isActive
+                        })
+                        .$promise
+                        .then(function (newSnapshot) {
+                            console.log('newSnapshot:', newSnapshot);
+                            
+                            sb.id = newSnapshot.id;
+                            return waterCB(null);
+                        })
+                        .catch(function (err) {
+                            return waterCB(err);
+                        });
+                    }
+                ], function (err) {
+                    if (err) {
+                        console.error('Snapshot create err: ', err);
+                    }
+                    return callback(err);
+                });
+            };
+            
+            // prompt for adding / removing authors
+            sb.authorAddPrompt = function () {
+                var newScope = $rootScope.$new(true);
+                newScope.authorAdd = sb.authorAdd;
+                newScope.authorExistsById = sb.authorExistsById;
+                newScope.authorDeleteById = sb.authorDeleteById;
+
+                var box = bootbox.dialog({
+                    title: "Authors",
+                    message: $compile('<div snapshot-add-author></div>')(newScope),
+                    show: false,
+                    className: 'modal-admin modal-admin-authors'
+                });
+                box.modal('show');
+            };
+            
+            // add author
+            sb.authorAdd = function (user) {
+                var newAuthor = angular.copy(defaultAuthor);
+                newAuthor.user = user;
+                sb.authors.push(newAuthor);
+            };
+            
+            // check if user is already an author on snapshot
+            sb.authorExistsById = function (authorId) {
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].user.id === authorId) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            
+            // delete author
+            sb.authorDeleteById = function (authorId) {
+                console.log('authorId:', authorId);
+                
+                var index = -1;
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].user.id === authorId) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index !== -1) {
+                    // if existing item
+                    if (sb.authors[index].id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('authors', sb.authors[index].id);
+                        // add delete flag
+                        sb.deleted.authors.push(sb.authors[index].id);
+                    }
+                    
+                    // make sure active author isn't deleted author
+                    if (sb.activeAuthor && sb.activeAuthor.user.id === authorId) {
+                        sb.activeAuthor = null;
+                    };
+                    
+                    // delete author
+                    sb.authors.splice(index, 1);
+                }
+            };
+            
+            // verifies snapshot is correct and saves
+            sb.save = function () {
+                console.log('saving sb:', sb);
+                
+                sb.saving = true;
+                
+                // reset errors
+                AlertService.reset();
+                
+                async.waterfall([
+                    sb.saveCheck,
+//                    sb.saveDelete,
+//                    sb.saveUpdate,
+                    sb.saveCreate
+                ], function (err) {
+                    // need to force an angular digest with $timeout
+                    $timeout(function () {});
+                    
+                    sb.saving = false;
+                    $window.scrollTo(0, 0);
+                    
+                    console.log('finished saving', err);
+                    
+                    if (err) {
+                        if (angular.isString(err)) {
+                            return AlertService.setError({
+                                msg: 'Snapshot Error',
+                                errorList: [err],
+                                show: true
+                            });
+                        } else {
+                            return AlertService.setError({
+                                msg: 'Snapshot Error',
+                                lbErr: err,
+                                show: true
+                            });
+                        }
+                    }
+                    
+                    AlertService.setSuccess({
+                        msg: sb.title + ' created successfully',
+                        show: true,
+                        persist: true
+                    });
+                    
+                    return $state.transitionTo('app.admin.overwatch.snapshots.list');
+                });
+            };
+            
+            // init snapshot
+            sb.init(snapshotData);
+            
+            // return instance
             return sb;
         };
         

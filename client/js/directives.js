@@ -1198,9 +1198,92 @@ angular.module('app.directives', ['ui.load'])
     };
   }
 ])
-.directive('snapshotAddAuthor', [function () {
+//.directive('snapshotAddAuthor', [function () {
+//    return {
+//        templateUrl: tpl + "views/admin/hs.snapshot.add.author.html"
+//    };
+//}])
+.directive('snapshotAddAuthor', ['$q', 'User', 'AjaxPagination', function ($q, User, AjaxPagination) {
     return {
-        templateUrl: tpl + "views/admin/hs.snapshot.add.author.html"
+        templateUrl: tpl + "views/admin/hs.snapshot.add.author.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.authors = [];
+            
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 10;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+            
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateAuthors(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+            
+            function updateAuthors (page, perpage, search, callback) {
+                $scope.loading = true;
+                
+                var pattern = '/.*'+search+'.*/i';
+                var where = {
+                    isProvider: true
+                };
+                
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            username: {
+                                regexp: pattern
+                            }
+                        },
+                        {
+                            email: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+                
+                AjaxPagination.update(User, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.authors = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateAuthors($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateAuthors(1, $scope.perpage, $scope.search);
+            };
+
+        }]
     };
 }])
 .directive('snapshotAddDeck', [function () {
