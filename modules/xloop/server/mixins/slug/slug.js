@@ -8,7 +8,6 @@ var packageJSON = require("./package");
 
 
 module.exports = function(Model, mixinOptions) {
-    console.log('were doing things');
 
     Model.on("attached", function (obj) {
         Model.app.on("booted", function() {
@@ -21,7 +20,7 @@ module.exports = function(Model, mixinOptions) {
 
             // Add properties and relations to slug model
             Slug.defineProperty(foreignKeyName, { type: ObjectId });
-            Slug.belongsTo(Model, {as: "parent", foreignKey: foreignKeyName});
+            Slug.belongsTo(Model, {as: Model.definition.name, foreignKey: foreignKeyName});
         });
     });
 
@@ -61,7 +60,6 @@ module.exports = function(Model, mixinOptions) {
 
         filter = filter || {};
         filter.where = {};
-        console.log("slug scope", filter);
         var Slug = Model.app.models.slug;
         Slug.findOne({
             where: {
@@ -69,19 +67,20 @@ module.exports = function(Model, mixinOptions) {
                 "slug": slug
             },
             include: {
-                relation: "parent",
+                relation: Model.definition.name,
                 scope: filter
             }
         }, function(err, instance) {
             if(err) return finalCb(err);
-            if(!instance || !instance.parent) {
+            if(!instance || !instance[Model.definition.name]) {
                 var noModelErr = new Error('unable to find model');
                 noModelErr.statusCode = 404;
                 noModelErr.code = 'MODEL_NOT_FOUND';
                 return finalCb(noModelErr)
             }
 
-            return finalCb(undefined, instance.parent);
+            var instanceJSON = instance.toJSON();
+            return finalCb(undefined, instanceJSON[Model.definition.name]);
         });
 
         return finalCb.promise;
@@ -94,7 +93,7 @@ module.exports = function(Model, mixinOptions) {
             description: "Finds model by slug",
             accepts: [
                 {arg: "slug", type: "string", required:true, http: {source: 'query'}},
-                {arg: "filter", type: "object", http: {source: 'query'}},
+                {arg: "filter", type: "object", required:false, http: {source: 'query'}},
             ],
             returns: { type: "object", root: true },
             http: {verb: 'get'},

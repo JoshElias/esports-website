@@ -10,7 +10,7 @@ var packageJSON = require("./package");
 
 
 module.exports = function(Model, mixinOptions) {
-console.log('MOTHERFUCK');
+
     // Ensure the request object on every type of hook
     Model.beforeRemote('**', function(ctx, modelInstance, next) {
         reqCache.setRequest(ctx);
