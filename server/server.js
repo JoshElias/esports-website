@@ -13,6 +13,7 @@ async.series([
     function(seriesCb) {
 
         var options = {};
+
         // Add third-party mixins
         options.mixinDirs = [];
 
@@ -22,22 +23,12 @@ async.series([
         return xloop.generateBootOptions(app, options, function(err, bootOptions) {
             if(err) return seriesCb(err);
 
-            if(!app.booting) {
-                app.booting = true;
-            }
-            boot(app, bootOptions);
-            app.booting = false;
-            return seriesCb();
-        })
+            return boot(app, bootOptions, seriesCb);
+        });
     },
 
     // Start server
     function(seriesCb) {
-/*
-        app.handler('rest').adapter.getClasses().forEach(function(c) {
-            console.log("fml", c);
-        });
-        */
 
         if (require.main !== module) {
             return seriesCb();

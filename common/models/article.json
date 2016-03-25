@@ -66,6 +66,7 @@
     "guideId": {},
     "authorId": {}
   },
+  "validations": [],
   "relations": {
     "comments": {
       "type": "hasMany",
@@ -161,6 +162,7 @@
       "property": "__edit__votes"
     }
   ],
+  "methods": {},
   "mixins": {
     "Validate": true,
     "DestroyOnDelete": true,

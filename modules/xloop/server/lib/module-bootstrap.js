@@ -13,15 +13,15 @@ function generateBootOptions(app, options, finalCb) {
     };
 
     // Get the root app directory
-    var appDir = path.dirname(require.main.filename);
-    var configsPath = path.join(appDir, "configs")
+    var appDir = path.join(__dirname, "..", "..", "..", "..", "server");
+    var configsPath = path.join(appDir, "configs");
 
     // Add default loopback directories
     loopbackBootOptions.appRootDir = path.join(appDir);
     loopbackBootOptions.appConfigRootDir = configsPath;
     loopbackBootOptions.modelsRootDir = configsPath;
     loopbackBootOptions.dsRootDir = configsPath;
-    loopbackBootOptions.middleware = require(path.join(__dirname, "..", "..", "..", "..", "server", "configs", "middleware"));
+    loopbackBootOptions.middleware = require(path.join(appDir, "configs", "middleware"));
     loopbackBootOptions.bootDirs.push(path.join(appDir, "boot"));
     loopbackBootOptions.modelSources.push(path.join(appDir, "..", "common", "models"));
 
@@ -148,7 +148,7 @@ function generateBootOptions(app, options, finalCb) {
                     }
 
                     var newMixinPath = path.join(mixinPath, file);
-                    loopbackBootOptions.mixinSources.push(newMixinPath);
+                    //loopbackBootOptions.mixinSources.push(newMixinPath);
 
                     return eachCb();
                 });

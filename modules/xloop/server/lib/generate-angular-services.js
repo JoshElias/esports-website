@@ -9,6 +9,7 @@ var appFile = path.join(__dirname, "..", "..", "..", "..", "server", "server.js"
 var outputFile = path.join(__dirname, "..", "..", "..", "..", "client", "dist", "js", "services", "lb-services.js");
 
 console.error('Loading LoopBack app %j', appFile);
+console.log("AppFile", appFile);
 var app = require(appFile);
 assertLoopBackVersion();
 

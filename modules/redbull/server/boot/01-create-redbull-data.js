@@ -2,6 +2,7 @@ var async = require("async");
 var utils = require("../../../../modules/xloop").utils;
 
 module.exports = function(server) {
+    return;
     if(server.models.length < 1) {
         return;
     }
