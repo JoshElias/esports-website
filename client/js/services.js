@@ -4152,7 +4152,7 @@ var loggedIn = false,
             return factory;
         }
     ])
-    .factory('OverwatchSnapshotBuilder', ['$q', '$upload', '$timeout', '$window', '$compile', '$state', '$rootScope', 'bootbox', 'OverwatchSnapshot', 'AlertService', 'Util', function ($q, $upload, $timeout, $window, $compile, $state, $rootScope, bootbox, OverwatchSnapshot, AlertService, Util) {
+    .factory('OverwatchSnapshotBuilder', ['$q', '$upload', '$timeout', '$window', '$compile', '$state', '$rootScope', 'bootbox', 'OverwatchSnapshot', 'OverwatchHero', 'AlertService', 'Util', function ($q, $upload, $timeout, $window, $compile, $state, $rootScope, bootbox, OverwatchSnapshot, OverwatchHero, AlertService, Util) {
         var snapshot = {};
             
         var defaultSnap = {
@@ -4183,7 +4183,6 @@ var loggedIn = false,
             saving: false,
             activeAuthor: null
         };
-<<<<<<< HEAD
         
         var defaultAuthor = {
             id: null,
@@ -4211,7 +4210,7 @@ var loggedIn = false,
 //            return d.promise;
 //        };
 //        
-//        // init default values
+//        // cache array of heroes
 //        var owHeroes = snapshot.loadHeroes().then(function (owHeroes) {
 //            console.log('owHeroes:', owHeroes);
 //            return owHeroes;
@@ -4581,6 +4580,55 @@ var loggedIn = false,
                     className: 'modal-admin modal-admin-authors'
                 });
                 box.modal('show');
+            };
+            
+            // set active author
+            sb.setActiveAuthor = function (author) {
+                sb.activeAuthor = author;
+            };
+            
+            // return if author has class
+            sb.authorHasHero = function (author, heroName) {
+                var index = author.expertClasses.indexOf(heroName);
+                return (index !== -1);
+            };
+            
+            // toggle class for author
+            sb.toggleAuthorHero = function (author, heroName) {
+                // check if class exists
+                var index = author.expertClasses.indexOf(heroName);
+                if (index !== -1) {
+                    author.expertClasses.splice(index, 1);
+                } else {
+                    author.expertClasses.push(heroName);
+                }
+                
+                // flag author as updated
+                sb.authorUpdated(author);
+            };
+            
+            // get snapshot author by id
+            sb.getAuthorById = function (authorId) {
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].id === authorId) {
+                        return sb.authors[i];
+                    }
+                }
+                return false;
+            };
+            
+            // flag author as updated
+            sb.authorUpdated = function (author) {
+                console.log('author: ', author);
+                // don't flag for update if new
+                if (!author.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.authors.indexOf(author.id);
+                if (index === -1) {
+                    sb.updated.authors.push(author.id);
+                    console.log('author update flagged: ', author.user.username);
+                }
             };
             
             // add author

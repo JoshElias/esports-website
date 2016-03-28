@@ -7427,7 +7427,22 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/overwatch.snapshots.snapshot.html',
-                        controller: 'AdminOverwatchSnapshotAddCtrl'
+                        controller: 'AdminOverwatchSnapshotAddCtrl',
+                        resolve: {
+                            owHeroes: ['OverwatchHero', function (OverwatchHero) {
+                                return OverwatchHero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: [
+                                            'heroName'
+                                        ]
+                                    }
+                                })
+                                .$promise;
+                            }]
+                        }
                     }
                 },
                 access: { auth: true, admin: true },

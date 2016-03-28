@@ -19840,7 +19840,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
     }])
-    .controller('AdminOverwatchSnapshotAddCtrl', ['$scope', 'OverwatchSnapshotBuilder', function ($scope, OverwatchSnapshotBuilder) {
+    .controller('AdminOverwatchSnapshotAddCtrl', ['$scope', 'OverwatchSnapshotBuilder', 'owHeroes', function ($scope, OverwatchSnapshotBuilder, owHeroes) {
+        
+        $scope.owHeroes = owHeroes;
+        console.log('$scope.owHeroes:', $scope.owHeroes);
         
         // set default page
         $scope.page = 'general';

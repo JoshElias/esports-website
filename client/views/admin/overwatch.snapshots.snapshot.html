@@ -301,15 +301,20 @@
                         <div class="col-md-12 col-lg-4 p-l-md">
                             <h4 class="user-section">{{snapshot.activeAuthor.user.username}}</h4>
                         </div>
+                        
                         <div class="col-md-12 col-lg-8 padding-none">
                             <ul class="author-classes">
-                                <li ng-repeat="hsClass in snapshot.getHearthstoneClasses()">
-                                    <button type="button" class="btn pull-right {{hsClass}}" ng-class="{ 'btn-class': snapshot.authorHasClass(snapshot.activeAuthor, hsClass) }" ng-click="snapshot.toggleAuthorClass(snapshot.activeAuthor, hsClass)" ng-tooltip data-original-title="{{hsClass}}">
-                                        <img src="{{app.cdn}}img/meta-snapshot/class-icons/{{hsClass}}.png">
+                                <li ng-repeat="owHero in owHeroes">
+                                    <button type="button"
+                                            class="btn pull-right {{owHero.heroName}}" 
+                                            ng-class="{ 'btn-class': snapshot.authorHasHero(snapshot.activeAuthor, owHero.heroName) }"
+                                            ng-click="snapshot.toggleAuthorHero(snapshot.activeAuthor, owHero.heroName)" ng-tooltip data-original-title="{{owHero.heroName}}">
+                                        <img src="{{app.cdn}}img/overwatch/hero-thumbnails/{{owHero.heroName}}.png">
                                     </button>
                                 </li>
                             </ul>
                         </div>
+                        
                     </div>
                     
                     <div class="col-sm-12">
