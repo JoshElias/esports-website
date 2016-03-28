@@ -3814,6 +3814,7 @@ angular.module('app.services', [])
                 square: ""
             },
             votes: 0,
+            isCommentable: true,
             active: false,
             loading: false,
             loaded: false,
@@ -3909,6 +3910,7 @@ angular.module('app.services', [])
                 sb.title = data.title;
                 sb.deckTiers = data.deckTiers;
                 sb.tiers = sb.generateTiers(data.deckTiers);
+                sb.isCommentable = data.isCommentable;
                 
                 // comments for frontend
                 sb.comments = data.comments || [];
