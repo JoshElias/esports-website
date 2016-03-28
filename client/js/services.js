@@ -3782,6 +3782,13 @@ angular.module('app.services', [])
             activeAuthor: null
         };
         
+        var defaultAuthor = {
+            id: null,
+            user: undefined,
+            description: "",
+            expertClasses: []
+        };
+        
 //        // query all heroes
 //        snapshot.loadHeroes = function () {
 //            var d = $q.defer();
