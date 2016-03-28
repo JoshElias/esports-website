@@ -1,4 +1,4 @@
-var utils = require("../../modules/xloop/server/lib/utils");
+var utils = require("../../../xloop/utils");
 var _ = require("underscore");
 var Promise = require("bluebird");
 var ObjectID = require("mongodb").ObjectID;

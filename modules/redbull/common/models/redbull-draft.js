@@ -1,7 +1,7 @@
 var loopback = require("loopback");
 var async = require("async");
 var Promise = require("bluebird");
-var utils = require("../../../../modules/xloop").utils;
+var utils = require("xloop").utils;
 
 
 module.exports = function(RedbullDraft) {

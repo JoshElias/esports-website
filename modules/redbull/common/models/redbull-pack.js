@@ -1,5 +1,5 @@
 var async = require("async");
-var utils = require("../../../../modules/xloop").utils;
+var utils = require("xloop").utils;
 
 module.exports = function(RedbullPack) {
 
