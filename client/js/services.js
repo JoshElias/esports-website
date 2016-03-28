@@ -140,7 +140,7 @@ angular.module('app.services', [])
         }
     ])
     .factory('AuthenticationService', function() {
-var loggedIn = false,
+        var loggedIn = false,
         admin = false,
         provider = false;
 
@@ -4557,6 +4557,11 @@ var loggedIn = false,
                         .catch(function (err) {
                             return waterCB(err);
                         });
+                    },
+                    function (waterCB) {
+                        OverwatchSnapshot.authors.create({
+                            
+                        });
                     }
                 ], function (err) {
                     if (err) {
@@ -4646,6 +4651,36 @@ var loggedIn = false,
                     }
                 }
                 return false;
+            };
+            
+            // prompt for author delete
+            sb.authorDeletePrompt = function (author) {
+                var box = bootbox.dialog({
+                    title: "Remove Author?",
+                    message: "Are you sure you want to remove the author <strong>" + author.user.username + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.authorDeleteById(author.user.id);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
             };
             
             // delete author

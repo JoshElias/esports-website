@@ -303,14 +303,13 @@
                         </div>
                         
                         <div class="col-md-12 col-lg-8 padding-none">
-                            <ul class="author-classes">
+                            <ul class="ow-hero-filters">
                                 <li ng-repeat="owHero in owHeroes">
-                                    <button type="button"
-                                            class="btn pull-right {{owHero.heroName}}" 
-                                            ng-class="{ 'btn-class': snapshot.authorHasHero(snapshot.activeAuthor, owHero.heroName) }"
-                                            ng-click="snapshot.toggleAuthorHero(snapshot.activeAuthor, owHero.heroName)" ng-tooltip data-original-title="{{owHero.heroName}}">
-                                        <img src="{{app.cdn}}img/overwatch/hero-thumbnails/{{owHero.heroName}}.png">
-                                    </button>
+                                    <a href class="{{owHero.heroName | lowercase}}"      
+                                       ng-class="{ 'active': snapshot.authorHasHero(snapshot.activeAuthor, owHero.heroName) }"
+                                       ng-click="snapshot.toggleAuthorHero(snapshot.activeAuthor, owHero.heroName)" 
+                                       ng-tooltip data-original-title="{{owHero.heroName}}">
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -319,7 +318,9 @@
                     
                     <div class="col-sm-12">
                         <label for="authorDescription_{{snapshot.activeAuthor.user.username}}" class="col-sm-12 padding-none control-label m-t-sm">Description</label>
-                        <textarea class="form-control m-b-lg" rows="15" name="authorDescription_{{snapshot.activeAuthor.user.username}}" ng-model="snapshot.activeAuthor.description" ng-change="snapshot.authorUpdated(snapshot.activeAuthor)"></textarea>
+                        <textarea class="form-control m-b-lg" rows="15" 
+                                  name="authorDescription_{{snapshot.activeAuthor.user.username}}" 
+                                  ng-model="snapshot.activeAuthor.description" ng-change="snapshot.authorUpdated(snapshot.activeAuthor)"></textarea>
                     </div>
                 </div>
                 

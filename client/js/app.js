@@ -582,102 +582,80 @@ var app = angular.module('app', [
                                     });
                                 }
                             }],
-                            article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Slug) {
+                            article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
                                 var slug = $stateParams.slug;
-                                console.log("looking for slug", slug);
-                                Slug.find({
-                                    where: {
-                                        slug: slug,
-                                        parentModelName: "article"
-                                    },
-                                    include: ["articles"]
-                                })
-                                .$promise
-                                .then(function (slug) {
-                                    console.log("slug", slug);
-                                    return slug;
-                                })
-                                .catch(function (err) {
-                                    console.log('ERR finding slug:', err);
-                                    if (err.status === 404) {
-                                        return throw404($state);
-                                    }
-                                });
+                                console.log("looking for slug:", slug);
 
 
-/*
-                                return Article.findOne({
+                                return Article.findById({
+                                    id: '56f979068790772017eef074',
                                     filter: {
-                                        where: {
-                                            "slug.url": slug
-                                        },
                                         include: [
-                                            {
-                                                relation: "author",
-                                                scope: {
-                                                    fields: [
-                                                        "username",
-                                                        "about",
-                                                        "providerDescription",
-                                                        "social",
-                                                        "email"
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: "comments",
-                                                scope: {
-                                                    include: [
-                                                        "author"
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: 'votes',
-                                                scope: {
-                                                    fields: {
-                                                        id: true,
-                                                        direction: true,
-                                                        authorId: true
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                relation: "relatedArticles",
-                                                scope: {
-                                                    fields: [
-                                                        "title",
-                                                        "isActive",
-                                                        "photoNames",
-                                                        "authorId",
-                                                        "voteScore",
-                                                        "articleType",
-                                                        "slug"
-                                                    ],
-                                                    include: [
-                                                        {
-                                                            relation: "author",
-                                                            scope: {
-                                                                fields: [
-                                                                    "username"
-                                                                ]
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            },
+//                                            {
+//                                                relation: "author",
+//                                                scope: {
+//                                                    fields: [
+//                                                        "username",
+//                                                        "about",
+//                                                        "providerDescription",
+//                                                        "social",
+//                                                        "email"
+//                                                    ]
+//                                                }
+//                                            },
+//                                            {
+//                                                relation: "comments",
+//                                                scope: {
+//                                                    include: [
+//                                                        "author"
+//                                                    ]
+//                                                }
+//                                            },
+//                                            {
+//                                                relation: 'votes',
+//                                                scope: {
+//                                                    fields: {
+//                                                        id: true,
+//                                                        direction: true,
+//                                                        authorId: true
+//                                                    }
+//                                                }
+//                                            },
+//                                            {
+//                                                relation: "relatedArticles",
+//                                                scope: {
+//                                                    fields: [
+//                                                        "title",
+//                                                        "isActive",
+//                                                        "photoNames",
+//                                                        "authorId",
+//                                                        "voteScore",
+//                                                        "articleType",
+//                                                        "slug"
+//                                                    ],
+//                                                    include: [
+//                                                        {
+//                                                            relation: "author",
+//                                                            scope: {
+//                                                                fields: [
+//                                                                    "username"
+//                                                                ]
+//                                                            }
+//                                                        }
+//                                                    ]
+//                                                }
+//                                            },
                                             {
                                                 relation: "deck",
                                                 scope: {
-                                                    fields: [
-                                                        'id',
-                                                        'playerClass',
-                                                        'heroName',
-                                                        'dust',
-                                                        'gameModeType',
-                                                        'name',
-                                                        'slug'
-                                                    ],
+                                                    fields: {
+                                                        id: true,
+                                                        playerClass: true,
+                                                        heroName: true,
+                                                        dust: true,
+                                                        gameModeType: true,
+                                                        name: true
+                                                    },
                                                     include: {
                                                         relation: 'cards',
                                                         scope: {
@@ -701,7 +679,15 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
+                                    console.log('data:', data);
+                                    // create slug as it was moved from model
+                                    data.slug = {
+                                        url: slug
+                                    };
+                                    
+                                    // tally votescore
                                     data.voteScore = Util.tally(data.votes, 'direction');
+                                    
                                     return data;
                                 })
                                 .catch(function (err) {
@@ -710,7 +696,7 @@ var app = angular.module('app', [
                                         return throw404($state);
                                     }
                                 });
-                                */
+                                
                             }]
                         }
                     }
