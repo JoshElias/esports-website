@@ -587,9 +587,11 @@ var app = angular.module('app', [
                                 console.log("looking for slug:", slug);
 
 
-                                return Article.findById({
-                                    id: '56f979068790772017eef074',
+                                return Article.findOne({
                                     filter: {
+                                        where: {
+                                            slug: slug
+                                        },
                                         include: [
 //                                            {
 //                                                relation: "author",
