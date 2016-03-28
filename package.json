@@ -7,7 +7,7 @@
     "postinstall": "cd node_modules/grunt-contrib-imagemin/node_modules/imagemin/node_modules && del /F /Q vinyl-fs && cd.. && npm install vinyl-fs@2.2.x"
   },
   "dependencies": {
-    "async": "^2.0.0-rc.2",
+    "async": "^1.5.2",
     "bcrypt-nodejs": "^0.0.3",
     "bluebird": "^3.3.4",
     "body-parser": "^1.15.0",

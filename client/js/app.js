@@ -497,10 +497,9 @@ var app = angular.module('app', [
                                         perpage: 12,
                                         total: 0,
                                         where: artWhere,
-                                        order: 'createdDate DESC',
+//                                        order: 'createdDate DESC',
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            content: false
                                         },
                                         include: [
                                           {
@@ -513,7 +512,7 @@ var app = angular.module('app', [
                                             }
                                           },
                                           {
-                                              relation: "slugs"
+                                            relation: "slugs"
                                           }
                                         ]
                                     },
