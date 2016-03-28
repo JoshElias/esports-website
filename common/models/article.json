@@ -4,29 +4,35 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$validate": true,
+    "$fieldFilter": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "$destroyOnDelete": true,
+    "$slug": true
   },
   "properties": {
     "title": {
       "type": "string",
-      "required": true
-    },
-    "slug": {
-        "url": {
-          "type": "string",
-          "validators": [
-            "unique"
-          ]
-        },
-        "linked": {
-          "type": "boolean"
-        }
+      "required": true,
+      "$slug": true
     },
     "description": {
       "type": "string"
     },
     "content": {
-      "type": "string"
+      "type": "string",
+      "$fieldFilter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
     },
     "photoNames": {
       "type": "object"
@@ -49,19 +55,14 @@
       "type": "date"
     },
     "premium": {
-      "type": "object"
+      "isPremium": {
+        "type": "boolean"
+      },
+      "expiryDate": {
+        "type": "date"
+      }
     },
     "articleType": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldRelatedArticles": {
-      "type": [
-        "string"
-      ]
-    },
-    "oldComments": {
       "type": [
         "string"
       ]
@@ -69,18 +70,12 @@
     "isActive": {
       "type": "boolean"
     },
-    "deckId": {
-      "type": {}
-    },
-    "guideId": {
-      "type": {}
-    },
     "__v": {
       "type": "number"
     },
-    "authorId": {
-      "type": {}
-    }
+    "deckId": {},
+    "guideId": {},
+    "authorId": {}
   },
   "validations": [],
   "relations": {
@@ -88,7 +83,7 @@
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "articleId",
-      "isChild": true
+      "$destroyOnDelete": true
     },
     "author": {
       "type": "belongsTo",
@@ -116,6 +111,17 @@
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "articleId"
+    },
+    "sluggables": {
+      "type": "hasMany",
+      "model": "sluggable",
+      "foreignKey": "articleId"
+    },
+    "slugs": {
+      "type": "hasMany",
+      "model": "slug",
+      "foreignKey": "articleId",
+      "through": "sluggable"
     }
   },
   "acls": [
@@ -150,7 +156,7 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__create__comments"
     },

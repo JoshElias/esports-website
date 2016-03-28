@@ -1,13 +1,5 @@
 module.exports = {
   "_meta": {
-    "sources": [
-      "loopback/common/models",
-      "loopback/server/models",
-      "../../common/models",
-      "./../models",
-      "../../node_modules/loopback-component-passport/lib/models",
-      "../../modules/redbull/common/models"
-    ],
     "mixins": [
       "loopback/common/mixins",
       "loopback/server/mixins",
@@ -63,6 +55,18 @@ module.exports = {
     "public": true
   },
   "post": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "game": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "hsClass": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "team": {
     "dataSource": "mongodb",
     "public": true
   },
@@ -281,5 +285,13 @@ module.exports = {
     "twitchfeeds": {
         "dataSource": "mongodb",
         "public": true
-    }
-}
+    },
+  "slug": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "sluggable": {
+    "dataSource": "mongodb",
+    "public": true
+  }
+};

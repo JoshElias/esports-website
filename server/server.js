@@ -1,38 +1,52 @@
-var path = require("path");
+var async = require("async");
 var loopback = require('loopback');
 var boot = require('loopback-boot');
-var consolidate = require("consolidate");
-var favicon = require("serve-favicon");
-var bodyParser = require("body-parser");
-var expressValidator = require('express-validator');
-var compression = require("compression");
-var methodOverride = require('method-override');
-var cookieParser = require('cookie-parser');
-var session = require("express-session");
-var MongoStore = require("connect-mongo")(session);
-var serveStatic = require("serve-static");
+var jloop = require("../modules/jloop");
+var path = require("path");
 
 var app = module.exports = loopback();
 
+async.series([
 
+    // Bootstrap the application, configure models, datasources and middleware.
+    // Sub-apps like REST API are mounted via boot scripts.
+    function(seriesCb) {
+        return jloop.generateBootOptions(app, function(err, bootOptions) {
+            if(err) return seriesCb(err);
 
-// Bootstrap the application, configure models, datasources and middleware.
-// Sub-apps like REST API are mounted via boot scripts.
-var bootOptions = {
-  "appRootDir": path.join(__dirname, "configs"),
-  "bootDirs" : [path.join(__dirname, "boot")]
-};
-boot(app, bootOptions);
+            // Add models for passport component
+            bootOptions.modelSources.push(path.join(__dirname, "..", "node_modules", "loopback-component-passport", "lib", "models"));
 
+            if(!app.booting) {
+                app.booting = true;
+            }
+            boot(app, bootOptions);
+            app.booting = false;
+            return seriesCb();
+        })
+    },
 
-app.start = function() {
-  return app.listen(app.get("port"), function() {
-    app.emit('started');
-    console.log('Web server listening at: %s', app.get('url'));
-  });
-};
+    // Start server
+    function(seriesCb) {
+/*
+        app.handler('rest').adapter.getClasses().forEach(function(c) {
+            console.log("fml", c);
+        });
+        */
 
-// start the server if `$ node server.js`
-if (require.main === module) {
-  app.start();
-}
+        if (require.main !== module) {
+            return seriesCb();
+        }
+
+        return app.listen(function() {
+            var baseUrl = app.get('url').replace(/\/$/, '');
+            console.log('Web server listening at: %s', baseUrl);
+            app.emit('started');
+            return seriesCb();
+        });
+    }
+  ],
+  function(err) {
+    if(err) console.log("err running server:", err);
+  }
+);

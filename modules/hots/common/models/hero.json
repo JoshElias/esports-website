@@ -1,0 +1,108 @@
+{
+  "name": "hero",
+  "plural": "heroes",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    }
+  },
+  "properties": {
+    "isActive": {
+      "type": "boolean"
+    },
+    "characters": {
+      "type": [
+        "object"
+      ]
+    },
+    "className": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "heroType": {
+      "type": "string"
+    },
+    "manaType": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "orderNum": {
+      "type": "number"
+    },
+    "price": {
+      "type": "object"
+    },
+    "role": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "universe": {
+      "type": "string"
+    },
+    "talentTiers": {
+      "type": "object"
+    },
+    "stats": {
+      "type": [
+        "object"
+      ]
+    }
+  },
+  "validations": [],
+  "relations": {
+    "talents": {
+      "type": "hasMany",
+      "model": "heroTalent",
+      "foreignId": "heroId"
+    },
+    "guides": {
+      "type": "hasMany",
+      "model": "guide",
+      "foreignKey": "heroId",
+      "through": "guideHero",
+      "keyThrough": "guideId"
+    },
+    "abilities": {
+      "type": "hasMany",
+      "model": "ability",
+      "foreignKey": "heroId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

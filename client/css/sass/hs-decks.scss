@@ -46,18 +46,36 @@
 // 2... HS decks backgrounds & deck builder header
 //*************************************
 
-@include hs-deck-images (druid, malfurion);
-@include hs-deck-images (hunter, rexxar);
-@include hs-deck-images (hunter, alleria);
-@include hs-deck-images (mage, jaina);
-@include hs-deck-images (mage, medivh);
-@include hs-deck-images (paladin, uther);
-@include hs-deck-images (priest, anduin);
-@include hs-deck-images (rogue, valeera);
-@include hs-deck-images (shaman, thrall);
-@include hs-deck-images (warlock, guldan);
-@include hs-deck-images (warrior, garrosh);
-@include hs-deck-images (warrior, magni);
+// druid
+@include hs-deck-images (malfurion, malfurion);
+
+// hunter
+@include hs-deck-images (rexxar, rexxar);
+@include hs-deck-images (alleria, alleria);
+
+// mage
+@include hs-deck-images (jaina, jaina);
+@include hs-deck-images (medivh, medivh);
+
+// paladin
+@include hs-deck-images (uther, uther);
+@include hs-deck-images (liadrin, liadrin);
+
+// priest
+@include hs-deck-images (anduin, anduin);
+
+// rogue
+@include hs-deck-images (valeera, valeera);
+
+// shaman
+@include hs-deck-images (thrall, thrall);
+
+// warlock
+@include hs-deck-images (guldan, guldan);
+
+// warrior
+@include hs-deck-images (garrosh, garrosh);
+@include hs-deck-images (magni, magni);
 
 //*************************************
 // 3... HS decks buider images and mulligans
@@ -70,6 +88,7 @@
 @include hs-db-and-color (warrior, magni, magni, $warrior-tan );
 @include hs-db-and-color (rogue, valeera, rogue-large, $rogue-yellow );
 @include hs-db-and-color (paladin, uther, paladin-large, $paladin-pink );
+@include hs-db-and-color (paladin, liadrin, liadrin, $paladin-pink );
 @include hs-db-and-color (priest, anduin, priest-large, $priest-white );
 @include hs-db-and-color (warlock, guldan, warlock-large, $warlock-pink );
 @include hs-db-and-color (hunter, rexxar, hunter-large, $hunter-green );

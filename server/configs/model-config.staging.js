@@ -4,9 +4,7 @@ module.exports = {
       "loopback/common/models",
       "loopback/server/models",
       "../../common/models",
-      "./../models",
-      "../../node_modules/loopback-component-passport/lib/models",
-      "../../modules/redbull/common/models"
+      "./../models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -63,6 +61,18 @@ module.exports = {
     "public": true
   },
   "post": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "game": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "hsClass": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "team": {
     "dataSource": "mongodb",
     "public": true
   },
@@ -237,6 +247,7 @@ module.exports = {
   "redbullRarityChance": {
       "dataSource": "tournament-mongo",
       "public": true
+<<<<<<< HEAD
   },
   "redbullPack": {
       "dataSource": "tournament-mongo",
@@ -281,5 +292,31 @@ module.exports = {
   "twitchfeeds": {
       "dataSource": "mongodb",
       "public": true
+=======
+    },
+    "spamRegex": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "spamOffence": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "twitterfeeds": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "twitchfeeds": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+  "slug": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "sluggable": {
+    "dataSource": "mongodb",
+    "public": true
+>>>>>>> nuclear-blast-zone
   }
 }

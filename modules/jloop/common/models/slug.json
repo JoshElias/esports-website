@@ -1,0 +1,71 @@
+{
+  "name": "slug",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "$validate": true
+  },
+  "properties": {
+    "slug": {
+      "type": "string",
+      "$validate": ["slug"]
+    },
+    "linked": {
+      "type": "boolean"
+    },
+    "baseKey": {
+      "type": "string"
+    },
+    "parentModelName": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "sluggables": {
+      "type": "hasMany",
+      "model": "sluggable",
+      "foreignKey": "slugId"
+    },
+    "articles": {
+      "type": "hasMany",
+      "model": "article",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "decks": {
+      "type": "hasMany",
+      "model": "deck",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "forumPosts": {
+      "type": "hasMany",
+      "model": "forumPost",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "forumThreads": {
+      "type": "hasMany",
+      "model": "forumThread",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "guides": {
+      "type": "hasMany",
+      "model": "guide",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    },
+    "snapshots": {
+      "type": "hasMany",
+      "model": "snapshot",
+      "foreignKey": "slugId",
+      "through": "sluggable"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

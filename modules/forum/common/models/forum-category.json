@@ -1,0 +1,63 @@
+{
+  "name": "forumCategory",
+  "plural": "forumCategories",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "$validate": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    },
+    "$destroyOnDelete": true
+  },
+  "properties": {
+    "title": {
+      "type": "string",
+      "$validate": ["spam"]
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "__v": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "forumThreads": {
+      "type": "hasMany",
+      "model": "forumThread",
+      "foreignKey": "forumCategoryId",
+      "$destroyOnDelete": true
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

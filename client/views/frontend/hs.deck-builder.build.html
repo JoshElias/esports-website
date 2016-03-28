@@ -8,8 +8,17 @@
             </div>
         </div>
     </div>
+    <!-- first fullwidth plg -->
+    <ts-ad class="row container-fluid text-center" structure="double"></ts-ad>
+    <!-- first fullwidth plg ends -->
     <div class="container-fluid">
+        
         <div class="container-fluid-max">
+            
+            <!-- first fullwidth plg -->
+            <!--<ts-ad class="m-t-md container-fluid text-center" structure="double"></ts-ad>-->
+            <!-- first fullwidth plg ends -->
+
             <div class="db-header clearfix" ng-class="{ 'head-shift' : step == 1 }">
                 <span ng-if="step == 1">
                     <h1>CARD SELECT</h1>
@@ -31,12 +40,12 @@
                 </span>
             </div>
         </div>
+        
         <div class="container-fluid-max" ng-hide="step !== 1">
             <form class="form-horizontal" name="dbForm" novalidate>
             <div class="db-builder row clearfix">
                 <!-- db-right -->
                 <div class="col-md-push-9 col-md-3">
-                   
                         
                     <div class="db-search">
                         <form class="ng-pristine ng-valid">
@@ -124,7 +133,7 @@
                     </div>
 
                     <div class="deck-info">
-                        <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
+                        <div class="db-deck-header db-deck-{{getActiveDeckName().toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
                             <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                         </div>
                         <span ng-show="deck.basic">
@@ -151,7 +160,7 @@
                                          style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
                         </div>
                     </div>
-                        <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
+                        <div class="db-deck-dust db-deck-footer db-deck-{{getActiveDeckName().toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
                             {{deck.getDust()}}
                             <div class="dust-bottle-sm"></div>
                         </div>
@@ -161,6 +170,11 @@
                         <span ng-if="!deckSubmitting">SUBMIT</span>
                         <span ng-if="deckSubmitting">SUBMITTING <i class="fa fa-spinner fa-pulse"></i></span>
                     </button>
+
+                    <!-- sidebar plg -->
+                    <!--<ts-ad class="text-center m-t-md m-b-md" structure="single"></ts-ad>-->
+                    <!-- sidebar plg ends-->
+                    
                 </div>
                 <!-- / db-right -->
 
@@ -170,6 +184,8 @@
                         <alert-box theme="admin"></alert-box>
                         
                         <div class="db-section-title clearfix">
+                            
+                            
                             <div class="row">
                                 <div class="col-md-2">
                                     <h1>CLASS</h1>
@@ -312,7 +328,13 @@
                                     </div>
                                     <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>
                                 </div>
+                                
+                                <!-- ad -->
+<!--                                <ts-ad class="m-t-md" structure="single"></ts-ad>-->
+                                <!-- ad -->
+                                
                             </div>
+                            
                         </div><!-- / db-cards -->
                     </div>
                     </div>
@@ -610,6 +632,25 @@
                                     </div>
                                 </div>
                             </div>
+                            <div ng-if="isUserAdmin || isUserContentProvider">
+                                <div class="form-group">
+                                    <label for="commentable" class="col-sm-2 control-label">Comments Enabled</label>
+                                    <div class="col-sm-10">
+                                        <div class="dropdown">
+                                            <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                                <span>{{isCommentable()}}</span>
+                                                <b class="caret"></b>
+                                            </button>
+                                            <ul class="list-group dropdown-menu dropdown-dark">
+                                                <li class="list-group-item" ng-class="{active: deck.isCommentable === type.value}" 
+                                                    ng-repeat="type in commentableTypes">
+                                                    <a href="#" ng-click="deck.isCommentable = type.value">{{type.text}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                                 <div class="form-group">
                                     <div class="col-sm-10 col-sm-offset-2">
                                         <div class="radio">
@@ -644,4 +685,8 @@
             </form>
         </div>
     </div>
+    <!-- sidebar plg -->
+    <ts-ad class="text-center row" structure="single"></ts-ad>
+    <!-- sidebar plg ends-->
 </div>
+

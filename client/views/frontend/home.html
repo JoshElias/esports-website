@@ -41,6 +41,7 @@
             
         </div>
         <div class="sub-nav-links">
+            
             <ul>
                 <li><a ui-sref="app.hs.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hots.talentCalculator.redirect">TALENT CALCULATOR</a></li><li><a ui-sref="app.hots.guideBuilder.step1">GUIDE BUILDER</a></li><li style="border-right: 0px;"><a target="_blank" ng-href="http://store.tempostorm.com" href="http://store.tempostorm.com">STORE</a></li>
                 <li style="border-left: none"><a target="_blank" ng-href="http://tempostorm.com" href="http://tempostorm.com"><subnav-redbull></subnav-redbull></a></li>
@@ -56,8 +57,20 @@
     
     <!-- articles -->
     <div class="home-articles">
-        <button class="home-articles-prev" ng-class="{ 'hidden': !canArticlePrev() }" ng-click="prevArticles()"><span class="fa fa-angle-left"></span></button>
-        <button class="home-articles-next" ng-class="{ 'hidden': !canArticleNext() }" ng-click="nextArticles()"><span class="fa" ng-class="{ 'fa-angle-right': articles.loading != 'next', 'fa-refresh fa-spin': articles.loading == 'next' }"></span></button>
+        
+        <button class="home-articles-prev"
+                ng-class="{ 'hidden': !canArticlePrev() }"
+                ng-click="prevArticles()">
+            <span class="fa fa-angle-left"></span>
+        </button>
+        
+        <button class="home-articles-next" 
+                ng-class="{ 'hidden': !canArticleNext() }"
+                ng-click="nextArticles()">
+            <span class="fa" 
+                  ng-class="{ 'fa-angle-right': articles.loading != 'next', 'fa-refresh fa-spin': articles.loading == 'next' }">
+            </span>
+        </button>
         
         <div class="home-articles-wrapper" home-articles data-viewable="articles.viewable()" data-offset="articles.offset" data-size="articles.data.length">
             <div class="home-articles-inner">
@@ -67,22 +80,27 @@
             </div>
         </div>
     </div>
+    
     <!-- / articles -->
-<!--    <adsense ad-client="ca-pub-6273013980199815" ad-slot="9426053882"></adsense>-->
-  
-<!--
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-6273013980199815"
-     data-ad-slot="9426053882"
-     data-ad-format="auto"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
--->
+    <ts-ad structure="double"></ts-ad>
   
     <div class="home-content">
+        
+        <!-- first fullwidth plg -->
+            
+<!--
+        <div class="row fullwidth-plg-div ts-plg clearfix hidden-sm hidden-xs">
+            <div class="col-lg-6 col-md-12 plg-long">
+                <div class="plg-leader img-responsive"></div>
+            </div>
+            <div class="col-lg-6 col-md-12 plg-long">
+                <div class="plg-leader img-responsive"></div>
+            </div>
+        </div>
+-->
+            
+        <!-- first fullwidth plg ends -->
+        
         <div class="row">
             <div class="col-xs-12">
                 <h1 class="title">TEMPOSTORM RESOURCES</h1>
@@ -172,7 +190,10 @@
                     </div>
                 </div>
             </div>
+            
         </div>
+
     </div>
+    <ts-ad class="text-center container-fluid row" structure="single"></ts-ad>
 </div>
 <!-- / content -->

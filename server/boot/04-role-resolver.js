@@ -1,8 +1,6 @@
 module.exports = function(server) {
     var Role = server.models.Role;
     var User = server.models.user;
-    var loopback = require("loopback");
-    var utils = require("../../lib/utils");
     var async = require("async");
 
 
@@ -16,6 +14,8 @@ module.exports = function(server) {
 
         User.getCurrent(function(err, currentUser) {
            if(err) return cb(err);
+           else if (!currentUser) return cb(undefined, false);
+
            return cb(undefined, isSubscribed(currentUser.toJSON()));
         });
 
@@ -25,8 +25,7 @@ module.exports = function(server) {
 
             var now = new Date();
             var dateISO = now.toISOString();
-            
-            return (user.subscription.isSubscribed 
+            return (user.subscription.isSubscribed
                     || (user.subscription.expiryDate > dateISO));
         }
     });

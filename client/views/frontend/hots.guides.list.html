@@ -16,6 +16,10 @@
 </div>
 <!-- /sub nav -->
 
+<!-- first fullwidth plg -->
+<ts-ad class="container-fluid text-center row" structure="double"></ts-ad>
+<!-- first fullwidth plg ends -->
+
 <div class="hots-dark">
     <!-- filtering -->
     <div hots-filtering heroes="heroes" maps="maps" filters="filters"></div>
@@ -134,6 +138,11 @@
                 </div>
                 <h1>TEMPOSTORM GUIDES</h1>
             </div>
+
+            <!-- first fullwidth plg -->
+            <!--<ts-ad class="container-fluid text-center m-b-md" structure="single"></ts-ad>-->
+            <!-- first fullwidth plg ends -->
+
             <div class="hots-list-ts-guides-wrapper">
                 <ul class="hots-guides row no-pad" ng-if="tempostormGuides.length">
                     <li class="col-xs-12 col-sm-6 col-md-6 col-lg-3" ng-repeat="guide in tempostormGuides">
@@ -168,6 +177,7 @@
                     </li>
                 </ul>
             </div>
+            
             <!-- page flipping -->
             <div pagination="tempostormPagination" class="default"></div>
             <!-- / page flipping -->
@@ -212,7 +222,11 @@
                 <!-- page flipping -->
                 <div pagination="communityPagination" class="default"></div>
                 <!-- / page flipping -->
-
+                
+                <!-- first fullwidth plg -->
+                <!--<ts-ad class="container-fluid text-center m-b-md" structure="single"></ts-ad>-->
+                <!-- first fullwidth plg ends -->
+                
                 <!-- guides titles -->
                 <div class="row hots-guides-long-title m-b-sm">
                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
@@ -285,6 +299,10 @@
                 </ul>
                 <p class="darkbox white p-md" ng-if="!communityGuides.length">There are no guides for the filtering above.</p>
                 <!-- / guides -->
+                
+                <!-- first fullwidth plg -->
+                <!--<ts-ad class="container-fluid text-center m-b-sm" structure="single"></ts-ad>-->
+                <!-- first fullwidth plg ends -->
 
                 <!-- page flipping -->
                 <div pagination="communityPagination" class="default"></div>
@@ -294,4 +312,8 @@
         </div>
     </div>
     <!-- guides end -->
+
+    <!-- first fullwidth plg -->
+    <ts-ad class="container-fluid text-center row" structure="single"></ts-ad>
+    <!-- first fullwidth plg ends -->
 </div>

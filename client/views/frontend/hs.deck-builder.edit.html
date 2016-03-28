@@ -9,6 +9,11 @@
         </div>
     </div>
     <div class="container-fluid-max">
+        
+        <!-- first fullwidth plg -->
+        <!--<ts-ad class="m-t-md container-fluid text-center" structure="double"></ts-ad>-->
+        <!-- first fullwidth plg ends -->
+        
         <div class="db-header clearfix" ng-class="{ 'head-shift' : step == 1 }">
 
             <span ng-if="step == 1">
@@ -35,6 +40,7 @@
         
         <form class="form-horizontal" name="dbForm" novalidate>
         <div class="db-builder row clearfix">
+            
             <!-- db-right -->
             <div class="col-md-push-9 col-md-3">
                 
@@ -123,7 +129,7 @@
                 </div>
 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{ deck.heroName | lowercase }}">
+                    <div class="db-deck-header db-deck-{{deck.heroName.toLowerCase()}} {{ deck.heroName | lowercase }}">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
@@ -153,7 +159,7 @@
                         </div>
                     </div>
                     
-                    <div class="db-deck-dust db-deck-footer db-deck-{{deck.playerClass | lowercase}} {{deck.heroName | lowercase}}">
+                    <div class="db-deck-dust db-deck-footer db-deck-{{deck.heroName | lowercase}} {{deck.heroName | lowercase}}">
                         {{deck.getDust()}}
                         <div class="dust-bottle-sm"></div>
                     </div>
@@ -166,6 +172,11 @@
                         <i class="fa fa-spinner fa-pulse"></i>
                     </span>
                 </button>
+                
+                <!-- sidebar plg -->
+                <!--<ts-ad class="text-center m-t-md m-b-md" structure="single"></ts-ad>-->
+                <!-- sidebar plg ends-->
+                
             </div>
             <!-- / db-right -->
 
@@ -175,6 +186,7 @@
                     <alert-box theme="admin"></alert-box>
                     
                     <div class="db-section-title clearfix">
+                        
                         <div class="row">
                             <div class="col-md-2">
                                 <h1>CLASS</h1>
@@ -326,7 +338,11 @@
                                     </div>
                                     <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>
                                 </div>
+                                
                             </div>
+                        
+                        
+                        
                     </div><!-- / db-cards -->
                 </div>
                 </div>
@@ -627,6 +643,25 @@
                                                     ng-class="{active: deck.isFeatured === type.value}" 
                                                     ng-repeat="type in featuredTypes">
                                                     <a href="#" ng-click="deck.isFeatured = type.value">{{type.text}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-if="isUserAdmin || isUserContentProvider">
+                                <div class="form-group">
+                                    <label for="commentable" class="col-sm-2 control-label">Comments Enabled</label>
+                                    <div class="col-sm-10">
+                                        <div class="dropdown">
+                                            <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                                <span>{{isCommentable()}}</span>
+                                                <b class="caret"></b>
+                                            </button>
+                                            <ul class="list-group dropdown-menu dropdown-dark">
+                                                <li class="list-group-item" ng-class="{active: deck.isCommentable === type.value}" 
+                                                    ng-repeat="type in commentableTypes">
+                                                    <a href="#" ng-click="deck.isCommentable = type.value">{{type.text}}</a>
                                                 </li>
                                             </ul>
                                         </div>

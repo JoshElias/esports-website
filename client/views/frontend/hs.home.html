@@ -24,13 +24,20 @@
 <!-- /sub nav -->
 
 <div class="container-fluid padding-none hs-bg">
+
+    <!-- a-sense -->
+    <ts-ad class="container-fluid text-center row" structure="single"></ts-ad>
+    <!-- /a-sense -->
+    
     <!-- filter start -->
     <div hs-filter-class-large classes="classes" filters="filters"></div>
     <!-- filter end -->
-
+    
     <!-- content start -->
     <div class="container-fluid hs-content">
+        
         <div class="row no-pad">
+
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
                 <h1 class="title">HEARTHSTONE ARTICLES</h1>
                 <h3 class="sub-title m-b-md">The latest articles on all things Hearthstone</h3>
@@ -51,7 +58,7 @@
                             <h3 class="sub-title m-b-md">Decks from Team Tempo Storm</h3>
                             <ul class="hs-decks row no-pad" ng-if="tempostormDecks.length">
                                 <li class="col-xs-12" ng-repeat="deck in tempostormDecks | orderBy: '-createdDate'">
-                                    <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck small {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+                                    <a ui-sref="app.hs.decks.deck({ slug: deck.slugs[0].slug })" class="hs-deck small {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
                                         <div class="inner"></div>
                                         <div class="hs-deck-premium" ng-if="isPremium(deck)"></div>
                                         <div class="bt-shadow"></div>
@@ -93,6 +100,10 @@
     </div>
     <!-- content end -->
 
+    <!-- a-sense -->
+    <ts-ad class="m-b-lg container-fluid text-center row" structure="single"></ts-ad>
+    <!-- /a-sense -->
+
     <!-- content footer -->
     <div class="container-fluid ts-content">
         <div class="row">
@@ -108,5 +119,9 @@
         </div>
     </div>
     <!-- /content footer -->
+
+    <!-- a-sense -->
+    <ts-ad class="container-fluid text-center row" structure="single"></ts-ad>
+    <!-- /adense -->
 
 </div>

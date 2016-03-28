@@ -1,7 +1,7 @@
 var async = require("async");
 var loopback = require("loopback");
 var _ = require("underscore");
-var utils = require("./../../../../lib/utils");
+var utils = require("../../../../modules/jloop").utils;
 
 var HS_CLASSES = ["Mage", "Paladin", "Rogue", "Druid", "Shaman",
     "Warlock", "Hunter", "Priest", "Warrior"];
@@ -49,7 +49,7 @@ module.exports = function(RedbullDeck) {
         }
         var userId = req.accessToken.userId.toString();
 
-        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], req, function (err, isInRoles) {
             if(err) return finalCb(err);
             if(isInRoles.none) return applyFilter();
 
@@ -82,6 +82,7 @@ module.exports = function(RedbullDeck) {
 
                     return User.isInRoles(userId,
                         ["$owner"],
+                        req,
                         {modelClass: "redbullDeck", modelId: result.id},
                         function (err, isInRoles) {
                             if(err) return resultCb(err);
@@ -106,6 +107,7 @@ module.exports = function(RedbullDeck) {
 
                 return User.isInRoles(userId,
                     ["$owner"],
+                    req,
                     {modelClass: "redbullDeck", modelId: ctx.result.id},
                     function (err, isInRoles) {
                         if(err) return finalCb(err);
@@ -231,7 +233,7 @@ module.exports = function(RedbullDeck) {
 
             // Do they have the right role
             var User = RedbullDeck.app.models.user;
-            return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
+            return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], req, function (err, isInRoles) {
                 if (err) return finalCb(err);
                 else if (!isInRoles.none) return finalCb();
                 else return reportValidationErr();

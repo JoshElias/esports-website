@@ -1,0 +1,204 @@
+{
+  "name": "guide",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "$validate": true,
+    "$fieldFilter": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin", "$owner"],
+      "predicate": "private"
+    },
+    "$destroyOnDelete": true,
+    "$slug": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "$slug": true
+    },
+    "guideType": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "$fieldFilter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
+    },
+    "youtubeId": {
+      "type": "string",
+      "$validate": ["youtubeId"]
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
+    },
+    "premium": {
+      "type": "object"
+    },
+    "isFeatured": {
+      "type": "boolean"
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "isPublic": {
+      "type": "boolean"
+    },
+    "against": {
+      "type": "object"
+    },
+    "content": {
+      "type": [
+        {
+          "title": {
+            "type": "string",
+            "$validate": ["spam"]
+          },
+          "orderNum": {
+            "type": "number"
+          },
+          "body": {
+            "type": "string",
+            "$validate": ["spam"]
+          }
+        }
+      ],
+      "$fieldFilter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
+    },
+    "talentTiers": {
+      "type": "object"
+    },
+    "isCommentable": {
+      "type": "boolean"
+    },
+    "synergy": {
+      "type": [
+        "string"
+      ]
+    },
+    "authorId": {}
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "guideId",
+      "$destroyOnDelete": true
+    },
+    "maps": {
+      "type": "hasAndBelongsToMany",
+      "model": "map"
+    },
+    "guideHeroes": {
+      "type": "hasMany",
+      "model": "guideHero",
+      "foreignKey": "guideId",
+      "$destroyOnDelete": true
+    },
+    "guideTalents": {
+      "type": "hasMany",
+      "model": "guideTalent",
+      "foreignKey": "guideId"
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "guideId"
+    },
+    "slugs": {
+      "type": "hasMany",
+      "model": "slug",
+      "foreignKey": "guideId",
+      "through": "sluggable"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "topGuide"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__comments"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__edit__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__guideHeroes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__guideTalents"
+    }
+  ],
+  "methods": {}
+}

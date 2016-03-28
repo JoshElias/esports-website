@@ -1,0 +1,211 @@
+{
+  "name": "user",
+  "plural": "users",
+  "base": "User",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "$fieldFilter": true
+  },
+  "properties": {
+    "isActive": {
+      "type": "boolean",
+      "default": false
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "photos": {
+      "type": "object"
+    },
+    "about": {
+      "type": "string"
+    },
+    "providerDescription": {
+      "type": "string"
+    },
+    "subscription": {
+      "type": "object",
+      "default": {},
+      "$fieldFilter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
+    },
+    "isProvider": {
+      "type": "boolean",
+      "$fieldFilter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
+    },
+    "isAdmin": {
+      "type": "boolean"
+    },
+    "loginCount": {
+      "type": "number"
+    },
+    "lastLoginDate": {
+      "type": "date",
+      "$filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
+    },
+    "resetPasswordCode": {
+      "type": "string",
+      "$fieldFilter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
+    },
+    "__v": {
+      "type": "number"
+    },
+    "social": {
+      "type": "object"
+    }
+  },
+  "hidden": [
+    "password"
+  ],
+  "validations": [],
+  "relations": {
+    "activities": {
+      "type": "hasMany",
+      "model": "activity",
+      "foreignKey": "authorId"
+    },
+    "articles": {
+      "type": "hasMany",
+      "model": "article",
+      "foreignKey": "authorId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "authorId"
+    },
+    "guides": {
+      "type": "hasMany",
+      "model": "guide",
+      "foreignKey": "authorId"
+    },
+    "forumPosts": {
+      "type": "hasMany",
+      "model": "forumPost",
+      "foreignKey": "authorId"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "isInRoles"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "assignRoles"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "revokeRoles"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "isLinked"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "changePassword"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "resetEmail"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "changeEmail"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "setSubscriptionPlan"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "setPlan"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "subscribe"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "setSubscriptionCard"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "cancelSubscription"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "updateAttributes"
+    }
+  ],
+  "methods": {}
+}

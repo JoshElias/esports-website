@@ -123,7 +123,7 @@
                 </div>
 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{ deck.heroName | lowercase }}">
+                    <div class="db-deck-header db-deck-{{deck.heroName.toLowerCase()}} {{ deck.heroName | lowercase }}">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
@@ -153,7 +153,7 @@
                         </div>
                     </div>
                     
-                    <div class="db-deck-dust db-deck-footer db-deck-{{deck.playerClass | lowercase}} {{deck.heroName | lowercase}}">
+                    <div class="db-deck-dust db-deck-footer db-deck-{{deck.heroName | lowercase}} {{deck.heroName | lowercase}}">
                         {{deck.getDust()}}
                         <div class="dust-bottle-sm"></div>
                     </div>
@@ -620,6 +620,25 @@
                                             <ul class="list-group dropdown-menu dropdown-dark">
                                                 <li class="list-group-item" ng-class="{active: deck.isFeatured === type.value}" ng-repeat="type in featuredTypes">
                                                     <a href="#" ng-click="deck.isFeatured = type.value">{{type.text}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-if="isUserAdmin || isUserContentProvider">
+                                <div class="form-group">
+                                    <label for="commentable" class="col-sm-2 control-label">Comments Enabled</label>
+                                    <div class="col-sm-10">
+                                        <div class="dropdown">
+                                            <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                                <span>{{isCommentable()}}</span>
+                                                <b class="caret"></b>
+                                            </button>
+                                            <ul class="list-group dropdown-menu dropdown-dark">
+                                                <li class="list-group-item" ng-class="{active: deck.isCommentable === type.value}" 
+                                                    ng-repeat="type in commentableTypes">
+                                                    <a href="#" ng-click="deck.isCommentable = type.value">{{type.text}}</a>
                                                 </li>
                                             </ul>
                                         </div>

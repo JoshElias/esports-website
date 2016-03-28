@@ -1,0 +1,82 @@
+{
+  "name": "deckTier",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "$destroyOnDelete": true
+  },
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "weeklyNotes": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "number"
+    },
+    "ranks": {
+      "type": [
+        "number"
+      ]
+    },
+    "deckId": {},
+    "snapshotId": {}
+  },
+  "validations": [],
+  "relations": {
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "deckTech": {
+      "type": "hasMany",
+      "model": "deckTech",
+      "foreignKey": "deckTierId",
+      "$destroyOnDelete": true
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "__create__deckTechs"
+    }
+  ],
+  "methods": {}
+}

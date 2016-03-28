@@ -4,7 +4,11 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$docFilter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive"
+    }
   },
   "properties": {
     "screenName": {
@@ -30,10 +34,19 @@
     },
     "isActive": {
       "type": "boolean"
+    },
+    "teamId": {
+      "type": {}
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "team": {
+      "type": "belongsTo",
+      "model": "team",
+      "foreignKey": "teamId"
+    }
+  },
   "acls": [
     {
       "principalType": "ROLE",

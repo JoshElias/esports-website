@@ -23,6 +23,12 @@
 
         </div>
         
+        <!-- first fullwidth plg -->
+
+        <ts-ad class="m-r-lg m-l-lg m-t-md" structure="double" theme="clear-plg"></ts-ad>
+
+        <!-- first fullwidth plg ends -->
+        
         <div class="row m-r-none m-l-none m-t-md">
             <div class="m-b-md article-left col-lg-8">
                 <div class="article-subscribe" ng-if="isPremium() && !isUser.premium && !isUser.admin && !isUser.contentProvider">
@@ -36,11 +42,15 @@
                     <!-- article content -->
                     <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>
                     <!-- / article content -->
+                    
+                    <!-- second fullwidth plg -->
+
+                    <!-- second fullwidth plg ends -->
 
                     <div class="article-author m-t-md" ng-if="article.author">
                         <a class="hidden-xs" href="./user/{{article.author.username}}">
-							<img gravatar-src-once="authorEmail" alt="" />
-						</a>
+                          <img gravatar-src-once="authorEmail" alt="" />
+                        </a>
                         
                         <div class="author-content">
                             <div class="author-top-wrapper clearfix">
@@ -67,14 +77,17 @@
             
             <div class="m-b-md article-right col-lg-4">
                 
-                <div ng-if="article.deck" class="article-deck" db-deck deck="article.deck"></div>
+                <div ng-if="article.deck" class="article-deck hs-styles m-b-md" db-deck deck="article.deck"></div>
                 
                 <!-- article related -->
-                <div class="article-related" ng-if="article.relatedArticles && article.relatedArticles.length && relatedActive()">
+    
+                <div class="article-related row m-r-none m-l-none" ng-if="article.relatedArticles && article.relatedArticles.length && relatedActive()">
                     <h3>RELATED ARTICLES</h3>
-                    <div class="related" ng-repeat="item in article.relatedArticles | orderBy: '-createdDate'" ng-if="item.isActive">
-                        <a href="./articles/{{item.slug.url}}" title="{{item.title}}">
-                            <div class="related-img pull-left" style="background-image: url('https://cdn-tempostorm.netdna-ssl.com/articles/{{item.photoNames.small}}')"></div>
+                    <div class="related" ng-repeat="item in article.relatedArticles | orderBy: '-createdDate'" 
+                         ng-if="item.isActive">
+                        <a href="./articles/{{item.slugs[0].slug}}" title="{{item.title}}">
+                            <div class="related-img pull-left" 
+                                 style="background-image: url('https://cdn-tempostorm.netdna-ssl.com/articles/{{item.photoNames.small}}')"></div>
                             <div class="related-info">
                                 <p class="ell top related-title-{{getType(item)}}">{{item.title}}</p>
                                 <p class="ell bot">by: {{item.author.username}}</p>
@@ -85,19 +98,22 @@
                 </div>
                 <!-- / article related -->
                 
+                <div class="row">
                 
-                <!--  G2A  -->
+                    <!--  G2A  -->
+
+                    <div class="g2a-square col-lg-12 col-sm-6">
+                        <a href="https://www.g2a.com/r/tempo-storm"><img src="https://cdn-tempostorm.netdna-ssl.com/img/g2a-tempo.png" alt="G2A"></a>
+                    </div>                
+                    <!-- / G2A -->
+
+                    <ts-ad class="m-r-lg m-l-lg m-t-md m-b-lg" structure="sidebar" theme="clear-plg"></ts-ad>
+
                 
-                <div class="g2a-square">
-                    <a href="https://www.g2a.com/r/tempo-storm"><img src="https://cdn-tempostorm.netdna-ssl.com/img/g2a-tempo.png" alt="G2A"></a>
-                </div>                
-                <!-- / G2A -->
-                
-                
-                
+                </div>
                 
             </div>
             
-        </div>
+        </div>    
     </div>
 </div>
