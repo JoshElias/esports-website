@@ -5,8 +5,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$destroyOnDelete": true
+    "validateUpsert": true
   },
   "properties": {
     "guideId": {},
@@ -35,9 +34,11 @@
       "type": "hasMany",
       "model": "guideTalent",
       "foreignKey": "guideHeroId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     }
   },
-  "acls": [],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true,
+    "Scope": true
+  }
 }

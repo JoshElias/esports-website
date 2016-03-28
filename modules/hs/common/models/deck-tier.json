@@ -4,8 +4,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$destroyOnDelete": true
+    "validateUpsert": true
   },
   "properties": {
     "description": {
@@ -28,7 +27,6 @@
     "deckId": {},
     "snapshotId": {}
   },
-  "validations": [],
   "relations": {
     "deck": {
       "type": "belongsTo",
@@ -39,7 +37,7 @@
       "type": "hasMany",
       "model": "deckTech",
       "foreignKey": "deckTierId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "snapshot": {
       "type": "belongsTo",
@@ -78,5 +76,8 @@
       "property": "__create__deckTechs"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true,
+    "Scope": true
+  }
 }

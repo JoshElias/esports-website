@@ -5,8 +5,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$destroyOnDelete": true
+    "validateUpsert": true
   },
   "properties": {
     "title": {
@@ -18,7 +17,6 @@
     "deckId": {},
     "deckTierId": {}
   },
-  "validations": [],
   "relations": {
     "deckTier": {
       "type": "belongsTo",
@@ -29,7 +27,7 @@
       "type": "hasMany",
       "model": "cardTech",
       "foreignKey": "deckTechId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "deck": {
       "type": "belongsTo",
@@ -68,5 +66,8 @@
       "property": "__create__cardTechs"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true,
+    "Scope": true
+  }
 }

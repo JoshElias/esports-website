@@ -5,18 +5,12 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true
+    "validateUpsert": true
   },
   "properties": {
     "title": {
       "type": "string",
-      "$validate": ["spam"]
+      "Validate": ["spam"]
     },
     "isActive": {
       "type": "boolean"
@@ -25,13 +19,12 @@
       "type": "number"
     }
   },
-  "validations": [],
   "relations": {
     "forumThreads": {
       "type": "hasMany",
       "model": "forumThread",
       "foreignKey": "forumCategoryId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     }
   },
   "acls": [
@@ -59,5 +52,20 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Authored": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

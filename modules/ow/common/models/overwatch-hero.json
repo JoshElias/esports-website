@@ -5,12 +5,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    }
+    "validateUpsert": true
   },
   "properties": {
     "heroName": {
@@ -48,7 +43,7 @@
     "youtubeId": {
       "type": "string",
       "required": true,
-      "$validate": ["youtubeId"]
+      "Validate": ["youtubeId"]
     },
     "className": {
       "type": "string",
@@ -63,7 +58,6 @@
       "required": true
     }
   },
-  "validations": [],
   "relations": {
     "overwatchAbilities": {
       "type": "hasMany",
@@ -101,5 +95,18 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

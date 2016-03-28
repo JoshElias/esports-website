@@ -21,7 +21,6 @@
     "redbullDraftId": {},
     "authorId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -69,5 +68,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

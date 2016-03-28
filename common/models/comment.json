@@ -4,22 +4,17 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$validate": true
+    "validateUpsert": true
   },
   "properties": {
     "text": {
       "type": "string",
-      "$validate": ["spam"]
+      "Validate": ["spam"]
     },
     "votes": {
       "type": [
         "object"
       ]
-    },
-    "createdDate": {
-      "type": "date",
-      "required": true
     },
     "voteScore": {
       "type": "number"
@@ -34,7 +29,6 @@
     "redbullDeckId": {},
     "overwatchSnapshotId": {}
   },
-  "validations": [],
   "relations": {
     "article": {
       "type": "belongsTo",
@@ -100,5 +94,13 @@
       "property": "*"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Validate": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

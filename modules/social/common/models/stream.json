@@ -47,8 +47,6 @@
       "required": true
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -74,5 +72,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

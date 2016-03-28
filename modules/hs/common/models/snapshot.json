@@ -4,14 +4,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true,
-    "$slug": true
+    "validateUpsert": true
   },
   "properties": {
     "snapNum": {
@@ -19,7 +12,7 @@
     },
     "title": {
       "type": "string",
-      "$slug": {
+      "Slug": {
         "prefixFunc": "metaSnapshot"
       }
     },
@@ -59,36 +52,30 @@
       "type": "hasMany",
       "model": "deckMatchup",
       "foreignKey": "snapshotId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "authors": {
       "type": "hasMany",
       "model": "snapshotAuthor",
       "foreignKey": "snapshotId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "snapshotId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "deckTiers": {
       "type": "hasMany",
       "model": "deckTier",
       "foreignKey": "snapshotId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "votes": {
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "snapshotId"
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "snapshotId",
-      "through": "sluggable"
     }
   },
   "acls": [
@@ -152,5 +139,21 @@
       "property": "__edit__votes"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Slug": true,
+    "Scope": true,
+    "Authored": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

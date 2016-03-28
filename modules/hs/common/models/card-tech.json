@@ -20,7 +20,6 @@
     "cardId": {},
     "deckTechId": {}
   },
-  "validations": [],
   "relations": {
     "deckTech": {
       "type": "belongsTo",
@@ -52,5 +51,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

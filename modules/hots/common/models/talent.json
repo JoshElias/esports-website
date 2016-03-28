@@ -20,7 +20,6 @@
       "required": true
     }
   },
-  "validations": [],
   "relations": {
     "abilities": {
       "type": "hasMany",
@@ -69,5 +68,12 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "TimeStamp": {
+      "createdAt": "createdDate",
+      "updatedAt": "updatedDate",
+      "required": true
+    }
+  }
 }

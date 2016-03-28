@@ -5,14 +5,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true,
-    "$slug": true
+    "validateUpsert": true
   },
   "properties": {
     "__v": {
@@ -23,33 +16,25 @@
     },
     "description": {
       "type": "string",
-      "$validate": ["spam"]
+      "Validate": ["spam"]
     },
     "title": {
       "type": "string",
-      "$validate": ["spam"],
-      "$slug": true
+      "Validate": ["spam"]
     },
     "forumCategoryId": {}
   },
-  "validations": [],
   "relations": {
     "forumPosts": {
       "type": "hasMany",
       "model": "forumPost",
       "foreignKey": "forumThreadId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "forumCategory": {
       "type": "belongsTo",
       "model": "forumCategory",
       "foreignKey": "forumCategoryId"
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "forumThreadId",
-      "through": "sluggable"
     }
   },
   "acls": [
@@ -77,5 +62,20 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Authored": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

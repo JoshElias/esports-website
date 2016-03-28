@@ -1,4 +1,3 @@
-var utils = require("../../modules/jloop/server/lib/utils");
 var _ = require("underscore");
 var Promise = require("bluebird");
 var ObjectID = require("mongodb").ObjectID;

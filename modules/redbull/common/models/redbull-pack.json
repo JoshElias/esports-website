@@ -14,7 +14,6 @@
     "redbullExpansionId": {},
     "ownerId": {}
   },
-  "validations": [],
   "relations": {
     "draft": {
       "type": "belongsTo",
@@ -44,7 +43,6 @@
     "principalId": "$everyone",
     "permission": "DENY"
   },
-
   {
     "accessType": "EXECUTE",
     "principalType": "ROLE",
@@ -85,5 +83,7 @@
     "permission": "ALLOW",
     "accessType": "WRITE"
   }],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

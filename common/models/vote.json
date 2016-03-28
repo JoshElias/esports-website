@@ -10,9 +10,6 @@
     "direction": {
       "type": "number"
     },
-    "createdDate": {
-      "type": "date"
-    },
     "authorId": {},
     "articleId": {},
     "guideId": {},
@@ -21,7 +18,6 @@
     "commentId": {},
     "overwatchSnapshotId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -99,5 +95,12 @@
       "property": "hasVoted"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

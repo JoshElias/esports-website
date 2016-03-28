@@ -56,14 +56,6 @@
       "emailVerificationRequired": true
     }
   },
-  "topic": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "post": {
-    "dataSource": "mongodb",
-    "public": true
-  },
   "game": {
     "dataSource": "mongodb",
     "public": true
@@ -212,10 +204,6 @@
     "dataSource":"mongodb",
     "public": true
   },
-  "container": {
-    "dataSource":"s3",
-    "public": true
-  },
   "image": {
     "dataSource":"s3",
     "public": true
@@ -292,11 +280,19 @@
         "dataSource": "mongodb",
         "public": true
     },
+    "hotsSnapshot": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "heroTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "guideTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
   "slug": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "sluggable": {
     "dataSource": "mongodb",
     "public": true
   }

@@ -1,7 +1,12 @@
 var async = require("async");
-var utils = require("../../../../modules/jloop").utils;
+var utils = require("xloop").utils;
 
 module.exports = function(server) {
+    return;
+    if(server.models.length < 1) {
+        return;
+    }
+
     var RedbullDraftSettings = server.models.redbullDraftSettings;
     var RedbullExpansion = server.models.redbullExpansion;
     var RedbullRarityChance = server.models.redbullRarityChance;

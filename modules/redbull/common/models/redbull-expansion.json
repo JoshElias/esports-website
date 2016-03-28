@@ -20,7 +20,6 @@
       "type": "string"
     }
   },
-  "validations": [],
   "relations": {
     "packs": {
       "type": "hasMany",
@@ -91,5 +90,7 @@
     "accessType": "WRITE"
   }
  ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

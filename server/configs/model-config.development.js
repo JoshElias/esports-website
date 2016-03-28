@@ -1,12 +1,4 @@
 module.exports = {
-  "_meta": {
-    "mixins": [
-      "loopback/common/mixins",
-      "loopback/server/mixins",
-      "../common/mixins",
-      "./mixins"
-    ]
-  },
   "AccessToken": {
     "dataSource": "mongodb",
     "public": false
@@ -49,14 +41,6 @@ module.exports = {
     "options": {
       "emailVerificationRequired": true
     }
-  },
-  "topic": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "post": {
-    "dataSource": "mongodb",
-    "public": true
   },
   "game": {
     "dataSource": "mongodb",
@@ -206,10 +190,6 @@ module.exports = {
     "dataSource":"mongodb",
     "public": true
   },
-  "container": {
-    "dataSource":"s3",
-    "public": true
-  },
   "image": {
       "dataSource":"s3",
      "public": true
@@ -263,12 +243,12 @@ module.exports = {
         "public": true
     },
     "archivedDraftCard": {
-      "dataSource": "tournament-mongo",
-      "public": true
+        "dataSource": "tournament-mongo",
+        "public": true
     },
     "tournamentDeckCard": {
-      "dataSource": "tournament-mongo",
-      "public": true
+        "dataSource": "tournament-mongo",
+        "public": true
     },
     "spamRegex": {
         "dataSource": "mongodb",
@@ -286,11 +266,19 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
+    "hotsSnapshot": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "heroTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "guideTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
   "slug": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "sluggable": {
     "dataSource": "mongodb",
     "public": true
   }

@@ -55,6 +55,12 @@
       "keyThrough": "talentId"
     }
   },
-  "acls": [],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

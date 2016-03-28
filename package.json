@@ -29,6 +29,7 @@
     "grunt-contrib-uglify": "^0.11.1",
     "knox": "^0.9.2",
     "loopback": "^2.27.0",
+    "loopback-authored-mixin": "git://github.com/nxtlvlgg/loopback-authored-mixin.git",
     "loopback-boot": "^2.17.0",
     "loopback-component-explorer": "^2.3.0",
     "loopback-component-passport": "*",
@@ -36,7 +37,13 @@
     "loopback-connector-mandrill": "git://github.com/JoshElias/loopback-connector-mandrill.git",
     "loopback-connector-mongodb": "1.13.2",
     "loopback-datasource-juggler": "^2.45.2",
+    "loopback-destroy-on-delete-mixin": "git://github.com/nxtlvlgg/loopback-destroy-on-delete-mixin.git",
+    "loopback-ds-timestamp-mixin": "^3.2.2",
+    "loopback-filter-mixin": "git://github.com/nxtlvlgg/loopback-filter-mixin.git",
+    "loopback-scope-mixin": "git://github.com/nxtlvlgg/loopback-scope-mixin.git",
     "loopback-sdk-angular": "^1.6.0",
+    "loopback-slug-mixin": "git://github.com/nxtlvlgg/loopback-slug-mixin.git",
+    "loopback-validate-mixin": "git://github.com/nxtlvlgg/loopback-validate-mixin.git",
     "method-override": "^2.3.5",
     "mime": "^1.3.4",
     "mongodb": "^2.1.7",
@@ -51,7 +58,8 @@
     "serve-favicon": "^2.3.0",
     "serve-static": "^1.10.2",
     "stripe": "^4.4.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "xloop": "git://github.com/nxtlvlgg/xloop.git"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

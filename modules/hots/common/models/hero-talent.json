@@ -18,7 +18,6 @@
     "talentId": {},
     "abilityId": {}
   },
-  "validations": [],
   "relations": {
     "hero": {
       "type": "belongsTo",
@@ -36,6 +35,7 @@
       "foreignKey": "abilityId"
     }
   },
-  "acls": [],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

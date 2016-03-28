@@ -46,8 +46,101 @@ angular.module('app.services', [])
         getStatusCode: function() { return statusCode; }
     }
 })
-.factory('AuthenticationService', function() {
-    var loggedIn = false,
+    .factory('CrudMan', [
+        function () {
+            //    var arrs = {};
+            var crud = {
+                exists  : [],
+                toDelete: [],
+                toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
+            }
+            var e = 'exists';
+            var d = 'toDelete';
+            var w = 'toWrite';
+
+            var CrudMan = function () {
+                var arrs = {};
+
+                function getArrs () {
+                    return arrs;
+                }
+
+                function find (item, arrName, crud) {
+                    return _.find(arrs[arrName][crud], function (val) { return val == item });
+                }
+
+                function createArr (arrName) {
+                    arrs[arrName] = angular.copy(crud);
+                }
+
+                function setExists (inArr, arrName) {
+                    if (!arrs[arrName]) {
+                        this.createArr(arrName);
+                    }
+
+                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
+                }
+
+                function removeFromArr (item, arrName, crud) {
+                    var arr = arrs[arrName];
+                    var idx = arr[crud].indexOf(item);
+
+                    arr[crud].splice(idx, 1);
+                }
+
+                function addToDelete (item, arrName) {
+                    var arr = arrs[arrName];
+
+                    if (find(item, arrName, w)) {
+                        var idx = arr[w].indexOf(item);
+
+                        arr[w].splice(idx, 1);
+                    }
+
+                    if (!find(item, arrName)) {
+                        arr[d].push(item);
+                    }
+                }
+
+                function addToArr (item, arrName) {
+                    var arr = arrs[arrName];
+
+                    if (find(item, arrName)) {
+                        var idx = arr[d].indexOf(item);
+
+                        arr[d].splice(idx, 1);
+                    }
+
+                    if (!find(item, arrName)) {
+                        arr[w].push(item);
+                    }
+                }
+
+                function toggleItem (item, arrName) {
+                    if (find(item, arrName, e)) {
+                        arrs[arrName][d].push(item);
+                    } else if (find(item, arrName, w)) {
+                        removeFromArr(item, arrName, w);
+                    } else {
+                        addToArr(item, arrName, w);
+                    }
+                }
+
+                return {
+                    setExists: setExists,
+                    toggle: toggleItem,
+                    add: addToArr,
+                    delete: addToDelete,
+                    createArr: createArr,
+                    getArrs: getArrs
+                }
+            }
+
+            return CrudMan();
+        }
+    ])
+    .factory('AuthenticationService', function() {
+var loggedIn = false,
         admin = false,
         provider = false;
 
@@ -366,6 +459,386 @@ angular.module('app.services', [])
             }
         }
     }])
+    .service('HOTSSnapshot', ['HotsSnapshot', 'SnapshotAuthor', 'HeroTier', 'GuideTier',
+        function (HotsSnapshot, SnapshotAuthor, HeroTier, GuideTier) {
+
+            var defaultSnapshot = {
+                snapNum: 0,
+                title: "default title",
+                intro: "default intro",
+                thoughts: "default thoughts",
+                slugs: [
+                    {
+                        linked: true,
+                        slug: "default slug"
+                    }
+                ],
+                authors: [],
+                heroTiers: [],
+                isActive: false,
+                createdDate: undefined
+            };
+            var defaultAuthor = {
+                description: "",
+                expertClasses: [],
+                hotsSnapshotId: "",
+                authorId: ""
+            };
+            var defaultGuideTier = {
+                heroTierId: "",
+                guideId: "",
+                orderNum: 0
+            };
+            var defaultCrud = {
+                exists: [],
+                toDelete: [],
+                toWrite: []
+            };
+            var exists = new Object();
+
+            var HOTSSnapshot = function (snapshot) {
+                if (!snapshot) {
+                    snapshot = angular.copy(defaultSnapshot);
+                }
+
+                if (snapshot.heroTiers) {
+                    snapshot.heroTiers = _.sortBy(snapshot.heroTiers, function (val) { return val.orderNum });
+                }
+
+                this.load(snapshot);
+            };
+
+            HOTSSnapshot.prototype.load = function (snapshot) {
+                exists['authors'] = angular.copy(defaultCrud);
+                exists['heroTiers'] = angular.copy(defaultCrud);
+                exists['guideTiers'] = angular.copy(defaultCrud);
+
+                this.snapNum     = snapshot.snapNum;
+                this.title       = snapshot.title;
+                this.intro       = snapshot.intro;
+                this.thoughts    = snapshot.thoughts;
+                this.slugs       = snapshot.slugs;
+                this.authors     = snapshot.authors;
+                this.heroTiers   = snapshot.heroTiers;
+                this.isActive    = snapshot.isActive;
+                this.createdDate = snapshot.createdDate;
+                this.tiers       = new Array();
+
+                if(!!snapshot.id) {
+                    this.id = snapshot.id;
+
+                    exists['authors'].exists = angular.copy(this.authors);
+                    exists['heroTiers'].exists = angular.copy(this.heroTiers);
+                }
+
+                console.log(exists);
+            };
+
+            //begin method definitions
+            HOTSSnapshot.prototype.addTier = function () {
+                var tier = {
+                    heroes: new Array(),
+                    tier: this.tiers.length + 1
+                };
+
+                this.tiers.push(tier);
+            };
+
+            HOTSSnapshot.prototype.buildTiers = function () {
+                var heroTiers = this.heroTiers;
+                var tiers = angular.copy(this.tiers);
+                var largestTier = tiers.length;
+
+                if (!!heroTiers) {
+                    this.tiers = new Array();
+
+                    _.each(heroTiers, function (heroTier, idx) {
+                        heroTier.orderNum = idx;
+
+                        if (heroTier.tier > largestTier)
+                            largestTier = heroTier.tier;
+                    });
+
+                    for (var i = 0; i < largestTier; i++) {
+                        this.addTier();
+                    }
+
+                    for (var i = 0; i < heroTiers.length; i++) {
+                        var item = heroTiers[i];
+
+                        this.tiers[item.tier - 1].heroes.push(item);
+                    }
+                }
+            };
+
+            HOTSSnapshot.prototype.newHero = function (obj) {
+                var hero = {
+                    summary      : obj.summary,
+                    tier         : obj.tier,
+                    previousTier : obj.previousTier,
+                    hero         : obj.hero,
+                    burstScore   : obj.burstScore,
+                    pushScore    : obj.pushScore,
+                    surviveScore : obj.surviveScore,
+                    scaleScore   : obj.scaleScore,
+                    utilityScore : obj.utilityScore,
+                    orderNum     : obj.orderNum,
+                    guideTierId  : obj.guideTierId,
+                    heroId       : obj.heroId,
+                    snapshotId   : obj.snapshotId
+                };
+
+                this.heroTiers.push(hero);
+            };
+
+            HOTSSnapshot.prototype.newAuthor = function (obj) {
+                var author = {
+                    description: obj.description,
+                    expertClasses: obj.expertClasses,
+                    hotsSnapshotId: obj.hotsSnapshotId,
+                    authorId: obj.authorId,
+                    user: obj.user
+                };
+
+                this.authors.push(author);
+            };
+
+            HOTSSnapshot.prototype.addGuideToHero = function (hero, guide) {
+                var that = this;
+                var tierGuide = angular.copy(defaultGuideTier);
+                tierGuide['guide'] = guide;
+                tierGuide['guideId'] = guide.id;
+                tierGuide['heroTierId'] = hero.id || "";
+
+                //this is temporary until we decide to enable multiple guides per hero
+                if (hero.guides && hero.guides.length > 0 && hero.guides[0].id) {
+                    _.each(hero.guides, function (tierGuide) {
+                        that.removeGuideFromHero(tierGuide.id, hero.id);
+                    });
+                }
+
+                if (!hero.guides)
+                    hero.guides = [];
+
+                hero.guides.push(tierGuide);
+
+                console.log(exists);
+            };
+
+            HOTSSnapshot.prototype.removeTier = function (tier) {
+                var that = this;
+                var heroes = this.heroTiers;
+                var tiers = this.tiers;
+                var tierToRemove = tier;
+
+                if (typeof tier == "number") {
+                    tierToRemove = _.find(tiers, function (fTier) {
+                        return tier == fTier.tier;
+                    });
+                }
+
+                _.each(tierToRemove.heroes, function (hero) {
+                    return that.removeHero(hero);
+                });
+
+                _.each(heroes, function (hero) {
+                    var heroTier = hero.tier;
+
+                    if (heroTier > tier)
+                        hero.tier = heroTier - 1;
+                });
+
+                tiers.splice(tiers.length-1, 1);
+            };
+
+            HOTSSnapshot.prototype.removeHero = function (hero) {
+                var that = this;
+                var heroTiersCopy = angular.copy(this.heroTiers);
+                var heroCopy = angular.copy(hero);
+
+                _.each(hero.guides, function (guide) {
+                    that.removeGuideFromHero(guide.id, hero.id);
+                });
+
+                if (hero.id)
+                    exists.heroTiers.toDelete.push(hero);
+
+                this.heroTiers.splice(this.heroTiers.indexOf(hero),1);
+            };
+
+            HOTSSnapshot.prototype.removeGuideFromHero = function (guideId, heroId) {
+                var hero = _.find(this.heroTiers, function (h) {
+                    return h.heroId == heroId || h.id == heroId;
+                });
+
+                var guide = _.find(hero.guides, function (g) {
+                    return g.guideId == guideId || g.id == guideId;
+                });
+
+                if (guide.id)
+                    exists.guideTiers.toDelete.push(guide);
+
+                hero.guides = _.difference(hero.guides, [guide]);
+            };
+
+            HOTSSnapshot.prototype.removeAuthor = function (obj) {
+                var authors = this.authors;
+
+                this.authors = _.difference(authors, [obj]);
+
+                if(!!obj.id)
+                    exists.authors.toDelete.push(obj);
+            };
+
+            HOTSSnapshot.prototype.newTier = function () {
+
+                this.tiers.push();
+            };
+
+            HOTSSnapshot.prototype.submit = function (cb) {
+                var arrs = exists;
+                var snapshot = angular.copy(this);
+
+                if (!snapshot.id)
+                    snapshot.createdDate = new Date().toISOString();
+
+                snapshot.slugOptions = {
+                    slug: snapshot.slugs[0].slug,
+                    linked: snapshot.slugs[0].linked
+                };
+
+                //build our crudman toWrite arrays
+                _.each(arrs, function (arr, key) {
+                    var exists  = arr.exists;
+                    var toWrite = arr.toWrite;
+
+                    _.each(snapshot[key], function (val) {
+                        var diff =  _.find(exists, function (eVal) {
+                            var valStr = JSON.stringify(val);
+                            var eValStr = JSON.stringify(eVal);
+
+                            return valStr == eValStr;
+                        });
+
+                        if (!diff) {
+                            toWrite.push(val);
+                        }
+                    });
+                });
+
+                async.waterfall([
+                    function (seriesCb) {
+                        HotsSnapshot.upsert(snapshot)
+                        .$promise
+                        .then(function (data) {
+
+                            //gross, patch me please
+                            if (data._id) {
+                                data.id = data._id;
+                                delete data._id;
+                            }
+
+                            return seriesCb(undefined, data);
+                        })
+                        .catch(seriesCb);
+                    }, function (newSnapshot, seriesCb) {
+                        var authors = arrs.authors;
+                        var hotsSnapshotId = newSnapshot.id;
+
+                        async.forEach(authors.toWrite, function (author, eachCb) {
+                            author.hotsSnapshotId = hotsSnapshotId;
+
+                            SnapshotAuthor.upsert(author)
+                            .$promise
+                            .then(function (data) {
+                                console.log('successfully submitted author:', data);
+                                return eachCb(undefined);
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+
+                                return eachCb(err);
+                            })
+                        }, function () {
+                            //if (err)
+                                //TODO ERR HANDLING
+
+                            return seriesCb(undefined, newSnapshot);
+                        });
+                    }, function (newSnapshot, seriesCb) {
+                        var heroTiers = arrs.heroTiers;
+                        var snapshotId = newSnapshot.id;
+                        var tierGuides = [];
+
+                        async.forEach(heroTiers.toWrite, function (heroTier, eachCb) {
+                            heroTier.snapshotId = snapshotId;
+
+                            HeroTier.upsert(heroTier)
+                            .$promise
+                            .then(function (data) {
+                                console.log('successfully submitted heroTier: ', data);
+                                _.each(heroTier.guides, function (guide) {
+                                    if (!guide.heroTierId)
+                                        guide.heroTierId = data.id;
+                                });
+                                tierGuides.push(heroTier.guides);
+
+                                return eachCb(undefined);
+                            });
+                        }, function (err) {
+                            //if (err)
+                                //TODO ERR HANDLING
+
+                            return seriesCb(undefined, tierGuides);
+                        });
+                    }, function (tierGuides, seriesCb) {
+                        var guides = _.flatten(tierGuides);
+
+                        async.forEach(guides, function (guide, eachCb) {
+                            GuideTier.upsert(guide)
+                            .$promise
+                            .then(function () {
+                                return eachCb(undefined);
+                            });
+                        }, seriesCb);
+
+                    }, function (seriesCb) {
+                        var objs = {
+                            guideTiers: GuideTier,
+                            heroTiers: HeroTier,
+                            authors: SnapshotAuthor
+                        };
+
+                        async.forEachOf(objs, function (obj, key, forEachCb) {
+                            async.forEach(arrs[key].toDelete, function (toDelete, eachCb) {
+                                obj.deleteById({
+                                    id: toDelete.id
+                                })
+                                .$promise
+                                .then(function () {
+                                    console.log('delete ' + key);
+                                    return eachCb();
+                                })
+                                .catch(function (e) {
+                                    if(e.status == 404) {
+                                        console.error("An error occured:");
+                                        console.error(e);
+                                        console.error("Continuing...");
+
+                                        return eachCb();
+                                    }
+
+                                    return eachCb(e);
+                                });
+                            }, forEachCb);
+                        }, seriesCb);
+                    }
+                ], cb);
+            };
+
+            return function (snapshot) { return new HOTSSnapshot(snapshot); }
+        }
+    ])
     .factory('AdminTeamService', ['$http', '$q', function ($http, $q) {
         return {
             getMembers: function () {
@@ -1157,37 +1630,37 @@ angular.module('app.services', [])
       var servObj = {};
       // ui.router hack for updating $stateParams without reloading resolves/controller
       // and allows History API to work.
-    
+
       servObj.updateStateParams = function(stateParams) {
           $state.current.reloadOnSearch = false;
-          
+
           $state.transitionTo($state.current.name, stateParams, {
               location: true,
               inherit: true,
               relative: $state.$current.name,
               notify: false
           });
-          
+
           $timeout(function () {
             $state.current.reloadOnSearch = undefined;
           });
       };
-      
+
       servObj.replaceHistoryWith404 = function() {
           $state.transitionTo('app.404', {}, {
               location: "replace"
           });
       };
-      // this method expects: 
+      // this method expects:
       // page - number
       // count - number
       // perpage - number
       servObj.validatePage = function (page, count, perpage) {
           // 404 if page entered manually is not valid
           if (angular.isUndefined(page)) return;
-          
+
           var page = angular.isNumber(page) ? page : parseInt(page);
-          
+
           if (angular.isDefined(page) && angular.isNumber(page) && page !== 1) {
               if (page <= 0) {
                   this.replaceHistoryWith404();
@@ -1202,7 +1675,7 @@ angular.module('app.services', [])
           }
 //          console.log('cleared page validation');
       };
-      
+
       // this method expects:
       // stateFilters - a stateParam array of values
       // availFilters - an array of available filters
@@ -1212,7 +1685,7 @@ angular.module('app.services', [])
               this.replaceHistoryWith404();
           }
       };
-      
+
       return servObj;
   }])
   .factory('AjaxPagination', ['$state', '$timeout', function ($state, $timeout) {
@@ -1499,7 +1972,7 @@ angular.module('app.services', [])
     return ow;
 })
 .factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', 'CrudMan', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone, CrudMan) {
-    
+
     var deckBuilder = {};
 
     deckBuilder.new = function (playerClass, data) {
@@ -1661,7 +2134,7 @@ angular.module('app.services', [])
             }
             return false;
         };
-        
+
         db.toggleMulligan = function (mulligan, withCoin, card) {
             //            console.log('mulligan: ', mulligan);
             //            console.log('card: ', card);
@@ -1814,19 +2287,19 @@ angular.module('app.services', [])
             if (exists) {
                 // check gameModeType
                 if(db.gameModeType === 'arena') {
-                    
+
                     db.cards[index].cardQuantity += 1;
                     return true;
                 } else {
                     // mode is constructed or brawl mode
                     if (!isLegendary && db.cards[index].cardQuantity === 1) {
-                            
+
                         db.cards[index].cardQuantity += 1;
                         return true;
                     }
                     // increase qty by one
                     if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
-                        
+
                         db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
                         return true;
                     }
@@ -1939,11 +2412,11 @@ angular.module('app.services', [])
                             label: 'Continue',
                             className: 'btn-danger',
                             callback: function () {
-                                
+
                                 $timeout(function() {
                                     db.cards.splice(index, 1);
                                 });
-                                
+
                                 for(var i = 0; i < db.mulligans.length; i++) {
                                     for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
                                         if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
@@ -1981,7 +2454,7 @@ angular.module('app.services', [])
                 card.cardQuantity = card.cardQuantity - 1;
             } else {
                 var index = db.cards.indexOf(card);
-                
+
                 db.cards.splice(index, 1);
             }
         };
@@ -2636,11 +3109,11 @@ angular.module('app.services', [])
                         var where = {};
 
                         if ((!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) && _.isEmpty(filters.heroes)) {
-                            
+
                             if (!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) {
                                 where.or = [];
                             }
-                            
+
                             if (!_.isEmpty(filters.roles)) {
                                 where.or.push({ role: { inq: filters.roles }})
                             }
@@ -2648,7 +3121,7 @@ angular.module('app.services', [])
                             if (!_.isEmpty(filters.universes)) {
                                 where.or.push({ universe: { inq: filters.universes }})
                             }
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -2656,7 +3129,7 @@ angular.module('app.services', [])
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
 //                            console.log('where:', where);
                             Hero.find({
                                 filter: {
@@ -2670,10 +3143,10 @@ angular.module('app.services', [])
                                 console.log(err);
                                 return finalCallback(err);
                             });
-                            
+
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -2681,7 +3154,7 @@ angular.module('app.services', [])
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
                             where.name = { inq: heroNames };
 
                             Hero.find({
@@ -2697,7 +3170,7 @@ angular.module('app.services', [])
                                 return finalCallback(err);
                             });
                         } else if (_.isEmpty(filters.heroes)) {
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -2705,7 +3178,7 @@ angular.module('app.services', [])
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
                             Hero.find({
                                 filter: {
                                     where: where,
@@ -2723,7 +3196,7 @@ angular.module('app.services', [])
                     },
                     function(heroes, seriesCallback) {
                         var where = {};
-                        
+
                         if (_.isEmpty(filters.heroes)) {
                             where = {
                                 isActive: true,
@@ -2738,9 +3211,9 @@ angular.module('app.services', [])
                                 }
                             };
                         }
-                        
+
 //                        console.log('where:', where);
-                        
+
                         Article.find({
                             filter: {
                                 where: where,
@@ -2771,7 +3244,7 @@ angular.module('app.services', [])
                 ])
             },
             topGuide: function (filters, finalCallback) {
-                if ( 
+                if (
                 !_.isUndefined(filters.heroes[0]) ||
                 !_.isEmpty(filters.universes) ||
                 !_.isEmpty(filters.roles) ||
@@ -2786,7 +3259,7 @@ angular.module('app.services', [])
                 } else {
                     var filter = {}
                 }
-               
+
                 Guide.topGuide(filter)
                 .$promise
                 .then(function (data) {
@@ -2814,7 +3287,7 @@ angular.module('app.services', [])
                     if (!_.isEmpty(filters.roles)) {
                         heroWhere.and.push({ role: { inq: filters.roles } });
                     }
-                    
+
                     if (!_.isEmpty(filters.search)) {
                         var pattern = '/.*'+filters.search+'.*/i';
                         heroWhere.or = [
@@ -2822,9 +3295,9 @@ angular.module('app.services', [])
                             { description: { regexp: pattern }}
                         ]
                     }
-                    
+
                 } else if (filters.search != "") {
-                    
+
                     var pattern = '/.*'+filters.search+'.*/i';
                     heroWhere.or = [
                         { name: { regexp: pattern } },
@@ -2836,14 +3309,14 @@ angular.module('app.services', [])
                     guideWhere.isFeatured = isFeatured;
                     order = "createdDate DESC";
                 }
-                
+
 //                console.log('heroWhere:', heroWhere);
-                
+
                 async.waterfall([
                     function(seriesCallback) {
                         var selectedUniverses = filters.universes,
                             selectedRoles = filters.roles
-                        
+
                         Hero.find({
                             filter: {
                                 fields: ["id"],
@@ -2941,11 +3414,11 @@ angular.module('app.services', [])
                                 ]
                             }
                         }).$promise.then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideWhere);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -3102,11 +3575,11 @@ angular.module('app.services', [])
                                 ]
                             }
                         }).$promise.then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideIds);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -3218,11 +3691,11 @@ angular.module('app.services', [])
                         })
                             .$promise
                             .then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideIds);
                         })
                             .catch(function (err) {
@@ -3252,19 +3725,19 @@ angular.module('app.services', [])
                 if (_.isEmpty(selectedHeroes)) {
                     return;
                 }
-                
+
                 var where = {}
 
                 if (isFeatured !== null) {
                     where.isFeatured = isFeatured
                 }
-                
+
                 async.waterfall([
                     //get selected heroes
                     function (seriesCallback) {
-                        
+
                         var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
-                        
+
                         Hero.find({
                             filter: {
                                 fields: ["id"],
@@ -3394,11 +3867,11 @@ angular.module('app.services', [])
                                         ]
                                     }
                                 }).$promise.then(function (guides) {
-                                    
+
                                     _.each(guides, function(guide) {
                                         guide.voteScore = Util.tally(guide.votes, 'direction');
                                     });
-                                    
+
                                     return waterCallback(undefined, guides);
                                 }).catch(function (err) {
                                     return waterCallback(err);
@@ -3662,99 +4135,6 @@ angular.module('app.services', [])
             emit : emit
         }
     }])
-    .factory('CrudMan', [
-        function () {
-            //    var arrs = {};
-            var crud = {
-                exists  : [],
-                toDelete: [],
-                toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
-            }
-            var e = 'exists';
-            var d = 'toDelete';
-            var w = 'toWrite';
-
-            var CrudMan = function () {
-                var arrs = {};
-
-                function getArrs () {
-                    return arrs;
-                }
-
-                function find (item, arrName, crud) {
-                    return _.find(arrs[arrName][crud], function (val) { return val == item });
-                }
-
-                function createArr (arrName) {
-                    arrs[arrName] = angular.copy(crud);
-                }
-
-                function setExists (inArr, arrName) {
-                    if (!arrs[arrName]) {
-                        this.createArr(arrName);
-                    }
-
-                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
-                }
-
-                function removeFromArr (item, arrName, crud) {
-                    var arr = arrs[arrName];
-                    var idx = arr[crud].indexOf(item);
-
-                    arr[crud].splice(idx, 1);
-                }
-
-                function addToDelete (item, arrName) {
-                    var arr = arrs[arrName];
-
-                    if (find(item, arrName)) {
-                        var idx = arr[w].indexOf(item);
-
-                        arr[w].splice(idx, 1);
-                    }
-
-                    if (!find(item, arrName)) {
-                        arr[d].push(item);
-                    }
-                }
-
-                function addToArr (item, arrName) {
-                    var arr = arrs[arrName];
-
-                    if (find(item, arrName)) {
-                        var idx = arr[d].indexOf(item);
-
-                        arr[d].splice(idx, 1);
-                    }
-
-                    if (!find(item, arrName)) {
-                        arr[w].push(item);
-                    }
-                }
-
-                function toggleItem (item, arrName) {
-                    if (find(item, arrName, e)) {
-                        arrs[arrName][d].push(item);
-                    } else if (find(item, arrName, w)) {
-                        removeFromArr(item, arrName, w);
-                    } else {
-                        addToArr(item, arrName, w);
-                    }
-                }
-
-                return {
-                    setExists: setExists,
-                    toggle: toggleItem,
-                    add: addToArr,
-                    delete: addToDelete,
-                    createArr: createArr,
-                    getArrs: getArrs
-                }
-            }
-
-            return CrudMan;
-        }
-    ])
     .factory('markitupSettings', [
         function() {
             var factory, markset;

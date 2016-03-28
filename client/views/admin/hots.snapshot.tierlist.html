@@ -1,0 +1,142 @@
+<div class="row">
+    <div class="col-md-4">
+        <span>Heroes</span>
+        <div class="tier-list" ng-repeat="tier in snapshot.tiers">
+            <div class="tier-list-head clearfix">
+                Tier {{tier.tier}}
+                <span class="pull-right">
+                    <button class="btn btn-green btn-sm" ng-click="openHeroAdd(tier.tier)">
+                        <i class="fa fa-plus-circle"></i>
+                        Add Hero
+                    </button>
+                    <button class="btn btn-red btn-sm m-l-sm" ng-click="removeTier(tier.tier)">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </span>
+            </div>
+
+            <div dnd-list="tier.heroes" class="tier-list-item">
+                <div
+                class="tier-list-hero clearfix"
+                ng-if="tier.heroes.length"
+                ng-repeat="hero in tier.heroes"
+                dnd-draggable="hero"
+                dnd-type="'hero'"
+                dnd-moved="updateDND($index, tier.heroes, tier.tier)"
+                ng-click="setActiveHero(hero)"
+                ng-class="{ active : hero.hero.id == activeHero.heroId }"
+                >
+                    {{hero.orderNum}} - {{hero.hero.name}}
+                    <button ng-click="removeHero(hero)" class="btn btn-red btn-sm pull-right">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="tier-list-no-hero" ng-if="!tier.heroes.length">
+                    No heroes have been selected for tier {{tier.tier}}
+                </div>
+            </div>
+        </div>
+        <div class="add-hero">
+            <button class="btn btn-green btn-sm" style="width:100%;" ng-click="snapshot.addTier()">
+                <i class="fa fa-plus-circle"></i>
+                Add Tier
+            </button>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div ng-if="!!activeHero">
+            <div class="row">
+                <div class="col-md-12 clearfix">
+                    {{activeHero.hero.name}} </br>
+                    {{activeHero.hero.title}}
+                    <div class="pull-right">
+                        <ul>
+                            <li>
+                                General
+                            </li>
+                            <li>
+                                Matchup
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    Associated Guide
+                    <div class="input-group">
+                        <input class="form-control" ng-model="activeHero.guides[0].guide.name" readonly>
+                        <span class="input-group-btn">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    ng-click="openGuideAdd()">
+                                <i class="fa fa-link"></i>
+                            </button>
+                        </span>
+                        <span ng-if="!!activeHero.guides[0]" class="input-group-btn">
+                            <button type="button"
+                                    class="btn btn-secondary btn-danger"
+                                    ng-click="guideDeleteById(activeHero.guides[0].id)">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-1">
+                    <div class="input-group">
+                        Push
+                        <input class="form-control" ng-model="activeHero.pushScore" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="input-group">
+                        Burst
+                        <input class="form-control" ng-model="activeHero.burstScore" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="input-group">
+                        Scale
+                        <input class="form-control" ng-model="activeHero.scaleScore" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="input-group">
+                        Survive
+                        <input class="form-control" ng-model="activeHero.surviveScore" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="input-group">
+                        Utility
+                        <input class="form-control" ng-model="activeHero.utilityScore" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="input-group" style="width: 100%;">
+                        Summary
+                        <textarea rows="15" class="form-control" ng-model="activeHero.summary"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    Previous Tiers
+                    <div class="row">
+                        <div class="col-lg-1" ng-repeat="i in pastTiers(numOfTiers) track by $index">
+                            <div class="input-group">
+                                <input class="form-control"
+                                       ng-model="activeHero.previousTiers[$index]" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

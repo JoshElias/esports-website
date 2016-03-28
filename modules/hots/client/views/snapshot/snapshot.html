@@ -1,0 +1,347 @@
+<div class="bg-override" id="introduction">
+    <div class="sub-nav-wrapper hidden-xs">
+        <div class="container-fluid sub-nav" sub-nav>
+            <div class="swap-to pull-right"></div>
+            <div class="sub-nav-links">
+                <ul>
+                    <li><a href="#introduction">INTRODUCTION</a>
+                    <li><a href="#tiers">TIER LIST</a>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="hots-meta-snapshot container-fluid ">
+        <div class="container wrapper-none heading m-t-xl">
+            <div class=" m-l-md">
+                <h1 class="title">Heroes of the Storm</h1>
+                <h3 class="sub-title m-b-md">{{snapshot.title}}</h3>
+
+            </div>
+            <div class="snapshot-votes pull-right clearfix"> 
+
+                <span class="snapVoteWrap">
+                    <vote-widget theme="single"></vote-widget>
+                </span>
+
+            </div>
+
+        </div>
+        <div class="container" >
+            <div class="m-t-md">
+                <div class="row no-pad clearfix">
+                    <div class="col-xs-12 col-lg-12 m-b-md">
+                        <div class="box-border wrapper-md">
+                            <div class="clearfix">
+                                <h2 class="section-title m-b-lg" >Introduction</h2>
+                                <p>{{snapshot.intro}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-pad clearfix">
+                    <div class="col-xs-12 col-lg-12 m-b-md">
+                        <div class="box-border wrapper-md">
+                            <div class="clearfix">
+                                <h2 class="section-title m-b-lg">Thoughts &amp; Observations</h2>
+                                <p>{{snapshot.thoughts}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile-filter box-border hidden-sm visible-xs m-b-sm"> <!-- Mobile hero filter, hidden md sm and up -->
+                    <div class="tier-hero-filters hidden-sm visible-xs clearfix">
+                        <div class="center ">
+                            <a ng-repeat="role in HOTS.roles" class="filter filter-{{role.toLowerCase()}}"></a>
+                            <a ng-repeat="universe in HOTS.universes" class="filter filter-universe-{{universe.toLowerCase()}}"></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- HOTS Tiers -->
+                <div class="hots-tiers m-b-md box-border no-outline" id="tiers">
+                    <div ng-repeat="tier in snapshot.tiers" id="tier {{tier.tier}}" class="tier">
+                        <div class="tier-heading">
+                            <a class="btn btn-block btn-tier-collapse" role="button" data-toggle="collapse" data-target="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
+                                <h2 class="pull-left">TIER {{tier.tier}}</h2>
+                            </a>
+                            <div class="tier-hero-filters hidden-xs">
+                                <a
+                                        ng-repeat="role in HOTS.roles"
+                                        class="filter filter-{{role.toLowerCase()}}"
+                                        ng-class="{'active':getIsActive('role', role, tier.tier)}"
+                                        ng-click="selectFilter($event, 'role', role, tier.tier, tier.heroes)"
+                                ></a>
+                                <a
+                                        ng-repeat="universe in HOTS.universes"
+                                        class="filter filter-universe-{{universe.toLowerCase()}}"
+                                        ng-class="{'active':getIsActive('universe', universe, tier.tier)}"
+                                        ng-click="selectFilter($event, 'universe', universe, tier.tier, tier.heroes)"
+                                ></a>
+                            </div>
+                        </div>
+
+
+                        <div class="tier-body collapse" id="collapseTier{{tier.tier}}">
+                            <div class="tier-hero" ng-if="activeFilters[tier.tier].filtered.length == 0">
+                                <div class="tier-hero-heading clearfix">
+                                    <h4>There are no heroes that match your currently selected filter.</h4>
+                                </div>
+                            </div>
+                            <!-- Hero start -->
+                            <div ng-repeat="hero in activeFilters[tier.tier].filtered | orderBy: 'orderNum'"
+                                id="Hero{{hero.id}}"
+                                class="tier-hero tier-hero-{{hero.hero.className}}"
+                            >
+                                <div class="tier-hero-heading clearfix" ng-click="triggerAnimation(hero)" role="button" data-toggle="collapse" ng-href="#collapseHero-{{hero.id}}" aria-expanded="false" aria-controls="collapseHero-{{hero.id}}">
+                                    <h4>{{hero.hero.name}} {{hero.orderNum}}</h4>
+                                    <a ui-sref="app.hots.guides.guide({ slug: hero.guides[0].guide.slugs[0].slug })"
+                                       target="_blank"
+                                       class="hero-button hidden-xs"
+                                       ng-if="hero.guides.length > 0"
+                                    >VIEW GUIDE</a>
+                                    <div class="filter filter-role {{hero.hero.role.toLowerCase()}}" ></div>
+                                    <div class="filter filter-universe filter-universe-{{hero.hero.universe.toLowerCase()}} active" ></div>
+                                </div>
+                                <div class="tier-hero-body collapse" id="collapseHero-{{hero.id}}">
+                                    <div class="">
+
+                                        <div class="row m-l-md m-t-md m-b-lg">
+                                            <h2>{{hero.hero.name}}</h2>
+                                            <h3>{{hero.hero.title}}</h3>
+                                        </div>
+                                        <div class="row m-l-none m-r-none">
+                                            <div class="col-xs-12 col-md-7 col-lg-7 m-b-sm">
+                                                <div class="hero-content m-l-xs">
+
+                                                    <h3>Summary</h3>
+                                                    <p>{{hero.summary}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-md-5 col-lg-5 m-b-sm hidden-xs">
+                                                <div class="hero-image">
+                                                    <img src="../img/hots/modal/heroes/{{hero.hero.className}}.png" class="{{hero.hero.className}}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row"> <!-- hidden on large for guide-->
+                                            <button class="bottom-hero-button hidden-sm visible-xs" >VIEW GUIDE</button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="padding-none col-xs-12 col-md-12 col-lg-12 m-b-md">
+                                                <row class="qualities clearfix">
+                                                    <div class="col-xs-12 col-sm-2 hidden-xs quality" style="text-align: center">
+                                                        <div round-progress
+                                                             max="10"
+                                                             current="hero.burstScore"
+                                                             color="#2766ad"
+                                                             bgcolor="rgba(255, 255, 255, 0.1)"
+                                                             radius="30"
+                                                             stroke="6"
+                                                             offset="10"
+                                                             semi="false"
+                                                             rounded="false"
+                                                             clockwise="true"
+                                                             responsive="true"
+                                                             duration="1500"
+                                                             animation="easeInOutQuart"
+                                                             class="round-progress-bar">
+                                                        </div><h3 class="value-centered">{{hero.burstScore}}</h3>
+                                                        <div class="quality-title">
+
+                                                            <h4>burst</h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-2 hidden-xs quality" style="text-align: center">
+                                                        <div round-progress
+                                                             max="10"
+                                                             current="hero.pushScore"
+                                                             color="#7d3193"
+                                                             bgcolor="rgba(255, 255, 255, 0.1)"
+                                                             radius="30"
+                                                             stroke="6"
+                                                             offset="10"
+                                                             semi="false"
+                                                             rounded="false"
+                                                             clockwise="true"
+                                                             responsive="true"
+                                                             duration="1500"
+                                                             animation="easeInOutQuart"
+                                                             class="round-progress-bar">
+                                                        </div><h3 class="value-centered">{{hero.pushScore}}</h3>
+                                                        <div class="quality-title">
+
+                                                            <h4>push</h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-2 hidden-xs quality" style="text-align: center">
+                                                        <div round-progress
+                                                             max="10"
+                                                             current="hero.surviveScore"
+                                                             color="#35b44b"
+                                                             bgcolor="rgba(255, 255, 255, 0.1)"
+                                                             radius="30"
+                                                             stroke="6"
+                                                             offset="10"
+                                                             semi="false"
+                                                             rounded="false"
+                                                             clockwise="true"
+                                                             responsive="true"
+                                                             duration="1500"
+                                                             animation="easeInOutQuart"
+                                                             class="round-progress-bar">
+                                                        </div><h3 class="value-centered">{{hero.surviveScore}}</h3>
+                                                        <div class="quality-title">
+
+                                                            <h4>survive</h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-2 hidden-xs quality" style="text-align: center">
+                                                        <div round-progress
+                                                             max="10"
+                                                             current="hero.scaleScore"
+                                                             color="#d62a28"
+                                                             bgcolor="rgba(255, 255, 255, 0.1)"
+                                                             radius="30"
+                                                             stroke="6"
+                                                             offset="10"
+                                                             semi="false"
+                                                             rounded="false"
+                                                             clockwise="true"
+                                                             responsive="true"
+                                                             duration="1500"
+                                                             animation="easeInOutQuart"
+                                                             class="round-progress-bar">
+                                                        </div><h3 class="value-centered">{{hero.scaleScore}}</h3>
+                                                        <div class="quality-title">
+
+                                                            <h4>scale</h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-2 hidden-xs quality" style="text-align: center">
+                                                        <div round-progress
+                                                             max="10"
+                                                             current="hero.utilityScore"
+                                                             color="#fba31b"
+                                                             bgcolor="rgba(255, 255, 255, 0.1)"
+                                                             radius="30"
+                                                             stroke="6"
+                                                             offset="10"
+                                                             semi="false"
+                                                             rounded="false"
+                                                             clockwise="true"
+                                                             responsive="true"
+                                                             duration="1500"
+                                                             animation="easeInOutQuart"
+                                                             class="round-progress-bar">
+                                                        </div><h3 class="value-centered">{{hero.utilityScore}}</h3>
+                                                        <div class="quality-title">
+
+                                                            <h4>utility</h4>
+                                                        </div>
+                                                    </div>
+
+
+
+                                                    <div class=" container m-t-md col-xs-12 hidden-sm hidden-md hidden-lg hidden-xl clearfix">
+                                                        <div class="smaller-qualities ">
+                                                            <svg class="chart">
+                                                                <g class="bar burst">
+                                                                    <rect width="100%" height="30" class="bar-back"></rect> <!-- Black bar -->
+                                                                    <rect width="15px" height="30" ></rect> <!-- left color block -->
+                                                                    <rect ng-attr-width="{{hero.burstScore*10}}%" ry="0" rx="0" height="30"></rect> <!-- long color block -->
+                                                                    <circle ng-attr-cx="{{hero.burstScore*10}}%" cy="15" r="15"></circle> <!-- right circle -->
+                                                                    <text x="5" y="15" dy=".35em">Burst</text> <!-- text left -->
+                                                                    <text ng-attr-x="{{(hero.burstScore * 10) - 1}}%" y="15" dy=".35em">{{hero.burstScore}}</text> <!-- number -->
+                                                                </g>
+                                                                <g class="bar push">
+                                                                    <rect width="100%" height="30" y="32" class="bar-back"></rect> <!-- Black bar -->
+                                                                    <rect width="15px" height="30" y="32" ></rect> <!-- left color block -->
+                                                                    <rect ng-attr-width="{{hero.pushScore*10}}%" ry="0" rx="0" height="30" y="32" ></rect> <!-- long color block -->
+                                                                    <circle ng-attr-cx="{{hero.pushScore*10}}%" cy="47" r="15"></circle> <!-- right circle -->
+                                                                    <text x="5" y="47" dy=".35em">Push</text> <!-- text left -->
+                                                                    <text ng-attr-x="{{(hero.pushScore * 10) - 1}}%" y="47" dy=".35em">{{hero.pushScore}}</text> <!-- number -->
+                                                                </g>
+                                                                <g class="bar survive">
+                                                                    <rect width="100%" height="30" y="64" class="bar-back"></rect> <!-- Black bar -->
+                                                                    <rect width="15px" height="30" y="64" ></rect> <!-- left color block -->
+                                                                    <rect ng-attr-width="{{hero.surviveScore*10}}%" ry="0" rx="0" height="30" y="64" ></rect> <!-- long color block -->
+                                                                    <circle ng-attr-cx="{{hero.surviveScore*10}}%" cy="79" r="15"></circle> <!-- right circle -->
+                                                                    <text x="5" y="79" dy=".35em">Survive</text> <!-- text left -->
+                                                                    <text ng-attr-x="{{(hero.surviveScore * 10) - 1}}%" y="79" dy=".35em">{{hero.surviveScore}}</text> <!-- number -->
+                                                                </g>
+                                                                <g class="bar scale">
+                                                                    <rect width="100%" height="30" y="96" class="bar-back"></rect> <!-- Black bar -->
+                                                                    <rect width="15px" height="30" y="96" ></rect> <!-- left color block -->
+                                                                    <rect ng-attr-width="{{hero.scaleScore*10}}%" ry="0" rx="0" height="30" y="96" ></rect> <!-- long color block -->
+                                                                    <circle ng-attr-cx="{{hero.scaleScore*10}}%" cy="111" r="15"></circle> <!-- right circle -->
+                                                                    <text x="5" y="111" dy=".35em">Scale</text> <!-- text left -->
+                                                                    <text ng-attr-x="{{(hero.scaleScore * 10) - 1}}%" y="111" dy=".35em">{{hero.scaleScore}}</text> <!-- number -->
+                                                                </g>
+                                                                <g class="bar utility">
+                                                                    <rect width="100%" height="30" y="128" class="bar-back"></rect> <!-- Black bar -->
+                                                                    <rect width="15px" height="30" y="128" ></rect> <!-- left color block -->
+                                                                    <rect ng-attr-width="{{hero.utilityScore*10}}%" ry="0" rx="0" height="30" y="128" ></rect> <!-- long color block -->
+                                                                    <circle ng-attr-cx="{{hero.utilityScore*10}}%" cy="143" r="15"></circle> <!-- right circle -->
+                                                                    <text x="5" y="143" dy=".35em">Utility</text> <!-- text left -->
+                                                                    <text ng-attr-x="{{(hero.utilityScore * 10) - 1}}%" y="143" dy=".35em">{{hero.utilityScore}}</text> <!-- number -->
+                                                                </g>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </row>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!--Hero ends -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AUTHORS -->
+                <div class="row m-l-none m-r-none m-b-md">
+                    <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors" >
+                        <a class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}">
+                            <div class="author-img-wrapper pull-left hidden-xs">
+                                <img ng-if="author.expertClasses.length === 1" class="author-class-icon m-l-sm" ng-src="../../img/meta-snapshot/class-icons/{{author.expertClasses[0]}}.png" />
+                            <span ng-if="author.expertClasses.length > 1">
+                                <img class="author-class-icon" ng-repeat="ico in author.expertClasses" src="../../img/meta-snapshot/class-icons/{{ico}}.png" style="left: {{((author.expertClasses.length-1)*23)-(23*$index)}}px;" />
+                            </span>
+                            </div>
+                            <div class="author-text-wrapper">
+                                <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.expertClasses.length > 0 } ">{{author.user.username}}</h2>
+                            <span ng-if="author.expertClasses.length === 1">
+                                <h3 class="classExpert">{{author.expertClasses[0]}} EXPERT</h3>
+                            </span>
+                                <h3 ng-if="author.expertClasses.length > 1">
+                                <span ng-repeat="klass in author.expertClasses">
+                                    <span ng-if="$index > 0">&nbsp;AND</span> {{klass}}
+                                </span>
+                                    EXPERT
+                                </h3>
+                            </div>
+                            <div class="soc-btns pull-right m-r-lg hidden-xs">
+                                <a ng-if="author.user.social.twitch" class="btn twitch-btn soc-btn" ng-click="goToTwitch($event, author.user.social.twitch)"><i class="fa fa-twitch"></i></a>
+                                <a ng-if="!author.user.social.twitch" class="btn twitch-btn soc-btn disable" disabled><i class="fa fa-twitch"></i></a>
+                                <a ng-if="author.user.social.twitter" class="btn twitter-btn soc-btn" ng-click="goToTwitter($event, author.user.social.twitter)"><i class="fa fa-twitter"></i></a>
+                                <a ng-if="!author.user.social.twitter" class="btn twitter-btn soc-btn disable" disabled><i class="fa fa-twitter"></i></a>
+                            </div>
+                        </a>
+
+                        <div class="author-collapse collapse" id="{{author.user.id}}">
+                            <p> {{author.description}} </p>
+                            <div class="soc-btns m-t-md m-b-md hidden-sm hidden-md hidden-lg">
+                                <a ng-if="author.user.social.twitch != '' && author.user.social.twitch != undefined" class="btn twitch-btn soc-btn" ng-click="goToTwitch($event, author.user.social.twitch)"><i class="fa fa-twitch"></i></a>
+                                <a ng-if="author.user.social.twitch === '' || author.user.social.twitch === undefined" class="btn twitch-btn soc-btn disable" disabled><i class="fa fa-twitch"></i></a>
+                                <a ng-if="author.user.social.twitter != '' && author.user.social.twitter != undefined" class="btn twitter-btn soc-btn" ng-click="goToTwitter($event, author.user.social.twitter)"><i class="fa fa-twitter"></i></a>
+                                <a ng-if="author.user.social.twitter === '' || author.user.social.twitter === undefined" class="btn twitter-btn soc-btn disable" disabled><i class="fa fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /AUTHORS -->
+            </div>
+        </div>
+    </div>
+</div>
+    

@@ -5,11 +5,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    }
+    "validateUpsert": true
   },
   "properties": {
     "name": {
@@ -77,7 +73,6 @@
       "required": true
     }
   },
-  "validations": [],
   "relations": {
     "decks": {
       "type": "hasMany",
@@ -116,5 +111,12 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    }
+  }
 }

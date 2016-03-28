@@ -10,7 +10,7 @@ module.exports = {
     modules_: {
         options: {
             outputStyle: 'expanded',
-            sassDir:     'modules/redbull/client/css',
+            sassDir:     'modules/**/client/css',
             cssDir:      'client/dist/css/sass/modules',
             cacheDir:    'modules/.sass-cache',
         }

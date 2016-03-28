@@ -1,5 +1,5 @@
-@import 'ts-colors.scss';
-@import 'ts-mixins.scss';
+@import 'ts-colors';
+@import 'ts-mixins';
 
 // Description: styles for the hots meta snapshot only. WARNING!! Some styles may be affected by deck styles from the hs-deck.scss file.
 
@@ -12,6 +12,7 @@
 // 5... qualities
 // 6... meta change box
 // 7... filter styles
+// 8... Preogress Bar
 
 //*************************************
 
@@ -24,45 +25,45 @@
 
 
 .hots-snapshot-styles {
-    
+
     h1, h2, h3, h4, h5, h6 {
         text-transform: uppercase;
         letter-spacing: 2px;
     }
-    
-    h1.title { 
-        font-family: 'Open Sans Bold'; 
-        font-size: 36px; 
-        color: $light-grey; 
-        letter-spacing: 2px; 
+
+    h1.title {
+        font-family: 'Open Sans Bold';
+        font-size: 36px;
+        color: $light-grey;
+        letter-spacing: 2px;
         text-transform: uppercase;
-        
+
         @media screen and (max-width: 680px) {
                 font-size: 25px;
                 width: 70%;
             }
-        
-        
+
+
     }
-    
-    h3.sub-title { 
-        font-size: 24px; 
+
+    h3.sub-title {
+        font-size: 24px;
         color: $ts-grey;
-        
+
         @media screen and (max-width: 680px) {
                 font-size: 18px;
                 width: 70%;
         }
     }
-    
+
     h2.section-title {
-        color: $light-grey; 
-        
+        color: $light-grey;
+
         @media screen and (max-width: 575px) {
-              border-bottom: 1px solid $ts-dark-grey;  
+              border-bottom: 1px solid $ts-dark-grey;
         }
-        
-        
+
+
         &:before {
             content: "";
             position: absolute;
@@ -71,7 +72,7 @@
             height: 1px;
             width: 300px;
             border-bottom: 1px solid $ts-dark-grey;
-            
+
             @media screen and (max-width: 600px) {
                 width: 90%;
                 left: 5%;
@@ -79,25 +80,25 @@
             }
         }
     }
-    
+
     .box-border {
-        
+
         @include ts-div-styles;
- 
+
         &.no-outline {
-            outline: 1px solid transparent; 
+            outline: 1px solid transparent;
             //this is inplace for Mozilla due to a bug with outlines and absolute positioned childrewn elements.
         }
-                
+
         h2, p {
-            color: $ts-grey; 
+            color: $ts-grey;
         }
     }
-    
+
 //*************************************
 // 2... background
 //*************************************
-    
+
     .bg-override {
         background-image: url(../img/backgrounds/hots-snapshot-bg.jpg);
         background-color: #010101;
@@ -111,30 +112,35 @@
 //*************************************
 // 3... Tiers
 //*************************************
-    
+
     .tier {
-        
+
         position: relative;
-        
+
+		&:not(:last-child) {
+			border-bottom: 2px solid black;
+		}
+
         .tier-heading {
             background: -webkit-linear-gradient(left, #1F2650, #20365F);
             background: -o-linear-gradient(right, #1F2650, #20365F);
             background: -moz-linear-gradient(right, #1F2650, #20365F);
             background: linear-gradient(to right, #1F2650, #20365F);
             border: 1px solid transparent;
-               
-        
+			position: relative;
+
+
         @media screen and (max-width: 575px) {
                 h2 {
                     margin-left: 10px;
                 }
             }
         }
-        
+
     }
-    
+
     .tier-body {
-        
+
         .tier-hero h4 {
             //padding-right: 200px;
             //text-indent: 20px;
@@ -146,7 +152,7 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             position: relative;
-            
+
             @media screen and (max-width: 750px) {
                 font-size: 14px;
                 margin-top: 5px;
@@ -165,35 +171,35 @@
                             font-size: 40px !important;
                         }
                 }
-                
+
             }
-            
+
             h3 {
                 font-size: 20px;
                 font-weight: bold;
                 color: $grey-blue;
             }
-            
+
             h4 {
                 text-indent: 0px;
             }
-            
+
             .hero-content {
                     padding-bottom: 50px;
-                
+
                 @media screen and (max-width: 750px) {
                         padding-bottom: 0px;
                     }
-                
-            }
-                
-        }
-        
 
-        
+            }
+
+        }
+
+
+
         .tier-hero-heading {
             height: 60px !important;
-            background-color: rgba($hots-dark-purple, 1) !important; 
+            background-color: rgba($hots-dark-purple, 1) !important;
             border: 1px solid transparent;
             border-bottom: 1px solid $ts-black;
             border-top: 1px solid $ts-black;
@@ -204,185 +210,285 @@
             -moz-appearance: none;
             appearance: none;
             cursor: pointer;
-            
+
             h4 {
                 margin-left: 20px;
-                
+
                 @media screen and (max-width: 740px) {
                     margin-left: 10px;
                 }
             }
-            
+
             @media screen and (min-width: 750px) {
-                
+
                 background-repeat: no-repeat !important;
                 background-position: right top !important;
                 padding-top: 4px;
-                
-               
+
+
             }
 
-             
+
         }
-        
-    
+
+
         .tier-hero:nth-child(2n+2)  {
-            
+
             .tier-hero-heading {
                 background-color: rgba(#32234c, 1) !important;
             }
         }
-        
+
         .hero-button {
                 position: absolute;
                 top: 16px;
-                right: 150px;
+                right: 250px;
                 display: block;
                 background: rgba(0, 0, 0, 0.25);
                 border: 1px $light-grey solid;
                 color: $light-grey;
                 padding: 2px 25px;
                 outline: none;
-                
+
                 .bottom-hero-button {
                     position: relative;
                 }
-                 
+
                  @media screen and (min-width: 750px) {
                      &:hover {
                         background-color: rgba($white, .15 ) ;
                         border: 2px solid transparent;
                      }
                  }
-                 
+
                  @media screen and (max-width: 750px) {
                     right: 10px;
-                    font-size: 12px;    
+                    font-size: 12px;
                  }
             }
-    
+
             .bottom-hero-button {
-                  
+
                 display: block;
                 background: rgba($hots-dark-purple, 1);
                 border: 1px $light-grey solid;
                 color: $light-grey;
                 padding: 5px 30px;
                 outline: none;
-                margin: 0 auto 20px;            
+                margin: 0 auto 20px;
             }
-    
-    
+
+
 //*************************************
 // 4... hero image
 //*************************************
-    
+
     .hero-image {
-        
+
         height: 270px;
 
         //mixin for positioning hero image is in hots-heroes
-       
+
     }
-    
+
 //*************************************
 // 5... qualities
 //*************************************
-    
+
     .qualities {
+        .smaller-qualities {
+            
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            padding: 0;
+            
+            .bar {
+                
+                .bar-back {
+                    fill: rgba(255, 255, 255, 0.09);
+                }
+                
+                circle {
+                    fill: $white;
+                }
+                
+              
+                
+                              
+                //height: 30px;
+                
+                transition: fill .3s ease;
+                
+                stroke: white;
+                stroke-width: 0px;
+                opacity: 1;
+              
+                &.burst {
+                    fill: #2766ad;
+                    
+                    text {
+                       
+                    }
+                    
+                    circle {
+                        fill: #2766ad; 
+                        
+                    }
+                                        
+                }
+                &.push {
+                    fill: #7d3193;
+                    
+                    circle {
+                        fill: #7d3193; 
+                        
+                    }
+                      
+                }
+                &.survive {
+                    fill: #35b44b;
+                    
+                    circle {
+                        fill: #35b44b; 
+                        
+                    }
+                        
+                }
+                &.scale {
+                    fill: #d62a28;
+                    
+                    circle {
+                        fill: #d62a28; 
+                        
+                    }
+                         
+                }
+                &.utility {
+                    fill: #fba31b;
+                    
+                    circle {
+                        fill: #fba31b; 
+                        
+                    }
+                        
+                }
+            }
+                
+                
+            
+              text {
+                text-transform: uppercase;
+                font-size: 14px;
+                  font-weight: 500;
+                fill: $white;
+              }
+            
+            
+            .chart {
+               width: 100%;
+                height: 160px;
+                margin-left: 0%;
+            }
+            
+//            .chart:hover,
+//            .chart:focus {
+//              .bar {
+//                fill: #aaa;
+//              }
+//            }
+            
+//            .bar:hover,
+//            .bar:focus {
+//              fill: red !important;
+//
+//              text {
+//                fill: red;
+//              }
+//            }
+
+
+            
+            
+            .relative-pos {
+                position: relative;
+                width: 100%;
+            }
+            
+            h4 {
+                font-size: 16px;
+                text-shadow: none;
+                width: 140px;
+                right: 2%;
+                text-align: right;
+                position: absolute;
+                line-height: 1em;
+            }
+            
+            .progress-wrapper {
+                position: relative;
+                margin: 20px auto;
+                font-size: 40px;
+                text-align: center;
+                
+                .qualities-numbers {
+                    position: absolute;
+                    width: 100%;
+                    top: 0px;
+                    right: 49%;
+                    
+                    .burst-number {
+                        
+                    }
+                    .push-number {
+                       
+                        top: 25px;
+                    }
+                    .survive-number {
+                         
+                       top: 50px;
+                    }
+                    .scale-number {
+                         
+                       top: 75px;
+                    }
+                    .utility-number {
+                         
+                        top: 100px;
+                    }
+                }
+                
+                
+                .progress-box {
+                    text-align: center;
+                }
+            }
+        }
     
+        
         .quality {
             
-            width: 20%;
-            float: left;
             
-            @media screen and (max-width: 520px) {
-                float: none;
-                clear: both;
-                width: 225px;
-                height: 65px;
-                margin-left: 20px;
+            
+            @media screen and (min-width: 767px){
+                       width: 20%;
             }
             
-            .outer-circle {
-                border: 2px solid $white;
-                border-radius: 50%;
-                width: 75px;
-                height: 75px;
-                margin: 0 auto;
-                
-
-                
-                @media screen and (max-width: 600px) {
-                        width: 60px;
-                        height: 60px;
-                    }
-                
-                @media screen and (max-width: 520px) {
-                        margin-left: 0px;
-                        margin-right: 15px;
-                        float: left;
-                        border: transparent;
-                    }
-
-                .circle {
-                    text-align: center;
-                    font-size: 35px;
-                    color: $white;
-                    font-weight: 700;
-                    border: 4px solid $white;
-                    background-color: $ts-blue;
-                    border-radius: 50%;
-                    width: 65px;
-                    height: 65px;
-                    margin: 3px;
-                    padding: 2px;
-                    
-
-                    
-                     @media screen and (max-width: 600px) {
-                        width: 50px;
-                        height: 50px;
-                        font-size: 25px;
-                        padding: 3px 3px 2px 2px;
-                    }
-                    
-                    @media screen and (max-width: 520px) {
-                        border: transparent;
-                        padding: 7px 0px 1px 0px;
-                    }
-                 
-                    
-                }
-                
-                .push { 
-                       background-color: $bright-purple; 
-                }
-                
-                .survive { 
-                       background-color: $bright-green; 
-                }
-                
-                .scale { 
-                       background-color: $bright-red; 
-                }
-                
-                .utility { 
-                       background-color: $bright-orange; 
-                }
-                
+            @media screen and (min-width: 520px){
+                       margin-bottom: 45px;
             }
-        
+
+
             .quality-title {
-                
+
                 text-align: center;
                 text-indent: 0;
-                
+
                 @media screen and (max-width: 520px) {
                         text-align: left;
-                    height: 85px;
+                        height: 85px;
                     }
-                
+
                 h4 {
                     text-transform: uppercase;
                     color: $white;
@@ -390,58 +496,102 @@
                     margin-top: 5px;
                     font-size: 15px;
                     padding-right: 0px;
+                    z-index: 100;
+                    font-size: 14px !important;
                     
+
                     @media screen and (max-width: 1200px) {
                         font-size: 10px;
-                        
+
                     }
-                    
+
                      @media screen and (max-width: 520px) {
                         font-size: 24px;
                         padding-top: 5px;
                     }
-                 
-                    
+
+
                 }
 
             }
+            
+            .round-progress-bar {
+                transform: rotate(180deg);
+                
+                @media screen and (max-width: 767px){
+                    padding-bottom: 25% !important;
+                    //height: 80px;
+                }
+                
+                @media screen and (max-width: 520px) {
+                    padding-bottom: 49% !important;
+                }
+                
+            }
+    
+            .value-centered {
+                position: absolute !important;
+                top: 30%;
+                width: auto;
+                right: 0;
+                font-size: 38px !important;
+                left: 0;
+                text-align: center;
+                
+                    @media screen and (max-width: 1200px){
+                        top: 16%;
+                    }
+                    @media screen and (max-width: 991px){
+                        top: 22%;
+                    }
+                    @media screen and (max-width: 767px){
+                        top: 23%;
+                        font-size: 40px !important;
+                    }
+                
+                    @media screen and (max-width: 450px){
+                        top: 17%;
+                        //font-size: 12px !important;
+                    }
+                
+                }
+            }
         }
-    
     }
-    
+
 //*************************************
 // 6... meta change box
 //*************************************
-    
+
     .meta-change-box {
-       
+
         margin: 0 auto;
         width: 270px;
-        
+
         div {
-            
+
             text-align: center;
             height: 100px;
             width: 90px;
             float: left;
             border: solid 1px rgba($off-black, .6);
-            
+
             @media screen and (max-width: 355px) {
               width: 80px;
             }
-            
+
             &.current-box {
                 background-color: $bright-green;
             }
-            
+
             &.previous-box {
                 background-color: $bright-red;
             }
-            
+
             &.change-box {
                 background-color: $bright-green;
             }
-            
+
             h5.change-title {
                 font-size: 12px;
                 font-weight: 700;
@@ -451,28 +601,31 @@
                 padding-top: 5px;
                 padding-bottom: 5px;
             }
-            
+
             span {
-                
+
                 color: $white;
                 font-size: 30px;
                 font-weight: 700;
             }
-        
+
         }
     }
 
 //*************************************
 // 7... filter styles
 //*************************************
-    
-   
-    
-    
+
+
+
+
     .tier-hero-filters {
-        float: right;
         margin-top: 7px;
         margin-right: 10px;
+		position: absolute;
+		right: 0;
+		z-index: 5;
+		top:0px;
     }
 
      .mobile-filter {
@@ -481,30 +634,30 @@
         background: -moz-linear-gradient(right, #1F2650, #20365F);
         background: linear-gradient(to right, #1F2650, #20365F);
         width: 100%;
-        
+
         .tier-hero-filters {
             float: none;
             margin: 0;
-            
+
             .center {
                 width: 374px;
                 overflow: auto;
-                margin: 10px auto;    
+                margin: 10px auto;
 
                 @media screen and (max-width: 500px) {
                     width: 172px;
                     margin: 15px auto 0;
-                    
+
                 }
              }
         }
-         
+
          .filter {
-             
+
              @media screen and (max-width: 500px) {
-                 
+
                  margin-bottom: 10px;
-                 
+
                  &.filter-specialist {
                      margin-right: 0px;
                  }
@@ -513,12 +666,12 @@
                     clear: both;
                  }
              }
-         
-         
+
+
          }
 
     }
-    
+
     .filter {
         background-image: url(../img/hots/filter-sprites.png);
         height: 49px;
@@ -527,16 +680,17 @@
         border: transparent;
         float: left;
         margin-left: 1px;
-        
-        
+		z-index: 5;
+
+
 
         //filters on the hero
 
         &.filter-role {
-            
+
             position: absolute;
             top:6px;
-            right: 370px;
+            right: 200px;
 
             &.warrior {
             background-position: -43px -1px;
@@ -550,26 +704,26 @@
                 background-position: -43px -148px;
             }
 
-            &.assasin {
+            &.assassin {
                 background-position: -43px -50px;
             }
-            
+
             @media screen and (max-width: 770px) {
-              right: 60px;            
+              right: 60px;
             }
         }
 
         &.filter-universe {
 
-            
+
             position: absolute;
             top:6px;
-            right: 320px;
+            right: 150px;
 
             @media screen and (max-width: 770px) {
               right: 10px;
             }
-                    
+
         }
 
         //filters on the tier
@@ -589,7 +743,7 @@
 
 
 
-        &.filter-assasin {
+        &.filter-assassin {
             background-position: -1px -50px;
             //position: absolute;
             //top:8px;
@@ -629,7 +783,7 @@
 
         //world filters
 
-        &.filter-universe-sc {
+        &.filter-universe-starcraft {
             background-position: -87px -50px;
 //            position: absolute;
 //            top:8px;
@@ -656,20 +810,20 @@
         }
 
 
-        &.filter-blizzard {
+        &.filter-universe-blizzard {
 
             background-position: -87px -148px;
 //            position: absolute;
 //            top:8px;
 //            right: 60px;
-//            
+//
              &.active {
                 background-position: -130px 48px;
             }
 
         }
 
-        &.filter-universe-wc {
+        &.filter-universe-warcraft {
             background-position: -87px -1px;
 //            position: absolute;
 //            top:8px;
@@ -678,7 +832,12 @@
             &.active {
                 background-position: -130px -1px;
             }
-        }    
+        }
+
     }
+
+//*************************************
+// 8... Preogress Bar
+//*************************************
     
-}
+   

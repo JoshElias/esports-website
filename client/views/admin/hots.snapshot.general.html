@@ -1,0 +1,83 @@
+<div>
+    <div class="col-md-4 m-t-lg">
+        <div class="form-group">
+            <label class="control-label" for="title">Title</label>
+            <div class="input-group">
+                <input ng-model="snapshot.title"
+                       ng-keyup="slugifyUrl(snapshot.title)"
+                       class="form-control"
+                       id="title"
+                       type="text"
+                />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="url">URL</label>
+            <div class="input-group" ng-repeat="slug in snapshot.slugs">
+                <span class="input-group-btn">
+                    <button ng-click="toggleLinked()"
+                            ng-class="{ 'active': slug.linked }"
+                            class="btn btn-default"
+                            type="button"
+                    ><i class="fa fa-link"></i></button>
+                </span>
+                <input ng-model="slug.slug"
+                       class="form-control"
+                       id="url"
+                       type="text"
+                       ng-readonly="slug.linked"
+                />
+            </div>
+        </div>
+
+        <!--<div class="form-group">-->
+            <!--<label>Snapshot Header Image</label>-->
+            <!--<div class="input-group">-->
+                <!--<input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photoNames.small">-->
+                <!--<input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photoNames.medium">-->
+                <!--<input type="hidden" id="snapshotPhotoLarge" name="snapshotPhotoLarge" value="" ng-model="snapshot.photoNames.large">-->
+                <!--<div class="photo-input">-->
+                    <!--<div class="upload-thumbnail upload-thumbnail-article">-->
+                        <!--<div class="upload-drop" ng-show="snapshot.photoNames.large === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>-->
+                        <!--<img src="{{getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">-->
+                    <!--</div>-->
+                    <!--<div class="btn-toolbar">-->
+                        <!--<button class="btn btn-default" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">-->
+                            <!--<span ng-show="snapshot.photoNames.large === ''">Select image</span>-->
+                            <!--<span ng-show="snapshot.photoNames.large !== ''">Change image</span>-->
+                        <!--</button>-->
+                        <!--<a href="#" class="btn btn-danger" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="col-lg-12">
+            <button class="btn active-btn"
+                    ng-class="{ active: snapshot.isActive }"
+                    ng-click="snapshot.isActive = !snapshot.isActive"
+                    ng-mouseover="activeHover = true"
+                    ng-mouseleave="activeHover = false"
+                >
+                <span ng-if="snapshot.isActive && activeHover">disable</span>
+                <span ng-if="!snapshot.isActive && activeHover">enable</span>
+
+                <span ng-if="!snapshot.isActive && !activeHover">inactive</span>
+                <span ng-if="snapshot.isActive && !activeHover">active</span>
+            </button>
+
+            {{snapshot.isActive}}
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="form-group">
+            <label for="introduction" class="control-label">INTRODUCTION</label>
+            <textarea ng-model="snapshot.intro" id="introduction" rows="10" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="thoughts" class="control-label">THOUGHTS AND OBSERVATIONS</label>
+            <textarea ng-model="snapshot.thoughts" id="thoughts" rows="10" class="form-control"></textarea>
+        </div>
+    </div>
+</div>

@@ -11,9 +11,6 @@
     "activityType": {
       "type": "string"
     },
-    "createdDate": {
-      "type": "date"
-    },
     "isActive": {
       "type": "boolean"
     },
@@ -24,7 +21,6 @@
     "forumPostId": {},
     "guideId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -76,5 +72,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

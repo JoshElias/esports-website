@@ -15,7 +15,6 @@
 
 //*************************************
 
-
 //*************************************
 // 1... admin team
 //*************************************
@@ -52,7 +51,7 @@
 }
 
 //*************************************
-// 2... admin meta snapshot
+// 2... admin meta snapshot HS
 //*************************************
 
 .button-block {}
@@ -119,6 +118,89 @@ textarea[name=thoughts] {
     line-height: 1.75
 }
 
+//*************************************
+// 2.1. admin meta snapshot HOTS
+//*************************************
+
+.panel {
+	&.panel-hots-snapshot-admin {
+		.panel-heading {
+			background-color: rgba(255,255,255,.4);
+
+
+			.panel-label {
+				.control-label {
+					&.small {
+						color: rgba(255,255,255,.4);
+					}
+				}
+			}
+		}
+
+		.panel-body {
+			.active-btn {
+				transition: 1s;
+				-moz-transition: 1s;
+				-webkit-transition: 1s;
+				width: 100%;
+				height: 70px;
+				border-radius: 4px;
+				color: white;
+				font-weight: bold;
+				background: #d9534f;
+				border: 1px solid #ac2925;
+
+				&.active {
+					background: #5cb85c;
+					border: 1px solid #4cae4c;
+				}
+
+				&:hover {
+					background: #f0ad4e;
+					border: 1px solid #eea236;
+				}
+			}
+		}
+	}
+}
+
+.tier-list {
+    list-style-type: none;
+    padding: 0;
+
+
+    .tier-list-head {
+        font-weight: bold;
+        background: #434343;
+		color: white;
+		padding: 10px;
+		line-height:50px;
+    }
+
+	.tier-list-item {
+		div {
+			background: #DDDDDD;
+			padding: 5px 10px;
+			height: 40px;
+			line-height: 30px;
+
+			&:nth-child(even) {
+				background: #BBBBBB;
+
+			}
+
+			&.active {
+				background: $ts-blue;
+				color: white;
+				font-weight: bold;
+			}
+
+			&:hover {
+				background: #999999;
+			}
+		}
+	}
+}
 
 //*************************************
 // 4... admin banner
@@ -377,4 +459,69 @@ ul[dnd-list] .dndPlaceholder {
 .no-top-bottom-pad {
         padding-top: 0 !important;
         padding-bottom: 0 !important;
+}
+
+
+//*************************************
+// 10... Admin Users styles
+//*************************************
+
+.admin-num-input {
+  -moz-appearance:textfield;
+
+
+  &.invalid {
+    border: 1px red solid;
+    background: #ff6664;
+    color: white;
+  }
+}
+.admin-num-input::-webkit-inner-spin-button,
+.admin-num-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.panel {
+
+	.panel-loading {
+		padding: 20px;
+		text-align: center;
+	}
+
+    &.panel-interior {
+        border: 0px;
+		background: rgba(0,0,0,.90);
+
+        .panel-heading {
+
+            background: rgba($white,0.15);
+
+        }
+
+		.panel-body {
+			padding: 0;
+			background: transparent;
+
+			.list-item {
+				border-bottom: 1px solid rgba($white, .15);
+				background: transparent;
+				padding: 7px;
+
+				&.active {
+					border-left: 4px solid blue;
+
+				}
+			}
+		}
+
+		.panel-footer {
+			border: 0px;
+			background: rgba($white,0.15);
+			border-bottom-left-radius: 4px;
+			border-bottom-right-radius: 4px;
+		}
+    }
 }

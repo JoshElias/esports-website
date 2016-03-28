@@ -1,18 +1,2 @@
 {
-  "angular.min.js": "angular.min.f3876817.js",
-<<<<<<< HEAD
-  "app.min.js": "app.min.c240fd0f.js",
-  "vendor.min.js": "vendor.min.7dc60efa.js",
-  "modules.min.js": "modules.min.79688589.js",
-  "lb-services.min.js": "lb-services.min.70554606.js",
-  "style.min.css": "style.min.99e0d0b1.css",
-=======
-  "app.min.js": "app.min.9ab5feac.js",
-  "vendor.min.js": "vendor.min.7dc60efa.js",
-  "modules.min.js": "modules.min.2168bc9f.js",
-  "lb-services.min.js": "lb-services.min.060e27c6.js",
-  "style.min.css": "style.min.b7b05c44.css",
->>>>>>> nuclear-blast-zone
-  "vendor.min.css": "vendor.min.60b209a2.css",
-  "modules.min.css": "modules.min.509f19dc.css"
 }

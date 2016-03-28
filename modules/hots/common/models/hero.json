@@ -5,11 +5,7 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    }
+    "validateUpsert": true
   },
   "properties": {
     "isActive": {
@@ -59,7 +55,6 @@
       ]
     }
   },
-  "validations": [],
   "relations": {
     "talents": {
       "type": "hasMany",
@@ -76,6 +71,11 @@
     "abilities": {
       "type": "hasMany",
       "model": "ability",
+      "foreignKey": "heroId"
+    },
+    "heroTier": {
+      "type": "hasMany",
+      "model": "heroTier",
       "foreignKey": "heroId"
     }
   },
@@ -104,5 +104,17 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp": {
+      "createdAt": "createdDate",
+      "updatedAt": "updatedDate",
+      "required": true
+    }
+  }
 }

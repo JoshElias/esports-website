@@ -4,28 +4,20 @@
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$validate": true,
-    "$fieldFilter": true,
-    "$docFilter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "inactive"
-    },
-    "$destroyOnDelete": true,
-    "$slug": true
+    "validateUpsert": true
   },
   "properties": {
     "title": {
       "type": "string",
       "required": true,
-      "$slug": true
+      "Slug": true
     },
     "description": {
       "type": "string"
     },
     "content": {
       "type": "string",
-      "$fieldFilter": {
+      "Filter": {
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
@@ -50,9 +42,6 @@
     },
     "isFeatured": {
       "type": "boolean"
-    },
-    "createdDate": {
-      "type": "date"
     },
     "premium": {
       "isPremium": {
@@ -83,7 +72,7 @@
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "articleId",
-      "$destroyOnDelete": true
+      "DestroyOnDelete": true
     },
     "author": {
       "type": "belongsTo",
@@ -173,5 +162,23 @@
       "property": "__edit__votes"
     }
   ],
-  "methods": {}
+  "methods": {},
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Slug": true,
+    "Scope": true,
+    "Authored": true,
+    "Filter": {
+      "fieldFilters": true,
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive", "premium"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

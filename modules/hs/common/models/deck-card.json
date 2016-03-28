@@ -18,7 +18,6 @@
       "required": true
     }
   },
-  "validations": [],
   "relations": {
     "card": {
       "type": "belongsTo",
@@ -62,5 +61,7 @@
       "property": "create"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }
