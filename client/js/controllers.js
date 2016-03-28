@@ -5923,9 +5923,6 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminHOTSSnapshotListCtrl', ['$scope', 'hotsSnapshots', function ($scope, hotsSnapshots) {
         $scope.snapshots = hotsSnapshots;
     }])
-    .controller('AdminHOTSSnapshotAddCtrl', ['$scope', function ($scope) {
-        console.log('were in add');
-    }])
     .controller('AdminHOTSSnapshotBuildCtrl', ['$scope', '$state', 'hotsSnapshot', 'HOTSSnapshot', 'HotsSnapshot', 'AlertService',
         function ($scope, $state, hotsSnapshot, HOTSSnapshot, HotsSnapshot, AlertService) {
             $scope.snapshot = new HOTSSnapshot(hotsSnapshot);

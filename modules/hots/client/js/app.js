@@ -162,50 +162,43 @@ angular.module('hotsSnapshot', [])
                                 filter: {
                                     include: [
                                         {
-                                            relation: "hotsSnapshots",
+                                            relation: "heroTiers",
                                             scope: {
                                                 include: [
                                                     {
-                                                        relation: "heroTiers",
+                                                        relation: "guides",
                                                         scope: {
                                                             include: [
                                                                 {
-                                                                    relation: "guides",
+                                                                    relation: "guide",
                                                                     scope: {
-                                                                        include: [
-                                                                            {
-                                                                                relation: "guide",
-                                                                                scope: {
-                                                                                    fields: ['id'],
-                                                                                    include: ["slugs"]
-                                                                                }
-                                                                            }
-                                                                        ]
-                                                                    }
-                                                                },
-                                                                {
-                                                                    relation: "hero",
-                                                                    scope: {
-                                                                        fields: [
-                                                                            'className',
-                                                                            'name',
-                                                                            'universe',
-                                                                            'role',
-                                                                            'title',
-                                                                            'characters'
-                                                                        ]
+                                                                        fields: ['id'],
+                                                                        include: ["slugs"]
                                                                     }
                                                                 }
                                                             ]
                                                         }
                                                     },
                                                     {
-                                                        relation: "authors",
+                                                        relation: "hero",
                                                         scope: {
-                                                            include: ["user"]
+                                                            fields: [
+                                                                'className',
+                                                                'name',
+                                                                'universe',
+                                                                'role',
+                                                                'title',
+                                                                'characters'
+                                                            ]
                                                         }
                                                     }
                                                 ]
+                                            }
+                                        },
+                                        {
+                                            relation: "authors",
+                                            scope: {
+                                                include: ["user"]
                                             }
                                         }
                                     ]
@@ -214,6 +207,7 @@ angular.module('hotsSnapshot', [])
                             .$promise
                             .then(function (data) {
                                 return data;
+                                
                             })
                             .catch(function (e) {
                                 console.log("ERR", e);

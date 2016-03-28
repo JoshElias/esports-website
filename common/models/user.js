@@ -5,7 +5,6 @@ var loopback = require("loopback");
 var bcrypt = require('bcrypt-nodejs');
 var request = require("request");
 
-var utils = require("../../../xloop/utils");
 var subscription = require("../../server/lib/subscription");
 
 
