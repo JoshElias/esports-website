@@ -2330,6 +2330,24 @@ angular.module('app.directives', ['ui.load'])
                 orderNum   : 0
             };
 
+            function buildOrder () {
+                var idx = 0;
+                _.each($scope.snapshot.tiers, function (tier) {
+                    _.each(tier.heroes, function (hero) {
+                        hero.orderNum = idx++;
+
+                        //gross
+                        var toChange = _.find($scope.snapshot.heroTiers, function (val) {
+                            return val.hero.className == hero.hero.className;
+                        });
+
+
+                        toChange.orderNum = hero.orderNum;
+                        toChange.tier = tier.tier;
+                    });
+                });
+            }
+
             function addBufferedHeroes (tier) {
                 var snap = $scope.snapshot;
                 var heroEmpty = _.isEmpty(snap.heroTiers);
@@ -2346,6 +2364,7 @@ angular.module('app.directives', ['ui.load'])
                 //snap.buildTiers();
                 $scope.$apply(function () {
                     snap.buildTiers();
+                    buildOrder();
                 });
 
                 if (heroEmpty) {
@@ -2361,24 +2380,10 @@ angular.module('app.directives', ['ui.load'])
                 return new Array(num);
             }
 
-            $scope.updateDND = function ($index, list, tier) {
+            $scope.updateDND = function ($index, list) {
                 list.splice($index, 1);
 
-                var idx = 0;
-                _.each($scope.snapshot.tiers, function (tier) {
-                    _.each(tier.heroes, function (hero) {
-                        hero.orderNum = idx++;
-
-                        //gross
-                        var toChange = _.find($scope.snapshot.heroTiers, function (val) {
-                            return val.hero.className == hero.hero.className;
-                        });
-
-                        
-                        toChange.orderNum = hero.orderNum;
-                        toChange.tier = tier.tier;
-                    });
-                });
+                buildOrder();
             };
 
             $scope.openHeroAdd = function (tier) {

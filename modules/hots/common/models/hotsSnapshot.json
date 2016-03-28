@@ -25,6 +25,10 @@
     },
     "createdDate": {
         "type": "date"
+    },
+    "isCommentable": {
+        "type": "boolean",
+        "default": true
     }
   },
   "validations": [],
@@ -34,9 +38,19 @@
           "model": "heroTier",
           "foreignKey": "snapshotId"
       },
+      "votes": {
+        "type": "hasMany",
+        "model": "vote",
+        "foreignKey": "hotsSnapshotId"
+      },
       "authors": {
           "type": "hasMany",
           "model": "snapshotAuthor",
+          "foreignKey": "hotsSnapshotId"
+      },
+      "comments": {
+          "type": "hasMany",
+          "model": "comment",
           "foreignKey": "hotsSnapshotId"
       }
   },
