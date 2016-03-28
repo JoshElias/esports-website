@@ -9076,7 +9076,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.voted = false;
             $scope.SnapshotService = Snapshot;
             $scope.votableSnapshot = {
-                votable: snapshot
+                snapshot: snapshot
             };
 
             // meta service
