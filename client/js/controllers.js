@@ -2669,10 +2669,10 @@ angular.module('app.controllers', ['ngCookies'])
 
 			//change the article item
             $scope.modifyItem = function (item) {
-				switch($scope.article.articleType[0]) {
-					case 'hs': $scope.article.deck = item; break;
-					case 'hots': $scope.article.guide = item; break;
-				}
+                switch($scope.article.articleType[0]) {
+                  case 'hs': $scope.article.deck = item; break;
+                  case 'hots': $scope.article.guide = item; break;
+                }
                 itemAddBox.modal('hide');
             };
 
@@ -3053,6 +3053,7 @@ angular.module('app.controllers', ['ngCookies'])
                       return paraCB();
                   })
                   .catch(function (err) {
+                      console.log('article upsert err:', err);
                       return paraCB(err);
                   });
               },
@@ -3074,6 +3075,7 @@ angular.module('app.controllers', ['ngCookies'])
                         return wateryCB(null, articleFound);
                       })
                       .catch(function (err) {
+                        console.log('related article err:', err);
                         return wateryCB(err);
                       });
                     },
@@ -3085,6 +3087,7 @@ angular.module('app.controllers', ['ngCookies'])
                         return wateryCB();
                       })
                       .catch(function (err) {
+                        console.log('related article destroy err:', err);
                         return wateryCB(err);
                       });
                     }
@@ -3118,6 +3121,7 @@ angular.module('app.controllers', ['ngCookies'])
                   });
                 }, function (err) {
                   if (err) {
+                    console.log('related create err:', err);
                     return paraCB(err);
                   }
                   return paraCB();
@@ -3134,6 +3138,7 @@ angular.module('app.controllers', ['ngCookies'])
                   lbErr: err
                 });
               }
+                
               AlertService.setSuccess({
                 show: false,
                 persist: true,
@@ -3279,6 +3284,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // delete article
             $scope.deleteArticle = function deleteArticle(article) {
+                console.log('article to del:', article);
                 var box = bootbox.dialog({
                     title: 'Delete article: ' + article.title + '?',
                     message: 'Are you sure you want to delete the article <strong>' + article.title + '</strong>?',
@@ -3287,18 +3293,24 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                Article.deleteById({ id: article.id })
-									.$promise.then(function (data) {
+                                Article.deleteById({ 
+                                    id: article.id 
+                                })
+									             .$promise
+                               .then(function (data) {
                                     if (data.$resolved) {
                                         var indexToDel = $scope.articles.indexOf(article);
+                                        
                                         if (indexToDel !== -1) {
                                             $scope.articles.splice(indexToDel, 1);
                                         }
+                                        
                                         AlertService.setSuccess({
-											show: true,
-											msg: article.title + ' was deleted successfully.'
-										});
-										$scope.articlePagination.total -= 1;
+                                          show: true,
+                                          msg: article.title + ' was deleted successfully.'
+                                        });
+                                        
+                                        $scope.articlePagination.total -= 1;
                                     }
                                 });
                             }

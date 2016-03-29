@@ -534,7 +534,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
-                                        console.log("articles", articles);
+                                    console.log("articles", articles);
                                     return articles;
                                 });
 
@@ -651,43 +651,6 @@ var app = angular.module('app', [
                                                 scope: {
                                                     fields: {
                                                         id: true,
-<<<<<<< HEAD
-                                                        direction: true,
-                                                        authorId: true
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                relation: "relatedArticles",
-                                                scope: {
-                                                    fields: [
-                                                        "title",
-                                                        "isActive",
-                                                        "photoNames",
-                                                        "authorId",
-                                                        "voteScore",
-                                                        "articleType",
-                                                        "slug"
-                                                    ],
-                                                    include: [
-                                                        {
-                                                            relation: "author",
-                                                            scope: {
-                                                                fields: [
-                                                                    "username"
-                                                                ]
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: "deck",
-                                                scope: {
-                                                    fields: {
-                                                        id: true,
-=======
->>>>>>> e14e94543ad60f4ed7585852ef9def3905642556
                                                         playerClass: true,
                                                         heroName: true,
                                                         dust: true,
@@ -4700,7 +4663,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.edit.html',
                         controller: 'AdminArticleEditCtrl',
                         resolve: {
-                            article: ['$stateParams', 'Article', function ($stateParams, Article) {
+                            article: ['$stateParams', 'Article', 'Util', function ($stateParams, Article, Util) {
                                 var articleID = $stateParams.articleID;
                                 return Article.findOne({
                                     filter: {
@@ -4729,6 +4692,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     console.log('data:', data);
+                                    data.slug = Util.setSlug(data);
                                     data.related = data.relatedArticles;
                                     return data;
                                 });
