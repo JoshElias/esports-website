@@ -180,7 +180,7 @@ angular.module('tsAdSense', [])
             s.className = "ad-script-tag";
             s.text = "<!-- google_ad_client = \"ca-pub-5622157629772216\";" +
                 " /* tempostorm */ google_ad_slot = \"5924728078\";" +
-                "google_adtest = on;" + //DON'T FORGET TO REMOVE THIS TAG BEFORE YOU LAUNCH TO LIVE SO YOU MAKE MONEY OK
+                // "google_adtest = on;" +
                 " google_ad_width = " + scope.w + ";" +
                 " google_ad_height = " + scope.h + ";" +
                 " //-->";
