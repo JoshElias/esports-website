@@ -24,9 +24,11 @@
     "guideId": {},
     "deckId": {},
     "snapshotId": {},
+    "hotsSnapshotId": {},
     "forumPostId": {},
     "parentCommentId": {},
-    "redbullDeckId": {}
+    "redbullDeckId": {},
+    "overwatchSnapshotId": {}
   },
   "relations": {
     "article": {
@@ -53,6 +55,16 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
+    },
+    "owSnapshot": {
+      "type": "belongsTo",
+      "model": "overwatchSnapshot",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "hotsSnapshot": {
+      "type": "belongsTo",
+      "model": "hotsSnapshot",
+      "foreignKey": "hotsSnapshotId"
     },
     "forumPost": {
       "type": "belongsTo",

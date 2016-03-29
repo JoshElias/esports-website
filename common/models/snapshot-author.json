@@ -17,6 +17,7 @@
     },
     "snapshotId": {},
     "hotsSnapshotId": {},
+    "overwatchSnapshotId": {},
     "authorId": {}
   },
   "relations": {
@@ -34,6 +35,11 @@
       "type": "belongsTo",
       "model": "hotsSnapshot",
       "foreignKey": "hotsSnapshotId"
+    },
+    "owSnapshot": {
+      "type": "belongsTo",
+      "model": "owSnapshot",
+      "foreignKey": "overwatchSnapshotId"
     }
   },
   "acls": [

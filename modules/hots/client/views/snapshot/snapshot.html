@@ -20,7 +20,7 @@
             <div class="snapshot-votes pull-right clearfix"> 
 
                 <span class="snapVoteWrap">
-                    <vote-widget theme="single"></vote-widget>
+                    <vote-widget votable="votableSnapshot" theme="single"></vote-widget>
                 </span>
 
             </div>
@@ -302,11 +302,12 @@
                 <div class="row m-l-none m-r-none m-b-md">
                     <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors" >
                         <a class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}">
-                            <div class="author-img-wrapper pull-left hidden-xs">
-                                <img ng-if="author.expertClasses.length === 1" class="author-class-icon m-l-sm" ng-src="../../img/meta-snapshot/class-icons/{{author.expertClasses[0]}}.png" />
-                            <span ng-if="author.expertClasses.length > 1">
-                                <img class="author-class-icon" ng-repeat="ico in author.expertClasses" src="../../img/meta-snapshot/class-icons/{{ico}}.png" style="left: {{((author.expertClasses.length-1)*23)-(23*$index)}}px;" />
-                            </span>
+                            <div class="hots-author-wrapper pull-left hidden-xs">
+                                <span ng-if="author.expertClasses.length > 1">
+                                    <div class="author-img-ico filter filter-{{ico.toLowerCase()}} active" ng-repeat="ico in author.expertClasses">
+
+                                    </div>
+                                </span>
                             </div>
                             <div class="author-text-wrapper">
                                 <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.expertClasses.length > 0 } ">{{author.user.username}}</h2>
@@ -341,6 +342,9 @@
                 </div>
                 <!-- /AUTHORS -->
             </div>
+            <!-- comments -->
+            <comment-section commentable="snapshot" service="service"></comment-section>
+            <!-- / commments -->
         </div>
     </div>
 </div>

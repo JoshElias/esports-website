@@ -191,6 +191,14 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
+    "overwatchSnapshot": {
+      "dataSource": "mongodb",
+      "public": true
+    },
+    "overwatchSnapshotHeroTier": {
+      "dataSource": "mongodb",
+      "public": true
+    },
     "deckCard": {
         "dataSource":"mongodb",
         "public": true
@@ -276,10 +284,6 @@ module.exports = {
         "public": true
     },
     "heroTier": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "hotsSnapshotAuthor": {
         "dataSource": "mongodb",
         "public": true
     },

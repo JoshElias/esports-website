@@ -1,18 +1,33 @@
 {
-  "name": "hotsSnapshot",
+  "name": "overwatchSnapshot",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "$slug": true
   },
   "properties": {
     "snapNum": {
       "type": "number"
     },
+    "slug": {
+        "url": {
+          "type": "string",
+          "validators": [
+            "unique"
+          ]
+        },
+        "linked": {
+          "type": "boolean"
+        }
+    },
+    "photoNames": {
+      "type": "object"
+    },
     "title": {
       "type": "string",
-      "Slug": true
+      "$slug": true
     },
     "intro": {
         "type": "string"
@@ -25,34 +40,31 @@
     },
     "createdDate": {
         "type": "date"
-    },
-    "isCommentable": {
-        "type": "boolean",
-        "default": true
     }
   },
   "validations": [],
   "relations": {
-      "heroTiers": {
-          "type": "hasMany",
-          "model": "heroTier",
-          "foreignKey": "snapshotId"
-      },
-      "votes": {
-        "type": "hasMany",
-        "model": "vote",
-        "foreignKey": "hotsSnapshotId"
-      },
-      "authors": {
-          "type": "hasMany",
-          "model": "snapshotAuthor",
-          "foreignKey": "hotsSnapshotId"
-      },
-      "comments": {
-          "type": "hasMany",
-          "model": "comment",
-          "foreignKey": "hotsSnapshotId"
-      }
+    "authors": {
+      "type": "hasMany",
+      "model": "snapshotAuthor",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "heroTiers": {
+      "type": "hasMany",
+      "model": "overwatchSnapshotHeroTier",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "overwatchSnapshotId",
+      "isChild": true
+    }
   },
   "acls": [
     {
@@ -79,7 +91,5 @@
       "permission": "ALLOW"
     }
   ],
-  "mixins": {
-    "Slug": true
-  }
+  "methods": {}
 }
