@@ -496,7 +496,7 @@ var app = angular.module('app', [
                                         perpage: 12,
                                         total: 0,
                                         where: artWhere,
-                                       order: 'createdDate DESC',
+                                        order: 'createdDate DESC',
                                         fields: {
                                             content: false
                                         },
@@ -4676,7 +4676,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.edit.html',
                         controller: 'AdminArticleEditCtrl',
                         resolve: {
-                            article: ['$stateParams', 'Article', function ($stateParams, Article) {
+                            article: ['$stateParams', 'Article', 'Util', function ($stateParams, Article, Util) {
                                 var articleID = $stateParams.articleID;
                                 return Article.findOne({
                                     filter: {
@@ -4695,12 +4695,17 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: "relatedArticles"
+                                            },
+                                            {
+                                                relation: 'slugs'
                                             }
                                         ]
                                     }
                                 })
                                 .$promise
                                 .then(function (data) {
+                                    console.log('data:', data);
+                                    data.slug = Util.setSlug(data);
                                     data.related = data.relatedArticles;
                                     return data;
                                 });
@@ -4865,7 +4870,7 @@ var app = angular.module('app', [
                             }],
 
                             classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
-								var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
+								                var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass,
