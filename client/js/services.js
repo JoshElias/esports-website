@@ -1868,6 +1868,16 @@ angular.module('app.services', [])
 
                 });
                 return out;
+            },
+            setSlug: function (obj) {
+                var s = obj.slugs[0];
+                var slug = {
+                    url: s.slug,
+                    linked: s.linked
+                };
+                delete obj.slugs;
+
+                return slug;
             }
         };
     }])
