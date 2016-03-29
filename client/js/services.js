@@ -476,7 +476,8 @@ angular.module('app.services', [])
                 authors: [],
                 heroTiers: [],
                 isActive: false,
-                createdDate: undefined
+                createdDate: undefined,
+                comments: []
             };
             var defaultAuthor = {
                 description: "",
@@ -513,16 +514,18 @@ angular.module('app.services', [])
                 exists['heroTiers'] = angular.copy(defaultCrud);
                 exists['guideTiers'] = angular.copy(defaultCrud);
 
-                this.snapNum     = snapshot.snapNum;
-                this.title       = snapshot.title;
-                this.intro       = snapshot.intro;
-                this.thoughts    = snapshot.thoughts;
-                this.slugs       = snapshot.slugs;
-                this.authors     = snapshot.authors;
-                this.heroTiers   = snapshot.heroTiers;
-                this.isActive    = snapshot.isActive;
-                this.createdDate = snapshot.createdDate;
-                this.tiers       = new Array();
+                this.snapNum       = snapshot.snapNum;
+                this.title         = snapshot.title;
+                this.intro         = snapshot.intro;
+                this.thoughts      = snapshot.thoughts;
+                this.slugs         = snapshot.slugs;
+                this.authors       = snapshot.authors;
+                this.heroTiers     = snapshot.heroTiers;
+                this.isActive      = snapshot.isActive;
+                this.createdDate   = snapshot.createdDate;
+                this.comments      = snapshot.comments;
+                this.isCommentable = snapshot.isCommentable;
+                this.tiers         = new Array();
 
                 if(!!snapshot.id) {
                     this.id = snapshot.id;
@@ -530,8 +533,6 @@ angular.module('app.services', [])
                     exists['authors'].exists = angular.copy(this.authors);
                     exists['heroTiers'].exists = angular.copy(this.heroTiers);
                 }
-
-                console.log(exists);
             };
 
             //begin method definitions
@@ -621,8 +622,6 @@ angular.module('app.services', [])
                     hero.guides = [];
 
                 hero.guides.push(tierGuide);
-
-                console.log(exists);
             };
 
             HOTSSnapshot.prototype.removeTier = function (tier) {
@@ -653,8 +652,6 @@ angular.module('app.services', [])
 
             HOTSSnapshot.prototype.removeHero = function (hero) {
                 var that = this;
-                var heroTiersCopy = angular.copy(this.heroTiers);
-                var heroCopy = angular.copy(hero);
 
                 _.each(hero.guides, function (guide) {
                     that.removeGuideFromHero(guide.id, hero.id);
@@ -732,7 +729,7 @@ angular.module('app.services', [])
                         .$promise
                         .then(function (data) {
 
-                            //gross, patch me please
+                            //gross, kill me pls
                             if (data._id) {
                                 data.id = data._id;
                                 delete data._id;
@@ -1871,6 +1868,16 @@ angular.module('app.services', [])
 
                 });
                 return out;
+            },
+            setSlug: function (obj) {
+                var s = obj.slugs[0];
+                var slug = {
+                    url: s.slug,
+                    linked: s.linked
+                };
+                delete obj.slugs;
+
+                return slug;
             }
         };
     }])

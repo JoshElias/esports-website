@@ -16,7 +16,8 @@
     "deckId": {},
     "snapshotId": {},
     "commentId": {},
-    "overwatchSnapshotId": {}
+    "overwatchSnapshotId": {},
+    "hotsSnapshotId": {}
   },
   "relations": {
     "author": {
