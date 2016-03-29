@@ -22,6 +22,9 @@
         "predicate": "premium"
       }
     },
+    "createdDate": {
+        "type": "date"
+    },
     "isCommentable": {
       "type": "boolean",
       "default": true

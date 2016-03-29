@@ -58,7 +58,7 @@
                             <h3 class="sub-title m-b-md">Decks from Team Tempo Storm</h3>
                             <ul class="hs-decks row no-pad" ng-if="tempostormDecks.length">
                                 <li class="col-xs-12" ng-repeat="deck in tempostormDecks | orderBy: '-createdDate'">
-                                    <a ui-sref="app.hs.decks.deck({ slug: deck.slugs[0].slug })" class="hs-deck small {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+                                    <a ui-sref="app.hs.decks.deck({ slug: deck.slug.url })" class="hs-deck small {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
                                         <div class="inner"></div>
                                         <div class="hs-deck-premium" ng-if="isPremium(deck)"></div>
                                         <div class="bt-shadow"></div>
@@ -79,7 +79,7 @@
                             <h3 class="sub-title m-b-md">Decks from the Community</h3>
                             <ul class="hs-decks row no-pad" ng-if="communityDecks.length">
                                 <li class="col-xs-12" ng-repeat="deck in communityDecks">
-                                    <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck small {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+                                    <a ui-sref="app.hs.decks.deck({ slug: deck.slug.url })" class="hs-deck small {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
                                         <div class="inner"></div>
                                         <div class="hs-deck-premium" ng-if="isPremium(deck)"></div>
                                         <div class="bt-shadow"></div>
