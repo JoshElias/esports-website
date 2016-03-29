@@ -32,8 +32,12 @@
         <div class="list-group-item admin-list-item clearfix" ng-repeat="deck in decks">
             <span>{{deck.name}}</span>
             <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.hearthstone.decks.edit({ deckID: deck.id })" class="btn btn-default">Edit</a>
-                <button class="btn btn-danger" ng-click="deleteDeck(deck)">Delete</button>
+                
+                <a ui-sref="app.admin.hearthstone.decks.edit({ deckID: deck.id })" 
+                   class="btn btn-default">Edit</a>
+                
+                <button class="btn btn-danger" 
+                        ng-click="deleteDeck(deck)">Delete</button>
             </div>
         </div>
         <div class="list-group-item" ng-show="!decks.length">

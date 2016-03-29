@@ -34,7 +34,6 @@ var app = angular.module('app', [
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
             $rootScope.LoginModalService = LoginModalService
-            console.log(window.canShowAds);
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
@@ -563,7 +562,6 @@ var app = angular.module('app', [
                                     })
                                     .$promise
                                     .then(function (userRoles) {
-                                        console.log(userRoles);
                                         return userRoles;
                                     })
                                     .catch(function (roleErr) {
@@ -632,6 +630,36 @@ var app = angular.module('app', [
                                                             }
                                                         }
                                                     ]
+                                                }
+                                            },
+                                            {
+                                                relation: "deck",
+                                                scope: {
+                                                    fields: [
+                                                        'id',
+                                                        'playerClass',
+                                                        'heroName',
+                                                        'dust',
+                                                        'gameModeType',
+                                                        'name',
+                                                        'slug'
+                                                    ],
+                                                    include: {
+                                                        relation: 'cards',
+                                                        scope: {
+                                                            include: {
+                                                                relation: 'card',
+                                                                scope: {
+                                                                    fields: [
+                                                                        'id',
+                                                                        'name',
+                                                                        'cost',
+                                                                        'photoNames'
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         ]
@@ -1625,7 +1653,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.snapshots.snapshot.html',
                         controller: 'HearthstoneSnapshotCtrl',
                         resolve: {
-                            dataSnapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
+                            snapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
                                 var slug = $stateParams.slug;
                                 return Snapshot.findOne({
                                     filter: {
@@ -1633,19 +1661,7 @@ var app = angular.module('app', [
                                             'slug.url': slug
                                         },
                                         fields: {
-                                            id: true,
-                                            authorId: true,
-                                            deckId: true,
-                                            active: true,
-                                            snapNum: true,
-                                            votes: true,
-                                            voteScore: true,
-                                            title: true,
-                                            content: true,
-                                            slug: true,
-                                            photoNames: true,
-                                            createdDate: true,
-                                            isCommentable: true
+                                            tiers: false
                                         },
                                         include: [
                                             {
@@ -1655,11 +1671,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'author',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    username: true,
-                                                                    email: true
-                                                                }
+                                                                fields: ['username', 'email']
                                                             }
                                                         }
                                                     ]
@@ -1672,19 +1684,13 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'forDeck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true
-                                                                }
+                                                                fields: ['playerClass']
                                                             }
                                                         },
                                                         {
                                                             relation: 'againstDeck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true
-                                                                }
+                                                                fields: ['playerClass']
                                                             }
                                                         }
                                                     ]
@@ -1697,12 +1703,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'deck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true,
-                                                                    name: true,
-                                                                    slug: true,
-                                                                }
+                                                                fields: ['id', 'name', 'slug', 'playerClass']
                                                             }
                                                         },
                                                         {
@@ -1714,7 +1715,10 @@ var app = angular.module('app', [
                                                                         scope: {
                                                                             include: [
                                                                                 {
-                                                                                    relation: 'card'
+                                                                                    relation: 'card',
+                                                                                    scope: {
+                                                                                        fields: ['name', 'photoNames']
+                                                                                    }
                                                                                 }
                                                                             ]
                                                                         }
@@ -1727,22 +1731,12 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: 'authors',
-                                                fields: {
-                                                  description: true,
-                                                  expertClasses: true,
-                                                  id: true,
-                                                  userId: true
-                                                },
                                                 scope: {
                                                     include: [
                                                         {
                                                             relation: 'user',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    social: true,
-                                                                    username: true
-                                                                }
+                                                                fields: ['username', 'social']
                                                             }
                                                         }
                                                     ],
@@ -1751,11 +1745,7 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'votes',
                                                 scope: {
-                                                    fields: {
-                                                        id: true,
-                                                        direction: true,
-                                                        authorId: true
-                                                    }
+                                                    fields: ['direction', 'authorId']
                                                 }
                                             }
                                         ]
@@ -2941,7 +2931,6 @@ var app = angular.module('app', [
                                     }
                                   }).$promise
                                   .then(function(heroData) {
-                                    console.log('heroData:', heroData);
                                     return waterCB(null, heroData);
                                   })
                                   .catch(function (err) {
@@ -3772,118 +3761,49 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
-                            teams: ['TeamMember', function (TeamMember) {
-                                TeamMember.find({})
-                                .$promise
-                                .then(function (t) {
-                                    async.each(t, function (tm, eachCb) {
-                                        if (typeof tm.isActive === 'string') {
-                                            tm.isActive = true;
-
-                                            TeamMember.update({
-                                                where: {
-                                                    id: tm.id
+                            teams: ['Team', function (Team) {
+                              return Team.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: [
+                                            'id', 
+                                            'name', 
+                                            'gameId', 
+                                            'orderNum',
+                                            'abbreviation'
+                                        ],
+                                        order: 'orderNum ASC',
+                                        include: [
+                                            {
+                                                relation: 'teamMembers',
+                                                scope: {
+                                                    where: {
+                                                        isActive: true
+                                                    },
+                                                    order: 'orderNum ASC',
+                                                    fields: [
+                                                      'fullName',
+                                                      'screenName',
+                                                      'description',
+                                                      'photoName',
+                                                      'screenName',
+                                                      'social',
+                                                      'orderNum',
+                                                    ]
                                                 }
-                                            }, tm)
-                                            .$promise
-                                            .then(function (data) {
-                                                return eachCb();
-                                            })
-                                        } else {
-                                            return eachCb();
-                                        }
-                                    });
-                                });
-                            }],
-                            hsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hs',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
+                                            },
+                                            {
+                                                relation: 'game',
+                                                scope: {
+                                                    fields: ['id', 'name']
+                                                }
+                                            }
+                                        ]
                                     }
                                 })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            hotsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hots',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            wowTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'wow',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            csTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'cs',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            fifaTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fifa',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            fgcTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fgc',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
+                                .$promise;
                             }]
                         }
                     }
@@ -6578,7 +6498,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/hs.snapshots.add.html',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.snapshot.html',
                         controller: 'AdminHearthstoneSnapshotAddCtrl',
                         resolve: {
                             dataPrevious: ['Snapshot', function (Snapshot) {
@@ -6608,7 +6528,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: "deck",
                                                             scope: {
-                                                                fields: ["name"]
+                                                                fields: ["name", "playerClass"]
                                                             }
                                                         },
                                                         {
@@ -6691,7 +6611,7 @@ var app = angular.module('app', [
                 url: '/:snapshotID',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/hs.snapshots.edit.html',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.snapshot.html',
                         controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
                             snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
@@ -6702,7 +6622,7 @@ var app = angular.module('app', [
                                             id: snapshotID
                                         },
                                         fields: {
-//                                            tiers: false
+                                            tiers: false
                                         },
                                         include: [
                                             {
@@ -6723,7 +6643,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: "deck",
                                                             scope: {
-                                                                fields: ["name"]
+                                                                fields: ["name", "playerClass"]
                                                             }
                                                         },
                                                         {
@@ -6767,37 +6687,7 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function (snapshot) {
-
-                                    snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
-
-                                    //BUILD TIERS//
-                                    snapshot.tiers = [];
-                                    _.each(snapshot.deckTiers, function (deck) {
-                                        if (snapshot.tiers[deck.tier-1] === undefined) {
-                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
-                                        }
-
-                                        snapshot.tiers[deck.tier-1].decks.push(deck);
-                                    });
-                                    snapshot.tiers = _.filter(snapshot.tiers, function (tier) { return tier; });
-
-                                    var deckNum = 0;
-                                    _.each(snapshot.tiers, function (tier, tIndex) {
-                                        tier.tier = tIndex+1
-                                        _.each(tier.decks, function(deck, dIndex) {
-                                            deck.tier = tIndex+1;
-                                            deck.ranks[0] = ++deckNum;
-                                        })
-                                    })
-                                    //BUILD TIERS//
-
-                                    //BUILD MATCHES//
-                                    snapshot.matches = snapshot.deckMatchups;
-
-                                    return snapshot;
-                                });
+                                .$promise;
                             }]
                         }
                     }
@@ -6823,15 +6713,17 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            teamInfo: ['Team', function (Team) {
+                            teams: ['Team', function (Team) {
                                 return Team.find({
                                     filter: {
-                                        fields: ['id', 'name', 'gameId'],
+                                        fields: ['id', 'name', 'gameId', 'orderNum'],
+                                        order: 'orderNum ASC',
                                         include: [
                                             {
                                                 relation: 'teamMembers',
                                                 scope: {
-                                                    fields: ['id', 'fullName', 'screenName']
+                                                    fields: ['id', 'fullName', 'screenName', 'orderNum'],
+                                                    order: 'orderNum ASC'
                                                 }
                                             },
                                             {
@@ -6843,11 +6735,8 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function (teamInfo) {
-                                    return teamInfo;
-                                });
-                            }],
+                                .$promise;
+                            }]
                         }
                     }
                 },
@@ -7026,12 +6915,7 @@ var app = angular.module('app', [
                                 return TeamMember.findById({
                                     id: memberID,
                                 })
-                                .$promise
-                                .then(function(teamMember) {
-                                    return teamMember;
-                                }).catch(function(err){
-                                    console.log(err);
-                                });
+                                .$promise;
                             }]
                         }
                     }

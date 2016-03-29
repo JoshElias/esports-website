@@ -1,10 +1,19 @@
 {
+<<<<<<< HEAD
   "angular.min.js": "angular.min.f3876817.js",
   "app.min.js": "app.min.a05d43d0.js",
   "vendor.min.js": "vendor.min.f8998e75.js",
   "modules.min.js": "modules.min.eeeec706.js",
   "lb-services.min.js": "lb-services.min.e228123f.js",
   "style.min.css": "style.min.426f193c.css",
+=======
+  "angular.min.js": "angular.min.6ab40545.js",
+  "app.min.js": "app.min.1ff04119.js",
+  "vendor.min.js": "vendor.min.502e9267.js",
+  "modules.min.js": "modules.min.2168bc9f.js",
+  "lb-services.min.js": "lb-services.min.e228123f.js",
+  "style.min.css": "style.min.e0b945be.css",
+>>>>>>> staging
   "vendor.min.css": "vendor.min.60b209a2.css",
   "modules.min.css": "modules.min.5cf7e8d7.css"
 }

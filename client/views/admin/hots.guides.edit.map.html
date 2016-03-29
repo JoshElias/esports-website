@@ -102,7 +102,8 @@
 </div>
 <div class="container" ng-show="step === 4">
     <div class="guide-text map-discussion"></div>
-    <div class="db-section m-b-md" ng-repeat="content in guide.content track by $index | orderBy: 'orderNum'">
+    <div class="db-section m-b-md" 
+         ng-repeat="content in guide.content | orderBy: 'orderNum' track by $index">
         <div class="gb-content-title">
             <div class="gb-chapter-carets">
                 <a href="#" class="gb-content-down m-r-xs" ng-class="{ 'disabled': $index == (guide.content.length - 1) }" ng-show="guide.content.length > 1" ng-click="guide.moveContentDown(content)"><i class="fa fa-caret-down"></i></a>
@@ -111,7 +112,10 @@
             <div class="gb-content-btns clearfix">
                 <a href="#" class="gb-content-delete" ng-show="guide.content.length" ng-click="guide.deleteContent(content)"><i class="fa fa-times"></i></a>
             </div>
-            <input type="text" name="contentTitle{{$index}}" class="form-control input-content-title" value="" ng-model="content.title">
+            <input type="text" 
+                   name="contentTitle{{$index}}"
+                   class="form-control input-content-title"
+                   value="" ng-model="content.title">
         </div>
         <div>
             <summernote id="contentBody{{$index}}" config="options" ng-model="content.body"></summernote>

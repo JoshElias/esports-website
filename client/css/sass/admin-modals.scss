@@ -1,0 +1,592 @@
+@import 'ts-colors.scss';
+
+//-----------------------------------
+// 0. mixins
+// 1. modal styles
+// 2. Pagination styles
+//-----------------------------------
+
+//-----------------------------------
+// 0. Modal styles
+//-----------------------------------
+
+@mixin modal-div-styles {
+    //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
+    background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.45), rgba($gradient-grey,0.90)); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.45)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba($gradient-grey,0.45),  rgba($gradient-grey,0.90)); /* W3C */
+    border: 0px solid transparent;
+    border-radius: 0px;
+    box-shadow: 2px 5px 15px rgba(0,0,0,.95);
+}
+
+//-----------------------------------
+// 1. Modal styles
+//-----------------------------------
+
+.modal-admin-authors {
+    .modal-content {
+        min-height: 700px;
+    }
+}
+
+.modal-admin-decks {
+    .modal-content {
+        min-height: 770px;
+    }
+}
+.modal-admin-cards {
+    .modal-content {
+        min-height: 686px;
+    }
+}
+
+.modal-admin-remove {
+    .modal-content {
+        //min-height: 330px;
+    }
+    
+    .bootbox-body {
+        margin-bottom: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .modal-body {
+        text-align: center;
+        margin-top: 20px;
+        color: $light-font;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .btn-danger, 
+    .btn-change {
+        background-image: none;
+        border-color: transparent;
+        border-radius: 0px;
+        background-color: rgba($btn-red, 0.6);
+        color: $light-font;
+        
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        
+        &:hover,
+        &:focus {
+            background-color: rgba($btn-red, 0.9);
+            color: $white;
+        
+        }
+        
+    } // btn-change, btn-danger
+}
+
+
+.modal-admin {
+    
+    
+    .modal-dialog {
+        //margin-top: 200px;
+    }
+    
+    .modal-content {
+        @include modal-div-styles;
+        position: relative;
+        
+        ///temp background due to older design
+        
+        //background: rgba(0,0,0,.75); /* For browsers that do not support gradients */
+    background: -moz-linear-gradient(top,  rgba($gradient-grey, 0.95), rgba($gradient-grey,0.90)); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(rgba($gradient-grey,0.95)), color-stop(rgba($gradient-grey,0.90))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba($gradient-grey,0.95),  rgba($gradient-grey,0.90)); /* W3C */
+        
+        .modal-header {
+            background: rgba($white,0.15);
+            border: 0px solid black;
+            min-height: 70px;
+            
+            .close {
+                margin-top: 5px;
+                margin-right: 10px;
+                font-size: 28px;
+                font-weight: 100;
+                text-shadow: none;
+            }
+                        
+            .modal-title {
+                font-size: 18px;
+                text-transform: uppercase;
+                margin: 8px 50px 8px 15px;
+            }
+        }
+        .modal-body {
+            padding: 0px 0px 70px 0px;
+            
+            .bootbox-body {
+                .search-styles {
+                    
+                    .fa {
+                        color: rgba($white, 0.8);
+                        position: absolute;
+                        top: -42px;
+                        right: 310px;
+                    }
+                
+                }
+                
+                form {
+                    
+                    .form-control {
+                        color: $light-font;
+                    }
+                    .form-control:focus {
+                        box-shadow: none;
+                        color: #fff;
+                    }
+                    
+                    input::-webkit-input-placeholder {
+                    color: rgba($white, 0.8) !important;
+                    }
+
+                    input:-moz-placeholder { /* Firefox 18- */
+                    color: rgba($white, 0.8) !important;  
+                    }
+
+                    input::-moz-placeholder {  /* Firefox 19+ */
+                    color: rgba($white, 0.8) !important;  
+                    }
+
+                    input:-ms-input-placeholder {  
+                    color: rgba($white, 0.8) !important;  
+                    }
+                    
+                    
+                    input {
+                    
+                        &:placeholder-shown {
+                            color: rgba($light-font, 0.3);
+                        }
+                    }
+                    
+                    .input-sm {
+                        height: 40px;
+                        border-radius: 0px;
+                        border: 0px solid transparent;
+                        background-color: rgba($white, 0.2);
+                        font-size: 12px;
+                        position: absolute;
+                        top: -55px;
+                        right: 65px;
+                        width: 45%;
+                        padding-left: 40px;
+                    }
+                }
+                
+                .list-group {
+
+                    li {
+                        list-style-type: none;
+                        outline: 1px solid rgba($white, 0.05);
+                        border-left: 8px solid transparent;
+                        height: 56px;
+                        padding: 12px;
+                        font-size: 12px;
+                        color: $light-font;
+                        background: rgba(255,255,255,0.0);
+                        position: relative;
+                        transition: 0.2s ease-in-out;
+                        z-index: 1;
+                        
+                        button,
+                        a {
+                            position: relative;
+                            z-index: 5;
+                        }
+                        
+                        &:after {
+                            
+                            position: absolute;
+                              content: '';
+                              top: 0;
+                              left: 0;
+                              width: 100%;
+                              height: 100%;
+                            
+                            background: rgba(255,255,255,0.2);
+background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.2)), color-stop(68%, rgba(255,255,255,0.02)), color-stop(69%, rgba(255,255,255,0.02)));
+background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+background: -o-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+background: -ms-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+                            
+                            transition: opacity 0.2s ease-in-out;
+                            z-index: 2;
+                            opacity: 0;
+                            
+                        }
+                        
+                        &:hover:after {
+                            opacity: 1;
+                        }
+                        
+                        &:hover {
+                            
+                           // transition: 2s ease-in-out;
+                            border-left: 8px solid  rgba(255, 255, 255, 0.2);
+                            
+                            
+                        }
+                        
+                        &.active {
+                            border-left: 8px solid $ts-blue !important;
+                            //transition: 0.0s ease;
+                            
+                            color: $white;
+                            
+                            a {
+                                color: $white;
+                            }
+                            
+                            &:after {
+                                opacity: 0.4;
+                            }
+                            
+                            &:hover:after {
+                                opacity: 1;
+                            }
+                            
+                        }
+                        
+                        .authour {
+                            margin: 6px 15px;
+                        }
+                        
+                        button {
+                            border-radius: 0px;
+                            -webkit-box-shadow: none;
+                            box-shadow: none;
+                            width: 90px;
+                            height: 32px;
+                            color: $light-font;
+                            transition: 0.2s ease-in-out;
+                        }
+                        
+                        .btn-success {
+                            background-color: rgba($btn-green, 0.15) ;
+                            border: 0px solid black;
+                            background-image: none !important;
+                            
+                            
+                            &:hover {
+                                background-color: rgba($btn-green, 0.5) ;
+                                color: $white;
+                            }
+                        }
+                        
+                        .btn-danger {
+                            background-color: rgba($btn-red, 0.15) ;
+                            border: 0px solid black;
+                            background-image: none !important;
+                            
+                            
+                             &:hover {
+                                background-color: rgba($btn-red,0.5) ;
+                                color: $white;
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+}
+
+//-----------------------------------
+// 2. Pagination 
+//-----------------------------------
+
+.modal-admin {
+    
+    .page-flipper {
+        background: rgba($white,0.15);
+        border: 0px solid black;
+        height: 70px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        
+        &.page-flipper-top {
+            margin: 0px;
+        }
+    
+        .btn-group {
+            margin: 15px 19%;
+            height: 40px;
+            border-radius: 0px;
+            border: 0px solid transparent;
+            background-color: rgba($white, 0.2);
+            font-size: 12px;
+            font-weight: 100;
+            text-align: center;
+        
+            
+            .btn:last-child .inner {
+                border-right: 0px solid transparent !important;
+            }
+            
+            .btn {
+                background: transparent;
+                color: $light-font;
+                //border: 0px solid transparent !important;
+                height: 100%;
+                min-width: 40px;
+                line-height: 40px;
+                font-weight: 100;
+                font-family: inherit !important;
+                
+                &:last-child,
+                &:first-child {
+                    border-radius: 0px !important;
+                }
+                
+                &.active {
+                background-color: transparent;
+                border-bottom: 4px solid rgba($white, 0.55) !important;
+                box-shadow: none;
+                
+                }
+                
+                 &:hover {
+                    background: rgba($black, 0.55);
+                }
+               
+                
+                .inner {
+                    border: 0px solid transparent !important;
+                    border-radius: 0px;
+                    
+                }
+            }
+            
+            .btn-pagination-nav {
+                width: 85px;
+                height: 100%;
+                background-color: rgba($black, 0.2);
+            }
+        }
+    }
+}
+
+//-----------------------------------
+// 3. ADD Card modal 
+//-----------------------------------
+
+.modal-admin {
+    
+    .list-group {
+    
+        .card {
+            img {
+                position: absolute;
+                top: 0;
+                right: 90px;
+                height: 26px;
+                width: auto;
+                opacity: .2;
+                transition: opacity 0.5s ease-in-out;
+            }
+        }
+    }
+    
+    .card-list {
+        
+        li {
+            height: 26px !important;
+            padding: 5px !important;
+            padding-left: 15px;
+            
+            
+            &.active {
+                .card {
+                    img { 
+                        transition: opacity 0.5s ease-in-out;
+                        opacity: .85;
+                    }
+                }
+            }
+            
+            button {
+                height: 26px !important;
+                position: absolute !important;
+                right: 0;
+                top: 0;
+                padding: 1px 6px !important;
+            }
+            
+            .btn-success {
+                background-color: rgba($btn-green, 0.35) !important;
+                border: 0px solid black;
+                background-image: none !important;
+
+
+                &:hover {
+                    background-color: rgba($btn-green, 0.5) !important;
+                    color: $white;
+                }
+            }
+
+            .btn-danger {
+                background-color: rgba($btn-red, 0.35) !important;
+                border: 0px solid black;
+                background-image: none !important;
+
+
+                 &:hover {
+                    background-color: rgba($btn-red,0.5) !important;
+                    color: $white;
+                }
+            }
+            
+            &:hover {
+                .card {
+                    img { 
+                        transition: opacity 0.5s ease-in-out;
+                        opacity: 1;
+                    }
+                }
+            
+            }
+        }
+    }
+
+    .big-spin {
+        .fa {
+            
+            margin-top: 37%;
+            font-size: 80px;
+
+        }
+    }
+
+}
+
+//-----------------------------------
+// 3. ADD Deck Modal 
+//-----------------------------------
+
+// footer fixes
+
+.modal-admin {
+    &.modal-has-footer { 
+        .modal-content {
+            
+            .page-flipper {
+                bottom: 70px;
+            }
+            
+            .modal-body {
+                 padding: 0px 0px 140px 0px;
+            }
+        }
+    }
+    
+    
+        
+    .modal-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 70px;
+        border: 0px solid transparent;
+        background: rgba(255, 255, 255, 0.15);
+        
+        .btn-default,
+        .btn-success {
+            background-image: none;
+            border: 0px solid transparent;
+            border-radius: 0px;
+            box-shadow: none;
+            -webkit-box-shadow: none;
+        }
+        
+        button {
+            //background: rgba(255, 255, 255, 0.15);
+            border: 0px solid transparent;
+            border-radius: 0px;
+            color: $light-font;
+            min-width: 60px;
+            height: 40px;
+            text-shadow: none;        
+            
+            &.btn-success {
+                background-color: rgba($btn-green, 0.5) ;
+                
+                &:hover {
+                    background-color: rgba($btn-green, 0.65) ;
+                    color: $white;
+                }
+            }
+            
+            &.btn-default {
+                background-color: rgba($ts-blue, 0.5);
+                
+                 &:hover {
+                    background-color: rgba($ts-blue, 0.75);
+                    color: $white;
+                }
+            
+            }
+        }
+    }
+}
+
+//deck list fixes
+
+.modal-admin {
+    .add-deck-modal {
+        
+        .list-group {
+            li {
+                &.active {
+                    a {
+                        color: $white;
+                    }
+                }
+            }
+        }
+        
+        .deck-fix {
+            padding: 0px !important;
+            
+            a {
+                display: block;
+                padding: 20px;
+                width: 100%;
+                height: 100%;
+                color: $light-font;
+            }
+            
+            
+            
+            
+            &:hover {
+                
+                a {
+                    color: $white;
+                    //font-weight: bold;
+                }
+                    
+            }
+        }
+    }
+}

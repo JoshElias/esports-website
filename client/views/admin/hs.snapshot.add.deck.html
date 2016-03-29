@@ -1,16 +1,18 @@
-<div class="panel panel-dark m-b-none">   
-    <div class="panel-heading clearfix">
-        <strong class="lh-lg">ADD DECK</strong>
-        <div class="pull-right m-r-sm">
-            <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchDecks(search)">
-        </div>
+<div class="add-deck-modal">
+    <div class="clearfix">
+        <form ng-submit="updateSearch()" class="search-styles">
+            <input type="text" ng-model="search" class="form-control input-sm pull-right" placeholder="search"><i class="fa fa-search"></i>
+        </form>
     </div>
-    <div class="list-group m-b-none">
-        <a href="#" class="list-group-item add-deck-item" ng-class="{ active : isDeck(d) || isSelected(d) }" ng-click="addDeck(d)" ng-repeat="d in deckData">
-            {{d.name}}
-        </a>
-        <div class="list-group-item center-text">
-            <button class="btn btn-blue btn-lg center-text" ng-click="closeDeckBox()" ng-disabled="matching">{{(matching == true) ? 'Building matches...' : 'Done'}}</button>
-        </div>    
+    <div class="text-center big-spin" ng-if="loading">
+        <i class="fa fa-refresh fa-spin"></i>
     </div>
+    <ul class="list-group m-b-none" ng-if="!loading && decks.length">
+        <li class="clearfix deck-fix" ng-class="{ active: deck === d }" ng-repeat="d in decks">
+            <a href="#" ng-click="toggleDeck(d)" class="deck">
+                {{d.name}}
+            </a>
+        </li>
+    </ul>
+    <div pagination="pagination" theme="modal-admin" class="modal-admin"></div>
 </div>

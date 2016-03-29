@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="./dist/css/modules.css" type="text/css" />
     
 </head>
-<body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
+<body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots'), 'hs': $state.includes('app.admin.hearthstone') }">
 
     <div class="app" id="app" ui-view="root" bootstrap-width></div>
     <script>
