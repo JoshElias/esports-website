@@ -169,6 +169,12 @@
     "Slug": true,
     "Scope": true,
     "Authored": true,
+    "Filter": {
+      "fieldFilters": true,
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive", "premium"]
+    },
     "TimeStamp" : {
       "createdAt" : "createdDate",
       "updatedAt" : "updatedDate",
