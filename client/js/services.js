@@ -1870,21 +1870,21 @@ angular.module('app.services', [])
                 return out;
             },
             setSlug: function (obj) {
-                var s = obj.slugs[0];
-                var slug = {
-                    url: s.slug,
-                    linked: s.linked
-                };
+                var slug = obj.slugs[0];
+                var sl = {
+                    url: slug.slug,
+                    linked: slug.linked
+                }
                 delete obj.slugs;
-
-                return slug;
+                
+                return sl;
             }
         };
     }])
     .factory('Base64', function () {
     var digitsStr =
-        //   0       8       16      24      32      40      48      56     63
-        //   v       v       v       v       v       v       v       v      v
+    //   0       8       16      24      32      40      48      56     63
+    //   v       v       v       v       v       v       v       v      v
         "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
     var digits = digitsStr.split('');
     var digitsMap = {};
@@ -3236,12 +3236,16 @@ angular.module('app.services', [])
                                     premium: true,
                                     createdDate: true
                                 },
-                                include: ['author'],
+                                include: ['author', 'slugs'],
                                 order: "createdDate DESC",
                                 limit: limit
                             }
                         }, function (articles) {
 //                            console.log('ARTICLES!!:', articles);
+                            _.each(articles, function (article) {
+                                article.slug = Util.setSlug(article);
+                            });
+
                             return finalCallback(undefined, articles);
                         }, function (err) {
                             console.log(err);
@@ -3271,6 +3275,7 @@ angular.module('app.services', [])
                 .$promise
                 .then(function (data) {
 //                    console.log(data);
+                    data.slug = Util.setSlug(data);
                     return finalCallback(undefined, data);
                 })
                 .catch(function (err) {
@@ -3326,7 +3331,9 @@ angular.module('app.services', [])
 
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: heroWhere,
                                 include: [
                                     {
@@ -3360,17 +3367,17 @@ angular.module('app.services', [])
                                 order: order,
                                 skip: ((page*limit) - limit),
                                 where: guideWhere,
-                                fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                ],
+                                fields: {
+                                    name: true,
+                                    authorId: true,
+                                    slug: true,
+                                    voteScore: true,
+                                    guideType: true,
+                                    premium: true,
+                                    id: true,
+                                    talentTiers: true,
+                                    createdDate: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -3406,7 +3413,7 @@ angular.module('app.services', [])
                                                         className: true
                                                     }
                                                 }
-                                            },
+                                            }
                                         }
                                     },
                                     {
@@ -3417,6 +3424,9 @@ angular.module('app.services', [])
                                                 direction: true
                                             }
                                         }
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
@@ -3424,6 +3434,7 @@ angular.module('app.services', [])
 
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
 
                             return seriesCallback(undefined, guides, guideWhere);
@@ -3578,6 +3589,9 @@ angular.module('app.services', [])
                                                 direction: true
                                             }
                                         }
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
@@ -3585,6 +3599,7 @@ angular.module('app.services', [])
 
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
 
                             return seriesCallback(undefined, guides, guideIds);
@@ -3692,6 +3707,9 @@ angular.module('app.services', [])
                                     },
                                     {
                                         relation: 'votes'
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
@@ -3701,6 +3719,7 @@ angular.module('app.services', [])
 
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
 
                             return seriesCallback(undefined, guides, guideIds);
@@ -3870,6 +3889,9 @@ angular.module('app.services', [])
                                                         direction: true
                                                     }
                                                 }
+                                            },
+                                            {
+                                                relation: 'slug'
                                             }
                                         ]
                                     }
@@ -3877,6 +3899,7 @@ angular.module('app.services', [])
 
                                     _.each(guides, function(guide) {
                                         guide.voteScore = Util.tally(guide.votes, 'direction');
+                                        guide.slug = Util.setSlug(guide);
                                     });
 
                                     return waterCallback(undefined, guides);
