@@ -1466,7 +1466,7 @@ angular.module('app.services', [])
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
     hots.heroRows = [9, 8, 9, 8, 7, 6];
-    hots.mapRows = [3,4,3];
+    hots.mapRows = [4,3,4];
 
     hots.genStats = function () {
         var stats = [],
