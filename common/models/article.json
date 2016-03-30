@@ -103,17 +103,6 @@
       "type": "hasMany",
       "model": "vote",
       "foreignKey": "articleId"
-    },
-    "sluggables": {
-      "type": "hasMany",
-      "model": "sluggable",
-      "foreignKey": "articleId"
-    },
-    "slugs": {
-      "type": "hasMany",
-      "model": "slug",
-      "foreignKey": "articleId",
-      "through": "sluggable"
     }
   },
   "acls": [
