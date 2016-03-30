@@ -4182,13 +4182,14 @@ angular.module('app.services', [])
             
             // relationships
             authors: [],
-            heroTiers: [],
+            tiers: [],
             
             // template things
             loading: false,
             loaded: false,
             saving: false,
-            activeAuthor: null
+            activeAuthor: null,
+            activeTierHero: null
         };
         
         var defaultAuthor = {
@@ -4198,31 +4199,25 @@ angular.module('app.services', [])
             expertClasses: []
         };
         
-//        // query all heroes
-//        snapshot.loadHeroes = function () {
-//            var d = $q.defer();
-//        
-//            OverwatchHero.find({
-//                filter: {
-//                    fields: [
-//                        'heroName'
-//                    ]
-//                }
-//            })
-//            .$promise
-//            .then(function (owHeroes) {
-//                return d.resolve(owHeroes);
-//            });
-//
-//            return d.promise;
-//        };
-//        
-//        // cache array of heroes
-//        var owHeroes = snapshot.loadHeroes().then(function (owHeroes) {
-//            console.log('owHeroes:', owHeroes);
-//            return owHeroes;
-//        });
+        var defaultTier = {
+            tier: 1,
+            heroes: []
+        };
         
+        var defaultTierHero = {
+            tier: 1,
+            summary: "",
+            strongAgainst: [],
+            weakAgainst: [],
+            hero: undefined
+        };
+        
+        var defaultTierHeroRank = {
+            heroName: "",
+            rank: 0
+        };
+        
+        // create a new overwatch snapshot
         snapshot.new = function (snapshotData) {
             
             var sb = angular.copy(defaultSnap);
@@ -4230,14 +4225,14 @@ angular.module('app.services', [])
             // track deletable 
             sb.deleted = {
                 authors: [],
-                heroTiers: []
+                tiers: []
             };
             
             // track updatable
             sb.updated = {
                 snapshot: false,
                 authors: [],
-                heroTiers: []
+                tiers: []
             };
             
             // init
@@ -4333,7 +4328,7 @@ angular.module('app.services', [])
                     });
                     
                     // hero tiers
-                    _.each(owSnapshot.heroTiers, function (heroTier) {
+                    _.each(owSnapshot.tiers, function (heroTier) {
                         delete heroTier.id;
                         delete heroTier.overwatchSnapshotId;
                     });
@@ -4395,6 +4390,72 @@ angular.module('app.services', [])
                         // mark snapshot as updated
                         sb.snapshotUpdated();
                     });
+                }
+            };
+            
+            // prompt for tier delete
+            sb.tierDeletePrompt = function (tier) {
+                var box = bootbox.dialog({
+                    title: "Remove Tier?",
+                    message: "Are you sure you want to remove the tier <strong>Tier " + tier.tier + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.tierDelete(tier);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // delete tier
+            sb.tierDelete = function (tier) {
+                var index = sb.tiers.indexOf(tier);
+                if (index !== -1) {
+//                    sb.tierDeleteAllDecks(tier);
+                    sb.tiers.splice(index, 1);
+                    sb.tierUpdateNumbers();
+                }
+            };
+            
+            // update all tier nums
+            sb.tierUpdateNumbers = function () {
+                var tierNum = 1;
+                var oldTier;
+                var newTier;
+                
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    sb.tiers[i].tier = tierNum;
+
+//                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+//                        oldTier = sb.tiers[i].decks[j].tier;
+//                        newTier = tierNum;
+//                        
+//                        // if tier moves from non matchups to matchups - add matchups for the deck
+//                        if (oldTier > 2 && newTier < 3) {
+//                            sb.matchupsAdd(sb.tiers[i].decks[j]);
+//                        }
+//                        
+//                        // set new tier for deck
+//                        sb.tiers[i].decks[j].tier = newTier;
+//                    }
+
+                    tierNum++;
                 }
             };
             
@@ -4463,6 +4524,13 @@ angular.module('app.services', [])
                     show: false
                 });
                 box.modal('show');
+            };
+            
+            // add tier
+            sb.tierAdd = function () {
+                var newTier = angular.copy(defaultTier);
+                newTier.tier = sb.tiers.length + 1;
+                sb.tiers.push(newTier);
             };
             
             sb.saveCheck = function (callback) {
@@ -4576,6 +4644,170 @@ angular.module('app.services', [])
                     }
                     return callback(err);
                 });
+            };
+            
+            // add hero
+            sb.heroAdd = function (tier, hero) {
+//                if (sb.getTierDeckByDeckId(hero.id)) { return false; }
+                
+                var newHero = angular.copy(defaultTierHero);
+                newHero.tier = tier.tier;
+                newHero.hero = hero;
+                
+                tier.heroes.push(newHero);
+                
+//                sb.decksUpdateCurrentRanks();
+                
+//                if (tier.tier <= 2) {
+//                    sb.matchupsAdd(newHero);
+//                    console.log(newHero);
+//                }
+            };
+            
+            // remove hero from tier
+            sb.heroRemove = function (tier, hero) {
+                var heroFound = false;
+                for (var i = 0; i < tier.heroes.length; i++) {
+                    if (tier.heroes[i].hero.id === hero.id) {
+                        // make sure not to leave deleted deck active
+                        if (sb.activeTierHero
+                            && sb.activeTierHero.hero === hero) {
+                            sb.activeTierHero = null;
+                        }
+                        
+                        return tier.heroes.splice(i, 1);
+                    }
+                }
+            };
+            
+            // remove a tierHero
+            sb.heroDelete = function (tier, tierHero) {
+                var index = tier.heroes.indexOf(tierHero);
+                if (index !== -1) {
+                    // if existing item
+                    if (tierHero.id) {
+                        // remove update flag
+//                        sb.removeUpdateFlag('deckTiers', deck.id);
+                        // flag deckTier for delete
+//                        sb.deleted.deckTiers.push(deck.id);
+                    }
+                                        
+//                    sb.deckDeleteAllTechs(deck);
+//                    sb.matchupsDelete(deck);
+                    
+                    tier.heroes.splice(index, 1);
+                    
+//                    sb.decksUpdateCurrentRanks();
+                    
+                    // make sure not to leave deleted deck active
+                    if (sb.activeTierHero === tierHero) {
+                        sb.activeTierHero = null;
+                    }
+                }
+            };
+            
+            // set active hero
+            sb.setActiveHero = function (tierHero) {
+                sb.activeTierHero = tierHero;
+            };
+            
+            // prompt to delete a tierHero
+            sb.heroDeletePrompt = function (tier, tierHero) {
+                var box = bootbox.dialog({
+                    title: "Remove Hero?",
+                    message: "Are you sure you want to remove the hero <strong>" + tierHero.hero.heroName + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.heroDelete(tier, tierHero);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // determine if a hero exists in any tier
+            sb.heroExistsInOtherTiers = function (currentTier, heroId) {
+                var heroExists = false;
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    if (sb.tiers[i] !== currentTier) {
+                        for (var j = 0; j < sb.tiers[i].heroes.length; j++) {
+
+                            if (sb.tiers[i].heroes[j].hero.id === heroId) {
+                                return heroExists = true;
+                            }
+
+                        }
+                    }
+                }
+                return heroExists;
+            };
+            
+            // determine if a hero already exists in 
+            sb.heroExistsInTier = function (currentTier, heroId) {
+                var heroExists = false;
+                _.each(currentTier.heroes, function (hero) {
+                    if (hero.hero.id === heroId) {
+                        return heroExists = true;
+                    }
+                });
+                
+                return heroExists;
+            };
+            
+            // prompt for adding a deck
+            sb.heroAddPrompt = function (tier) {
+                var newScope = $rootScope.$new(true);
+                newScope.heroAdd = sb.heroAdd;
+                newScope.heroRemove = sb.heroRemove;
+                newScope.currentTier = tier;
+                newScope.heroExistsInTier = sb.heroExistsInTier;
+                newScope.heroExistsInOtherTiers = sb.heroExistsInOtherTiers;
+                
+                var box = bootbox.dialog({
+                    title: "Heroes",
+                    message: $compile('<div ow-snapshot-add-hero></div>')(newScope),
+                    buttons: {
+                        submit: {
+                            label: 'Done',
+                            className: 'btn-primary',
+                            callback: function () {
+//                                if (!newScope.hero) { return false; }
+                                
+//                                $timeout(function () {
+//                                    sb.deckAdd(tier, newScope.deck.name, newScope.deck);
+//                                });
+                                
+                                box.modal('hide');
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    show: false,
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
+                });
+                box.modal('show');
             };
             
             // prompt for adding / removing authors

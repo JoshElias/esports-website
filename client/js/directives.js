@@ -1518,6 +1518,95 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
+.directive('owSnapshotAddHero', [function () {
+    return {
+        templateUrl: tpl + 'views/admin/overwatch.snapshot.add.hero.html',
+        controller: ['$scope', '$q', '$timeout', 'OverwatchHero', 'AjaxPagination', function ($scope, $q, $timeout, OverwatchHero, AjaxPagination) {
+            $scope.loading = false;
+            $scope.heroes = [];
+
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 100;
+            
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateHeroes(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+
+            function updateHeroes (page, perpage, search, callback) {
+                $scope.loading = true;
+
+                var pattern = '/.*'+search+'.*/i';
+                var where = {};
+
+//                if(!_.isEmpty(search)) {
+//                    where['or'] = [
+//                        {
+//                            name: {
+//                                regexp: pattern
+//                            }
+//                        },
+//                        {
+//                            universe: {
+//                                regexp: pattern
+//                            }
+//                        },
+//                        {
+//                            role: {
+//                                regexp: pattern
+//                            }
+//                        }
+//                    ];
+//                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+                
+                var countOptions = {
+                    where: where
+                };
+
+                AjaxPagination.update(OverwatchHero, findOptions, countOptions, function (err, data, count) {
+                    console.log('data:', data);
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.heroes = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            
+            updateHeroes($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateHeroes(1, $scope.perpage, $scope.search);
+            };
+        }]
+    };
+}])
 .directive('snapshotAddDeck', [function () {
     return {
         templateUrl: tpl + "views/admin/hs.snapshot.add.deck.html"
