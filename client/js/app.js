@@ -519,9 +519,7 @@ var app = angular.module('app', [
                                     filters: $stateParams.f || [],
                                 };
                             }],
-                            articles: ['paginationParams', 'Article', function (paginationParams, Article) {
-                                console.log("slugs", paginationParams.artParams);
-
+                            articles: ['paginationParams', 'Article', 'Util', function (paginationParams, Article, Util) {
                                 return Article.find({
                                     filter: {
                                         where: paginationParams.artParams.where,
@@ -534,7 +532,10 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
-                                    console.log("articles", articles);
+                                    _.each(articles, function (article) {
+                                        article.slug = Util.setSlug(article);
+                                    });
+
                                     return articles;
                                 });
 
@@ -795,6 +796,9 @@ var app = angular.module('app', [
                                                         scope: {
                                                             fields: ['username']
                                                         }
+                                                    },
+                                                    {
+                                                        relation: "slugs"
                                                     }
                                                 ]
                                             }
@@ -873,10 +877,16 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            dataArticles: ['Article', 'filterParams', function (Article, filterParams) {
-                                return Article.find({
-                                    
-                                }).$promise;
+                            dataArticles: ['Article', 'filterParams', 'Util', function (Article, filterParams, Util) {
+                                return Article.find(filterParams.articleParams.options)
+                                .$promise
+                                .then(function (articles) {
+                                    _.each(articles, function (article) {
+                                        article.slug = Util.setSlug(article);
+                                    })
+
+                                    return articles;
+                                });
                             }],
                             dataDecksTempostorm: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
 //                                console.log('filterParams.tsDeckParams', filterParams.tsDeckParams);
@@ -885,8 +895,9 @@ var app = angular.module('app', [
                                 .then(function (tempoDecks) {
                                     _.each(tempoDecks, function(tempoDeck) {
                                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
+                                        tempoDeck.slug = Util.setSlug(tempoDeck);
                                     });
-                                    console.log('tempoDecks: ', tempoDecks);
+
                                     return tempoDecks;
                                 });
                             }],
@@ -896,6 +907,7 @@ var app = angular.module('app', [
                                 .then(function (comDecks) {
                                     _.each(comDecks, function(comDeck) {
                                         comDeck.voteScore = Util.tally(comDeck.votes, 'direction');
+                                        comDeck.slug = Util.setSlug(comDeck);
                                     });
                                     return comDecks;
                                 });
@@ -1103,6 +1115,7 @@ var app = angular.module('app', [
                                 .then(function (data) {
                                     _.each(data, function (deck) {
                                         deck.voteScore = Util.tally(deck.votes, 'direction');
+                                        deck.slug = Util.setSlug(deck);
                                     });
 
                                     return data;
@@ -2820,102 +2833,102 @@ var app = angular.module('app', [
                                         where: {
                                             slug: slug,
                                         },
-                                        fields: [
-                                            'against',
-                                            'authorId',
-                                            'comments',
-                                            'content',
-                                            'createdDate',
-                                            'description',
-                                            'guideType',
-                                            'id',
-                                            'isFeatured',
-                                            'isPublic',
-                                            'name',
-                                            'premium',
-                                            'slug',
-                                            'synergy',
-                                            'viewCount',
-                                            'youtubeId',
-                                            'isCommentable'
-                                        ],
+                                        fields: {
+                                            against: true,
+                                            authorId: true,
+                                            comments: true,
+                                            content: true,
+                                            createdDate: true,
+                                            description: true,
+                                            guideType: true,
+                                            id: true,
+                                            isFeatured: true,
+                                            isPublic: true,
+                                            name: true,
+                                            premium: true,
+                                            slug: true,
+                                            synergy: true,
+                                            viewCount: true,
+                                            youtubeId: true,
+                                            isCommentable: true
+                                        },
                                         include: [
-                                          {
-                                            relation: 'author'
-                                          },
-                                          {
-                                          relation: 'guideHeroes',
-                                          scope: {
-                                            include: [
-                                              {
-                                                relation: 'talents'
-                                              },
-                                              {
-                                                relation: 'hero',
+                                            {
+                                                relation: 'author'
+                                            },
+                                            {
+                                                relation: 'guideHeroes',
                                                 scope: {
-                                                  fields: [
-                                                    'className',
-                                                    'description',
-                                                    'universe',
-                                                    'heroType',
-                                                    'name',
-                                                    'role'
-                                                  ],
-                                                  include: [
-                                                    {
-                                                      relation: 'talents',
-                                                      scope: {
-                                                        include: {
-                                                          relation: 'talent',
-                                                          scope: {
-                                                            fields: ['orderNum']
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  ]
-                                                }
-                                              }
-                                            ]
-                                          }
-                                        },
-                                        {
-                                          relation: 'guideTalents',
-                                          scope: {
-                                            include: ['talent']
-                                          }
-                                        },
-                                        {
-                                          relation: 'maps'
-                                        },
-                                        {
-                                            relation: 'comments',
-                                            scope: {
-                                                include: [
-                                                    {
-                                                        relation: 'author',
-                                                        scope: {
-                                                            fields: {
-                                                                id: true,
-                                                                username: true,
-                                                                email: true
+                                                    include: [
+                                                        {
+                                                            relation: 'talents'
+                                                        },
+                                                        {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                                fields: [
+                                                                    'className',
+                                                                    'description',
+                                                                    'universe',
+                                                                    'heroType',
+                                                                    'name',
+                                                                    'role'
+                                                                ],
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents',
+                                                                        scope: {
+                                                                            include: {
+                                                                                relation: 'talent',
+                                                                                scope: {
+                                                                                    fields: ['orderNum']
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
                                                             }
                                                         }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'guideTalents',
+                                                scope: {
+                                                    include: ['talent']
+                                                }
+                                            },
+                                            {
+                                                relation: 'maps'
+                                            },
+                                            {
+                                                relation: 'comments',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    username: true,
+                                                                    email: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'votes',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true,
+                                                        authorId: true
                                                     }
-                                                ]
-                                            }
-                                        },
-                                        {
-                                            relation: 'votes',
-                                            scope: {
-                                                fields: {
-                                                    id: true,
-                                                    direction: true,
-                                                    authorId: true
                                                 }
                                             }
-                                        }
-                                      ]
+                                        ]
                                     }
                                 }).$promise.then(function (data) {
                                     data.voteScore = Util.tally(data.votes, 'direction');
