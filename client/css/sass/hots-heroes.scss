@@ -222,6 +222,7 @@
 @include hots-hero-filters-image (zeratul, 47);
 @include hots-hero-filters-image (li-ming, 48);
 @include hots-hero-filters-image (xul, 49);
+@include hots-hero-filters-image (dehaka, 50);
 
 
 
@@ -355,6 +356,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(zeratul);
 @include hots-hero(lunara);
 @include hots-hero(greymane);
+@include hots-hero(dehaka);
 
 //*************************************
 //5... HOTS heroes talents
@@ -514,6 +516,24 @@ This is the template for hots-hero-talents.
     ( class: (upheaval, favor-of-the-old-gods, favor-of-the-old-gods), pos: 7 ), // -210
     ( class: (molten-block), pos: 8 ), // -240
     ( class: (i-am-hurrying, the-will-of-gall), pos: 9 ) // -270
+) );
+
+// talents: dehaka
+
+@include hots-hero-talents ( dehaka, (
+    ( class: (enduring-swarm, symbiosis, whirling-dervish), pos: 0 ), // 0
+    ( class: (primal-aggression), pos: 1 ), // -30
+    ( class: (enhanced-agility, one-who-collects, essence-devourer), pos: 2 ), // -60
+    ( class: (tissue-regeneration, hero-stalker), pos: 3 ), // -90
+    ( class: (lurker-strain, rapid-regeneration), pos: 4 ), // -120
+    ( class: (numbing-eruption), pos: 5 ), // -150
+    ( class: (feeding-frenzy, paralyzing-enzymes), pos: 6 ), // -180
+    ( class: (constriction, elongated-tongue), pos: 7 ), // -210
+    ( class: (isolation, contagion), pos: 8 ), // -240
+    ( class: (adaptation, change-is-survival), pos: 9 ), // -270
+    ( class: (swift-pursuit, apex-predator), pos: 10 ), // -300
+    ( class: (ferocious-stalker), pos: 11 ), // -330
+    ( class: (hardened-shield), pos: 12 ) // -360
 ) );
 
 //talents: diablo
