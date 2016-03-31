@@ -162,10 +162,6 @@
       "predicate": "inactive",
       "requiredFields": ["isActive", "premium"]
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

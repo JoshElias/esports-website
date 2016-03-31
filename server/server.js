@@ -22,6 +22,7 @@ async.series([
         options.mixinSources.push(path.join("..", "node_modules", "loopback-filter-mixin"));
         options.mixinSources.push(path.join("..", "node_modules", "loopback-scope-mixin"));
         options.mixinSources.push(path.join("..", "node_modules", "loopback-slug-mixin"));
+        options.mixinSources.push(path.join("..", "node_modules", "loopback-timestamp-mixin"));
         options.mixinSources.push(path.join("..", "node_modules", "loopback-validate-mixin"));
 
         // Add third-party models

@@ -257,10 +257,6 @@
       "predicate": "private",
       "requiredFields": ["isPublic", "premium"]
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

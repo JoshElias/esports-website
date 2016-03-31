@@ -103,10 +103,6 @@
   "mixins": {
     "Scope": true,
     "Validate": true,
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

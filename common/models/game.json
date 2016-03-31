@@ -59,10 +59,6 @@
       "requiredFields": ["isActive"]
     },
     "DestroyOnDelete": true,
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }
