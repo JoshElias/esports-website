@@ -10817,8 +10817,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
     /* admin hots */
-    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams',
-        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams) {
+    .controller('AdminHeroListCtrl', ['$scope', '$q', '$timeout', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams',
+        function ($scope, $q, $timeout, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams) {
             // grab alerts
 //            if (AlertService.hasAlert()) {
 //                $scope.success = AlertService.getSuccess();
@@ -11557,7 +11557,6 @@ angular.module('app.controllers', ['ngCookies'])
                     return heroTalent.talent;
                 });
                 
-                
                 //build our crudman toWrite arrays
                 _.each(arrs, function (arr, key) {
                     var exists  = arr.exists;
@@ -11577,6 +11576,9 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 });
                 
+                console.log('arrs:', arrs);
+                console.log('hero:', hero);
+                
                 async.waterfall([
                     function (wateryCB) {
                         Hero.upsert(hero)
@@ -11591,9 +11593,13 @@ angular.module('app.controllers', ['ngCookies'])
                     },
                     function (heroId, wateryCB) {
                         async.each(arrs['abilities'].toWrite, function (heroAbil, heroAbilCB) {
+                            heroAbil.heroId = heroId;
+                            
                             Ability.upsert(heroAbil)
                             .$promise
                             .then(function (newHeroAbil) {
+                                heroAbil.id = newHeroAbil.id;
+                                
                                 console.log('newHeroAbil:', newHeroAbil);
                                 return heroAbilCB(null, heroId);
                             })
@@ -11601,11 +11607,32 @@ angular.module('app.controllers', ['ngCookies'])
                                 return heroAbilCB(err);
                             });
                         }, function (err) {
+                
+                            _.each(arrs['talents'].toWrite, function (val) {
+                                var talAbil = _.find(arrs['abilities'].toWrite, function (innerVal) {
+                                    return (val.ability === innerVal.name);
+                                });
+                                
+                                if(!talAbil) {
+                                    talAbil = _.find(arrs['abilities'].exists, function (innerVal) {
+                                        return (val.ability === innerVal.name);
+                                    });
+                                }
+
+                                if (talAbil) {
+                                    val.abilityId = talAbil.id;
+                                }
+                            });
+                            
                             return wateryCB(err, heroId);
                         });
                     },
                     function (heroId, wateryCB) {
                         async.each(arrs['talents'].toWrite, function (heroTal, heroTalCB) {
+                            console.log('heroTal:', heroTal);
+                            heroTal.heroId = heroId;
+                            heroTal.talentId = heroTal.talent.id;
+                            
                             HeroTalent.upsert(heroTal)
                             .$promise
                             .then(function (newHeroTal) {
@@ -15782,7 +15809,8 @@ angular.module('app.controllers', ['ngCookies'])
                         return abilities[i];
                     }
                 }
-                return false;
+                
+                return undefined;
             };
 
             // abilities
