@@ -1987,7 +1987,7 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["name", "id"],
+                        fields: {name: true, id: true},
                         where: { isProvider: true }
                     }
                 },
@@ -2017,7 +2017,7 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["title", "id", "photoNames"]
+                        fields: {title: true, id: true, photoNames: true}
                     }
                 };
 
@@ -2046,7 +2046,7 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["name", "id"]
+                        fields: {name: true, id: true}
                     }
                 };
 
@@ -2076,7 +2076,7 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["username", "id"],
+                        fields: {username: true, id: true},
                         where: {
                             isProvider: true
                         }
@@ -2513,7 +2513,7 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["name", "id"]
+                        fields: {name: true, id: true}
                     }
                 };
 
@@ -2542,7 +2542,7 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["title", "id", "photoNames"]
+                        fields: {title: true, id: true, photoNames: true}
                     }
                 };
 
@@ -2571,7 +2571,7 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["name", "id"]
+                        fields: {name: true, id: true}
                     }
                 };
 
@@ -2600,7 +2600,7 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: ["username", "id"],
+                        fields: {username: true, id: true},
                         where: {
                             isProvider: true
                         }
@@ -7820,9 +7820,9 @@ angular.module('app.controllers', ['ngCookies'])
                         Deck.create(cleanDeck)
                         .$promise
                         .then(function (deckUpdated) {
-//                            console.log('deck create:', deckUpdated);
+                           // console.log('deck create:', deckUpdated);
                             deckId = deckUpdated.id;
-                            deckSlug = deckUpdated.slug;
+                            deckSlug = Util.slugify(deckUpdated.name);
                             return waterCB();
                         })
                         .catch(function (err) {
@@ -8849,6 +8849,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.deckSubmitting = false;
 //                    console.log('results[0].slug:', results[0].slug);
                     $scope.app.settings.deck = null;
+                    console.log(results);
                     $state.transitionTo('app.hs.decks.deck', { slug: results[0].slug });
                 });
             }
@@ -15550,173 +15551,174 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-              if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
-                return false;
-              }
-              if (!User.isAuthenticated()) {
-                LoginModalService.showModal('login', function () {
-                  $scope.saveGuide();
-                });
-              } else {
-                var cleanGuide = angular.copy($scope.guide);
-                cleanGuide.slug = Util.slugify(cleanGuide.name);
-                cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
+                if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                    return false;
+                }
+                if (!User.isAuthenticated()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.saveGuide();
+                    });
+                } else {
+                    var cleanGuide = angular.copy($scope.guide);
+                    cleanGuide.slug = Util.slugify(cleanGuide.name);
+                    cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
 
-                var keys = ['name',
-                            'authorId',
-                            'slug',
-                            'guideType',
-                            'description',
-                            'createdDate',
-                            'premium',
-                            'votes',
-                            'against',
-                            'synergy',
-                            'content',
-                            'isFeatured',
-                            'isPublic',
-                            'youtubeId',
-                            'viewCount',
-                            'voteScore',
-                            'isCommentable'
-                           ];
-                var stripped = Util.cleanObj(cleanGuide, keys);
-                var temp = _.map($scope.guide.heroes, function (hero) {
-                  return _.map(hero.talents, function (talent, tier) {
-                    var str = tier.slice(4, tier.length);
+                    var keys = [
+                        'name',
+                        'authorId',
+                        'slug',
+                        'guideType',
+                        'description',
+                        'createdDate',
+                        'premium',
+                        'votes',
+                        'against',
+                        'synergy',
+                        'content',
+                        'isFeatured',
+                        'isPublic',
+                        'youtubeId',
+                        'viewCount',
+                        'voteScore',
+                        'isCommentable'
+                    ];
+                    var stripped = Util.cleanObj(cleanGuide, keys);
+                    var temp = _.map($scope.guide.heroes, function (hero) {
+                        return _.map(hero.talents, function (talent, tier) {
+                            var str = tier.slice(4, tier.length);
 
-                    return {
-                      heroId: hero.hero.id,
-                      talentId: talent,
-                      tier: parseInt(str)
-                    }
-                  });
-                });
+                            return {
+                                heroId: hero.hero.id,
+                                talentId: talent,
+                                tier: parseInt(str)
+                            }
+                        });
+                    });
 
-                cleanGuide.guideTalents = _.flatten(temp);
+                    cleanGuide.guideTalents = _.flatten(temp);
 
-                stripped.votes = [
-                  {
-                    userId: User.getCurrentId(),
-                    direction: 1
-                  }
-                ];
+                    stripped.votes = [
+                        {
+                            userId: User.getCurrentId(),
+                            direction: 1
+                        }
+                    ];
 
-                stripped.voteScore = 1;
+                    stripped.voteScore = 1;
 
 //                console.log('saving stripped:', stripped);
 //                console.log('$scope.guide:', $scope.guide);
-                  
-                 var guideCreated;
-                var tals = [];
-                async.series([
-                  function (seriesCB) {
-                      Guide.create(stripped)
-                      .$promise
-                      .then(function (createdGuide) {
-                          guideCreated = createdGuide;
-                          return seriesCB();
-                      })
-                      .catch(function (err) {
-                          return seriesCB(err);
-                      });
-                  },
-                  function (seriesCB) {
-                      Guide.guideHeroes.createMany({
-                          id: guideCreated.id
-                      }, cleanGuide.guideHeroes)
-                      .$promise
-                      .then(function (guideHeroData) {
 
-                          _.each(guideHeroData, function(eachVal) {
-                            var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                              return filterVal.heroId === eachVal.heroId;
+                    var guideCreated;
+                    var tals = [];
+                    async.series([
+                        function (seriesCB) {
+                            Guide.create(stripped)
+                            .$promise
+                            .then(function (createdGuide) {
+                                guideCreated = createdGuide;
+                                return seriesCB();
+                            })
+                            .catch(function (err) {
+                                return seriesCB(err);
                             });
+                        },
+                        function (seriesCB) {
+                            Guide.guideHeroes.createMany({
+                                id: guideCreated.id
+                            }, cleanGuide.guideHeroes)
+                            .$promise
+                            .then(function (guideHeroData) {
 
-                              _.each(heroTals, function (innerEachVal, index, list) {
-                                innerEachVal.guideId = guideCreated.id;
-                                innerEachVal.guideHeroId = eachVal.id;
-                              });
-                              tals.push(heroTals);
-                          });
+                                _.each(guideHeroData, function(eachVal) {
+                                    var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                                        return filterVal.heroId === eachVal.heroId;
+                                    });
 
-                          return seriesCB();
-                      })
-                      .catch(function (err) {
-                          return seriesCB(err);
-                      });
-                  },
-                  function (seriesCB) {
-                    Guide.guideTalents.createMany({
-                      id: guideCreated.id
-                    }, tals)
-                    .$promise
-                    .then(function (guideTalentData) {
-                      return seriesCB();
-                    })
-                    .catch(function (err) {
-                      console.log('guide talent err', err);
-                      return seriesCB(err);
-                    });
-                  },
-                  function (seriesCB) {
-                      var freeVote = {
-                          direction: 1,
-                          createdDate: new Date().toISOString(),
-                          authorId: User.getCurrentId()
-                      };
+                                    _.each(heroTals, function (innerEachVal, index, list) {
+                                        innerEachVal.guideId = guideCreated.id;
+                                        innerEachVal.guideHeroId = eachVal.id;
+                                    });
+                                    tals.push(heroTals);
+                                });
 
-                      Guide.votes.create({
-                          id: guideCreated.id
-                      }, freeVote)
-                      .$promise
-                      .then(function (voteCreated) {
-                          return seriesCB();
-                      })
-                      .catch(function (err) {
-                          return seriesCB(err);
-                      });
-                  },
-                  function (seriesCB) {
-                    async.each(cleanGuide.maps, function(map, mapCB) {
+                                return seriesCB();
+                            })
+                            .catch(function (err) {
+                                return seriesCB(err);
+                            });
+                        },
+                        function (seriesCB) {
+                            Guide.guideTalents.createMany({
+                                id: guideCreated.id
+                            }, tals)
+                            .$promise
+                            .then(function (guideTalentData) {
+                                return seriesCB();
+                            })
+                            .catch(function (err) {
+                                console.log('guide talent err', err);
+                                return seriesCB(err);
+                            });
+                        },
+                        function (seriesCB) {
+                            var freeVote = {
+                                direction: 1,
+                                createdDate: new Date().toISOString(),
+                                authorId: User.getCurrentId()
+                            };
+
+                            Guide.votes.create({
+                                id: guideCreated.id
+                            }, freeVote)
+                            .$promise
+                            .then(function (voteCreated) {
+                                return seriesCB();
+                            })
+                            .catch(function (err) {
+                                return seriesCB(err);
+                            });
+                        },
+                        function (seriesCB) {
+                            async.each(cleanGuide.maps, function(map, mapCB) {
 //                          console.log('map.id:', map.id);
 //                          console.log('guideData:', guideData);
-                      Guide.maps.link({
-                        id: guideCreated.id,
-                        fk: map.id
-                      }, null)
-                      .$promise
-                      .then(function (mapLinkData) {
+                                Guide.maps.link({
+                                    id: guideCreated.id,
+                                    fk: map.id
+                                }, null)
+                                .$promise
+                                .then(function (mapLinkData) {
 //                            console.log('mapLinkData:', mapLinkData);
-                        return mapCB();
-                      })
-                      .catch(function (err) {
-                        console.log('map link err:', err);
-                        return mapCB(err);
-                      });
-                    }, function (err, results) {
-                      if (err) {
-                        return seriesCB(err);
-                      }
-                      return seriesCB();
+                                    return mapCB();
+                                })
+                                .catch(function (err) {
+                                    console.log('map link err:', err);
+                                    return mapCB(err);
+                                });
+                            }, function (err, results) {
+                                if (err) {
+                                    return seriesCB(err);
+                                }
+                                return seriesCB();
+                            });
+
+                        }], function (err, results) {
+                        $scope.fetching = false;
+                        if (err) {
+                            $window.scrollTo(0, 0);
+                            AlertService.setError({
+                                show: true,
+                                lbErr: err,
+                                msg: 'Unable to Save Guide'
+                            });
+                            return console.log('series err:', err);
+                        }
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: Util.slugify(guideCreated.name) });
                     });
 
-                  }], function (err, results) {
-                      $scope.fetching = false;
-                      if (err) {
-                        $window.scrollTo(0, 0);
-                        AlertService.setError({
-                          show: true,
-                          lbErr: err,
-                          msg: 'Unable to Save Guide'
-                        });
-                        return console.log('series err:', err);
-                      }
-                      $scope.app.settings.guide = null;
-                      $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
-                });
-
-              }
+                }
             };
         }
     ])
@@ -16989,17 +16991,17 @@ angular.module('app.controllers', ['ngCookies'])
                     Guide.findById({
                         id: guide.id,
                         filter: {
-                            fields: [
-                                "name",
-                                "authorId",
-                                "slug",
-                                "voteScore",
-                                "guideType",
-                                "premium",
-                                "id",
-                                "talentTiers",
-                                "createdDate"
-                            ],
+                            fields: {
+                                name: true,
+                                authorId: true,
+                                slug: true,
+                                voteScore: true,
+                                guideType: true,
+                                premium: true,
+                                id: true,
+                                talentTiers: true,
+                                createdDate: true
+                            },
                             include: [
                                 {
                                   relation: "author",

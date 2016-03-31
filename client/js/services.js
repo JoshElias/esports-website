@@ -830,7 +830,17 @@ angular.module('app.services', [])
                             }, forEachCb);
                         }, seriesCb);
                     }
-                ], cb);
+                ], function (err) {
+                    if (err) {
+                        exists['authors'].toWrite = [];
+                        exists['heroTiers'].toWrite = [];
+                        exists['guideTiers'].toWrite = [];
+
+                        return cb(err);
+                    }
+
+                    return cb(undefined);
+                });
             };
 
             return function (snapshot) { return new HOTSSnapshot(snapshot); }
@@ -1870,14 +1880,19 @@ angular.module('app.services', [])
                 return out;
             },
             setSlug: function (obj) {
-                var slug = obj.slugs[0];
-                var sl = {
-                    url: slug.slug,
-                    linked: slug.linked
+                var sl = {};
+
+                try {
+                    var slug = obj.slugs[0];
+                    sl = {
+                        url: slug.slug,
+                        linked: slug.linked
+                    };
+
+                    delete obj.slugs;
+                } finally {
+                    return sl;
                 }
-                delete obj.slugs;
-                
-                return sl;
             }
         };
     }])
@@ -3339,7 +3354,7 @@ angular.module('app.services', [])
                                     {
                                         relation: "guides",
                                         scope: {
-                                            fields: ["id"],
+                                            fields: {id: true},
                                             where: heroGuideWhere
                                         }
                                     }

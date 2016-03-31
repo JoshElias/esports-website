@@ -2356,22 +2356,22 @@ var app = angular.module('app', [
                                         total: 0,
                                         where: tsWhere,
                                         order: 'createdDate DESC',
-                                        fields: [
-                                            "name",
-                                            "authorId",
-                                            "slug",
-                                            "voteScore",
-                                            "guideType",
-                                            "premium",
-                                            "id",
-                                            "talentTiers",
-                                            "createdDate"
-                                        ],
+                                        fields: {
+                                            name: true,
+                                            authorId: true,
+                                            slug: true,
+                                            voteScore: true,
+                                            guideType: true,
+                                            premium: true,
+                                            id: true,
+                                            talentTiers: true,
+                                            createdDate: true
+                                        },
                                         include: [
                                         {
                                           relation: "author",
                                           scope: {
-                                            fields: ['username']
+                                            fields: {username: true}
                                           }
                                         },
                                         {
@@ -2384,7 +2384,7 @@ var app = angular.module('app', [
                                               {
                                                 relation: 'hero',
                                                 scope: {
-                                                  fields: ['name', 'className']
+                                                  fields: {name: true, className: true}
                                                 }
                                               }
                                             ]
@@ -2428,7 +2428,7 @@ var app = angular.module('app', [
                                         {
                                           relation: "author",
                                           scope: {
-                                            fields: ['username']
+                                            fields: {username: true}
 
                                           }
                                         },
@@ -2442,7 +2442,7 @@ var app = angular.module('app', [
                                               {
                                                 relation: 'hero',
                                                 scope: {
-                                                  fields: ['name', 'className']
+                                                  fields: {name: true, className: true}
                                                 }
                                               }
                                             ]
@@ -2542,55 +2542,55 @@ var app = angular.module('app', [
                                                 where: {
                                                     id: guideId.id
                                                 },
-                                                fields: [
-                                                    "name",
-                                                    "authorId",
-                                                    "slug",
-                                                    "voteScore",
-                                                    "guideType",
-                                                    "premium",
-                                                    "id",
-                                                    "talentTiers",
-                                                    "createdDate"
-                                                ],
+                                                fields: {
+                                                    name: true,
+                                                    authorId: true,
+                                                    slug: true,
+                                                    voteScore: true,
+                                                    guideType: true,
+                                                    premium: true,
+                                                    id: true,
+                                                    talentTiers: true,
+                                                    createdDate: true
+                                                },
                                                 include: [
                                                     {
-                                                      relation: "author",
-                                                      scope: {
-                                                        fields: ['username']
-                                                      }
+                                                        relation: "author",
+                                                        scope: {
+                                                            fields: ['username']
+                                                        }
                                                     },
                                                     {
-                                                      relation: 'guideHeroes',
-                                                      scope: {
-                                                        include: [
-                                                          {
-                                                            relation: 'hero',
-                                                            scope: {
-                                                              fields: ['name', 'className'],
-                                                                include: [
-                                                                    {
-                                                                        relation: 'talents'
+                                                        relation: 'guideHeroes',
+                                                        scope: {
+                                                            include: [
+                                                                {
+                                                                    relation: 'hero',
+                                                                    scope: {
+                                                                        fields: ['name', 'className'],
+                                                                        include: [
+                                                                            {
+                                                                                relation: 'talents'
+                                                                            }
+                                                                        ]
                                                                     }
-                                                                ]
-                                                            }
-                                                          }
-                                                        ]
-                                                      }
+                                                                }
+                                                            ]
+                                                        }
                                                     },
                                                     {
-                                                      relation: 'guideTalents',
-                                                      scope: {
-                                                        include: {
-                                                          relation: 'talent',
-                                                          scope: {
-                                                            fields: {
-                                                              name: true,
-                                                              className: true
-                                                            }
-                                                          }
-                                                        },
-                                                      }
+                                                        relation: 'guideTalents',
+                                                        scope: {
+                                                            include: {
+                                                                relation: 'talent',
+                                                                scope: {
+                                                                    fields: {
+                                                                        name: true,
+                                                                        className: true
+                                                                    }
+                                                                }
+                                                            },
+                                                        }
                                                     },
                                                     {
                                                         relation: 'votes',
@@ -2601,7 +2601,7 @@ var app = angular.module('app', [
                                                             }
                                                         }
                                                     }
-                                                  ]
+                                                ]
                                             }
                                         })
                                         .$promise
@@ -4761,7 +4761,12 @@ var app = angular.module('app', [
                                     total: 0,
                                     options: {
                                         filter: {
-                                            fields: ["id", "name", "playerClass", "description",]
+                                            fields: {
+                                                id: true,
+                                                name: true,
+                                                playerClass: true,
+                                                description: true
+                                            }
                                         },
                                         where: {
                                             isPublic: true
@@ -4770,7 +4775,6 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-
                             decksCount: ['Deck', 'paginationParams', function(Deck, paginationParams) {
                                 return Deck.count({}).$promise
                                 .then(function (deckCount) {
@@ -4845,17 +4849,31 @@ var app = angular.module('app', [
                                 return Card.find({
                                     filter: {
                                         fields: {
-                                            artist: false,
-                                            attack: false,
-                                            durability: false,
-                                            expansion: false,
-                                            flavor: false,
-                                            health: false,
-                                            isActive: false,
-                                            race: false,
-                                            text: false,
-                                            deckable: false
+                                            id: true,
+                                            name: true,
+                                            cost: true,
+                                            rarity: true,
+                                            playerClass: true,
+                                            dust: true,
+                                            mechanics: true,
+                                            cardType: true,
+                                            deckable: true,
+                                            expansion: true,
+                                            isActive: true,
+                                            photoNames: true
                                         },
+                                        // fields: {
+                                        //     artist: false,
+                                        //     attack: false,
+                                        //     durability: false,
+                                        //     expansion: false,
+                                        //     flavor: false,
+                                        //     health: false,
+                                        //     isActive: false,
+                                        //     race: false,
+                                        //     text: false,
+                                        //     deckable: false
+                                        // },
                                         where: {
                                             playerClass: playerClass,
                                             deckable: true
@@ -5153,17 +5171,31 @@ var app = angular.module('app', [
 
                                 return Card.find({
                                     filter: {
+                                        // fields: {
+                                        //     artist: false,
+                                        //     attack: false,
+                                        //     durability: false,
+                                        //     expansion: false,
+                                        //     flavor: false,
+                                        //     health: false,
+                                        //     isActive: false,
+                                        //     race: false,
+                                        //     text: false,
+                                        //     deckable: false
+                                        // },
                                         fields: {
-                                            artist: false,
-                                            attack: false,
-                                            durability: false,
-                                            expansion: false,
-                                            flavor: false,
-                                            health: false,
-                                            isActive: false,
-                                            race: false,
-                                            text: false,
-                                            deckable: false
+                                            id: true,
+                                            name: true,
+                                            cost: true,
+                                            rarity: true,
+                                            playerClass: true,
+                                            dust: true,
+                                            mechanics: true,
+                                            cardType: true,
+                                            deckable: true,
+                                            expansion: true,
+                                            isActive: true,
+                                            photoNames: true
                                         },
                                         where: {
                                             playerClass: playerClass,
@@ -5200,17 +5232,31 @@ var app = angular.module('app', [
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
+                                        // fields: {
+                                        //     artist: false,
+                                        //     attack: false,
+                                        //     durability: false,
+                                        //     expansion: false,
+                                        //     flavor: false,
+                                        //     health: false,
+                                        //     isActive: false,
+                                        //     race: false,
+                                        //     text: false,
+                                        //     deckable: false
+                                        // },
                                         fields: {
-                                            artist: false,
-                                            attack: false,
-                                            durability: false,
-                                            expansion: false,
-                                            flavor: false,
-                                            health: false,
-                                            isActive: false,
-                                            race: false,
-                                            text: false,
-                                            deckable: false
+                                            id: true,
+                                            name: true,
+                                            cost: true,
+                                            rarity: true,
+                                            playerClass: true,
+                                            dust: true,
+                                            mechanics: true,
+                                            cardType: true,
+                                            deckable: true,
+                                            expansion: true,
+                                            isActive: true,
+                                            photoNames: true
                                         },
                                         where: {
                                             playerClass: 'Neutral',
@@ -5780,7 +5826,7 @@ var app = angular.module('app', [
                                     return waterCB(null, heroData);
                                   })
                                   .catch(function (err) {
-                                    return waterCB();
+                                    return waterCB(err);
                                   });
                                 }
                               ], function(err, results) {
