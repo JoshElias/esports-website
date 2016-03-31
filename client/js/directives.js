@@ -725,15 +725,16 @@ angular.module('app.directives', ['ui.load'])
     return {
         templateUrl: tpl + 'views/frontend/directives/subnav.redbull.html',
         link: function (scope, el, attrs) {
-            var startShake = null,
+            var selector = '.subnav-sealed-packs > a.packs > img',
+                startShake = null,
                 shakeLoop = null,
                 shakeInterval = 5000;
             // start shaking pack timer
             // shake pack
             function shakePack () {
-                $('.sub-nav-pack').trigger('startRumble');
+                $(selector).trigger('startRumble');
                 $timeout(function() {
-                    $('.sub-nav-pack').trigger('stopRumble');
+                    $(selector).trigger('stopRumble');
                 }, 750);
             }
 
@@ -757,7 +758,7 @@ angular.module('app.directives', ['ui.load'])
                 stopShakeTimer();
             });
 
-            $('.sub-nav-pack').jrumble();
+            $(selector).jrumble();
 
         }
     };

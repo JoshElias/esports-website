@@ -16026,10 +16026,10 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!votes[poll.id]) { votes[poll.id] = []; }
 
                 if ($scope.hasVoted(poll, item)) {
-                    votes[poll.id].splice(votes[poll.id].indexOf(item._id), 1);
+                    votes[poll.id].splice(votes[poll.id].indexOf(item.id), 1);
                 } else {
                     if (votes[poll.id].length >= poll.voteLimit) { return false; }
-                    votes[poll.id].push(item._id);
+                    votes[poll.id].push(item.id);
                 }
             };
 
@@ -16051,8 +16051,8 @@ angular.module('app.controllers', ['ngCookies'])
                     item,
                     cnt;
 
-                for (var i = 0; i < poll.oldItems.length; i++) {
-                    cnt = poll.oldItems[i].votes;
+                for (var i = 0; i < poll.items.length; i++) {
+                    cnt = poll.items[i].votes;
                     if (cnt > big) { big = cnt; }
                 }
                 if (big === 0) { return 0; }
@@ -16062,8 +16062,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.votePercentage = function (item, poll) {
                 var v = item.votes,
                     cnt = 0;
-                for (var i = 0; i < poll.oldItems.length; i++) {
-                    cnt = parseInt(cnt + poll.oldItems[i].votes);
+                for (var i = 0; i < poll.items.length; i++) {
+                    cnt = parseInt(cnt + poll.items[i].votes);
                 }
                 if (cnt === 0) { return 0; }
                 return Math.ceil(v / cnt * 100);
@@ -16071,7 +16071,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.hasVoted = function (poll, item) {
                 if (!votes[poll.id]) { return false; }
-                return (votes[poll.id].indexOf(item._id) !== -1);
+                return (votes[poll.id].indexOf(item.id) !== -1);
             };
 
 
@@ -16118,7 +16118,7 @@ angular.module('app.controllers', ['ngCookies'])
                 submitting = true;
                 var v = [];
                 _.each(votes[poll.id], function (vote) {
-                  v.push(_.find(poll.oldItems, function (item) {
+                  v.push(_.find(poll.items, function (item) {
                     return item._id === vote;
                   }));
                 })
