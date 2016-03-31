@@ -11523,157 +11523,209 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.editHero = function () {
-              var arrs = angular.copy(CrudMan.getArrs());
-
-              var hero = angular.copy($scope.hero);
-              var tals = arrs.talents;
-              var talsToAdd  = tals.toWrite;
-              var abils = arrs.abilities;
-              var abilsToAdd = abils.toWrite;
-
-                _.each(abils.exists, function (abil) {
-                    var b = _.find(hero.abilities, function (heroAbil) {
-                        return (abil.id == heroAbil.id);
-                    });
-
-                    if(b && b.orderNum !== abil.orderNum) {
-                        arrs.abilities.toWrite.push(b);
-                    }
-                });
-
-                _.each(tals.exists, function (tal) {
-                    var b = _.find(hero.talents, function (heroTal) {
-                        return (tal.id == heroTal.id);
-                    });
-
-                    if(b && b.orderNum !== tal.orderNum) {
-                        arrs.talents.toWrite.push(b);
-                    }
-                });
-
-              delete hero.abilities;
-              delete hero.talents;
-
-              var talsToRemove = [];
-              _.each(talsToAdd, function (talVal) {
-                var allAbils = abils.exists.concat(abilsToAdd);
-                var a = _.find(allAbils, function (abiVal) { return talVal.ability === abiVal.name });
-                var toPush = {};
-
-                delete talVal.ability;
-
-                if (!_.isUndefined(a)) {
-                  if(!_.isUndefined(a.id)) {
-                    talVal.abilityId = a.id;
-                    return;
-                  }
-
-                  if (_.isUndefined(a.talents)) {
-                    a.talents = [];
-                  }
-
-                  a.talents.push(talVal);
-                  talsToRemove.push(talVal);
-                }
-              });
-
-              talsToAdd = _.difference(talsToAdd, talsToRemove);
-
-//              console.log('tals', tals);
-//              console.log('talsToAdd', talsToAdd);
-//              console.log('abils', abils);
-//              console.log('abilsToAdd', abilsToAdd);
-
-
-              Hero.upsert({
-                where: {
-                  id: hero.id
-                }
-              }, hero)
-              .$promise
-              .then(function (heroData) {
+                
+                console.log('$scope.hero:', $scope.hero);
+                
                 async.series([
-                  function(seriesCb) {
-                    async.each(abilsToAdd, function (abil, abilCb) {
-                      var tempTals = abil.talents;
-                      delete abil.talents;
-                      abil.heroId = heroData.id;
-                      Ability.upsert({}, abil)
-                      .$promise
-                      .then(function (abilData) {
-                        async.each(tempTals, function(abilTal, abilTalCb) {
-                          Talent.upsert({}, abilTal.talent)
-                          .$promise
-                          .then(function (abilTalData) {
-                            abilTal.heroId = heroData.id;
-                            abilTal.talentId = abilTalData.id;
-                            abilTal.abilityId = abilData.id;
-                            abilTal.tier = abilTal.tier;
-                            abilTal.orderNum = abilTal.orderNum;
-
-//                            console.log(abilTal);
-                            HeroTalent.upsert({}, abilTal)
-                            .$promise
-                            .then(function (heroTalData) {
-                              return abilTalCb();
-                            }).catch(abilTalCb);
-                          }).catch(abilTalCb);
-                        }, abilCb);
-                      }).catch(seriesCb);
-                    }, seriesCb);
-                  },
-                  function (seriesCb) {
-//                    console.log(talsToAdd);
-                    async.each(talsToAdd, function (tal, eachCb) {
-                      Talent.upsert({}, tal.talent)
-                      .$promise
-                      .then(function (talData) {
-                        tal.heroId = heroData.id;
-                        tal.talentId = talData.id;
-                        tal.tier = tal.tier;
-                        tal.orderNum = tal.orderNum;
-
-                        HeroTalent.upsert({}, tal)
+                    function(paraCB){ 
+                        Hero.upsert($scope.hero)
                         .$promise
-                        .then(function () {
-                          return eachCb(undefined);
+                        .then(function (heroUpdated) {
+                            return paraCB();
                         })
-                        .catch(eachCb);
-                      })
-                      .catch(eachCb);
-                    }, seriesCb(undefined))
-                  },
-                  function (seriesCb) {
-                    async.each(arrs.talents.toDelete, function (tal, eachCb) {
-                      HeroTalent.destroyById({
-                        id: tal.id
-                      })
-                      .$promise
-                      .then(function () {
-                        return eachCb();
-                      })
-                      .catch(eachCb);
-                    }, seriesCb);
-                  },
-                  function (seriesCb) {
-                    async.each(arrs.abilities.toDelete, function (abil, eachCb) {
-                      Ability.destroyById({
-                        id: abil.id
-                      })
-                      .$promise
-                      .then(function () {
-                        return eachCb();
-                      })
-                      .catch(eachCb);
-                    }, seriesCb);
-                  }
-                ], function (err) {
-                  if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
-                  else {
-                    $state.go('app.admin.hots.heroes.list');
-                  }
-                })
-              }).catch(function (err) { console.log(err); });
+                        .catch(function (err) {
+                            return paraCB(err);
+                        });
+                    },
+                    function(paraCB){
+                        Hero.abilities.destroyAll({
+                            id: $scope.hero.id
+                        })
+                        .$promise
+                        .then(function (heroAbsDeld) {
+                            return paraCB();
+                        })
+                        .catch(function (err) {
+                            return paraCB(err);
+                        });
+                    },
+                    function (paraCB) {
+                        console.log('hero.abilities:', hero.abilities);
+                        
+                        async.each($scope.hero.abilities, function (heroAbil, heroAbilCB) {
+                            var newHeroAbil = angular.copy(_.omit(heroAbil, 'id'));
+                            
+                            Hero.abilities.upsert(newHeroAbil)
+                            .$promise
+                            .then(function (newHeroAbil) {
+                                return heroAbilCB();
+                            })
+                            .catch(function (err) {
+                                return heroAbilCB(err);
+                            });
+                        }, function (err) {
+                            return paraCB(err);
+                        });
+                        
+//                        Hero.abilities.createMany({
+//                            id: $scope.hero.id
+//                        }, $scope.hero.abilities)
+//                        .$promise
+//                        .then(function (newHeroAbs) {
+//                            return paraCB();
+//                        })
+//                        .catch(function (err) {
+//                            return paraCB(err);
+//                        });
+                    },
+                    function (paraCB) {
+                        Hero.talents.destroyAll({
+                            id: $scope.hero.id
+                        })
+                        .$promise
+                        .then(function (heroTalsDeld) {
+                            return paraCB();
+                        })
+                        .catch(function (err) {
+                            return paraCB(err);
+                        });
+                    },
+                    function (paraCB) {
+                        async.each($scope.hero.talents, function (heroTal, heroTalCB) {
+                            var newHeroTal = angular.copy(_.omit(heroTal, 'id'));
+                            
+                            Hero.talents.upsert(newHeroTal)
+                            .$promise
+                            .then(function (newHeroTal) {
+                                return heroTalCB();
+                            })
+                            .catch(function (err) {
+                                return heroTalCB(err);
+                            });
+                        }, function (err) {
+                            return paraCB(err);
+                        });
+//                        Hero.talents.createMany({
+//                            id: $scope.hero.id
+//                        }, $scope.hero.talents)
+//                        .$promise
+//                        .then(function (newHeroTals) {
+//                            return paraCB();
+//                        })
+//                        .catch(function (err) {
+//                            return paraCB(err);
+//                        });
+                    }
+                ], function(err) {
+                    if (err) {
+                        console.log('err:', err);
+                        return AlertService.setError({
+                            show: true,
+                            msg: 'Unable to update Hero',
+                            lbErr: err
+                        });
+                    }
+                    
+                    AlertService.setSuccess({
+                        show: true,
+                        msg: hero.name + ' updated successfully',
+                        persist: true
+                    });
+                    
+                    return $state.go('app.admin.hots.heroes.list');
+                });
+
+
+//              Hero.upsert({
+//                where: {
+//                  id: hero.id
+//                }
+//              }, hero)
+//              .$promise
+//              .then(function (heroData) {
+//                async.series([
+//                  function(seriesCb) {
+//                    async.each(abilsToAdd, function (abil, abilCb) {
+//                      var tempTals = abil.talents;
+//                      delete abil.talents;
+//                      abil.heroId = heroData.id;
+//                      Ability.upsert({}, abil)
+//                      .$promise
+//                      .then(function (abilData) {
+//                        async.each(tempTals, function(abilTal, abilTalCb) {
+//                          Talent.upsert({}, abilTal.talent)
+//                          .$promise
+//                          .then(function (abilTalData) {
+//                            abilTal.heroId = heroData.id;
+//                            abilTal.talentId = abilTalData.id;
+//                            abilTal.abilityId = abilData.id;
+//                            abilTal.tier = abilTal.tier;
+//                            abilTal.orderNum = abilTal.orderNum;
+//
+////                            console.log(abilTal);
+//                            HeroTalent.upsert({}, abilTal)
+//                            .$promise
+//                            .then(function (heroTalData) {
+//                              return abilTalCb();
+//                            }).catch(abilTalCb);
+//                          }).catch(abilTalCb);
+//                        }, abilCb);
+//                      }).catch(seriesCb);
+//                    }, seriesCb);
+//                  },
+//                  function (seriesCb) {
+////                    console.log(talsToAdd);
+//                    async.each(talsToAdd, function (tal, eachCb) {
+//                      Talent.upsert({}, tal.talent)
+//                      .$promise
+//                      .then(function (talData) {
+//                        tal.heroId = heroData.id;
+//                        tal.talentId = talData.id;
+//                        tal.tier = tal.tier;
+//                        tal.orderNum = tal.orderNum;
+//
+//                        HeroTalent.upsert({}, tal)
+//                        .$promise
+//                        .then(function () {
+//                          return eachCb(undefined);
+//                        })
+//                        .catch(eachCb);
+//                      })
+//                      .catch(eachCb);
+//                    }, seriesCb(undefined))
+//                  },
+//                  function (seriesCb) {
+//                    async.each(arrs.talents.toDelete, function (tal, eachCb) {
+//                      HeroTalent.destroyById({
+//                        id: tal.id
+//                      })
+//                      .$promise
+//                      .then(function () {
+//                        return eachCb();
+//                      })
+//                      .catch(eachCb);
+//                    }, seriesCb);
+//                  },
+//                  function (seriesCb) {
+//                    async.each(arrs.abilities.toDelete, function (abil, eachCb) {
+//                      Ability.destroyById({
+//                        id: abil.id
+//                      })
+//                      .$promise
+//                      .then(function () {
+//                        return eachCb();
+//                      })
+//                      .catch(eachCb);
+//                    }, seriesCb);
+//                  }
+//                ], function (err) {
+//                  if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
+//                  else {
+//                    $state.go('app.admin.hots.heroes.list');
+//                  }
+//                })
+//              }).catch(function (err) { console.log(err); });
+                
             };
         }
     ])
