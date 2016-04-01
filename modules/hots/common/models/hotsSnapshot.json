@@ -23,9 +23,6 @@
     "isActive": {
         "type": "boolean"
     },
-    "createdDate": {
-        "type": "date"
-    },
     "isCommentable": {
         "type": "boolean",
         "default": true
@@ -80,6 +77,7 @@
     }
   ],
   "mixins": {
-    "Slug": true
+    "Slug": true,
+    "Timestamp": true
   }
 }

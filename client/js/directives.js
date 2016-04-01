@@ -2248,7 +2248,6 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
         controller: ['$scope', 'Util', function ($scope, Util) {
             //$scope.snapshot = $scope.$parent.snapshot;
-            var sl = $scope.snapshot.slugs[0];
 
             $scope.toggleLinked = function () {
                 $scope.snapshot.slugs[0].linked = !$scope.snapshot.slugs[0].linked;
@@ -2258,8 +2257,9 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.slugifyUrl = function (str) {
                 console.log(str);
-                console.log(sl);
-                if (!$scope.snapshot.slugs[0].linked)
+                console.log($scope.snapshot.slugs[0]);
+
+                if (!$scope.snapshot.slugs[0] && !$scope.snapshot.slugs[0].linked)
                     return;
 
                 $scope.snapshot.slugs[0].slug = slugify(str);

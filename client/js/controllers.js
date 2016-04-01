@@ -1932,7 +1932,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminArticleAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'heroes', 'LoopBackAuth', 'Guide', 'Article', 'User', 'Hero', 'Deck', 'ArticleArticle',
         function ($scope, $upload, $state, $window, $compile, bootbox, Hearthstone, Util, AlertService, heroes, LoopBackAuth, Guide, Article, User, Hero, Deck, ArticleArticle) {
-            
+
             // default article
             var d = new Date();
             d.setMonth(d.getMonth()+1);
@@ -2297,7 +2297,7 @@ angular.module('app.controllers', ['ngCookies'])
             // select options
             $scope.articleFeatured =
                 $scope.articlePremium =
-                    $scope.articleActive = 
+                    $scope.articleActive =
                         $scope.commentableOptions = [
                         { name: 'Yes', value: true },
                         { name: 'No', value: false }
@@ -2375,11 +2375,11 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.addArticle = function (article) {
             $scope.fetching = true;
-            
+
             var cleanArticle = angular.copy(article);
 
             cleanArticle.deckId = (article.articleType[0] === 'hs' && article.deck && article.deck.id) ? article.deck.id : null;
-            
+
             cleanArticle = Util.cleanObj(cleanArticle, [
                 'articleType',
                 'authorId',
@@ -2398,86 +2398,91 @@ angular.module('app.controllers', ['ngCookies'])
                 'related',
                 'isCommentable'
             ]);
-            
+
             if (cleanArticle.guide) {
                 delete cleanArticle.guide;
             }
-            
+
             if (cleanArticle.deck) {
                 delete cleanArticle.deck;
             }
 
-				// unlink guides/decks depending on what type of guide
-				if (cleanArticle.articleType[0] !== 'hs') {
-					cleanArticle['deck'] = undefined;
-					cleanArticle['deckId'] = undefined;
-				}
+            // unlink guides/decks depending on what type of guide
+            if (cleanArticle.articleType[0] !== 'hs') {
+                cleanArticle['deck'] = undefined;
+                cleanArticle['deckId'] = undefined;
+            }
 
-				if (cleanArticle.articleType[0] !== 'hots') {
-					cleanArticle['guide'] = undefined;
-					cleanArticle['guideId'] = undefined;
-				}
+            if (cleanArticle.articleType[0] !== 'hots') {
+                cleanArticle['guide'] = undefined;
+                cleanArticle['guideId'] = undefined;
+            }
 
-				var d = new Date().toISOString();
-				cleanArticle.createdDate = d;
-
-				// create model for articleArticle
-				var relatedArticleArticle = [];
-				angular.forEach(cleanArticle.related, function(relatedArticle) {
-					var articleArticle = {
-						childArticleId: relatedArticle.id
-					};
-					relatedArticleArticle.push(articleArticle);
-				});
-        
-        delete cleanArticle.related;
-
-				async.waterfall([
-					function (wateryCB) {
-						Article.create(cleanArticle)
-						.$promise
-						.then(function (articleCreated) {
-							return wateryCB(null, articleCreated);
-						})
-						.catch(function (err) {
-							return wateryCB(err);
-						});
-					},
-					function (articleCreated, wateryCB) {
-						// add parentId from created article
-						angular.forEach(relatedArticleArticle, function(articleArticle) {
-							articleArticle.parentArticleId = articleCreated.id;
-						});
-
-						ArticleArticle.createMany(relatedArticleArticle)
-						.$promise
-						.then(function (relatedArticles) {
-							return wateryCB(null);
-						})
-						.catch(function (err) {
-							return wateryCB(err);
-						});
-					}
-				], function(err, results) {
-					$scope.fetching = false;
-					$window.scrollTo(0, 0);
-					if (err) {
-						return AlertService.setError({
-							show: true,
-							msg: 'Unable to create Article.',
-							lbErr: err
-						});
-					}
-					AlertService.setSuccess({
-						persist: true,
-						show: false,
-						msg: article.title + ' created successfully',
-					});
-					$state.transitionTo('app.admin.articles.list');
-				});
+            var d = new Date().toISOString();
+            cleanArticle.createdDate = d;
+            cleanArticle.slugOptions = {
+                slug: cleanArticle.slug.url,
+                linked: cleanArticle.slug.linked
             };
-        }
-    ])
+
+            // create model for articleArticle
+            var relatedArticleArticle = [];
+            angular.forEach(cleanArticle.related, function(relatedArticle) {
+                var articleArticle = {
+                    childArticleId: relatedArticle.id
+                };
+                relatedArticleArticle.push(articleArticle);
+            });
+
+            delete cleanArticle.related;
+
+            var createdArticle;
+            async.waterfall([
+                function (wateryCB) {
+                    Article.create(cleanArticle)
+                    .$promise
+                    .then(function (articleCreated) {
+                        createdArticle = articleCreated
+                        return wateryCB(null, articleCreated);
+                    })
+                    .catch(function (err) {
+                        return wateryCB(err);
+                    });
+                },
+                function (articleCreated, wateryCB) {
+                    // add parentId from created article
+                    angular.forEach(relatedArticleArticle, function(articleArticle) {
+                        articleArticle.parentArticleId = articleCreated.id;
+                    });
+
+                    ArticleArticle.createMany(relatedArticleArticle)
+                    .$promise
+                    .then(function (relatedArticles) {
+                        return wateryCB(null);
+                    })
+                    .catch(function (err) {
+                        return wateryCB(err);
+                    });
+                }
+            ], function(err, results) {
+                $scope.fetching = false;
+                $window.scrollTo(0, 0);
+                if (err) {
+                    return AlertService.setError({
+                        show: true,
+                        msg: 'Unable to create Article.',
+                        lbErr: err
+                    });
+                }
+                AlertService.setSuccess({
+                    persist: true,
+                    show: false,
+                    msg: article.title + ' created successfully',
+                });
+                $state.transitionTo('app.admin.articles.list');
+            });
+        };
+    }])
     .controller('AdminArticleEditCtrl', ['$scope', '$q', '$timeout', '$upload', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article', 'User', 'ArticleArticle', 'heroes', 
         function ($scope, $q, $timeout, $upload, $state, $window, $compile, $filter, bootbox, Hearthstone, Util, AlertService, Article, Deck, Guide, article, User, ArticleArticle, heroes) {
             var itemAddBox,
@@ -3000,7 +3005,7 @@ angular.module('app.controllers', ['ngCookies'])
 //        console.log('article:', article);
         $scope.editArticle = function (article) {
             $scope.fetching = true;
-            
+
             var cleanArticle = angular.copy(article);
 
             cleanArticle = Util.cleanObj(cleanArticle, [
@@ -3022,11 +3027,15 @@ angular.module('app.controllers', ['ngCookies'])
             ]);
 
             cleanArticle.deckId = (article.articleType[0] === 'hs' && article.deck && article.deck.id) ? article.deck.id : null;
-            
+            cleanArticle.slugOptions = {
+                slug: cleanArticle.slug.url,
+                linked: cleanArticle.slug.linked
+            }
+
             if (cleanArticle.guide) {
                 delete cleanArticle.guide;
             }
-            
+
             if (cleanArticle.deck) {
                 delete cleanArticle.deck;
             }
@@ -3041,112 +3050,111 @@ angular.module('app.controllers', ['ngCookies'])
                 cleanArticle['guide'] = null;
                 cleanArticle['guideId'] = null;
             }
-            
-            console.log('cleanArticle:', cleanArticle);
+
             async.parallel([
-              function (paraCB) {
-                  Article.prototype$updateAttributes({
-                      id: cleanArticle.id
-                  }, cleanArticle)
-                  .$promise
-                  .then(function (articleUpdated) {
-                      return paraCB();
-                  })
-                  .catch(function (err) {
-                      console.log('article upsert err:', err);
-                      return paraCB(err);
-                  });
-              },
-              function(paraCB) {
+                function (paraCB) {
+                    Article.prototype$updateAttributes({
+                        id: cleanArticle.id
+                    }, cleanArticle)
+                    .$promise
+                    .then(function (articleUpdated) {
+                        return paraCB();
+                    })
+                    .catch(function (err) {
+                        console.log('article upsert err:', err);
+                        return paraCB(err);
+                    });
+                },
+                function(paraCB) {
 
-                async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
+                    async.each(relatedArticleChanges.toDelete, function(relatedToDelete, relatedToDeleteCB) {
 
-                  async.waterfall([
-                    function (wateryCB) {
-                      ArticleArticle.findOne({
-                        filter: {
-                          where: {
-                            childArticleId: relatedToDelete.id,
-                            parentArticleId: cleanArticle.id
-                          }
+                        async.waterfall([
+                            function (wateryCB) {
+                                ArticleArticle.findOne({
+                                    filter: {
+                                        where: {
+                                            childArticleId: relatedToDelete.id,
+                                            parentArticleId: cleanArticle.id
+                                        }
+                                    }
+                                }).$promise
+                                .then(function (articleFound) {
+                                    return wateryCB(null, articleFound);
+                                })
+                                .catch(function (err) {
+                                    console.log('related article err:', err);
+                                    return wateryCB(err);
+                                });
+                            },
+                            function (articleFound, wateryCB) {
+                                ArticleArticle.destroyById({
+                                    id: articleFound.id
+                                }).$promise
+                                .then(function (relArticleDestroyed) {
+                                    return wateryCB();
+                                })
+                                .catch(function (err) {
+                                    console.log('related article destroy err:', err);
+                                    return wateryCB(err);
+                                });
+                            }
+                        ], function(err) {
+                            if (err) {
+                                return relatedToDeleteCB(err);
+                            }
+                            return relatedToDeleteCB();
+                        });
+
+                    }, function(err) {
+                        if (err) {
+                            return paraCB(err);
                         }
-                      }).$promise
-                      .then(function (articleFound) {
-                        return wateryCB(null, articleFound);
-                      })
-                      .catch(function (err) {
-                        console.log('related article err:', err);
-                        return wateryCB(err);
-                      });
-                    },
-                    function (articleFound, wateryCB) {
-                      ArticleArticle.destroyById({
-                        id: articleFound.id
-                      }).$promise
-                      .then(function (relArticleDestroyed) {
-                        return wateryCB();
-                      })
-                      .catch(function (err) {
-                        console.log('related article destroy err:', err);
-                        return wateryCB(err);
-                      });
-                    }
-                  ], function(err) {
-                    if (err) {
-                      return relatedToDeleteCB(err);
-                    }
-                    return relatedToDeleteCB();
-                  });
-
-                }, function(err) {
-                  if (err) {
-                    return paraCB(err);
-                  }
-                  return paraCB();
-                });
-              },
-              function(paraCB) {
-                async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
-                  var articleArticle = {
-                    parentArticleId: cleanArticle.id,
-                    childArticleId: relatedArticle.id
-                  };
-                  ArticleArticle.create(articleArticle)
-                  .$promise
-                  .then(function (relatedArticleCreated) {
-                    return relatedCreateCB();
-                  })
-                  .catch(function (err) {
-                    return relatedCreateCB(err);
-                  });
-                }, function (err) {
-                  if (err) {
-                    console.log('related create err:', err);
-                    return paraCB(err);
-                  }
-                  return paraCB();
-                });
-              }
+                        return paraCB();
+                    });
+                },
+                function(paraCB) {
+                    async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
+                        var articleArticle = {
+                            parentArticleId: cleanArticle.id,
+                            childArticleId: relatedArticle.id
+                        };
+                        ArticleArticle.create(articleArticle)
+                        .$promise
+                        .then(function (relatedArticleCreated) {
+                            return relatedCreateCB();
+                        })
+                        .catch(function (err) {
+                            return relatedCreateCB(err);
+                        });
+                    }, function (err) {
+                        if (err) {
+                            console.log('related create err:', err);
+                            return paraCB(err);
+                        }
+                        return paraCB();
+                    });
+                }
             ], function(err) {
-              $scope.fetching = false;
-              $window.scrollTo(0, 0);
-              if (err) {
-                console.log('async para err: ', err);
-                return AlertService.setError({
-                  show: true,
-                  msg: article.title + ' could not be updated',
-                  lbErr: err
+                $scope.fetching = false;
+                $window.scrollTo(0, 0);
+                if (err) {
+                    console.log('async para err: ', err);
+                    return AlertService.setError({
+                        show: true,
+                        msg: article.title + ' could not be updated',
+                        lbErr: err
+                    });
+                }
+
+                AlertService.setSuccess({
+                    show: false,
+                    persist: true,
+                    msg: cleanArticle.title + ' updated successfully',
                 });
-              }
-                
-              AlertService.setSuccess({
-                show: false,
-                persist: true,
-                msg: cleanArticle.title + ' updated successfully',
-              });
-              $state.transitionTo('app.admin.articles.list');
+                $state.transitionTo('app.admin.articles.list');
             });
-          };
+        };
 
 //          $scope.getNames = function () {
 //              AdminArticleService.getNames($scope.article).success(function (data) {
@@ -7813,14 +7821,16 @@ angular.module('app.controllers', ['ngCookies'])
 //                });
 
                 // save children manually
-                var deckId,
-                    deckSlug;
+                var updatedDeck;
+                var deckId;
+                var deckSlug;
                 async.waterfall([
                     function (waterCB) {
                         Deck.create(cleanDeck)
                         .$promise
                         .then(function (deckUpdated) {
                            // console.log('deck create:', deckUpdated);
+                            updatedDeck = deckUpdated
                             deckId = deckUpdated.id;
                             deckSlug = Util.slugify(deckUpdated.name);
                             return waterCB();
@@ -7938,14 +7948,14 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     }
                     $scope.app.settings.deck = null;
-                    $state.transitionTo('app.hs.decks.deck', { slug: deckSlug });
+                    $state.transitionTo('app.hs.decks.deck', { slug: Util.slugify(updatedDeck.name) });
                 });
 
             }
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'Util', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, Util, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
 //            console.log('deckCardMulligans:', deckCardMulligans);
             
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
@@ -8616,11 +8626,13 @@ angular.module('app.controllers', ['ngCookies'])
 //              console.log('deck before update:', deck);
 //              console.log('WOOOOOOOOOOORK');
 
+                var updatedDeck;
                 async.series([
                     function (seriesCallback) {
                         Deck.upsert(deck)
                         .$promise
                         .then(function (deckUpdated) {
+                            updatedDeck = deckUpdated;
 //                            console.log('deck upserted: ',deckUpdated);
                             seriesCallback(null, deckUpdated);
                         })
@@ -8850,7 +8862,7 @@ angular.module('app.controllers', ['ngCookies'])
 //                    console.log('results[0].slug:', results[0].slug);
                     $scope.app.settings.deck = null;
                     console.log(results);
-                    $state.transitionTo('app.hs.decks.deck', { slug: results[0].slug });
+                    $state.transitionTo('app.hs.decks.deck', { slug: Util.slugify(updatedDeck.name) });
                 });
             }
         }
@@ -10795,14 +10807,16 @@ angular.module('app.controllers', ['ngCookies'])
 //                });
 
                 // save children manually
-                var deckId,
-                    deckSlug;
+                var returnedDeck;
+                var deckId;
+                var deckSlug;
                 async.waterfall([
                     function (waterCB) {
                         Deck.create(cleanDeck)
                         .$promise
                         .then(function (deckUpdated) {
 //                            console.log('deck create:', deckUpdated);
+                            returnedDeck = deckUpdated
                             deckId = deckUpdated.id;
                             deckSlug = deckUpdated.slug;
                             return waterCB();
@@ -10925,7 +10939,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     }
                     $scope.app.settings.deck = null;
-                    $state.transitionTo('app.hs.decks.deck', { slug: deckSlug });
+                    $state.transitionTo('app.hs.decks.deck', { slug: Util.slugify(returnedDeck.name) });
                 });
 
 
@@ -11585,6 +11599,7 @@ angular.module('app.controllers', ['ngCookies'])
 
               });
 
+                var updatedDeck;
                 async.series([
                     function (seriesCallback) {
                         Deck.prototype$updateAttributes({
@@ -11592,6 +11607,7 @@ angular.module('app.controllers', ['ngCookies'])
                         }, deck)
                         .$promise
                         .then(function (deckUpdated) {
+                            updatedDeck = deckUpdated;
 //                            console.log('deck upserted: ',deckUpdated);
                             seriesCallback(null, deckUpdated);
                         })
@@ -11820,7 +11836,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.deckSubmitting = false;
 //                    console.log('results[0].slug:', results[0].slug);
                     $scope.app.settings.deck = null;
-                    $state.transitionTo('app.hs.decks.deck', { slug: results[0].slug });
+                    $state.transitionTo('app.hs.decks.deck', { slug: Util.slugify(updatedDeck.name) });
                 });
             }
         }
@@ -17872,111 +17888,110 @@ angular.module('app.controllers', ['ngCookies'])
                   
                 var guideCreated;
                 var tals = [];
-                async.series([
-                  function (seriesCB) {
-                      Guide.create(stripped)
-                      .$promise
-                      .then(function (createdGuide) {
-                          guideCreated = createdGuide;
-                          return seriesCB();
-                      })
-                      .catch(function (err) {
-                          console.log("catching guide create error")
-                          return seriesCB(err);
-                      });
-                  },
-                  function (seriesCB) {
-                      Guide.guideHeroes.createMany({
-                          id: guideCreated.id
-                      }, cleanGuide.guideHeroes)
-                      .$promise
-                      .then(function (guideHeroData) {
-                          
-                              _.each(guideHeroData, function(eachVal) {
-                                var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                                  return filterVal.heroId === eachVal.heroId;
-                                });
-                                  
-                              _.each(heroTals, function (innerEachVal, index, list) {
-                                innerEachVal.guideId = guideCreated.id;
-                                innerEachVal.guideHeroId = eachVal.id;
-                              });
-                                  
-                              tals.push(heroTals);
+                  async.series([
+                      function (seriesCB) {
+                          Guide.create(stripped)
+                          .$promise
+                          .then(function (createdGuide) {
+                              guideCreated = createdGuide;
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              console.log("catching guide create error");
+                              return seriesCB(err);
                           });
-                          return seriesCB();
-                      })
-                      .catch(function (err) {
-                          return seriesCB(err);
-                      });
-                  },
-                  function (seriesCB) {
-                    Guide.guideTalents.createMany({
-                      id: guideCreated.id
-                    }, tals)
-                    .$promise
-                    .then(function (guideTalentData) {
-                      return seriesCB();
-                    })
-                    .catch(function (err) {
-                      console.log('guide talent err', err);
-                      return seriesCB(err);
-                    });
-                  },
-                  function (seriesCB) {
-                      var freeVote = {
-                          direction: 1,
-                          createdDate: new Date().toISOString(),
-                          authorId: User.getCurrentId()
-                      };
+                      },
+                      function (seriesCB) {
+                          Guide.guideHeroes.createMany({
+                              id: guideCreated.id
+                          }, cleanGuide.guideHeroes)
+                          .$promise
+                          .then(function (guideHeroData) {
+                              _.each(guideHeroData, function(eachVal) {
+                                  var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                                      return filterVal.heroId === eachVal.heroId;
+                                  });
 
-                      Guide.votes.create({
-                          id: guideCreated.id
-                      }, freeVote)
-                      .$promise
-                      .then(function (voteCreated) {
-                          return seriesCB();
-                      })
-                      .catch(function (err) {
-                          return seriesCB(err);
-                      });
-                  },
-                  function (seriesCB) {
-                    async.each(cleanGuide.maps, function(map, mapCB) {
-                        
-                      Guide.maps.link({
-                        id: guideCreated.id,
-                        fk: map.id
-                      }, null)
-                      .$promise
-                      .then(function (mapLinkData) {
-                        return mapCB();
-                      })
-                      .catch(function (err) {
-                        console.log('map link err:', err);
-                        return mapCB(err);
-                      });
-                    }, function (err, results) {
-                      if (err) {
-                        return seriesCB(err);
-                      }
-                      return seriesCB();
-                    });
+                                  _.each(heroTals, function (innerEachVal, index, list) {
+                                      innerEachVal.guideId = guideCreated.id;
+                                      innerEachVal.guideHeroId = eachVal.id;
+                                  });
 
-                  }], function (err) {
+                                  tals.push(heroTals);
+                              });
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
+                          Guide.guideTalents.createMany({
+                              id: guideCreated.id
+                          }, tals)
+                          .$promise
+                          .then(function (guideTalentData) {
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              console.log('guide talent err', err);
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
+                          var freeVote = {
+                              direction: 1,
+                              createdDate: new Date().toISOString(),
+                              authorId: User.getCurrentId()
+                          };
+
+                          Guide.votes.create({
+                              id: guideCreated.id
+                          }, freeVote)
+                          .$promise
+                          .then(function (voteCreated) {
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
+                          async.each(cleanGuide.maps, function(map, mapCB) {
+
+                              Guide.maps.link({
+                                  id: guideCreated.id,
+                                  fk: map.id
+                              }, null)
+                              .$promise
+                              .then(function (mapLinkData) {
+                                  return mapCB();
+                              })
+                              .catch(function (err) {
+                                  console.log('map link err:', err);
+                                  return mapCB(err);
+                              });
+                          }, function (err, results) {
+                              if (err) {
+                                  return seriesCB(err);
+                              }
+                              return seriesCB();
+                          });
+
+                      }], function (err) {
                       $scope.fetching = false;
                       if (err) {
-                        $window.scrollTo(0, 0);
-                        AlertService.setError({
-                          show: true,
-                          lbErr: err,
-                          msg: 'Unable to Save Guide'
-                        });
-                        return console.log('series err:', err);
+                          $window.scrollTo(0, 0);
+                          AlertService.setError({
+                              show: true,
+                              lbErr: err,
+                              msg: 'Unable to Save Guide'
+                          });
+                          return console.log('series err:', err);
                       }
                       $scope.app.settings.guide = null;
-                      $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
-                });
+                      $state.go('app.hots.guides.guide', { slug: Util.slugify(guideCreated.name) });
+                  });
 
               }
             };
@@ -18194,7 +18209,7 @@ angular.module('app.controllers', ['ngCookies'])
                             });
                         }
                         $scope.app.settings.guide = null;
-                        $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
+                        $state.go('app.hots.guides.guide', { slug: Util.slugify(guideCreated.name) });
                     });
                 }
             };
@@ -18609,7 +18624,7 @@ angular.module('app.controllers', ['ngCookies'])
                   }
 //                  console.log('results:', results);
                   $scope.app.settings.guide = null;
-                  $state.go('app.hots.guides.guide', { slug: guideInfo.slug });
+                  $state.go('app.hots.guides.guide', { slug: Util.slugify(guideInfo.name) });
                 });
 
               }
@@ -18773,7 +18788,7 @@ angular.module('app.controllers', ['ngCookies'])
                             Guide.upsert($scope.guide)
                             .$promise
                             .then(function (guideData) {
-                                guideSlug = guideData.slug;
+                                guideSlug = Util.slugify(guideData.name);
                                 return paraCB();
                             })
                             .catch(function (err) {
