@@ -326,25 +326,25 @@ module.exports = function(Image) {
                 function copyFile(callback) {
                     // read file
                     fs.readFile(file.path, function (err, data) {
-                        if (err) return next(err);
+                        if (err) return done(err);
                         // write file
                         fs.writeFile(path + large, data, function (err) {
-                            if (err) return next(err);
+                            if (err) return done(err);
                             // chmod new file
                             fs.chmod(path + large, 0777, function (err) {
-                                if (err) return next(err);
+                                if (err) return done(err);
                                 // delete tmp file
                                 fs.unlink(file.path, function (err) {
-                                    if (err) return next(err);
+                                    if (err) return done(err);
                                     // resize
                                     gm(path + large).quality(100).resize(800, 600, ">").write(path + large, function (err) {
-                                        if (err) return next(err);
+                                        if (err) return done(err);
                                         gm(path + large).quality(100).resize(140, 140, "^").write(path + thumb, function (err) {
-                                            if (err) return next(err);
+                                            if (err) return done(err);
                                             gm(path + thumb).quality(100).gravity('Center').crop(140, 140).write(path + thumb, function (err) {
-                                                if (err) return next(err);
+                                                if (err) return done(err);
                                                 fs.chmod(path + thumb, 0777, function (err) {
-                                                    if (err) return next(err);
+                                                    if (err) return done(err);
                                                     return callback();
                                                 });
                                             });
