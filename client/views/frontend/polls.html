@@ -72,11 +72,11 @@
                         </div>
 
                         <div class="poll-description" ng-bind-html="getContent(poll.description)"></div>
-
+                        
                         <div class="row">
                             <div class="item-wrapper wrapper-xs">
-                                <div class="poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3"  ng-repeat="item in poll.items">
-                                    <a href="#" ng-click="bigImg(item.photos.large)">
+                                <div class="poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3" ng-repeat="item in poll.items">
+                                    <a href="#" ng-click="bigImg(item)">
                                         <img ng-class="{ 'active' : hasVoted(poll, item) }" ng-src="https://cdn-tempostorm.netdna-ssl.com/polls/{{item.photoNames.thumb}}" alt="">
                                         <i class="fa fa-check" ng-class="{ 'active' : hasVoted(poll, item)}"></i>
                                     </a>
@@ -147,7 +147,7 @@
                         <div class="row">
                             <div class="clearfix voted-img-item-wrapper wrapper-xs">
                                 <div class="voted-poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3" ng-class="{ 'active' : getLocalVotes(poll, item) }"  ng-repeat="item in poll.items | orderBy: '-votes'">
-                                    <a href="#" ng-click="bigImg(item.photos.large)">
+                                    <a href="#" ng-click="bigImg(item)">
                                         <span style="height: {{voteCurve(item, poll)}}%;"></span>
                                         <div>
                                             <h3>{{item.votes}}</h3>

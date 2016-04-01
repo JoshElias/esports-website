@@ -16022,6 +16022,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.pollsMain = dataPollsMain;
             $scope.pollsSide = dataPollsSide;
 
+            console.log('dataPollsMain: ', dataPollsMain);
+            
             $scope.toggleItem = function (poll, item) {
                 if (!votes[poll.id]) { votes[poll.id] = []; }
 
@@ -16093,16 +16095,17 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getLocalVotes = function (poll, item) {
                 var localVotes = PollService.getStorage(poll.id);
                 for (var i = 0; i < localVotes.length; i++) {
-                    if(item._id == localVotes[i]) {
+                    if(item.id == localVotes[i]) {
                         return true;
                     }
                 }
             }
 
-            $scope.bigImg = function (img, title) {
+            $scope.bigImg = function (item) {
+                console.log('item: ', item);
+                
                 box = bootbox.dialog({
-                    title: title,
-                    message: $compile('<a ng-click="closeBox()"><img class="img-responsive" ng-src="' + $scope.app.cdn + 'polls/' +img+ '" alt=""></a>')($scope),
+                    message: $compile('<a ng-click="closeBox()"><img class="img-responsive" ng-src="https://cdn-tempostorm.netdna-ssl.com/polls/' +item.photoNames.large+ '" alt=""></a>')($scope),
                     backdrop: true
                 });
 
@@ -16119,7 +16122,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var v = [];
                 _.each(votes[poll.id], function (vote) {
                   v.push(_.find(poll.items, function (item) {
-                    return item._id === vote;
+                    return item.id === vote;
                   }));
                 })
 
