@@ -538,6 +538,10 @@ module.exports = function(Image) {
                 return done(defaultError);
             }
 
+
+            var teamHeight = 368;
+            var teamWidth = 698;
+
             var file = files[Object.keys(files)[0]]; // get first property in dict files
 
             // check if image file
@@ -582,13 +586,20 @@ module.exports = function(Image) {
                             fs.unlink(file.path, function(err) {
                                 if (err) return done(err);
                                 // resize
-                                gm(path + photo).quality(100).resize(188, 188, "^").write(path + photo, function(err) {
-                                    if (err) return done(err);
-                                    fs.chmod(path + photo, 0777, function(err) {
+                                gm(path + photo)
+                                    .quality(100)
+                                    .resize(teamWidth, teamHeight, "^^")
+                                    .repage("+")
+                                    .gravity("Center")
+                                    .crop(teamWidth, teamHeight, 0, 0)
+                                    .write(path + photo, function(err) {
                                         if (err) return done(err);
-                                        return callback();
-                                    });
-                                });
+                                        fs.chmod(path + photo, 0777, function(err) {
+                                            if (err) return done(err);
+                                            return callback();
+                                        });
+                                    }
+                                );
                             });
                         });
                     });
