@@ -16022,8 +16022,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.pollsMain = dataPollsMain;
             $scope.pollsSide = dataPollsSide;
 
-            console.log('dataPollsMain: ', dataPollsMain);
-            
             $scope.toggleItem = function (poll, item) {
                 if (!votes[poll.id]) { votes[poll.id] = []; }
 
@@ -16102,8 +16100,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.bigImg = function (item) {
-                console.log('item: ', item);
-                
                 box = bootbox.dialog({
                     message: $compile('<a ng-click="closeBox()"><img class="img-responsive" ng-src="https://cdn-tempostorm.netdna-ssl.com/polls/' +item.photoNames.large+ '" alt=""></a>')($scope),
                     backdrop: true
