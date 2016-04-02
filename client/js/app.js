@@ -6405,7 +6405,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     polls: {
-                        templateUrl: tpl + 'views/admin/polls.add.html',
+                        templateUrl: tpl + 'views/admin/polls.poll.html',
                         controller: 'AdminPollAddCtrl'
                     }
                 },
@@ -6416,7 +6416,7 @@ var app = angular.module('app', [
                 url: '/edit/:pollID',
                 views: {
                     polls: {
-                        templateUrl: tpl + 'views/admin/polls.edit.html',
+                        templateUrl: tpl + 'views/admin/polls.poll.html',
                         controller: 'AdminPollEditCtrl',
                         resolve: {
                             poll: ['$stateParams', 'Poll', function($stateParams, Poll){
@@ -6429,10 +6429,7 @@ var app = angular.module('app', [
 										include: 'items'
                                     }
                                 })
-                                .$promise
-                                .then(function (data) {
-                                    return data;
-                                })
+                                .$promise;
                             }]
 
                         }

@@ -6629,28 +6629,14 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'AlertService', 'Poll',
-        function ($scope, $upload, $state, $window, $compile, AlertService, Poll) {
-            var box,
-                defaultPoll = {
-                    title : '',
-                    subtitle: '',
-                    description: '',
-                    pollType: '',
-                    viewType: '',
-                    items: [],
-					voteLimit: ''
-                },
-                defaultItem = {
-                    name: '',
-                    orderNum: 0,
-                    photoNames: {
-                        large: '',
-                        thumb: ''
-                    }
-                }
-
-            $scope.options = {
+    .controller('AdminPollAddCtrl', ['$scope', 'PollBuilder',
+        function ($scope, PollBuilder) {
+            
+            $scope.mode = 'add';
+            
+            $scope.poll = PollBuilder.new();
+            
+            /*$scope.options = {
                 disableDragAndDrop: true,
                 height: 300,
                 fontNames: ['Open Sans Regular', 'Open Sans Bold'],
@@ -6798,7 +6784,7 @@ angular.module('app.controllers', ['ngCookies'])
 						lbErr: err
 					});
                 });
-            };
+            };*/
         }
     ])
     .controller('AdminPollEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll', 'PollItem',
