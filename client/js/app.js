@@ -301,7 +301,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/overwatch.home.html',
                         controller: 'OverwatchHomeCtrl',
                         resolve: {
-                            articles: ['Article', function (Article) {
+                            articles: ['Article', 'Util', function (Article, Util) {
                                 var perpage = 6;
 
                                 return Article.find({
@@ -310,7 +310,14 @@ var app = angular.module('app', [
                                             articleType: 'overwatch',
                                             isActive: true
                                         },
-                                        include: ['author'],
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            },
+                                            {
+                                                relation: 'slugs'
+                                            }
+                                        ],
                                         fields: {
                                             content: false,
                                             votes: false
@@ -318,7 +325,14 @@ var app = angular.module('app', [
                                         order: 'createdDate DESC',
                                         limit: perpage
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (owArticles) {
+                                    _.each(owArticles, function (owArticle) {
+                                        owArticle.slug = Util.setSlug(owArticle);
+                                    });
+                                    
+                                    return owArticles;
+                                });
                             }],
                             heroes: ['OverwatchHero', function (OverwatchHero) {
                                 return OverwatchHero.find({
@@ -1165,7 +1179,6 @@ var app = angular.module('app', [
                             }],
                             deck: ['$stateParams', '$state', 'Deck', 'Util', function ($stateParams, $state, Deck, Util) {
                                 var slug = $stateParams.slug;
-                                console.log('slug:', slug);
                                 
                                 return Deck.findOne({
                                     filter: {
@@ -1196,7 +1209,6 @@ var app = angular.module('app', [
                                                 scope: {
                                                     include: 'card',
                                                     scope: {
-                                                        // TODO THIS ISN"T WORKING!
                                                         fields: [
                                                             'id',
                                                             'name',
@@ -1233,7 +1245,7 @@ var app = angular.module('app', [
                                                 scope: {
                                                     fields: [
                                                         'id',
-                                                        'name'
+                                                        'username'
                                                     ]
                                                 }
                                             },
@@ -3042,7 +3054,6 @@ var app = angular.module('app', [
                                     }
                                   }).$promise
                                   .then(function(heroData) {
-                                    console.log('heroData:', heroData);
                                     return waterCB(null, heroData);
                                   })
                                   .catch(function (err) {
@@ -4704,7 +4715,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
                                     data.slug = Util.setSlug(data);
                                     data.related = data.relatedArticles;
                                     return data;

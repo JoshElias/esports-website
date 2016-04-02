@@ -2436,6 +2436,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             delete cleanArticle.related;
 
+            console.log('saving:', cleanArticle);
             var createdArticle;
             async.waterfall([
                 function (wateryCB) {
@@ -3051,11 +3052,10 @@ angular.module('app.controllers', ['ngCookies'])
                 cleanArticle['guideId'] = null;
             }
 
+            console.log('saving:', cleanArticle);
             async.parallel([
                 function (paraCB) {
-                    Article.prototype$updateAttributes({
-                        id: cleanArticle.id
-                    }, cleanArticle)
+                    Article.upsert(cleanArticle)
                     .$promise
                     .then(function (articleUpdated) {
                         return paraCB();
@@ -7821,6 +7821,7 @@ angular.module('app.controllers', ['ngCookies'])
 //                });
 
                 // save children manually
+                console.log('saving deck:', cleanDeck);
                 var updatedDeck;
                 var deckId;
                 var deckSlug;
