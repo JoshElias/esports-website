@@ -5852,6 +5852,7 @@ angular.module('app.services', [])
                     },
                     // create authors
                     function (snapshotId, cb) {
+                        console.log('creating authors');
                         async.each(sb.authors, function (author, eachCallback) {
                             // only create authors without ids
                             if (author.id) { return eachCallback(); }
@@ -5877,28 +5878,34 @@ angular.module('app.services', [])
                     },
                     // create deck tiers
                     function (snapshotId, cb) {
-                        async.each(sb.deckTiers, function (deckTier, eachCallback) {
-                            // only create deck tiers without ids
-                            if (deckTier.id) { return eachCallback(); }
-                            // create new deck tier
-                            var newDeckTier = {
-                                description: deckTier.description,
-                                weeklyNotes: deckTier.weeklyNotes,
-                                name: deckTier.name,
-                                tier: deckTier.tier,
-                                deckId: deckTier.deck.id,
-                                snapshotId: snapshotId,
-                                ranks: deckTier.ranks
-                            };
-                            console.log('Created Deck Tier: ', newDeckTier);
-                            DeckTier.create(newDeckTier)
-                            .$promise
-                            .then(function (data) {
-                                deckTier.id = data.id;
-                                return eachCallback();
-                            })
-                            .catch(function (response) {
-                                return eachCallback(response);
+                        console.log('creating deck tiers');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckCallback) {
+                                // only create deck tiers without ids
+                                if (deckTier.id) { return eachDeckCallback(); }
+                                // create new deck tier
+                                var newDeckTier = {
+                                    description: deckTier.description,
+                                    weeklyNotes: deckTier.weeklyNotes,
+                                    name: deckTier.name,
+                                    tier: deckTier.tier,
+                                    deckId: deckTier.deck.id,
+                                    snapshotId: snapshotId,
+                                    ranks: deckTier.ranks
+                                };
+                                console.log('Created Deck Tier: ', newDeckTier);
+                                DeckTier.create(newDeckTier)
+                                .$promise
+                                .then(function (data) {
+                                    deckTier.id = data.id;
+                                    return eachDeckCallback();
+                                })
+                                .catch(function (response) {
+                                    return eachDeckCallback(response);
+                                });
+                            }, function (err) {
+                                if (err) { return cb(err); }
+                                return eachTierCallback();
                             });
                         }, function (err) {
                             if (err) { return cb(err); }
@@ -5907,29 +5914,35 @@ angular.module('app.services', [])
                     },
                     // create deck techs
                     function (snapshotId, cb) {
-                        async.each(sb.deckTiers, function (deckTier, eachDeckTierCallback) {
-                            async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
-                                // only create deck techs without ids
-                                if (deckTech.id) { return eachDeckTechCallback(); }
-                                // create new deck tech
-                                var newDeckTech = {
-                                    title: deckTech.title,
-                                    deckId: deckTier.deck.id,
-                                    deckTierId: deckTier.id
-                                };
-                                console.log('Created Deck Tech: ', newDeckTech);
-                                DeckTech.create(newDeckTech)
-                                .$promise
-                                .then(function (data) {
-                                    deckTech.id = data.id;
-                                    return eachDeckTechCallback();
-                                })
-                                .catch(function (response) {
-                                    return eachDeckTechCallback(response);
+                        console.log('creating deck techs');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckTierCallback) {
+                                async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
+                                    // only create deck techs without ids
+                                    if (deckTech.id) { return eachDeckTechCallback(); }
+                                    // create new deck tech
+                                    var newDeckTech = {
+                                        title: deckTech.title,
+                                        deckId: deckTier.deck.id,
+                                        deckTierId: deckTier.id
+                                    };
+                                    console.log('Created Deck Tech: ', newDeckTech);
+                                    DeckTech.create(newDeckTech)
+                                    .$promise
+                                    .then(function (data) {
+                                        deckTech.id = data.id;
+                                        return eachDeckTechCallback();
+                                    })
+                                    .catch(function (response) {
+                                        return eachDeckTechCallback(response);
+                                    });
+                                }, function (err) {
+                                    if (err) { return cb(err); }
+                                    return eachDeckTierCallback();
                                 });
                             }, function (err) {
                                 if (err) { return cb(err); }
-                                return eachDeckTierCallback();
+                                return eachTierCallback();
                             });
                         }, function (err) {
                             if (err) { return cb(err); }
@@ -5938,35 +5951,41 @@ angular.module('app.services', [])
                     },
                     // create deck tech cards
                     function (snapshotId, cb) {
-                        async.each(sb.deckTiers, function (deckTier, eachDeckTierCallback) {
-                            async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
-                                async.each(deckTech.cardTech, function (cardTech, eachCardTechCallback) {
-                                    // only create deck techs without ids
-                                    if (cardTech.id) { return eachCardTechCallback(); }
-                                    // create new deck tech
-                                    var newCardTech = {
-                                        both: cardTech.both || false,
-                                        toss: cardTech.toss || false,
-                                        cardId: cardTech.card.id,
-                                        deckTechId: deckTech.id
-                                    };
-                                    console.log('Created Card Tech: ', newCardTech);
-                                    CardTech.create(newCardTech)
-                                    .$promise
-                                    .then(function (data) {
-                                        cardTech.id = data.id;
-                                        return eachCardTechCallback();
-                                    })
-                                    .catch(function (response) {
-                                        return eachCardTechCallback(response);
+                        console.log('creating deck tech cards');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckTierCallback) {
+                                async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
+                                    async.each(deckTech.cardTech, function (cardTech, eachCardTechCallback) {
+                                        // only create deck techs without ids
+                                        if (cardTech.id) { return eachCardTechCallback(); }
+                                        // create new deck tech
+                                        var newCardTech = {
+                                            both: cardTech.both || false,
+                                            toss: cardTech.toss || false,
+                                            cardId: cardTech.card.id,
+                                            deckTechId: deckTech.id
+                                        };
+                                        console.log('Created Card Tech: ', newCardTech);
+                                        CardTech.create(newCardTech)
+                                        .$promise
+                                        .then(function (data) {
+                                            cardTech.id = data.id;
+                                            return eachCardTechCallback();
+                                        })
+                                        .catch(function (response) {
+                                            return eachCardTechCallback(response);
+                                        });
+                                    }, function (err) {
+                                        if (err) { return cb(err); }
+                                        return eachDeckTechCallback();
                                     });
                                 }, function (err) {
                                     if (err) { return cb(err); }
-                                    return eachDeckTechCallback();
+                                    return eachDeckTierCallback();
                                 });
                             }, function (err) {
                                 if (err) { return cb(err); }
-                                return eachDeckTierCallback();
+                                return eachTierCallback();
                             });
                         }, function (err) {
                             if (err) { return cb(err); }
@@ -5975,6 +5994,7 @@ angular.module('app.services', [])
                     },
                     // create matchups
                     function (snapshotId, cb) {
+                        console.log('creating matchups');
                         async.each(sb.matchups, function (matchup, eachCallback) {
                             // only create matchups without ids
                             if (matchup.id) { return eachCallback(); }
