@@ -4472,7 +4472,21 @@ angular.module('app.services', [])
                     }
                 }
             };
-
+            
+            // get deckTier by Id
+            sb.getDeckTierById = function (deckTierId) {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        if (sb.tiers[i].decks[j].id === deckTierId) {
+                            console.log(deckTierId, sb.tiers[i].decks[j]);
+                            return sb.tiers[i].decks[j];
+                        }
+                    }
+                }
+                
+                return false;
+            };
+            
             // update tiers for decks
             sb.decksUpdateTier = function () {
                 var tierNum;
@@ -4484,6 +4498,9 @@ angular.module('app.services', [])
                         sb.tiers[i].decks[j].tier = tierNum;
                     }
                 }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
             };
 
             // update order for decks in tiers
@@ -4499,6 +4516,9 @@ angular.module('app.services', [])
                         orderNum++;
                     }
                 }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
             };
 
             // update current ranks for decks
@@ -4513,6 +4533,9 @@ angular.module('app.services', [])
                         rank++;
                     }
                 }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
             };
 
             // delete all deck techs in a deck
@@ -5117,7 +5140,7 @@ angular.module('app.services', [])
                 sb.decksUpdateTier();
                 sb.decksUpdateOrder();
                 sb.decksUpdateCurrentRanks();
-
+                
                 // update matchups for deck if we need to
                 movedDeck = sb.getTierDeckByDeckId(deck.deck.id);
                 afterInMatchups = (movedDeck.tier === 1 || movedDeck.tier === 2);
@@ -5153,6 +5176,15 @@ angular.module('app.services', [])
                 if (index === -1) {
                     sb.updated.authors.push(author.id);
                     console.log('author update flagged: ', author.user.username);
+                }
+            };
+            
+            // flag all deckTiers as updated
+            sb.allDeckTiersUpdated = function () {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        sb.deckTierUpdated(sb.tiers[i].decks[j]);
+                    }
                 }
             };
             
