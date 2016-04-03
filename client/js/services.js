@@ -3839,7 +3839,7 @@ angular.module('app.services', [])
         };
         var defaultTierDeck = {
             name: "",
-            explanation: "",
+            description: "",
             weeklyNotes: "",
             deck: undefined,
             ranks: [0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -5648,10 +5648,11 @@ angular.module('app.services', [])
                                 }
                             }, {
                                 name: deckTier.name,
-                                explanation: deckTier.explanation,
+                                description: deckTier.description,
                                 weeklyNotes: deckTier.weeklyNotes,
                                 deckId: deckTier.deck.id,
-                                ranks: deckTier.ranks
+                                ranks: deckTier.ranks,
+                                tier: deckTier.tier
                             })
                             .$promise
                             .then(function (data) {
