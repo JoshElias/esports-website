@@ -5350,9 +5350,9 @@ angular.module('app.services', [])
                                     return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no deck attached");
                                 }
                                 
-                                // check explanation
-                                if (!sb.tiers[tierInc].decks[deckInc].explanation || !sb.tiers[tierInc].decks[deckInc].explanation.length) {
-                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no explanation");
+                                // check description
+                                if (!sb.tiers[tierInc].decks[deckInc].description || !sb.tiers[tierInc].decks[deckInc].description.length) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no description");
                                 }
                                 
                                 // check weekly notes
