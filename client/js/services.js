@@ -3772,8 +3772,8 @@ angular.module('app.services', [])
         return factory;
     }
 ])
-.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'AlertService', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
-    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, AlertService, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
+.factory('HearthstoneSnapshotBuilder', ['$state', '$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'AlertService', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
+    function ($state, $upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, AlertService, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
         var snapshot = {};
         var maxTrends = 12;
         var snapshotTypes = [
@@ -5223,9 +5223,11 @@ angular.module('app.services', [])
             
             // check snapshot before save
             sb.saveCheck = function (callback) {
+                console.log('save check');
                 async.series([
                     // check snapshot
                     function (cb) {
+                        console.log('check snapshot');
                         // check title
                         if (!sb.title || !sb.title.length) {
                             return cb("Snapshot doesn't have a title");
@@ -5260,9 +5262,12 @@ angular.module('app.services', [])
                         if (!sb.content || !sb.content.thoughts || !sb.content.thoughts.length) {
                             return cb("Snapshot does not have thoughts and observations");
                         }
+                        
+                        return cb();
                     },
                     // check authors
                     function (cb) {
+                        console.log('check authors');
                         // check that at least 1 author exists
                         if (!sb.authors || !sb.authors.length) {
                             return cb("Snapshot doesn't have any authors");
@@ -5271,21 +5276,24 @@ angular.module('app.services', [])
                         // check each author
                         for (var i = 0; i < sb.authors.length; i++) {
                             // check author expert classes
-                            if (!sb.authors[i].expertClasses || !sb.sb.authors[i].expertClasses.length) {
+                            if (!sb.authors[i].expertClasses || !sb.authors[i].expertClasses.length) {
                                 return cb("Author " + sb.authors[i].user.username + " has no expert class");
                             }
                             
                             // check description
-                            if (!sb.authors[i].description || !sb.sb.authors[i].description.length) {
+                            if (!sb.authors[i].description || !sb.authors[i].description.length) {
                                 return cb("Author " + sb.authors[i].user.username + " has no description");
                             }
                         }
                         
                         // TODO: verify all classes selected
                         // TODO: verify no duplicate classes used
+
+                        return cb();
                     },
                     // check tiers / decks
                     function (cb) {
+                        console.log('check tiers');
                         // make sure at least 1 tier
                         if (!sb.tiers || !sb.tiers.length) {
                             return cb("Snapshot doesn't have any tiers");
@@ -5342,13 +5350,18 @@ angular.module('app.services', [])
 
                             }
                         }
+
+                        return cb();
                     },
                     // verify matchups
                     function (cb) {
+                        console.log('check matchups');
                         // check that matchups count matches number of decks
                         if (!sb.validMatchups()) {
                             return cb("FATAL ERROR: Number of matchups do not match number of decks");
                         }
+
+                        return cb();
                     }
                 ], function (err) {
                     return callback(err);
@@ -5751,9 +5764,10 @@ angular.module('app.services', [])
                     // create snapshot
                     function (cb) {
                         if (sb.id) { return cb(null, sb.id); }
-                        Snapshot.create({
+                        console.log('snapshot: ', {
                             snapNum: sb.snapNum,
                             title: sb.title,
+                            snapshotType: sb.snapshotType,
                             slug: {
                                 url: sb.slug.url,
                                 linked: sb.slug.linked
@@ -5769,6 +5783,29 @@ angular.module('app.services', [])
                                 medium: sb.photoNames.medium || '',
                                 large: sb.photoNames.large || ''
                             },
+                            isCommentable: sb.isCommentable,
+                            isActive: sb.isActive
+                        });
+                        Snapshot.create({
+                            snapNum: sb.snapNum,
+                            title: sb.title,
+                            snapshotType: sb.snapshotType,
+                            slug: {
+                                url: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
+                            content: {
+                                intro: sb.content.intro,
+                                thoughts: sb.content.thoughts
+                            },
+                            createdDate: new Date().toISOString(),
+                            photoNames: {
+                                square: sb.photoNames.square || '',
+                                small: sb.photoNames.small || '',
+                                medium: sb.photoNames.medium || '',
+                                large: sb.photoNames.large || ''
+                            },
+                            isCommentable: sb.isCommentable,
                             isActive: sb.isActive
                         })
                         .$promise
@@ -5971,6 +6008,8 @@ angular.module('app.services', [])
                                 show: true
                             });
                         }
+                    } else {
+                        $state.go('app.admin.hearthstone.snapshots.list');
                     }
                     
                     console.log('done saving');
