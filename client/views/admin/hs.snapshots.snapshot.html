@@ -193,11 +193,11 @@
                     <div class="panel-body">
                         <label for="intro" class="col-sm-12 control-label">Introduction</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" rows="10"></textarea>
+                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" ng-change="snapshot.snapshotUpdated()" rows="10"></textarea>
                         </div>
                         <label for="thoughts" class="col-sm-12 control-label">Thoughts &amp; Observations</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" rows="10"></textarea>
+                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" ng-change="snapshot.snapshotUpdated()" rows="10"></textarea>
                         </div>
                     </div>
                 </div>
