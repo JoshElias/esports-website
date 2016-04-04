@@ -617,7 +617,7 @@ This is the template for hots-hero-talents.
 //talents: Gazlowe
 
 @include hots-hero-talents ( gazlowe, (
-    ( class: (extra-tnt, ark-reactor, x-tra-large-bombs, kwik-release-charge), pos: 0 ), // 0
+    ( class: (extra-tnt, ark-reaktor, x-tra-large-bombs, kwik-release-charge), pos: 0 ), // 0
     ( class: (scrap-o-matic-smelter, reduce-reuse-recycle), pos: 1 ), // -30
     ( class: (break-it-down), pos: 2 ), // -60
     ( class: (regeneration-master), pos: 3 ), // -90
@@ -667,8 +667,8 @@ This is the template for hots-hero-talents.
     ( class: (friend-or-foe), pos: 4 ), // -120
     ( class: (thirsting-blade), pos: 5 ), // -150
     ( class: (hunters-onslaught), pos: 6 ), // -180
-    ( class: (metamorphosis), pos: 7 ), // -210
-    ( class: (the-hunt), pos: 8 ), // -240
+    ( class: (metamorphosis, demonic-form), pos: 7 ), // -210
+    ( class: (the-hunt, nowhere-to-hide), pos: 8 ), // -240
     ( class: (elusive-strike), pos: 9 ), // -270
     ( class: (sixth-sense), pos: 10 ), // -300
     ( class: (fiery-brand), pos: 11 ), // -330
@@ -1292,7 +1292,7 @@ This is the template for hots-hero-talents.
     ( class: (press-the-advantage), pos: 1 ), // -30
     ( class: (dash), pos: 2 ), // -60
     ( class: (combat-tactician), pos: 3 ), // -90
-    ( class: (in-the-rythm, sizzlin-attacks), pos: 4 ), // -120
+    ( class: (in-the-rhythm, sizzlin-attacks), pos: 4 ), // -120
     ( class: (fully-loaded), pos: 5 ), // -150
     ( class: (the-bigger-they-are), pos: 6 ), // -180
     ( class: (master-assassin), pos: 7 ), // -210
