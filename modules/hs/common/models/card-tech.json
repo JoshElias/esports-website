@@ -52,6 +52,7 @@
     }
   ],
   "mixins": {
-    "Scope": true
+    "Scope": true,
+    "Timestamp" : true
   }
 }

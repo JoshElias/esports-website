@@ -117,6 +117,7 @@
       "acceptedRoles": ["$admin"],
       "predicate": "inactive",
       "requiredFields": ["isActive"]
-    }
+    },
+    "Timestamp" : true
   }
 }

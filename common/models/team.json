@@ -11,18 +11,23 @@
       "type": "number"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "abbreviation": {
       "type": "string"
     },
-    "gameId": {}
+    "gameId": {
+      "index": 1
+    }
   },
   "relations": {
     "game": {
@@ -64,10 +69,6 @@
       "predicate": "inactive",
       "requiredFields": ["isActive"]
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

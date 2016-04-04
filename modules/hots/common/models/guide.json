@@ -10,6 +10,7 @@
     "name": {
       "type": "string",
       "required": true,
+      "Validate": ["spam"],
       "Slug": true
     },
     "guideType": {
@@ -73,9 +74,6 @@
     "talentTiers": {
       "type": "object"
     },
-    "isCommentable": {
-      "type": "boolean"
-    },
     "synergy": {
       "type": [
         "string"
@@ -90,8 +88,11 @@
       "DestroyOnDelete": true
     },
     "maps": {
-      "type": "hasAndBelongsToMany",
-      "model": "map"
+      "type": "hasMany",
+      "model": "map",
+      "foreignKey": "guideId",
+      "through": "guideMap",
+      "DestroyOnDelete": true
     },
     "guideHeroes": {
       "type": "hasMany",
@@ -177,6 +178,18 @@
       "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "__create__guideTalents"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__maps"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__edit__maps"
     }
   ],
   "mixins": {
@@ -191,10 +204,6 @@
       "predicate": "private",
       "requiredFields": ["isPublic", "premium"]
     },
-    "TimeStamp": {
-      "createdAt": "createdDate",
-      "updatedAt": "updatedDate",
-      "required": true
-    }
+    "Timestamp" : true
   }
 }

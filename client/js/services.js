@@ -611,6 +611,8 @@ angular.module('app.services', [])
                 tierGuide['guideId'] = guide.id;
                 tierGuide['heroTierId'] = hero.id || "";
 
+                console.log(hero.guides);
+
                 //this is temporary until we decide to enable multiple guides per hero
                 if (hero.guides && hero.guides.length > 0 && hero.guides[0].id) {
                     _.each(hero.guides, function (tierGuide) {
@@ -830,7 +832,17 @@ angular.module('app.services', [])
                             }, forEachCb);
                         }, seriesCb);
                     }
-                ], cb);
+                ], function (err) {
+                    if (err) {
+                        exists['authors'].toWrite = [];
+                        exists['heroTiers'].toWrite = [];
+                        exists['guideTiers'].toWrite = [];
+
+                        return cb(err);
+                    }
+
+                    return cb(undefined);
+                });
             };
 
             return function (snapshot) { return new HOTSSnapshot(snapshot); }
@@ -1870,14 +1882,19 @@ angular.module('app.services', [])
                 return out;
             },
             setSlug: function (obj) {
-                var slug = obj.slugs[0];
-                var sl = {
-                    url: slug.slug,
-                    linked: slug.linked
+                var sl = {};
+
+                try {
+                    var slug = obj.slugs[0];
+                    sl = {
+                        url: slug.slug,
+                        linked: slug.linked
+                    };
+
+                    delete obj.slugs;
+                } finally {
+                    return sl;
                 }
-                delete obj.slugs;
-                
-                return sl;
             }
         };
     }])
@@ -1945,7 +1962,7 @@ angular.module('app.services', [])
     hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
-    hots.heroRows = [9, 8, 9, 8, 7, 6];
+    hots.heroRows = [9, 8, 9, 8, 9, 8];
     hots.mapRows = [3,4,3];
 
     hots.genStats = function () {
@@ -3339,7 +3356,7 @@ angular.module('app.services', [])
                                     {
                                         relation: "guides",
                                         scope: {
-                                            fields: ["id"],
+                                            fields: {id: true},
                                             where: heroGuideWhere
                                         }
                                     }

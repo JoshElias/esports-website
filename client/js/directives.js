@@ -1280,7 +1280,7 @@ angular.module('app.directives', ['ui.load'])
         controller: ['$scope', function ($scope) {
             $scope.loading = false;
             $scope.authors = [];
-            
+
             // pagination
             $scope.page = 1;
             $scope.perpage = 10;
@@ -1288,7 +1288,7 @@ angular.module('app.directives', ['ui.load'])
                 page: $scope.page,
                 perpage: $scope.perpage
             };
-            
+
             $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
                 var d = $q.defer();
                 updateAuthors(page, perpage, $scope.search, function (err, count) {
@@ -1305,7 +1305,7 @@ angular.module('app.directives', ['ui.load'])
                 var where = {
                     isProvider: true
                 };
-                
+
                 if(!_.isEmpty(search)) {
                     where['or'] = [
                         {
@@ -1332,7 +1332,7 @@ angular.module('app.directives', ['ui.load'])
                 var countOptions = {
                     where: where
                 };
-                
+
                 AjaxPagination.update(User, findOptions, countOptions, function (err, data, count) {
                     $scope.loading = false;
                     if (err) { return console.error('Pagination error:', err); }
@@ -1347,7 +1347,7 @@ angular.module('app.directives', ['ui.load'])
                     }
                 });
             }
-            
+
             updateAuthors($scope.page, $scope.perpage, $scope.search);
 
             // search
@@ -1528,7 +1528,7 @@ angular.module('app.directives', ['ui.load'])
             // pagination
             $scope.page = 1;
             $scope.perpage = 100;
-            
+
             var pOptions = {
                 page: $scope.page,
                 perpage: $scope.perpage
@@ -1577,7 +1577,7 @@ angular.module('app.directives', ['ui.load'])
                         order: 'username ASC'
                     }
                 };
-                
+
                 var countOptions = {
                     where: where
                 };
@@ -1597,7 +1597,7 @@ angular.module('app.directives', ['ui.load'])
                     }
                 });
             }
-            
+
             updateHeroes($scope.page, $scope.perpage, $scope.search);
 
             // search
@@ -2248,7 +2248,6 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
         controller: ['$scope', 'Util', function ($scope, Util) {
             //$scope.snapshot = $scope.$parent.snapshot;
-            var sl = $scope.snapshot.slugs[0];
 
             $scope.toggleLinked = function () {
                 $scope.snapshot.slugs[0].linked = !$scope.snapshot.slugs[0].linked;
@@ -2258,8 +2257,9 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.slugifyUrl = function (str) {
                 console.log(str);
-                console.log(sl);
-                if (!$scope.snapshot.slugs[0].linked)
+                console.log($scope.snapshot.slugs[0]);
+
+                if (!$scope.snapshot.slugs[0] && !$scope.snapshot.slugs[0].linked)
                     return;
 
                 $scope.snapshot.slugs[0].slug = slugify(str);
@@ -2313,7 +2313,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.openAuthorAdd = function () {
                 var dialog = box({
                     message: $compile('<snapshot-add-author></snapshot-add-author>')($scope),
-                    title: 'rekt'
+                    title: 'Add author'
                 });
 
                 dialog.modal('show');
@@ -2478,7 +2478,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.openHeroAdd = function (tier) {
                 var dialog = box({
                     message: $compile('<snapshot-add-hero></snapshot-add-hero>')($scope),
-                    title: 'rekt'
+                    title: 'Add hero'
                 });
 
                 dialog.modal('show');
@@ -2488,6 +2488,7 @@ angular.module('app.directives', ['ui.load'])
             };
 
             $scope.heroAdd = function (hero) {
+
                 var newHero = angular.copy(defaultHeroTier);
                 newHero['heroId'] = hero.id;
                 newHero['hero'] = hero;

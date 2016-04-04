@@ -12,10 +12,12 @@
     },
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     }
   },
   "relations": {
@@ -59,10 +61,6 @@
       "requiredFields": ["isActive"]
     },
     "DestroyOnDelete": true,
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

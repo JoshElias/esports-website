@@ -12,7 +12,8 @@
       "type": "number"
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "content": {
       "type": "string",
@@ -20,6 +21,7 @@
     },
     "title": {
       "type": "string",
+      "index": 1,
       "Validate": ["spam"]
     },
     "viewCount": {
@@ -31,7 +33,9 @@
     "votes": {
       "type": "object"
     },
-    "forumThreadId": {}
+    "forumThreadId": {
+      "index": 1
+    }
   },
   "relations": {
     "forumThread": {
@@ -95,10 +99,6 @@
       "predicate": "inactive",
       "requiredFields": ["isActive"]
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

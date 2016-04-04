@@ -21,17 +21,18 @@
     "referer": {
       "type": "string"
     },
-    "createdDate": {
-      "type": "date"
-    },
     "modelName": {
       "type": "string"
     },
     "propertyName": {
       "type": "string"
     },
-    "spamRegexId": {},
-    "userId": {}
+    "spamRegexId": {
+      "index": 1
+    },
+    "userId": {
+      "index": 1
+    }
   },
   "relations": {
     "user": {
@@ -71,6 +72,7 @@
     }
   ],
   "mixins": {
-    "Scope": true
+    "Scope": true,
+    "Timestamp": true
   }
 }

@@ -8,13 +8,14 @@
   },
   "properties": {
     "parentArticleId": {
-      "required": true
+      "required": true,
+      "index": 1
     },
     "childArticleId": {
-      "required": true
+      "required": true,
+      "index": 1
     }
   },
-  "validations": [],
   "relations": {
     "parentArticle": {
       "type": "belongsTo",

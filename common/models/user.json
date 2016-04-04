@@ -10,13 +10,16 @@
   "properties": {
     "isActive": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "index": 1
     },
     "firstName": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "lastName": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "photos": {
       "type": "object"
@@ -38,7 +41,8 @@
       "type": "boolean",
       "Filter": {
         "acceptedRoles": ["$owner", "$admin"]
-      }
+      },
+      "index": 1
     },
     "isAdmin": {
       "type": "boolean"
@@ -50,7 +54,8 @@
       "type": "date",
       "Filter": {
         "acceptedRoles": ["$owner", "$admin"]
-      }
+      },
+      "index": -1
     },
     "resetPasswordCode": {
       "type": "string",
@@ -72,11 +77,6 @@
     "activities": {
       "type": "hasMany",
       "model": "activity",
-      "foreignKey": "authorId"
-    },
-    "articles": {
-      "type": "hasMany",
-      "model": "article",
       "foreignKey": "authorId"
     },
     "comments": {
@@ -210,10 +210,6 @@
     "Filter": {
       "fieldFilters": true
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

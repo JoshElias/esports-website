@@ -10,6 +10,7 @@
     "title": {
       "type": "string",
       "required": true,
+      "index": 1,
       "Slug": true
     },
     "description": {
@@ -21,9 +22,6 @@
         "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
         "predicate": "premium"
       }
-    },
-    "createdDate": {
-        "type": "date"
     },
     "isCommentable": {
       "type": "boolean",
@@ -38,13 +36,15 @@
       ]
     },
     "themeName": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "viewCount": {
       "type": "number"
     },
     "isFeatured": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "premium": {
       "isPremium": {
@@ -60,14 +60,18 @@
       ]
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "__v": {
       "type": "number"
     },
-    "deckId": {},
-    "guideId": {},
-    "authorId": {}
+    "deckId": {
+      "index": 1
+    },
+    "guideId": {
+      "index": 1
+    }
   },
   "validations": [],
   "relations": {
@@ -76,11 +80,6 @@
       "model": "comment",
       "foreignKey": "articleId",
       "DestroyOnDelete": true
-    },
-    "author": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "authorId"
     },
     "relatedArticles": {
       "type": "hasMany",
@@ -154,7 +153,6 @@
       "property": "__edit__votes"
     }
   ],
-  "methods": {},
   "mixins": {
     "Validate": true,
     "DestroyOnDelete": true,
@@ -167,10 +165,6 @@
       "predicate": "inactive",
       "requiredFields": ["isActive", "premium"]
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

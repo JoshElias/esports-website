@@ -10,10 +10,12 @@
   "properties": {
     "title": {
       "type": "string",
+      "index": 1,
       "Validate": ["spam"]
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "__v": {
       "type": "number"
@@ -62,10 +64,6 @@
       "predicate": "inactive",
       "requiredFields": ["isActive"]
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

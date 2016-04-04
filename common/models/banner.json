@@ -11,7 +11,8 @@
       "type": "string"
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "description": {
       "type": "string"
@@ -23,10 +24,12 @@
       "type": "object"
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     }
   },
   "acls": [
@@ -55,10 +58,6 @@
       "predicate": "inactive",
       "requiredFields": ["isActive"]
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

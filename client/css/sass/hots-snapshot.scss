@@ -1,5 +1,5 @@
-@import '../../../../client/css/sass/ts-colors';
-@import '../../../../client/css/sass/ts-mixins';
+@import 'ts-colors';
+@import 'ts-mixins';
 
 // Description: styles for the hots meta snapshot only. WARNING!! Some styles may be affected by deck styles from the hs-deck.scss file.
 
@@ -693,7 +693,6 @@
 	z-index: 5;
 
 
-
 	//filters on the hero
 
 	&.filter-role {
@@ -781,7 +780,6 @@
 
 	&.filter-specialist {
 		background-position: -1px -148px;
-		margin-right: 30px;
 		//            position: absolute;
 		//            top:8px;
 		//            right: 230px;

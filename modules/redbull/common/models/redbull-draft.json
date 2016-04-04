@@ -216,10 +216,6 @@
       "predicate": "official",
       "requiredFields": ["isOfficial"]
     },
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }

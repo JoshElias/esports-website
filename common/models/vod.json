@@ -9,7 +9,8 @@
   "properties": {
     "displayDate": {
       "type": "date",
-      "required": true
+      "required": true,
+      "index": -1
     },
     "youtubeId": {
       "type": "string",
@@ -50,10 +51,6 @@
   "mixins": {
     "Validate": true,
     "Scope": true,
-    "TimeStamp" : {
-      "createdAt" : "createdDate",
-      "updatedAt" : "updatedDate",
-      "required" : true
-    }
+    "Timestamp" : true
   }
 }
