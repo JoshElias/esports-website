@@ -1,20 +1,4 @@
 module.exports = {
-  "_meta": {
-    "sources": [
-      "loopback/common/models",
-      "loopback/server/models",
-      "../../common/models",
-      "./../models",
-      "../../node_modules/loopback-component-passport/lib/models",
-      "../../modules/redbull/common/models"
-    ],
-    "mixins": [
-      "loopback/common/mixins",
-      "loopback/server/mixins",
-      "../common/mixins",
-      "./mixins"
-    ]
-  },
   "AccessToken": {
     "dataSource": "mongodb",
     "public": false
@@ -57,14 +41,6 @@ module.exports = {
     "options": {
       "emailVerificationRequired": true
     }
-  },
-  "topic": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "post": {
-    "dataSource": "mongodb",
-    "public": true
   },
   "game": {
     "dataSource": "mongodb",
@@ -202,12 +178,16 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
-  "deckCard": {
-    "dataSource":"mongodb",
+  "overwatchSnapshot": {
+    "dataSource": "mongodb",
     "public": true
   },
-  "container": {
-    "dataSource":"s3",
+  "overwatchSnapshotHeroTier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "deckCard": {
+    "dataSource":"mongodb",
     "public": true
   },
   "image": {
@@ -221,6 +201,10 @@ module.exports = {
     "guideHero" : {
         "dataSource": "mongodb",
         "public": true
+    },
+    "guideMap" : {
+      "dataSource": "mongodb",
+      "public": true
     },
     "guideTalent" : {
         "dataSource": "mongodb",
@@ -263,12 +247,12 @@ module.exports = {
         "public": true
     },
     "archivedDraftCard": {
-      "dataSource": "tournament-mongo",
-      "public": true
+        "dataSource": "tournament-mongo",
+        "public": true
     },
     "tournamentDeckCard": {
-      "dataSource": "tournament-mongo",
-      "public": true
+        "dataSource": "tournament-mongo",
+        "public": true
     },
     "spamRegex": {
         "dataSource": "mongodb",
@@ -285,5 +269,21 @@ module.exports = {
     "twitchfeeds": {
         "dataSource": "mongodb",
         "public": true
-    }
-}
+    },
+    "hotsSnapshot": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "heroTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "guideTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+  "slug": {
+    "dataSource": "mongodb",
+    "public": true
+  }
+};

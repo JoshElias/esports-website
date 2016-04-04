@@ -4,9 +4,7 @@
       "loopback/common/models",
       "loopback/server/models",
       "../common/models",
-      "./models",
-      "../node_modules/loopback-component-passport/lib/models",
-      "../../modules/redbull/common/models"
+      "./models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -57,14 +55,6 @@
     "options": {
       "emailVerificationRequired": true
     }
-  },
-  "topic": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "post": {
-    "dataSource": "mongodb",
-    "public": true
   },
   "game": {
     "dataSource": "mongodb",
@@ -202,12 +192,16 @@
     "dataSource": "mongodb",
     "public": true
   },
-  "deckCard": {
-    "dataSource":"mongodb",
+  "overwatchSnapshot": {
+    "dataSource": "mongodb",
     "public": true
   },
-  "container": {
-    "dataSource":"s3",
+  "overwatchSnapshotHeroTier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "deckCard": {
+    "dataSource":"mongodb",
     "public": true
   },
   "image": {
@@ -219,6 +213,10 @@
     "public": true
   },
   "guideHero" : {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "guideMap" : {
     "dataSource": "mongodb",
     "public": true
   },
@@ -285,5 +283,21 @@
     "twitchfeeds": {
         "dataSource": "mongodb",
         "public": true
-    }
+    },
+    "hotsSnapshot": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "heroTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "guideTier": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+  "slug": {
+    "dataSource": "mongodb",
+    "public": true
+  }
 }

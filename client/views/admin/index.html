@@ -48,9 +48,12 @@
                     <i class="fa fa-fw fa-angle-down"></i>
                 </span>
                 <i class="fa fa-bolt m-r-sm"></i>
-                <span>HotS</span>
+                <span>Hots</span>
             </a>
             <ul class="nav nav-sub">
+                <li ng-class="{active:$state.includes('app.admin.hots.snapshots')}">
+                    <a ui-sref="app.admin.hots.snapshots.list">Snapshots</a>
+                </li>
                 <li ng-class="{active:$state.includes('app.admin.hots.heroes')}">
                     <a ui-sref="app.admin.hots.heroes.list">Heroes</a>
                 </li>
@@ -77,6 +80,9 @@
                 <span>Overwatch</span>
             </a>
             <ul class="nav nav-sub">
+                <li ng-class="{active:$state.includes('app.admin.overwatch.snapshots')}">
+                    <a ui-sref="app.admin.overwatch.snapshots.list">Snapshots</a>
+                </li>
                 <li ng-class="{active:$state.includes('app.admin.overwatch.heroes')}">
                     <a ui-sref="app.admin.overwatch.heroes.list">Heroes</a>
                 </li>

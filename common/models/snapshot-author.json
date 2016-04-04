@@ -15,10 +15,19 @@
         "string"
       ]
     },
-    "snapshotId": {},
-    "authorId": {}
+    "snapshotId": {
+      "index": 1
+    },
+    "hotsSnapshotId": {
+      "index": 1
+    },
+    "overwatchSnapshotId": {
+      "index": 1
+    },
+    "authorId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "user": {
       "type": "belongsTo",
@@ -29,6 +38,16 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
+    },
+    "hotsSnapshot": {
+      "type": "belongsTo",
+      "model": "hotsSnapshot",
+      "foreignKey": "hotsSnapshotId"
+    },
+    "owSnapshot": {
+      "type": "belongsTo",
+      "model": "owSnapshot",
+      "foreignKey": "overwatchSnapshotId"
     }
   },
   "acls": [
@@ -56,5 +75,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

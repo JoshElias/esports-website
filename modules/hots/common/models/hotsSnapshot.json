@@ -1,0 +1,83 @@
+{
+  "name": "hotsSnapshot",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "snapNum": {
+      "type": "number"
+    },
+    "title": {
+      "type": "string",
+      "Slug": true
+    },
+    "intro": {
+        "type": "string"
+    },
+    "thoughts": {
+        "type": "string"
+    },
+    "isActive": {
+        "type": "boolean"
+    },
+    "isCommentable": {
+        "type": "boolean",
+        "default": true
+    }
+  },
+  "validations": [],
+  "relations": {
+      "heroTiers": {
+          "type": "hasMany",
+          "model": "heroTier",
+          "foreignKey": "snapshotId"
+      },
+      "votes": {
+        "type": "hasMany",
+        "model": "vote",
+        "foreignKey": "hotsSnapshotId"
+      },
+      "authors": {
+          "type": "hasMany",
+          "model": "snapshotAuthor",
+          "foreignKey": "hotsSnapshotId"
+      },
+      "comments": {
+          "type": "hasMany",
+          "model": "comment",
+          "foreignKey": "hotsSnapshotId"
+      }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "mixins": {
+    "Slug": true,
+    "Timestamp": true
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "name": "overwatchSnapshot",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "$slug": true
+  },
+  "properties": {
+    "snapNum": {
+      "type": "number"
+    },
+    "slug": {
+        "url": {
+          "type": "string",
+          "validators": [
+            "unique"
+          ]
+        },
+        "linked": {
+          "type": "boolean"
+        }
+    },
+    "photoNames": {
+      "type": "object"
+    },
+    "title": {
+      "type": "string",
+      "$slug": true
+    },
+    "intro": {
+        "type": "string"
+    },
+    "thoughts": {
+        "type": "string"
+    },
+    "isActive": {
+        "type": "boolean"
+    },
+    "createdDate": {
+        "type": "date"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "authors": {
+      "type": "hasMany",
+      "model": "snapshotAuthor",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "heroTiers": {
+      "type": "hasMany",
+      "model": "overwatchSnapshotHeroTier",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "overwatchSnapshotId",
+      "isChild": true
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

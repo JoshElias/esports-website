@@ -10,13 +10,16 @@
   "properties": {
     "isActive": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "index": 1
     },
     "firstName": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "lastName": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "photos": {
       "type": "object"
@@ -29,10 +32,17 @@
     },
     "subscription": {
       "type": "object",
-      "default": {}
+      "default": {},
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "isProvider": {
-      "type": "boolean"
+      "type": "boolean",
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      },
+      "index": 1
     },
     "isAdmin": {
       "type": "boolean"
@@ -41,10 +51,17 @@
       "type": "number"
     },
     "lastLoginDate": {
-      "type": "date"
+      "type": "date",
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      },
+      "index": -1
     },
     "resetPasswordCode": {
-      "type": "string"
+      "type": "string",
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "__v": {
       "type": "number"
@@ -56,16 +73,10 @@
   "hidden": [
     "password"
   ],
-  "validations": [],
   "relations": {
     "activities": {
       "type": "hasMany",
       "model": "activity",
-      "foreignKey": "authorId"
-    },
-    "articles": {
-      "type": "hasMany",
-      "model": "article",
       "foreignKey": "authorId"
     },
     "comments": {
@@ -194,5 +205,11 @@
       "property": "updateAttributes"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Filter": {
+      "fieldFilters": true
+    },
+    "Timestamp" : true
+  }
 }

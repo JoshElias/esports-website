@@ -1,0 +1,108 @@
+{
+  "name": "overwatchHero",
+  "plural": "overwatchHeroes",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "heroName": {
+      "type": "string",
+      "required": true
+    },
+    "heroRole": {
+      "type": "string",
+      "required": true
+    },
+    "realName": {
+      "type": "string",
+      "required": true
+    },
+    "age": {
+      "type": "string",
+      "required": true
+    },
+    "occupation": {
+      "type": "string",
+      "required": true
+    },
+    "location": {
+      "type": "string",
+      "required": true
+    },
+    "organization": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "youtubeId": {
+      "type": "string",
+      "required": true,
+      "Validate": ["youtubeId"]
+    },
+    "className": {
+      "type": "string",
+      "required": true
+    },
+    "orderNum": {
+      "type": "number",
+      "required": true
+    },
+    "isActive": {
+      "type": "boolean",
+      "required": true
+    }
+  },
+  "relations": {
+    "overwatchAbilities": {
+      "type": "hasMany",
+      "model": "overwatchAbility",
+      "foreignKey": "heroId"
+    },
+    "heroTier": {
+        "type": "hasMany",
+        "model": "overwatchSnapshotHeroTiers",
+        "foreignKey": "overwatchHeroId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "mixins": {
+    "Validate": true,
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "Timestamp" : true
+  }
+}

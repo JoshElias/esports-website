@@ -51,7 +51,6 @@
     "authorId": {},
     "redbullDraftSettingsId": {}
   },
-  "validations": [],
   "relations": {
     "cards": {
       "type": "hasMany",
@@ -63,19 +62,19 @@
       "type": "hasMany",
       "model": "redbullPackCard",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "packs": {
       "type": "hasMany",
       "model": "redbullPack",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "decks": {
       "type": "hasMany",
       "model": "redbullDeck",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "archivedCards": {
       "type": "hasMany",
@@ -165,7 +164,6 @@
       "permission": "ALLOW",
       "property": "submitDecks"
     },
-
     {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
@@ -210,5 +208,14 @@
     }
 
   ],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "official",
+      "requiredFields": ["isOfficial"]
+    },
+    "Timestamp" : true
+  }
 }

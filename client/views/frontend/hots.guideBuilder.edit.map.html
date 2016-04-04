@@ -107,8 +107,8 @@
 </div>
 <div class="container m-b-lg" ng-show="step === 4">
     <div class="guide-text map-discussion"></div>
-    <div class="db-section m-b-md" 
-         ng-repeat="content in guide.content | orderBy: 'orderNum' track by $index ">
+    <div class="db-section m-b-md"
+         ng-repeat="content in guide.content | orderBy: 'orderNum' track by $index">
         <div class="gb-content-title">
             <div class="gb-chapter-carets">
                 <a href="#" class="gb-content-down m-r-xs" ng-class="{ 'disabled': $index == (guide.content.length - 1) }" ng-show="guide.content.length > 1" ng-click="guide.moveContentDown(content)"><i class="fa fa-caret-down"></i></a>

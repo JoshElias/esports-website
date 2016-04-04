@@ -30,8 +30,6 @@
       "type": "boolean"
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -80,5 +78,7 @@
       "permission": "ALLOW",
       "accessType": "WRITE"
     }],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

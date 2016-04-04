@@ -1,0 +1,62 @@
+{
+  "name": "ability",
+  "plural": "abilities",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "abilityType": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "className": {
+      "type": "string"
+    },
+    "orderNum": {
+      "type": "number"
+    },
+    "healing": {
+      "type": "number"
+    },
+    "damage": {
+      "type": "number"
+    },
+    "cooldown": {
+      "type": "number"
+    },
+    "mana": {
+      "type": "number"
+    },
+    "charNames": {
+      "type": []
+    },
+    "heroId": {}
+  },
+  "validations": [],
+  "relations": {
+    "hero": {
+      "type": "belongsTo",
+      "model": "hero",
+      "foreignKey": "heroId"
+    },
+    "talents": {
+      "type": "hasMany",
+      "model": "talent",
+      "foreignKey": "abilityId",
+      "through": "heroTalent",
+      "keyThrough": "talentId"
+    }
+  },
+  "mixins": {
+    "Scope": true,
+    "Timestamp" : true
+  }
+}

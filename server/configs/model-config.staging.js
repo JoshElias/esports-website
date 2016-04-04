@@ -4,9 +4,7 @@ module.exports = {
       "loopback/common/models",
       "loopback/server/models",
       "../../common/models",
-      "./../models",
-      "../../node_modules/loopback-component-passport/lib/models",
-      "../../modules/redbull/common/models"
+      "./../models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -57,14 +55,6 @@ module.exports = {
     "options": {
       "emailVerificationRequired": true
     }
-  },
-  "topic": {
-    "dataSource": "mongodb",
-    "public": true
-  },
-  "post": {
-    "dataSource": "mongodb",
-    "public": true
   },
   "game": {
     "dataSource": "mongodb",
@@ -202,88 +192,104 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
-    "deckCard": {
-        "dataSource":"mongodb",
-        "public": true
-    },
+  "overwatchSnapshot": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "overwatchSnapshotHeroTier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "deckCard": {
+      "dataSource":"mongodb",
+      "public": true
+  },
   "container": {
     "dataSource":"s3",
     "public": true
   },
-    "image": {
-        "dataSource":"s3",
-        "public": true
-    },
-    "articleArticle" : {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "guideHero" : {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "guideTalent" : {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "heroTalent" : {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "ability" : {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "redbullExpansion": {
-        "dataSource": "tournament-mongo",
-        "public": true
-    },
-    "redbullRarityChance": {
-        "dataSource": "tournament-mongo",
-        "public": true
-    },
-    "redbullPack": {
-        "dataSource": "tournament-mongo",
-        "public": true
-    },
-    "redbullDraft": {
-        "dataSource": "tournament-mongo",
-        "public": true
-    },
-    "redbullDraftSettings": {
-        "dataSource": "tournament-mongo",
-        "public": true
-    },
-    "redbullPackCard": {
-        "dataSource": "tournament-mongo",
-        "public": true
-    },
-    "redbullDeck": {
-        "dataSource": "tournament-mongo",
-        "public": true
-    },
-    "archivedDraftCard": {
+  "image": {
+      "dataSource":"s3",
+      "public": true
+  },
+  "articleArticle" : {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "guideHero" : {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "guideMap" : {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "guideTalent" : {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "heroTalent" : {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "ability" : {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "redbullExpansion": {
       "dataSource": "tournament-mongo",
       "public": true
-    },
-    "tournamentDeckCard": {
+  },
+  "redbullRarityChance": {
       "dataSource": "tournament-mongo",
       "public": true
-    },
-    "spamRegex": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "spamOffence": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "twitterfeeds": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "twitchfeeds": {
-        "dataSource": "mongodb",
-        "public": true
-    }
+  },
+  "redbullPack": {
+      "dataSource": "tournament-mongo",
+      "public": true
+  },
+  "redbullDraft": {
+      "dataSource": "tournament-mongo",
+      "public": true
+  },
+  "redbullDraftSettings": {
+      "dataSource": "tournament-mongo",
+      "public": true
+  },
+  "redbullPackCard": {
+      "dataSource": "tournament-mongo",
+      "public": true
+  },
+  "redbullDeck": {
+      "dataSource": "tournament-mongo",
+      "public": true
+  },
+  "archivedDraftCard": {
+    "dataSource": "tournament-mongo",
+    "public": true
+  },
+  "tournamentDeckCard": {
+    "dataSource": "tournament-mongo",
+    "public": true
+  },
+  "spamRegex": {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "spamOffence": {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "twitterfeeds": {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "twitchfeeds": {
+      "dataSource": "mongodb",
+      "public": true
+  },
+  "sluggable": {
+    "dataSource": "mongodb",
+    "public": true
+  }
 }

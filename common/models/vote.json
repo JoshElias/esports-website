@@ -10,17 +10,31 @@
     "direction": {
       "type": "number"
     },
-    "createdDate": {
-      "type": "date"
+    "authorId": {
+      "index": 1
     },
-    "authorId": {},
-    "articleId": {},
-    "guideId": {},
-    "deckId": {},
-    "snapshotId": {},
-    "commentId": {}
+    "articleId": {
+      "index": 1
+    },
+    "guideId": {
+      "index": 1
+    },
+    "deckId": {
+      "index": 1
+    },
+    "snapshotId": {
+      "index": 1
+    },
+    "commentId": {
+      "index": 1
+    },
+    "overwatchSnapshotId": {
+      "index": 1
+    },
+    "hotsSnapshotId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -46,6 +60,11 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
+    },
+    "owSnapshot": {
+      "type": "belongsTo",
+      "model": "overwatchSnapshot",
+      "foreignKey": "overwatchSnapshotId"
     }
   },
   "acls": [
@@ -93,5 +112,8 @@
       "property": "hasVoted"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Timestamp" : true
+  }
 }

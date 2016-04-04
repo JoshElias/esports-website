@@ -1,11 +1,12 @@
 var async = require("async");
+var Promise = require("bluebird");
 var uuid = require("node-uuid");
 var loopback = require("loopback");
 var bcrypt = require('bcrypt-nodejs');
 var request = require("request");
 
-var utils = require("./../../lib/utils");
-var subscription = require("./../../lib/subscription");
+var subscription = require("../../server/lib/subscription");
+
 
 module.exports = function(User) {
 
@@ -28,19 +29,11 @@ module.exports = function(User) {
 
     
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
+        ctx.method.skipFilter = true;
         ctx.req.logIn(ctx.result.toJSON().user, function (err) {
             next(err);
         });
     });
-
-
-    var filter = {
-        fieldNames: ["subscription", "isProvider", "isAdmin", "lastLoginDate",
-            "resetPasswordCode", "newEmail", "email", "newEmailCode"],
-        acceptedRoles: ["$owner", "$admin"]
-    };
-    User.observe("loaded", utils.filterFields(filter));
-
 
 
     // Handle user registeration
@@ -147,7 +140,7 @@ module.exports = function(User) {
          * @param {Error} err
          */
         User.confirm = function (uid, token, redirect, fn) {
-            fn = fn || utils.createPromiseCallback();
+            fn = fn || new Promise();
 
             User.findOne({where:{id:uid, verificationToken:token}}, function (err, user) {
                 if (err) return fn(err);
@@ -252,7 +245,7 @@ module.exports = function(User) {
 
     
     User.changePassword = function (email, password, token, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         User.findOne({where: {email: email}}, function (err, user) {
             if (err) {
@@ -291,7 +284,7 @@ module.exports = function(User) {
     };
 
     User.resetEmail = function (email, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
         var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
         User.getCurrent(function(err, user) {
@@ -351,7 +344,7 @@ module.exports = function(User) {
 
     
     User.changeEmail = function (uid, token, email, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         var AccessToken = User.app.models.AccessToken;
 
@@ -456,31 +449,51 @@ module.exports = function(User) {
 
 
 
-    User.isInRoles = function(uid, roleNames, options, cb) {
-        if (cb === undefined && typeof options === 'function') {
-            cb = options;
+    User.isInRoles = function(uid, roleNames, req, options, finalCb) {
+        if (finalCb === undefined && typeof options === "function") {
+            finalCb = options;
             options = undefined;
         }
 
-        cb = cb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
-        var loopbackContext = loopback.getCurrentContext();
 
 
         // Check for the roles we already have
         var isInRoles = {};
-        if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
-            if (typeof ctx.active.http.req.roles !== "object") {
-                ctx.active.http.req.roles = {};
+        if (req) {
+
+            // Add generic static/dynamic roles
+            if (typeof req.roles !== "object") {
+                req.roles = {};
+            }
+            if(typeof req.roles[uid] !== "object") {
+                req.roles[uid] = {};
             }
 
-            var currentRoles = loopbackContext.active.http.req.roles[uid];
+            var currentRoles = req.roles[uid];
             for (var key in currentRoles) {
                 isInRoles[key] = currentRoles[key];
             }
+
+            // Add the owner status if applicable
+            if (req.ownedModels !== "object") {
+                req.ownedModels = {};
+            }
+            if (req.ownedModels[uid] !== "object") {
+                req.ownedModels[uid] = {};
+            }
+
+            var ownedModels = req.ownedModels[uid];
+            if(options && typeof options.modelId === "string") {
+                if(typeof ownedModels[options.modelId] !== "undefined") {
+                    isInRoles["$owner"] = ownedModels[options.modelId];
+                }
+            }
         }
+
         
         // Re evaluate isInRole report
         if (Object.keys(isInRoles).length > 0) {
@@ -501,8 +514,8 @@ module.exports = function(User) {
             isInRoles.all = true;
             isInRoles.none = true;
         }
-        
-        async.eachSeries(roleNames, function (roleName, eachCb) {
+
+        return async.each(roleNames, function (roleName, eachCb) {
 
             if (typeof isInRoles[roleName] !== "undefined") {
                 return eachCb();
@@ -524,33 +537,45 @@ module.exports = function(User) {
             // Handle the $owner role specially.
             if (roleName === "$owner") {
 
-                if (typeof options !== "object") {
+                if (typeof options !== "object" || !options.modelClass || !options.modelId) {
                     return updateIsInRoles(undefined, false);
                 }
 
                 var modelClass = loopback.getModel(options.modelClass);
-                return Role.isOwner(modelClass, options.modelId, uid, updateIsInRoles);
+                return Role.isOwner(modelClass, options.modelId, uid, function (err, isRole) {
+                    if (err) return eachCb(err);
+
+                    if (req) {
+                        req.ownedModels[uid][options.modelId] = isRole;
+                    }
+                    return updateIsInRoles(undefined, isRole);
+                });
             }
 
             // Handle all other roles
-            return Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, updateIsInRoles);
+            return Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, function (err, isRole) {
+                if (err) return eachCb(err);
+
+
+                if (req) {
+                    req.roles[uid][roleName] = isRole;
+                }
+                return updateIsInRoles(undefined, isRole);
+            })
 
 
         }, function (err) {
-            if (err) return cb(err);
+            if (err) return finalCb(err);
 
-            if (loopbackContext && loopbackContext.active === "object" && Object.keys(loopbackContext.active).length > 0) {
-                loopbackContext.active.http.req.roles[uid] = isInRoles;
-            }
-            cb(err, isInRoles);
+            return finalCb(err, isInRoles);
         });
 
-        return cb.promise;
+        return finalCb.promise;
     };
 
 
     User.assignRoles = function (uid, roleNames, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
@@ -621,7 +646,7 @@ module.exports = function(User) {
 
 
     User.revokeRoles = function (uid, roleNames, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
@@ -689,7 +714,7 @@ module.exports = function(User) {
 
 
     User.isLinked = function (providers, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         var UserIdentity = User.app.models.userIdentity;
         var ctx = loopback.getCurrentContext();
@@ -745,7 +770,7 @@ module.exports = function(User) {
 
 
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         User.getCurrent(function (err, user) {
             if (err) return cb(err);
@@ -757,7 +782,7 @@ module.exports = function(User) {
 
 
     User.setSubscriptionCard = function (cctoken, cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         User.getCurrent(function (err, user) {
             if (err) return cb(err);
@@ -768,7 +793,7 @@ module.exports = function(User) {
     };
 
     User.cancelSubscription = function (cb) {
-        cb = cb || utils.createPromiseCallback();
+        cb = cb || new Promise();
 
         User.getCurrent(function (err, user) {
             if (err) return cb(err);
@@ -779,14 +804,18 @@ module.exports = function(User) {
     };
 
     
-    
+
+
+
     User.remoteMethod(
         'isInRoles',
         {
             description: "Checks if a user is of role",
             accepts: [
                 {arg: 'uid', type: 'string', required:true, http: {source: 'query'}},
-                {arg: 'roleNames', type: 'array', required:true, http: {source: 'query'}}
+                {arg: 'roleNames', type: 'array', required:true, http: {source: 'query'}},
+                {arg: 'req', type: 'object', description:'http request object. Not read from client', required:true, http: {source: 'req'}},
+                {arg: 'options', type: 'object', http: {source: 'query'}}
             ],
             returns: {arg: 'isInRoles', type: 'object'},
             http: {verb: 'get'},

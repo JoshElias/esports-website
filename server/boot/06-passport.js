@@ -2,7 +2,6 @@ var loopback = require("loopback");
 var passport = require("passport");
 var async = require("async");
 var crypto = require("crypto");
-var config = require("./../../common/config");
 
 var PassportConfigurator = require("loopback-component-passport").PassportConfigurator;
 

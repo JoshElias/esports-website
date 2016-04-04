@@ -1,0 +1,69 @@
+{
+  "name": "forumCategory",
+  "plural": "forumCategories",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "title": {
+      "type": "string",
+      "index": 1,
+      "Validate": ["spam"]
+    },
+    "isActive": {
+      "type": "boolean",
+      "index": 1
+    },
+    "__v": {
+      "type": "number"
+    }
+  },
+  "relations": {
+    "forumThreads": {
+      "type": "hasMany",
+      "model": "forumThread",
+      "foreignKey": "forumCategoryId",
+      "DestroyOnDelete": true
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Authored": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "Timestamp" : true
+  }
+}
