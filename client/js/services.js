@@ -3815,7 +3815,7 @@ angular.module('app.services', [])
             },
             votes: 0,
             isCommentable: true,
-            active: false,
+            isActive: false,
             loading: false,
             loaded: false,
             saving: false,
@@ -5779,7 +5779,7 @@ angular.module('app.services', [])
                             slug: sb.slug,
                             content: sb.content,
                             photoNames: sb.photoNames,
-                            isActive: sb.active
+                            isActive: sb.isActive
                         })
                         .$promise
                         .then(function (data) {
