@@ -1143,8 +1143,7 @@ angular.module('app.controllers', ['ngCookies'])
                             createdDate: true,
                             authorId: true,
                             playerClass: true,
-                            heroName: true,
-                            slug: true
+                            heroName: true
                         },
                         include: [
                             {
@@ -1164,6 +1163,12 @@ angular.module('app.controllers', ['ngCookies'])
                                         direction: true
                                     }
                                 }
+                            },
+                            {
+                                relation: 'slugs',
+                                scope: {
+                                    fields: ['slug', 'linked']
+                                }
                             }
                         ]
                     }
@@ -1171,6 +1176,8 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (decks) {
                     _.each(decks, function(deck) {
+                        // init template vals
+                        deck.slug = Util.setSlug(deck);
                         deck.voteScore = Util.tally(deck.votes, 'direction');
                     });
 
@@ -1199,7 +1206,7 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($event.preventDefault) $event.preventDefault();
                 $event.cancelBubble = true;
                 $event.returnValue = false;
-                $state.transitionTo('app.hs.deckBuilder.edit', { slug: deck.slug });
+                $state.transitionTo('app.hs.deckBuilder.edit', { slug: deck.slug.url });
             };
 
             // delete deck
@@ -1280,8 +1287,7 @@ angular.module('app.controllers', ['ngCookies'])
                             createdDate: true,
                             premium: true,
                             authorId: true,
-                            guideType: true,
-                            slug: true
+                            guideType: true
                         },
                         include: [
                             {
@@ -1327,12 +1333,20 @@ angular.module('app.controllers', ['ngCookies'])
                                 scope: {
                                     fields: ['authorId', 'direction']
                                 }
+                            },
+                            {
+                                relation: 'slugs',
+                                scope: {
+                                    fields: ['slug', 'linked']
+                                }
                             }
                         ]
                     }
                 }).$promise
                 .then(function (guides) {
                     _.each(guides, function(guide) {
+                        // init template values
+                        guide.slug = Util.setSlug(guide);
                         guide.voteScore = Util.tally(guide.votes, 'direction');
                     });
 
@@ -1440,9 +1454,9 @@ angular.module('app.controllers', ['ngCookies'])
                 $event.returnValue = false;
 
                 if (guide.guideType == 'hero') {
-                    $state.transitionTo('app.hots.guideBuilder.edit.hero', { slug: guide.slug });
+                    $state.transitionTo('app.hots.guideBuilder.edit.hero', { slug: guide.slug.url });
                 } else {
-                    $state.transitionTo('app.hots.guideBuilder.edit.map', { slug: guide.slug });
+                    $state.transitionTo('app.hots.guideBuilder.edit.map', { slug: guide.slug.url });
                 }
             };
 
@@ -10947,8 +10961,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService', 'CrudMan',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService, CrudMan) {
+    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService','Util',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService, Util) {
 //            console.log('deckCardMulligans:', deckCardMulligans);
             
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
@@ -11837,7 +11851,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.deckSubmitting = false;
 //                    console.log('results[0].slug:', results[0].slug);
                     $scope.app.settings.deck = null;
-                    $state.transitionTo('app.hs.decks.deck', { slug: Util.slugify(updatedDeck.name) });
+                    $state.transitionTo('app.hs.decks.deck', { slug: Util.slugify(deck.name) });
                 });
             }
         }
@@ -17998,8 +18012,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
           }
     ])
-    .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util', 'userRoles', 'EventService', 'AlertService', 'Vote',
-        function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util, userRoles, EventService, AlertService, Vote) {
+    .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util', 'userRoles', 'EventService', 'AlertService', 'Vote', 'GuideMap',
+        function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util, userRoles, EventService, AlertService, Vote, GuideMap) {
 
 			$scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -18158,10 +18172,29 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.guide.voteScore = 1;
 //                    console.log('saving $scope.guide:', $scope.guide);
                     
+                    var cleanMapGuide = Util.cleanObj($scope.guide, [
+                        'name',
+                        'guideType',
+                        'description',
+                        'youtubeId',
+                        'createdDate',
+                        'isCommentable',
+                        'premium',
+                        'isFeatured',
+                        'viewCount',
+                        'isPublic',
+                        'against',
+                        'content',
+                        'talentTiers',
+                        'synergy',
+                        'maps'
+                    ]);
+                    
+                    console.log('cleanMapGuide:', cleanMapGuide);
                     var guideCreated;
                     async.waterfall([
                         function (waterCB) {
-                            Guide.create($scope.guide)
+                            Guide.create(cleanMapGuide)
                             .$promise
                             .then(function (createdGuide) {
                                 guideCreated = createdGuide;
@@ -18172,12 +18205,12 @@ angular.module('app.controllers', ['ngCookies'])
                             });
                         },
                         function(waterCB) {
-                            Guide.maps.link({
-                                id: guideCreated.id,
-                                fk: $scope.maps[0].id
-                            }, null)
+                            GuideMap.create({
+                                guideId: guideCreated.id,
+                                mapId: cleanMapGuide.maps[0].id
+                            })
                             .$promise
-                            .then(function (mapLinkData) {
+                            .then(function (newGuideMap) {
                                 return waterCB();
                             })
                             .catch(function (err) {
@@ -18209,6 +18242,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 lbErr: err
                             });
                         }
+                        
                         $scope.app.settings.guide = null;
                         $state.go('app.hots.guides.guide', { slug: Util.slugify(guideCreated.name) });
                     });
@@ -18632,8 +18666,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'userRoles', 'EventService', 'AlertService', 'Util',
-        function ($scope, $state, $window, HOTS, GuideBuilder,  dataGuide, dataHeroes, dataMaps, LoginModalService, User, Guide, userRoles, EventService, AlertService, Util) {
+    .controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'userRoles', 'EventService', 'AlertService', 'Util', 'GuideMap', 'Map',
+        function ($scope, $state, $window, HOTS, GuideBuilder,  dataGuide, dataHeroes, dataMaps, LoginModalService, User, Guide, userRoles, EventService, AlertService, Util, GuideMap, Map) {
 
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
@@ -18771,7 +18805,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-                var guideSlug;
 //                console.log('saving guide: ', $scope.guide);
                 if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                     return false;
@@ -18781,15 +18814,13 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.saveGuide();
                     });
                 } else {
-                    $scope.guide.slug = Util.slugify($scope.guide.name);
                     $scope.fetching = true;
 
-                    async.parallel([
+                    async.series([
                         function(paraCB){
                             Guide.upsert($scope.guide)
                             .$promise
                             .then(function (guideData) {
-                                guideSlug = Util.slugify(guideData.name);
                                 return paraCB();
                             })
                             .catch(function (err) {
@@ -18797,11 +18828,11 @@ angular.module('app.controllers', ['ngCookies'])
                             });
                         },
                         function(paraCB) {
-                            Guide.maps.unlink({
-                                id: $scope.guide.id,
-                                fk: mapFromDB.id
-                            }).$promise
-                            .then(function (mapUnlinkData) {
+                            Guide.maps.destroyAll({
+                                id: $scope.guide.id
+                            })
+                            .$promise
+                            .then(function (mapsDeld) {
                                 return paraCB();
                             })
                             .catch(function (err) {
@@ -18809,11 +18840,11 @@ angular.module('app.controllers', ['ngCookies'])
                             });
                         },
                         function(paraCB){
-                            Guide.maps.link({
-                                id: $scope.guide.id,
-                                fk: $scope.guide.maps[0].id
+                            GuideMap.create({
+                                guideId: $scope.guide.id,
+                                mapId: $scope.guide.maps[0].id
                             }).$promise
-                            .then(function (mapLinkData) {
+                            .then(function (newGuideMap) {
                                 return paraCB();
                             })
                             .catch(function (err) {
@@ -18832,7 +18863,7 @@ angular.module('app.controllers', ['ngCookies'])
                             return console.log('para err: ', err);
                         }
                         $scope.app.settings.guide = null;
-                        $state.go('app.hots.guides.guide', { slug: guideSlug });
+                        $state.go('app.hots.guides.guide', { slug: Util.slugify($scope.guide.name) });
                     });
                 }
             };

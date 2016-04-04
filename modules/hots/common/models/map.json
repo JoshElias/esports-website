@@ -26,8 +26,15 @@
   "validations": [],
   "relations": {
     "guides": {
-      "type": "hasAndBelongsToMany",
-      "model": "guide"
+      "type": "hasMany",
+      "model": "guide",
+      "foreignKey": "guideId",
+      "through": "guideMap"
+    },
+    "guideMaps": {
+      "type": "hasMany",
+      "foreignKey": "mapId",
+      "model": "guideMap"
     }
   },
   "acls": [
