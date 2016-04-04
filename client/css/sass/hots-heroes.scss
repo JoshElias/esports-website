@@ -222,6 +222,7 @@
 @include hots-hero-filters-image (zeratul, 47);
 @include hots-hero-filters-image (li-ming, 48);
 @include hots-hero-filters-image (xul, 49);
+@include hots-hero-filters-image (dehaka, 50);
 
 
 
@@ -355,6 +356,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(zeratul);
 @include hots-hero(lunara);
 @include hots-hero(greymane);
+@include hots-hero(dehaka);
 
 //*************************************
 //5... HOTS heroes talents
@@ -516,6 +518,24 @@ This is the template for hots-hero-talents.
     ( class: (i-am-hurrying, the-will-of-gall), pos: 9 ) // -270
 ) );
 
+// talents: dehaka
+
+@include hots-hero-talents ( dehaka, (
+    ( class: (enduring-swarm, symbiosis, whirling-dervish), pos: 0 ), // 0
+    ( class: (primal-aggression), pos: 1 ), // -30
+    ( class: (enhanced-agility, one-who-collects, essence-devourer), pos: 2 ), // -60
+    ( class: (tissue-regeneration, hero-stalker), pos: 3 ), // -90
+    ( class: (lurker-strain, rapid-regeneration), pos: 4 ), // -120
+    ( class: (numbing-eruption), pos: 5 ), // -150
+    ( class: (feeding-frenzy, paralyzing-enzymes), pos: 6 ), // -180
+    ( class: (constriction, elongated-tongue), pos: 7 ), // -210
+    ( class: (isolation, contagion), pos: 8 ), // -240
+    ( class: (adaptation, change-is-survival), pos: 9 ), // -270
+    ( class: (swift-pursuit, apex-predator), pos: 10 ), // -300
+    ( class: (ferocious-stalker), pos: 11 ), // -330
+    ( class: (hardened-shield), pos: 12 ) // -360
+) );
+
 //talents: diablo
 
 @include hots-hero-talents ( diablo, (
@@ -597,25 +617,20 @@ This is the template for hots-hero-talents.
 //talents: Gazlowe
 
 @include hots-hero-talents ( gazlowe, (
-    ( class: (regeneration-master, ), pos: 0 ), // 0
-    ( class: (scrap-o-matic-smelter, break-it-down, reduce-reuse-recycle), pos: 1 ), // -30
-    ( class: (extra-tnt, kwik-release-charge), pos: 2 ), // -60
-    ( class: (demolitionist), pos: 3 ), // -90
-    ( class: (mercenary-lord), pos: 4 ), // -120
-    ( class: (clockwerk-steam-fists, rock-it-turret-xl, engine-gunk, long-ranged-turrets, turret-storage, turret-storage), pos: 5 ), // -150
-    ( class: (promote), pos: 6 ), // -180
-    ( class: (mercenary-lord), pos: 7 ), // -210
-    ( class: (first-aid), pos: 8 ), // -240
-    ( class: (calldown-mule), pos: 9 ), // -270
-    ( class: (robo-goblin, mecha-lord), pos: 10 ), // -300
-    ( class: (grav-o-bomb-3000, miniature-black-hole), pos: 11 ), // -330
-    ( class: (burning-rage), pos: 12 ), // -360
-    ( class: (ez-pz-dimensional-ripper, hyperfocus-coils, goblin-fusion), pos: 13 ), // -390
-    ( class: (sprint), pos: 14 ), // -420
-    ( class: (stoneskin), pos: 15 ), // -450
-    ( class: (fury-of-the-storm), pos: 16 ), // -480
-    ( class: (hardened-shield), pos: 17 ) // -510
+    ( class: (extra-tnt, ark-reactor, x-tra-large-bombs, kwik-release-charge), pos: 0 ), // 0
+    ( class: (scrap-o-matic-smelter, reduce-reuse-recycle), pos: 1 ), // -30
+    ( class: (break-it-down), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (clockwerk-steam-fists, rock-it-turret-xl, turret-storage, superior-schematics), pos: 4 ), // -120
+    ( class: (mercenary-lord), pos: 5 ), // -150
+    ( class: (engine-gunk), pos: 6 ), // -180
+    ( class: (hyperfocus-coils, ez-pz-dimensional-ripper, goblin-fusion, firin-mah-lazorz), pos: 7 ), // -210
+    ( class: (robo-goblin, mecha-lord), pos: 8 ), // -240
+    ( class: (grav-o-bomb-3000, miniature-black-hole), pos: 9 ), // -270
+    ( class: (sprint), pos: 10 ), // -300
+    ( class: (its-raining-scrap), pos: 11 ) // -330
 ) );
+
 
 //talents: Greymane
 
@@ -645,19 +660,19 @@ This is the template for hots-hero-talents.
 //talents: illidan
 
 @include hots-hero-talents ( illidan, (
-    ( class: (battered-assault, fel-reach, immolation, unbound, second-sweep), pos: 0 ), // 0
-    ( class: (shadow-shield, rapid-chase, reflexive-block, sixth-sense), pos: 1 ), // -30
-    ( class: (regeneration-master), pos: 2 ), // -60
-    ( class: (seasoned-marksman), pos: 3 ), // -90
-    ( class: (marked-for-death, lunge, friend-or-foe, rapid-chase), pos: 4 ), // -120
-    ( class: (thirsting-blade, thrill-of-battle, hunters-onslaught), pos: 5 ), // -150
-    ( class: (follow-through), pos: 6 ), // -180
-    ( class: (first-aid), pos: 7 ), // -210
-    ( class: (metamorphosis, demonic-form), pos: 8 ), // -240
-    ( class: (the-hunt, nowhere-to-hide), pos: 9 ), // -270
-    ( class: (giant-killer), pos: 10 ), // -300
-    ( class: (blood-for-blood), pos: 11 ), // -330
-    ( class: (stoneskin), pos: 12 ), // -360
+    ( class: (immolation, unbound, nimble-defender), pos: 0 ), // 0
+    ( class: (battered-assault), pos: 1 ), // -30
+    ( class: (unending-hatred), pos: 2 ), // -60
+    ( class: (rapid-chase, reflexive-block, marked-for-death), pos: 3 ), // -90
+    ( class: (friend-or-foe), pos: 4 ), // -120
+    ( class: (thirsting-blade), pos: 5 ), // -150
+    ( class: (hunters-onslaught), pos: 6 ), // -180
+    ( class: (metamorphosis), pos: 7 ), // -210
+    ( class: (the-hunt), pos: 8 ), // -240
+    ( class: (elusive-strike), pos: 9 ), // -270
+    ( class: (sixth-sense), pos: 10 ), // -300
+    ( class: (fiery-brand), pos: 11 ), // -330
+    ( class: (blades-of-azzinoth), pos: 12 ), // -360
     ( class: (nexus-blades), pos: 13 ), // -390
     ( class: (bolt-of-the-storm), pos: 14 ) // -420
 ) );
@@ -731,20 +746,17 @@ This is the template for hots-hero-talents.
 //talents: kaelthas
 
 @include hots-hero-talents ( kaelthas, (
-    ( class: (mana-addict), pos: 0 ), // 0
-    ( class: (convection, mana-tap, flamethrower, ignite), pos: 1 ), // -30
-    ( class: (energy-roil, nether-wind, tri-optimal, gravity-throw), pos: 2 ), // -60
-    ( class: (fel-infusion, sunfire-enchantment), pos: 3 ), // -90
-    ( class: (gathering-power), pos: 4 ), // -120
-    ( class: (envenom), pos: 5 ), // -150
-    ( class: (fission-bomb, chain-bomb, pyromaniac, backdraft), pos: 6 ), // -180
-    ( class: (clairvoyance), pos: 7 ), // -210
-    ( class: (phoenix, rebirth), pos: 8 ), // -240
-    ( class: (pyroblast, presence-of-mind), pos: 9 ), // -270
-    ( class: (spell-shield), pos: 10 ), // -300
-    ( class: (arcane-barrier), pos: 11 ), // -330
-    ( class: (bolt-of-the-storm), pos: 12 ), // -360
-    ( class: (arcane-power), pos: 13 ) // -390
+    ( class: (convection, burned-flesh, fury-of-the-sunwell), pos: 0 ), // 0
+    ( class: (fel-infusion, sunfire-enchantment, mana-tap, twin-spheres), pos: 1 ), // -30
+    ( class: (mana-addict), pos: 2 ), // -60
+    ( class: (nether-wind, gravity-crush), pos: 3 ), // -90
+    ( class: (energy-roil), pos: 4 ), // -120
+    ( class: (phoenix, rebirth), pos: 5 ), // -150
+    ( class: (pyroblast, presence-of-mind), pos: 6 ), // -180
+    ( class: (pyromaniac, sun-kings-fury, master-of-flames), pos: 7 ), // -210
+    ( class: (backdraft), pos: 8 ), // -240
+    ( class: (fission-bomb), pos: 9 ), // -270
+    ( class: (arcane-power), pos: 10 ) // -300
 ) );
 
 //talents: kharazim
@@ -1177,21 +1189,22 @@ This is the template for hots-hero-talents.
 //talents: sylvanas
 
 @include hots-hero-talents ( sylvanas, (
-    ( class: (with-the-wind, barbed-shot, overflowing-quiver, evasive-fire, splinter-shot), pos: 0 ), // 0
-    ( class: (lost-soul, life-drain, cold-embrace), pos: 1 ), // -30
-    ( class: (corruption, paralysis, unstable-poison, overwhelming-affliction), pos: 2 ), // -60
-    ( class: (rangers-ambush, shade-form, windrunner), pos: 3 ), // -90
-    ( class: (envenom), pos: 4 ), // -120
-    ( class: (follow-through), pos: 5 ), // -150
-    ( class: (mercenary-lord), pos: 6 ), // -180
-    ( class: (wailing-arrow, deafening-blast), pos: 7 ), // -210
-    ( class: (possession, dark-ladys-call), pos: 8 ), // -240
-    ( class: (spell-shield), pos: 9 ), // -270
-    ( class: (will-of-the-forsaken), pos: 10 ), // -300
-    ( class: (blood-for-blood), pos: 11 ), // -330
-    ( class: (fury-of-the-storm), pos: 12 ), // -360
-    ( class: (bolt-of-the-storm), pos: 13 ) // -390
+    ( class: (overflowing-quiver, withering-barrage, barbed-shot, evasive-fire), pos: 0 ), // 0
+    ( class: (paralysis, unstable-poison, overwhelming-affliction), pos: 1 ), // -30
+    ( class: (mercenary-queen), pos: 2 ), // -60
+    ( class: (with-the-wind), pos: 3 ), // -90
+    ( class: (lost-soul, life-drain, cold-embrace), pos: 4 ), // -120
+    ( class: (possession), pos: 5 ), // -150
+    ( class: (wailing-arrow, deafening-blast), pos: 6 ), // -180
+    ( class: (mind-control, dark-ladys-call), pos: 7 ), // -210
+    ( class: (windrunner), pos: 8 ), // -240
+    ( class: (will-of-the-forsaken), pos: 9 ), // -270
+    ( class: (spell-shield), pos: 10 ), // -300
+    ( class: (remorseless, fury-of-the-storm), pos: 11 ), // -330
+    ( class: (bolt-of-the-storm), pos: 12 ) // -360
 ) );
+
+
 
 //talents: tassadar
 
@@ -1275,26 +1288,24 @@ This is the template for hots-hero-talents.
 //talents: tychus
 
 @include hots-hero-talents ( tychus, (
-    ( class: (armor-piercing-rounds, spray-n-pray, lead-rain), pos: 0 ), // 0
-    ( class: (shredder-grenade, melting-point, quarterback, concussion-grenade), pos: 1 ), // -30
-    ( class: (dash, stim-pack), pos: 2 ), // -60
-    ( class: (regeneration-master), pos: 3 ), // -90
-    ( class: (scouting-drone), pos: 4 ), // -120
-    ( class: (vampiric-assault), pos: 5 ), // -150
-    ( class: (focused-attack), pos: 6 ), // -180
-    ( class: (rapid-fire, lock-and-load), pos: 7 ), // -210
-    ( class: (first-aid), pos: 8 ), // -240
-    ( class: (searing-attacks), pos: 9 ), // -270
-    ( class: (commandeer-odin, big-red-button), pos: 10 ), // -300
-    ( class: (drakken-laser-drill, focusing-diodes), pos: 11 ), // -330
-    ( class: (giant-killer), pos: 12 ), // -360
-    ( class: (relentless), pos: 13 ), // -390
-    ( class: (executioner), pos: 14 ), // -420
-    ( class: (stoneskin), pos: 15 ), // -450
-    ( class: (nexus-frenzy), pos: 16 ), // -480
-    ( class: (bolt-of-the-storm), pos: 17 ) // -510
+    ( class: (shrug-it-off, bob-and-weave), pos: 0 ), // 0
+    ( class: (press-the-advantage), pos: 1 ), // -30
+    ( class: (dash), pos: 2 ), // -60
+    ( class: (combat-tactician), pos: 3 ), // -90
+    ( class: (in-the-rythm, sizzlin-attacks), pos: 4 ), // -120
+    ( class: (fully-loaded), pos: 5 ), // -150
+    ( class: (the-bigger-they-are), pos: 6 ), // -180
+    ( class: (master-assassin), pos: 7 ), // -210
+    ( class: (quarterback, titan-grenade), pos: 8 ), // -240
+    ( class: (concussion-grenade), pos: 9 ), // -270
+    ( class: (relentless-soldier), pos: 10 ), // -300
+    ( class: (commandeer-odin, big-red-button), pos: 11 ), // -330
+    ( class: (drakken-laser-drill, focusing-diodes), pos: 12 ), // -360
+    ( class: (thats-the-stuff), pos: 13 ), // -390
+    ( class: (neosteel-coating), pos: 14 ), // -420
+    ( class: (spray-n-pray, lead-rain), pos: 15 ), // -450
+    ( class: (armor-piercing-rounds), pos: 16 ) // -480
 ) );
-
 
 //talents: tyrael
 

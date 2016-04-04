@@ -1466,7 +1466,7 @@ angular.module('app.services', [])
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
     hots.heroRows = [9, 8, 9, 8, 7, 6];
-    hots.mapRows = [3,4,3];
+    hots.mapRows = [4,3,4];
 
     hots.genStats = function () {
         var stats = [],
@@ -3772,8 +3772,8 @@ angular.module('app.services', [])
         return factory;
     }
 ])
-.factory('HearthstoneSnapshotBuilder', ['$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'AlertService', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
-    function ($upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, AlertService, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
+.factory('HearthstoneSnapshotBuilder', ['$state', '$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'AlertService', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
+    function ($state, $upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, AlertService, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
         var snapshot = {};
         var maxTrends = 12;
         var snapshotTypes = [
@@ -3815,7 +3815,7 @@ angular.module('app.services', [])
             },
             votes: 0,
             isCommentable: true,
-            active: false,
+            isActive: false,
             loading: false,
             loaded: false,
             saving: false,
@@ -3839,7 +3839,7 @@ angular.module('app.services', [])
         };
         var defaultTierDeck = {
             name: "",
-            explanation: "",
+            description: "",
             weeklyNotes: "",
             deck: undefined,
             ranks: [0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -4084,6 +4084,14 @@ angular.module('app.services', [])
                 });
 
                 return tiers;
+            };
+            
+            // toggle active
+            sb.toggleActive = function () {
+                sb.isActive = !sb.isActive;
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
             };
             
             // generate tier range for charts
@@ -4472,7 +4480,21 @@ angular.module('app.services', [])
                     }
                 }
             };
-
+            
+            // get deckTier by Id
+            sb.getDeckTierById = function (deckTierId) {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        if (sb.tiers[i].decks[j].id === deckTierId) {
+                            console.log(deckTierId, sb.tiers[i].decks[j]);
+                            return sb.tiers[i].decks[j];
+                        }
+                    }
+                }
+                
+                return false;
+            };
+            
             // update tiers for decks
             sb.decksUpdateTier = function () {
                 var tierNum;
@@ -4484,6 +4506,9 @@ angular.module('app.services', [])
                         sb.tiers[i].decks[j].tier = tierNum;
                     }
                 }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
             };
 
             // update order for decks in tiers
@@ -4499,6 +4524,9 @@ angular.module('app.services', [])
                         orderNum++;
                     }
                 }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
             };
 
             // update current ranks for decks
@@ -4513,6 +4541,9 @@ angular.module('app.services', [])
                         rank++;
                     }
                 }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
             };
 
             // delete all deck techs in a deck
@@ -4572,11 +4603,13 @@ angular.module('app.services', [])
             
             // get deck tech card by id
             sb.getCardTechById = function (cardTechId) {
+                console.log('get card by id: ', cardTechId);
                 for (var i = 0; i < sb.tiers.length; i++) {
                     for (var j = 0; j < sb.tiers[i].decks.length; i++) {
                         for (var k = 0; sb.tiers[i].decks[j].deckTech.length; k++) {
                             for (var l = 0; l < sb.tiers[i].decks[j].deckTech[k].cardTech.length; l++) {
                                 if (sb.tiers[i].decks[j].deckTech[k].cardTech[l].id === cardTechId) {
+                                    console.log('found card: ', sb.tiers[i].decks[j].deckTech[k].cardTech[l]);
                                     return sb.tiers[i].decks[j].deckTech[k].cardTech[l];
                                 }
                             }
@@ -5117,7 +5150,7 @@ angular.module('app.services', [])
                 sb.decksUpdateTier();
                 sb.decksUpdateOrder();
                 sb.decksUpdateCurrentRanks();
-
+                
                 // update matchups for deck if we need to
                 movedDeck = sb.getTierDeckByDeckId(deck.deck.id);
                 afterInMatchups = (movedDeck.tier === 1 || movedDeck.tier === 2);
@@ -5153,6 +5186,15 @@ angular.module('app.services', [])
                 if (index === -1) {
                     sb.updated.authors.push(author.id);
                     console.log('author update flagged: ', author.user.username);
+                }
+            };
+            
+            // flag all deckTiers as updated
+            sb.allDeckTiersUpdated = function () {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        sb.deckTierUpdated(sb.tiers[i].decks[j]);
+                    }
                 }
             };
             
@@ -5223,9 +5265,11 @@ angular.module('app.services', [])
             
             // check snapshot before save
             sb.saveCheck = function (callback) {
+                console.log('save check');
                 async.series([
                     // check snapshot
                     function (cb) {
+                        console.log('check snapshot');
                         // check title
                         if (!sb.title || !sb.title.length) {
                             return cb("Snapshot doesn't have a title");
@@ -5260,9 +5304,12 @@ angular.module('app.services', [])
                         if (!sb.content || !sb.content.thoughts || !sb.content.thoughts.length) {
                             return cb("Snapshot does not have thoughts and observations");
                         }
+                        
+                        return cb();
                     },
                     // check authors
                     function (cb) {
+                        console.log('check authors');
                         // check that at least 1 author exists
                         if (!sb.authors || !sb.authors.length) {
                             return cb("Snapshot doesn't have any authors");
@@ -5271,21 +5318,24 @@ angular.module('app.services', [])
                         // check each author
                         for (var i = 0; i < sb.authors.length; i++) {
                             // check author expert classes
-                            if (!sb.authors[i].expertClasses || !sb.sb.authors[i].expertClasses.length) {
+                            if (!sb.authors[i].expertClasses || !sb.authors[i].expertClasses.length) {
                                 return cb("Author " + sb.authors[i].user.username + " has no expert class");
                             }
                             
                             // check description
-                            if (!sb.authors[i].description || !sb.sb.authors[i].description.length) {
+                            if (!sb.authors[i].description || !sb.authors[i].description.length) {
                                 return cb("Author " + sb.authors[i].user.username + " has no description");
                             }
                         }
                         
                         // TODO: verify all classes selected
                         // TODO: verify no duplicate classes used
+
+                        return cb();
                     },
                     // check tiers / decks
                     function (cb) {
+                        console.log('check tiers');
                         // make sure at least 1 tier
                         if (!sb.tiers || !sb.tiers.length) {
                             return cb("Snapshot doesn't have any tiers");
@@ -5310,9 +5360,9 @@ angular.module('app.services', [])
                                     return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no deck attached");
                                 }
                                 
-                                // check explanation
-                                if (!sb.tiers[tierInc].decks[deckInc].explanation || !sb.tiers[tierInc].decks[deckInc].explanation.length) {
-                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no explanation");
+                                // check description
+                                if (!sb.tiers[tierInc].decks[deckInc].description || !sb.tiers[tierInc].decks[deckInc].description.length) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no description");
                                 }
                                 
                                 // check weekly notes
@@ -5342,13 +5392,18 @@ angular.module('app.services', [])
 
                             }
                         }
+
+                        return cb();
                     },
                     // verify matchups
                     function (cb) {
+                        console.log('check matchups');
                         // check that matchups count matches number of decks
                         if (!sb.validMatchups()) {
                             return cb("FATAL ERROR: Number of matchups do not match number of decks");
                         }
+
+                        return cb();
                     }
                 ], function (err) {
                     return callback(err);
@@ -5603,10 +5658,11 @@ angular.module('app.services', [])
                                 }
                             }, {
                                 name: deckTier.name,
-                                explanation: deckTier.explanation,
+                                description: deckTier.description,
                                 weeklyNotes: deckTier.weeklyNotes,
                                 deckId: deckTier.deck.id,
-                                ranks: deckTier.ranks
+                                ranks: deckTier.ranks,
+                                tier: deckTier.tier
                             })
                             .$promise
                             .then(function (data) {
@@ -5723,7 +5779,7 @@ angular.module('app.services', [])
                             slug: sb.slug,
                             content: sb.content,
                             photoNames: sb.photoNames,
-                            isActive: sb.active
+                            isActive: sb.isActive
                         })
                         .$promise
                         .then(function (data) {
@@ -5751,9 +5807,10 @@ angular.module('app.services', [])
                     // create snapshot
                     function (cb) {
                         if (sb.id) { return cb(null, sb.id); }
-                        Snapshot.create({
+                        console.log('snapshot: ', {
                             snapNum: sb.snapNum,
                             title: sb.title,
+                            snapshotType: sb.snapshotType,
                             slug: {
                                 url: sb.slug.url,
                                 linked: sb.slug.linked
@@ -5769,6 +5826,29 @@ angular.module('app.services', [])
                                 medium: sb.photoNames.medium || '',
                                 large: sb.photoNames.large || ''
                             },
+                            isCommentable: sb.isCommentable,
+                            isActive: sb.isActive
+                        });
+                        Snapshot.create({
+                            snapNum: sb.snapNum,
+                            title: sb.title,
+                            snapshotType: sb.snapshotType,
+                            slug: {
+                                url: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
+                            content: {
+                                intro: sb.content.intro,
+                                thoughts: sb.content.thoughts
+                            },
+                            createdDate: new Date().toISOString(),
+                            photoNames: {
+                                square: sb.photoNames.square || '',
+                                small: sb.photoNames.small || '',
+                                medium: sb.photoNames.medium || '',
+                                large: sb.photoNames.large || ''
+                            },
+                            isCommentable: sb.isCommentable,
                             isActive: sb.isActive
                         })
                         .$promise
@@ -5782,6 +5862,7 @@ angular.module('app.services', [])
                     },
                     // create authors
                     function (snapshotId, cb) {
+                        console.log('creating authors');
                         async.each(sb.authors, function (author, eachCallback) {
                             // only create authors without ids
                             if (author.id) { return eachCallback(); }
@@ -5807,28 +5888,34 @@ angular.module('app.services', [])
                     },
                     // create deck tiers
                     function (snapshotId, cb) {
-                        async.each(sb.deckTiers, function (deckTier, eachCallback) {
-                            // only create deck tiers without ids
-                            if (deckTier.id) { return eachCallback(); }
-                            // create new deck tier
-                            var newDeckTier = {
-                                description: deckTier.description,
-                                weeklyNotes: deckTier.weeklyNotes,
-                                name: deckTier.name,
-                                tier: deckTier.tier,
-                                deckId: deckTier.deck.id,
-                                snapshotId: snapshotId,
-                                ranks: deckTier.ranks
-                            };
-                            console.log('Created Deck Tier: ', newDeckTier);
-                            DeckTier.create(newDeckTier)
-                            .$promise
-                            .then(function (data) {
-                                deckTier.id = data.id;
-                                return eachCallback();
-                            })
-                            .catch(function (response) {
-                                return eachCallback(response);
+                        console.log('creating deck tiers');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckCallback) {
+                                // only create deck tiers without ids
+                                if (deckTier.id) { return eachDeckCallback(); }
+                                // create new deck tier
+                                var newDeckTier = {
+                                    description: deckTier.description,
+                                    weeklyNotes: deckTier.weeklyNotes,
+                                    name: deckTier.name,
+                                    tier: deckTier.tier,
+                                    deckId: deckTier.deck.id,
+                                    snapshotId: snapshotId,
+                                    ranks: deckTier.ranks
+                                };
+                                console.log('Created Deck Tier: ', newDeckTier);
+                                DeckTier.create(newDeckTier)
+                                .$promise
+                                .then(function (data) {
+                                    deckTier.id = data.id;
+                                    return eachDeckCallback();
+                                })
+                                .catch(function (response) {
+                                    return eachDeckCallback(response);
+                                });
+                            }, function (err) {
+                                if (err) { return cb(err); }
+                                return eachTierCallback();
                             });
                         }, function (err) {
                             if (err) { return cb(err); }
@@ -5837,29 +5924,35 @@ angular.module('app.services', [])
                     },
                     // create deck techs
                     function (snapshotId, cb) {
-                        async.each(sb.deckTiers, function (deckTier, eachDeckTierCallback) {
-                            async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
-                                // only create deck techs without ids
-                                if (deckTech.id) { return eachDeckTechCallback(); }
-                                // create new deck tech
-                                var newDeckTech = {
-                                    title: deckTech.title,
-                                    deckId: deckTier.deck.id,
-                                    deckTierId: deckTier.id
-                                };
-                                console.log('Created Deck Tech: ', newDeckTech);
-                                DeckTech.create(newDeckTech)
-                                .$promise
-                                .then(function (data) {
-                                    deckTech.id = data.id;
-                                    return eachDeckTechCallback();
-                                })
-                                .catch(function (response) {
-                                    return eachDeckTechCallback(response);
+                        console.log('creating deck techs');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckTierCallback) {
+                                async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
+                                    // only create deck techs without ids
+                                    if (deckTech.id) { return eachDeckTechCallback(); }
+                                    // create new deck tech
+                                    var newDeckTech = {
+                                        title: deckTech.title,
+                                        deckId: deckTier.deck.id,
+                                        deckTierId: deckTier.id
+                                    };
+                                    console.log('Created Deck Tech: ', newDeckTech);
+                                    DeckTech.create(newDeckTech)
+                                    .$promise
+                                    .then(function (data) {
+                                        deckTech.id = data.id;
+                                        return eachDeckTechCallback();
+                                    })
+                                    .catch(function (response) {
+                                        return eachDeckTechCallback(response);
+                                    });
+                                }, function (err) {
+                                    if (err) { return cb(err); }
+                                    return eachDeckTierCallback();
                                 });
                             }, function (err) {
                                 if (err) { return cb(err); }
-                                return eachDeckTierCallback();
+                                return eachTierCallback();
                             });
                         }, function (err) {
                             if (err) { return cb(err); }
@@ -5868,35 +5961,41 @@ angular.module('app.services', [])
                     },
                     // create deck tech cards
                     function (snapshotId, cb) {
-                        async.each(sb.deckTiers, function (deckTier, eachDeckTierCallback) {
-                            async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
-                                async.each(deckTech.cardTech, function (cardTech, eachCardTechCallback) {
-                                    // only create deck techs without ids
-                                    if (cardTech.id) { return eachCardTechCallback(); }
-                                    // create new deck tech
-                                    var newCardTech = {
-                                        both: cardTech.both || false,
-                                        toss: cardTech.toss || false,
-                                        cardId: cardTech.card.id,
-                                        deckTechId: deckTech.id
-                                    };
-                                    console.log('Created Card Tech: ', newCardTech);
-                                    CardTech.create(newCardTech)
-                                    .$promise
-                                    .then(function (data) {
-                                        cardTech.id = data.id;
-                                        return eachCardTechCallback();
-                                    })
-                                    .catch(function (response) {
-                                        return eachCardTechCallback(response);
+                        console.log('creating deck tech cards');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckTierCallback) {
+                                async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
+                                    async.each(deckTech.cardTech, function (cardTech, eachCardTechCallback) {
+                                        // only create deck techs without ids
+                                        if (cardTech.id) { return eachCardTechCallback(); }
+                                        // create new deck tech
+                                        var newCardTech = {
+                                            both: cardTech.both || false,
+                                            toss: cardTech.toss || false,
+                                            cardId: cardTech.card.id,
+                                            deckTechId: deckTech.id
+                                        };
+                                        console.log('Created Card Tech: ', newCardTech);
+                                        CardTech.create(newCardTech)
+                                        .$promise
+                                        .then(function (data) {
+                                            cardTech.id = data.id;
+                                            return eachCardTechCallback();
+                                        })
+                                        .catch(function (response) {
+                                            return eachCardTechCallback(response);
+                                        });
+                                    }, function (err) {
+                                        if (err) { return cb(err); }
+                                        return eachDeckTechCallback();
                                     });
                                 }, function (err) {
                                     if (err) { return cb(err); }
-                                    return eachDeckTechCallback();
+                                    return eachDeckTierCallback();
                                 });
                             }, function (err) {
                                 if (err) { return cb(err); }
-                                return eachDeckTierCallback();
+                                return eachTierCallback();
                             });
                         }, function (err) {
                             if (err) { return cb(err); }
@@ -5905,6 +6004,7 @@ angular.module('app.services', [])
                     },
                     // create matchups
                     function (snapshotId, cb) {
+                        console.log('creating matchups');
                         async.each(sb.matchups, function (matchup, eachCallback) {
                             // only create matchups without ids
                             if (matchup.id) { return eachCallback(); }
@@ -5971,6 +6071,8 @@ angular.module('app.services', [])
                                 show: true
                             });
                         }
+                    } else {
+                        $state.go('app.admin.hearthstone.snapshots.list');
                     }
                     
                     console.log('done saving');
