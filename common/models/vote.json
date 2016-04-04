@@ -10,14 +10,30 @@
     "direction": {
       "type": "number"
     },
-    "authorId": {},
-    "articleId": {},
-    "guideId": {},
-    "deckId": {},
-    "snapshotId": {},
-    "commentId": {},
-    "overwatchSnapshotId": {},
-    "hotsSnapshotId": {}
+    "authorId": {
+      "index": 1
+    },
+    "articleId": {
+      "index": 1
+    },
+    "guideId": {
+      "index": 1
+    },
+    "deckId": {
+      "index": 1
+    },
+    "snapshotId": {
+      "index": 1
+    },
+    "commentId": {
+      "index": 1
+    },
+    "overwatchSnapshotId": {
+      "index": 1
+    },
+    "hotsSnapshotId": {
+      "index": 1
+    }
   },
   "relations": {
     "author": {

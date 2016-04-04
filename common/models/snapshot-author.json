@@ -15,10 +15,18 @@
         "string"
       ]
     },
-    "snapshotId": {},
-    "hotsSnapshotId": {},
-    "overwatchSnapshotId": {},
-    "authorId": {}
+    "snapshotId": {
+      "index": 1
+    },
+    "hotsSnapshotId": {
+      "index": 1
+    },
+    "overwatchSnapshotId": {
+      "index": 1
+    },
+    "authorId": {
+      "index": 1
+    }
   },
   "relations": {
     "user": {

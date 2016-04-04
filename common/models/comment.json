@@ -19,16 +19,33 @@
     "voteScore": {
       "type": "number"
     },
-    "authorId": {},
-    "articleId": {},
-    "guideId": {},
-    "deckId": {},
-    "snapshotId": {},
-    "hotsSnapshotId": {},
-    "forumPostId": {},
-    "parentCommentId": {},
-    "redbullDeckId": {},
-    "overwatchSnapshotId": {}
+    "articleId": {
+      "index": 1
+    },
+    "guideId": {
+      "index": 1
+    },
+    "deckId": {
+      "index": 1
+    },
+    "snapshotId": {
+      "index": 1
+    },
+    "hotsSnapshotId": {
+      "index": 1
+    },
+    "forumPostId": {
+      "index": 1
+    },
+    "parentCommentId": {
+      "index": 1
+    },
+    "redbullDeckId": {
+      "index": 1
+    },
+    "overwatchSnapshotId": {
+      "index": 1
+    }
   },
   "relations": {
     "article": {
@@ -103,6 +120,7 @@
   "mixins": {
     "Scope": true,
     "Validate": true,
+    "Authored": true,
     "Timestamp" : true
   }
 }
