@@ -4086,6 +4086,14 @@ angular.module('app.services', [])
                 return tiers;
             };
             
+            // toggle active
+            sb.toggleActive = function () {
+                sb.isActive = !sb.isActive;
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
             // generate tier range for charts
             sb.chartGenerateTierRanges = function () {
                 // loop through each tier
@@ -4595,11 +4603,13 @@ angular.module('app.services', [])
             
             // get deck tech card by id
             sb.getCardTechById = function (cardTechId) {
+                console.log('get card by id: ', cardTechId);
                 for (var i = 0; i < sb.tiers.length; i++) {
                     for (var j = 0; j < sb.tiers[i].decks.length; i++) {
                         for (var k = 0; sb.tiers[i].decks[j].deckTech.length; k++) {
                             for (var l = 0; l < sb.tiers[i].decks[j].deckTech[k].cardTech.length; l++) {
                                 if (sb.tiers[i].decks[j].deckTech[k].cardTech[l].id === cardTechId) {
+                                    console.log('found card: ', sb.tiers[i].decks[j].deckTech[k].cardTech[l]);
                                     return sb.tiers[i].decks[j].deckTech[k].cardTech[l];
                                 }
                             }
