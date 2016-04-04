@@ -25,7 +25,8 @@ var app = angular.module('app', [
     'app.directives',
     'app.animations',
     'app.redbull',
-    'tsAdSense'
+    'tsAdSense',
+    'app.polls'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
@@ -3810,38 +3811,6 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Teams', description: 'Teams on Tempostorm', keywords: '' }
             })
-            .state('app.polls', {
-                url: 'vote',
-                views: {
-                    content: {
-                        templateUrl: tpl + 'views/frontend/polls.html',
-                        controller: 'PollsCtrl',
-                        resolve: {
-                          dataPollsMain: ['Poll', function (Poll) {
-                            return Poll.find({
-                                filter: {
-                                    where: {
-                                        viewType: 'main'
-                                    },
-                                    include: ['items']
-                                }
-                            }).$promise;
-                          }],
-                          dataPollsSide: ['Poll', function (Poll) {
-                            return Poll.find({
-                                filter: {
-                                    where: {
-                                        viewType: 'side'
-                                    },
-                                    include: ['items']
-                                }
-                            }).$promise;
-                          }]
-                        }
-                    }
-                },
-                seo: { title: 'Vote', description: 'Vote on TempoStorm', keywords: '' }
-            })
             .state('app.sponsors', {
                 url: 'sponsors',
                 views: {
@@ -6333,105 +6302,6 @@ var app = angular.module('app', [
                                 var bannerID = $stateParams.bannerID;
                                 return AdminBannerService.getBanner(bannerID);
                             }]
-                        }
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.polls', {
-                abstract: true,
-                url: '/polls',
-                views: {
-                    admin: {
-                        templateUrl: tpl + 'views/admin/polls.html'
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.polls.list', {
-                url: '',
-                views: {
-                    polls: {
-                        templateUrl: tpl + 'views/admin/polls.list.html',
-                        controller: 'AdminPollListCtrl',
-                        resolve: {
-                            paginationParams: [function() {
-                                return {
-                                    page: 1,
-                                    perpage: 50,
-                                    options: {
-                                        filter: {
-                                            fields: {
-                                                id: true,
-                                                title: true
-                                            },
-                                            limit: 50,
-                                            order: 'createdDate DESC'
-                                        }
-                                    }
-                                };
-                            }],
-                            pollsCount: ['Poll', 'paginationParams', function (Poll, paginationParams) {
-                                return Poll.count({})
-                                .$promise
-                                .then(function (pollCount) {
-                                    paginationParams.total = pollCount.count;
-                                    return pollCount;
-                                })
-                                .catch(function (err) {
-                                    console.log('Poll.count err: ',err);
-                                });
-                            }],
-                            polls: ['Poll', 'paginationParams', function (Poll, paginationParams) {
-                                return Poll.find(
-                                    paginationParams.options
-                                ).$promise
-                                .then(function (allPolls) {
-                                    return allPolls;
-                                })
-                                .catch(function (err) {
-                                    console.log('Poll.find err: ', err);
-                                });
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.polls.add', {
-                url: '/add',
-                views: {
-                    polls: {
-                        templateUrl: tpl + 'views/admin/polls.poll.html',
-                        controller: 'AdminPollAddCtrl'
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.polls.edit', {
-                url: '/edit/:pollID',
-                views: {
-                    polls: {
-                        templateUrl: tpl + 'views/admin/polls.poll.html',
-                        controller: 'AdminPollEditCtrl',
-                        resolve: {
-                            poll: ['$stateParams', 'Poll', function($stateParams, Poll){
-                                var pollID = $stateParams.pollID;
-                                return Poll.findOne({
-                                    filter: {
-                                        where: {
-                                            id: pollID
-                                        },
-										include: 'items'
-                                    }
-                                })
-                                .$promise;
-                            }]
-
                         }
                     }
                 },
