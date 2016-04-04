@@ -249,10 +249,16 @@ var app = angular.module('app', [
                                             isActive: true
                                         },
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            content: false
                                         },
-                                        include: ['author'],
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            },
+                                            {
+                                                relation: 'slugs'
+                                            }
+                                        ],
                                         order: "createdDate DESC",
                                         skip: (offset * num) - num,
                                         limit: num
@@ -335,7 +341,7 @@ var app = angular.module('app', [
                 seo: { title: 'Overwatch', description: 'Tempo Storm is your top source for Blizzard Entertainment\'s Overwatch. Tournament news, strategy, and patch details.', keywords: 'blizzard overwatch' }
             })
             .state('app.overwatch.snapshot', {
-                abstrat: true,
+                abstract: true,
                 url: '/meta-snapshot',
                 views: {
                     overwatch: {
@@ -492,8 +498,7 @@ var app = angular.module('app', [
                                         where: artWhere,
                                         order: 'createdDate DESC',
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            content: false
                                         },
                                         include: [
                                           {
@@ -504,6 +509,9 @@ var app = angular.module('app', [
                                                 'username'
                                               ]
                                             }
+                                          },
+                                          {
+                                            relation: "slugs"
                                           }
                                         ]
                                     },
@@ -511,8 +519,7 @@ var app = angular.module('app', [
                                     filters: $stateParams.f || [],
                                 };
                             }],
-                            articles: ['paginationParams', 'Article', function (paginationParams, Article) {
-
+                            articles: ['paginationParams', 'Article', 'Util', function (paginationParams, Article, Util) {
                                 return Article.find({
                                     filter: {
                                         where: paginationParams.artParams.where,
@@ -525,6 +532,10 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
+                                    _.each(articles, function (article) {
+                                        article.slug = Util.setSlug(article);
+                                    });
+
                                     return articles;
                                 });
 
@@ -573,65 +584,96 @@ var app = angular.module('app', [
                             }],
                             article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
                                 var slug = $stateParams.slug;
+                                console.log("looking for slug:", slug);
+
 
                                 return Article.findOne({
                                     filter: {
                                         where: {
-                                            "slug.url": slug
+                                            slug: slug
                                         },
                                         include: [
+                                           {
+                                               relation: "author",
+                                               scope: {
+                                                   fields: [
+                                                       "username",
+                                                       "about",
+                                                       "providerDescription",
+                                                       "social",
+                                                       "email"
+                                                   ]
+                                               }
+                                           },
+                                           {
+                                               relation: "comments",
+                                               scope: {
+                                                   include: [
+                                                       "author"
+                                                   ]
+                                               }
+                                           },
+                                           {
+                                               relation: 'votes',
+                                               scope: {
+                                                   fields: {
+                                                       id: true,
+                                                       direction: true,
+                                                       authorId: true
+                                                   }
+                                               }
+                                           },
+                                           {
+                                               relation: "relatedArticles",
+                                               scope: {
+                                                   fields: [
+                                                       "title",
+                                                       "isActive",
+                                                       "photoNames",
+                                                       "authorId",
+                                                       "voteScore",
+                                                       "articleType",
+                                                       "slug"
+                                                   ],
+                                                   include: [
+                                                       {
+                                                           relation: "author",
+                                                           scope: {
+                                                               fields: [
+                                                                   "username"
+                                                               ]
+                                                           }
+                                                       }
+                                                   ]
+                                               }
+                                           },
                                             {
-                                                relation: "author",
-                                                scope: {
-                                                    fields: [
-                                                        "username",
-                                                        "about",
-                                                        "providerDescription",
-                                                        "social",
-                                                        "email"
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: "comments",
-                                                scope: {
-                                                    include: [
-                                                        "author"
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: 'votes',
+                                                relation: "deck",
                                                 scope: {
                                                     fields: {
                                                         id: true,
-                                                        direction: true,
-                                                        authorId: true
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                relation: "relatedArticles",
-                                                scope: {
-                                                    fields: [
-                                                        "title",
-                                                        "isActive",
-                                                        "photoNames",
-                                                        "authorId",
-                                                        "voteScore",
-                                                        "articleType",
-                                                        "slug"
-                                                    ],
-                                                    include: [
-                                                        {
-                                                            relation: "author",
-                                                            scope: {
-                                                                fields: [
-                                                                    "username"
-                                                                ]
+                                                        playerClass: true,
+                                                        heroName: true,
+                                                        dust: true,
+                                                        gameModeType: true,
+                                                        name: true
+                                                    },
+                                                    include: {
+                                                        relation: 'cards',
+                                                        scope: {
+                                                            include: {
+                                                                relation: 'card',
+                                                                scope: {
+                                                                    fields: [
+                                                                        'id',
+                                                                        'name',
+                                                                        'cost',
+                                                                        'photoNames'
+                                                                    ]
+                                                                }
                                                             }
                                                         }
-                                                    ]
+                                                    }
                                                 }
                                             }
                                         ]
@@ -639,7 +681,15 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
+                                    console.log('data:', data);
+                                    // create slug as it was moved from model
+                                    data.slug = {
+                                        url: slug
+                                    };
+                                    
+                                    // tally votescore
                                     data.voteScore = Util.tally(data.votes, 'direction');
+                                    
                                     return data;
                                 })
                                 .catch(function (err) {
@@ -648,6 +698,7 @@ var app = angular.module('app', [
                                         return throw404($state);
                                     }
                                 });
+                                
                             }]
                         }
                     }
@@ -745,6 +796,9 @@ var app = angular.module('app', [
                                                         scope: {
                                                             fields: ['username']
                                                         }
+                                                    },
+                                                    {
+                                                        relation: "slugs"
                                                     }
                                                 ]
                                             }
@@ -756,17 +810,19 @@ var app = angular.module('app', [
                                               limit: 10,
                                               order: "createdDate DESC",
                                               where: tsDeckWhere,
-                                              fields: {
-                                                id: true,
-                                                name: true,
-                                                playerClass: true,
-                                                heroName: true,
-                                                premium: true,
-                                                authorId: true,
-                                                slug: true,
-                                                createdDate: true
-                                              },
+                                              fields: [
+                                                  'id',
+                                                  'name',
+                                                  'playerClass',
+                                                  'heroName',
+                                                  'premium',
+                                                  'authorId',
+                                                  'createdDate'
+                                              ],
                                               include: [
+                                                  {
+                                                      relation: 'slugs',
+                                                  },
                                                   {
                                                       relation: "author",
                                                       scope: {
@@ -801,6 +857,9 @@ var app = angular.module('app', [
                                               },
                                               include: [
                                                   {
+                                                      relation: "slugs",
+                                                  },
+                                                  {
                                                       relation: "author",
                                                       scope: {
                                                           fields: ['username']
@@ -818,16 +877,27 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            dataArticles: ['Article', 'filterParams', function (Article, filterParams) {
-                                return Article.find(filterParams.articleParams.options).$promise;
+                            dataArticles: ['Article', 'filterParams', 'Util', function (Article, filterParams, Util) {
+                                return Article.find(filterParams.articleParams.options)
+                                .$promise
+                                .then(function (articles) {
+                                    _.each(articles, function (article) {
+                                        article.slug = Util.setSlug(article);
+                                    })
+
+                                    return articles;
+                                });
                             }],
                             dataDecksTempostorm: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
+//                                console.log('filterParams.tsDeckParams', filterParams.tsDeckParams);
                                 return Deck.find(filterParams.tsDeckParams.options)
                                 .$promise
                                 .then(function (tempoDecks) {
                                     _.each(tempoDecks, function(tempoDeck) {
                                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
+                                        tempoDeck.slug = Util.setSlug(tempoDeck);
                                     });
+
                                     return tempoDecks;
                                 });
                             }],
@@ -837,6 +907,7 @@ var app = angular.module('app', [
                                 .then(function (comDecks) {
                                     _.each(comDecks, function(comDeck) {
                                         comDeck.voteScore = Util.tally(comDeck.votes, 'direction');
+                                        comDeck.slug = Util.setSlug(comDeck);
                                     });
                                     return comDecks;
                                 });
@@ -930,21 +1001,24 @@ var app = angular.module('app', [
                                             premium: true,
                                         },
                                         include: [
-                                          {
-                                            relation: "author",
-                                            scope: {
-                                              fields: [
-                                                'id',
-                                                'username'
-                                              ]
+                                            {
+                                                relation: "author",
+                                                scope: {
+                                                    fields: [
+                                                        'id',
+                                                        'username'
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: "votes",
+                                                scope: {
+                                                    fields: ['direction']
+                                                }
+                                            },
+                                            {
+                                                relation: "slugs"
                                             }
-                                          },
-                                          {
-                                            relation: "votes",
-                                            scope: {
-                                              fields: ['direction']
-                                            }
-                                          }
                                         ]
                                     },
                                     comParams: {
@@ -965,21 +1039,24 @@ var app = angular.module('app', [
                                             premium: true
                                         },
                                         include: [
-                                          {
-                                            relation: "author",
-                                            scope: {
-                                              fields: [
-                                                'id',
-                                                'username'
-                                              ]
+                                            {
+                                                relation: "author",
+                                                scope: {
+                                                    fields: [
+                                                        'id',
+                                                        'username'
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: "votes",
+                                                scope: {
+                                                    fields: ['id', 'direction', 'authorId']
+                                                }
+                                            },
+                                            {
+                                                relation: "slugs"
                                             }
-                                          },
-                                          {
-                                            relation: "votes",
-                                              scope: {
-                                                  fields: ['id', 'direction', 'authorId']
-                                              }
-                                          }
                                         ]
                                     },
                                     search: $stateParams.s || '',
@@ -1001,6 +1078,7 @@ var app = angular.module('app', [
                                 .then(function (data) {
                                     _.each(data, function (deck) {
                                         deck.voteScore = Util.tally(deck.votes, 'direction');
+                                        deck.slug = Util.setSlug(deck);
                                     });
 
                                     return data;
@@ -1037,6 +1115,7 @@ var app = angular.module('app', [
                                 .then(function (data) {
                                     _.each(data, function (deck) {
                                         deck.voteScore = Util.tally(deck.votes, 'direction');
+                                        deck.slug = Util.setSlug(deck);
                                     });
 
                                     return data;
@@ -1085,86 +1164,108 @@ var app = angular.module('app', [
                                 }
                             }],
                             deck: ['$stateParams', '$state', 'Deck', 'Util', function ($stateParams, $state, Deck, Util) {
-                                var stateSlug = $stateParams.slug;
-//                                console.log('stateSlug:', stateSlug);
+                                var slug = $stateParams.slug;
+                                console.log('slug:', slug);
+                                
                                 return Deck.findOne({
                                     filter: {
                                         where: {
-                                            slug: stateSlug
+                                            slug: slug,
                                         },
-                                        fields: {
-                                            id: true,
-                                            createdDate: true,
-                                            name: true,
-                                            description: true,
-                                            playerClass: true,
-                                            premium: true,
-                                            slug: true,
-                                            dust: true,
-                                            heroName: true,
-                                            authorId: true,
-                                            deckType: true,
-                                            isPublic: true,
-                                            votes: true,
-                                            voteScore: true,
-                                            chapters: true,
-                                            youtubeId: true,
-                                            gameModeType: true,
-                                            isActive: true,
-                                            isCommentable: true
-                                        },
+                                        fields: [
+                                            'id',
+                                            'createdDate',
+                                            'name',
+                                            'description',
+                                            'playerClass',
+                                            'premium',
+                                            'dust',
+                                            'heroName',
+                                            'authorId',
+                                            'deckType',
+                                            'isPublic',
+                                            'chapters',
+                                            'youtubeId',
+                                            'gameModeType',
+                                            'isActive',
+                                            'isCommentable'
+                                        ],
                                         include: [
                                             {
-                                                relation: "cards",
+                                                relation: 'cards',
                                                 scope: {
-                                                    include: {
-                                                        relation: 'card',
-                                                        scope: {
-                                                            fields: ['id', 'name', 'cardType', 'cost', 'dust', 'photoNames']
-                                                        }
+                                                    include: 'card',
+                                                    scope: {
+                                                        // TODO THIS ISN"T WORKING!
+                                                        fields: [
+                                                            'id',
+                                                            'name',
+                                                            'cardType',
+                                                            'cost',
+                                                            'dust',
+                                                            'photoNames'
+                                                        ]
                                                     }
                                                 }
                                             },
                                             {
-                                                relation: "comments",
+                                                relation: 'comments',
                                                 scope: {
-                                                    fields: ['id', 'votes', 'authorId', 'createdDate', 'text'],
+                                                    fields: [
+                                                        'id',
+                                                        'votes',
+                                                        'authorId',
+                                                        'createdDate'
+                                                    ],
                                                     include: {
                                                         relation: 'author',
                                                         scope: {
-                                                            fields: ['id', 'username']
+                                                            fields: [
+                                                                'id',
+                                                                'username'
+                                                            ]
                                                         }
                                                     }
                                                 }
                                             },
                                             {
-                                                relation: "author",
+                                                relation: 'author',
                                                 scope: {
-                                                    fields: ['id', 'username']
+                                                    fields: [
+                                                        'id',
+                                                        'name'
+                                                    ]
                                                 }
                                             },
                                             {
-                                                relation: "matchups",
+                                                relation: 'matchups',
                                                 scope: {
-                                                    fields: ['forChance', 'deckName', 'className']
+                                                    fields: [
+                                                        'forChance',
+                                                        'deckName',
+                                                        'className'
+                                                    ]
                                                 }
                                             },
                                             {
-                                                relation: "votes",
-                                                scope: {
-                                                    fields: ['id', 'direction', 'authorId']
-                                                }
+                                                relation: 'votes',
+                                                fields: [
+                                                    'id',
+                                                    'direction',
+                                                    'authorId'
+                                                ]
                                             }
                                         ]
                                     }
                                 })
                                 .$promise
-                                .then(function (deck) {
-                                    deck.voteScore = Util.tally(deck.votes, 'direction');
-                                    return deck;
+                                .then(function (data) {
+                                    data.voteScore = Util.tally(data.votes, 'direction');
+
+                                    return data;
                                 })
                                 .catch(function (err) {
-                                    console.log('Deck.findOne err: ', err);
+                                    console.log("err: ", err);
                                     if (err.status === 404) {
                                         return throw404($state);
                                     }
@@ -2732,102 +2833,102 @@ var app = angular.module('app', [
                                         where: {
                                             slug: slug,
                                         },
-                                        fields: [
-                                            'against',
-                                            'authorId',
-                                            'comments',
-                                            'content',
-                                            'createdDate',
-                                            'description',
-                                            'guideType',
-                                            'id',
-                                            'isFeatured',
-                                            'isPublic',
-                                            'name',
-                                            'premium',
-                                            'slug',
-                                            'synergy',
-                                            'viewCount',
-                                            'youtubeId',
-                                            'isCommentable'
-                                        ],
+                                        fields: {
+                                            against: true,
+                                            authorId: true,
+                                            comments: true,
+                                            content: true,
+                                            createdDate: true,
+                                            description: true,
+                                            guideType: true,
+                                            id: true,
+                                            isFeatured: true,
+                                            isPublic: true,
+                                            name: true,
+                                            premium: true,
+                                            slug: true,
+                                            synergy: true,
+                                            viewCount: true,
+                                            youtubeId: true,
+                                            isCommentable: true
+                                        },
                                         include: [
-                                          {
-                                            relation: 'author'
-                                          },
-                                          {
-                                          relation: 'guideHeroes',
-                                          scope: {
-                                            include: [
-                                              {
-                                                relation: 'talents'
-                                              },
-                                              {
-                                                relation: 'hero',
+                                            {
+                                                relation: 'author'
+                                            },
+                                            {
+                                                relation: 'guideHeroes',
                                                 scope: {
-                                                  fields: [
-                                                    'className',
-                                                    'description',
-                                                    'universe',
-                                                    'heroType',
-                                                    'name',
-                                                    'role'
-                                                  ],
-                                                  include: [
-                                                    {
-                                                      relation: 'talents',
-                                                      scope: {
-                                                        include: {
-                                                          relation: 'talent',
-                                                          scope: {
-                                                            fields: ['orderNum']
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  ]
-                                                }
-                                              }
-                                            ]
-                                          }
-                                        },
-                                        {
-                                          relation: 'guideTalents',
-                                          scope: {
-                                            include: ['talent']
-                                          }
-                                        },
-                                        {
-                                          relation: 'maps'
-                                        },
-                                        {
-                                            relation: 'comments',
-                                            scope: {
-                                                include: [
-                                                    {
-                                                        relation: 'author',
-                                                        scope: {
-                                                            fields: {
-                                                                id: true,
-                                                                username: true,
-                                                                email: true
+                                                    include: [
+                                                        {
+                                                            relation: 'talents'
+                                                        },
+                                                        {
+                                                            relation: 'hero',
+                                                            scope: {
+                                                                fields: [
+                                                                    'className',
+                                                                    'description',
+                                                                    'universe',
+                                                                    'heroType',
+                                                                    'name',
+                                                                    'role'
+                                                                ],
+                                                                include: [
+                                                                    {
+                                                                        relation: 'talents',
+                                                                        scope: {
+                                                                            include: {
+                                                                                relation: 'talent',
+                                                                                scope: {
+                                                                                    fields: ['orderNum']
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
                                                             }
                                                         }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'guideTalents',
+                                                scope: {
+                                                    include: ['talent']
+                                                }
+                                            },
+                                            {
+                                                relation: 'maps'
+                                            },
+                                            {
+                                                relation: 'comments',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    username: true,
+                                                                    email: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'votes',
+                                                scope: {
+                                                    fields: {
+                                                        id: true,
+                                                        direction: true,
+                                                        authorId: true
                                                     }
-                                                ]
-                                            }
-                                        },
-                                        {
-                                            relation: 'votes',
-                                            scope: {
-                                                fields: {
-                                                    id: true,
-                                                    direction: true,
-                                                    authorId: true
                                                 }
                                             }
-                                        }
-                                      ]
+                                        ]
                                     }
                                 }).$promise.then(function (data) {
                                     data.voteScore = Util.tally(data.votes, 'direction');
@@ -3754,118 +3855,49 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
-                            teams: ['TeamMember', function (TeamMember) {
-                                TeamMember.find({})
-                                .$promise
-                                .then(function (t) {
-                                    async.each(t, function (tm, eachCb) {
-                                        if (typeof tm.isActive === 'string') {
-                                            tm.isActive = true;
-
-                                            TeamMember.update({
-                                                where: {
-                                                    id: tm.id
+                            teams: ['Team', function (Team) {
+                              return Team.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: [
+                                            'id', 
+                                            'name', 
+                                            'gameId', 
+                                            'orderNum',
+                                            'abbreviation'
+                                        ],
+                                        order: 'orderNum ASC',
+                                        include: [
+                                            {
+                                                relation: 'teamMembers',
+                                                scope: {
+                                                    where: {
+                                                        isActive: true
+                                                    },
+                                                    order: 'orderNum ASC',
+                                                    fields: [
+                                                      'fullName',
+                                                      'screenName',
+                                                      'description',
+                                                      'photoName',
+                                                      'screenName',
+                                                      'social',
+                                                      'orderNum',
+                                                    ]
                                                 }
-                                            }, tm)
-                                            .$promise
-                                            .then(function (data) {
-                                                return eachCb();
-                                            })
-                                        } else {
-                                            return eachCb();
-                                        }
-                                    });
-                                });
-                            }],
-                            hsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hs',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
+                                            },
+                                            {
+                                                relation: 'game',
+                                                scope: {
+                                                    fields: ['id', 'name']
+                                                }
+                                            }
+                                        ]
                                     }
                                 })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            hotsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hots',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            wowTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'wow',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            csTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'cs',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            fifaTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fifa',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
-                            }],
-                            fgcTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fgc',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    return tm;
-                                });
+                                .$promise;
                             }]
                         }
                     }
@@ -4644,7 +4676,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.edit.html',
                         controller: 'AdminArticleEditCtrl',
                         resolve: {
-                            article: ['$stateParams', 'Article', function ($stateParams, Article) {
+                            article: ['$stateParams', 'Article', 'Util', function ($stateParams, Article, Util) {
                                 var articleID = $stateParams.articleID;
                                 return Article.findOne({
                                     filter: {
@@ -4663,12 +4695,17 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: "relatedArticles"
+                                            },
+                                            {
+                                                relation: 'slugs'
                                             }
                                         ]
                                     }
                                 })
                                 .$promise
                                 .then(function (data) {
+                                    console.log('data:', data);
+                                    data.slug = Util.setSlug(data);
                                     data.related = data.relatedArticles;
                                     return data;
                                 });
@@ -4833,7 +4870,7 @@ var app = angular.module('app', [
                             }],
 
                             classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
-								var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
+								                var playerClass = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass,
@@ -6088,6 +6125,9 @@ var app = angular.module('app', [
                                                 scope: {
                                                     include: ['user']
                                                 }
+                                            },
+                                            {
+                                                relation: 'slugs'
                                             }
                                         ]
                                     }
@@ -6920,15 +6960,17 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            teamInfo: ['Team', function (Team) {
+                            teams: ['Team', function (Team) {
                                 return Team.find({
                                     filter: {
-                                        fields: ['id', 'name', 'gameId'],
+                                        fields: ['id', 'name', 'gameId', 'orderNum'],
+                                        order: 'orderNum ASC',
                                         include: [
                                             {
                                                 relation: 'teamMembers',
                                                 scope: {
-                                                    fields: ['id', 'fullName', 'screenName']
+                                                    fields: ['id', 'fullName', 'screenName', 'orderNum'],
+                                                    order: 'orderNum ASC'
                                                 }
                                             },
                                             {
@@ -6940,11 +6982,8 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function (teamInfo) {
-                                    return teamInfo;
-                                });
-                            }],
+                                .$promise;
+                            }]
                         }
                     }
                 },
@@ -7123,12 +7162,7 @@ var app = angular.module('app', [
                                 return TeamMember.findById({
                                     id: memberID,
                                 })
-                                .$promise
-                                .then(function(teamMember) {
-                                    return teamMember;
-                                }).catch(function(err){
-                                    console.log(err);
-                                });
+                                .$promise;
                             }]
                         }
                     }
@@ -7334,7 +7368,84 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
-            }).state('app.hots.guides.guide_new', {
+            })
+            .state('app.admin.overwatch.snapshots', {
+                abstract: true,
+                url: '/snapshots',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/admin/overwatch.snapshots.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.overwatch.snapshots.list', {
+                url: '',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/overwatch.snapshots.list.html',
+                        controller: 'AdminOverwatchSnapshotListCtrl',
+                        resolve: {
+                            paginationParams: [function () {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    total: 0,
+                                    options: {
+                                        filter: {
+                                            limit: 50,
+                                            order: 'createdDate DESC',
+                                            fields: ['id', 'title', 'snapNum']
+                                        }
+                                    }
+                                }
+                            }],
+                            owSnapshots: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
+                                return OverwatchSnapshot.find(paginationParams.options)
+                                .$promise;
+                            }],
+                            owSnapshotsCount: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
+                                return OverwatchSnapshot.count().$promise
+                                .then(function (snapCount) {
+                                    paginationParams.total = snapCount.count;
+                                    
+                                    return snapCount.count;
+                                });
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.overwatch.snapshots.add', {
+                url: '/add',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/overwatch.snapshots.snapshot.html',
+                        controller: 'AdminOverwatchSnapshotAddCtrl',
+                        resolve: {
+                            owHeroes: ['OverwatchHero', function (OverwatchHero) {
+                                return OverwatchHero.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        },
+                                        fields: [
+                                            'heroName'
+                                        ]
+                                    }
+                                })
+                                .$promise;
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.hots.guides.guide_new', {
                 url: '/new/:slug',
                 views: {
                     guides: {
@@ -7447,10 +7558,18 @@ var app = angular.module('app', [
                         }
                     }
                 },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' },
                 og: true
+            })
+            .state("app.otherwise", {
+                url: "*path",
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/404.html'
+                    }
+                }
             });
-
-
     }]
 );
 

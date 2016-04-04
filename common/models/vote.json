@@ -10,17 +10,15 @@
     "direction": {
       "type": "number"
     },
-    "createdDate": {
-      "type": "date"
-    },
     "authorId": {},
     "articleId": {},
     "guideId": {},
     "deckId": {},
     "snapshotId": {},
-    "commentId": {}
+    "commentId": {},
+    "overwatchSnapshotId": {},
+    "hotsSnapshotId": {}
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -46,6 +44,11 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
+    },
+    "owSnapshot": {
+      "type": "belongsTo",
+      "model": "overwatchSnapshot",
+      "foreignKey": "overwatchSnapshotId"
     }
   },
   "acls": [
@@ -93,5 +96,12 @@
       "property": "hasVoted"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

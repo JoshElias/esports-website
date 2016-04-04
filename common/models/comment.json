@@ -9,18 +9,12 @@
   "properties": {
     "text": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "Validate": ["spam"]
     },
     "votes": {
       "type": [
         "object"
       ]
-    },
-    "createdDate": {
-      "type": "date",
-      "required": true
     },
     "voteScore": {
       "type": "number"
@@ -30,11 +24,12 @@
     "guideId": {},
     "deckId": {},
     "snapshotId": {},
+    "hotsSnapshotId": {},
     "forumPostId": {},
     "parentCommentId": {},
-    "redbullDeckId": {}
+    "redbullDeckId": {},
+    "overwatchSnapshotId": {}
   },
-  "validations": [],
   "relations": {
     "article": {
       "type": "belongsTo",
@@ -60,6 +55,16 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
+    },
+    "owSnapshot": {
+      "type": "belongsTo",
+      "model": "overwatchSnapshot",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "hotsSnapshot": {
+      "type": "belongsTo",
+      "model": "hotsSnapshot",
+      "foreignKey": "hotsSnapshotId"
     },
     "forumPost": {
       "type": "belongsTo",
@@ -95,5 +100,13 @@
       "property": "*"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Validate": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

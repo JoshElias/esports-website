@@ -8,16 +8,27 @@
   },
   "properties": {
     "snapNum": {
-      "type": "string"
+      "type": "number"
     },
-    "subtitle": {
-      "type": "string"
+    "title": {
+      "type": "string",
+      "Slug": true
     },
     "intro": {
         "type": "string"
     },
     "thoughts": {
         "type": "string"
+    },
+    "isActive": {
+        "type": "boolean"
+    },
+    "createdDate": {
+        "type": "date"
+    },
+    "isCommentable": {
+        "type": "boolean",
+        "default": true
     }
   },
   "validations": [],
@@ -26,6 +37,21 @@
           "type": "hasMany",
           "model": "heroTier",
           "foreignKey": "snapshotId"
+      },
+      "votes": {
+        "type": "hasMany",
+        "model": "vote",
+        "foreignKey": "hotsSnapshotId"
+      },
+      "authors": {
+          "type": "hasMany",
+          "model": "snapshotAuthor",
+          "foreignKey": "hotsSnapshotId"
+      },
+      "comments": {
+          "type": "hasMany",
+          "model": "comment",
+          "foreignKey": "hotsSnapshotId"
       }
   },
   "acls": [
@@ -53,5 +79,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Slug": true
+  }
 }

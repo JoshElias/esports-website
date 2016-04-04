@@ -3,21 +3,22 @@
 <div class="panel panel-default br-none">
     <div class="panel-heading  wrapper-md clearfix">
         <div class="row">
-            <div class="col-xs-3 panel-label p-r-none">
-                <label for="snapshot-number" class="control-label">
+            <div class="col-xs-12 panel-label p-r-none">
+                <label for="snapshot-number" class="control-label pull-left">
                     <h3>Add Meta Snapshot #</h3>
                 </label>
-            </div>
-            <div class="col-xs-1 panel-label">
-                <input ng-model="snapshot.snapNum" name="snapshot-number" id="snapshot-number" class="form-control pull-left" type="text" />
+                <input ng-model="snapshot.snapNum" name="snapshot-number" id="snapshot-number" class="form-control pull-left snap-num" type="text" />
+                <button ng-click="loadPrevious()" class="btn btn-green pull-right m-r-md">
+                Load previous
+            </button>
             </div>
         </div>
     </div>
     <!--- mini nav --->
-    <div class="panel-body padding-none p-t-none p-b-none flex-check">
+    <div class="panel-body padding-none p-t-none p-b-none ">
         
         <div ui-view="hots-admin-snapshot" class="hots-admin-snapshot-body col-md-12">
-
+            <!--LOAD OUR DIRECTIVES HERE-->
         </div>
     </div>
 

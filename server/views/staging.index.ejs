@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="app" ng-controller="AppCtrl">
+<head>
+    <meta name="google-site-verification" content="2LQpZjJv45yhwG9Fgy2m9ufoMlMov6aIKebfUxGmecI" />
+    <meta charset="utf-8" />
+    <base href="/" />
+    <title ng-bind="metaservice.metaTitle()">TempoStorm</title>
+    <!--og meta tags-->
+    <meta property="og:type" content="{{ metaservice.ogMetaType() }}"/>
+    <meta property="og:url" content="{{ metaservice.ogMetaUrl() }}"/>
+    <meta property="og:image" content="{{ metaservice.ogMetaImage() }}"/>
+    <meta property="og:title" content="{{ metaservice.ogMetaTitle() }}"/>
+    <meta property="og:description" content="{{ metaservice.ogMetaDescription() }}"/>
+    <!--/og meta tags-->
+    <meta name="description" content="{{ metaservice.metaDescription() }}" />
+    <meta name="keywords" content="{{ metaservice.metaKeywords() }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <meta name="prerender-status-code" content="{{ metaservice.getStatusCode() }}">
+
+    <link rel="stylesheet" href="{cdnUrl}css/{assets.vendor_min_css}" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}css/{assets.style_min_css}" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}css/{assets.modules_min_css}" type="text/css" />
+</head>
+<body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
+
+    <div class="app" id="app" ui-view="root" bootstrap-width></div>
+    <script>
+        var tpl = '{cdnUrl}';
+    </script>
+
+    <!-- vendor -->
+    <script src="{cdnUrl}js/{assets.vendor_min_js}"></script>
+
+    <!-- angular -->
+    <script src="{cdnUrl}js/{assets.angular_min_js}"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <!-- lbServices -->
+    <script src="{cdnUrl}js/services/lb-services.js"></script>
+
+    <!-- modules -->
+    <script src="{cdnUrl}js/{assets.modules_min_js}"></script>
+
+    <!-- app -->
+    <script src="{cdnUrl}js/{assets.app_min_js}"></script>
+    <script src="{cdnUrl}js/{assets.modules_min_js}"></script>
+
+    <!-- stripe -->
+    <script src="https://js.stripe.com/v2/"></script>
+
+    <!-- google analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-57639561-1', 'auto');
+    </script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
+        
         <div class="pull-right" ng-if="decks">
             <span class="m-r-sm">
                 Showing: 
@@ -11,6 +12,7 @@
             </span>
             <div pagination="deckPagination" theme="admin" class="admin"></div>
         </div>
+        
         <div class="pull-left mg-r-sm">
             <form class="form-inline" ng-submit="searchDecks()" novalidate>
                 <div class="form-group">
@@ -27,13 +29,18 @@
                 </div>
             </form>
         </div>
+        
     </div>
     <div class="list-group">
         <div class="list-group-item admin-list-item clearfix" ng-repeat="deck in decks">
             <span>{{deck.name}}</span>
             <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.hearthstone.decks.edit({ deckID: deck.id })" class="btn btn-default">Edit</a>
-                <button class="btn btn-danger" ng-click="deleteDeck(deck)">Delete</button>
+                
+                <a ui-sref="app.admin.hearthstone.decks.edit({ deckID: deck.id })" 
+                   class="btn btn-default">Edit</a>
+                
+                <button class="btn btn-danger" 
+                        ng-click="deleteDeck(deck)">Delete</button>
             </div>
         </div>
         <div class="list-group-item" ng-show="!decks.length">

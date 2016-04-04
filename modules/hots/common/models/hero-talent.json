@@ -1,0 +1,41 @@
+{
+  "name": "heroTalent",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "tier": {
+      "type": "number"
+    },
+    "orderNum": {
+      "type": "number",
+      "required": true
+    },
+    "heroId": {},
+    "talentId": {},
+    "abilityId": {}
+  },
+  "relations": {
+    "hero": {
+      "type": "belongsTo",
+      "model": "hero",
+      "foreignKey": "heroId"
+    },
+    "talent": {
+      "type": "belongsTo",
+      "model": "talent",
+      "foreignKey": "talentId"
+    },
+    "ability": {
+      "type": "belongsTo",
+      "model": "ability",
+      "foreignKey": "abilityId"
+    }
+  },
+  "mixins": {
+    "Scope": true
+  }
+}

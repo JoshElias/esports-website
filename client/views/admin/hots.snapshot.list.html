@@ -1,9 +1,5 @@
-<div class="panel panel-success animated" ng-show="success.show">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
-        <strong>{{success.msg}}</strong>
-    </div>
-</div>
+<alert-box theme="admin"></alert-box>
+
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
 <!--
@@ -35,7 +31,7 @@
         </div>
     </div>
     <div class="admin-list">
-        <div class="admin-list-item snapshot-list clearfix" ng-repeat="snapshot in snapshots">
+        <div class="admin-list-item snapshot-list clearfix" ng-class="{'fade' : deleting === snapshot.id }" ng-repeat="snapshot in snapshots">
             <div class="list-accent-div">
                 <div class="row">
                     <div class="col-xs-6">
@@ -44,13 +40,13 @@
                     <div class="col-xs-6">
                         <div class="pull-right btn-toolbar snapshot-list-item">
                             <a ui-sref="app.admin.hots.snapshots.snapshot.general({ snapshotId: snapshot.id })" class="btn btn-default">Edit</a>
-                            <button class="btn btn-danger" ng-click="deleteSnapshot(snapshot)">Delete</button>
+                            <button class="btn btn-danger" ng-click="deleteSnapshot(snapshot, $index)">Delete</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="admin-list-item" ng-show="!snapshots.length">
+        <div class="admin-list-item placeholder-text" ng-show="!snapshots.length">
             There are no snapshots yet.
         </div>
         <div class="admin-list-item b-t-none" ng-show="snapshots.length && filtered && !filtered.length">

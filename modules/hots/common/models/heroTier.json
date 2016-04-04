@@ -13,8 +13,9 @@
     "tier": {
       "type": "number"
     },
-    "previousTier": {
-      "type": "number"
+    "previousTiers": {
+      "type": ["number"],
+      "default": []
     },
     "burstScore": {
       "type": "number"
@@ -31,6 +32,9 @@
     "utilityScore": {
       "type": "number"
     },
+    "orderNum": {
+      "type": "number"
+    },
     "heroId": {},
     "snapshotId": {}
   },
@@ -42,7 +46,7 @@
           "foreignKey": "snapshotId"
       },
       "hero": {
-          "type": "hasOne",
+          "type": "belongsTo",
           "model": "hero",
           "foreignKey": "heroId"
       },

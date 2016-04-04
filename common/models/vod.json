@@ -11,15 +11,9 @@
       "type": "date",
       "required": true
     },
-    "createdDate": {
-      "type": "date",
-      "defaultFn": "now"
-    },
     "youtubeId": {
       "type": "string",
-      "validators": [
-        "youtubeId"
-      ]
+      "Validate": ["youtubeId"]
     },
     "subtitle": {
       "type": "string"
@@ -28,8 +22,6 @@
       "type": "object"
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -55,5 +47,13 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "Scope": true,
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

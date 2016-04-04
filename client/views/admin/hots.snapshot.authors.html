@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
+    <div class="col-md-12 col-lg-3 leftside-content padding-none">
         <ul class="edit-nav m-b-none">
             <li class="pull-left" ><a ui-sref="app.admin.hots.snapshots.snapshot.general">General</a></li>
             <li class="pull-left selected" ><a ui-sref="app.admin.hots.snapshots.snapshot.authors">Authors</a></li>
@@ -33,7 +33,7 @@
         </ul>
         
         <div ng-if="!snapshot.authors.length">
-            <div class="admin-list m-b-none">
+            <div class="admin-list m-b-none placeholder-text">
                 No authors have been added yet.
             </div>
         </div>
@@ -45,7 +45,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-md-8 col-lg-9 author-right-section clearfix" ng-if="!!activeAuthor">
+    <div class="col-md-12 col-lg-9 author-right-section clearfix" ng-if="!!activeAuthor">
         <div class="row clearfix">
             <div class="col-xs-12">
                 <label class="control-label m-t-md">{{activeAuthor.user.username}}</label>

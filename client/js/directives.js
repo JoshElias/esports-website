@@ -1280,7 +1280,7 @@ angular.module('app.directives', ['ui.load'])
         controller: ['$scope', function ($scope) {
             $scope.loading = false;
             $scope.authors = [];
-
+            
             // pagination
             $scope.page = 1;
             $scope.perpage = 10;
@@ -1288,7 +1288,7 @@ angular.module('app.directives', ['ui.load'])
                 page: $scope.page,
                 perpage: $scope.perpage
             };
-
+            
             $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
                 var d = $q.defer();
                 updateAuthors(page, perpage, $scope.search, function (err, count) {
@@ -1305,7 +1305,7 @@ angular.module('app.directives', ['ui.load'])
                 var where = {
                     isProvider: true
                 };
-
+                
                 if(!_.isEmpty(search)) {
                     where['or'] = [
                         {
@@ -1332,7 +1332,7 @@ angular.module('app.directives', ['ui.load'])
                 var countOptions = {
                     where: where
                 };
-
+                
                 AjaxPagination.update(User, findOptions, countOptions, function (err, data, count) {
                     $scope.loading = false;
                     if (err) { return console.error('Pagination error:', err); }
@@ -1347,6 +1347,7 @@ angular.module('app.directives', ['ui.load'])
                     }
                 });
             }
+            
             updateAuthors($scope.page, $scope.perpage, $scope.search);
 
             // search
@@ -1517,6 +1518,95 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
+.directive('owSnapshotAddHero', [function () {
+    return {
+        templateUrl: tpl + 'views/admin/overwatch.snapshot.add.hero.html',
+        controller: ['$scope', '$q', '$timeout', 'OverwatchHero', 'AjaxPagination', function ($scope, $q, $timeout, OverwatchHero, AjaxPagination) {
+            $scope.loading = false;
+            $scope.heroes = [];
+
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 100;
+            
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateHeroes(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+
+            function updateHeroes (page, perpage, search, callback) {
+                $scope.loading = true;
+
+                var pattern = '/.*'+search+'.*/i';
+                var where = {};
+
+//                if(!_.isEmpty(search)) {
+//                    where['or'] = [
+//                        {
+//                            name: {
+//                                regexp: pattern
+//                            }
+//                        },
+//                        {
+//                            universe: {
+//                                regexp: pattern
+//                            }
+//                        },
+//                        {
+//                            role: {
+//                                regexp: pattern
+//                            }
+//                        }
+//                    ];
+//                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+                
+                var countOptions = {
+                    where: where
+                };
+
+                AjaxPagination.update(OverwatchHero, findOptions, countOptions, function (err, data, count) {
+                    console.log('data:', data);
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.heroes = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            
+            updateHeroes($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateHeroes(1, $scope.perpage, $scope.search);
+            };
+        }]
+    };
+}])
 .directive('snapshotAddDeck', [function () {
     return {
         templateUrl: tpl + "views/admin/hs.snapshot.add.deck.html"
@@ -1582,6 +1672,7 @@ angular.module('app.directives', ['ui.load'])
                 for (var i = 0; i < $scope.deck.cards.length; i++) {
                     dust += $scope.deck.cards[i].cardQuantity * $scope.deck.cards[i].card.dust;
                 }
+
                 return dust;
             };
         }],
@@ -2155,8 +2246,28 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'E',
         templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
-        controller: ['$scope', function ($scope) {
-            $scope.snapshot = $scope.$parent.snapshot;
+        controller: ['$scope', 'Util', function ($scope, Util) {
+            //$scope.snapshot = $scope.$parent.snapshot;
+            var sl = $scope.snapshot.slugs[0];
+
+            $scope.toggleLinked = function () {
+                $scope.snapshot.slugs[0].linked = !$scope.snapshot.slugs[0].linked;
+
+                return $scope.slugifyUrl($scope.snapshot.title);
+            };
+
+            $scope.slugifyUrl = function (str) {
+                console.log(str);
+                console.log(sl);
+                if (!$scope.snapshot.slugs[0].linked)
+                    return;
+
+                $scope.snapshot.slugs[0].slug = slugify(str);
+            };
+
+            function slugify (str) {
+                return Util.slugify(str);
+            }
         }]
     }
 })
@@ -2170,7 +2281,7 @@ angular.module('app.directives', ['ui.load'])
             var defaultAuthor = {
                 description: "",
                 expertClasses: [],
-                snapshotId: "",
+                hotsSnapshotId: "",
                 authorId: ""
             }
 
@@ -2308,6 +2419,24 @@ angular.module('app.directives', ['ui.load'])
                 orderNum   : 0
             };
 
+            function buildOrder () {
+                var idx = 0;
+                _.each($scope.snapshot.tiers, function (tier) {
+                    _.each(tier.heroes, function (hero) {
+                        hero.orderNum = idx++;
+
+                        //gross
+                        var toChange = _.find($scope.snapshot.heroTiers, function (val) {
+                            return val.hero.className == hero.hero.className;
+                        });
+
+
+                        toChange.orderNum = hero.orderNum;
+                        toChange.tier = tier.tier;
+                    });
+                });
+            }
+
             function addBufferedHeroes (tier) {
                 var snap = $scope.snapshot;
                 var heroEmpty = _.isEmpty(snap.heroTiers);
@@ -2324,6 +2453,7 @@ angular.module('app.directives', ['ui.load'])
                 //snap.buildTiers();
                 $scope.$apply(function () {
                     snap.buildTiers();
+                    buildOrder();
                 });
 
                 if (heroEmpty) {
@@ -2333,6 +2463,17 @@ angular.module('app.directives', ['ui.load'])
 
             if (!!$scope.snapshot.heroTiers)
                 $scope.activeHero = $scope.snapshot.heroTiers[0];
+
+            $scope.numOfTiers = 12;
+            $scope.pastTiers = function (num) {
+                return new Array(num);
+            }
+
+            $scope.updateDND = function ($index, list) {
+                list.splice($index, 1);
+
+                buildOrder();
+            };
 
             $scope.openHeroAdd = function (tier) {
                 var dialog = box({

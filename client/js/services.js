@@ -140,7 +140,7 @@ angular.module('app.services', [])
         }
     ])
     .factory('AuthenticationService', function() {
-var loggedIn = false,
+        var loggedIn = false,
         admin = false,
         provider = false;
 
@@ -459,26 +459,30 @@ var loggedIn = false,
             }
         }
     }])
-    .service('HOTSSnapshot', ['HotsSnapshot', 'HotsSnapshotAuthor', 'HeroTier', 'GuideTier',
-        function (HotsSnapshot, HotsSnapshotAuthor, HeroTier, GuideTier) {
+    .service('HOTSSnapshot', ['HotsSnapshot', 'SnapshotAuthor', 'HeroTier', 'GuideTier',
+        function (HotsSnapshot, SnapshotAuthor, HeroTier, GuideTier) {
 
             var defaultSnapshot = {
                 snapNum: 0,
                 title: "default title",
                 intro: "default intro",
                 thoughts: "default thoughts",
-                slug: {
-                    linked: true,
-                    url: "default slug"
-                },
-                heroTiers: [],
+                slugs: [
+                    {
+                        linked: true,
+                        slug: "default slug"
+                    }
+                ],
                 authors: [],
-                isActive: false
+                heroTiers: [],
+                isActive: false,
+                createdDate: undefined,
+                comments: []
             };
             var defaultAuthor = {
                 description: "",
                 expertClasses: [],
-                snapshotId: "",
+                hotsSnapshotId: "",
                 authorId: ""
             };
             var defaultGuideTier = {
@@ -498,19 +502,30 @@ var loggedIn = false,
                     snapshot = angular.copy(defaultSnapshot);
                 }
 
+                if (snapshot.heroTiers) {
+                    snapshot.heroTiers = _.sortBy(snapshot.heroTiers, function (val) { return val.orderNum });
+                }
+
+                this.load(snapshot);
+            };
+
+            HOTSSnapshot.prototype.load = function (snapshot) {
                 exists['authors'] = angular.copy(defaultCrud);
                 exists['heroTiers'] = angular.copy(defaultCrud);
                 exists['guideTiers'] = angular.copy(defaultCrud);
 
-                this.snapNum   = snapshot.snapNum;
-                this.title     = snapshot.title;
-                this.intro     = snapshot.intro;
-                this.thoughts  = snapshot.thoughts;
-                this.slug      = snapshot.slug;
-                this.authors   = snapshot.authors;
-                this.heroTiers = snapshot.heroTiers;
-                this.isActive  = snapshot.isActive;
-                this.tiers     = new Array();
+                this.snapNum       = snapshot.snapNum;
+                this.title         = snapshot.title;
+                this.intro         = snapshot.intro;
+                this.thoughts      = snapshot.thoughts;
+                this.slugs         = snapshot.slugs;
+                this.authors       = snapshot.authors;
+                this.heroTiers     = snapshot.heroTiers;
+                this.isActive      = snapshot.isActive;
+                this.createdDate   = snapshot.createdDate;
+                this.comments      = snapshot.comments;
+                this.isCommentable = snapshot.isCommentable;
+                this.tiers         = new Array();
 
                 if(!!snapshot.id) {
                     this.id = snapshot.id;
@@ -558,11 +573,6 @@ var loggedIn = false,
             };
 
             HOTSSnapshot.prototype.newHero = function (obj) {
-                //if (!_.isEmpty(validate(obj))) {
-                //    console.log("error!");
-                //    return;
-                //}
-
                 var hero = {
                     summary      : obj.summary,
                     tier         : obj.tier,
@@ -583,15 +593,10 @@ var loggedIn = false,
             };
 
             HOTSSnapshot.prototype.newAuthor = function (obj) {
-                //if (!_.isEmpty(validate(obj))) {
-                //    console.log("error!");
-                //    return;
-                //}
-
                 var author = {
                     description: obj.description,
                     expertClasses: obj.expertClasses,
-                    snapshotId: obj.snapshotId,
+                    hotsSnapshotId: obj.hotsSnapshotId,
                     authorId: obj.authorId,
                     user: obj.user
                 };
@@ -617,8 +622,6 @@ var loggedIn = false,
                     hero.guides = [];
 
                 hero.guides.push(tierGuide);
-
-                console.log(exists);
             };
 
             HOTSSnapshot.prototype.removeTier = function (tier) {
@@ -649,8 +652,6 @@ var loggedIn = false,
 
             HOTSSnapshot.prototype.removeHero = function (hero) {
                 var that = this;
-                var heroTiersCopy = angular.copy(this.heroTiers);
-                var heroCopy = angular.copy(hero);
 
                 _.each(hero.guides, function (guide) {
                     that.removeGuideFromHero(guide.id, hero.id);
@@ -680,9 +681,10 @@ var loggedIn = false,
             HOTSSnapshot.prototype.removeAuthor = function (obj) {
                 var authors = this.authors;
 
-                exists.authors.toDelete.push(obj);
-
                 this.authors = _.difference(authors, [obj]);
+
+                if(!!obj.id)
+                    exists.authors.toDelete.push(obj);
             };
 
             HOTSSnapshot.prototype.newTier = function () {
@@ -693,6 +695,14 @@ var loggedIn = false,
             HOTSSnapshot.prototype.submit = function (cb) {
                 var arrs = exists;
                 var snapshot = angular.copy(this);
+
+                if (!snapshot.id)
+                    snapshot.createdDate = new Date().toISOString();
+
+                snapshot.slugOptions = {
+                    slug: snapshot.slugs[0].slug,
+                    linked: snapshot.slugs[0].linked
+                };
 
                 //build our crudman toWrite arrays
                 _.each(arrs, function (arr, key) {
@@ -718,20 +728,33 @@ var loggedIn = false,
                         HotsSnapshot.upsert(snapshot)
                         .$promise
                         .then(function (data) {
+
+                            //gross, kill me pls
+                            if (data._id) {
+                                data.id = data._id;
+                                delete data._id;
+                            }
+
                             return seriesCb(undefined, data);
-                        });
+                        })
+                        .catch(seriesCb);
                     }, function (newSnapshot, seriesCb) {
                         var authors = arrs.authors;
-                        var snapshotId = newSnapshot.id;
+                        var hotsSnapshotId = newSnapshot.id;
 
                         async.forEach(authors.toWrite, function (author, eachCb) {
-                            author.snapshotId = snapshotId;
+                            author.hotsSnapshotId = hotsSnapshotId;
 
-                            HotsSnapshotAuthor.upsert(author)
+                            SnapshotAuthor.upsert(author)
                             .$promise
                             .then(function (data) {
                                 console.log('successfully submitted author:', data);
                                 return eachCb(undefined);
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+
+                                return eachCb(err);
                             })
                         }, function () {
                             //if (err)
@@ -780,7 +803,7 @@ var loggedIn = false,
                         var objs = {
                             guideTiers: GuideTier,
                             heroTiers: HeroTier,
-                            authors: HotsSnapshotAuthor
+                            authors: SnapshotAuthor
                         };
 
                         async.forEachOf(objs, function (obj, key, forEachCb) {
@@ -792,6 +815,17 @@ var loggedIn = false,
                                 .then(function () {
                                     console.log('delete ' + key);
                                     return eachCb();
+                                })
+                                .catch(function (e) {
+                                    if(e.status == 404) {
+                                        console.error("An error occured:");
+                                        console.error(e);
+                                        console.error("Continuing...");
+
+                                        return eachCb();
+                                    }
+
+                                    return eachCb(e);
                                 });
                             }, forEachCb);
                         }, seriesCb);
@@ -1834,13 +1868,23 @@ var loggedIn = false,
 
                 });
                 return out;
+            },
+            setSlug: function (obj) {
+                var slug = obj.slugs[0];
+                var sl = {
+                    url: slug.slug,
+                    linked: slug.linked
+                }
+                delete obj.slugs;
+                
+                return sl;
             }
         };
     }])
     .factory('Base64', function () {
     var digitsStr =
-        //   0       8       16      24      32      40      48      56     63
-        //   v       v       v       v       v       v       v       v      v
+    //   0       8       16      24      32      40      48      56     63
+    //   v       v       v       v       v       v       v       v      v
         "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
     var digits = digitsStr.split('');
     var digitsMap = {};
@@ -1880,7 +1924,7 @@ var loggedIn = false,
         Shaman: ['Thrall'],
         Warrior: ['Garrosh','Magni'],
         Rogue: ['Valeera'],
-        Paladin: ['Uther'],
+        Paladin: ['Uther', 'Liadrin'],
         Priest: ['Anduin'],
         Warlock: ['Guldan'],
         Hunter: ['Rexxar', 'Alleria'],
@@ -1954,7 +1998,6 @@ var loggedIn = false,
             description: data.description || '',
             chapters: data.chapters || [],
             deckType: data.deckType || 'None',
-            isCommentable: data.isCommentable,
             gameModeType: data.gameModeType || 'constructed',
             basic: _.isUndefined(data.basic) ? false : data.basic,
             matchups: data.matchups || [],
@@ -2036,15 +2079,15 @@ var loggedIn = false,
                     mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
-                },
+                }
             ]
         };
 
-        db.init = function() {
-            if (db.cards.length) {
-                db.sortDeck();
-            }
-        };
+            db.init = function() {
+                if (db.cards.length) {
+                    db.sortDeck();
+                }
+            };
 
         db.validVideo = function () {
             //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -3193,12 +3236,16 @@ var loggedIn = false,
                                     premium: true,
                                     createdDate: true
                                 },
-                                include: ['author'],
+                                include: ['author', 'slugs'],
                                 order: "createdDate DESC",
                                 limit: limit
                             }
                         }, function (articles) {
 //                            console.log('ARTICLES!!:', articles);
+                            _.each(articles, function (article) {
+                                article.slug = Util.setSlug(article);
+                            });
+
                             return finalCallback(undefined, articles);
                         }, function (err) {
                             console.log(err);
@@ -3228,6 +3275,7 @@ var loggedIn = false,
                 .$promise
                 .then(function (data) {
 //                    console.log(data);
+                    data.slug = Util.setSlug(data);
                     return finalCallback(undefined, data);
                 })
                 .catch(function (err) {
@@ -3283,7 +3331,9 @@ var loggedIn = false,
 
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: heroWhere,
                                 include: [
                                     {
@@ -3317,17 +3367,17 @@ var loggedIn = false,
                                 order: order,
                                 skip: ((page*limit) - limit),
                                 where: guideWhere,
-                                fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                ],
+                                fields: {
+                                    name: true,
+                                    authorId: true,
+                                    slug: true,
+                                    voteScore: true,
+                                    guideType: true,
+                                    premium: true,
+                                    id: true,
+                                    talentTiers: true,
+                                    createdDate: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -3363,7 +3413,7 @@ var loggedIn = false,
                                                         className: true
                                                     }
                                                 }
-                                            },
+                                            }
                                         }
                                     },
                                     {
@@ -3374,6 +3424,9 @@ var loggedIn = false,
                                                 direction: true
                                             }
                                         }
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
@@ -3381,6 +3434,7 @@ var loggedIn = false,
 
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
 
                             return seriesCallback(undefined, guides, guideWhere);
@@ -3535,6 +3589,9 @@ var loggedIn = false,
                                                 direction: true
                                             }
                                         }
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
@@ -3542,6 +3599,7 @@ var loggedIn = false,
 
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
 
                             return seriesCallback(undefined, guides, guideIds);
@@ -3649,6 +3707,9 @@ var loggedIn = false,
                                     },
                                     {
                                         relation: 'votes'
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
@@ -3658,6 +3719,7 @@ var loggedIn = false,
 
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
 
                             return seriesCallback(undefined, guides, guideIds);
@@ -3827,6 +3889,9 @@ var loggedIn = false,
                                                         direction: true
                                                     }
                                                 }
+                                            },
+                                            {
+                                                relation: 'slug'
                                             }
                                         ]
                                     }
@@ -3834,6 +3899,7 @@ var loggedIn = false,
 
                                     _.each(guides, function(guide) {
                                         guide.voteScore = Util.tally(guide.votes, 'direction');
+                                        guide.slug = Util.setSlug(guide);
                                     });
 
                                     return waterCallback(undefined, guides);
@@ -4100,20 +4166,870 @@ var loggedIn = false,
         }
     }])
     .factory('markitupSettings', [
-    function() {
-        var factory, markset;
-        markset = [
-            //here goes your usual markItUp layout
-        ];
-        factory = {};
-        factory.create = function(callback) {
-            return {
-                afterInsert: callback,
-                previewParserPath: '',
-                markupSet: markset
+        function() {
+            var factory, markset;
+            markset = [
+                //here goes your usual markItUp layout
+            ];
+            factory = {};
+            factory.create = function(callback) {
+                return {
+                    afterInsert: callback,
+                    previewParserPath: '',
+                    markupSet: markset
+                };
             };
+            return factory;
+        }
+    ])
+    .factory('OverwatchSnapshotBuilder', ['$q', '$upload', '$timeout', '$window', '$compile', '$state', '$rootScope', 'bootbox', 'OverwatchSnapshot', 'OverwatchHero', 'AlertService', 'Util', function ($q, $upload, $timeout, $window, $compile, $state, $rootScope, bootbox, OverwatchSnapshot, OverwatchHero, AlertService, Util) {
+        var snapshot = {};
+            
+        var defaultSnap = {
+            // parent model
+            snapNum: 1,
+            title: "",
+            slug: {
+                url: "",
+                linked: true,
+            },
+            intro: "",
+            thoughts: "",
+            photoNames: {
+                large: "",
+                medium: "",
+                small: "",
+                square: ""
+            },
+            isActive: true,
+            
+            // relationships
+            authors: [],
+            tiers: [],
+            
+            // template things
+            loading: false,
+            loaded: false,
+            saving: false,
+            activeAuthor: null,
+            activeTierHero: null
         };
-        return factory;
-    }
-]);
-;
+        
+        var defaultAuthor = {
+            id: null,
+            user: undefined,
+            description: "",
+            expertClasses: []
+        };
+        
+        var defaultTier = {
+            tier: 1,
+            heroes: []
+        };
+        
+        var defaultTierHero = {
+            tier: 1,
+            summary: "",
+            strongAgainst: [],
+            weakAgainst: [],
+            hero: undefined
+        };
+        
+        var defaultTierHeroRank = {
+            heroName: "",
+            rank: 0
+        };
+        
+        // create a new overwatch snapshot
+        snapshot.new = function (snapshotData) {
+            
+            var sb = angular.copy(defaultSnap);
+            
+            // track deletable 
+            sb.deleted = {
+                authors: [],
+                tiers: []
+            };
+            
+            // track updatable
+            sb.updated = {
+                snapshot: false,
+                authors: [],
+                tiers: []
+            };
+            
+            // init
+            sb.init = function(data) {
+                // if we have data, load it
+                if (data) {
+                    // load data
+                    sb.load(data);
+                    
+                    // generate tier ranges for charts
+//                    sb.chartGenerateTierRanges();
+                }
+            };
+            
+            // load snapshot data
+            sb.load = function (owSnapshot) {
+                // parent model
+                sb.id           = owSnapshot.id;
+                sb.snapNum      = owSnapshot.snapNum;
+                sb.title        = owSnapshot.title;
+                sb.intro        = owSnapshot.intro;
+                sb.thoughts     = owSnapshot.thoughts;
+                sb.isActive     = owSnapshot.isActive;
+                sb.createdDate  = owSnapshot.createdDate;
+                
+                // relations
+                sb.authors      = owSnapshot.authors;
+                sb.heroTiers    = owSnapshot.heroTiers;
+            };
+            
+            // flag snapshot as updated
+            sb.snapshotUpdated = function () {
+                console.log('snapshot updated');
+                
+                // don't flag for update if new
+                if (!sb.id) { return false; }
+                
+                // flag for update
+                sb.updated.snapshot = true;
+            };
+            
+            // load latest snapshot and increment snapshot number
+            sb.loadPrevious = function () {
+                // set loading
+                sb.loading = true;
+                
+                // get latest snapshot
+                OverwatchSnapshot.findOne({
+                    filter: {
+                        where: {
+                            isActive: true
+                        },
+                        fields: [],
+                        order: 'createdDate DESC',
+                        include: [
+                            {
+                                relation: 'authors',
+                                scope: {
+                                    include: {
+                                        relation: 'user',
+                                        scope: {
+                                            fields: ['username']
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                relation: 'heroTiers',
+                                scope: {
+                                    include: {
+                                        relation: 'heros',
+                                        scope: {
+                                            fields: ['heroName']
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                })
+                .$promise
+                .then(function (owSnapshot) {
+                    console.log('owSnapshot:', owSnapshot);
+                    // strip ids from old data so new items get created
+                    
+                    // snapshotId
+                    delete owSnapshot.id;
+                    
+                    // authors
+                    _.each(owSnapshot.authors, function (author) {
+                        delete author.id;
+                        delete author.overwatchSnapshotId;
+                    });
+                    
+                    // hero tiers
+                    _.each(owSnapshot.tiers, function (heroTier) {
+                        delete heroTier.id;
+                        delete heroTier.overwatchSnapshotId;
+                    });
+                    
+                    // inc snapshot num
+                    owSnapshot.snapNum++;
+                    
+                    // init comments/votes
+                    sb.comments = owSnapshot.comments || [];
+                    sb.votes = owSnapshot.votes || [];
+                    
+                    // ... do more stuff ...
+                    
+                    // load snapshot data
+                    sb.load(owSnapshot);
+                    
+                    // set loading
+                    sb.loading = false;
+                });
+            };
+            
+            // photo uploading
+            sb.photoUpload = function ($files) {
+                console.log('inside photo upload');
+                console.log('$files:', $files);
+                if (!$files.length) return false;
+                
+                // create new $scope
+                var newScope = $rootScope.$new(true);
+                newScope.uploading = 0;
+                
+                // bootbox prompt
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')(newScope),
+                    closeButton: false,
+                    animate: false
+                });
+                
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    newScope.upload = $upload.upload({
+                        url: '/api/images/uploadSnapshot',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        newScope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        sb.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
+                        var URL = (tpl === './') ? cdn2 : tpl;
+                        sb.snapshotImg = URL + data.path + data.small;
+                        box.modal('hide');
+                        
+                        // mark snapshot as updated
+                        sb.snapshotUpdated();
+                    });
+                }
+            };
+            
+            // prompt for tier delete
+            sb.tierDeletePrompt = function (tier) {
+                var box = bootbox.dialog({
+                    title: "Remove Tier?",
+                    message: "Are you sure you want to remove the tier <strong>Tier " + tier.tier + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.tierDelete(tier);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // delete tier
+            sb.tierDelete = function (tier) {
+                var index = sb.tiers.indexOf(tier);
+                if (index !== -1) {
+//                    sb.tierDeleteAllDecks(tier);
+                    sb.tiers.splice(index, 1);
+                    sb.tierUpdateNumbers();
+                }
+            };
+            
+            // update all tier nums
+            sb.tierUpdateNumbers = function () {
+                var tierNum = 1;
+                var oldTier;
+                var newTier;
+                
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    sb.tiers[i].tier = tierNum;
+
+//                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+//                        oldTier = sb.tiers[i].decks[j].tier;
+//                        newTier = tierNum;
+//                        
+//                        // if tier moves from non matchups to matchups - add matchups for the deck
+//                        if (oldTier > 2 && newTier < 3) {
+//                            sb.matchupsAdd(sb.tiers[i].decks[j]);
+//                        }
+//                        
+//                        // set new tier for deck
+//                        sb.tiers[i].decks[j].tier = newTier;
+//                    }
+
+                    tierNum++;
+                }
+            };
+            
+            // get snapshot image url
+            sb.getImage = function () {
+                var URL = (tpl === './') ? cdn2 : tpl;
+                var imgPath = 'snapshots/';
+                return (sb.photoNames && sb.photoNames.small === '') ?  URL + 'img/blank.png' : URL + imgPath + sb.photoNames.small;
+            };
+            
+            // remove image
+            sb.removeImage = function () {
+                sb.photoNames.square = '';
+                sb.photoNames.small = '';
+                sb.photoNames.medium = '';
+                sb.photoNames.large = '';
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
+            // set slug
+            sb.setSlug = function () {
+                if (!sb.slug.linked) { return false; }
+                sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
+            };
+
+            // toggle if slug is linked to title
+            sb.slugToggleLink = function () {
+                sb.slug.linked = !sb.slug.linked;
+                sb.setSlug();
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
+            // prompt for load previous
+            sb.loadPreviousPrompt = function () {
+                var box;
+                
+//                newScope.loadPrevious = function (snapshotType) {
+//                    sb.loadPrevious(snapshotType);
+//                    box.modal('hide');
+//                }
+                
+                box = bootbox.dialog({
+                    title: 'Load Previous Snapshot',
+                    message: 'Current snapshot data will be replaced with the most recent saved snapshot',
+                    buttons: {
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        },
+                        continue: {
+                            label: 'Continue',
+                            className: 'btn-danger pull-right',
+                            callback: function () {
+                                sb.loadPrevious();
+                            }
+                        }
+                    },
+                    className: 'modal-admin',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // add tier
+            sb.tierAdd = function () {
+                var newTier = angular.copy(defaultTier);
+                newTier.tier = sb.tiers.length + 1;
+                sb.tiers.push(newTier);
+            };
+            
+            sb.saveCheck = function (callback) {
+                console.log('callback:', callback);
+                console.log('inside save check');
+                async.series([
+                    function (seriesCB) {
+                        // check title
+                        if (!sb.title || !sb.title.length) {
+                            console.log(1);
+                            return seriesCB("Snapshot doesn't have a title");
+                        }
+                        
+                        // check url
+                        if (!sb.slug || !sb.slug.url || !sb.slug.url.length) {
+                            return seriesCB("Snapshot doesn't have a url");
+                        }
+                        
+                        // check image
+                        if (!sb.photoNames 
+                            || !sb.photoNames.square 
+                            || !sb.photoNames.square.length 
+                            || !sb.photoNames.small 
+                            || !sb.photoNames.small.length
+                            || !sb.photoNames.medium
+                            || !sb.photoNames.medium.length
+                            || !sb.photoNames.large
+                            || !sb.photoNames.large.length) {
+                            return seriesCB("Snapshot doesn't have an image");
+                        }
+                        
+                        // check active
+                        if (sb.isActive === undefined || (sb.isActive !== true && sb.isActive !== false)) {
+                            return seriesCB("Snapshot active field is set to an invalid value");
+                        }
+                        
+                        // check intro
+                        if (!sb.intro || !sb.intro.length) {
+                            return seriesCB("Snapshot does not have an introduction");
+                        }
+                        
+                        // check thoughts
+                        if (!sb.thoughts || !sb.thoughts.length) {
+                            return seriesCB("Snapshot does not have thoughts");
+                        }
+                        
+                        // all tests passed
+                        return seriesCB();
+                    }
+                ], function (err) {
+                    console.log('end save check', err);
+                    return callback(err);
+                });
+            };
+            
+            sb.saveDelete = function (callback) {
+                console.log('inside saveDelete');
+                return callback(undefined);
+            };
+            
+            sb.saveUpdate = function (callback) {
+                console.log('inside saveUpdate');
+                return callback(undefined);
+            };
+            
+            sb.saveCreate = function (callback) {
+                console.log('inside saveCreate');
+                async.waterfall([
+                    // create snapshot
+                    function (waterCB) {
+                        console.log('got here?');
+                        if (sb.id) { return waterCB(null, sb.id); }
+                        
+                        OverwatchSnapshot.create({
+                            snapNum: sb.snapNum,
+                            title: sb.title,
+                            slug: {
+                                url: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
+                            intro: sb.intro,
+                            thoughts: sb.thoughts,
+                            createdDate: new Date().toISOString(),
+                            photoNames: {
+                                square: sb.photoNames.square || '',
+                                small: sb.photoNames.small || '',
+                                medium: sb.photoNames.medium || '',
+                                large: sb.photoNames.large || ''
+                            },
+                            isActive: sb.isActive
+                        })
+                        .$promise
+                        .then(function (newSnapshot) {
+                            console.log('newSnapshot:', newSnapshot);
+                            
+                            sb.id = newSnapshot.id;
+                            return waterCB(null);
+                        })
+                        .catch(function (err) {
+                            return waterCB(err);
+                        });
+                    },
+                    function (waterCB) {
+                        OverwatchSnapshot.authors.create({
+                            
+                        });
+                    }
+                ], function (err) {
+                    if (err) {
+                        console.error('Snapshot create err: ', err);
+                    }
+                    return callback(err);
+                });
+            };
+            
+            // add hero
+            sb.heroAdd = function (tier, hero) {
+//                if (sb.getTierDeckByDeckId(hero.id)) { return false; }
+                
+                var newHero = angular.copy(defaultTierHero);
+                newHero.tier = tier.tier;
+                newHero.hero = hero;
+                
+                tier.heroes.push(newHero);
+                
+//                sb.decksUpdateCurrentRanks();
+                
+//                if (tier.tier <= 2) {
+//                    sb.matchupsAdd(newHero);
+//                    console.log(newHero);
+//                }
+            };
+            
+            // remove hero from tier
+            sb.heroRemove = function (tier, hero) {
+                var heroFound = false;
+                for (var i = 0; i < tier.heroes.length; i++) {
+                    if (tier.heroes[i].hero.id === hero.id) {
+                        // make sure not to leave deleted deck active
+                        if (sb.activeTierHero
+                            && sb.activeTierHero.hero === hero) {
+                            sb.activeTierHero = null;
+                        }
+                        
+                        return tier.heroes.splice(i, 1);
+                    }
+                }
+            };
+            
+            // remove a tierHero
+            sb.heroDelete = function (tier, tierHero) {
+                var index = tier.heroes.indexOf(tierHero);
+                if (index !== -1) {
+                    // if existing item
+                    if (tierHero.id) {
+                        // remove update flag
+//                        sb.removeUpdateFlag('deckTiers', deck.id);
+                        // flag deckTier for delete
+//                        sb.deleted.deckTiers.push(deck.id);
+                    }
+                                        
+//                    sb.deckDeleteAllTechs(deck);
+//                    sb.matchupsDelete(deck);
+                    
+                    tier.heroes.splice(index, 1);
+                    
+//                    sb.decksUpdateCurrentRanks();
+                    
+                    // make sure not to leave deleted deck active
+                    if (sb.activeTierHero === tierHero) {
+                        sb.activeTierHero = null;
+                    }
+                }
+            };
+            
+            // set active hero
+            sb.setActiveHero = function (tierHero) {
+                sb.activeTierHero = tierHero;
+            };
+            
+            // prompt to delete a tierHero
+            sb.heroDeletePrompt = function (tier, tierHero) {
+                var box = bootbox.dialog({
+                    title: "Remove Hero?",
+                    message: "Are you sure you want to remove the hero <strong>" + tierHero.hero.heroName + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.heroDelete(tier, tierHero);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // determine if a hero exists in any tier
+            sb.heroExistsInOtherTiers = function (currentTier, heroId) {
+                var heroExists = false;
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    if (sb.tiers[i] !== currentTier) {
+                        for (var j = 0; j < sb.tiers[i].heroes.length; j++) {
+
+                            if (sb.tiers[i].heroes[j].hero.id === heroId) {
+                                return heroExists = true;
+                            }
+
+                        }
+                    }
+                }
+                return heroExists;
+            };
+            
+            // determine if a hero already exists in 
+            sb.heroExistsInTier = function (currentTier, heroId) {
+                var heroExists = false;
+                _.each(currentTier.heroes, function (hero) {
+                    if (hero.hero.id === heroId) {
+                        return heroExists = true;
+                    }
+                });
+                
+                return heroExists;
+            };
+            
+            // prompt for adding a deck
+            sb.heroAddPrompt = function (tier) {
+                var newScope = $rootScope.$new(true);
+                newScope.heroAdd = sb.heroAdd;
+                newScope.heroRemove = sb.heroRemove;
+                newScope.currentTier = tier;
+                newScope.heroExistsInTier = sb.heroExistsInTier;
+                newScope.heroExistsInOtherTiers = sb.heroExistsInOtherTiers;
+                
+                var box = bootbox.dialog({
+                    title: "Heroes",
+                    message: $compile('<div ow-snapshot-add-hero></div>')(newScope),
+                    buttons: {
+                        submit: {
+                            label: 'Done',
+                            className: 'btn-primary',
+                            callback: function () {
+//                                if (!newScope.hero) { return false; }
+                                
+//                                $timeout(function () {
+//                                    sb.deckAdd(tier, newScope.deck.name, newScope.deck);
+//                                });
+                                
+                                box.modal('hide');
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    show: false,
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
+                });
+                box.modal('show');
+            };
+            
+            // prompt for adding / removing authors
+            sb.authorAddPrompt = function () {
+                var newScope = $rootScope.$new(true);
+                newScope.authorAdd = sb.authorAdd;
+                newScope.authorExistsById = sb.authorExistsById;
+                newScope.authorDeleteById = sb.authorDeleteById;
+
+                var box = bootbox.dialog({
+                    title: "Authors",
+                    message: $compile('<div snapshot-add-author></div>')(newScope),
+                    show: false,
+                    className: 'modal-admin modal-admin-authors'
+                });
+                box.modal('show');
+            };
+            
+            // set active author
+            sb.setActiveAuthor = function (author) {
+                sb.activeAuthor = author;
+            };
+            
+            // return if author has class
+            sb.authorHasHero = function (author, heroName) {
+                var index = author.expertClasses.indexOf(heroName);
+                return (index !== -1);
+            };
+            
+            // toggle class for author
+            sb.toggleAuthorHero = function (author, heroName) {
+                // check if class exists
+                var index = author.expertClasses.indexOf(heroName);
+                if (index !== -1) {
+                    author.expertClasses.splice(index, 1);
+                } else {
+                    author.expertClasses.push(heroName);
+                }
+                
+                // flag author as updated
+                sb.authorUpdated(author);
+            };
+            
+            // get snapshot author by id
+            sb.getAuthorById = function (authorId) {
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].id === authorId) {
+                        return sb.authors[i];
+                    }
+                }
+                return false;
+            };
+            
+            // flag author as updated
+            sb.authorUpdated = function (author) {
+                console.log('author: ', author);
+                // don't flag for update if new
+                if (!author.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.authors.indexOf(author.id);
+                if (index === -1) {
+                    sb.updated.authors.push(author.id);
+                    console.log('author update flagged: ', author.user.username);
+                }
+            };
+            
+            // add author
+            sb.authorAdd = function (user) {
+                var newAuthor = angular.copy(defaultAuthor);
+                newAuthor.user = user;
+                sb.authors.push(newAuthor);
+            };
+            
+            // check if user is already an author on snapshot
+            sb.authorExistsById = function (authorId) {
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].user.id === authorId) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            
+            // prompt for author delete
+            sb.authorDeletePrompt = function (author) {
+                var box = bootbox.dialog({
+                    title: "Remove Author?",
+                    message: "Are you sure you want to remove the author <strong>" + author.user.username + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.authorDeleteById(author.user.id);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // delete author
+            sb.authorDeleteById = function (authorId) {
+                console.log('authorId:', authorId);
+                
+                var index = -1;
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].user.id === authorId) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index !== -1) {
+                    // if existing item
+                    if (sb.authors[index].id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('authors', sb.authors[index].id);
+                        // add delete flag
+                        sb.deleted.authors.push(sb.authors[index].id);
+                    }
+                    
+                    // make sure active author isn't deleted author
+                    if (sb.activeAuthor && sb.activeAuthor.user.id === authorId) {
+                        sb.activeAuthor = null;
+                    };
+                    
+                    // delete author
+                    sb.authors.splice(index, 1);
+                }
+            };
+            
+            // verifies snapshot is correct and saves
+            sb.save = function () {
+                console.log('saving sb:', sb);
+                
+                sb.saving = true;
+                
+                // reset errors
+                AlertService.reset();
+                
+                async.waterfall([
+                    sb.saveCheck,
+//                    sb.saveDelete,
+//                    sb.saveUpdate,
+                    sb.saveCreate
+                ], function (err) {
+                    // need to force an angular digest with $timeout
+                    $timeout(function () {});
+                    
+                    sb.saving = false;
+                    $window.scrollTo(0, 0);
+                    
+                    console.log('finished saving', err);
+                    
+                    if (err) {
+                        if (angular.isString(err)) {
+                            return AlertService.setError({
+                                msg: 'Snapshot Error',
+                                errorList: [err],
+                                show: true
+                            });
+                        } else {
+                            return AlertService.setError({
+                                msg: 'Snapshot Error',
+                                lbErr: err,
+                                show: true
+                            });
+                        }
+                    }
+                    
+                    AlertService.setSuccess({
+                        msg: sb.title + ' created successfully',
+                        show: true,
+                        persist: true
+                    });
+                    
+                    return $state.transitionTo('app.admin.overwatch.snapshots.list');
+                });
+            };
+            
+            // init snapshot
+            sb.init(snapshotData);
+            
+            // return instance
+            return sb;
+        };
+        
+        return snapshot;
+    }]);

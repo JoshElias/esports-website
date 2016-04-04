@@ -1,5 +1,5 @@
 <div class="db-deck clearfix">
-    <div class="db-deck-header db-deck-{{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+    <div class="db-deck-header db-deck-{{deck.heroName.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
         <div class="db-arena">
             <span ng-if="deck.gameModeType === 'constructed'">Constructed</span>
             <span ng-if="deck.gameModeType === 'arena'">Arena</span>
@@ -24,9 +24,9 @@
             
             <div class="db-deck-card-name">{{card.card.name}}</div>
         </div>
-        <div class="db-deck-footer db-deck-{{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+        <div class="db-deck-footer db-deck-{{deck.heroName.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
             <div class="db-deck-footer-wrapper">
-                <div class="db-deck-dust">{{getDust()}}</div>
+                <div class="db-deck-dust">{{deck.dust}}</div>
                 <div class="dust-bottle-sm"></div>
             </div>
         </div>

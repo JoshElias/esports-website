@@ -3,7 +3,7 @@ module.exports = function(Image) {
     var formidable = require("formidable");
     var fs = require("graceful-fs");
     var gm = require('gm').subClass({ imageMagick: true });
-    var amazon = require("../../lib/amazon");
+    var amazon = require("../../server/lib/amazon");
 
 
     var defaultError = new Error('image upload failed');

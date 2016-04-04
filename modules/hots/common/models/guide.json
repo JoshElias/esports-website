@@ -1,0 +1,200 @@
+{
+  "name": "guide",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "Slug": true
+    },
+    "guideType": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
+    },
+    "youtubeId": {
+      "type": "string",
+      "Validate": ["youtubeId"]
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
+    },
+    "premium": {
+      "type": "object"
+    },
+    "isFeatured": {
+      "type": "boolean"
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "isPublic": {
+      "type": "boolean"
+    },
+    "against": {
+      "type": "object"
+    },
+    "content": {
+      "type": [
+        {
+          "title": {
+            "type": "string",
+            "Validate": ["spam"]
+          },
+          "orderNum": {
+            "type": "number"
+          },
+          "body": {
+            "type": "string",
+            "Validate": ["spam"]
+          }
+        }
+      ],
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin", "$premium", "$contentProvider"],
+        "predicate": "premium"
+      }
+    },
+    "talentTiers": {
+      "type": "object"
+    },
+    "isCommentable": {
+      "type": "boolean"
+    },
+    "synergy": {
+      "type": [
+        "string"
+      ]
+    }
+  },
+  "relations": {
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "guideId",
+      "DestroyOnDelete": true
+    },
+    "maps": {
+      "type": "hasAndBelongsToMany",
+      "model": "map"
+    },
+    "guideHeroes": {
+      "type": "hasMany",
+      "model": "guideHero",
+      "foreignKey": "guideId",
+      "DestroyOnDelete": true
+    },
+    "guideTalents": {
+      "type": "hasMany",
+      "model": "guideTalent",
+      "foreignKey": "guideId"
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "guideId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "topGuide"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__comments"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__edit__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__guideHeroes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__guideTalents"
+    }
+  ],
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Slug": true,
+    "Scope": true,
+    "Authored": true,
+    "Filter": {
+      "fieldFilters": true,
+      "acceptedRoles": ["$admin", "$owner"],
+      "predicate": "private",
+      "requiredFields": ["isPublic", "premium"]
+    },
+    "TimeStamp": {
+      "createdAt": "createdDate",
+      "updatedAt": "updatedDate",
+      "required": true
+    }
+  }
+}

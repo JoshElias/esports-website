@@ -1,7 +1,7 @@
 {
   "name": "userIdentity",
   "plural": "userIdentities",
-  "base": "UserIdentity",
+  "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
   "options": {
@@ -10,7 +10,6 @@
   "properties": {
     "userId": {}
   },
-  "validations": [],
   "relations": {
     "user": {
       "type": "belongsTo",
@@ -43,5 +42,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

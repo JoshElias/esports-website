@@ -1,11 +1,11 @@
-{
+ {
   "name": "team",
-  "base": "PersistedModel",
-  "strict": true,
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
+   "base": "PersistedModel",
+   "strict": true,
+   "idInjection": true,
+   "options": {
+     "validateUpsert": true
+   },
   "properties": {
     "__v": {
       "type": "number"
@@ -16,11 +16,14 @@
     "isActive": {
       "type": "boolean"
     },
-    "gameId": {
-      "type": {}
-    }
+    "orderNum": {
+      "type": "number"
+    },
+    "abbreviation": {
+      "type": "string"
+    },
+    "gameId": {}
   },
-  "validations": [],
   "relations": {
     "game": {
       "type": "belongsTo",
@@ -31,7 +34,7 @@
       "type": "hasMany",
       "model": "teamMember",
       "foreignKey": "teamId",
-      "isChild": true
+      "DestroyOnDelete": true
     }
   },
   "acls": [
@@ -53,5 +56,18 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

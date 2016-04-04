@@ -35,7 +35,6 @@
       "type": {}
     }
   },
-  "validations": [],
   "relations": {
     "team": {
       "type": "belongsTo",
@@ -68,5 +67,17 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

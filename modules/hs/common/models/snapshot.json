@@ -1,0 +1,159 @@
+{
+  "name": "snapshot",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "snapNum": {
+      "type": "number"
+    },
+    "title": {
+      "type": "string",
+      "Slug": {
+        "prefixFunc": "metaSnapshot"
+      }
+    },
+    "content": {
+      "type": "object"
+    },
+    "tiers": {
+      "type": "object"
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "photoNames": {
+      "type": "object"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "oldAuthors": {
+      "type": [
+        "object"
+      ]
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "deckMatchups": {
+      "type": "hasMany",
+      "model": "deckMatchup",
+      "foreignKey": "snapshotId",
+      "DestroyOnDelete": true
+    },
+    "authors": {
+      "type": "hasMany",
+      "model": "snapshotAuthor",
+      "foreignKey": "snapshotId",
+      "DestroyOnDelete": true
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "snapshotId",
+      "DestroyOnDelete": true
+    },
+    "deckTiers": {
+      "type": "hasMany",
+      "model": "deckTier",
+      "foreignKey": "snapshotId",
+      "DestroyOnDelete": true
+    },
+    "votes": {
+      "type": "hasMany",
+      "model": "vote",
+      "foreignKey": "snapshotId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__comments"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "__create__deckTiers"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__get__deckMatchups"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__get__votes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__edit__votes"
+    }
+  ],
+  "mixins": {
+    "Validate": true,
+    "DestroyOnDelete": true,
+    "Slug": true,
+    "Scope": true,
+    "Authored": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
+}

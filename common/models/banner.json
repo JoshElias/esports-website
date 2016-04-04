@@ -29,8 +29,6 @@
       "type": "boolean"
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -50,5 +48,17 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Filter": {
+      "acceptedRoles": ["$admin"],
+      "predicate": "inactive",
+      "requiredFields": ["isActive"]
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

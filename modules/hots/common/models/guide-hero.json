@@ -1,0 +1,44 @@
+{
+  "name": "guideHero",
+  "plural": "guideHeroes",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "guideId": {},
+    "heroId": {}
+  },
+  "validations": [],
+  "relations": {
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "hero": {
+      "type": "belongsTo",
+      "model": "hero",
+      "foreignKey": "heroId"
+    },
+    "talents": {
+      "type": "hasMany",
+      "model": "talent",
+      "foreignKey": "guideId",
+      "through": "guideTalent",
+      "keyThrough": "talentId"
+    },
+    "guideTalents": {
+      "type": "hasMany",
+      "model": "guideTalent",
+      "foreignKey": "guideHeroId",
+      "DestroyOnDelete": true
+    }
+  },
+  "mixins": {
+    "DestroyOnDelete": true,
+    "Scope": true
+  }
+}

@@ -1,6 +1,7 @@
 var loopback = require("loopback");
 var async = require("async");
-var utils = require("./../../../../lib/utils");
+var Promise = require("bluebird");
+var utils = require("xloop").utils;
 
 
 module.exports = function(RedbullDraft) {
@@ -24,7 +25,7 @@ module.exports = function(RedbullDraft) {
         }
         var userId = req.accessToken.userId.toString();
 
-        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], req, function (err, isInRoles) {
             if(err) return finalCb(err);
             if(isInRoles.none) return applyFilter();
 
@@ -56,6 +57,7 @@ module.exports = function(RedbullDraft) {
 
                     return User.isInRoles(userId,
                         ["$owner"],
+                        req,
                         {modelClass: "redbullDraft", modelId: result.id},
                         function (err, isInRoles) {
                             if(err) return resultCb(err);
@@ -80,6 +82,7 @@ module.exports = function(RedbullDraft) {
 
                 return User.isInRoles(userId,
                     ["$owner"],
+                    req,
                     {modelClass: "redbullDraft", modelId: ctx.result.id},
                     function (err, isInRoles) {
                         if(err) return finalCb(err);
@@ -160,7 +163,7 @@ module.exports = function(RedbullDraft) {
         clientData.authorId = userId;
 
         // Check if this is an official draft or not
-        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], req, function (err, isInRoles) {
             if (err) return finalCb(err);
 
             // If the user tried to start an official draft without authorization
@@ -227,7 +230,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         var currentTime = Date.now();
 
@@ -260,7 +263,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         RedbullDraft.findById(draftId, {
             include: ["settings"]
@@ -315,7 +318,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         var RedbullDeck = RedbullDraft.app.models.redbullDeck;
 
@@ -364,7 +367,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;
@@ -372,7 +375,7 @@ module.exports = function(RedbullDraft) {
     };
 
     RedbullDraft.getDraftPlayers = function (finalCb) {
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;
@@ -420,7 +423,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;

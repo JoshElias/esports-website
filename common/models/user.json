@@ -29,10 +29,16 @@
     },
     "subscription": {
       "type": "object",
-      "default": {}
+      "default": {},
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "isProvider": {
-      "type": "boolean"
+      "type": "boolean",
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "isAdmin": {
       "type": "boolean"
@@ -41,10 +47,16 @@
       "type": "number"
     },
     "lastLoginDate": {
-      "type": "date"
+      "type": "date",
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "resetPasswordCode": {
-      "type": "string"
+      "type": "string",
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     },
     "__v": {
       "type": "number"
@@ -56,7 +68,6 @@
   "hidden": [
     "password"
   ],
-  "validations": [],
   "relations": {
     "activities": {
       "type": "hasMany",
@@ -194,5 +205,15 @@
       "property": "updateAttributes"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Filter": {
+      "fieldFilters": true
+    },
+    "TimeStamp" : {
+      "createdAt" : "createdDate",
+      "updatedAt" : "updatedDate",
+      "required" : true
+    }
+  }
 }

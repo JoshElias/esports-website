@@ -4,10 +4,6 @@ module.exports = {
             "loopback/common/models",
             "loopback/server/models",
             "../../common/models",
-            "./../models",
-            "../../node_modules/loopback-component-passport/lib/models",
-            "../../modules/redbull/common/models",
-            "../../modules/hotsSnapshot/common/models"
         ],
         "mixins": [
             "loopback/common/mixins",
@@ -59,25 +55,17 @@ module.exports = {
             "emailVerificationRequired": true
         }
     },
-    "topic": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "post": {
-        "dataSource": "mongodb",
-        "public": true
-    },
     "game": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "hsClass": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "team": {
-      "dataSource": "mongodb",
-      "public": true
+        "dataSource": "mongodb",
+        "public": true
     },
     "teamMember": {
         "dataSource": "mongodb",
@@ -203,12 +191,16 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
+    "overwatchSnapshot": {
+      "dataSource": "mongodb",
+      "public": true
+    },
+    "overwatchSnapshotHeroTier": {
+      "dataSource": "mongodb",
+      "public": true
+    },
     "deckCard": {
         "dataSource":"mongodb",
-        "public": true
-    },
-    "container": {
-        "dataSource":"s3",
         "public": true
     },
     "image": {
@@ -295,11 +287,11 @@ module.exports = {
         "dataSource": "mongodb",
         "public": true
     },
-    "hotsSnapshotAuthor": {
+    "guideTier": {
         "dataSource": "mongodb",
         "public": true
     },
-    "guideTier": {
+    "slug": {
         "dataSource": "mongodb",
         "public": true
     }
