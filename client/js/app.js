@@ -1488,6 +1488,7 @@ var app = angular.module('app', [
 
                             deckNoMulligans: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var stateSlug = $stateParams.slug;
+                                
                                 return Deck.findOne({
                                     filter: {
                                         where: {
@@ -2942,7 +2943,10 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise.then(function (data) {
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    console.log('data:', data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
                                 })
@@ -3308,7 +3312,16 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (guide) {
+                                    console.log('guide:', guide);
+                                    return guide;
+                                })
+                                .catch(function (err) {
+                                    if (err.status === 404) {
+                                        return throw404($state);
+                                    }
+                                });
                             }],
                             dataHeroes: ['Hero', function (Hero) {
                                 return Hero.find({
@@ -4249,8 +4262,7 @@ var app = angular.module('app', [
                                             createdDate: true,
                                             authorId: true,
                                             playerClass: true,
-                                            heroName: true,
-                                            slug: true
+                                            heroName: true
                                         },
                                         include: [
                                             {
@@ -4270,13 +4282,22 @@ var app = angular.module('app', [
                                                         direction: true
                                                     }
                                                 }
+                                            },
+                                            {
+                                                relation: 'slugs',
+                                                scope: {
+                                                    fields: ['slug', 'linked']
+                                                }
                                             }
                                         ]
                                     }
                                 })
                                 .$promise
                                 .then(function (decks) {
+                                    console.log('decks:', decks);
                                     _.each(decks, function(deck) {
+                                        // init template vars
+                                        deck.slug = Util.setSlug(deck);
                                         deck.voteScore = Util.tally(deck.votes, 'direction');
                                     });
 
@@ -4318,8 +4339,7 @@ var app = angular.module('app', [
                                             createdDate: true,
                                             premium: true,
                                             authorId: true,
-                                            guideType: true,
-                                            slug: true
+                                            guideType: true
                                         },
                                         include: [
                                             {
@@ -4365,12 +4385,20 @@ var app = angular.module('app', [
                                                 scope: {
                                                     fields: ['authorId', 'direction']
                                                 }
+                                            },
+                                            {
+                                                relation: 'slugs',
+                                                scope: {
+                                                    fields: ['slug', 'linked']
+                                                }
                                             }
                                         ]
                                     }
                                 }).$promise
                                 .then(function (guides) {
                                     _.each(guides, function(guide) {
+                                        // init template values
+                                        guide.slug = Util.setSlug(guide);
                                         guide.voteScore = Util.tally(guide.votes, 'direction');
                                     });
 

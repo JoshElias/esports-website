@@ -220,6 +220,10 @@ module.exports = {
       "dataSource": "mongodb",
       "public": true
   },
+  "guideMap" : {
+      "dataSource": "mongodb",
+      "public": true
+  },
   "guideTalent" : {
       "dataSource": "mongodb",
       "public": true

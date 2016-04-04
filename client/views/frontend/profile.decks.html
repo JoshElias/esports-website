@@ -2,7 +2,7 @@
 
 <ul class="hs-decks row" ng-if="decks.length">
     <li class="col-xs-12 col-sm-6 m-b-sm" ng-repeat="deck in decks">
-        <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck large {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+        <a ui-sref="app.hs.decks.deck({ slug: deck.slug.url })" class="hs-deck large {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
             <div class="inner"></div>
             <div class="hs-deck-premium" ng-if="isPremium(deck)"></div>
             <div class="bt-shadow"></div>
@@ -12,7 +12,8 @@
             </div>
             <div class="hs-deck-votes">{{deck.voteScore}}</div>
             <div class="hs-deck-owner" ng-if="$parent.$parent.User.getCurrentId() === deck.author.id">
-                <button class="btn btn-blue btn-xs" ng-click="deckEdit($event, deck)">Edit</button>
+                <button class="btn btn-blue btn-xs" 
+                        ng-click="deckEdit($event, deck)">Edit</button>
                 <button class="btn btn-danger btn-xs" ng-click="deckDelete($event, deck)">Delete</button>
             </div>
         </a>
