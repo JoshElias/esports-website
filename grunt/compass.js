@@ -14,13 +14,5 @@ module.exports = {
             cssDir:      'client/dist/css/sass/modules',
             cacheDir:    'modules/.sass-cache',
         }
-    },
-    asense: {
-        options: {
-            outputStyle: 'expanded',
-            sassDir:     'modules/asense/client/css',
-            cssDir:      'client/dist/css/sass/modules',
-            cacheDir:    'modules/.sass-cache',
-        }
     }
 };
