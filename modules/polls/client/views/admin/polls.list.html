@@ -28,16 +28,18 @@
             </form>
         </div>
     </div>
-    <div class="list-group">
-        <div class="list-group-item polls-list-item clearfix" ng-repeat="poll in polls">
-            <div class="row">
-                <div class="col-sm-6">
-                    <span>{{poll.title}}</span>
-                </div>
-                <div class="col-sm-6">
-                    <div class="pull-right btn-toolbar">
-                        <a href="./admin/polls/edit/{{poll.id}}" class="btn btn-default">Edit</a>
-                        <button class="btn btn-danger" ng-click="deletePoll(poll)">Delete</button>
+    <div class="admin-list">
+        <div class="admin-list-item snapshot-list clearfix" ng-repeat="poll in polls">
+            <div class="list-accent-div">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <span class="snapshot-list-item">{{poll.title}}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="pull-right btn-toolbar snapshot-list-item">
+                            <a href="./admin/polls/edit/{{poll.id}}" class="btn btn-default">Edit</a>
+                            <button class="btn btn-danger" ng-click="deletePoll(poll)">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>

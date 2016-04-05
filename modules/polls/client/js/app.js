@@ -64,7 +64,7 @@ var polls = angular.module('app.polls', [
             url: '/polls',
             views: {
                 admin: {
-                    templateUrl: tpl + 'views/admin/polls.html'
+                    templateUrl: moduleTpl + 'admin/polls.html'
                 }
             },
             access: { auth: true, admin: true },
@@ -74,7 +74,7 @@ var polls = angular.module('app.polls', [
             url: '',
             views: {
                 polls: {
-                    templateUrl: tpl + 'views/admin/polls.list.html',
+                    templateUrl: moduleTpl + 'admin/polls.list.html',
                     controller: 'AdminPollListCtrl',
                     resolve: {
                         paginationParams: [function() {
@@ -125,7 +125,7 @@ var polls = angular.module('app.polls', [
             url: '/add',
             views: {
                 polls: {
-                    templateUrl: tpl + 'views/admin/polls.poll.html',
+                    templateUrl: moduleTpl + 'admin/polls.poll.html',
                     controller: 'AdminPollAddCtrl'
                 }
             },
@@ -136,7 +136,7 @@ var polls = angular.module('app.polls', [
             url: '/edit/:pollID',
             views: {
                 polls: {
-                    templateUrl: tpl + 'views/admin/polls.poll.html',
+                    templateUrl: moduleTpl + 'admin/polls.poll.html',
                     controller: 'AdminPollEditCtrl',
                     resolve: {
                         poll: ['$stateParams', 'Poll', function($stateParams, Poll){

@@ -1,7 +1,13 @@
 angular.module('polls.controllers')
-.controller('AdminPollEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll', 'PollItem',
-    function ($scope, $upload, $state, $window, $compile, AlertService, poll, Poll, PollItem) {
-        var box,
+.controller('AdminPollEditCtrl', ['$scope', 'PollBuilder', 'poll', 
+    function ($scope, PollBuilder, poll) {
+
+        $scope.page = 'general';
+        $scope.mode = 'edit';
+
+        $scope.poll = PollBuilder.new(poll);
+        
+/*        var box,
             defaultPoll = {
                 title : '',
                 subtitle: '',
@@ -241,5 +247,6 @@ angular.module('polls.controllers')
 
 
         };
+*/
     }
 ]);

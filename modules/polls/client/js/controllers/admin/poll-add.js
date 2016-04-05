@@ -2,58 +2,12 @@ angular.module('polls.controllers')
 .controller('AdminPollAddCtrl', ['$scope', 'PollBuilder',
     function ($scope, PollBuilder) {
 
+        $scope.page = 'general';
         $scope.mode = 'add';
 
         $scope.poll = PollBuilder.new();
 
-        /*$scope.options = {
-            disableDragAndDrop: true,
-            height: 300,
-            fontNames: ['Open Sans Regular', 'Open Sans Bold'],
-            defaultFontName: 'Open Sans Regular',
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-                ['fontname', ['fontname']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
-                ['format', ['hr']],
-                ['misc', ['undo', 'redo', 'codeview']]
-            ]
-        };
-
-        // load Poll
-        $scope.poll = angular.copy(defaultPoll);
-        $scope.item = angular.copy(defaultItem);
-        $scope.currentItem = angular.copy(defaultItem);
-        $scope.imgPath = 'polls/';
-
-        $scope.pollType = [
-            { name: 'Image', value: 'img' },
-            { name: 'Text', value: 'txt' }
-        ];
-
-        $scope.pollView = [
-            { name: 'Main', value: 'main' },
-            { name: 'Sidebar', value: 'side' },
-            { name: 'Hide', value: 'hide'}
-        ];
-
-        $scope.pollActive = [
-            { name: 'Yes', value: 'true'},
-            { name: 'No', value: 'false'}
-        ];
-
-        $scope.voteLimit = function() {
-            var out = [];
-            for (var i = 0; i < $scope.poll.items.length; i++) {
-                out.push(i + 1);
-            }
-            return out;
-        }
-
+        /*
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
             var uploadBox = bootbox.dialog({

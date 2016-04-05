@@ -5,7 +5,7 @@ angular.module('polls.services')
             { key: 'Image', value: 'img' },
             { key: 'Text', value: 'txt' }
         ];
-        var pollViews = [
+        var viewTypes = [
             { key: 'Main', value: 'main' },
             { key: 'Sidebar', value: 'side' },
             { key: 'Hide', value: 'hide'}            
@@ -33,7 +33,7 @@ angular.module('polls.services')
             subtitle: '',
             description: '',
             pollType: 'img',
-            voteLimit: 0,
+            voteLimit: 1,
             viewType: ''
         };
         var defaultPollItem = {
@@ -67,24 +67,179 @@ angular.module('polls.services')
                 }
             };
 
+            // load data into service
             pb.load = function (data) {
                 pb.loaded = true;
+                
+                pb.title = data.title;
+                pb.subtitle = data.subtitle;
+                pb.description = data.description;
+                pb.pollType = data.pollType;
+                pb.viewType = data.viewType;
+                pb.items = data.items;
+                pb.voteLimit = data.voteLimit;
+                
             };
             
+            // get summernote options
             pb.getSummernoteOptions = function () {
                 return summernoteOptions;
             };
             
-            // check snapshot before save
+            // get poll types
+            pb.getPollTypes = function () {
+                return pollTypes;
+            };
+            
+            // get view types
+            pb.getViewTypes = function () {
+                return viewTypes;
+            };
+            
+            // get vote limits
+            pb.getVoteLimits = function () {
+                var out = [];
+                if (!pb.items.length || pb.items.length < 2) { return out; }
+                
+                for (var i = 1; i < pb.items.length; i++) {
+                    out.push(i);
+                }
+                
+                return out;
+            };
+            
+            // delete poll item
+            pb.pollItemDelete = function (pollItem) {
+                // flag item as deleted
+                pb.pollItemDeleted(pollItem);
+                
+                // remove poll item
+                var index = pb.items.indexOf(pollItem);
+                pb.items.splice(index, 1);
+            };
+            
+            // photo upload
+            pb.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var newScope = $rootScope.$new(true);
+                newScope.uploading = 0;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')(newScope),
+                    closeButton: false,
+                    animate: false
+                });
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    newScope.upload = $upload.upload({
+                        url: '/api/images/uploadPoll',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        newScope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        sb.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
+                        var URL = (tpl === './') ? cdn2 : tpl;
+                        sb.snapshotImg = URL + data.path + data.small;
+                        box.modal('hide');
+                        
+                        // mark poll as updated
+                        pb.pollUpdated();
+                    });
+                }
+            };
+
+            // get snapshot image url
+            pb.getImage = function () {
+                var URL = (tpl === './') ? cdn2 : tpl;
+                var imgPath = 'polls/';
+                return (sb.photoNames && sb.photoNames.small === '') ?  URL + 'img/blank.png' : URL + imgPath + sb.photoNames.small;
+            };
+            
+            // prompt for pollItem delete
+            pb.pollItemDeletePrompt = function (pollItem) {
+                var box = bootbox.dialog({
+                    title: "Remove Poll Item?",
+                    message: "Are you sure you want to remove the poll item <strong>" + pollItem.name + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    pb.pollItemDelete(pollItem);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // flag poll as updated
+            pb.pollUpdated = function () {
+                pb.updated.poll = true;
+            };
+            
+            // flag pollItem as updated
+            pb.pollItemUpdated = function (pollItem) {
+                // don't flag if no id
+                if (!pollItem.id) { return false; }
+                
+                // check if already flagged
+                var index = pb.updated.pollItems.indexOf(pollItem.id);
+                if (index === -1) {
+                    // add id to flags
+                    pb.updated.pollItems.push(pollItem.id);
+                }
+            };
+            
+            // flag pollItem as deleted
+            pb.pollItemDeleted = function (pollItem) {
+                // don't flag if no id
+                if (!pollItem.id) { return false; }
+                
+                // check if already flagged
+                var index = pb.deleted.pollItems.indexOf(pollItem.id);
+                if (index === -1) {
+                    // check if we need to remove from updated
+                    var updatedIndex = pb.updated.pollItems.indexOf(pollItem.id);
+                    if (updatedIndex !== -1) {
+                        pb.updated.pollItems.splice(updatedIndex, 1);
+                    }
+                    
+                    // add id to flags
+                    pb.deleted.pollItems.push(pollItem.id);
+                }
+            };
+            
+            // check poll before save
             pb.saveCheck = function (callback) {
                 async.series([
                     // check poll
                     function (cb) {
                         
+                        return cb();
                     },
                     // check poll items
                     function (cb) {
                         
+                        return cb();
                     }
                 ], function (err) {
                     return callback(err);
@@ -254,7 +409,7 @@ angular.module('polls.services')
                 });
             };
             
-            // save snapshot
+            // save poll
             pb.save = function () {
                 console.log('poll: ', pb);
                 pb.saving = true;

@@ -1,0 +1,102 @@
+<alert-box theme="admin"></alert-box>
+
+<div class="panel panel-default br-none">
+    <form name="form" role="form" class="form-horizontal">
+    <div class="panel-heading">
+        <h3><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Poll</h3>
+    </div>
+    <div class="panel-body padding-none p-t-none p-b-none flex-check">
+        <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
+            
+            <ul class="edit-nav m-b-md">
+                <li class="pull-left" ng-class="{selected: page==='general'}"><a href="#" ng-click="page = 'general'" >General</a></li>
+                <li class="pull-left" ng-class="{selected: page==='items'}"><a href="#" ng-click="page = 'items'" >Items</a></li>
+            </ul>
+            
+            <div ng-if="page === 'general'">
+                <div class="form-group">
+                    <label for="title" class="col-sm-12 control-label">Title</label>
+                    <div class="col-sm-12">
+                        <input type="title" id="title" name="title" class="form-control" ng-model="poll.title" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="subtitle" class="col-sm-12 control-label">Subtitle</label>
+                    <div class="col-sm-12">
+                        <input type="subtitle" id="subtitle" name="subtitle" class="form-control" ng-model="poll.subtitle" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="type" class="col-sm-12 control-label">Poll Type</label>
+                    <div class="col-sm-12">
+                        <select id="type" name="type" class="form-control" ng-options="pollType.value as pollType.key for pollType in poll.getPollTypes()" ng-model="poll.pollType" required></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="view" class="col-sm-12 control-label">View</label>
+                    <div class="col-sm-12">
+                        <select id="view" name="view" class="form-control" ng-options="viewType.value as viewType.key for viewType in poll.getViewTypes()" ng-model="poll.viewType" required></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="voteLimit" class="col-sm-12 control-label">Vote Limit</label>
+                    <div class="col-sm-12">
+                        <select id="voteLimit" name="voteLimit" class="form-control" ng-disabled="!poll.items.length" ng-options="number as number for number in poll.getVoteLimits()" ng-model="poll.voteLimit"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="page === 'items'">
+                <div class="panel panel-default">
+                    <div class="panel-heading clearfix">
+                        <a href="#" class="btn btn-sm btn-green btn-rounded pull-right"
+                           ng-click="poll.itemAddPrompt()">
+                            <i class="fa fa-plus-circle m-r-xs"></i>Add
+                        </a>
+                        <strong class="lh-lg">Items</strong>
+                    </div>
+                    <ul class="admin-list padding-none" dnd-list="poll.items" ng-show="poll.items.length">
+                        <li class="admin-list-item clearfix"
+                            ng-repeat="pollItem in poll.items"
+                            dnd-draggable="item"
+                            dnd-moved="poll.pollItemsUpdateDND(poll.items, $index)"
+                            dnd-disable-if="poll.items.length < 2"
+                        >
+                            <div class="list-accent-div">
+                                <span class="snapshot-list-item">{{pollItem.name}}</span>
+                                <div class="snapshot-list-item pull-right">
+                                    <button class="btn btn-default" ng-click="poll.pollItemEditWnd(pollItem)">Edit</button>
+                                    <button class="btn btn-danger" ng-click="poll.pollItemDeletePrompt(pollItem)">Delete</button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="panel-body" ng-show="!poll.items.length">
+                        <p class="m-b-none">There are no items added for this poll yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div ng-show="page === 'general'" class="col-sm-12 col-md-8 col-lg-9">
+            <div class="form-group">
+                <label for="description" class="col-sm-12 control-label">Description</label>
+                <div class="col-sm-12">
+                    <summernote id="description" config="poll.getSummernoteOptions()" ng-model="poll.description"></summernote>
+                </div>
+            </div>
+        </div>
+        
+        <div ng-show="page === 'items'" class="col-sm-12 col-md-8 col-lg-9">
+        </div>
+                
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="col-sm-12">
+            <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid || poll.pollItems.length <= 2 || poll.saving" ng-click="poll.save()">
+				<span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Poll<i class="fa fa-spinner fa-pulse m-l-xs" ng-if="poll.saving"></i>
+			</button>
+        </div>
+    </div>
+    </form>
+</div>
