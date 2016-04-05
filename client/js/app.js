@@ -2859,7 +2859,6 @@ var app = angular.module('app', [
                                             isPublic: true,
                                             name: true,
                                             premium: true,
-                                            slug: true,
                                             synergy: true,
                                             viewCount: true,
                                             youtubeId: true,
@@ -2947,6 +2946,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     console.log('data:', data);
+                                    data.slug = Util.setSlug(data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
                                 })
@@ -3247,6 +3247,7 @@ var app = angular.module('app', [
                                 function(waterCB) {
                                   Hero.find({
                                     filter: {
+                                        order: "name ASC",
                                         where: {
                                             isActive: true
                                         },
@@ -3314,7 +3315,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (guide) {
-                                    console.log('guide:', guide);
                                     return guide;
                                 })
                                 .catch(function (err) {
@@ -3326,6 +3326,7 @@ var app = angular.module('app', [
                             dataHeroes: ['Hero', function (Hero) {
                                 return Hero.find({
                                     filter: {
+                                        order: "name ASC",
                                         where: {
                                             isActive: true
                                         }
@@ -5907,7 +5908,6 @@ var app = angular.module('app', [
                                 }
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                                console.log('heeeeeere');
                                 return Hero.find({
                                     filter: {
                                         where: {
