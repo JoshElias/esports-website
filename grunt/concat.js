@@ -22,7 +22,6 @@ module.exports = {
                 'client/vendor/jrumble/jquery.jrumble.min.js',
                 'client/vendor/jqueryui-touch-punch/jquery.ui.touch-punch.js',
                 'client/vendor/angular-svg-round-progressbar/build/roundProgress.min.js'
-
             ],
             'client/dist/js/angular.js': [
                 'client/vendor/angular/angular.js',
