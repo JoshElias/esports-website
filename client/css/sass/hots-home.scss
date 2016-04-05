@@ -391,7 +391,19 @@
     .filters-maps ul li { list-style: none; display: inline-block; margin: 0 10px 10px 0; }
     .filters-maps ul li:last-child { margin-right: 0px; }
 
-    .filters-maps ul li button { display:inline-block; width:55px; height:55px; border-radius: 50%; border: 2px solid #FFF; overflow:hidden; background-repeat: no-repeat; background: url('../img/hots/maps/hots-map-sprite.png'); white-space: nowrap; text-indent: -99999px; outline: none; transition: transform .25s ease-in-out, opacity .25s ease-in-out; }
+    .filters-maps ul li button { 
+        display:inline-block; 
+        width:55px; 
+        height:55px; 
+        border-radius: 50%; 
+        border: 2px solid #FFF; 
+        overflow:hidden; 
+        background-repeat: no-repeat; 
+        background: url('../img/hots/maps/hots-map-sprite.png'); 
+        white-space: nowrap; 
+        text-indent: -99999px; 
+        outline: none; 
+        transition: transform .25s ease-in-out, opacity .25s ease-in-out; }
 
     .filters-maps ul li button.not-selected { opacity: .3; transform: scale(.9,.9); }
 
@@ -404,17 +416,7 @@
     //.filters-maps ul li button.skytemple { background-position: -344px -2px; }
     //.filters-maps ul li button.tomb-of-the-spider-queen { background-position: -401px -2px; }
 
-    .filters-maps ul li button.battlefield-of-eternity {width:55px; height:55px; background-position: -2px -2px}
-    .filters-maps ul li button.blackhearts-bay {width:55px; height:55px; background-position: -59px -2px}
-    .filters-maps ul li button.cursed-hollow {width:55px; height:55px; background-position: -116px -2px}
-    .filters-maps ul li button.dragon-shrine {width:55px; height:55px; background-position: -173px -2px}
-    .filters-maps ul li button.garden-of-terror {width:55px; height:55px; background-position: -230px -2px}
-    .filters-maps ul li button.haunted-mines {width:55px; height:55px; background-position: -287px -2px}
-    .filters-maps ul li button.infernal-shrine {width:55px; height:55px; background-position: -344px -2px}
-    .filters-maps ul li button.sky-temple {width:55px; height:55px; background-position: -401px -2px}
-    .filters-maps ul li button.towers-of-doom {width:55px; height:55px; background-position: -458px -2px}
-    .filters-maps ul li button.tomb-of-the-spider-queen {width:55px; height:55px; background-position: -515px -2px}
-
+    // ----------------- Specific map filters moved to hots maps -----------------------------
 
 
     //*************************************
