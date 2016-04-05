@@ -16,6 +16,9 @@
         "prefixFunc": "metaSnapshot"
       }
     },
+    "snapshotType": {
+      "type": "string"
+    },
     "content": {
       "type": "object"
     },

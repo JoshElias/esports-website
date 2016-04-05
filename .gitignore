@@ -33,6 +33,7 @@ server/uploads/photos/teams/*
 server/logs/tempostorm.log
 server/logs/tempostorm.err
 server/logs/*
+*.brackets.json
 .brackets.json
 .jshint.rc
 server/configs/assets.json

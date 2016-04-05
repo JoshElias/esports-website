@@ -1,7 +1,0 @@
-{
-    "jscodehints.detectedExclusions": [
-        "C:/Users/Uther/Documents/GitHub/tempostorm/client/js/controllers.js",
-        "chart.js",
-        "C:/Users/Admin/Documents/GitHub/tempostorm/server/configs/model-config.production.js"
-    ]
-}

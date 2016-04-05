@@ -1,3 +1,7 @@
+<!-- a-sense -->
+<ts-ad class="container-fluid text-center row" structure="double"></ts-ad>
+<!-- /a-sense -->
+
 <div class="container">
     <ul class="gb-steps gb-steps-map clearfix">
         <li class="steps-arrow steps-arrow-prev">
@@ -42,11 +46,8 @@
         </li>
     </ul>
     
-    <!-- a-sense -->
-    <ts-ad class="container-fluid text-center m-t-md" structure="double"></ts-ad>
-    <!-- /a-sense -->
 </div>
-<div class="container" ng-show="step === 2">
+<div class="container m-b-lg" ng-show="step === 2">
     <div class="guide-text map-select"></div>
     
     <div class="map-selection">
@@ -68,7 +69,7 @@
     <!-- /a-sense -->
 
 </div>
-<div class="container" ng-show="step === 3">
+<div class="container m-b-lg" ng-show="step === 3">
     <div class="guide-text hero-information"></div>
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
@@ -95,14 +96,18 @@
                 <span>Who is weak on this map?</span>
             </div>
             <ul class="hero-list">
-                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleWeak(hero)" hots-hero tooltip-pos="left">{{hero.name}}</a></li>
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }">
+                    <a href="#" class="{{hero.className}}" 
+                       ng-click="guide.toggleWeak(hero)" 
+                       hots-hero tooltip-pos="left">{{hero.name}}</a>
+                </li>
             </ul>
         </div>
     </div>
 </div>
-<div class="container" ng-show="step === 4">
+<div class="container m-b-lg" ng-show="step === 4">
     <div class="guide-text map-discussion"></div>
-    <div class="db-section m-b-md" 
+    <div class="db-section m-b-md"
          ng-repeat="content in guide.content | orderBy: 'orderNum' track by $index">
         <div class="gb-content-title">
             <div class="gb-chapter-carets">
@@ -123,7 +128,7 @@
         ADD CHAPTER
     </a>
 </div>
-<div class="container" ng-show="step === 5">
+<div class="container m-b-lg" ng-show="step === 5">
     <div class="guide-text save-guide-now"></div>
   
     <alert-box theme="admin"></alert-box>
@@ -270,3 +275,7 @@
         </div>
     </div>
 </div>
+
+<!-- a-sense -->
+<ts-ad class="text-center container-fluid row" structure="single"></ts-ad>
+<!-- /a-sense -->

@@ -256,15 +256,27 @@ angular.module('app.controllers', ['ngCookies'])
                                     isActive: true
                                 },
                                 fields: {
-                                    content: false,
-                                    votes: false
+                                    content: false
                                 },
-                                include: ["author"],
+                                include: [
+                                    {
+                                        relation: 'author'
+                                    },
+                                    {
+                                        relation: 'slugs'
+                                    }
+                                ],
                                 order: "createdDate DESC",
                                 skip: $scope.articles.data.length,
                                 limit: num
                             }
                         }).$promise.then(function (data) {
+                            
+                            _.each(data, function (article) {
+                                // init template vars
+                                article.slug = Util.setSlug(data);
+                            });
+                            
                             $scope.articles.data = $scope.articles.data.concat(data);
                             $scope.articles.offset += num;
                             $scope.articles.loading = false;
@@ -2473,13 +2485,31 @@ angular.module('app.controllers', ['ngCookies'])
                     ArticleArticle.createMany(relatedArticleArticle)
                     .$promise
                     .then(function (relatedArticles) {
+                        return wateryCB(null, articleCreated);
+                    })
+                    .catch(function (err) {
+                        return wateryCB(err);
+                    });
+                },
+                function (articleCreated, wateryCB) {
+                    var freeVote = {
+                        direction: 1,
+                        createdDate: new Date().toISOString(),
+                        authorId: User.getCurrentId()
+                    };
+                    
+                    Article.votes.create({
+                        id: articleCreated.id
+                    }, freeVote)
+                    .$promise
+                    .then(function (freeVote) {
                         return wateryCB(null);
                     })
                     .catch(function (err) {
                         return wateryCB(err);
                     });
                 }
-            ], function(err, results) {
+            ], function(err) {
                 $scope.fetching = false;
                 $window.scrollTo(0, 0);
                 if (err) {
@@ -3368,7 +3398,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
 
             $scope.searchSnapshots = function() {
-                updateSnapshots(1, $scope.perpage, $scope.search, false);
+                updateSnapshots(1, $scope.perpage, $scope.search);
             };
 
             // pagination
@@ -3383,40 +3413,27 @@ angular.module('app.controllers', ['ngCookies'])
                     fields: paginationParams.options.filter.fields,
                     order: "createdDate DESC",
                     skip: ((page*perpage)-perpage),
-                    limit: paginationParams.perpage
+                    limit: perpage
                 };
 
-                if ($scope.search.length > 0) {
-                    //noinspection UnterminatedStatementJS
-                    options.filter.where = {
+                if ($scope.search.length) {
+                    options.filter['where'] = {
                         or: [
                             { title: { regexp: pattern } },
-                            { content: { regexp: pattern } }
+                            { snapNum: parseInt(search) },
+                            { 'content.intro': { regexp: pattern } },
+                            { 'content.thoughts': { regexp: pattern } }
                         ]
-                    }
-                    countOptions.where = {
+                    };
+                    countOptions['where'] = {
                         or: [
                             { title: { regexp: pattern } },
-                            { content: { regexp: pattern } }
+                            { snapNum: parseInt(search) },
+                            { 'content.intro': { regexp: pattern } },
+                            { 'content.thoughts': { regexp: pattern } }
                         ]
-                    }
+                    };
                 }
-
-//                Snapshot.count(countOptions, function (count) {
-//                    Snapshot.find(options, function (snapshots) {
-//                        $scope.snapshotPagination.total = count.count;
-//                        $scope.snapshotPagination.page = page;
-//                        $scope.snapshotPagination.perpage = perpage;
-//
-//                        $timeout(function () {
-//                            $scope.snapshots = snapshots;
-//                            $scope.fetching = false;
-//                            if (callback) {
-//                                return callback(count.count);
-//                            }
-//                        });
-//                    });
-//                });
 
                 AjaxPagination.update(Snapshot, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
@@ -3468,91 +3485,6 @@ angular.module('app.controllers', ['ngCookies'])
                                   AlertService.setSuccess({ show: true, msg: snapshot.title + ' deleted successfully.' });
                                 }
                               })
-//                                Snapshot.findOne({
-//                                    filter: {
-//                                        limit: 1,
-//                                        order: "createdDate DESC",
-//                                        include: [
-//                                            {
-//                                                relation: "authors",
-//                                            },
-//                                            {
-//                                                relation: "deckTiers",
-//                                                scope: {
-//                                                    include: [
-//                                                        {
-//                                                            relation: "deckTech",
-//                                                            scope: {
-//                                                                include: {
-//                                                                    relation: "cardTech",
-//                                                                }
-//                                                            }
-//                                                        }
-//                                                    ]
-//                                                }
-//                                            },
-//                                            {
-//                                                relation: "deckMatchups"
-//                                            }
-//                                        ]
-//                                    }
-//                                })
-//                                .$promise
-//                                .then(function (data) {
-//                                  Snapshot.deleteById
-//                                    async.each(data.deckTiers, function(deckTier, deckEachCb) {
-//                                        async.each(deckTier.deckTech, function(deckTech, techEachCb) {
-//                                            async.each(deckTech.cardTech, function(cardTech, cardTechCb) {
-//
-//                                                CardTech.deleteById({
-//                                                    id: cardTech.id
-//                                                }, function() {
-//                                                    console.log("CARDTECH REMOVAL");
-//                                                    return cardTechCb();
-//                                                }, function (err) {
-//                                                    console.log("There was an error removing CARDTECH, carrying on with removal:", err);
-//                                                    return cardTechCb();
-//                                                });
-//
-//                                            }, function () {
-//                                                DeckTech.deleteById({
-//                                                    id: deckTech.id
-//                                                }, function () {
-//                                                    console.log("DECKTECH REMOVAL");
-//                                                    return techEachCb();
-//                                                }, function (err) {
-//                                                    console.log("There was an error removing DECKTECH, carrying on with removal:", err);
-//                                                    return techEachCb();
-//                                                });
-//
-//                                            });
-//
-//                                        }, function () {
-//                                            DeckTier.deleteById({
-//                                                id: deckTier.id
-//                                            }, function () {
-//                                                console.log("DECKTIER REMOVAL");
-//                                                return deckEachCb();
-//                                            }, function (err) {
-//                                                console.log("there was an error removing DECKTIER, carrying on with removal:", err);
-//                                            });
-//                                        });
-//                                    }, function () {
-//                                        Snapshot.deleteById({ id: snapshot.id }).$promise.then(function (data) {
-//                                            console.log("SNAPSHOT REMOVAL");
-//                                            if (data.$resolved) {
-//                                                var indexToDel = $scope.snapshots.indexOf(snapshot);
-//                                                if (indexToDel !== -1) {
-//                                                    $scope.snapshots.splice(indexToDel, 1);
-//                                                }
-//                                                $scope.success = {
-//                                                    show: true,
-//                                                    msg: snapshot.title + ' deleted successfully.'
-//                                                };
-//                                            }
-//                                        });
-//                                    });
-//                                });
                             }
                         },
                         cancel: {
@@ -3562,7 +3494,9 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
                 });
                 box.modal('show');
             };
@@ -3570,352 +3504,121 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image', 'CrudMan',
-        function ($scope, $upload, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image, CrudMan) {
-           
-            var curProgress = 0;
-            var maxProgress = 0;
-            var CrudMan = new CrudMan();
-            var deckTechList = _.flatten(_.map(snapshot.deckTiers, function (deckTier) {
-                        return _.map(deckTier.deckTech, function (tech) {
-                            return tech;
+    .controller('AdminHearthstoneSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'HearthstoneSnapshotBuilder', 'snapshot', 
+        function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, HearthstoneSnapshotBuilder, snapshot) {
+            
+            // set default page
+            $scope.page = 'general';
+            $scope.deckPage = 'general';
+            
+            // set mode to edit
+            $scope.mode = 'edit';
+            
+            // load snapshot into builder
+            $scope.snapshot = HearthstoneSnapshotBuilder.new(snapshot);
+        }
+    ])
+    .controller('AdminHearthstoneSnapshotAddCtrl', ['$scope', 'HearthstoneSnapshotBuilder',
+        function ($scope, HearthstoneSnapshotBuilder) {
+            
+            // set default page
+            $scope.page = 'general';
+            $scope.deckPage = 'general';
+            
+            // set mode to add
+            $scope.mode = 'add';
+            
+            // create new snapshot builder
+            $scope.snapshot = HearthstoneSnapshotBuilder.new();
+            
+        }
+    ])
+    .controller('AdminTeamListCtrl', ['$scope', '$q', '$window', 'Team', 'TeamMember', 'AlertService', 'teams',
+        function ($scope, $q, $window, Team, TeamMember, AlertService, teams) {
+            $scope.teams = teams;
+          
+            // move team up on arrow click
+            $scope.moveTeamUp = function (teams, team) {
+                var index = teams.indexOf(team);
+                if (index === -1 || index === 0) { return false; }
+                
+                var teamAbove = teams[index-1];
+                teams[index-1] = teams[index];
+                teams[index] = teamAbove;
+
+                saveTeamOrderNum()
+                .then(function (err) {
+                    $scope.fetching = false;
+                    $window.scrollTo(0, 0);
+
+                    if (err) {
+                        return AlertService.setError({
+                            show: true,
+                            msg: 'Unable to move ' + team.game.name + ' team up'
                         });
-                    }), true);
+                    }
 
-            CrudMan.setExists(snapshot.deckTiers, 'decks');
-            CrudMan.setExists(deckTechList, 'deckTech');
-            CrudMan.setExists(_.flatten(_.map(deckTechList, function (val) { return val.cardTech })), 'cardTech');
-
-            $scope.snapshot = snapshot;
-            $scope.search = "";
-            $scope.decks = [];
-            $scope.matches = populateMatches();
-            $scope.matching = false;
-            $scope.selectedDecks = [];
-            $scope.removedDecks = [];
-            $scope.isLoading = false;
-
-            // special
-            var deckBootBox = undefined,
-                authorBootBox = undefined,
-                cardBootBox = undefined,
-                defaultTier = {
-                    tier : 1,
-                    decks : []
-                },
-                defaultTierDeck = {
-                    name: "",
-                    explanation : "",
-                    weeklyNotes : "",
-                    deck : undefined,
-                    ranks : [ 0,0,0,0,0,0,0,0,0,0,0,0,0 ],
-                    deckTech : [],
-                    snapshotId : $scope.snapshot.id
-                },
-                defaultAuthor = {
-                    user: undefined,
-                    description: "",
-                    klass: []
-                },
-                defaultDeckMatch = {
-                    forDeck : undefined,
-                    againstDeck : undefined,
-                    forChance : 0,
-                    againstChance : 0
-                },
-                defaultDeckTech = {
-                    title : "",
-                    cardTech : [],
-                    orderNum : 1
-                },
-                defaultTechCards = {
-                    card : undefined,
-                    toss : false,
-                    orderNum : 1
-                };
-
-            //noinspection UnterminatedStatementJS
-            var errorList = {
-                emptyDeckTech: "Empty deck tech!"
-            }
-
-            function setErr(err) {
-                $scope.isLoading = false;
-                if (_.isUndefined(err)) {
-                    AlertService.reset();
-                    return;
-                }
-
-                $window.scrollTo(0,0);
-                AlertService.setError({ show: true, msg: "Unable to add Snapshot!", errorList: err.list});
-            }
-
-            // photo upload
-            //noinspection UnterminatedStatementJS
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var box = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                box.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/images/uploadSnapshot',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.snapshot.photoNames = {
-                            large: data.large,
-                            medium: data.medium,
-                            small: data.small,
-                            square: data.square
-                        };
-//                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-						var URL = (tpl === './') ? cdn2 : tpl;
-                        $scope.snapshotImg = URL + data.path + data.small;
-                        box.modal('hide');
+                    return AlertService.setSuccess({
+                        show: true,
+                        msg: team.game.name + ' team moved up successfully'
                     });
-                }
-            }
-
-            $scope.getImage = function () {
-                $scope.imgPath = 'snapshots/';
-                if (!$scope.snapshot) { return '/img/blank.png'; }
-//                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-				var URL = (tpl === './') ? cdn2 : tpl;
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  URL + '/img/blank.png' : URL + $scope.imgPath + $scope.snapshot.photoNames.small;
+                });
             };
+          
+            // move team down on arrow click
+            $scope.moveTeamDown = function (teams, team) {
+                var index = teams.indexOf(team);
+                if (index === -1 || index === teams.length - 1) { return false; }
+                
+                var teamBelow = teams[index+1];
+                teams[index+1] = teams[index];
+                teams[index] = teamBelow;
 
-            //REMOVE METHODS
-            function removeAuthorAJAX(obj, cb) {
-                if (!obj.id) { return cb(); }
+                saveTeamOrderNum()
+                .then(function (err) {
+                    $scope.fetching = false;
+                    $window.scrollTo(0, 0);
 
-                Snapshot.authors.destroyById({
-                    id: $scope.snapshot.id,
-                    fk: obj.id
-                })
-                .$promise
-                .then(function () {
-                    return cb();
-                })
-                .catch(function (err) {
-                    return cb();
-                })
-            }
-
-//            function removeTierAJAX(id, obj, cb) {
-//
-//                removeDeckAJAX(id, obj, function () {
-//                    return cb();
-//                });
-//            }
-//
-//            function removeDeckAJAX(id, obj, cb) {
-////                if (!obj.id) { return cb(); }
-//
-//                if (id === undefined) {
-//                    async.each(obj.decks, function (deck, eachCb) {
-//                        removeDeckTechAJAX(deck.id, deck, function () {
-//                            DeckTier.destroyById({
-//                                id: deck.id
-//                            })
-//                            .$promise
-//                            .then(function(data) {
-//                                return eachCb();
-//                            }).catch(function(err) {
-//                                return eachCb(err);
-//                            });
-//                        });
-//                    }, function () {
-//                        return cb();
-//                    });
-//                } else {
-//                    removeDeckTechAJAX(id, obj, function () {
-//                        DeckTier.destroyById({
-//                            id: id
-//                        })
-//                        .$promise
-//                        .then(function(data) {
-//                            return cb();
-//                        }).catch(function(err) {
-//                            return cb(err);
-//                        });
-//                    });
-//                }
-//            }
-//
-//            function removeDeckTechAJAX(id, obj, cb) {
-//                if (!obj.id) { return cb(); }
-//
-//                if (obj.deckTech) {
-//                    async.each(obj.deckTech, function (deckTech, eachCb) {
-//                        removeCardTechAJAX(deckTech.id, deckTech, function () {
-//                            DeckTier.deckTech.destroyAll({
-//                                id: id
-//                            })
-//                            .$promise
-//                            .then(function(data) {
-////                                console.log("successfully removed ALL deckTech:::", data);
-//                                return eachCb();
-//                            }).catch(function(err) {
-//                                return eachCb(err);
-//                            });
-//                        });
-//                    }, function () {
-//                        return cb();
-//                    });
-//                } else {
-//                    removeCardTechAJAX(id, obj, function () {
-//                        DeckTech.destroyById({
-//                            id: id
-//                        })
-//                        .$promise
-//                        .then(function(data) {
-////                            console.log("successfully removed deckTech:", data);
-//                            return cb();
-//                        }).catch(function(err) {
-//                            return cb(err);
-//                        });
-//                    });
-//                }
-//            }
-//
-//            function removeCardTechAJAX(id, obj, cb) {
-//                if (!obj.id) { return cb(); }
-//
-//                if (obj.cardTech) {
-//                    DeckTech.cardTech.destroyAll({
-//                        id: id
-//                    })
-//                    .$promise
-//                    .then(function(data) {
-////                        console.log("successfully removed cardTech:", data);
-//                        return cb();
-//                    }).catch(function(err) {
-//                        return cb(err);
-//                    });
-//                } else {
-//                    CardTech.destroyById({
-//                        id: id
-//                    })
-//                    .$promise
-//                    .then(function(data) {
-////                        console.log("successfully removed cardTech:", data);
-//                        return cb();
-//                    }).catch(function(err) {
-//                        return eachCb();
-//                    });
-//                }
-//            }
-            //REMOVE METHODS
-
-            function populateMatches () {
-                var out = [],
-                    tierLength = $scope.snapshot.tiers.length,
-                    maxTierLength = (tierLength > 2) ? 2 : tierLength;
-
-                for (var i = 0; i < maxTierLength; i++) {
-                    for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-                        out.push($scope.snapshot.tiers[i].decks[j]);
+                    if (err) {
+                        return AlertService.setError({
+                            show: true,
+                            msg: 'Unable to move ' + team.game.name + ' team down'
+                        });
                     }
-                }
-                return out;
-            }
 
-            //noinspection UnterminatedStatementJS
-            $scope.updateDND = function (list, index, d) {
-                list.splice(index, 1);
-                for (var i = 0; i < list.length; i++) {
-                    list[i].orderNum = i + 1;
-                }
-                updateMatchesDND(d);
-
-                doUpdateMatches(function () {
-                    $scope.selectedDecks = [];
-                    $scope.removedDecks = [];
-                    $scope.deckRanks();
-                }, false);
-            }
-
-            function updateMatchesDND (d) {
-                var tierLength = $scope.snapshot.tiers.length;
-                var maxTierLength = (tierLength > 2) ? 2 : tierLength;
-
-                for (var i = 0; i < maxTierLength; i++) {
-                    for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-                        if ($scope.snapshot.tiers[i].decks[j].deck.id == d.deck.id) {
-                            for (var k = 0; k < $scope.snapshot.matches.length; k++) {
-                                if ($scope.snapshot.matches[k].forDeck.id == d.deck.id || $scope.snapshot.matches[k].againstDeck.id == d.deck.id) {
-                                    return;
-                                }
-                            }
-                            $scope.selectedDecks.push(d);
-                            $scope.tier = $scope.snapshot.tiers[i].tier;
-                            return;
-                        }
-                    }
-                }
-                removeMatch(d.deck);
-            }
-
-
-            function escapeStr( str ) {
-                return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            }
-
-            /* GET METHODS */
-            function getDecks (callback) {
-                var where = {};
-
-                var pattern = '/.*'+$scope.search+'.*/i';
-
-                if(!_.isEmpty($scope.search)) {
-                    where['name'] = { regexp: pattern }
-                }
-
-                Deck.find({
-                    filter: {
-                        order: 'createdDate DESC',
-                        limit: 10,
-                        where: where
-                    }
-                })
-                .$promise
-                .then(function (data) {
-                    $timeout(function () {
-                        callback(data);
+                    return AlertService.setSuccess({
+                        show: true,
+                        msg: team.game.name + ' team moved down successfully'
                     });
                 });
-            }
-
-            function getProviders (callback) {
-                //noinspection UnterminatedStatementJS
-                var where = {
-                    isProvider: true
+            };
+          
+            // update the order of teams
+            function teamsOrderUpdate () {
+                var teams = $scope.teams;
+                for (var i = 0; i < teams.length; i++) {
+                    teams[i].orderNum = i + 1;
                 }
+            };
+            
+            // save new team orders to db
+            function saveTeamOrderNum () {
+                var d = $q.defer();
+                
+                async.each($scope.teams, function (team, teamCB) {
+                    var teamOrderNum = $scope.teams.indexOf(team);
+                    team.orderNum = teamOrderNum + 1;
 
-                var pattern = '/.*'+$scope.search+'.*/i';
-
-                if(!_.isEmpty($scope.search)) {
-                    where['username'] = { regexp: pattern }
-                }
-
-                User.find({
-                    filter: {
-                        where: where
-                    }
-                })
-                .$promise
-                .then(function (data) {
-                    $timeout(function () {
-                        return callback(data);
+                    Team.upsert(team)
+                    .$promise
+                    .then(function (teamUpdated) {
+                        return teamCB();
+                    })
+                    .catch(function (err) {
+                        return teamCB(err);
                     });
+                }, function (err) {
+                    return d.resolve(err);
                 });
             }
 
@@ -6944,21 +6647,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = paginationParams.search;
             
             $scope.selectedDecks = [];
-            
-            $scope.toggleSelectedDeck = function (deck) {
-              deck.selected = deck.selected ? true : false;
-              console.log(deck.selected);
-              
-              // check if user is unselecting a deck
-              var index = $scope.selectedDecks.indexOf(deck.id);
-              if (index !== -1) {
-                $scope.selectedDecks.splice(index, 1);
-              } else {
-                // user is adding a deck
-                $scope.selectedDecks.push(deck.id);
-              }
-              console.log('sel decks: ', $scope.selectedDecks);
-            };
 
             // search on keyup
             $scope.searchDecks = function() {
@@ -7906,8 +7594,6 @@ angular.module('app.controllers', ['ngCookies'])
                             .$promise
                             .then(function (newDeckMulligan) {
 
-//                                console.log('newDeckMulligan:', newDeckMulligan);
-
                                 async.parallel([
                                     function(paraCB){
                                         Mulligan.mulligansWithCoin.createMany({
@@ -7941,6 +7627,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     if (err) return deckMulliganCB(err);
                                     return deckMulliganCB();
                                 });
+                                
                             })
                             .catch(function (err) {
                                 console.log('deckMulligan err:', err);
@@ -11856,358 +11543,24 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HearthstoneSnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'dataSnapshot', 'LoginModalService', 'User', 'Snapshot', 'LoopBackAuth',
-        function ($scope, $state, $rootScope, $compile, $window, dataSnapshot, LoginModalService, User, Snapshot, LoopBackAuth) {
+    .controller('HearthstoneSnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'LoginModalService', 'User', 'LoopBackAuth', 'HearthstoneSnapshotBuilder', 'Snapshot', 'snapshot',
+        function ($scope, $state, $rootScope, $compile, $window, LoginModalService, User, LoopBackAuth, HearthstoneSnapshotBuilder, Snapshot, snapshot) {
 
-//            console.log('snapshot: ', dataSnapshot);
-            $scope.snapshot = dataSnapshot;
-            // New decktiers array from snapshot.deckTiers
-            $scope.deckTiers = getAllDecksByTier();
+            // load snapshot
+            $scope.snapshot = HearthstoneSnapshotBuilder.new(snapshot);
+            
+            // vote
+            $scope.voted = false;
             $scope.SnapshotService = Snapshot;
             $scope.votableSnapshot = {
-                snapshot: $scope.snapshot
+                snapshot: snapshot
             };
 
-//            console.log('new deckTiers: ', $scope.deckTiers);
-
-            $scope.show = [];
-            $scope.matchupName = [];
-            $scope.voted = false;
-//            $scope.hasVoted = checkVotes();
-
-            function getAllDecksByTier() {
-                var uniqueTiers = {};
-                var outArr = [];
-
-                // loop through all deck tiers
-                // create an object for each tier
-                // determine the tier of the deck
-                // push the deck to the corresponding tier obj
-
-                for(var i = 0, j = $scope.snapshot.deckTiers.length; i < j; i++) {
-                    var currentDeckTier = $scope.snapshot.deckTiers[i].tier;
-                    var uniqueTier = true;
-                    for(var k = 0, l = outArr.length; k < l; k++) {
-                        if(outArr[k].tier === currentDeckTier) {
-                            uniqueTier = false;
-                            outArr[k].decks.push($scope.snapshot.deckTiers[i]);
-                        }
-                    }
-
-                    if(uniqueTier) {
-                        var newTier = {
-                            id: $scope.snapshot.deckTiers[i].id,
-                            tier: currentDeckTier,
-                            decks: [$scope.snapshot.deckTiers[i]],
-                        };
-                        outArr.push(newTier);
-                    }
-                }
-
-                return outArr;
-
-            }
-
-//        $scope.show.comments = SnapshotService.getStorage();
-//        $scope.$watch('User.isAuthenticated()', function() {
-//            $scope.hasVoted();
-//        });
-
-            var mouseOver = [],
-                charts = [],
-                viewHeight = 0,
-                box = undefined;
-
-            //noinspection UnterminatedStatementJS
-            $scope.getImage = function () {
-                return ($scope.snapshot.photos.large == "") ? $scope.app.cdn + 'snapshots/default-banner.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.large;
-            }
-
-            //noinspection UnterminatedStatementJS
-            $scope.getMouseOver = function (deckID) {
-                return mouseOver[deckID] || false;
-            }
-
-            //noinspection UnterminatedStatementJS
-            $scope.setMouseOver = function (deckID, isOver, deckName) {
-                mouseOver[deckID] = isOver;
-                $scope.matchupName[deckID] = deckName || false;
-            }
-
+            // meta service
             $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
-
-//            console.log('square: ', $scope.snapshot.photoNames.square);
-
             var ogImg = ($scope.snapshot.photoNames.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photoNames.square;
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
 
-            for (var i = 0; i < $scope.deckTiers.length; i++) {
-                $scope.show[i+1] = false;
-            }
-
-            //noinspection UnterminatedStatementJS
-            $scope.setView = function (height) {
-                viewHeight = height*350;
-            }
-
-            //noinspection UnterminatedStatementJS
-            $scope.getView = function () {
-                return viewHeight;
-            }
-
-            // trends
-            $scope.currentTier = 1;
-            $scope.currentDeck = false;
-            $scope.tierRange = [];
-
-            //noinspection UnterminatedStatementJS
-            $scope.snapshotTimeline = function () {
-                var out = [];
-                for (var i = $scope.snapshot.snapNum; i > $scope.snapshot.snapNum - 13; i--) {
-                    out.push(i);
-                }
-                return out;
-            }
-
-//        $scope.getTier = function (tier) {
-//            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-//                if ($scope.snapshot.tiers[i].tier == tier) {
-//                    return $scope.snapshot.tiers[i];
-//                }
-//            }
-//            return false;
-//        }
-
-            //noinspection UnterminatedStatementJS
-            $scope.getTier = function (tier) {
-                for (var i = 0; i < $scope.deckTiers.length; i++) {
-                    if ($scope.deckTiers[i].tier == tier) {
-                        return $scope.deckTiers[i];
-                    }
-                }
-                return false;
-            }
-
-            function getTierRange (tierNum) {
-                var tier = $scope.getTier(tierNum),
-                    out = [],
-                    highestRank = 0,
-                    lowestRank = 0;
-
-                // find highest and lowest in tier
-                for (var i = 0; i < tier.decks.length; i++) {
-                    var history = tier.decks[i].ranks;
-                    for (var j = 0; j < history.length; j++) {
-                        if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
-                        if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
-                    }
-                }
-
-                // generate range
-                for (var i = lowestRank; i <= highestRank; i++) {
-                    out.push(i);
-                }
-
-                return out;
-            };
-
-            // init tier ranges
-            for (var i = 0; i < $scope.deckTiers.length; i++) {
-                var tierNum = $scope.deckTiers[i].tier;
-                $scope.tierRange[tierNum] = getTierRange(tierNum);
-            }
-
-            $scope.toggleCurrentDeck = function (deckNum) {
-                $scope.currentDeck = ($scope.currentDeck == deckNum) ? false : deckNum;
-            };
-
-            $scope.hasDeckSelected = function () {
-                return $scope.currentDeck;
-            };
-
-            $scope.setCurrentTier = function (tierNum) {
-                $scope.currentTier = tierNum;
-                $scope.toggleCurrentDeck(false);
-            };
-
-            //noinspection UnterminatedStatementJS
-            $scope.getPositionY = function (tierNum, deckIndex, height, padding) {
-                var size = $scope.tierRange[tierNum].length;
-                return Math.round(((height - padding)/size*deckIndex) + padding, 2);
-            }
-
-            //noinspection UnterminatedStatementJS
-            $scope.getPositionX = function (index, padding) {
-                return Math.round(100 - padding - ((100 - padding)/12*index) + (padding / 2), 2);
-            }
-
-            $scope.getRanks = function (deck) {
-                var ranks = deck.ranks;
-                return ranks;
-            };
-
-            $scope.getRankIndex = function (tierNum, rank) {
-                var range = $scope.tierRange[tierNum];
-                return range.indexOf(rank);
-            };
-
-            $scope.getNextRank = function (deck, index) {
-                return deck.ranks[index + 1];
-            };
-
-            $scope.hasNextRank = function (deck, index) {
-                return (deck.ranks[index + 1]);
-            };
-
-//            function checkVotes () {
-//                for (var i = 0; i < $scope.snapshot.votes.length; i++) {
-//                    if (typeof($scope.snapshot.votes[i]) === 'object') {
-//                        if ($scope.snapshot.votes[i].userID == LoopBackAuth.currentUserId) {
-//                            $scope.hasVoted = true;
-//                            break;
-//                        }
-//                    } else {
-//                        if ($scope.snapshot.votes[i] == LoopBackAuth.currentUserId) {
-//                            $scope.hasVoted = true;
-//                            break;
-//                        }
-//                    }
-//                }
-//                return $scope.hasVoted
-//            }
-//            console.log(LoopBackAuth.currentUserId);
-//            $scope.voteSnapshot = function (snapshot) {
-//
-//                if (!LoopBackAuth.currentUserId) {
-//                    LoginModalService.showModal('login', function() {
-//                        vote(snapshot);
-//                    });
-//                } else {
-//                    if (!$scope.hasVoted) {
-//                        console.log(snapshot);
-//                        $scope.processingVote = true;
-//                        Snapshot.findOne({
-//                            filter: {
-//                                where: {
-//                                    id: $scope.snapshot.id
-//                                },
-//                                fields: ["votes", "votesCount"]
-//                            }
-//                        })
-//                        .$promise
-//                        .then(function (snapshot) {
-//                            async.waterfall([
-//                                function(seriesCallback) {
-//                                    snapshot.votes.push(LoopBackAuth.currentUserId);
-//                                    snapshot.votesCount += 1;
-//                                    return seriesCallback(undefined, snapshot)
-//                                },
-//                                function(snapshot, seriesCallback) {
-//
-//                                    Snapshot.update({
-//                                        where: {
-//                                            id: $scope.snapshot.id
-//                                        }
-//                                    }, {
-//                                        votes: snapshot.votes,
-//                                        votesCount: snapshot.votesCount
-//                                    }, function (data) {
-//                                        $scope.snapshot.votes = data.votes;
-//                                        $scope.snapshot.votesCount = data.votesCount;
-//                                        checkVotes();
-//                                        $scope.processingVote = false;
-//                                    });
-//                                }
-//                            ]);
-//                        });
-//                    }
-//                }
-//            };
-
-            // check for custom deck name or load normal name
-//        function getDeckName (deckID) {
-//            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-//                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-//                    if ($scope.snapshot.tiers[i].decks[j].deck._id == deckID) {
-//                        return ($scope.snapshot.tiers[i].decks[j].name.length) ? $scope.snapshot.tiers[i].decks[j].name : $scope.snapshot.tiers[i].decks[j].deck.name;
-//                    }
-//                }
-//            }
-//            return false;
-//        }
-
-            // check for custom deck name or load normal name
-            function getDeckName (deckID) {
-                for (var i = 0; i < $scope.deckTiers.length; i++) {
-                    for (var j = 0; j < $scope.deckTiers[i].decks.length; j++) {
-                        if ($scope.deckTiers[i].decks[j].deck.id == deckID) {
-                            return ($scope.deckTiers[i].decks[j].name.length) ? $scope.deckTiers[i].decks[j].name : $scope.deckTiers[i].decks[j].deck.name;
-                        }
-                    }
-                }
-                return false;
-            }
-
-//        function init () {
-//            var tierLength = $scope.snapshot.tiers.length,
-//                maxTierLength = (tierLength > 2) ? 2 : tierLength;
-//
-//            /******************************************* HAS VOTED *******************************************/
-//
-//
-//
-//            /******************************************* BUILD TIER MATCHES *******************************************/
-//            for (var j = 0; j < maxTierLength; j++) {
-//                for (var k = 0; k < $scope.snapshot.tiers[j].decks.length; k++) {
-//                    var matches = [];
-//                    for (var i = 0; i < $scope.snapshot.matches.length; i++) {
-//                        if($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].for._id || $scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) {
-//                            var newObj = {
-//                                against: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for._id : $scope.snapshot.matches[i].against._id,
-//                                chance: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].forChance : $scope.snapshot.matches[i].againstChance,
-//                                playerClass: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.playerClass : $scope.snapshot.matches[i].against.playerClass,
-//                                //name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
-//                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? getDeckName($scope.snapshot.matches[i].for._id) : getDeckName($scope.snapshot.matches[i].against._id)
-//                            };
-//                            matches.push(newObj);
-//                        }
-//                    }
-//                    charts[$scope.snapshot.tiers[j].decks[k].deck._id] = matches;
-//                }
-//            }
-//
-//        }
-
-            function init () {
-                var tierLength = $scope.deckTiers.length,
-                    maxTierLength = (tierLength > 2) ? 2 : tierLength;
-
-                /******************************************* HAS VOTED *******************************************/
-
-
-
-                /******************************************* BUILD TIER MATCHES *******************************************/
-                for (var j = 0; j < tierLength; j++) {
-                    for (var k = 0; k < $scope.deckTiers[j].decks.length; k++) {
-                        var matches = [];
-                        for (var i = 0; i < $scope.snapshot.deckMatchups.length; i++) {
-                            if($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].forDeckId || $scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) {
-                                var newObj = {
-                                    against: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forDeckId : $scope.snapshot.deckMatchups[i].againstDeckId,
-                                    chance: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forChance : $scope.snapshot.deckMatchups[i].againstChance,
-                                    playerClass: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forDeck.playerClass : $scope.snapshot.deckMatchups[i].againstDeck.playerClass,
-                                    name: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? getDeckName($scope.snapshot.deckMatchups[i].forDeck.id) : getDeckName($scope.snapshot.deckMatchups[i].againstDeck.id)
-                                };
-                                matches.push(newObj);
-                            }
-                        }
-                        charts[$scope.deckTiers[j].decks[k].deck.id] = matches;
-                    }
-                }
-
-            }
-
-            //noinspection UnterminatedStatementJS
             $scope.scrollToDeck = function (deck) {
                 $('html, body').animate({
                     scrollTop: (deck.offset().top - 100)
@@ -12226,7 +11579,6 @@ angular.module('app.controllers', ['ngCookies'])
             //noinspection UnterminatedStatementJS
             $scope.goToTwitch = function ($event, usr) {
                 event = event || window.event;
-//                console.log('$event:', $event);
                 $event.stopPropagation();
                 //noinspection UnterminatedStatementJS
                 var url = 'http://twitch.tv/' + usr
@@ -12240,22 +11592,7 @@ angular.module('app.controllers', ['ngCookies'])
                 window.open(url, '_blank');
             }
 
-            //noinspection UnterminatedStatementJS
-            $scope.getMatches = function (id) {
-                return charts[id];
-            }
-
-            function getClass(deck) {
-                return deck.playerClass;
-            }
-
-            //noinspection UnterminatedStatementJS
-            $scope.getMatchClass = function (match, id) {
-                return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
-            }
-
             $scope.goToDeck = function ($event, slug) {
-//                console.log(slug);
                 $event.stopPropagation();
                 var url = $state.href('app.hs.decks.deck', { slug: slug });
                 window.open(url,'_blank');
@@ -12275,18 +11612,6 @@ angular.module('app.controllers', ['ngCookies'])
                 var url = 'http://twitter.com/' + usr;
                 window.open(url, '_blank');
             }
-
-            //noinspection UnterminatedStatementJS
-            $scope.toggleComments = function () {
-                if (!SnapshotService.getStorage()) {
-                    SnapshotService.setStorage(true);
-                } else {
-                    SnapshotService.setStorage(false);
-                }
-                $scope.show.comments = SnapshotService.getStorage();
-            }
-
-            init();
         }
     ])
     .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
@@ -13994,8 +13319,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
     /* admin hots */
-    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams',
-        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams) {
+    .controller('AdminHeroListCtrl', ['$scope', '$q', '$timeout', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams',
+        function ($scope, $q, $timeout, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams) {
             // grab alerts
 //            if (AlertService.hasAlert()) {
 //                $scope.success = AlertService.getSuccess();
@@ -14117,14 +13442,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 'Hero', 'Ability', 'Talent', 'HeroTalent', 'CrudMan',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService, Hero, Ability, Talent, HeroTalent, CrudMan) {
-          var CrudMan = new CrudMan();
-
-          CrudMan.createArr('talents');
-          CrudMan.createArr('abilities');
-          // default hero
-          var defaultHero = {
+    .controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'Ability', 'HeroTalent', 'Talent',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, Ability, HeroTalent, Talent) {
+            
+            var defaultHero = {
                   name : '',
                   description: '',
                   title: '',
@@ -14141,351 +13462,7 @@ angular.module('app.controllers', ['ngCookies'])
                   className: '',
                   isActive: true
               },
-              defaultAbility = {
-                  name: '',
-                  abilityType: HOTS.abilityTypes[0],
-                  mana: '',
-                  cooldown: '',
-                  description: '',
-                  damage: '',
-                  healing: '',
-                  className: '',
-                  orderNum: 1
-              },
-              defaultTalent = {
-                  name: '',
-                  tier: HOTS.tiers[0],
-                  description: '',
-                  ability: undefined,
-                  className: '',
-                  orderNum: 1
-              },
-              defaultCharacter = {
-                  name: '',
-                  stats: {
-                      base: {
-                          health: 0,
-                          healthRegen: 0,
-                          mana: 0,
-                          manaRegen: 0,
-                          attackSpeed: 0,
-                          range: 0,
-                          damage: 0
-                      },
-                      gain: {
-                          health: 0,
-                          healthRegen: 0,
-                          mana: 0,
-                          manaRegen: 0,
-                          attackSpeed: 0,
-                          range: 0,
-                          damage: 0
-                      }
-                  }
-              };
-
-          // load hero
-          $scope.hero = angular.copy(defaultHero);
-
-          // roles
-          $scope.roles = HOTS.roles;
-
-          // types
-          $scope.heroTypes = HOTS.types;
-
-          // universe
-          $scope.universes = HOTS.universes;
-
-          // mana types
-          $scope.manaTypes = HOTS.manaTypes;
-
-          //talents
-          $scope.talentTiers = HOTS.tiers;
-
-          // select options
-          $scope.heroActive = [
-              { name: 'Yes', value: true },
-              { name: 'No', value: false }
-          ];
-
-          // abilities
-          $scope.abilityTypes = HOTS.abilityTypes;
-          var box;
-          $scope.abilityAddWnd = function () {
-//              console.log('sup');
-              $scope.currentAbility = angular.copy(defaultAbility);
-              box = bootbox.dialog({
-                  title: 'Add Ability',
-                  message: $compile('<div ability-add-form></div>')($scope)
-              });
-          };
-
-          $scope.abilityEditWnd = function (ability) {
-              $scope.currentAbility = ability;
-              box = bootbox.dialog({
-                  title: 'Edit Ability',
-                  message: $compile('<div ability-edit-form></div>')($scope)
-              });
-          };
-
-          $scope.addAbility = function () {
-              var abil = $scope.currentAbility;
-
-              $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
-              $scope.hero.abilities.push(abil);
-              CrudMan.add(abil, 'abilities');
-              box.modal('hide');
-              $scope.currentAbility = false;
-            };
-
-          $scope.editAbility = function (ability) {
-              CrudMan.toggle(ability, 'abilities');
-              box.modal('hide');
-              $scope.currentAbility = false;
-          };
-
-          $scope.deleteAbility = function (ability) {
-              var index = $scope.hero.abilities.indexOf(ability);
-              $scope.hero.abilities.splice(index, 1);
-
-              for (var i = 0; i < $scope.hero.abilities.length; i++) {
-                  $scope.hero.abilities[i].orderNum = i + 1;
-              }
-          };
-
-             //noinspection UnterminatedStatementJS
-            $scope.characterAbilToggle = function (currentAbility, char) {
-                if (_.isUndefined(currentAbility.charNames))
-                    currentAbility.charNames = [];
-
-                var item = _.find(currentAbility.charNames, function (val) { return val === char.name; });
-
-                if (!item) {
-                    currentAbility.charNames.push(char.name);
-                } else {
-                    var idx = currentAbility.charNames.indexOf(item);
-                    currentAbility.charNames.splice(idx, 1);
-                }
-            }
-
-          // talents
-          $scope.talentAddWnd = function () {
-              $scope.currentTalent = angular.copy(defaultTalent);
-//                $scope.talentAbilities = $scope.hero.abilities;
-              $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
-              box = bootbox.dialog({
-                  title: 'Add Talent',
-                  message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
-              });
-          };
-
-          $scope.talentEditWnd = function (talent) {
-              $scope.currentTalent = talent;
-//                $scope.talentAbilities = $scope.hero.abilities;
-              $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
-              box = bootbox.dialog({
-                  title: 'Edit Talent',
-                  message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
-              });
-          };
-
-          $scope.addTalent = function (talent) {
-              var tal = $scope.currentTalent;
-              if (_.isUndefined($scope.talents)) {
-                  $scope.talents = [];
-              }
-
-              tal.orderNum = $scope.hero.talents.length + 1;
-              $scope.hero.talents.push(tal);
-              CrudMan.toggle(tal, 'talents');
-              box.modal('hide');
-              $scope.currentTalent = undefined;
-          };
-
-          $scope.editTalent = function (talent) {
-              CrudMan.add(talent, 'talents');
-              box.modal('hide');
-              $scope.currentTalent = false;
-            };
-
-          $scope.deleteTalent = function (talent) {
-              var index = $scope.hero.talents.indexOf(talent);
-              $scope.hero.talents.splice(index, 1);
-              CrudMan.toggle(talent, 'talents');
-
-              for (var i = 0; i < $scope.hero.talents.length; i++) {
-                  $scope.hero.talents[i].orderNum = i + 1;
-              }
-          };
-
-          // characters
-          $scope.charAddWnd = function () {
-              $scope.currentCharacter = angular.copy(defaultCharacter);
-              box = bootbox.dialog({
-                  title: 'Add Character',
-                  message: $compile('<div char-add-form></div>')($scope)
-              });
-          };
-
-          $scope.charEditWnd = function (character) {
-              $scope.currentCharacter = character;
-              box = bootbox.dialog({
-                  title: 'Edit Character',
-                  message: $compile('<div char-edit-form></div>')($scope)
-              });
-          };
-
-          $scope.addCharacter = function () {
-              $scope.hero.characters.push($scope.currentCharacter);
-              box.modal('hide');
-              $scope.currentCharacter = false;
-          };
-
-          $scope.editCharacter = function (character) {
-              box.modal('hide');
-              $scope.currentCharacter = false;
-          };
-
-          $scope.deleteChar = function (character) {
-              var index = $scope.hero.characters.indexOf(character);
-              $scope.hero.characters.splice(index, 1);
-          };
-
-          $scope.updateDND = function (list, index) {
-
-              list.splice(index, 1);
-
-              for (var i = 0; i < list.length; i++) {
-                  list[i].orderNum = i + 1;
-              }
-          };
-
-          $scope.addHero = function () {
-            var arrs = angular.copy(CrudMan.getArrs());
-
-            var hero = angular.copy($scope.hero);
-            var tals = arrs.talents;
-            var talsToAdd  = tals.toWrite;
-            var abils = arrs.abilities;
-            var abilsToAdd = abils.toWrite;
-
-//            console.log(arrs);
-
-            delete hero.abilities;
-            delete hero.talents;
-
-            var talsToRemove = [];
-            _.each(talsToAdd, function (talVal) {
-              var allAbils = abils.exists.concat(abilsToAdd);
-              var a = _.find(allAbils, function (abiVal) { return talVal.ability === abiVal.name });
-              var toPush = {};
-
-              delete talVal.ability;
-
-              if (!_.isUndefined(a)) {
-                if(!_.isUndefined(a.id)) {
-                  talVal.abilityId = a.id;
-                  return;
-                }
-
-                if (_.isUndefined(a.talents)) {
-                  a.talents = [];
-                }
-
-                a.talents.push(talVal);
-                talsToRemove.push(talVal);
-              }
-            });
-
-            talsToAdd = _.difference(talsToAdd, talsToRemove);
-
-//            console.log('tals', tals);
-//            console.log('talsToAdd', talsToAdd);
-//            console.log('abils', abils);
-//            console.log('abilsToAdd', abilsToAdd);
-
-            Hero.create({}, hero)
-            .$promise
-            .then(function (heroData) {
-              async.series([
-                function(seriesCb) {
-                  async.each(abilsToAdd, function (abil, abilCb) {
-                    var tempTals = abil.talents;
-                    delete abil.talents;
-
-                    abil.heroId = heroData.id;
-                    Ability.create({}, abil)
-                    .$promise
-                    .then(function (abilData) {
-                      async.each(tempTals, function(abilTal, abilTalCb) {
-                        var tempTal = abilTal.talent;
-
-                        Talent.upsert({}, tempTal)
-                        .$promise
-                        .then(function (abilTalData) {
-//                          console.log(heroData);
-//                          console.log(abilTalData);
-//                          console.log(abilData);
-//                          console.log(abilTal);
-
-                          abilTal.heroId = heroData.id;
-                          abilTal.talentId = abilTalData.id;
-                          abilTal.abilityId = abilData.id;
-                          abilTal.tier = abilTal.tier;
-                          abilTal.orderNum = abilTal.orderNum;
-
-                          HeroTalent.create({}, abilTal)
-                          .$promise
-                          .then(function (heroTalData) {
-                            return abilTalCb();
-                          }).catch(abilTalCb);
-                        }).catch(abilTalCb);
-                      }, abilCb);
-                    }).catch(abilCb);
-                  }, seriesCb(undefined));
-                },
-                function (seriesCb) {
-                  async.each(talsToAdd, function (tal, eachCb) {
-                    Talent.upsert({}, tal.talent)
-                    .$promise
-                    .then(function (talData) {
-                      tal.heroId = heroData.id;
-                      tal.talentId = talData.id;
-                      tal.tier = tal.tier;
-                      tal.orderNum = tal.orderNum;
-                      delete tal.talent;
-
-                      HeroTalent.create({}, tal)
-                      .$promise
-                      .then(function () {
-                        return eachCb(undefined);
-                      })
-                      .catch(eachCb);
-                    })
-                    .catch(seriesCb);
-                  }, seriesCb(undefined))
-                }
-              ], function (err) {
-                if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
-                else { AlertService.setSuccess({ persist: true, show: true, msg: "Hero was successfully added" }); $state.go('app.admin.hots.heroes.list'); }
-              })
-            }).catch(function (err) { console.log(err); });
-          };
-
-//          $scope.$on('$destroy', function() {
-//            CrudMan.reset();
-//          });
-
-        }
-    ])
-    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'Ability', 'HeroTalent', 'Talent', 'CrudMan',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, Ability, HeroTalent, Talent, CrudMan) {
-            // defaults
-            var CrudMan = new CrudMan();
-
-            CrudMan.setExists(hero.talents, 'talents');
-            CrudMan.setExists(hero.abilities, 'abilities');
-            var defaultAbility = {
+            defaultAbility = {
                 name: '',
                 abilityType: HOTS.abilityTypes[0],
                 mana: '',
@@ -14526,9 +13503,24 @@ angular.module('app.controllers', ['ngCookies'])
                   }
                 }
               };
+            
+            var defaultCrud = {
+                exists: [],
+                toDelete: [],
+                toWrite: []
+            };
+            
+            var exists = new Object();
+            exists['talents']   = angular.copy(defaultCrud);
+            exists['abilities'] = angular.copy(defaultCrud);
+            exists['talentModels'] = angular.copy(defaultCrud);
+            
+            exists['talents'].exists = [];
+            exists['abilities'].exists = [];
+            exists['talentModels'].exists = [];
 
             // load hero
-            $scope.hero = hero;
+            $scope.hero = angular.copy(defaultHero);
 
             // roles
             $scope.roles = HOTS.roles;
@@ -14573,13 +13565,13 @@ angular.module('app.controllers', ['ngCookies'])
 
               $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
               $scope.hero.abilities.push(abil);
-              CrudMan.toggle(abil, 'abilities');
+//              CrudMan.toggle(abil, 'abilities');
               box.modal('hide');
               $scope.currentAbility = false;
             };
 
             $scope.editAbility = function (ability) {
-                CrudMan.add(ability, 'abilities');
+//                CrudMan.add(ability, 'abilities');
                 box.modal('hide');
                 $scope.currentAbility = false;
             };
@@ -14587,7 +13579,422 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deleteAbility = function (ability) {
               var index = $scope.hero.abilities.indexOf(ability);
               $scope.hero.abilities.splice(index, 1);
-              CrudMan.toggle(ability, 'abilities');
+              
+              // push into toDelete if ability has an id
+                if (angular.isDefined(ability.id)) {
+                    exists['abilities'].toDelete.push(ability);
+                }
+
+              for (var i = 0; i < $scope.hero.abilities.length; i++) {
+                $scope.hero.abilities[i].orderNum = i + 1;
+              }
+            };
+
+            $scope.characterAbilToggle = function (currentAbility, char) {
+                if (_.isUndefined(currentAbility.charNames))
+                    currentAbility.charNames = [];
+
+                var item = _.find(currentAbility.charNames, function (val) { return val === char.name; });
+
+                if (!item) {
+                    currentAbility.charNames.push(char.name);
+                } else {
+                    var idx = currentAbility.charNames.indexOf(item);
+                    currentAbility.charNames.splice(idx, 1);
+                }
+            }
+
+            // talents
+            $scope.talentTiers = HOTS.tiers;
+            $scope.talentAddWnd = function () {
+                $scope.currentTalent = angular.copy(defaultTalent);
+  //                $scope.talentAbilities = $scope.hero.abilities;
+                $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
+                box = bootbox.dialog({
+                    title: 'Add Talent',
+                    message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
+                });
+            };
+
+            $scope.talentEditWnd = function (talent) {
+//                console.log(talent);
+                $scope.currentTalent = talent;
+                $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
+                box = bootbox.dialog({
+                    title: 'Edit Talent',
+                    message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
+                });
+            };
+
+            $scope.addTalent = function () {
+                var tal = $scope.currentTalent;
+
+                tal.orderNum = $scope.hero.talents.length + 1;
+                $scope.hero.talents.push(tal);
+//                CrudMan.toggle(tal, 'talents');
+                box.modal('hide');
+                $scope.currentTalent = false;
+            };
+
+            $scope.editTalent = function (talent) {
+//              CrudMan.add(talent, 'talents');
+                
+              box.modal('hide');
+              $scope.currentTalent = false;
+            };
+
+            $scope.deleteTalent = function (talent) {
+                var index = $scope.hero.talents.indexOf(talent);
+                $scope.hero.talents.splice(index, 1);
+                
+                // push talent into toDelete if id exists
+                if (angular.isDefined(talent.id)) {
+                    exists['talents'].toDelete.push(talent);
+                }
+
+                for (var i = 0; i < $scope.hero.talents.length; i++) {
+                    $scope.hero.talents[i].orderNum = i + 1;
+                }
+            };
+
+            // characters
+            $scope.charAddWnd = function () {
+                $scope.currentCharacter = angular.copy(defaultCharacter);
+                box = bootbox.dialog({
+                    title: 'Add Character',
+                    message: $compile('<div char-add-form></div>')($scope)
+                });
+            };
+
+            $scope.charEditWnd = function (character) {
+                $scope.currentCharacter = character;
+                box = bootbox.dialog({
+                    title: 'Edit Character',
+                    message: $compile('<div char-edit-form></div>')($scope)
+                });
+            };
+
+            $scope.addCharacter = function () {
+                $scope.hero.characters.push($scope.currentCharacter);
+                box.modal('hide');
+                $scope.currentCharacter = false;
+            };
+
+            $scope.editCharacter = function (character) {
+                box.modal('hide');
+                $scope.currentCharacter = false;
+            };
+
+            $scope.deleteChar = function (character) {
+                var index = $scope.hero.characters.indexOf(character);
+                $scope.hero.characters.splice(index, 1);
+            };
+
+            $scope.updateDND = function (list, index, item, key) {
+                list.splice(index, 1);
+
+                for (var i = 0; i < list.length; i++) {
+                    list[i].orderNum = i + 1;
+                }
+            };
+
+            $scope.afterDND = function (item, key) {
+                console.log(item, key);
+            }
+
+            $scope.editHero = function () {
+                
+                var arrs = exists;
+                var hero = angular.copy($scope.hero);
+                
+                // build talentModels toWrite arrays
+                hero.talentModels = _.map(hero.talents, function (heroTalent) {
+                    return heroTalent.talent;
+                });
+                
+                //build our crudman toWrite arrays
+                _.each(arrs, function (arr, key) {
+                    var exists  = arr.exists;
+                    var toWrite = arr.toWrite;
+
+                    _.each(hero[key], function (val) {
+                        var diff =  _.find(exists, function (eVal) {
+                            var valStr = JSON.stringify(val);
+                            var eValStr = JSON.stringify(eVal);
+
+                            return valStr == eValStr;
+                        });
+
+                        if (!diff) {
+                            toWrite.push(val);
+                        }
+                    });
+                });
+                
+                async.waterfall([
+                    function (wateryCB) {
+                        Hero.upsert(hero)
+                        .$promise
+                        .then(function (heroUpdated) {
+                            return wateryCB(null, heroUpdated.id);
+                        })
+                        .catch(function (err) {
+                            return wateryCB(err);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['abilities'].toWrite, function (heroAbil, heroAbilCB) {
+                            heroAbil.heroId = heroId;
+                            
+                            Ability.upsert(heroAbil)
+                            .$promise
+                            .then(function (newHeroAbil) {
+                                heroAbil.id = newHeroAbil.id;
+                                
+                                return heroAbilCB(null, heroId);
+                            })
+                            .catch(function (err) {
+                                return heroAbilCB(err);
+                            });
+                        }, function (err) {
+                
+                            _.each(arrs['talents'].toWrite, function (val) {
+                                var talAbil = _.find(arrs['abilities'].toWrite, function (innerVal) {
+                                    return (val.ability === innerVal.name);
+                                });
+                                
+                                if(!talAbil) {
+                                    talAbil = _.find(arrs['abilities'].exists, function (innerVal) {
+                                        return (val.ability === innerVal.name);
+                                    });
+                                }
+
+                                if (talAbil) {
+                                    val.abilityId = talAbil.id;
+                                }
+                            });
+                            
+                            return wateryCB(err, heroId);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['talents'].toWrite, function (heroTal, heroTalCB) {
+                            heroTal.heroId = heroId;
+                            heroTal.talentId = heroTal.talent.id;
+                            
+                            HeroTalent.upsert(heroTal)
+                            .$promise
+                            .then(function (newHeroTal) {
+                                console.log('newHeroTal: ', newHeroTal);
+                                return heroTalCB(null, heroId);
+                            })
+                            .catch(function (err) {
+                                return heroTalCB(err);
+                            });
+                        }, function (err) {
+                            return wateryCB(err, heroId);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['abilities'].toDelete, function (heroAbil, heroAbilCB) {
+                            Ability.deleteById({
+                                id: heroAbil.id
+                            })
+                            .$promise
+                            .then(function (abilDeld) {
+                                console.log('abilDeld:', abilDeld);
+                                return wateryCB(null, heroId);
+                            })
+                            .catch(function (err) {
+                                return wateryCB(err);
+                            });
+                        }, function (err) {
+                            return wateryCB(err, heroId);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['talents'].toDelete, function (heroTal, heroTalCB) {
+                            HeroTalent.deleteById({
+                                id: heroTal.id,
+                            })
+                            .$promise
+                            .then(function (heroTalDeld) {
+                                console.log('heroTalDeld:', heroTalDeld);
+                                return wateryCB(null, heroId);
+                            })
+                            .catch(function (err) {
+                                return wateryCB(err);
+                            });
+                        }, function (err) {
+                            return wateryCB(err, heroId);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['talentModels'].toWrite, function (talentModel, talentModelCB) {
+                            Talent.upsert(talentModel)
+                            .$promise
+                            .then(function (newTalentModel) {
+                                return talentModelCB();
+                            })
+                            .catch(function (err) {
+                                return talentModelCB(err);
+                            });
+                        }, function (err) {
+                            return wateryCB(err);
+                        });
+                    }
+                ], function (err) {
+                    if (err) {
+                        console.log('err:', err);
+                        return AlertService.setError({
+                            show: true,
+                            msg: 'Unable to update Hero: ' + hero.name,
+                            lbErr: err
+                        });
+                    }
+                    
+                    AlertService.setSuccess({
+                        persist: true,
+                        show: true,
+                        msg: hero.name + ' updated successfully'
+                    });
+                    
+                    return $state.go('app.admin.hots.heroes.list');
+                });
+                
+            };
+        }
+    ])
+    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'Ability', 'HeroTalent', 'Talent',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, Ability, HeroTalent, Talent) {
+            
+            var defaultAbility = {
+                name: '',
+                abilityType: HOTS.abilityTypes[0],
+                mana: '',
+                cooldown: '',
+                description: '',
+                damage: '',
+                healing: '',
+                className: '',
+                orderNum: 1,
+                charNames: []
+              },
+              defaultTalent = {
+                talent: {},
+                tier: HOTS.tiers[0],
+                ability: null,
+                orderNum: 1
+              },
+              defaultCharacter = {
+                name: '',
+                stats: {
+                  base: {
+                    health: 0,
+                    healthRegen: 0,
+                    mana: 0,
+                    manaRegen: 0,
+                    attackSpeed: 0,
+                    range: 0,
+                    damage: 0
+                  },
+                  gain: {
+                    health: 0,
+                    healthRegen: 0,
+                    mana: 0,
+                    manaRegen: 0,
+                    attackSpeed: 0,
+                    range: 0,
+                    damage: 0
+                  }
+                }
+              };
+            
+            var defaultCrud = {
+                exists: [],
+                toDelete: [],
+                toWrite: []
+            };
+            
+            var exists = new Object();
+            exists['talents']   = angular.copy(defaultCrud);
+            exists['abilities'] = angular.copy(defaultCrud);
+            exists['talentModels'] = angular.copy(defaultCrud);
+            
+            exists['talents'].exists = angular.copy(hero.talents);
+            exists['abilities'].exists = angular.copy(hero.abilities);
+            exists['talentModels'].exists = angular.copy(
+                _.map(exists['talents'].exists, function (heroTalent) {
+                    return heroTalent.talent;
+                })
+            );
+
+            // load hero
+            $scope.hero = hero;
+            console.log("exists['talentModels']:", exists['talentModels']);
+
+            // roles
+            $scope.roles = HOTS.roles;
+
+            // types
+            $scope.heroTypes = HOTS.types;
+
+            // universe
+            $scope.universes = HOTS.universes;
+
+            // mana types
+            $scope.manaTypes = HOTS.manaTypes;
+
+            // select options
+            $scope.heroActive = [
+                { name: 'Yes', value: true },
+                { name: 'No', value: false }
+            ];
+
+            // abilities
+            $scope.abilityTypes = HOTS.abilityTypes;
+            var box;
+            $scope.abilityAddWnd = function () {
+                $scope.currentAbility = angular.copy(defaultAbility);
+//                $scope.currentAbility._id = data.id;
+                box = bootbox.dialog({
+                    title: 'Add Ability',
+                    message: $compile('<div ability-add-form></div>')($scope)
+                });
+            };
+
+            $scope.abilityEditWnd = function (ability) {
+                $scope.currentAbility = ability;
+                box = bootbox.dialog({
+                    title: 'Edit Ability',
+                    message: $compile('<div ability-edit-form></div>')($scope)
+                });
+            };
+
+            $scope.addAbility = function () {
+              var abil = $scope.currentAbility;
+
+              $scope.currentAbility.orderNum = $scope.hero.abilities.length + 1;
+              $scope.hero.abilities.push(abil);
+//              CrudMan.toggle(abil, 'abilities');
+              box.modal('hide');
+              $scope.currentAbility = false;
+            };
+
+            $scope.editAbility = function (ability) {
+//                CrudMan.add(ability, 'abilities');
+                box.modal('hide');
+                $scope.currentAbility = false;
+            };
+
+            $scope.deleteAbility = function (ability) {
+              var index = $scope.hero.abilities.indexOf(ability);
+              $scope.hero.abilities.splice(index, 1);
+              
+              // push into toDelete if ability has an id
+                if (angular.isDefined(ability.id)) {
+                    exists['abilities'].toDelete.push(ability);
+                }
 
               for (var i = 0; i < $scope.hero.abilities.length; i++) {
                 $scope.hero.abilities[i].orderNum = i + 1;
@@ -14636,13 +14043,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                 tal.orderNum = $scope.hero.talents.length + 1;
                 $scope.hero.talents.push(tal);
-                CrudMan.toggle(tal, 'talents');
+//                CrudMan.toggle(tal, 'talents');
                 box.modal('hide');
                 $scope.currentTalent = false;
             };
 
             $scope.editTalent = function (talent) {
-              CrudMan.add(talent, 'talents');
+//              CrudMan.add(talent, 'talents');
+                
               box.modal('hide');
               $scope.currentTalent = false;
             };
@@ -14650,7 +14058,11 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deleteTalent = function (talent) {
                 var index = $scope.hero.talents.indexOf(talent);
                 $scope.hero.talents.splice(index, 1);
-                CrudMan.toggle(talent, 'talents');
+                
+                // push talent into toDelete if id exists
+                if (angular.isDefined(talent.id)) {
+                    exists['talents'].toDelete.push(talent);
+                }
 
                 for (var i = 0; i < $scope.hero.talents.length; i++) {
                     $scope.hero.talents[i].orderNum = i + 1;
@@ -14704,157 +14116,172 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.editHero = function () {
-              var arrs = angular.copy(CrudMan.getArrs());
-
-              var hero = angular.copy($scope.hero);
-              var tals = arrs.talents;
-              var talsToAdd  = tals.toWrite;
-              var abils = arrs.abilities;
-              var abilsToAdd = abils.toWrite;
-
-                _.each(abils.exists, function (abil) {
-                    var b = _.find(hero.abilities, function (heroAbil) {
-                        return (abil.id == heroAbil.id);
-                    });
-
-                    if(b && b.orderNum !== abil.orderNum) {
-                        arrs.abilities.toWrite.push(b);
-                    }
+                
+                var arrs = exists;
+                var hero = angular.copy($scope.hero);
+                
+                // build talentModels toWrite arrays
+                hero.talentModels = _.map(hero.talents, function (heroTalent) {
+                    return heroTalent.talent;
                 });
+                
+                //build our crudman toWrite arrays
+                _.each(arrs, function (arr, key) {
+                    var exists  = arr.exists;
+                    var toWrite = arr.toWrite;
 
-                _.each(tals.exists, function (tal) {
-                    var b = _.find(hero.talents, function (heroTal) {
-                        return (tal.id == heroTal.id);
+                    _.each(hero[key], function (val) {
+                        var diff =  _.find(exists, function (eVal) {
+                            var valStr = JSON.stringify(val);
+                            var eValStr = JSON.stringify(eVal);
+
+                            return valStr == eValStr;
+                        });
+
+                        if (!diff) {
+                            toWrite.push(val);
+                        }
                     });
-
-                    if(b && b.orderNum !== tal.orderNum) {
-                        arrs.talents.toWrite.push(b);
-                    }
                 });
-
-              delete hero.abilities;
-              delete hero.talents;
-
-              var talsToRemove = [];
-              _.each(talsToAdd, function (talVal) {
-                var allAbils = abils.exists.concat(abilsToAdd);
-                var a = _.find(allAbils, function (abiVal) { return talVal.ability === abiVal.name });
-                var toPush = {};
-
-                delete talVal.ability;
-
-                if (!_.isUndefined(a)) {
-                  if(!_.isUndefined(a.id)) {
-                    talVal.abilityId = a.id;
-                    return;
-                  }
-
-                  if (_.isUndefined(a.talents)) {
-                    a.talents = [];
-                  }
-
-                  a.talents.push(talVal);
-                  talsToRemove.push(talVal);
-                }
-              });
-
-              talsToAdd = _.difference(talsToAdd, talsToRemove);
-
-//              console.log('tals', tals);
-//              console.log('talsToAdd', talsToAdd);
-//              console.log('abils', abils);
-//              console.log('abilsToAdd', abilsToAdd);
-
-
-              Hero.upsert({
-                where: {
-                  id: hero.id
-                }
-              }, hero)
-              .$promise
-              .then(function (heroData) {
-                async.series([
-                  function(seriesCb) {
-                    async.each(abilsToAdd, function (abil, abilCb) {
-                      var tempTals = abil.talents;
-                      delete abil.talents;
-                      abil.heroId = heroData.id;
-                      Ability.upsert({}, abil)
-                      .$promise
-                      .then(function (abilData) {
-                        async.each(tempTals, function(abilTal, abilTalCb) {
-                          Talent.upsert({}, abilTal.talent)
-                          .$promise
-                          .then(function (abilTalData) {
-                            abilTal.heroId = heroData.id;
-                            abilTal.talentId = abilTalData.id;
-                            abilTal.abilityId = abilData.id;
-                            abilTal.tier = abilTal.tier;
-                            abilTal.orderNum = abilTal.orderNum;
-
-//                            console.log(abilTal);
-                            HeroTalent.upsert({}, abilTal)
-                            .$promise
-                            .then(function (heroTalData) {
-                              return abilTalCb();
-                            }).catch(abilTalCb);
-                          }).catch(abilTalCb);
-                        }, abilCb);
-                      }).catch(seriesCb);
-                    }, seriesCb);
-                  },
-                  function (seriesCb) {
-//                    console.log(talsToAdd);
-                    async.each(talsToAdd, function (tal, eachCb) {
-                      Talent.upsert({}, tal.talent)
-                      .$promise
-                      .then(function (talData) {
-                        tal.heroId = heroData.id;
-                        tal.talentId = talData.id;
-                        tal.tier = tal.tier;
-                        tal.orderNum = tal.orderNum;
-
-                        HeroTalent.upsert({}, tal)
+                
+                console.log('arrs:', arrs);
+                console.log('hero:', hero);
+                
+                async.waterfall([
+                    function (wateryCB) {
+                        Hero.upsert(hero)
                         .$promise
-                        .then(function () {
-                          return eachCb(undefined);
+                        .then(function (heroUpdated) {
+                            console.log('heroUpdated:', heroUpdated);
+                            return wateryCB(null, heroUpdated.id);
                         })
-                        .catch(eachCb);
-                      })
-                      .catch(eachCb);
-                    }, seriesCb(undefined))
-                  },
-                  function (seriesCb) {
-                    async.each(arrs.talents.toDelete, function (tal, eachCb) {
-                      HeroTalent.destroyById({
-                        id: tal.id
-                      })
-                      .$promise
-                      .then(function () {
-                        return eachCb();
-                      })
-                      .catch(eachCb);
-                    }, seriesCb);
-                  },
-                  function (seriesCb) {
-                    async.each(arrs.abilities.toDelete, function (abil, eachCb) {
-                      Ability.destroyById({
-                        id: abil.id
-                      })
-                      .$promise
-                      .then(function () {
-                        return eachCb();
-                      })
-                      .catch(eachCb);
-                    }, seriesCb);
-                  }
+                        .catch(function (err) {
+                            return wateryCB(err);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['abilities'].toWrite, function (heroAbil, heroAbilCB) {
+                            heroAbil.heroId = heroId;
+                            
+                            Ability.upsert(heroAbil)
+                            .$promise
+                            .then(function (newHeroAbil) {
+                                heroAbil.id = newHeroAbil.id;
+                                
+                                console.log('newHeroAbil:', newHeroAbil);
+                                return heroAbilCB(null, heroId);
+                            })
+                            .catch(function (err) {
+                                return heroAbilCB(err);
+                            });
+                        }, function (err) {
+                
+                            _.each(arrs['talents'].toWrite, function (val) {
+                                var talAbil = _.find(arrs['abilities'].toWrite, function (innerVal) {
+                                    return (val.ability === innerVal.name);
+                                });
+                                
+                                if(!talAbil) {
+                                    talAbil = _.find(arrs['abilities'].exists, function (innerVal) {
+                                        return (val.ability === innerVal.name);
+                                    });
+                                }
+
+                                if (talAbil) {
+                                    val.abilityId = talAbil.id;
+                                }
+                            });
+                            
+                            return wateryCB(err, heroId);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['talents'].toWrite, function (heroTal, heroTalCB) {
+                            console.log('heroTal:', heroTal);
+                            heroTal.heroId = heroId;
+                            heroTal.talentId = heroTal.talent.id;
+                            
+                            HeroTalent.upsert(heroTal)
+                            .$promise
+                            .then(function (newHeroTal) {
+                                console.log('newHeroTal: ', newHeroTal);
+                                return heroTalCB(null, heroId);
+                            })
+                            .catch(function (err) {
+                                return heroTalCB(err);
+                            });
+                        }, function (err) {
+                            return wateryCB(err, heroId);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['abilities'].toDelete, function (heroAbil, heroAbilCB) {
+                            Ability.deleteById({
+                                id: heroAbil.id
+                            })
+                            .$promise
+                            .then(function (abilDeld) {
+                                console.log('abilDeld:', abilDeld);
+                                return wateryCB(null, heroId);
+                            })
+                            .catch(function (err) {
+                                return wateryCB(err);
+                            });
+                        }, function (err) {
+                            return wateryCB(err, heroId);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        async.each(arrs['talents'].toDelete, function (heroTal, heroTalCB) {
+                            HeroTalent.deleteById({
+                                id: heroTal.id,
+                            })
+                            .$promise
+                            .then(function (heroTalDeld) {
+                                console.log('heroTalDeld:', heroTalDeld);
+                                return wateryCB(null, heroId);
+                            })
+                            .catch(function (err) {
+                                return wateryCB(err);
+                            });
+                        }, function (err) {
+                            return wateryCB(err, heroId);
+                        });
+                    },
+                    function (heroId, wateryCB) {
+                        console.log(arrs.talentModels.toWrite);
+                        async.each(arrs['talentModels'].toWrite, function (talentModel, talentModelCB) {
+                            Talent.upsert(talentModel)
+                            .$promise
+                            .then(function (newTalentModel) {
+                                return talentModelCB();
+                            })
+                            .catch(function (err) {
+                                return talentModelCB(err);
+                            });
+                        }, function (err) {
+                            return wateryCB(err);
+                        });
+                    }
                 ], function (err) {
-                  if (!_.isEmpty(err)) { console.log("There has been an ERROR!", err); return; }
-                  else {
-                    $state.go('app.admin.hots.heroes.list');
-                  }
-                })
-              }).catch(function (err) { console.log(err); });
+                    if (err) {
+                        console.log('err:', err);
+                        return AlertService.setError({
+                            show: true,
+                            msg: 'Unable to update Hero: ' + hero.name,
+                            lbErr: err
+                        });
+                    }
+                    
+                    AlertService.setSuccess({
+                        persist: true,
+                        show: true,
+                        msg: hero.name + ' updated successfully'
+                    });
+                    
+                    return $state.go('app.admin.hots.heroes.list');
+                });
+                
             };
         }
     ])
@@ -15245,7 +14672,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.editMap = function () {
                 $scope.showError = false;
-
                 Map.update({
                     where: {
                         id: $scope.map.id
@@ -15582,17 +15008,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-                if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
-                    return false;
-                }
-                if (!User.isAuthenticated()) {
-                    LoginModalService.showModal('login', function () {
-                        $scope.saveGuide();
-                    });
-                } else {
-                    var cleanGuide = angular.copy($scope.guide);
-                    cleanGuide.slug = Util.slugify(cleanGuide.name);
-                    cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
 
                     var keys = [
                         'name',
@@ -15735,8 +15150,7 @@ angular.module('app.controllers', ['ngCookies'])
                     });
 
                 }
-            };
-        }
+            }
     ])
     .controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'heroes', 'maps',
         function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, heroes, maps) {
@@ -15844,25 +15258,83 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             };
+            
+            // save guide
+            $scope.saveGuide = function () {
+//              console.log('okay...here we go...');
+                if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
+                    return false;
+                }
+                if (!User.isAuthenticated()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.saveGuide();
+                    });
+                } else {
+                    $scope.fetching = true;
+                    
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+//                    $scope.authorId = LoopBackAuth.currentUserId;
+                    $scope.guide.authorId = User.getCurrentId();
 
-//            // save guide
-//            $scope.saveGuide = function () {
-//                if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
-//                    return false;
-//                }
-//
-//                AdminHOTSGuideService.addGuide($scope.guide).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        $scope.app.settings.guide = null;
-//                        AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been added successfully.' });
-//                        $state.go('app.admin.hots.guides.list');
-//                    }
-//                });
-//            };
+                    $scope.guide.voteScore = 1;
+//                    console.log('saving $scope.guide:', $scope.guide);
+                    
+                    var guideCreated;
+                    async.waterfall([
+                        function (waterCB) {
+                            Guide.create($scope.guide)
+                            .$promise
+                            .then(function (createdGuide) {
+                                guideCreated = createdGuide;
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        },
+                        function(waterCB) {
+                            Guide.maps.link({
+                                id: guideCreated.id,
+                                fk: $scope.maps[0].id
+                            }, null)
+                            .$promise
+                            .then(function (mapLinkData) {
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        },
+                        function (waterCB) {
+                            Vote.create({
+                                direction: 1,
+                                createdDate: new Date().toISOString(),
+                                authorId: User.getCurrentId(),
+                                guideId: guideCreated.id
+                            })
+                            .$promise
+                            .then(function (voteCreated) {
+                                return waterCB();
+                            })
+                            .catch(function (err) {
+                                return waterCB(err);
+                            });
+                        }
+                    ], function (err) {
+                        $window.scrollTo(0, 0);
+                        $scope.fetching = false;
+                        if (err) {
+                            return AlertService.setError({
+                                show: true,
+                                msg: 'Unable to Save Guide',
+                                lbErr: err
+                            });
+                        }
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: guideCreated.slug });
+                    });
+                }
+            };
         }
     ])
     .controller('AdminHOTSGuideEditStep1Ctrl', ['$scope', 'guide',
@@ -17849,7 +17321,9 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
                 var cleanGuide = angular.copy($scope.guide);
                 cleanGuide.slug = Util.slugify(cleanGuide.name);
+                cleanGuide.authorId = User.getCurrentId();
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
+                cleanGuide.authorId = User.getCurrentId();
 
                 var keys = ['name',
                             'against',
@@ -18138,7 +17612,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-//              console.log('okay...here we go...');
                 if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                     return false;
                 }
@@ -18150,7 +17623,9 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.fetching = true;
                     
                     $scope.guide.slug = Util.slugify($scope.guide.name);
+                    $scope.guide.authorId = User.getCurrentId();
 //                    $scope.authorId = LoopBackAuth.currentUserId;
+                    $scope.guide.authorId = User.getCurrentId();
 
                     $scope.guide.voteScore = 1;
 //                    console.log('saving $scope.guide:', $scope.guide);
@@ -18173,7 +17648,6 @@ angular.module('app.controllers', ['ngCookies'])
                         'maps'
                     ]);
                     
-                    console.log('cleanMapGuide:', cleanMapGuide);
                     var guideCreated;
                     async.waterfall([
                         function (waterCB) {
@@ -18941,7 +18415,8 @@ angular.module('app.controllers', ['ngCookies'])
                         return abilities[i];
                     }
                 }
-                return false;
+                
+                return undefined;
             };
 
             // abilities
@@ -19379,6 +18854,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
+
     .controller('AdminOverwatchHeroListCtrl', ['$scope', '$window', '$timeout', 'bootbox', 'AlertService', 'OverwatchHero', 'heroes',
         function ($scope, $window, $timeout, bootbox, AlertService, OverwatchHero, heroes) {
             // load vars
@@ -19794,130 +19270,130 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
 
-    .controller('AdminOverwatchSnapshotListCtrl', ['$scope', '$q', '$timeout', 'bootbox', 'AjaxPagination', 'AlertService', 'OverwatchSnapshot', 'owSnapshots', 'owSnapshotsCount', 'paginationParams', function ($scope, $q, $timeout, bootbox, AjaxPagination, AlertService, OverwatchSnapshot, owSnapshots, owSnapshotsCount, paginationParams) {
-        
-        // load snapshots
-        $scope.snapshots = owSnapshots;
-        $scope.page = paginationParams.page;
-        $scope.perpage = paginationParams.perpage;
-        $scope.total = owSnapshotsCount;
-        $scope.search = '';
-
-        $scope.searchSnapshots = function() {
-            updateSnapshots(1, $scope.perpage, $scope.search, false);
-        };
-
-        // pagination
-        function updateSnapshots (page, perpage, search, callback) {
-            $scope.fetching = true;
-
-            var options = {},
-                countOptions = {},
-                pattern = '/.*'+search+'.*/i';
-
-            options.filter = {
-                fields: paginationParams.options.filter.fields,
-                order: "createdDate DESC",
-                skip: ((page*perpage)-perpage),
-                limit: paginationParams.perpage
-            };
-
-            if ($scope.search.length > 0) {
-                options.filter.where = {
-                    or: [
-                        { title: { regexp: pattern } }
-                    ]
-                }
-                countOptions.where = {
-                    or: [
-                        { title: { regexp: pattern } }
-                    ]
-                }
-            }
-
-            AjaxPagination.update(OverwatchSnapshot, options, countOptions, function (err, data, count) {
-                $scope.fetching = false;
-                if (err) return console.log('got err:', err);
-                $scope.snapshotPagination.page = page;
-                $scope.snapshotPagination.perpage = perpage;
-                $scope.snapshots = data;
-                $scope.snapshotPagination.total = count.count;
-                if (callback) {
-                    callback(null, count);
-                }
-            });
-        }
-
-        // page flipping
-        $scope.snapshotPagination = AjaxPagination.new(paginationParams,
-            function (page, perpage) {
-                var d = $q.defer();
-
-                updateSnapshots(page, perpage, $scope.search, function (err, count) {
-                    if (err) return console.log('err: ', err);
-                    d.resolve(count.count);
-                });
-                return d.promise;
-            }
-        );
-
-        // delete snapshot
-        $scope.deleteSnapshot = function deleteSnapshot(snapshot) {
-            var box = bootbox.dialog({
-                title: 'Delete Meta Snapshot: ' + snapshot.title + '?',
-                message: 'Are you sure you want to delete the Meta Snapshot <strong>' + snapshot.title + '</strong>?',
-                buttons: {
-                    delete: {
-                        label: 'Delete',
-                        className: 'btn-danger',
-                        callback: function () {
-                          OverwatchSnapshot.deleteById({
-                            id: snapshot.id
-                          })
-                          .$promise
-                          .then(function (data) {
-                            if (data.$resolved) {
-                                
-                              var indexToDel = $scope.snapshots.indexOf(snapshot);
-                              if (indexToDel !== -1) {
-                                $scope.snapshots.splice(indexToDel, 1);
-                              }
-                                
-                              AlertService.setSuccess({ 
-                                  show: true, 
-                                  msg: snapshot.title + ' deleted successfully.' 
-                              });
-                                
-                            }
-                          })
-                        }
-                    },
-                    cancel: {
-                        label: 'Cancel',
-                        className: 'btn-default pull-left',
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                }
-            });
-            box.modal('show');
-        };
-        
-    }])
-    .controller('AdminOverwatchSnapshotAddCtrl', ['$scope', 'OverwatchSnapshotBuilder', 'owHeroes', function ($scope, OverwatchSnapshotBuilder, owHeroes) {
-        
-        $scope.owHeroes = owHeroes;
-        console.log('$scope.owHeroes:', $scope.owHeroes);
-        
-        // set default page
-        $scope.page = 'general';
-        
-        // set mode to add
-        $scope.mode = 'add';
-        
-        // init snapshot
-        $scope.snapshot = OverwatchSnapshotBuilder.new();
-        console.log('$scope.snapshot:', $scope.snapshot);
-        
-    }]);
+    //.controller('AdminOverwatchSnapshotListCtrl', ['$scope', '$q', '$timeout', 'bootbox', 'AjaxPagination', 'AlertService', 'OverwatchSnapshot', 'owSnapshots', 'owSnapshotsCount', 'paginationParams', function ($scope, $q, $timeout, bootbox, AjaxPagination, AlertService, OverwatchSnapshot, owSnapshots, owSnapshotsCount, paginationParams) {
+    //
+    //    // load snapshots
+    //    $scope.snapshots = owSnapshots;
+    //    $scope.page = paginationParams.page;
+    //    $scope.perpage = paginationParams.perpage;
+    //    $scope.total = owSnapshotsCount;
+    //    $scope.search = '';
+    //
+    //    $scope.searchSnapshots = function() {
+    //        updateSnapshots(1, $scope.perpage, $scope.search, false);
+    //    };
+    //
+    //    // pagination
+    //    function updateSnapshots (page, perpage, search, callback) {
+    //        $scope.fetching = true;
+    //
+    //        var options = {},
+    //            countOptions = {},
+    //            pattern = '/.*'+search+'.*/i';
+    //
+    //        options.filter = {
+    //            fields: paginationParams.options.filter.fields,
+    //            order: "createdDate DESC",
+    //            skip: ((page*perpage)-perpage),
+    //            limit: paginationParams.perpage
+    //        };
+    //
+    //        if ($scope.search.length > 0) {
+    //            options.filter.where = {
+    //                or: [
+    //                    { title: { regexp: pattern } }
+    //                ]
+    //            }
+    //            countOptions.where = {
+    //                or: [
+    //                    { title: { regexp: pattern } }
+    //                ]
+    //            }
+    //        }
+    //
+    //        AjaxPagination.update(OverwatchSnapshot, options, countOptions, function (err, data, count) {
+    //            $scope.fetching = false;
+    //            if (err) return console.log('got err:', err);
+    //            $scope.snapshotPagination.page = page;
+    //            $scope.snapshotPagination.perpage = perpage;
+    //            $scope.snapshots = data;
+    //            $scope.snapshotPagination.total = count.count;
+    //            if (callback) {
+    //                callback(null, count);
+    //            }
+    //        });
+    //    }
+    //
+    //    // page flipping
+    //    $scope.snapshotPagination = AjaxPagination.new(paginationParams,
+    //        function (page, perpage) {
+    //            var d = $q.defer();
+    //
+    //            updateSnapshots(page, perpage, $scope.search, function (err, count) {
+    //                if (err) return console.log('err: ', err);
+    //                d.resolve(count.count);
+    //            });
+    //            return d.promise;
+    //        }
+    //    );
+    //
+    //    // delete snapshot
+    //    $scope.deleteSnapshot = function deleteSnapshot(snapshot) {
+    //        var box = bootbox.dialog({
+    //            title: 'Delete Meta Snapshot: ' + snapshot.title + '?',
+    //            message: 'Are you sure you want to delete the Meta Snapshot <strong>' + snapshot.title + '</strong>?',
+    //            buttons: {
+    //                delete: {
+    //                    label: 'Delete',
+    //                    className: 'btn-danger',
+    //                    callback: function () {
+    //                      OverwatchSnapshot.deleteById({
+    //                        id: snapshot.id
+    //                      })
+    //                      .$promise
+    //                      .then(function (data) {
+    //                        if (data.$resolved) {
+    //
+    //                          var indexToDel = $scope.snapshots.indexOf(snapshot);
+    //                          if (indexToDel !== -1) {
+    //                            $scope.snapshots.splice(indexToDel, 1);
+    //                          }
+    //
+    //                          AlertService.setSuccess({
+    //                              show: true,
+    //                              msg: snapshot.title + ' deleted successfully.'
+    //                          });
+    //
+    //                        }
+    //                      })
+    //                    }
+    //                },
+    //                cancel: {
+    //                    label: 'Cancel',
+    //                    className: 'btn-default pull-left',
+    //                    callback: function () {
+    //                        box.modal('hide');
+    //                    }
+    //                }
+    //            }
+    //        });
+    //        box.modal('show');
+    //    };
+    //
+    //}])
+    //.controller('AdminOverwatchSnapshotAddCtrl', ['$scope', 'OverwatchSnapshotBuilder', 'owHeroes', function ($scope, OverwatchSnapshotBuilder, owHeroes) {
+    //
+    //    $scope.owHeroes = owHeroes;
+    //    console.log('$scope.owHeroes:', $scope.owHeroes);
+    //
+    //    // set default page
+    //    $scope.page = 'general';
+    //
+    //    // set mode to add
+    //    $scope.mode = 'add';
+    //
+    //    // init snapshot
+    //    $scope.snapshot = OverwatchSnapshotBuilder.new();
+    //    console.log('$scope.snapshot:', $scope.snapshot);
+    //
+    //}]);

@@ -266,6 +266,11 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
+                                    _.each(articles, function (article) {
+                                        // init template vars
+                                        article.slug = Util.setSlug(article);
+                                    });
+                                    
                                     return articles;
                                 })
                                 .catch(function (err) {
@@ -354,23 +359,23 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Overwatch', description: 'Tempo Storm is your top source for Blizzard Entertainment\'s Overwatch. Tournament news, strategy, and patch details.', keywords: 'blizzard overwatch' }
             })
-            .state('app.overwatch.snapshot', {
-                abstract: true,
-                url: '/meta-snapshot',
-                views: {
-                    overwatch: {
-                        templateUrl: tpl + 'views/frontend/overwatch.snapshots.html'
-                    }
-                }
-            })
-            .state('app.overwatch.snapshot.snapshot', {
-                url: '/test',
-                views: {
-                    overwatchSnapshots: {
-                        templateUrl: tpl + 'views/frontend/overwatch.snapshots.snapshot.html',
-                    }
-                }
-            })
+            //.state('app.overwatch.snapshot', {
+            //    abstract: true,
+            //    url: '/meta-snapshot',
+            //    views: {
+            //        overwatch: {
+            //            templateUrl: tpl + 'views/frontend/overwatch.snapshots.html'
+            //        }
+            //    }
+            //})
+            //.state('app.overwatch.snapshot.snapshot', {
+            //    url: '/test',
+            //    views: {
+            //        overwatchSnapshots: {
+            //            templateUrl: tpl + 'views/frontend/overwatch.snapshots.snapshot.html',
+            //        }
+            //    }
+            //})
 
             .state('app.overwatch.heroes', {
                 abstract: true,
@@ -598,8 +603,6 @@ var app = angular.module('app', [
                             }],
                             article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
                                 var slug = $stateParams.slug;
-                                console.log("looking for slug:", slug);
-
 
                                 return Article.findOne({
                                     filter: {
@@ -695,13 +698,11 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
-                                    // create slug as it was moved from model
+                                    // init template vars
                                     data.slug = {
                                         url: slug
                                     };
                                     
-                                    // tally votescore
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     
                                     return data;
@@ -1739,7 +1740,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.snapshots.snapshot.html',
                         controller: 'HearthstoneSnapshotCtrl',
                         resolve: {
-                            dataSnapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
+                            snapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
                                 var slug = $stateParams.slug;
                                 return Snapshot.findOne({
                                     filter: {
@@ -1747,19 +1748,7 @@ var app = angular.module('app', [
                                             'slug.url': slug
                                         },
                                         fields: {
-                                            id: true,
-                                            authorId: true,
-                                            deckId: true,
-                                            active: true,
-                                            snapNum: true,
-                                            votes: true,
-                                            voteScore: true,
-                                            title: true,
-                                            content: true,
-                                            slug: true,
-                                            photoNames: true,
-                                            createdDate: true,
-                                            isCommentable: true
+                                            tiers: false
                                         },
                                         include: [
                                             {
@@ -1769,11 +1758,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'author',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    username: true,
-                                                                    email: true
-                                                                }
+                                                                fields: ['username', 'email']
                                                             }
                                                         }
                                                     ]
@@ -1786,19 +1771,13 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'forDeck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true
-                                                                }
+                                                                fields: ['playerClass']
                                                             }
                                                         },
                                                         {
                                                             relation: 'againstDeck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true
-                                                                }
+                                                                fields: ['playerClass']
                                                             }
                                                         }
                                                     ]
@@ -1811,12 +1790,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'deck',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true,
-                                                                    name: true,
-                                                                    slug: true,
-                                                                }
+                                                                fields: ['id', 'name', 'slug', 'playerClass']
                                                             }
                                                         },
                                                         {
@@ -1828,7 +1802,10 @@ var app = angular.module('app', [
                                                                         scope: {
                                                                             include: [
                                                                                 {
-                                                                                    relation: 'card'
+                                                                                    relation: 'card',
+                                                                                    scope: {
+                                                                                        fields: ['name', 'photoNames']
+                                                                                    }
                                                                                 }
                                                                             ]
                                                                         }
@@ -1841,22 +1818,12 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: 'authors',
-                                                fields: {
-                                                  description: true,
-                                                  expertClasses: true,
-                                                  id: true,
-                                                  userId: true
-                                                },
                                                 scope: {
                                                     include: [
                                                         {
                                                             relation: 'user',
                                                             scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    social: true,
-                                                                    username: true
-                                                                }
+                                                                fields: ['username', 'social']
                                                             }
                                                         }
                                                     ],
@@ -1865,11 +1832,7 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'votes',
                                                 scope: {
-                                                    fields: {
-                                                        id: true,
-                                                        direction: true,
-                                                        authorId: true
-                                                    }
+                                                    fields: ['direction', 'authorId']
                                                 }
                                             }
                                         ]
@@ -2945,7 +2908,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
                                     data.slug = Util.setSlug(data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
@@ -4216,6 +4178,12 @@ var app = angular.module('app', [
                                                 scope: {
                                                     fields: ['id', 'authorId', 'direction']
                                                 }
+                                            },
+                                            {
+                                                relation: 'slugs',
+                                                scope: {
+                                                    fields: ['slug', 'linked']
+                                                }
                                             }
                                         ]
                                     }
@@ -4223,6 +4191,8 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (articles) {
                                     _.each(articles, function(article) {
+                                        // init template vars
+                                        article.slug = Util.setSlug(article);
                                         article.voteScore = Util.tally(article.votes, 'direction');
                                     });
 
@@ -4295,7 +4265,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (decks) {
-                                    console.log('decks:', decks);
                                     _.each(decks, function(deck) {
                                         // init template vars
                                         deck.slug = Util.setSlug(deck);
@@ -6799,7 +6768,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/hs.snapshots.add.html',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.snapshot.html',
                         controller: 'AdminHearthstoneSnapshotAddCtrl',
                         resolve: {
                             dataPrevious: ['Snapshot', function (Snapshot) {
@@ -6829,7 +6798,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: "deck",
                                                             scope: {
-                                                                fields: ["name"]
+                                                                fields: ["name", "playerClass"]
                                                             }
                                                         },
                                                         {
@@ -6912,7 +6881,7 @@ var app = angular.module('app', [
                 url: '/:snapshotID',
                 views: {
                     snapshots: {
-                        templateUrl: tpl + 'views/admin/hs.snapshots.edit.html',
+                        templateUrl: tpl + 'views/admin/hs.snapshots.snapshot.html',
                         controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
                             snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
@@ -6923,7 +6892,7 @@ var app = angular.module('app', [
                                             id: snapshotID
                                         },
                                         fields: {
-//                                            tiers: false
+                                            tiers: false
                                         },
                                         include: [
                                             {
@@ -6944,7 +6913,7 @@ var app = angular.module('app', [
                                                         {
                                                             relation: "deck",
                                                             scope: {
-                                                                fields: ["name"]
+                                                                fields: ["name", "playerClass"]
                                                             }
                                                         },
                                                         {
@@ -6988,37 +6957,7 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function (snapshot) {
-
-                                    snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
-
-                                    //BUILD TIERS//
-                                    snapshot.tiers = [];
-                                    _.each(snapshot.deckTiers, function (deck) {
-                                        if (snapshot.tiers[deck.tier-1] === undefined) {
-                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
-                                        }
-
-                                        snapshot.tiers[deck.tier-1].decks.push(deck);
-                                    });
-                                    snapshot.tiers = _.filter(snapshot.tiers, function (tier) { return tier; });
-
-                                    var deckNum = 0;
-                                    _.each(snapshot.tiers, function (tier, tIndex) {
-                                        tier.tier = tIndex+1
-                                        _.each(tier.decks, function(deck, dIndex) {
-                                            deck.tier = tIndex+1;
-                                            deck.ranks[0] = ++deckNum;
-                                        })
-                                    })
-                                    //BUILD TIERS//
-
-                                    //BUILD MATCHES//
-                                    snapshot.matches = snapshot.deckMatchups;
-
-                                    return snapshot;
-                                });
+                                .$promise;
                             }]
                         }
                     }
@@ -7453,82 +7392,82 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
-            .state('app.admin.overwatch.snapshots', {
-                abstract: true,
-                url: '/snapshots',
-                views: {
-                    overwatch: {
-                        templateUrl: tpl + 'views/admin/overwatch.snapshots.html'
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.overwatch.snapshots.list', {
-                url: '',
-                views: {
-                    snapshots: {
-                        templateUrl: tpl + 'views/admin/overwatch.snapshots.list.html',
-                        controller: 'AdminOverwatchSnapshotListCtrl',
-                        resolve: {
-                            paginationParams: [function () {
-                                return {
-                                    page: 1,
-                                    perpage: 50,
-                                    total: 0,
-                                    options: {
-                                        filter: {
-                                            limit: 50,
-                                            order: 'createdDate DESC',
-                                            fields: ['id', 'title', 'snapNum']
-                                        }
-                                    }
-                                }
-                            }],
-                            owSnapshots: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
-                                return OverwatchSnapshot.find(paginationParams.options)
-                                .$promise;
-                            }],
-                            owSnapshotsCount: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
-                                return OverwatchSnapshot.count().$promise
-                                .then(function (snapCount) {
-                                    paginationParams.total = snapCount.count;
-                                    
-                                    return snapCount.count;
-                                });
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.overwatch.snapshots.add', {
-                url: '/add',
-                views: {
-                    snapshots: {
-                        templateUrl: tpl + 'views/admin/overwatch.snapshots.snapshot.html',
-                        controller: 'AdminOverwatchSnapshotAddCtrl',
-                        resolve: {
-                            owHeroes: ['OverwatchHero', function (OverwatchHero) {
-                                return OverwatchHero.find({
-                                    filter: {
-                                        where: {
-                                            isActive: true
-                                        },
-                                        fields: [
-                                            'heroName'
-                                        ]
-                                    }
-                                })
-                                .$promise;
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
+            //.state('app.admin.overwatch.snapshots', {
+            //    abstract: true,
+            //    url: '/snapshots',
+            //    views: {
+            //        overwatch: {
+            //            templateUrl: tpl + 'views/admin/overwatch.snapshots.html'
+            //        }
+            //    },
+            //    access: { auth: true, admin: true },
+            //    seo: { title: 'Admin', description: '', keywords: '' }
+            //})
+            //.state('app.admin.overwatch.snapshots.list', {
+            //    url: '',
+            //    views: {
+            //        snapshots: {
+            //            templateUrl: tpl + 'views/admin/overwatch.snapshots.list.html',
+            //            controller: 'AdminOverwatchSnapshotListCtrl',
+            //            resolve: {
+            //                paginationParams: [function () {
+            //                    return {
+            //                        page: 1,
+            //                        perpage: 50,
+            //                        total: 0,
+            //                        options: {
+            //                            filter: {
+            //                                limit: 50,
+            //                                order: 'createdDate DESC',
+            //                                fields: ['id', 'title', 'snapNum']
+            //                            }
+            //                        }
+            //                    }
+            //                }],
+            //                owSnapshots: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
+            //                    return OverwatchSnapshot.find(paginationParams.options)
+            //                    .$promise;
+            //                }],
+            //                owSnapshotsCount: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
+            //                    return OverwatchSnapshot.count().$promise
+            //                    .then(function (snapCount) {
+            //                        paginationParams.total = snapCount.count;
+            //
+            //                        return snapCount.count;
+            //                    });
+            //                }]
+            //            }
+            //        }
+            //    },
+            //    access: { auth: true, admin: true },
+            //    seo: { title: 'Admin', description: '', keywords: '' }
+            //})
+            //.state('app.admin.overwatch.snapshots.add', {
+            //    url: '/add',
+            //    views: {
+            //        snapshots: {
+            //            templateUrl: tpl + 'views/admin/overwatch.snapshots.snapshot.html',
+            //            controller: 'AdminOverwatchSnapshotAddCtrl',
+            //            resolve: {
+            //                owHeroes: ['OverwatchHero', function (OverwatchHero) {
+            //                    return OverwatchHero.find({
+            //                        filter: {
+            //                            where: {
+            //                                isActive: true
+            //                            },
+            //                            fields: [
+            //                                'heroName'
+            //                            ]
+            //                        }
+            //                    })
+            //                    .$promise;
+            //                }]
+            //            }
+            //        }
+            //    },
+            //    access: { auth: true, admin: true },
+            //    seo: { title: 'Admin', description: '', keywords: '' }
+            //})
             .state('app.hots.guides.guide_new', {
                 url: '/new/:slug',
                 views: {

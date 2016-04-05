@@ -112,7 +112,10 @@
             <div class="gb-content-btns clearfix">
                 <a href="#" class="gb-content-delete" ng-show="guide.content.length" ng-click="guide.deleteContent(content)"><i class="fa fa-times"></i></a>
             </div>
-            <input type="text" name="contentTitle{{$index}}" class="form-control input-content-title" value="" ng-model="content.title">
+            <input type="text" 
+                   name="contentTitle{{$index}}"
+                   class="form-control input-content-title"
+                   value="" ng-model="content.title">
         </div>
         <div>
             <summernote id="contentBody{{$index}}" config="options" ng-model="content.body"></summernote>

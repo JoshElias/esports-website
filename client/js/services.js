@@ -1963,7 +1963,7 @@ angular.module('app.services', [])
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
     hots.heroRows = [9, 8, 9, 8, 9, 8];
-    hots.mapRows = [3,4,3];
+    hots.mapRows = [4,3,4];
 
     hots.genStats = function () {
         var stats = [],
@@ -4199,82 +4199,116 @@ angular.module('app.services', [])
             return factory;
         }
     ])
-    .factory('OverwatchSnapshotBuilder', ['$q', '$upload', '$timeout', '$window', '$compile', '$state', '$rootScope', 'bootbox', 'OverwatchSnapshot', 'OverwatchHero', 'AlertService', 'Util', function ($q, $upload, $timeout, $window, $compile, $state, $rootScope, bootbox, OverwatchSnapshot, OverwatchHero, AlertService, Util) {
+.factory('HearthstoneSnapshotBuilder', ['$state', '$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'AlertService', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
+    function ($state, $upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, AlertService, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
         var snapshot = {};
-            
+        var maxTrends = 12;
+        var snapshotTypes = [
+            { key: 'Standard', value: 'standard' },
+            { key: 'Wild', value: 'wild' },
+            { key: 'Legacy', value: 'legacy' },
+        ];
+        var hsClasses = [
+            'druid',
+            'hunter',
+            'mage',
+            'paladin',
+            'priest',
+            'rogue',
+            'shaman',
+            'warlock',
+            'warrior'
+        ];
         var defaultSnap = {
-            // parent model
             snapNum: 1,
+            snapshotType: 'standard',
             title: "",
+            authors: [],
             slug: {
                 url: "",
                 linked: true,
             },
-            intro: "",
-            thoughts: "",
+            content: {
+                intro: "",
+                thoughts: ""
+            },
+            matchups: [],
+            tiers: [],
             photoNames: {
                 large: "",
                 medium: "",
                 small: "",
                 square: ""
             },
-            isActive: true,
-            
-            // relationships
-            authors: [],
-            tiers: [],
-            
-            // template things
+            votes: 0,
+            isCommentable: true,
+            isActive: false,
             loading: false,
             loaded: false,
             saving: false,
+            tierShow: [],
+            activeDeck: null,
             activeAuthor: null,
-            activeTierHero: null
+            currentChartTier: 1,
+            currentChartDeck: null,
+            currentMatchupDeck: [],
+            chartTierRanges: []
         };
-        
         var defaultAuthor = {
             id: null,
             user: undefined,
             description: "",
             expertClasses: []
         };
-        
         var defaultTier = {
             tier: 1,
-            heroes: []
+            decks: []
         };
-        
-        var defaultTierHero = {
-            tier: 1,
-            summary: "",
-            strongAgainst: [],
-            weakAgainst: [],
-            hero: undefined
+        var defaultTierDeck = {
+            name: "",
+            description: "",
+            weeklyNotes: "",
+            deck: undefined,
+            ranks: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            deckTech: []
         };
-        
-        var defaultTierHeroRank = {
-            heroName: "",
-            rank: 0
+        var defaultDeckMatch = {
+            forDeck: undefined,
+            againstDeck: undefined,
+            forChance: 0,
+            againstChance: 0
         };
-        
-        // create a new overwatch snapshot
-        snapshot.new = function (snapshotData) {
-            
+        var defaultDeckTech = {
+            title: "",
+            cardTech: [],
+            orderNum: 1
+        };
+        var defaultTechCards = {
+            card: undefined,
+            toss: false,
+            both: false,
+            orderNum: 1
+        };
+
+        snapshot.new = function (data) {
+            // start with default snapshot
             var sb = angular.copy(defaultSnap);
-            
-            // track deletable 
             sb.deleted = {
                 authors: [],
-                tiers: []
+                deckTiers: [],
+                deckTechs: [],
+                cardTechs: [],
+                matchups: []
             };
-            
-            // track updatable
             sb.updated = {
                 snapshot: false,
                 authors: [],
-                tiers: []
+                deckTiers: [],
+                deckTechs: [],
+                cardTechs: [],
+                matchups: []
             };
-            
+
             // init
             sb.init = function(data) {
                 // if we have data, load it
@@ -4283,130 +4317,940 @@ angular.module('app.services', [])
                     sb.load(data);
                     
                     // generate tier ranges for charts
-//                    sb.chartGenerateTierRanges();
+                    sb.chartGenerateTierRanges();
                 }
             };
-            
-            // load snapshot data
-            sb.load = function (owSnapshot) {
-                // parent model
-                sb.id           = owSnapshot.id;
-                sb.snapNum      = owSnapshot.snapNum;
-                sb.title        = owSnapshot.title;
-                sb.intro        = owSnapshot.intro;
-                sb.thoughts     = owSnapshot.thoughts;
-                sb.isActive     = owSnapshot.isActive;
-                sb.createdDate  = owSnapshot.createdDate;
+
+            sb.load = function (data) {
+                sb.authors = data.authors;
+                sb.content = data.content;
+                sb.createdDate = data.createdDate;
+                sb.matchups = data.deckMatchups;
+                sb.id = data.id;
+                sb.isActive = data.isActive;
+                sb.photoNames = data.photoNames;
+                sb.slug = data.slug;
+                sb.snapNum = data.snapNum;
+                // TODO: remove the "||" patch after updating the db
+                sb.snapshotType = data.snapshotType || defaultSnap.snapshotType;
+                sb.tiers = data.tiers;
+                sb.title = data.title;
+                sb.deckTiers = data.deckTiers;
+                sb.tiers = sb.generateTiers(data.deckTiers);
+                sb.isCommentable = data.isCommentable;
                 
-                // relations
-                sb.authors      = owSnapshot.authors;
-                sb.heroTiers    = owSnapshot.heroTiers;
+                // comments for frontend
+                sb.comments = data.comments || [];
+                sb.votes = data.votes || [];
+                
+                // set slug
+                if (sb.slug.linked) {
+                    sb.setSlug();
+                }
+                
+                sb.loaded = true;
             };
-            
-            // flag snapshot as updated
-            sb.snapshotUpdated = function () {
-                console.log('snapshot updated');
-                
-                // don't flag for update if new
-                if (!sb.id) { return false; }
-                
-                // flag for update
-                sb.updated.snapshot = true;
-            };
-            
-            // load latest snapshot and increment snapshot number
-            sb.loadPrevious = function () {
+
+            // load latest snapshot and increment snapshot number / shift trends
+            sb.loadPrevious = function (snapshotType) {
                 // set loading
                 sb.loading = true;
                 
                 // get latest snapshot
-                OverwatchSnapshot.findOne({
+                Snapshot.findOne({
                     filter: {
                         where: {
+                            snapshotType: snapshotType,
                             isActive: true
                         },
-                        fields: [],
+                        fields: {
+                            tiers: false
+                        },
                         order: 'createdDate DESC',
                         include: [
                             {
-                                relation: 'authors',
+                                relation: "authors",
                                 scope: {
                                     include: {
-                                        relation: 'user',
+                                        relation: "user",
                                         scope: {
-                                            fields: ['username']
+                                            fields: ["username"]
                                         }
                                     }
                                 }
                             },
                             {
-                                relation: 'heroTiers',
+                                relation: "deckTiers",
                                 scope: {
-                                    include: {
-                                        relation: 'heros',
-                                        scope: {
-                                            fields: ['heroName']
+                                    include: [
+                                        {
+                                            relation: "deck",
+                                            scope: {
+                                                fields: ["name", "playerClass"]
+                                            }
+                                        },
+                                        {
+                                            relation: "deckTech",
+                                            scope: {
+                                                include: {
+                                                    relation: "cardTech",
+                                                    scope: {
+                                                        include: {
+                                                            relation: "card",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
-                                    }
+                                    ]
+                                }
+                            },
+                            {
+                                relation: "deckMatchups",
+                                scope: {
+                                    include: [
+                                        {
+                                            relation: "forDeck",
+                                            scope: {
+                                                fields: ["name"]
+                                            }
+                                        },
+                                        {
+                                            relation: "againstDeck",
+                                            scope: {
+                                                fields: ["name"]
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         ]
                     }
                 })
                 .$promise
-                .then(function (owSnapshot) {
-                    console.log('owSnapshot:', owSnapshot);
+                .then(function (data) {
+                    console.log('loaded: ', data);
                     // strip ids from old data so new items get created
-                    
-                    // snapshotId
-                    delete owSnapshot.id;
+                    // snapshot
+                    delete data.id;
                     
                     // authors
-                    _.each(owSnapshot.authors, function (author) {
+                    _.each(data.authors, function (author) {
+                        delete author.snapshotId;
                         delete author.id;
-                        delete author.overwatchSnapshotId;
                     });
                     
-                    // hero tiers
-                    _.each(owSnapshot.tiers, function (heroTier) {
-                        delete heroTier.id;
-                        delete heroTier.overwatchSnapshotId;
+                    // deck matchups
+                    _.each(data.deckMatchups, function (deckMatchup) {
+                        delete deckMatchup.snapshotId;
+                        delete deckMatchup.id;
                     });
                     
-                    // inc snapshot num
-                    owSnapshot.snapNum++;
+                    // deck tiers
+                    _.each(data.deckTiers, function (deckTier) {
+                        
+                        // deck techs
+                        _.each(deckTier.deckTech, function (deckTech) {
+                            
+                            // tech cards
+                            _.each(deckTech.cardTech, function (cardTech) {
+                                delete cardTech.deckTechId;
+                                delete cardTech.id;
+                            });
+                            
+                            delete deckTech.deckTierId;
+                            delete deckTech.id;
+                        });
+                        
+                        delete deckTier.snapshotId;
+                        delete deckTier.id;
+                    });
                     
-                    // init comments/votes
-                    sb.comments = owSnapshot.comments || [];
-                    sb.votes = owSnapshot.votes || [];
+                    // increase snapshot number
+                    data.snapNum++;
                     
-                    // ... do more stuff ...
+                    // shift deck ranks one week
+                    for (var i = 0; i < data.deckTiers.length; i++) {
+                        // remove last item
+                        data.deckTiers[i].ranks.pop();
+                        
+                        // duplicate last week's rank to this week
+                        data.deckTiers[i].ranks = [data.deckTiers[i].ranks[0]].concat(data.deckTiers[i].ranks);
+                    }
                     
-                    // load snapshot data
-                    sb.load(owSnapshot);
+                    // load data
+                    sb.load(data);
                     
                     // set loading
                     sb.loading = false;
                 });
             };
             
-            // photo uploading
-            sb.photoUpload = function ($files) {
-                console.log('inside photo upload');
-                console.log('$files:', $files);
-                if (!$files.length) return false;
+            // generate tiers from deckTiers data
+            sb.generateTiers = function (deckTiers) {
+                var tiers = [];
+
+                // sort decks
+                deckTiers.sort(function(a,b) {
+                    return (a.ranks[0] - b.ranks[0])
+                });
+
+                // tiers
+                _.each(deckTiers, function (deck) {
+                    if (tiers[deck.tier - 1] === undefined) {
+                        tiers[deck.tier - 1] = {
+                            tier: deck.tier,
+                            decks: []
+                        };
+                    }
+
+                    tiers[deck.tier - 1].decks.push(deck);
+                });
+
+                return tiers;
+            };
+            
+            // toggle active
+            sb.toggleActive = function () {
+                sb.isActive = !sb.isActive;
                 
-                // create new $scope
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
+            // generate tier range for charts
+            sb.chartGenerateTierRanges = function () {
+                // loop through each tier
+                _.each(sb.tiers, function (tier) {
+                    var out = [],
+                        highestRank = 0,
+                        lowestRank = 0;
+
+                    // find highest and lowest in tier
+                    for (var i = 0; i < tier.decks.length; i++) {
+                        var history = tier.decks[i].ranks;
+                        for (var j = 0; j < history.length; j++) {
+                            if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
+                            if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
+                        }
+                    }
+
+                    // generate range
+                    for (var i = lowestRank; i <= highestRank; i++) {
+                        out.push(i);
+                    }
+
+                    // set chart tier range
+                    sb.chartTierRanges[tier.tier] = out;
+                });
+            };
+            
+            // get tier range
+            sb.getChartTierRange = function (tierNum) {
+                return sb.chartTierRanges[tierNum];
+            };
+            
+            // get current chart tier
+            sb.getCurrentChartTier = function () {
+                return sb.currentChartTier;
+            };
+            
+            // set current chart tier
+            sb.setCurrentChartTier = function (tierNum) {
+                // don't update if the current tier is already tierNum
+                if (sb.getCurrentChartTier() === tierNum) { return false; }
+                
+                // set tier
+                sb.currentChartTier = tierNum;
+                
+                // unset current chart deck
+                sb.currentChartDeck = null;
+            };
+            
+            // get chart position x
+            sb.getChartPositionX = function (index, padding) {
+                return Math.round(100 - padding - ((100 - padding)/12*index) + (padding / 2), 2);
+            };
+            
+            // get chart position y
+            sb.getChartPositionY = function (tierNum, deckIndex, height, padding) {
+                var size = sb.getChartTierRange(tierNum).length;
+                return Math.round(((height - padding)/size*deckIndex) + padding, 2);
+            };
+            
+            // get chart rank index
+            sb.getChartRankIndex = function (tierNum, rank) {
+                var range = sb.getChartTierRange(tierNum);
+                return range.indexOf(rank);
+            };
+
+            // get chart next rank
+            sb.getChartNextRank = function (deck, index) {
+                return deck.ranks[index + 1];
+            };
+
+            // check if chart has next rank
+            sb.hasChartNextRank = function (deck, index) {
+                return (deck.ranks[index + 1]);
+            };
+            
+            // get timeline for chart
+            sb.getChartTimeline = function () {
+                var out = [];
+                for (var i = sb.snapNum; i > sb.snapNum - 13; i--) {
+                    out.push(i);
+                }
+                return out;
+            };
+            
+            // check if has current chart deck
+            sb.hasCurrentChartDeck = function () {
+                return (!!sb.getCurrentChartDeck());
+            };
+            
+            // return current chart deck
+            sb.getCurrentChartDeck = function () {
+                return sb.currentChartDeck;
+            };
+            
+            // toggle current chart deck
+            sb.toggleCurrentChartDeck = function (deck) {
+                if (sb.hasCurrentChartDeck() && sb.getCurrentChartDeck() === deck) {
+                    sb.currentChartDeck = null;
+                } else {
+                    sb.currentChartDeck = deck;
+                }
+            };
+            
+            // get snapshot types
+            sb.getSnapshotTypes = function () {
+                return snapshotTypes;
+            };
+            
+            // set slug
+            sb.setSlug = function () {
+                if (!sb.slug.linked) { return false; }
+                sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
+            };
+
+            // toggle if slug is linked to title
+            sb.slugToggleLink = function () {
+                sb.slug.linked = !sb.slug.linked;
+                sb.setSlug();
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
+            // remove image
+            sb.removeImage = function () {
+                sb.photoNames.square = '';
+                sb.photoNames.small = '';
+                sb.photoNames.medium = '';
+                sb.photoNames.large = '';
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
+            // toggle active
+            sb.toggleActive = function () {
+                sb.isActive = !sb.isActive;
+                
+                // flag snapshot as updated
+                sb.snapshotUpdated();
+            };
+            
+            // trends array for decks
+            sb.getTrends = function () {
+                return new Array(maxTrends);
+            };
+            
+            // set active author
+            sb.setActiveAuthor = function (author) {
+                sb.activeAuthor = author;
+            };
+            
+            // get snapshot author by id
+            sb.getAuthorById = function (authorId) {
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].id === authorId) {
+                        return sb.authors[i];
+                    }
+                }
+                return false;
+            };
+            
+            // add author
+            sb.authorAdd = function (user) {
+                var newAuthor = angular.copy(defaultAuthor);
+                newAuthor.user = user;
+                sb.authors.push(newAuthor);
+            };
+
+            // check if user is already an author on snapshot
+            sb.authorExistsById = function (authorId) {
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].user.id === authorId) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            // delete author
+            sb.authorDeleteById = function (authorId) {
+                console.log(authorId);
+                
+                var index = -1;
+                for (var i = 0; i < sb.authors.length; i++) {
+                    if (sb.authors[i].user.id === authorId) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index !== -1) {
+                    // if existing item
+                    if (sb.authors[index].id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('authors', sb.authors[index].id);
+                        // add delete flag
+                        sb.deleted.authors.push(sb.authors[index].id);
+                    }
+                    
+                    // make sure active author isn't deleted author
+                    if (sb.activeAuthor && sb.activeAuthor.user.id === authorId) {
+                        sb.activeAuthor = null;
+                    };
+                    
+                    // delete author
+                    sb.authors.splice(index, 1);
+                }
+            };
+            
+            // get hs classes
+            sb.getHearthstoneClasses = function () {
+                return hsClasses;
+            };
+            
+            // toggle class for author
+            sb.toggleAuthorClass = function (author, klass) {
+                // check if class exists
+                var index = author.expertClasses.indexOf(klass);
+                if (index !== -1) {
+                    author.expertClasses.splice(index, 1);
+                } else {
+                    author.expertClasses.push(klass);
+                }
+                
+                // flag author as updated
+                sb.authorUpdated(author);
+            };
+            
+            // return if author has class
+            sb.authorHasClass = function (author, klass) {
+                var index = author.expertClasses.indexOf(klass);
+                return (index !== -1);
+            };
+            
+            // get tier
+            sb.getTier = function (tierNum) {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    if (sb.tiers[i].tier === tierNum) {
+                        return sb.tiers[i];
+                    }
+                }
+                     
+                return false;
+            };
+            
+            // add tier
+            sb.tierAdd = function () {
+                var newTier = angular.copy(defaultTier);
+                newTier.tier = sb.tiers.length + 1;
+                sb.tiers.push(newTier);
+            };
+
+            // delete tier
+            sb.tierDelete = function (tier) {
+                var index = sb.tiers.indexOf(tier);
+                if (index !== -1) {
+                    sb.tierDeleteAllDecks(tier);
+                    sb.tiers.splice(index, 1);
+                    sb.tierUpdateNumbers();
+                }
+            };
+
+            // update all tier nums
+            sb.tierUpdateNumbers = function () {
+                var tierNum = 1;
+                var oldTier;
+                var newTier;
+                
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    sb.tiers[i].tier = tierNum;
+
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        oldTier = sb.tiers[i].decks[j].tier;
+                        newTier = tierNum;
+                        
+                        // if tier moves from non matchups to matchups - add matchups for the deck
+                        if (oldTier > 2 && newTier < 3) {
+                            sb.matchupsAdd(sb.tiers[i].decks[j]);
+                        }
+                        
+                        // set new tier for deck
+                        sb.tiers[i].decks[j].tier = newTier;
+                    }
+
+                    tierNum++;
+                }
+            };
+
+            // delete all decks in a tier
+            sb.tierDeleteAllDecks = function (tier) {
+                if (!tier || !tier.decks || !tier.decks.length) { return false; }
+                for (var i = tier.decks.length; i >= 0; i--) {
+                    sb.deckDelete(tier, tier.decks[i]);
+                }
+            };
+
+            // get a tier deck by deck id
+            sb.getTierDeckByDeckId = function (deckId) {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        if (sb.tiers[i].decks[j].deck.id === deckId) {
+                            return sb.tiers[i].decks[j];
+                        }
+                    }
+                }
+
+                return false;
+            };
+            
+            // set active deck
+            sb.setActiveDeck = function (deck) {
+                sb.activeDeck = deck;
+            };
+            
+            // add deck
+            sb.deckAdd = function (tier, deckName, deck) {
+                if (sb.getTierDeckByDeckId(deck.id)) { return false; }
+                var newDeck = angular.copy(defaultTierDeck);
+                newDeck.tier = tier.tier;
+                newDeck.name = deckName;
+                newDeck.deck = deck;
+                tier.decks.push(newDeck);
+                sb.decksUpdateCurrentRanks();
+                if (tier.tier <= 2) {
+                    sb.matchupsAdd(newDeck);
+                    console.log(newDeck);
+                }
+            };
+            
+            // change the deck
+            sb.deckChange = function (deckTier, newDeck) {
+                var oldDeckId = deckTier.deck.id;
+                var newDeckId = newDeck.id;
+                var matchups = sb.getMatchupsByDeckId(oldDeckId);
+                
+                console.log('updating deck ', oldDeckId, ' to ', newDeckId);
+                
+                // update all matchups to new deck id
+                for (var i = 0; i < matchups.length; i++) {
+                    // swap out deck
+                    if (matchups[i].forDeck.id === oldDeckId) {
+                        matchups[i].forDeck = newDeck;
+                        matchups[i].forDeck = newDeck;
+                        matchups[i].forDeckId = newDeckId;
+                    }
+                    if (matchups[i].againstDeck.id === oldDeckId) {
+                        matchups[i].againstDeck = newDeck;
+                        matchups[i].againstDeckId = newDeckId;
+                    }
+                    
+                    // mark matchup as updated
+                    sb.matchupUpdated(matchups[i]);
+                }
+                
+                // change deck
+                deckTier.deck = newDeck;
+                deckTier.deckId = newDeckId;
+                
+                // flag deck tier as updated
+                sb.deckTierUpdated(deckTier);
+            };
+            
+            // delete deck
+            sb.deckDelete = function (tier, deck) {
+                var index = tier.decks.indexOf(deck);
+                if (index !== -1) {
+                    // if existing item
+                    if (deck.id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('deckTiers', deck.id);
+                        // flag deckTier for delete
+                        sb.deleted.deckTiers.push(deck.id);
+                    }
+                                        
+                    sb.deckDeleteAllTechs(deck);
+                    sb.matchupsDelete(deck);
+                    tier.decks.splice(index, 1);
+                    sb.decksUpdateCurrentRanks();
+                    
+                    // make sure not to leave deleted deck active
+                    if (sb.activeDeck === deck) {
+                        sb.activeDeck = null;
+                    }
+                }
+            };
+            
+            // get deckTier by Id
+            sb.getDeckTierById = function (deckTierId) {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        if (sb.tiers[i].decks[j].id === deckTierId) {
+                            console.log(deckTierId, sb.tiers[i].decks[j]);
+                            return sb.tiers[i].decks[j];
+                        }
+                    }
+                }
+                
+                return false;
+            };
+            
+            // update tiers for decks
+            sb.decksUpdateTier = function () {
+                var tierNum;
+
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    tierNum = sb.tiers[i].tier;
+
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        sb.tiers[i].decks[j].tier = tierNum;
+                    }
+                }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
+            };
+
+            // update order for decks in tiers
+            sb.decksUpdateOrder = function () {
+                var orderNum;
+
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    orderNum = 1;
+
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        sb.tiers[i].decks[j].orderNum = orderNum;
+
+                        orderNum++;
+                    }
+                }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
+            };
+
+            // update current ranks for decks
+            sb.decksUpdateCurrentRanks = function () {
+                var rank = 1;
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        // update rank for deck
+                        sb.tiers[i].decks[j].ranks[0] = rank;
+
+                        // inc rank for next deck
+                        rank++;
+                    }
+                }
+                
+                // flag all decks as updated
+                sb.allDeckTiersUpdated();
+            };
+
+            // delete all deck techs in a deck
+            sb.deckDeleteAllTechs = function (deck) {
+                if (!deck || !deck.deckTech || !deck.deckTech.length) { return false; }
+                for (var i = 0; i < deck.deckTech.length; i++) {
+                    sb.deckTechDelete(deck, deck.deckTech[i]);
+                }
+            };
+            
+            // get deck tech by id
+            sb.getDeckTechById = function (deckTechId) {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; i++) {
+                        for (var k = 0; sb.tiers[i].decks[j].deckTech.length; k++) {
+                            if (sb.tiers[i].decks[j].deckTech[k].id === deckTechId) {
+                                return sb.tiers[i].decks[j].deckTech[k];
+                            }
+                        }
+                    }
+                }
+                return false;
+            };
+            
+            // add deck tech
+            sb.deckTechAdd = function (deck) {
+                var newDeckTech = angular.copy(defaultDeckTech);
+                deck.deckTech.push(newDeckTech);
+            };
+
+            // delete deck tech
+            sb.deckTechDelete = function (deck, deckTech) {
+                var index = deck.deckTech.indexOf(deckTech);
+                if (index !== -1) {
+                    // if existing item
+                    if (deckTech.id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('deckTechs', deckTech.id);
+                        // flag deckTech for delete
+                        sb.deleted.deckTechs.push(deckTech.id);
+                    }
+
+                    // delete cardTechs from deckTech
+                    sb.deckDeleteAllTechCards(deckTech);
+                    // delete deckTech
+                    deck.deckTech.splice(index, 1);
+                }
+            };
+
+            // delete all deck tech cards in a deck tech
+            sb.deckDeleteAllTechCards = function (deckTech) {
+                if (!deckTech || !deckTech.cardTech || !deckTech.cardTech.length) { return false; }
+                for (var i = 0; i < deckTech.cardTech.length; i++) {
+                    sb.deckTechCardDeleteById(deckTech, deckTech.cardTech[i].card.id);
+                }
+            };
+            
+            // get deck tech card by id
+            sb.getCardTechById = function (cardTechId) {
+                console.log('get card by id: ', cardTechId);
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; i++) {
+                        for (var k = 0; sb.tiers[i].decks[j].deckTech.length; k++) {
+                            for (var l = 0; l < sb.tiers[i].decks[j].deckTech[k].cardTech.length; l++) {
+                                if (sb.tiers[i].decks[j].deckTech[k].cardTech[l].id === cardTechId) {
+                                    console.log('found card: ', sb.tiers[i].decks[j].deckTech[k].cardTech[l]);
+                                    return sb.tiers[i].decks[j].deckTech[k].cardTech[l];
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            };
+            
+            // add deck tech card
+            sb.deckTechCardAdd = function (deckTech, card) {
+                if (sb.deckTechCardExistsById(deckTech, card.id)) { return false; }
+                var newDeckTechCard = angular.copy(defaultTechCards);
+                newDeckTechCard.card = card;
+                deckTech.cardTech.push(newDeckTechCard);
+            };
+
+            // delete deck tech card
+            sb.deckTechCardDeleteById = function (deckTech, cardId) {
+                var index = -1;
+                for (var i = 0; i < deckTech.cardTech.length; i++) {
+                    if (deckTech.cardTech[i].card.id === cardId) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index !== -1) {
+                    // if existing item
+                    if (deckTech.cardTech[index].id) {
+                        // remove update flag
+                        sb.removeUpdateFlag('cardTechs', deckTech.cardTech[index].id);
+                        // flag cardTech for delete
+                        sb.deleted.cardTechs.push(deckTech.cardTech[index].id);
+                    }
+                    
+                    // remove cardTech
+                    deckTech.cardTech.splice(index, 1);
+                }
+            };
+
+            // check if card is in deck techs
+            sb.deckTechCardExistsById = function (deckTech, cardId) {
+                for (var i = 0; i < deckTech.cardTech.length; i++) {
+                    if (deckTech.cardTech[i].card.id === cardId) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            // toggle deck tech card toss
+            sb.deckTechCardToggleToss = function (card) {
+                card.toss = !card.toss;
+                
+                // flag cardTech as updated
+                sb.cardTechUpdated(card);
+            };
+
+            // toggle deck tech card both
+            sb.deckTechCardToggleBoth = function (card) {
+                card.both = !card.both;
+                
+                // flag cardTech as updated
+                sb.cardTechUpdated(card);
+            };
+
+            // return decks that need matchups
+            sb.matchupDecks = function () {
+                var decks = [];
+                var maxTiers = (sb.tiers.length > 2) ? 2 : sb.tiers.length;
+
+                for (var i = 0; i < maxTiers; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        decks.push(sb.tiers[i].decks[j]);
+                    }
+                }
+
+                return decks;
+            };
+
+            // order the matchups by deck ranks
+            sb.matchupOrderBy = function (matchup, deck) {
+                deck = deck || sb.activeDeck;
+                
+                if (!deck) { return 0; }
+                
+                return (matchup.forDeck.id === deck.id) ? sb.getTierDeckByDeckId(matchup.againstDeck.id).ranks[0] : sb.getTierDeckByDeckId(matchup.forDeck.id).ranks[0];
+            };
+            
+            // verify the number of matchups to number of decks in first two tiers
+            sb.validMatchups = function () {
+                var n = sb.matchupDecks().length;
+                return ((n / 2 * (2 + (n - 1))) === sb.matchups.length);
+            };
+
+            // get matchup by id
+            sb.getMatchupById = function (matchupId) {
+                for (var i = 0; i < sb.matchups.length; i++) {
+                    if (sb.matchups[i].id === matchupId) {
+                        return sb.matchups[i];
+                    }
+                }
+                return false;
+            };
+            
+            // add matchups to each deck for deck
+            sb.matchupsAdd = function (deck) {
+                var matchupDecks = sb.matchupDecks();
+
+                for (var i = 0; i < matchupDecks.length; i++) {
+                    var newMatchup = angular.copy(defaultDeckMatch);
+                    newMatchup.forDeck = deck.deck;
+                    newMatchup.againstDeck = matchupDecks[i].deck;
+                    
+                    if (deck.deck.id === matchupDecks[i].deck.id) {
+                        newMatchup.forChance = 50;
+                        newMatchup.againstChance = 50;
+                    }
+                    sb.matchups.push(newMatchup);
+                    console.log(newMatchup);
+                }
+            };
+
+            // delete matchups from each deck for deck
+            sb.matchupsDelete = function (deck) {
+                for (var i = sb.matchups.length - 1; i >= 0; i--) {
+                    if (sb.matchups[i].forDeck.id === deck.deck.id || sb.matchups[i].againstDeck.id === deck.deck.id) {
+                        // if existing item
+                        if (sb.matchups[i].id) {
+                            // remove update flag
+                            sb.removeUpdateFlag('matchups', sb.matchups[i].id);
+                            // flag matchup for delete
+                            sb.deleted.matchups.push(sb.matchups[i].id);
+                        }
+                        
+                        sb.matchups.splice(i, 1);
+                    }
+                }
+            };
+
+            // update for chance when updating against chance on a matchup
+            sb.matchupChangeAgainstChance = function (matchup) {
+                matchup.forChance = (100 - matchup.againstChance);
+                
+                // flag matchup for update
+                if (matchup.id) {
+                    sb.updated.matchups.push(matchup.id);
+                }
+            }
+
+            // update against chance when updating for chance on a matchup
+            sb.matchupChangeForChance = function (matchup) {
+                matchup.againstChance = (100 - matchup.forChance);
+                
+                // flag matchup for update
+                if (matchup.id) {
+                    sb.updated.matchups.push(matchup.id);
+                }
+            }
+
+            // get matchups by deck id
+            sb.getMatchupsByDeckId = function (deckId) {
+                var matchups = [];
+
+                for (var i = 0; i < sb.matchups.length; i++) {
+                    if (sb.matchups[i].forDeck.id === deckId || sb.matchups[i].againstDeck.id === deckId) {
+                        matchups.push(sb.matchups[i]);
+                    }
+                }
+
+                return matchups;
+            };
+            
+            // get the opposing deck for a deck in a matchup
+            sb.getMatchupOpposingDeck = function (deck, matchup) {
+                return (deck.deck.id === matchup.forDeck.id) ? sb.getTierDeckByDeckId(matchup.againstDeck.id) : sb.getTierDeckByDeckId(matchup.forDeck.id);
+            };
+            
+            // get the opposing chance for a deck in a matchup
+            sb.getMatchupOpposingChance = function (deck, matchup) {
+                return (deck.deck.id === matchup.forDeck.id) ? matchup.againstChance : matchup.forChance;
+            };
+            
+            // get current matchup deck
+            sb.getCurrentMatchupDeck = function (deck) {
+                return sb.currentMatchupDeck[deck.id];
+            };
+            
+            // set current matchup deck
+            sb.setCurrentMatchupDeck = function (deck, matchup) {
+                sb.currentMatchupDeck[deck.id] = sb.getMatchupOpposingDeck(deck, matchup);
+            };
+            
+            // unset current matchup deck
+            sb.unsetCurrentMatchupDeck = function (deck) {
+                sb.currentMatchupDeck[deck.id] = null;
+            };
+            
+            // check if current matchup deck exists
+            sb.hasCurrentMatchupDeck = function (deck) {
+                return (!!sb.currentMatchupDeck[deck.id]);
+            };
+            
+            // photo upload
+            sb.photoUpload = function ($files) {
+                if (!$files.length) return false;
                 var newScope = $rootScope.$new(true);
                 newScope.uploading = 0;
-                
-                // bootbox prompt
                 var box = bootbox.dialog({
                     message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')(newScope),
                     closeButton: false,
                     animate: false
                 });
-                
                 box.modal('show');
                 for (var i = 0; i < $files.length; i++) {
                     var file = $files[i];
@@ -4432,424 +5276,14 @@ angular.module('app.services', [])
                     });
                 }
             };
-            
-            // prompt for tier delete
-            sb.tierDeletePrompt = function (tier) {
-                var box = bootbox.dialog({
-                    title: "Remove Tier?",
-                    message: "Are you sure you want to remove the tier <strong>Tier " + tier.tier + "</strong>?",
-                    buttons: {
-                        confirm: {
-                            label: "Delete",
-                            className: "btn-danger",
-                            callback: function () {
-                                $timeout(function () {
-                                    sb.tierDelete(tier);
-                                    box.modal('hide');
-                                });
-                            }
-                        },
-                        cancel: {
-                            label: "Cancel",
-                            className: "btn-default pull-left",
-                            callback: function () {
-                                box.modal('hide');
-                            }
-                        }
-                    },
-                    className: 'modal-admin modal-admin-remove',
-                    show: false
-                });
-                box.modal('show');
-            };
-            
-            // delete tier
-            sb.tierDelete = function (tier) {
-                var index = sb.tiers.indexOf(tier);
-                if (index !== -1) {
-//                    sb.tierDeleteAllDecks(tier);
-                    sb.tiers.splice(index, 1);
-                    sb.tierUpdateNumbers();
-                }
-            };
-            
-            // update all tier nums
-            sb.tierUpdateNumbers = function () {
-                var tierNum = 1;
-                var oldTier;
-                var newTier;
-                
-                for (var i = 0; i < sb.tiers.length; i++) {
-                    sb.tiers[i].tier = tierNum;
 
-//                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
-//                        oldTier = sb.tiers[i].decks[j].tier;
-//                        newTier = tierNum;
-//                        
-//                        // if tier moves from non matchups to matchups - add matchups for the deck
-//                        if (oldTier > 2 && newTier < 3) {
-//                            sb.matchupsAdd(sb.tiers[i].decks[j]);
-//                        }
-//                        
-//                        // set new tier for deck
-//                        sb.tiers[i].decks[j].tier = newTier;
-//                    }
-
-                    tierNum++;
-                }
-            };
-            
             // get snapshot image url
             sb.getImage = function () {
                 var URL = (tpl === './') ? cdn2 : tpl;
                 var imgPath = 'snapshots/';
                 return (sb.photoNames && sb.photoNames.small === '') ?  URL + 'img/blank.png' : URL + imgPath + sb.photoNames.small;
             };
-            
-            // remove image
-            sb.removeImage = function () {
-                sb.photoNames.square = '';
-                sb.photoNames.small = '';
-                sb.photoNames.medium = '';
-                sb.photoNames.large = '';
-                
-                // flag snapshot as updated
-                sb.snapshotUpdated();
-            };
-            
-            // set slug
-            sb.setSlug = function () {
-                if (!sb.slug.linked) { return false; }
-                sb.slug.url = "meta-snapshot-" + sb.snapNum + "-" + Util.slugify(sb.title);
-            };
 
-            // toggle if slug is linked to title
-            sb.slugToggleLink = function () {
-                sb.slug.linked = !sb.slug.linked;
-                sb.setSlug();
-                
-                // flag snapshot as updated
-                sb.snapshotUpdated();
-            };
-            
-            // prompt for load previous
-            sb.loadPreviousPrompt = function () {
-                var box;
-                
-//                newScope.loadPrevious = function (snapshotType) {
-//                    sb.loadPrevious(snapshotType);
-//                    box.modal('hide');
-//                }
-                
-                box = bootbox.dialog({
-                    title: 'Load Previous Snapshot',
-                    message: 'Current snapshot data will be replaced with the most recent saved snapshot',
-                    buttons: {
-                        cancel: {
-                            label: 'Cancel',
-                            className: 'btn-default pull-left',
-                            callback: function () {
-                                box.modal('hide');
-                            }
-                        },
-                        continue: {
-                            label: 'Continue',
-                            className: 'btn-danger pull-right',
-                            callback: function () {
-                                sb.loadPrevious();
-                            }
-                        }
-                    },
-                    className: 'modal-admin',
-                    show: false
-                });
-                box.modal('show');
-            };
-            
-            // add tier
-            sb.tierAdd = function () {
-                var newTier = angular.copy(defaultTier);
-                newTier.tier = sb.tiers.length + 1;
-                sb.tiers.push(newTier);
-            };
-            
-            sb.saveCheck = function (callback) {
-                console.log('callback:', callback);
-                console.log('inside save check');
-                async.series([
-                    function (seriesCB) {
-                        // check title
-                        if (!sb.title || !sb.title.length) {
-                            console.log(1);
-                            return seriesCB("Snapshot doesn't have a title");
-                        }
-                        
-                        // check url
-                        if (!sb.slug || !sb.slug.url || !sb.slug.url.length) {
-                            return seriesCB("Snapshot doesn't have a url");
-                        }
-                        
-                        // check image
-                        if (!sb.photoNames 
-                            || !sb.photoNames.square 
-                            || !sb.photoNames.square.length 
-                            || !sb.photoNames.small 
-                            || !sb.photoNames.small.length
-                            || !sb.photoNames.medium
-                            || !sb.photoNames.medium.length
-                            || !sb.photoNames.large
-                            || !sb.photoNames.large.length) {
-                            return seriesCB("Snapshot doesn't have an image");
-                        }
-                        
-                        // check active
-                        if (sb.isActive === undefined || (sb.isActive !== true && sb.isActive !== false)) {
-                            return seriesCB("Snapshot active field is set to an invalid value");
-                        }
-                        
-                        // check intro
-                        if (!sb.intro || !sb.intro.length) {
-                            return seriesCB("Snapshot does not have an introduction");
-                        }
-                        
-                        // check thoughts
-                        if (!sb.thoughts || !sb.thoughts.length) {
-                            return seriesCB("Snapshot does not have thoughts");
-                        }
-                        
-                        // all tests passed
-                        return seriesCB();
-                    }
-                ], function (err) {
-                    console.log('end save check', err);
-                    return callback(err);
-                });
-            };
-            
-            sb.saveDelete = function (callback) {
-                console.log('inside saveDelete');
-                return callback(undefined);
-            };
-            
-            sb.saveUpdate = function (callback) {
-                console.log('inside saveUpdate');
-                return callback(undefined);
-            };
-            
-            sb.saveCreate = function (callback) {
-                console.log('inside saveCreate');
-                async.waterfall([
-                    // create snapshot
-                    function (waterCB) {
-                        console.log('got here?');
-                        if (sb.id) { return waterCB(null, sb.id); }
-                        
-                        OverwatchSnapshot.create({
-                            snapNum: sb.snapNum,
-                            title: sb.title,
-                            slug: {
-                                url: sb.slug.url,
-                                linked: sb.slug.linked
-                            },
-                            intro: sb.intro,
-                            thoughts: sb.thoughts,
-                            createdDate: new Date().toISOString(),
-                            photoNames: {
-                                square: sb.photoNames.square || '',
-                                small: sb.photoNames.small || '',
-                                medium: sb.photoNames.medium || '',
-                                large: sb.photoNames.large || ''
-                            },
-                            isActive: sb.isActive
-                        })
-                        .$promise
-                        .then(function (newSnapshot) {
-                            console.log('newSnapshot:', newSnapshot);
-                            
-                            sb.id = newSnapshot.id;
-                            return waterCB(null);
-                        })
-                        .catch(function (err) {
-                            return waterCB(err);
-                        });
-                    },
-                    function (waterCB) {
-                        OverwatchSnapshot.authors.create({
-                            
-                        });
-                    }
-                ], function (err) {
-                    if (err) {
-                        console.error('Snapshot create err: ', err);
-                    }
-                    return callback(err);
-                });
-            };
-            
-            // add hero
-            sb.heroAdd = function (tier, hero) {
-//                if (sb.getTierDeckByDeckId(hero.id)) { return false; }
-                
-                var newHero = angular.copy(defaultTierHero);
-                newHero.tier = tier.tier;
-                newHero.hero = hero;
-                
-                tier.heroes.push(newHero);
-                
-//                sb.decksUpdateCurrentRanks();
-                
-//                if (tier.tier <= 2) {
-//                    sb.matchupsAdd(newHero);
-//                    console.log(newHero);
-//                }
-            };
-            
-            // remove hero from tier
-            sb.heroRemove = function (tier, hero) {
-                var heroFound = false;
-                for (var i = 0; i < tier.heroes.length; i++) {
-                    if (tier.heroes[i].hero.id === hero.id) {
-                        // make sure not to leave deleted deck active
-                        if (sb.activeTierHero
-                            && sb.activeTierHero.hero === hero) {
-                            sb.activeTierHero = null;
-                        }
-                        
-                        return tier.heroes.splice(i, 1);
-                    }
-                }
-            };
-            
-            // remove a tierHero
-            sb.heroDelete = function (tier, tierHero) {
-                var index = tier.heroes.indexOf(tierHero);
-                if (index !== -1) {
-                    // if existing item
-                    if (tierHero.id) {
-                        // remove update flag
-//                        sb.removeUpdateFlag('deckTiers', deck.id);
-                        // flag deckTier for delete
-//                        sb.deleted.deckTiers.push(deck.id);
-                    }
-                                        
-//                    sb.deckDeleteAllTechs(deck);
-//                    sb.matchupsDelete(deck);
-                    
-                    tier.heroes.splice(index, 1);
-                    
-//                    sb.decksUpdateCurrentRanks();
-                    
-                    // make sure not to leave deleted deck active
-                    if (sb.activeTierHero === tierHero) {
-                        sb.activeTierHero = null;
-                    }
-                }
-            };
-            
-            // set active hero
-            sb.setActiveHero = function (tierHero) {
-                sb.activeTierHero = tierHero;
-            };
-            
-            // prompt to delete a tierHero
-            sb.heroDeletePrompt = function (tier, tierHero) {
-                var box = bootbox.dialog({
-                    title: "Remove Hero?",
-                    message: "Are you sure you want to remove the hero <strong>" + tierHero.hero.heroName + "</strong>?",
-                    buttons: {
-                        confirm: {
-                            label: "Delete",
-                            className: "btn-danger",
-                            callback: function () {
-                                $timeout(function () {
-                                    sb.heroDelete(tier, tierHero);
-                                    box.modal('hide');
-                                });
-                            }
-                        },
-                        cancel: {
-                            label: "Cancel",
-                            className: "btn-default pull-left",
-                            callback: function () {
-                                box.modal('hide');
-                            }
-                        }
-                    },
-                    className: 'modal-admin modal-admin-remove',
-                    show: false
-                });
-                box.modal('show');
-            };
-            
-            // determine if a hero exists in any tier
-            sb.heroExistsInOtherTiers = function (currentTier, heroId) {
-                var heroExists = false;
-                for (var i = 0; i < sb.tiers.length; i++) {
-                    if (sb.tiers[i] !== currentTier) {
-                        for (var j = 0; j < sb.tiers[i].heroes.length; j++) {
-
-                            if (sb.tiers[i].heroes[j].hero.id === heroId) {
-                                return heroExists = true;
-                            }
-
-                        }
-                    }
-                }
-                return heroExists;
-            };
-            
-            // determine if a hero already exists in 
-            sb.heroExistsInTier = function (currentTier, heroId) {
-                var heroExists = false;
-                _.each(currentTier.heroes, function (hero) {
-                    if (hero.hero.id === heroId) {
-                        return heroExists = true;
-                    }
-                });
-                
-                return heroExists;
-            };
-            
-            // prompt for adding a deck
-            sb.heroAddPrompt = function (tier) {
-                var newScope = $rootScope.$new(true);
-                newScope.heroAdd = sb.heroAdd;
-                newScope.heroRemove = sb.heroRemove;
-                newScope.currentTier = tier;
-                newScope.heroExistsInTier = sb.heroExistsInTier;
-                newScope.heroExistsInOtherTiers = sb.heroExistsInOtherTiers;
-                
-                var box = bootbox.dialog({
-                    title: "Heroes",
-                    message: $compile('<div ow-snapshot-add-hero></div>')(newScope),
-                    buttons: {
-                        submit: {
-                            label: 'Done',
-                            className: 'btn-primary',
-                            callback: function () {
-//                                if (!newScope.hero) { return false; }
-                                
-//                                $timeout(function () {
-//                                    sb.deckAdd(tier, newScope.deck.name, newScope.deck);
-//                                });
-                                
-                                box.modal('hide');
-                            }
-                        },
-                        cancel: {
-                            label: 'Cancel',
-                            className: 'btn-default pull-left',
-                            callback: function () {
-                                box.modal('hide');
-                            }
-                        }
-                    },
-                    show: false,
-                    className: 'modal-admin modal-admin-decks modal-has-footer'
-                });
-                box.modal('show');
-            };
-            
             // prompt for adding / removing authors
             sb.authorAddPrompt = function () {
                 var newScope = $rootScope.$new(true);
@@ -4865,73 +5299,7 @@ angular.module('app.services', [])
                 });
                 box.modal('show');
             };
-            
-            // set active author
-            sb.setActiveAuthor = function (author) {
-                sb.activeAuthor = author;
-            };
-            
-            // return if author has class
-            sb.authorHasHero = function (author, heroName) {
-                var index = author.expertClasses.indexOf(heroName);
-                return (index !== -1);
-            };
-            
-            // toggle class for author
-            sb.toggleAuthorHero = function (author, heroName) {
-                // check if class exists
-                var index = author.expertClasses.indexOf(heroName);
-                if (index !== -1) {
-                    author.expertClasses.splice(index, 1);
-                } else {
-                    author.expertClasses.push(heroName);
-                }
-                
-                // flag author as updated
-                sb.authorUpdated(author);
-            };
-            
-            // get snapshot author by id
-            sb.getAuthorById = function (authorId) {
-                for (var i = 0; i < sb.authors.length; i++) {
-                    if (sb.authors[i].id === authorId) {
-                        return sb.authors[i];
-                    }
-                }
-                return false;
-            };
-            
-            // flag author as updated
-            sb.authorUpdated = function (author) {
-                console.log('author: ', author);
-                // don't flag for update if new
-                if (!author.id) { return false; }
-                
-                // check if already flagged
-                var index = sb.updated.authors.indexOf(author.id);
-                if (index === -1) {
-                    sb.updated.authors.push(author.id);
-                    console.log('author update flagged: ', author.user.username);
-                }
-            };
-            
-            // add author
-            sb.authorAdd = function (user) {
-                var newAuthor = angular.copy(defaultAuthor);
-                newAuthor.user = user;
-                sb.authors.push(newAuthor);
-            };
-            
-            // check if user is already an author on snapshot
-            sb.authorExistsById = function (authorId) {
-                for (var i = 0; i < sb.authors.length; i++) {
-                    if (sb.authors[i].user.id === authorId) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-            
+
             // prompt for author delete
             sb.authorDeletePrompt = function (author) {
                 var box = bootbox.dialog({
@@ -4961,41 +5329,1147 @@ angular.module('app.services', [])
                 });
                 box.modal('show');
             };
-            
-            // delete author
-            sb.authorDeleteById = function (authorId) {
-                console.log('authorId:', authorId);
+
+            // prompt for tier delete
+            sb.tierDeletePrompt = function (tier) {
+                var box = bootbox.dialog({
+                    title: "Remove Tier?",
+                    message: "Are you sure you want to remove the tier <strong>Tier " + tier.tier + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.tierDelete(tier);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // prompt for adding a deck
+            sb.deckAddPrompt = function (tier) {
+                var newScope = $rootScope.$new(true);
                 
-                var index = -1;
-                for (var i = 0; i < sb.authors.length; i++) {
-                    if (sb.authors[i].user.id === authorId) {
-                        index = i;
-                        break;
-                    }
+                var box = bootbox.dialog({
+                    title: "Decks",
+                    message: $compile('<div snapshot-add-deck></div>')(newScope),
+                    buttons: {
+                        submit: {
+                            label: 'Add Deck',
+                            className: 'btn-success',
+                            callback: function () {
+                                if (!newScope.deck) { return false; }
+                                
+                                $timeout(function () {
+                                    sb.deckAdd(tier, newScope.deck.name, newScope.deck);
+                                });
+                                
+                                box.modal('hide');
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    show: false,
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
+                });
+                box.modal('show');
+            };
+            
+            // prompt for changing a deck
+            sb.deckChangePrompt = function (deck) {
+                var newScope = $rootScope.$new(true);
+                
+                var box = bootbox.dialog({
+                    title: "Decks",
+                    message: $compile('<div snapshot-add-deck></div>')(newScope),
+                    buttons: {
+                        submit: {
+                            label: 'Change Deck',
+                            className: 'btn-success',
+                            callback: function () {
+                                if (!newScope.deck) { return false; }
+                                
+                                $timeout(function () {
+                                    sb.deckChange(deck, newScope.deck);
+                                });
+                                
+                                box.modal('hide');
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    show: false,
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
+                });
+                box.modal('show');
+            };
+
+            // prompt for deck delete
+            sb.deckDeletePrompt = function (tier, deck) {
+                var box = bootbox.dialog({
+                    title: "Remove Deck?",
+                    message: "Are you sure you want to remove the deck <strong>" + deck.name + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.deckDelete(tier, deck);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // prompt for deck tech delete
+            sb.deckTechDeletePrompt = function (deck, deckTech) {
+                var box = bootbox.dialog({
+                    title: "Remove Deck Tech?",
+                    message: "Are you sure you want to remove the deck tech <strong>" + deckTech.title + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.deckTechDelete(deck, deckTech);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // prompt for adding / removing cards from deck techs
+            sb.deckTechCardAddPrompt = function (deckTech) {
+                var newScope = $rootScope.$new(true);
+                newScope.deckTech = deckTech;
+                newScope.deckTechCardAdd = sb.deckTechCardAdd;
+                newScope.deckTechCardExistsById = sb.deckTechCardExistsById;
+                newScope.deckTechCardDeleteById = sb.deckTechCardDeleteById;
+
+                var box = bootbox.dialog({
+                    title: "Cards",
+                    message: $compile('<div snapshot-add-card></div>')(newScope),
+                    show: false,
+                    className: 'modal-admin modal-admin-cards'
+                });
+                box.modal('show');
+            };
+
+            // prompt for deck tech card delete
+            sb.deckTechCardDeletePrompt = function (deckTech, card) {
+                var box = bootbox.dialog({
+                    title: "Remove Card?",
+                    message: "Are you sure you want to remove the card <strong>" + card.card.name + "</strong>?",
+                    buttons: {
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger",
+                            callback: function () {
+                                $timeout(function () {
+                                    sb.deckTechCardDeleteById(deckTech, card.card.id);
+                                    box.modal('hide');
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin modal-admin-remove',
+                    show: false
+                });
+                box.modal('show');
+            };
+            
+            // prompt for load previous
+            sb.loadPreviousPrompt = function () {
+                var box;
+                var newScope = $rootScope.$new(true);
+                newScope.snapshotTypes = sb.getSnapshotTypes;
+                newScope.loadPrevious = function (snapshotType) {
+                    sb.loadPrevious(snapshotType);
+                    box.modal('hide');
                 }
-                if (index !== -1) {
-                    // if existing item
-                    if (sb.authors[index].id) {
-                        // remove update flag
-                        sb.removeUpdateFlag('authors', sb.authors[index].id);
-                        // add delete flag
-                        sb.deleted.authors.push(sb.authors[index].id);
+                
+                box = bootbox.dialog({
+                    title: "Load Previous Snapshot",
+                    message: $compile('<div hs-snapshot-load-previous></div>')(newScope),
+                    buttons: {
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default pull-left",
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    },
+                    className: 'modal-admin',
+                    show: false
+                });
+                box.modal('show');
+            };
+
+            // deck update after dnd ordering
+            sb.deckUpdateDND = function (decks, index, deck) {
+                var beforeInMatchups = (deck.tier === 1 || deck.tier === 2);
+                var movedDeck;
+                var afterInMatchups;
+
+                // remove old position for deck
+                decks.splice(index, 1);
+
+                // update all decks
+                sb.decksUpdateTier();
+                sb.decksUpdateOrder();
+                sb.decksUpdateCurrentRanks();
+                
+                // update matchups for deck if we need to
+                movedDeck = sb.getTierDeckByDeckId(deck.deck.id);
+                afterInMatchups = (movedDeck.tier === 1 || movedDeck.tier === 2);
+
+                if (beforeInMatchups !== afterInMatchups) {
+                    if (afterInMatchups) {
+                        sb.matchupsAdd(movedDeck);
+                    } else {
+                        sb.matchupsDelete(movedDeck);
                     }
-                    
-                    // make sure active author isn't deleted author
-                    if (sb.activeAuthor && sb.activeAuthor.user.id === authorId) {
-                        sb.activeAuthor = null;
-                    };
-                    
-                    // delete author
-                    sb.authors.splice(index, 1);
                 }
             };
             
-            // verifies snapshot is correct and saves
-            sb.save = function () {
-                console.log('saving sb:', sb);
+            // flag snapshot as updated
+            sb.snapshotUpdated = function () {
+                console.log('snapshot updated');
                 
+                // don't flag for update if new
+                if (!sb.id) { return false; }
+                
+                // flag for update
+                sb.updated.snapshot = true;
+            };
+            
+            // flag author as updated
+            sb.authorUpdated = function (author) {
+                console.log('author: ', author);
+                // don't flag for update if new
+                if (!author.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.authors.indexOf(author.id);
+                if (index === -1) {
+                    sb.updated.authors.push(author.id);
+                    console.log('author update flagged: ', author.user.username);
+                }
+            };
+            
+            // flag all deckTiers as updated
+            sb.allDeckTiersUpdated = function () {
+                for (var i = 0; i < sb.tiers.length; i++) {
+                    for (var j = 0; j < sb.tiers[i].decks.length; j++) {
+                        sb.deckTierUpdated(sb.tiers[i].decks[j]);
+                    }
+                }
+            };
+            
+            // flag deckTier as updated
+            sb.deckTierUpdated = function (deckTier) {
+                console.log('deckTier: ', deckTier);
+                // don't flag for update if new
+                if (!deckTier.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.deckTiers.indexOf(deckTier.id);
+                if (index === -1) {
+                    sb.updated.deckTiers.push(deckTier.id);
+                    console.log('deckTier update flagged: ', deckTier.name);
+                }
+            };
+            
+            // flag deckTech as updated
+            sb.deckTechUpdated = function (deckTech) {
+                console.log('deckTech: ', deckTech);
+                // don't flag for update if new
+                if (!deckTech.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.deckTechs.indexOf(deckTech.id);
+                if (index === -1) {
+                    sb.updated.deckTechs.push(deckTech.id);
+                    console.log('deckTech update flagged: ', deckTech.title);
+                }
+            };
+            
+            // flag cardTech as updated
+            sb.cardTechUpdated = function (cardTech) {
+                console.log('cardTech: ', cardTech);
+                // don't flag for update if new
+                if (!cardTech.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.cardTechs.indexOf(cardTech.id);
+                if (index === -1) {
+                    sb.updated.cardTechs.push(cardTech.id);
+                    console.log('cardTech update flagged: ', cardTech.card.name);
+                }
+            };
+            
+            // flag matchup as updated
+            sb.matchupUpdated = function (matchup) {
+                console.log('matchup: ', matchup);
+                // don't flag for update if new
+                if (!matchup.id) { return false; }
+                
+                // check if already flagged
+                var index = sb.updated.matchups.indexOf(matchup.id);
+                if (index === -1) {
+                    sb.updated.matchups.push(matchup.id);
+                    console.log('matchup update flagged: ', matchup.id);
+                }
+            };
+            
+            // remove the update flag for an item
+            sb.removeUpdateFlag = function (type, itemId) {
+                var updated = sb.updated[type];
+                var index = updated.indexOf(itemId);
+                if (index !== -1) {
+                    updated.splice(index, 1);
+                }
+            };
+            
+            // check snapshot before save
+            sb.saveCheck = function (callback) {
+                console.log('save check');
+                async.series([
+                    // check snapshot
+                    function (cb) {
+                        console.log('check snapshot');
+                        // check title
+                        if (!sb.title || !sb.title.length) {
+                            return cb("Snapshot doesn't have a title");
+                        }
+                        
+                        // check url
+                        if (!sb.slug || !sb.slug.url || !sb.slug.url.length) {
+                            return cb("Snapshot doesn't have a url");
+                        }
+                        
+                        // check type
+                        if (!sb.snapshotType || !sb.snapshotType.length) {
+                            return cb("Snapshot doesn't have a type");
+                        }
+                        
+                        // check image
+                        if (!sb.photoNames || !sb.photoNames.square || !sb.photoNames.square.length || !sb.photoNames.small || !sb.photoNames.small.length || !sb.photoNames.medium || !sb.photoNames.medium.length || !sb.photoNames.large || !sb.photoNames.large.length) {
+                            return cb("Snapshot doesn't have an image");
+                        }
+                        
+                        // check active
+                        if (sb.isActive === undefined || (sb.isActive !== true && sb.isActive !== false)) {
+                            return cb("Snapshot active field is set to an invalid value");
+                        }
+                        
+                        // check intro
+                        if (!sb.content || !sb.content.intro || !sb.content.intro.length) {
+                            return cb("Snapshot does not have an introduction");
+                        }
+                        
+                        // check thoughts
+                        if (!sb.content || !sb.content.thoughts || !sb.content.thoughts.length) {
+                            return cb("Snapshot does not have thoughts and observations");
+                        }
+                        
+                        return cb();
+                    },
+                    // check authors
+                    function (cb) {
+                        console.log('check authors');
+                        // check that at least 1 author exists
+                        if (!sb.authors || !sb.authors.length) {
+                            return cb("Snapshot doesn't have any authors");
+                        }
+                        
+                        // check each author
+                        for (var i = 0; i < sb.authors.length; i++) {
+                            // check author expert classes
+                            if (!sb.authors[i].expertClasses || !sb.authors[i].expertClasses.length) {
+                                return cb("Author " + sb.authors[i].user.username + " has no expert class");
+                            }
+                            
+                            // check description
+                            if (!sb.authors[i].description || !sb.authors[i].description.length) {
+                                return cb("Author " + sb.authors[i].user.username + " has no description");
+                            }
+                        }
+                        
+                        // TODO: verify all classes selected
+                        // TODO: verify no duplicate classes used
+
+                        return cb();
+                    },
+                    // check tiers / decks
+                    function (cb) {
+                        console.log('check tiers');
+                        // make sure at least 1 tier
+                        if (!sb.tiers || !sb.tiers.length) {
+                            return cb("Snapshot doesn't have any tiers");
+                        }
+                        
+                        // loop trough each tier
+                        for (var tierInc = 0; tierInc < sb.tiers.length; tierInc++) {
+                            // make sure at least 1 deck in tier
+                            if (!sb.tiers[tierInc].decks || !sb.tiers[tierInc].decks.length) {
+                                return cb("Tier " + sb.tiers[tierInc].tier + " doesn't have any decks");
+                            }
+
+                            // check each deck
+                            for (var deckInc = 0; deckInc < sb.tiers[tierInc].length; deckInc++) {
+                                // check deck name
+                                if (!sb.tiers[tierInc].decks[deckInc].name || !sb.tiers[tierInc].decks[deckInc].name.length) {
+                                    return cb("Deck at rank " + sb.tiers[tierInc].decks[deckInc].ranks[0] + " has no name");
+                                }
+                                
+                                // check deck exists
+                                if (!sb.tiers[tierInc].decks[deckInc].deck || !sb.tiers[tierInc].decks[deckInc].deck.id || !sb.tiers[tierInc].decks[deckInc].deck.id.length) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no deck attached");
+                                }
+                                
+                                // check description
+                                if (!sb.tiers[tierInc].decks[deckInc].description || !sb.tiers[tierInc].decks[deckInc].description.length) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no description");
+                                }
+                                
+                                // check weekly notes
+                                if (!sb.tiers[tierInc].decks[deckInc].weeklyNotes || !sb.tiers[tierInc].decks[deckInc].weeklyNotes.length) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no weekly notes");
+                                }
+                                
+                                // check weekly trends
+                                if (!sb.tiers[tierInc].decks[deckInc].ranks || !sb.tiers[tierInc].decks[deckInc].ranks.length || (!sb.tiers[tierInc].decks[deckInc].ranks.length === (maxTrends + 1))) {
+                                    return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has no weekly trends");
+                                }
+                                
+                                // check each deck tech if any exist
+                                for (var deckTechCnt = 0; deckTechCnt < sb.tiers[tierInc].decks[deckInc].deckTech.length; deckTechCnt++) {
+                                    // check title
+                                    if (!sb.tiers[tierInc].decks[deckInc].deckTech[deckTechCnt].title || !sb.tiers[tierInc].decks[deckInc].deckTech[deckTechCnt].title.length) {
+                                        return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has a deck tech with no title");
+                                    }
+                                    
+                                    // check that it has at least 1 card
+                                    if (!sb.tiers[tierInc].decks[deckInc].deckTech[deckTechCnt].cards || !sb.tiers[tierInc].decks[deckInc].deckTech[deckTechCnt].cards.length) {
+                                        return cb("Deck " + sb.tiers[tierInc].decks[deckInc].name + " has a deck tech with no cards");
+                                    }
+                                    
+                                    // TODO: check that there are no class cards for different class than deck
+                                }
+
+                            }
+                        }
+
+                        return cb();
+                    },
+                    // verify matchups
+                    function (cb) {
+                        console.log('check matchups');
+                        // check that matchups count matches number of decks
+                        if (!sb.validMatchups()) {
+                            return cb("FATAL ERROR: Number of matchups do not match number of decks");
+                        }
+
+                        return cb();
+                    }
+                ], function (err) {
+                    return callback(err);
+                });
+            };
+            
+            // delete items on save
+            sb.saveDelete = function (callback) {
+                console.log('begin deleted: ', sb.deleted);
+                async.series([
+                    // delete card techs
+                    function (cb) {
+                        console.log('deleting card techs');
+                        // skip if nothing to delete
+                        if (!sb.deleted.cardTechs.length) { return cb(); }
+                        
+                        async.each(sb.deleted.cardTechs, function (cardTechId, eachCallback) {
+                            CardTech.deleteById({ id: cardTechId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted cardTech: ', cardTechId);
+                                // reset deleted flags
+                                var index = sb.deleted.cardTechs.indexOf(cardTechId);
+                                if (index !== -1) {
+                                    sb.deleted.cardTechs.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete cardTech error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // delete deck techs
+                    function (cb) {
+                        console.log('deleting deck techs');
+                        // skip if nothing to delete
+                        if (!sb.deleted.deckTechs.length) { return cb(); }
+                        
+                        async.each(sb.deleted.deckTechs, function (deckTechId, eachCallback) {
+                            DeckTech.deleteById({ id: deckTechId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted deckTech: ', deckTechId);
+                                // reset deleted flags
+                                var index = sb.deleted.deckTechs.indexOf(deckTechId);
+                                if (index !== -1) {
+                                    sb.deleted.deckTechs.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete deckTech error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // delete deck tiers
+                    function (cb) {
+                        console.log('deleting deck tiers');
+                        // skip if nothing to delete
+                        if (!sb.deleted.deckTiers.length) { return cb(); }
+                        
+                        async.each(sb.deleted.deckTiers, function (deckTierId, eachCallback) {
+                            DeckTier.deleteById({ id: deckTierId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted deckTier: ', deckTierId);
+                                // reset deleted flags
+                                var index = sb.deleted.deckTiers.indexOf(deckTierId);
+                                if (index !== -1) {
+                                    sb.deleted.deckTiers.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete deckTier error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // delete deck matchups
+                    function (cb) {
+                        console.log('deleting matchups');
+                        // skip if nothing to delete
+                        if (!sb.deleted.matchups.length) { return cb(); }
+                        
+                        async.each(sb.deleted.matchups, function (matchupId, eachCallback) {
+                            DeckMatchup.deleteById({ id: matchupId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted matchup: ', matchupId);
+                                // reset deleted flags
+                                var index = sb.deleted.matchups.indexOf(matchupId);
+                                if (index !== -1) {
+                                    sb.deleted.matchups.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete matchup error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // delete authors
+                    function (cb) {
+                        console.log('deleting authors');
+                        // skip if nothing to delete
+                        if (!sb.deleted.authors.length) { return cb(); }
+                        
+                        async.each(sb.deleted.authors, function (authorId, eachCallback) {
+                            SnapshotAuthor.deleteById({ id: authorId })
+                            .$promise
+                            .then(function (data) {
+                                console.log('deleted author: ', authorId);
+                                // reset deleted flags
+                                var index = sb.deleted.authors.indexOf(authorId);
+                                if (index !== -1) {
+                                    sb.deleted.authors.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('delete author error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    }
+                ], function (err) {
+                    console.log('done deleting');
+                    console.log('deleted: ', sb.deleted);
+                    return callback();
+                });
+            };
+            
+            // update items on save
+            sb.saveUpdate = function (callback) {
+                console.log('begin updated: ', sb.updated);
+                async.series([
+                    // update card techs
+                    function (cb) {
+                        console.log('updating card techs');
+                        // skip if nothing to update
+                        if (!sb.updated.cardTechs.length) { return cb(); }
+                        
+                        async.each(sb.updated.cardTechs, function (cardTechId, eachCallback) {
+                            var cardTech = sb.getCardTechById(cardTechId);
+                            CardTech.update({
+                                where: {
+                                    id: cardTechId
+                                }
+                            }, {
+                                both: cardTech.both || false,
+                                toss: cardTech.toss || false,
+                                cardId: cardTech.card.id
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated cardTech: ', cardTechId);
+                                // reset updated flags
+                                var index = sb.updated.cardTechs.indexOf(cardTechId);
+                                if (index !== -1) {
+                                    sb.updated.cardTechs.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update cardTech error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // delete deck techs
+                    function (cb) {
+                        console.log('update deck techs');
+                        // skip if nothing to update
+                        if (!sb.updated.deckTechs.length) { return cb(); }
+                        
+                        async.each(sb.updated.deckTechs, function (deckTechId, eachCallback) {
+                            var deckTech = sb.getDeckTechById(deckTechId);
+                            DeckTech.update({
+                                where: {
+                                    id: deckTechId
+                                }
+                            }, {
+                                title: deckTech.title
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated deckTech: ', deckTechId);
+                                // reset updated flags
+                                var index = sb.updated.deckTechs.indexOf(deckTechId);
+                                if (index !== -1) {
+                                    sb.updated.deckTechs.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update deckTech error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // update deck tiers
+                    function (cb) {
+                        console.log('updating deck tiers');
+                        // skip if nothing to update
+                        if (!sb.updated.deckTiers.length) { return cb(); }
+                        
+                        async.each(sb.updated.deckTiers, function (deckTierId, eachCallback) {
+                            var deckTier = sb.getDeckTierById(deckTierId);
+                            DeckTier.update({
+                                where: {
+                                    id: deckTierId
+                                }
+                            }, {
+                                name: deckTier.name,
+                                description: deckTier.description,
+                                weeklyNotes: deckTier.weeklyNotes,
+                                deckId: deckTier.deck.id,
+                                ranks: deckTier.ranks,
+                                tier: deckTier.tier
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated deckTier: ', deckTierId);
+                                // reset updated flags
+                                var index = sb.updated.deckTiers.indexOf(deckTierId);
+                                if (index !== -1) {
+                                    sb.updated.deckTiers.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update deckTier error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // update deck matchups
+                    function (cb) {
+                        console.log('updating matchups');
+                        // skip if nothing to update
+                        if (!sb.updated.matchups.length) { return cb(); }
+                        
+                        async.each(sb.updated.matchups, function (matchupId, eachCallback) {
+                            var matchup = sb.getMatchupById(matchupId);
+                            DeckMatchup.update({
+                                where: {
+                                    id: matchupId
+                                }
+                            }, {
+                                forDeckId: matchup.forDeck.id,
+                                againstDeckId: matchup.againstDeck.id,
+                                forChance: matchup.forChance,
+                                againstChance: matchup.againstChance
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated matchup: ', matchupId);
+                                // reset updated flags
+                                var index = sb.updated.matchups.indexOf(matchupId);
+                                if (index !== -1) {
+                                    sb.updated.matchups.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update matchup error: ', err);
+                            }
+                            return cb(err);
+                        });
+                        
+                    },
+                    // update authors
+                    function (cb) {
+                        console.log('updating authors');
+                        // skip if nothing to update
+                        if (!sb.updated.authors.length) { return cb(); }
+                        
+                        async.each(sb.updated.authors, function (authorId, eachCallback) {
+                            var author = sb.getAuthorById(authorId);
+                            SnapshotAuthor.update({
+                                where: {
+                                    id: authorId
+                                }
+                            }, {
+                                description: author.description,
+                                expertClasses: author.expertClasses
+                            })
+                            .$promise
+                            .then(function (data) {
+                                console.log('updated author: ', authorId);
+                                // reset updated flags
+                                var index = sb.updated.authors.indexOf(authorId);
+                                if (index !== -1) {
+                                    sb.updated.authors.splice(index, 1);
+                                }
+                                // next
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) {
+                                console.log('update author error: ', err);
+                            }
+                            return cb(err);
+                        });
+                    },
+                    // update snapshot
+                    function (cb) {
+                        console.log('updating snapshot');
+                        // skip if nothing to update
+                        if (!sb.updated.snapshot || !sb.id) { return cb(); }
+                        
+                        Snapshot.update({
+                            where: {
+                                id: sb.id
+                            }
+                        }, {
+                            snapNum: sb.snapNum,
+                            //snapshotType: sb.snapshotType,
+                            title: sb.title,
+                            slug: sb.slug,
+                            content: sb.content,
+                            photoNames: sb.photoNames,
+                            isActive: sb.isActive
+                        })
+                        .$promise
+                        .then(function (data) {
+                            console.log('updated snapshot: ', sb.id);
+                            // reset updated flags
+                            sb.updated.snapshot = false;
+                            // next
+                            return cb();
+                        })
+                        .catch(function (response) {
+                            console.log('update snapshot error: ', response);
+                            return cb(response);
+                        });
+                    }
+                ], function (err) {
+                    console.log('done updating');
+                    console.log('updated: ', sb.updated);
+                    return callback();
+                });
+            };
+            
+            // create new items on save
+            sb.saveCreate = function (callback) {
+                async.waterfall([
+                    // create snapshot
+                    function (cb) {
+                        if (sb.id) { return cb(null, sb.id); }
+                        console.log('snapshot: ', {
+                            snapNum: sb.snapNum,
+                            title: sb.title,
+                            snapshotType: sb.snapshotType,
+                            slug: {
+                                url: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
+                            content: {
+                                intro: sb.content.intro,
+                                thoughts: sb.content.thoughts
+                            },
+                            createdDate: new Date().toISOString(),
+                            photoNames: {
+                                square: sb.photoNames.square || '',
+                                small: sb.photoNames.small || '',
+                                medium: sb.photoNames.medium || '',
+                                large: sb.photoNames.large || ''
+                            },
+                            isCommentable: sb.isCommentable,
+                            isActive: sb.isActive
+                        });
+                        Snapshot.create({
+                            snapNum: sb.snapNum,
+                            title: sb.title,
+                            snapshotType: sb.snapshotType,
+                            slug: {
+                                url: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
+                            content: {
+                                intro: sb.content.intro,
+                                thoughts: sb.content.thoughts
+                            },
+                            createdDate: new Date().toISOString(),
+                            photoNames: {
+                                square: sb.photoNames.square || '',
+                                small: sb.photoNames.small || '',
+                                medium: sb.photoNames.medium || '',
+                                large: sb.photoNames.large || ''
+                            },
+                            isCommentable: sb.isCommentable,
+                            isActive: sb.isActive
+                        })
+                        .$promise
+                        .then(function (data) {
+                            sb.id = data.id;
+                            return cb(null, data.id);
+                        })
+                        .catch(function (response) {
+                            return cb(response);
+                        });
+                    },
+                    // create authors
+                    function (snapshotId, cb) {
+                        console.log('creating authors');
+                        async.each(sb.authors, function (author, eachCallback) {
+                            // only create authors without ids
+                            if (author.id) { return eachCallback(); }
+                            // create new author
+                            SnapshotAuthor.create({
+                                description: author.description,
+                                expertClasses: author.expertClasses,
+                                snapshotId: snapshotId,
+                                authorId: author.user.id
+                            })
+                            .$promise
+                            .then(function (data) {
+                                author.id = data.id;
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    },
+                    // create deck tiers
+                    function (snapshotId, cb) {
+                        console.log('creating deck tiers');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckCallback) {
+                                // only create deck tiers without ids
+                                if (deckTier.id) { return eachDeckCallback(); }
+                                // create new deck tier
+                                var newDeckTier = {
+                                    description: deckTier.description,
+                                    weeklyNotes: deckTier.weeklyNotes,
+                                    name: deckTier.name,
+                                    tier: deckTier.tier,
+                                    deckId: deckTier.deck.id,
+                                    snapshotId: snapshotId,
+                                    ranks: deckTier.ranks
+                                };
+                                console.log('Created Deck Tier: ', newDeckTier);
+                                DeckTier.create(newDeckTier)
+                                .$promise
+                                .then(function (data) {
+                                    deckTier.id = data.id;
+                                    return eachDeckCallback();
+                                })
+                                .catch(function (response) {
+                                    return eachDeckCallback(response);
+                                });
+                            }, function (err) {
+                                if (err) { return cb(err); }
+                                return eachTierCallback();
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    },
+                    // create deck techs
+                    function (snapshotId, cb) {
+                        console.log('creating deck techs');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckTierCallback) {
+                                async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
+                                    // only create deck techs without ids
+                                    if (deckTech.id) { return eachDeckTechCallback(); }
+                                    // create new deck tech
+                                    var newDeckTech = {
+                                        title: deckTech.title,
+                                        deckId: deckTier.deck.id,
+                                        deckTierId: deckTier.id
+                                    };
+                                    console.log('Created Deck Tech: ', newDeckTech);
+                                    DeckTech.create(newDeckTech)
+                                    .$promise
+                                    .then(function (data) {
+                                        deckTech.id = data.id;
+                                        return eachDeckTechCallback();
+                                    })
+                                    .catch(function (response) {
+                                        return eachDeckTechCallback(response);
+                                    });
+                                }, function (err) {
+                                    if (err) { return cb(err); }
+                                    return eachDeckTierCallback();
+                                });
+                            }, function (err) {
+                                if (err) { return cb(err); }
+                                return eachTierCallback();
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    },
+                    // create deck tech cards
+                    function (snapshotId, cb) {
+                        console.log('creating deck tech cards');
+                        async.each(sb.tiers, function (tier, eachTierCallback) {
+                            async.each(tier.decks, function (deckTier, eachDeckTierCallback) {
+                                async.each(deckTier.deckTech, function (deckTech, eachDeckTechCallback) {
+                                    async.each(deckTech.cardTech, function (cardTech, eachCardTechCallback) {
+                                        // only create deck techs without ids
+                                        if (cardTech.id) { return eachCardTechCallback(); }
+                                        // create new deck tech
+                                        var newCardTech = {
+                                            both: cardTech.both || false,
+                                            toss: cardTech.toss || false,
+                                            cardId: cardTech.card.id,
+                                            deckTechId: deckTech.id
+                                        };
+                                        console.log('Created Card Tech: ', newCardTech);
+                                        CardTech.create(newCardTech)
+                                        .$promise
+                                        .then(function (data) {
+                                            cardTech.id = data.id;
+                                            return eachCardTechCallback();
+                                        })
+                                        .catch(function (response) {
+                                            return eachCardTechCallback(response);
+                                        });
+                                    }, function (err) {
+                                        if (err) { return cb(err); }
+                                        return eachDeckTechCallback();
+                                    });
+                                }, function (err) {
+                                    if (err) { return cb(err); }
+                                    return eachDeckTierCallback();
+                                });
+                            }, function (err) {
+                                if (err) { return cb(err); }
+                                return eachTierCallback();
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    },
+                    // create matchups
+                    function (snapshotId, cb) {
+                        console.log('creating matchups');
+                        async.each(sb.matchups, function (matchup, eachCallback) {
+                            // only create matchups without ids
+                            if (matchup.id) { return eachCallback(); }
+                            // create new deck tier
+                            DeckMatchup.create({
+                                forChance: matchup.forChance,
+                                againstChance: matchup.againstChance,
+                                forDeckId: matchup.forDeck.id,
+                                againstDeckId: matchup.againstDeck.id,
+                                snapshotId: snapshotId
+                            })
+                            .$promise
+                            .then(function (data) {
+                                matchup.id = data.id;
+                                return eachCallback();
+                            })
+                            .catch(function (response) {
+                                return eachCallback(response);
+                            });
+                        }, function (err) {
+                            if (err) { return cb(err); }
+                            return cb(null, snapshotId);
+                        });
+                    }
+                ], function (err) {
+                    if (err) {
+                        console.error('Save create error: ', err);
+                        return callback(err);
+                    }
+                    console.log('done creating');
+                    return callback();
+                });
+            };
+            
+            // save snapshot
+            sb.save = function () {
+                console.log('snapshot: ', sb);
                 sb.saving = true;
                 
                 // reset errors
@@ -5003,21 +6477,17 @@ angular.module('app.services', [])
                 
                 async.waterfall([
                     sb.saveCheck,
-//                    sb.saveDelete,
-//                    sb.saveUpdate,
+                    sb.saveDelete,
+                    sb.saveUpdate,
                     sb.saveCreate
                 ], function (err) {
-                    // need to force an angular digest with $timeout
-                    $timeout(function () {});
-                    
-                    sb.saving = false;
-                    $window.scrollTo(0, 0);
-                    
-                    console.log('finished saving', err);
+                    $timeout(function () {
+                        sb.saving = false;
+                    });
                     
                     if (err) {
-                        if (angular.isString(err)) {
-                            return AlertService.setError({
+                        if (typeof err === 'string') {
+                            AlertService.setError({
                                 msg: 'Snapshot Error',
                                 errorList: [err],
                                 show: true
@@ -5029,24 +6499,24 @@ angular.module('app.services', [])
                                 show: true
                             });
                         }
+                    } else {
+                        $state.go('app.admin.hearthstone.snapshots.list');
                     }
                     
-                    AlertService.setSuccess({
-                        msg: sb.title + ' created successfully',
-                        show: true,
-                        persist: true
-                    });
-                    
-                    return $state.transitionTo('app.admin.overwatch.snapshots.list');
+                    console.log('done saving');
                 });
+                
             };
-            
-            // init snapshot
-            sb.init(snapshotData);
-            
+
+            // run init
+            sb.init(data);
+
             // return instance
             return sb;
         };
-        
+
+        // return service
         return snapshot;
-    }]);
+    }
+])
+;

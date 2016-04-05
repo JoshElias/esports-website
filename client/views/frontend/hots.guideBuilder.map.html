@@ -1,4 +1,8 @@
-<div class="container">
+<!-- a-sense -->
+<ts-ad class="container-fluid text-center row" structure="double"></ts-ad>
+<!-- /a-sense -->
+
+<div class="container m-t-lg">
     <ul class="gb-steps gb-steps-map clearfix">
         <li class="steps-arrow steps-arrow-prev">
             <button ng-click="prevStep()">
@@ -42,11 +46,9 @@
         </li>
     </ul>
         
-    <!-- a-sense -->
-    <ts-ad class="container-fluid text-center m-t-md" structure="double"></ts-ad>
-    <!-- /a-sense -->
+   
 </div>
-<div class="container" ng-show="step === 2">
+<div class="container m-b-lg" ng-show="step === 2">
     <div class="guide-text map-select"></div>
     
     <div class="map-selection">
@@ -68,7 +70,7 @@
     <!-- /adsense -->
     
 </div>
-<div class="container" ng-show="step === 3">
+<div class="container m-b-lg" ng-show="step === 3">
     <div class="guide-text hero-information"></div>
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
@@ -100,7 +102,7 @@
         </div>
     </div>
 </div>
-<div class="container" ng-show="step === 4">
+<div class="container m-b-lg" ng-show="step === 4">
     <div class="guide-text map-discussion"></div>
     <div class="db-section m-b-md" 
          ng-repeat="content in guide.content | orderBy: 'orderNum' track by $index">
@@ -123,7 +125,7 @@
         ADD CHAPTER
     </a>
 </div>
-<div class="container" ng-show="step === 5">
+<div class="container m-b-lg" ng-show="step === 5">
     <div class="guide-text save-guide-now"></div>
   
     <alert-box theme="admin"></alert-box>
@@ -266,5 +268,5 @@
 </div>
 
 <!-- a-sense -->
-<ts-ad class="container text-center  m-t-md" structure="single"></ts-ad>
+<ts-ad class="text-center container-fluid row" structure="single"></ts-ad>
 <!-- /a-sense -->

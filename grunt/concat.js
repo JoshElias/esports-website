@@ -11,7 +11,7 @@ module.exports = {
             'client/dist/js/vendor.js': [
                 'client/vendor/jquery/dist/jquery.js',
                 'client/vendor/jquery-ui/jquery-ui.js',
-                'client/vendor/bootstrap/dist/js/module-loader.js',
+                'client/vendor/bootstrap/dist/js/bootstrap.js',
                 'client/vendor/moment/min/moment.min.js',
                 'client/vendor/summernote/dist/summernote.js',
                 'client/vendor/bootbox/bootbox.js',
@@ -45,7 +45,8 @@ module.exports = {
                 'client/vendor/ngstorage/ngStorage.min.js',
                 'client/vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js',
                 'client/vendor/angular-animate/angular-animate.min.js',
-                'client/vendor/angular-iscroll/dist/lib/angular-iscroll.js'
+                'client/vendor/angular-iscroll/dist/lib/angular-iscroll.js',
+                'client/vendor/angular-svg-round-progressbar/build/roundProgress.min.js'
             ],
             'client/dist/js/app.js': [
                 'client/js/app.js',

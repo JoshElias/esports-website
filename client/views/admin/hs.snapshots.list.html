@@ -6,7 +6,7 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <div class="pull-right" ng-if="snapshots">
+        <div class="pull-right m-t-lg" ng-if="snapshots">
             <span class="m-r-sm">
                 Showing: 
                 <strong>{{ snapshotPagination.total === 0 ? snapshotPagination.total : ((snapshotPagination.page - 1) * snapshotPagination.perpage) + 1 }}</strong> 
@@ -21,7 +21,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" 
+                        <button type="submit" class="btn btn-default  btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -32,24 +32,26 @@
             </form>
         </div>
     </div>
-    <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="snapshot in snapshots | orderBy : '-snapNum'">
-            <div class="row">
-                <div class="col-sm-6">
-                    <span>Meta Snapshot {{snapshot.snapNum}} - {{snapshot.title}}</span>
-                </div>
-                <div class="col-sm-6">
-                    <div class="pull-right btn-toolbar">
-                        <a ui-sref="app.admin.hearthstone.snapshots.edit({ snapshotID: snapshot.id })" class="btn btn-default">Edit</a>
-                        <button class="btn btn-danger" ng-click="deleteSnapshot(snapshot)">Delete</button>
+    <div class="admin-list">
+        <div class="admin-list-item snapshot-list clearfix" ng-repeat="snapshot in snapshots | orderBy : '-snapNum'">
+            <div class="list-accent-div">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-9">
+                        <span class="snapshot-list-item">Meta Snapshot {{snapshot.snapNum}} - {{snapshot.title}}</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-3">
+                        <div class="pull-right btn-toolbar snapshot-list-item">
+                            <a ui-sref="app.admin.hearthstone.snapshots.edit({ snapshotID: snapshot.id })" class="btn btn-default">Edit</a>
+                            <button class="btn btn-danger" ng-click="deleteSnapshot(snapshot)">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="list-group-item" ng-if="!snapshots.length && !search.length">
+        <div class="admin-list-item" ng-if="!snapshots.length && !search.length">
             There are no snapshots yet.
         </div>
-        <div class="list-group-item b-t-none" ng-if="search.length && snapshotPagination.total === 0">
+        <div class="admin-list-item b-t-none" ng-if="search.length && snapshotPagination.total === 0">
             That search returned no results.
         </div>
     </div>
@@ -76,7 +78,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" 
+                        <button type="submit" class="btn btn-default btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
