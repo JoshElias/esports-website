@@ -256,15 +256,27 @@ angular.module('app.controllers', ['ngCookies'])
                                     isActive: true
                                 },
                                 fields: {
-                                    content: false,
-                                    votes: false
+                                    content: false
                                 },
-                                include: ["author"],
+                                include: [
+                                    {
+                                        relation: 'author'
+                                    },
+                                    {
+                                        relation: 'slugs'
+                                    }
+                                ],
                                 order: "createdDate DESC",
                                 skip: $scope.articles.data.length,
                                 limit: num
                             }
                         }).$promise.then(function (data) {
+                            
+                            _.each(data, function (article) {
+                                // init template vars
+                                article.slug = Util.setSlug(data);
+                            });
+                            
                             $scope.articles.data = $scope.articles.data.concat(data);
                             $scope.articles.offset += num;
                             $scope.articles.loading = false;

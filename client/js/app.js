@@ -266,6 +266,11 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
+                                    _.each(articles, function (article) {
+                                        // init template vars
+                                        article.slug = Util.setSlug(article);
+                                    });
+                                    
                                     return articles;
                                 })
                                 .catch(function (err) {
