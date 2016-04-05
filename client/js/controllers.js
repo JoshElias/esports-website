@@ -15120,8 +15120,7 @@ angular.module('app.controllers', ['ngCookies'])
                     });
 
                 }
-            };
-        }
+            }
     ])
     .controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'heroes', 'maps',
         function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, heroes, maps) {
@@ -18827,6 +18826,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
+
     .controller('AdminOverwatchHeroListCtrl', ['$scope', '$window', '$timeout', 'bootbox', 'AlertService', 'OverwatchHero', 'heroes',
         function ($scope, $window, $timeout, bootbox, AlertService, OverwatchHero, heroes) {
             // load vars
@@ -19242,130 +19242,130 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
 
-    .controller('AdminOverwatchSnapshotListCtrl', ['$scope', '$q', '$timeout', 'bootbox', 'AjaxPagination', 'AlertService', 'OverwatchSnapshot', 'owSnapshots', 'owSnapshotsCount', 'paginationParams', function ($scope, $q, $timeout, bootbox, AjaxPagination, AlertService, OverwatchSnapshot, owSnapshots, owSnapshotsCount, paginationParams) {
-        
-        // load snapshots
-        $scope.snapshots = owSnapshots;
-        $scope.page = paginationParams.page;
-        $scope.perpage = paginationParams.perpage;
-        $scope.total = owSnapshotsCount;
-        $scope.search = '';
-
-        $scope.searchSnapshots = function() {
-            updateSnapshots(1, $scope.perpage, $scope.search, false);
-        };
-
-        // pagination
-        function updateSnapshots (page, perpage, search, callback) {
-            $scope.fetching = true;
-
-            var options = {},
-                countOptions = {},
-                pattern = '/.*'+search+'.*/i';
-
-            options.filter = {
-                fields: paginationParams.options.filter.fields,
-                order: "createdDate DESC",
-                skip: ((page*perpage)-perpage),
-                limit: paginationParams.perpage
-            };
-
-            if ($scope.search.length > 0) {
-                options.filter.where = {
-                    or: [
-                        { title: { regexp: pattern } }
-                    ]
-                }
-                countOptions.where = {
-                    or: [
-                        { title: { regexp: pattern } }
-                    ]
-                }
-            }
-
-            AjaxPagination.update(OverwatchSnapshot, options, countOptions, function (err, data, count) {
-                $scope.fetching = false;
-                if (err) return console.log('got err:', err);
-                $scope.snapshotPagination.page = page;
-                $scope.snapshotPagination.perpage = perpage;
-                $scope.snapshots = data;
-                $scope.snapshotPagination.total = count.count;
-                if (callback) {
-                    callback(null, count);
-                }
-            });
-        }
-
-        // page flipping
-        $scope.snapshotPagination = AjaxPagination.new(paginationParams,
-            function (page, perpage) {
-                var d = $q.defer();
-
-                updateSnapshots(page, perpage, $scope.search, function (err, count) {
-                    if (err) return console.log('err: ', err);
-                    d.resolve(count.count);
-                });
-                return d.promise;
-            }
-        );
-
-        // delete snapshot
-        $scope.deleteSnapshot = function deleteSnapshot(snapshot) {
-            var box = bootbox.dialog({
-                title: 'Delete Meta Snapshot: ' + snapshot.title + '?',
-                message: 'Are you sure you want to delete the Meta Snapshot <strong>' + snapshot.title + '</strong>?',
-                buttons: {
-                    delete: {
-                        label: 'Delete',
-                        className: 'btn-danger',
-                        callback: function () {
-                          OverwatchSnapshot.deleteById({
-                            id: snapshot.id
-                          })
-                          .$promise
-                          .then(function (data) {
-                            if (data.$resolved) {
-                                
-                              var indexToDel = $scope.snapshots.indexOf(snapshot);
-                              if (indexToDel !== -1) {
-                                $scope.snapshots.splice(indexToDel, 1);
-                              }
-                                
-                              AlertService.setSuccess({ 
-                                  show: true, 
-                                  msg: snapshot.title + ' deleted successfully.' 
-                              });
-                                
-                            }
-                          })
-                        }
-                    },
-                    cancel: {
-                        label: 'Cancel',
-                        className: 'btn-default pull-left',
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                }
-            });
-            box.modal('show');
-        };
-        
-    }])
-    .controller('AdminOverwatchSnapshotAddCtrl', ['$scope', 'OverwatchSnapshotBuilder', 'owHeroes', function ($scope, OverwatchSnapshotBuilder, owHeroes) {
-        
-        $scope.owHeroes = owHeroes;
-        console.log('$scope.owHeroes:', $scope.owHeroes);
-        
-        // set default page
-        $scope.page = 'general';
-        
-        // set mode to add
-        $scope.mode = 'add';
-        
-        // init snapshot
-        $scope.snapshot = OverwatchSnapshotBuilder.new();
-        console.log('$scope.snapshot:', $scope.snapshot);
-        
-    }]);
+    //.controller('AdminOverwatchSnapshotListCtrl', ['$scope', '$q', '$timeout', 'bootbox', 'AjaxPagination', 'AlertService', 'OverwatchSnapshot', 'owSnapshots', 'owSnapshotsCount', 'paginationParams', function ($scope, $q, $timeout, bootbox, AjaxPagination, AlertService, OverwatchSnapshot, owSnapshots, owSnapshotsCount, paginationParams) {
+    //
+    //    // load snapshots
+    //    $scope.snapshots = owSnapshots;
+    //    $scope.page = paginationParams.page;
+    //    $scope.perpage = paginationParams.perpage;
+    //    $scope.total = owSnapshotsCount;
+    //    $scope.search = '';
+    //
+    //    $scope.searchSnapshots = function() {
+    //        updateSnapshots(1, $scope.perpage, $scope.search, false);
+    //    };
+    //
+    //    // pagination
+    //    function updateSnapshots (page, perpage, search, callback) {
+    //        $scope.fetching = true;
+    //
+    //        var options = {},
+    //            countOptions = {},
+    //            pattern = '/.*'+search+'.*/i';
+    //
+    //        options.filter = {
+    //            fields: paginationParams.options.filter.fields,
+    //            order: "createdDate DESC",
+    //            skip: ((page*perpage)-perpage),
+    //            limit: paginationParams.perpage
+    //        };
+    //
+    //        if ($scope.search.length > 0) {
+    //            options.filter.where = {
+    //                or: [
+    //                    { title: { regexp: pattern } }
+    //                ]
+    //            }
+    //            countOptions.where = {
+    //                or: [
+    //                    { title: { regexp: pattern } }
+    //                ]
+    //            }
+    //        }
+    //
+    //        AjaxPagination.update(OverwatchSnapshot, options, countOptions, function (err, data, count) {
+    //            $scope.fetching = false;
+    //            if (err) return console.log('got err:', err);
+    //            $scope.snapshotPagination.page = page;
+    //            $scope.snapshotPagination.perpage = perpage;
+    //            $scope.snapshots = data;
+    //            $scope.snapshotPagination.total = count.count;
+    //            if (callback) {
+    //                callback(null, count);
+    //            }
+    //        });
+    //    }
+    //
+    //    // page flipping
+    //    $scope.snapshotPagination = AjaxPagination.new(paginationParams,
+    //        function (page, perpage) {
+    //            var d = $q.defer();
+    //
+    //            updateSnapshots(page, perpage, $scope.search, function (err, count) {
+    //                if (err) return console.log('err: ', err);
+    //                d.resolve(count.count);
+    //            });
+    //            return d.promise;
+    //        }
+    //    );
+    //
+    //    // delete snapshot
+    //    $scope.deleteSnapshot = function deleteSnapshot(snapshot) {
+    //        var box = bootbox.dialog({
+    //            title: 'Delete Meta Snapshot: ' + snapshot.title + '?',
+    //            message: 'Are you sure you want to delete the Meta Snapshot <strong>' + snapshot.title + '</strong>?',
+    //            buttons: {
+    //                delete: {
+    //                    label: 'Delete',
+    //                    className: 'btn-danger',
+    //                    callback: function () {
+    //                      OverwatchSnapshot.deleteById({
+    //                        id: snapshot.id
+    //                      })
+    //                      .$promise
+    //                      .then(function (data) {
+    //                        if (data.$resolved) {
+    //
+    //                          var indexToDel = $scope.snapshots.indexOf(snapshot);
+    //                          if (indexToDel !== -1) {
+    //                            $scope.snapshots.splice(indexToDel, 1);
+    //                          }
+    //
+    //                          AlertService.setSuccess({
+    //                              show: true,
+    //                              msg: snapshot.title + ' deleted successfully.'
+    //                          });
+    //
+    //                        }
+    //                      })
+    //                    }
+    //                },
+    //                cancel: {
+    //                    label: 'Cancel',
+    //                    className: 'btn-default pull-left',
+    //                    callback: function () {
+    //                        box.modal('hide');
+    //                    }
+    //                }
+    //            }
+    //        });
+    //        box.modal('show');
+    //    };
+    //
+    //}])
+    //.controller('AdminOverwatchSnapshotAddCtrl', ['$scope', 'OverwatchSnapshotBuilder', 'owHeroes', function ($scope, OverwatchSnapshotBuilder, owHeroes) {
+    //
+    //    $scope.owHeroes = owHeroes;
+    //    console.log('$scope.owHeroes:', $scope.owHeroes);
+    //
+    //    // set default page
+    //    $scope.page = 'general';
+    //
+    //    // set mode to add
+    //    $scope.mode = 'add';
+    //
+    //    // init snapshot
+    //    $scope.snapshot = OverwatchSnapshotBuilder.new();
+    //    console.log('$scope.snapshot:', $scope.snapshot);
+    //
+    //}]);

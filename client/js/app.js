@@ -354,23 +354,23 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Overwatch', description: 'Tempo Storm is your top source for Blizzard Entertainment\'s Overwatch. Tournament news, strategy, and patch details.', keywords: 'blizzard overwatch' }
             })
-            .state('app.overwatch.snapshot', {
-                abstract: true,
-                url: '/meta-snapshot',
-                views: {
-                    overwatch: {
-                        templateUrl: tpl + 'views/frontend/overwatch.snapshots.html'
-                    }
-                }
-            })
-            .state('app.overwatch.snapshot.snapshot', {
-                url: '/test',
-                views: {
-                    overwatchSnapshots: {
-                        templateUrl: tpl + 'views/frontend/overwatch.snapshots.snapshot.html',
-                    }
-                }
-            })
+            //.state('app.overwatch.snapshot', {
+            //    abstract: true,
+            //    url: '/meta-snapshot',
+            //    views: {
+            //        overwatch: {
+            //            templateUrl: tpl + 'views/frontend/overwatch.snapshots.html'
+            //        }
+            //    }
+            //})
+            //.state('app.overwatch.snapshot.snapshot', {
+            //    url: '/test',
+            //    views: {
+            //        overwatchSnapshots: {
+            //            templateUrl: tpl + 'views/frontend/overwatch.snapshots.snapshot.html',
+            //        }
+            //    }
+            //})
 
             .state('app.overwatch.heroes', {
                 abstract: true,
@@ -7385,82 +7385,82 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
-            .state('app.admin.overwatch.snapshots', {
-                abstract: true,
-                url: '/snapshots',
-                views: {
-                    overwatch: {
-                        templateUrl: tpl + 'views/admin/overwatch.snapshots.html'
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.overwatch.snapshots.list', {
-                url: '',
-                views: {
-                    snapshots: {
-                        templateUrl: tpl + 'views/admin/overwatch.snapshots.list.html',
-                        controller: 'AdminOverwatchSnapshotListCtrl',
-                        resolve: {
-                            paginationParams: [function () {
-                                return {
-                                    page: 1,
-                                    perpage: 50,
-                                    total: 0,
-                                    options: {
-                                        filter: {
-                                            limit: 50,
-                                            order: 'createdDate DESC',
-                                            fields: ['id', 'title', 'snapNum']
-                                        }
-                                    }
-                                }
-                            }],
-                            owSnapshots: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
-                                return OverwatchSnapshot.find(paginationParams.options)
-                                .$promise;
-                            }],
-                            owSnapshotsCount: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
-                                return OverwatchSnapshot.count().$promise
-                                .then(function (snapCount) {
-                                    paginationParams.total = snapCount.count;
-                                    
-                                    return snapCount.count;
-                                });
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.overwatch.snapshots.add', {
-                url: '/add',
-                views: {
-                    snapshots: {
-                        templateUrl: tpl + 'views/admin/overwatch.snapshots.snapshot.html',
-                        controller: 'AdminOverwatchSnapshotAddCtrl',
-                        resolve: {
-                            owHeroes: ['OverwatchHero', function (OverwatchHero) {
-                                return OverwatchHero.find({
-                                    filter: {
-                                        where: {
-                                            isActive: true
-                                        },
-                                        fields: [
-                                            'heroName'
-                                        ]
-                                    }
-                                })
-                                .$promise;
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
+            //.state('app.admin.overwatch.snapshots', {
+            //    abstract: true,
+            //    url: '/snapshots',
+            //    views: {
+            //        overwatch: {
+            //            templateUrl: tpl + 'views/admin/overwatch.snapshots.html'
+            //        }
+            //    },
+            //    access: { auth: true, admin: true },
+            //    seo: { title: 'Admin', description: '', keywords: '' }
+            //})
+            //.state('app.admin.overwatch.snapshots.list', {
+            //    url: '',
+            //    views: {
+            //        snapshots: {
+            //            templateUrl: tpl + 'views/admin/overwatch.snapshots.list.html',
+            //            controller: 'AdminOverwatchSnapshotListCtrl',
+            //            resolve: {
+            //                paginationParams: [function () {
+            //                    return {
+            //                        page: 1,
+            //                        perpage: 50,
+            //                        total: 0,
+            //                        options: {
+            //                            filter: {
+            //                                limit: 50,
+            //                                order: 'createdDate DESC',
+            //                                fields: ['id', 'title', 'snapNum']
+            //                            }
+            //                        }
+            //                    }
+            //                }],
+            //                owSnapshots: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
+            //                    return OverwatchSnapshot.find(paginationParams.options)
+            //                    .$promise;
+            //                }],
+            //                owSnapshotsCount: ['OverwatchSnapshot', 'paginationParams', function (OverwatchSnapshot, paginationParams) {
+            //                    return OverwatchSnapshot.count().$promise
+            //                    .then(function (snapCount) {
+            //                        paginationParams.total = snapCount.count;
+            //
+            //                        return snapCount.count;
+            //                    });
+            //                }]
+            //            }
+            //        }
+            //    },
+            //    access: { auth: true, admin: true },
+            //    seo: { title: 'Admin', description: '', keywords: '' }
+            //})
+            //.state('app.admin.overwatch.snapshots.add', {
+            //    url: '/add',
+            //    views: {
+            //        snapshots: {
+            //            templateUrl: tpl + 'views/admin/overwatch.snapshots.snapshot.html',
+            //            controller: 'AdminOverwatchSnapshotAddCtrl',
+            //            resolve: {
+            //                owHeroes: ['OverwatchHero', function (OverwatchHero) {
+            //                    return OverwatchHero.find({
+            //                        filter: {
+            //                            where: {
+            //                                isActive: true
+            //                            },
+            //                            fields: [
+            //                                'heroName'
+            //                            ]
+            //                        }
+            //                    })
+            //                    .$promise;
+            //                }]
+            //            }
+            //        }
+            //    },
+            //    access: { auth: true, admin: true },
+            //    seo: { title: 'Admin', description: '', keywords: '' }
+            //})
             .state('app.hots.guides.guide_new', {
                 url: '/new/:slug',
                 views: {
