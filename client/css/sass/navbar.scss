@@ -1,0 +1,333 @@
+@import 'ts-colors.scss';
+@import 'ts-mixins.scss';
+
+
+//*************************************
+// 1.. main Navbar
+//*************************************
+
+//mega nav overrides
+
+.navbar {
+    .gradient-add {
+        
+        @media screen and (min-width: 768px) {
+                z-index: 1;
+                position: relative;
+                
+            &:after {  //gradient hover
+                position: absolute;
+                content: '';
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255,255,255,0.2);
+                background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0.2)), color-stop(68%, rgba(255,255,255,0.02)), color-stop(69%, rgba(255,255,255,0.02)));
+                background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                background: -o-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                background: -ms-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.02) 69%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+                z-index: 1;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+
+            } // gradient
+
+            &.active {
+                &:after {
+                    opacity: 0.5;
+                }
+            }
+
+            &:hover {
+                transition: 0.5s ease;
+                color: $white;
+
+                 &:after {
+                    opacity: 0.7;
+                    transition: opacity 0.5s ease;
+                }
+            }
+        }
+    } // gradient-add
+    
+    .dropdown-menu {
+        border: 0px solid transparent;
+        li { 
+            >a {
+                padding-left: 25px;
+                
+                @media screen and (min-width: 768px) {
+                
+                    .list-accent-div {
+                        opacity: 0;
+                        background-color: rgba($ts-blue, 1);
+                        width: 6px;
+                        height: 30px;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        z-index: 5;
+                        transition: 0.2s ease;
+                    }
+
+                    &:hover {
+                        .list-accent-div {
+                            opacity: 0.5;
+                            transition: 0.2s ease;
+                        }
+                    }
+
+                    &.active {
+                        .list-accent-div {
+                            opacity: 1;
+                            transition: 0.2s ease;
+                        }
+                    }
+                }
+                
+                @media screen and (max-width: 768px) {
+                    
+                    &.active {
+                    
+                        background-color: $ts-blue;
+                        color: $white !important;
+                        
+                        &:hover {
+                            background-color: $ts-blue;
+                        }
+                    }
+                }
+            }
+        }
+        
+    } // dropdown-menu 
+    
+    .navbar-nav {
+        > li {
+            &.dropdown-grid {
+                &.open {
+                    
+                    @media screen and (min-width: 768px) {
+                        .nav-accent-div {
+                            opacity: 1;
+                            transition: 0.2s ease;
+                            background-color: rgba($ts-blue, 1);
+                        }
+                    }
+                    
+                    @media screen and (min-width: 768px) {
+                        
+                            background-color: $ts-blue;
+                    }
+                }
+                
+                > .dropdown-grid-wrapper { 
+                    > .dropdown-menu {
+                        padding-left: 0px;
+                        padding-top: 0px;
+                        padding-right: 0px;
+                        
+                        .section-img {
+                            display: none;
+                        }
+                        
+                        @media screen and (min-width: 992px) {
+                            
+                            .section-img {
+                                display: block;
+                                width: 100%;
+                                height: auto;
+                                margin-bottom: 10px;
+                            }
+                            
+                            .game-list-border {
+                                border-right: 1px solid rgba($white, .15);
+                                height: 225px;
+                            }
+                        }
+                    }
+                }
+            }
+        } // > li
+        
+        .game-head-link { 
+            display: block; 
+            padding: 5px 15px 5px 25px; 
+            font-size: 16px; 
+            line-height: 20px; 
+            white-space: nowrap; 
+            font-weight: 700; 
+            color: rgba($white, .75) !important;
+            text-transform: uppercase;
+            transition: 0.2s ease;
+            margin-top: 10px; 
+            
+            &:hover {
+                color: rgba($white, 1);
+                transition: 0.2s ease;
+            }
+        }
+    }
+} // mega nav overrides navbar bookend class
+
+/* nav bar */
+.navbar-tempo {
+    margin-bottom: 0px;
+    height: 52px;
+    background: #1b1b1b;
+    color: #2766ad;
+    border-bottom: 2px solid #000;
+}
+
+
+.navbar-tempo .navbar-header { margin-left: 0px !important; }
+.navbar-tempo .navbar-toggle { margin-right: 0px !important; }
+/*.navbar-tempo .nav.navbar-nav { margin: 0px; }*/
+
+@media (min-width: 980px) {
+    .navbar .navbar-center {
+        margin: 0 auto;
+        display: table;
+        table-layout: fixed;
+        float: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .navbar .navbar-right {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+    }
+}
+/*.navbar-tempo .dropdown-header { border-bottom: 1px solid #2766ad; }*/
+
+.navbar-tempo .navbar-brand {
+    margin: 6px 10px 6px 15px;
+    width: 40px;
+    height: 40px;
+    background: url('../img/logo_white.png') no-repeat;
+    background-position: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-indent: -99999px;
+}
+.navbar-tempo .navbar-nav .dropdown-menu { background: #1B1B1B; }
+.navbar-tempo .navbar-nav > li { margin-bottom: -1px; }
+.navbar-tempo .navbar-nav > li > a {
+    color: rgba(255,255,255,.4) !important;
+    font-weight:bold;
+    letter-spacing: 1px;
+    text-shadow: none;
+    background: #1B1B1B !important;
+    
+    
+    .nav-accent-div {
+        width: 100%;
+        height: 6px;
+        background-color: rgba($ts-blue, 0.5);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        opacity: 0;
+        transition: 0.2s ease;
+
+        @media screen and (max-width: 768px) {
+            display: none;
+        }
+    }
+}
+
+.navbar-tempo .navbar-nav > li > a:hover {
+    color: rgba(255,255,255,.6) !important;
+    font-weight:bold;
+    letter-spacing: 1px;
+    text-shadow: none;
+    background: #1B1B1B !important;
+    
+    @media screen and (min-width: 768px) {
+        .nav-accent-div {
+            opacity: 1;
+            transition: 0.2s ease;
+        }
+    }
+}
+
+.navbar-tempo .navbar-nav > .active > a,
+.navbar-tempo .navbar-nav > .active > a:hover,
+.navbar-tempo .navbar-nav > .active > a:focus {
+    color: #FFF !important;
+    
+    @media screen and (min-width: 768px) {
+        .nav-accent-div {
+            opacity: 1;
+            transition: 0.2s ease;
+            background-color: rgba($ts-blue, 1);
+        }
+    }
+    
+    @media screen and (max-width: 768px) {
+        background-color: $ts-blue!important;
+    }
+}
+
+.navbar-tempo .navbar-nav > .open > a,
+.navbar-tempo .navbar-nav > .open > a:focus {
+    color: #FFF !important;
+    
+    @media screen and (max-width: 768px) { 
+        background-color: $ts-blue !important;
+    }
+
+    .nav-accent-div {
+        display: block;
+    }
+}
+
+.navbar-tempo .dropdown-menu { border-top: 2px solid #2766ad; }
+.navbar-tempo .dropdown-menu li a:focus,
+.navbar-tempo .dropdown-menu li a:hover { background: none; color: white!important; }
+
+.navbar { 
+    .navbar-nav {
+        @media screen and (max-width: 767px) {
+            margin-top: -1px;
+        }
+    }
+}
+
+.navbar-nav .dropdown-menu li { min-width: 200px; }
+
+.navbar-nav .dropdown-menu li,
+.navbar-nav .dropdown-menu li a { color: rgba(255,255,255,.4); }
+.navbar-nav .dropdown-menu li.sub a,
+.navbar-nav .dropdown-menu li.sub { color: rgba(255,255,255,.5); }
+.navbar-nav .dropdown-menu li.sub a:hover { color: rgba(255,255,255, 1) !important; }
+.navbar-nav .dropdown-menu li a:focus { color: rgba(255,255,255,.5) !important; border: none; outline: none; }
+//.navbar-nav .dropdown-menu li.active a,
+//.navbar-nav .dropdown-menu li a.active { background: #2766ad; color: #FFF !important; }
+
+.navbar-default {
+    .navbar-collapse {
+        border-color: $ts-blue;
+    }
+}
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover { color: #FFF !important; }
+
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover { background: #2766ad; border-color: #083f7d; }
+.navbar-default .navbar-toggle:focus .icon-bar, .navbar-default .navbar-toggle:hover .icon-bar { background-color: #FFF; }
+.navbar-default .navbar-nav .open .dropdown-menu > li > a { padding-top: 10px; padding-bottom: 11px; }
+
+
+/* mega nav fix */
+.navbar:not(.no-border) .navbar-nav>li.dropdown-grid>.dropdown-grid-wrapper>.dropdown-menu, .navbar:not(.no-border) .navbar-nav>li[class*=dropdown]>.dropdown-menu {
+    margin-top: 0px;
+}
+.navbar:not(.no-border) .navbar-nav>li.dropdown-grid>.dropdown-grid-wrapper>.dropdown-menu.dropdown-user-login, .navbar:not(.no-border) .navbar-nav>li[class*=dropdown]>.dropdown-menu.dropdown-user-login {
+    margin-top: 2px;
+}

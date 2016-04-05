@@ -598,24 +598,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background-color: #2766ad;
 }
 
-//*************************************
-// 3.1.. main Navbar
-//*************************************
 
-
-/* nav bar */
-.navbar-tempo {
-    margin-bottom: 0px;
-    height: 52px;
-    background: #1b1b1b;
-    color: #2766ad;
-    border-bottom: 2px solid #000;
-}
-
-
-.navbar-tempo .navbar-header { margin-left: 0px !important; }
-.navbar-tempo .navbar-toggle { margin-right: 0px !important; }
-/*.navbar-tempo .nav.navbar-nav { margin: 0px; }*/
+//moved main navbar to navbar.scss
 
 @media (min-width: 980px) {
     .navbar .navbar-center {
