@@ -184,8 +184,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article',
-        function ($scope, $sce, articles, articlesTotal, Article) {
+    .controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article', 'Util',
+        function ($scope, $sce, articles, articlesTotal, Article, Util) {
             // data
             $scope.articles = {
                 loading: false,
@@ -275,7 +275,6 @@ angular.module('app.controllers', ['ngCookies'])
                             _.each(data, function (article) {
                                 // init template variables
                                 article.slug = Util.setSlug(data);
-                                console.log('article:', article);
                             });
                             
                             $scope.articles.data = $scope.articles.data.concat(data);
