@@ -1,0 +1,28 @@
+@import 'ts-colors.scss';
+
+.ts-admin-styles {
+
+    .note-toolbar {
+        &.panel-heading {
+            height: 100%;
+        }
+    }
+    
+    .note-editor { 
+        
+        &.panel {
+            background: transparent;
+        }
+        
+        .note-editing-area { 
+            .note-editable {
+                
+                
+                
+                &.panel-body {
+                    background: $white-08;
+                }
+            }
+        }
+    }
+}
