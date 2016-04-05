@@ -2399,9 +2399,10 @@ angular.module('app.directives', ['ui.load'])
         restict: 'A',
         templateUrl: tpl + 'views/admin/directives/hs.snapshot.load-previous.html',
         controller: ['$scope', function ($scope) {
-            
+
         }]
     };
+})
 .directive('hotsSnapshotGeneral', function () {
     return {
         restrict: 'E',

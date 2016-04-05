@@ -1,11 +1,7 @@
 module.exports = {
     /* build */
     first: ['clean:js', 'clean:css', 'clean:sass'],
-<<<<<<< HEAD
-    second: ['compass:build', 'compass:asense', 'compass:modules_', 'loopback_sdk_angular:build'],
-=======
     second: ['compass:build', 'compass:modules_'/*, 'loopback_sdk_angular:build'*/],
->>>>>>> nuclear-blast-zone
     third: ['newer:concat', 'newer:htmlmin:dist', 'newer:htmlmin:modules_'],
     fourth: ['newer:uglify', 'newer:cssmin'/*, 'newer:imagemin'*/],
     fifth: ['hash', 'newer:copy:fonts', 'newer:copy:modules_audio'],
