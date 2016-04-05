@@ -603,6 +603,8 @@ var app = angular.module('app', [
                             }],
                             article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
                                 var slug = $stateParams.slug;
+                                
+                                console.log('looking for:', slug);
 
                                 return Article.findOne({
                                     filter: {
@@ -649,8 +651,7 @@ var app = angular.module('app', [
                                                        "photoNames",
                                                        "authorId",
                                                        "voteScore",
-                                                       "articleType",
-                                                       "slug"
+                                                       "articleType"
                                                    ],
                                                    include: [
                                                        {
@@ -659,6 +660,12 @@ var app = angular.module('app', [
                                                                fields: [
                                                                    "username"
                                                                ]
+                                                           }
+                                                       },
+                                                       {
+                                                           relation: 'slugs',
+                                                           scope: {
+                                                               fields: ['linked', 'slug']
                                                            }
                                                        }
                                                    ]
@@ -697,15 +704,20 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise
-                                .then(function (data) {
+                                .then(function (article) {
                                     // init template vars
-                                    data.slug = {
+                                    article.slug = {
                                         url: slug
                                     };
                                     
-                                    data.voteScore = Util.tally(data.votes, 'direction');
+                                    article.voteScore = Util.tally(article.votes, 'direction');
+
+                                    _.each(article.relatedArticles, function (relatedArticle) {
+                                        relatedArticle.slug = Util.setSlug(relatedArticle);
+                                    });
                                     
-                                    return data;
+                                    console.log('article:', article);
+                                    return article;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
@@ -824,15 +836,15 @@ var app = angular.module('app', [
                                               limit: 10,
                                               order: "createdDate DESC",
                                               where: tsDeckWhere,
-                                              fields: {
-                                                  id: true,
-                                                  name: true,
-                                                  playerClass: true,
-                                                  heroName: true,
-                                                  premium: true,
-                                                  authorId: true,
-                                                  createdDate: true
-                                              },
+                                              fields: [
+                                                  'id',
+                                                  'name',
+                                                  'playerClass',
+                                                  'heroName',
+                                                  'premium',
+                                                  'authorId',
+                                                  'createdDate'
+                                              ],
                                               include: [
                                                   {
                                                       relation: 'slugs',
@@ -905,6 +917,7 @@ var app = angular.module('app', [
                                 return Deck.find(filterParams.tsDeckParams.options)
                                 .$promise
                                 .then(function (tempoDecks) {
+                                    console.log('tempoDecks:', tempoDecks);
                                     _.each(tempoDecks, function(tempoDeck) {
                                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
                                         tempoDeck.slug = Util.setSlug(tempoDeck);
