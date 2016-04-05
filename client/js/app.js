@@ -904,10 +904,11 @@ var app = angular.module('app', [
                                 });
                             }],
                             dataDecksTempostorm: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
-//                                console.log('filterParams.tsDeckParams', filterParams.tsDeckParams);
+                                console.log('filterParams.tsDeckParams', filterParams.tsDeckParams);
                                 return Deck.find(filterParams.tsDeckParams.options)
                                 .$promise
                                 .then(function (tempoDecks) {
+                                    console.log('tempoDecks:', tempoDecks);
                                     _.each(tempoDecks, function(tempoDeck) {
                                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
                                         tempoDeck.slug = Util.setSlug(tempoDeck);
@@ -920,6 +921,7 @@ var app = angular.module('app', [
                                 return Deck.find(filterParams.comDeckParams.options)
                                 .$promise
                                 .then(function (comDecks) {
+                                    console.log('comDecks:', comDecks);
                                     _.each(comDecks, function(comDeck) {
                                         comDeck.voteScore = Util.tally(comDeck.votes, 'direction');
                                         comDeck.slug = Util.setSlug(comDeck);
