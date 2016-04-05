@@ -273,8 +273,9 @@ angular.module('app.controllers', ['ngCookies'])
                         }).$promise.then(function (data) {
                             
                             _.each(data, function (article) {
-                                // init template vars
+                                // init template variables
                                 article.slug = Util.setSlug(data);
+                                console.log('article:', article);
                             });
                             
                             $scope.articles.data = $scope.articles.data.concat(data);
