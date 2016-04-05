@@ -1,6 +1,6 @@
 <alert-box theme="admin"></alert-box>
 
-<div class="panel panel-default br-none">
+<div class="panel panel-default br-none polls-section">
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">
         <h3><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Poll</h3>
@@ -47,27 +47,28 @@
             </div>
 
             <div ng-if="page === 'items'">
-                <div class="panel panel-default">
-                    <div class="panel-heading clearfix">
-                        <a href="#" class="btn btn-sm btn-green btn-rounded pull-right"
-                           ng-click="poll.itemAddPrompt()">
-                            <i class="fa fa-plus-circle m-r-xs"></i>Add
-                        </a>
-                        <strong class="lh-lg">Items</strong>
-                    </div>
-                    <ul class="admin-list padding-none" dnd-list="poll.items" ng-show="poll.items.length">
-                        <li class="admin-list-item clearfix"
+                <div class="panel panel-fix">
+                    <ul class="admin-list padding-none m-b-none" dnd-list="poll.items" ng-show="poll.items.length">
+                        <li class="admin-list-item gradient-add clearfix"
                             ng-repeat="pollItem in poll.items"
                             dnd-draggable="item"
                             dnd-moved="poll.pollItemsUpdateDND(poll.items, $index)"
                             dnd-disable-if="poll.items.length < 2"
                         >
-                            <div class="list-accent-div">
-                                <span class="snapshot-list-item">{{pollItem.name}}</span>
-                                <div class="snapshot-list-item pull-right">
-                                    <button class="btn btn-default" ng-click="poll.pollItemEditWnd(pollItem)">Edit</button>
-                                    <button class="btn btn-danger" ng-click="poll.pollItemDeletePrompt(pollItem)">Delete</button>
+                            <div class="list-accent-div pointer-item" ng-click="poll.pollItemEditWnd(pollItem)">
+                                <span class="full-div">{{pollItem.name}}</span>
+                                <div class="btn-group pull-right">
+<!--                                    <button class="btn btn-default" ng-click="poll.pollItemEditWnd(pollItem)">Edit</button>-->
+                                    <button type="button" class="btn btn-remove btn-xs" ng-click="poll.pollItemDeletePrompt(pollItem)"><i class="fa fa-close"></i></button>
                                 </div>
+                            </div>
+                        </li>
+                        <li class="admin-list-item gradient-add clearfix">
+                            <div class="list-accent-div">
+                                <a href="#" class="add-element"
+                               ng-click="poll.itemAddPrompt()">
+                                <i class="fa fa-plus-circle"></i>Add Poll
+                                </a>
                             </div>
                         </li>
                     </ul>

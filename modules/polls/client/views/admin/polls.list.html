@@ -29,14 +29,14 @@
         </div>
     </div>
     <div class="admin-list">
-        <div class="admin-list-item snapshot-list clearfix" ng-repeat="poll in polls">
+        <div class="admin-list-item list-items clearfix" ng-repeat="poll in polls">
             <div class="list-accent-div">
                 <div class="row">
                     <div class="col-sm-6">
-                        <span class="snapshot-list-item">{{poll.title}}</span>
+                        <span class="list-item-height">{{poll.title}}</span>
                     </div>
                     <div class="col-sm-6">
-                        <div class="pull-right btn-toolbar snapshot-list-item">
+                        <div class="pull-right btn-toolbar list-item-height">
                             <a href="./admin/polls/edit/{{poll.id}}" class="btn btn-default">Edit</a>
                             <button class="btn btn-danger" ng-click="deletePoll(poll)">Delete</button>
                         </div>
