@@ -800,7 +800,6 @@ var app = angular.module('app', [
                                                     createdDate: true,
                                                     description: true,
                                                     photoNames: true,
-                                                    slug: true,
                                                     themeName: true,
                                                     title: true,
                                                     premium: true
@@ -825,15 +824,15 @@ var app = angular.module('app', [
                                               limit: 10,
                                               order: "createdDate DESC",
                                               where: tsDeckWhere,
-                                              fields: [
-                                                  'id',
-                                                  'name',
-                                                  'playerClass',
-                                                  'heroName',
-                                                  'premium',
-                                                  'authorId',
-                                                  'createdDate'
-                                              ],
+                                              fields: {
+                                                  id: true,
+                                                  name: true,
+                                                  playerClass: true,
+                                                  heroName: true,
+                                                  premium: true,
+                                                  authorId: true,
+                                                  createdDate: true
+                                              },
                                               include: [
                                                   {
                                                       relation: 'slugs',
@@ -847,7 +846,7 @@ var app = angular.module('app', [
                                                   {
                                                       relation: "votes",
                                                       scope: {
-                                                          fields: ['authorId', 'direction']
+                                                          fields: ['direction']
                                                       }
                                                   }
                                               ]
@@ -867,7 +866,6 @@ var app = angular.module('app', [
                                                 heroName: true,
                                                 premium: true,
                                                 authorId: true,
-                                                slug: true,
                                                 createdDate: true
                                               },
                                               include: [
@@ -904,11 +902,9 @@ var app = angular.module('app', [
                                 });
                             }],
                             dataDecksTempostorm: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
-                                console.log('filterParams.tsDeckParams', filterParams.tsDeckParams);
                                 return Deck.find(filterParams.tsDeckParams.options)
                                 .$promise
                                 .then(function (tempoDecks) {
-                                    console.log('tempoDecks:', tempoDecks);
                                     _.each(tempoDecks, function(tempoDeck) {
                                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
                                         tempoDeck.slug = Util.setSlug(tempoDeck);
@@ -921,7 +917,6 @@ var app = angular.module('app', [
                                 return Deck.find(filterParams.comDeckParams.options)
                                 .$promise
                                 .then(function (comDecks) {
-                                    console.log('comDecks:', comDecks);
                                     _.each(comDecks, function(comDeck) {
                                         comDeck.voteScore = Util.tally(comDeck.votes, 'direction');
                                         comDeck.slug = Util.setSlug(comDeck);

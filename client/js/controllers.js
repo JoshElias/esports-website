@@ -270,7 +270,9 @@ angular.module('app.controllers', ['ngCookies'])
                                 skip: $scope.articles.data.length,
                                 limit: num
                             }
-                        }).$promise.then(function (data) {
+                        })
+                        .$promise
+                        .then(function (data) {
                             
                             _.each(data, function (article) {
                                 // init template variables
