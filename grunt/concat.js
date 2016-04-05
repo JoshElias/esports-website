@@ -21,7 +21,7 @@ module.exports = {
                 'client/vendor/async/dist/async.min.js',
                 'client/vendor/jrumble/jquery.jrumble.min.js',
                 'client/vendor/jqueryui-touch-punch/jquery.ui.touch-punch.js',
-                'client/vendor/angular-svg-round-progressbar/roundProgress.min.js'
+                'client/vendor/angular-svg-round-progressbar/build/roundProgress.min.js'
 
             ],
             'client/dist/js/angular.js': [
