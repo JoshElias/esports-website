@@ -9,10 +9,12 @@
   },
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "abilityType": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "description": {
       "type": "string"
@@ -21,7 +23,8 @@
       "type": "string"
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "healing": {
       "type": "number"
@@ -33,12 +36,15 @@
       "type": "number"
     },
     "mana": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "charNames": {
       "type": []
     },
-    "heroId": {}
+    "heroId": {
+      "index": 1
+    }
   },
   "validations": [],
   "relations": {

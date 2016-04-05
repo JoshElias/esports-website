@@ -8,15 +8,23 @@
   },
   "properties": {
     "tier": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "orderNum": {
       "type": "number",
-      "required": true
+      "required": true,
+      "index": 1
     },
-    "heroId": {},
-    "talentId": {},
-    "abilityId": {}
+    "heroId": {
+      "index": 1
+    },
+    "talentId": {
+      "index": 1
+    },
+    "abilityId": {
+      "index": 1
+    }
   },
   "relations": {
     "hero": {

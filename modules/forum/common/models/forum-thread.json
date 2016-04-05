@@ -12,7 +12,8 @@
       "type": "number"
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "description": {
       "type": "string",
@@ -20,9 +21,12 @@
     },
     "title": {
       "type": "string",
+      "index": 1,
       "Validate": ["spam"]
     },
-    "forumCategoryId": {}
+    "forumCategoryId": {
+      "index": 1
+    }
   },
   "relations": {
     "forumPosts": {

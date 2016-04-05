@@ -11,7 +11,8 @@
       "type": "string"
     },
     "tier": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "previousTiers": {
       "type": ["number"],
@@ -33,12 +34,16 @@
       "type": "number"
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
-    "heroId": {},
-    "snapshotId": {}
+    "heroId": {
+      "index": 1
+    },
+    "snapshotId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
       "snapshot": {
           "type": "belongsTo",
@@ -80,6 +85,5 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

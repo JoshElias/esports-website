@@ -8,27 +8,29 @@
   },
   "properties": {
     "snapNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "title": {
       "type": "string",
+      "index": 1,
       "Slug": true
     },
     "intro": {
-        "type": "string"
+      "type": "string"
     },
     "thoughts": {
-        "type": "string"
+      "type": "string"
     },
     "isActive": {
-        "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "isCommentable": {
         "type": "boolean",
         "default": true
     }
   },
-  "validations": [],
   "relations": {
       "heroTiers": {
           "type": "hasMany",
