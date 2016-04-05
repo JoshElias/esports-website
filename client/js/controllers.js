@@ -2473,13 +2473,31 @@ angular.module('app.controllers', ['ngCookies'])
                     ArticleArticle.createMany(relatedArticleArticle)
                     .$promise
                     .then(function (relatedArticles) {
+                        return wateryCB(null, articleCreated);
+                    })
+                    .catch(function (err) {
+                        return wateryCB(err);
+                    });
+                },
+                function (articleCreated, wateryCB) {
+                    var freeVote = {
+                        direction: 1,
+                        createdDate: new Date().toISOString(),
+                        authorId: User.getCurrentId()
+                    };
+                    
+                    Article.votes.create({
+                        id: articleCreated.id
+                    }, freeVote)
+                    .$promise
+                    .then(function (freeVote) {
                         return wateryCB(null);
                     })
                     .catch(function (err) {
                         return wateryCB(err);
                     });
                 }
-            ], function(err, results) {
+            ], function(err) {
                 $scope.fetching = false;
                 $window.scrollTo(0, 0);
                 if (err) {
@@ -17582,7 +17600,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-//              console.log('okay...here we go...');
                 if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                     return false;
                 }
@@ -17619,7 +17636,6 @@ angular.module('app.controllers', ['ngCookies'])
                         'maps'
                     ]);
                     
-                    console.log('cleanMapGuide:', cleanMapGuide);
                     var guideCreated;
                     async.waterfall([
                         function (waterCB) {

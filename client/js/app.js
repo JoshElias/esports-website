@@ -598,8 +598,6 @@ var app = angular.module('app', [
                             }],
                             article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
                                 var slug = $stateParams.slug;
-                                console.log("looking for slug:", slug);
-
 
                                 return Article.findOne({
                                     filter: {
@@ -695,13 +693,11 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
-                                    // create slug as it was moved from model
+                                    // init template vars
                                     data.slug = {
                                         url: slug
                                     };
                                     
-                                    // tally votescore
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     
                                     return data;
@@ -2907,7 +2903,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
                                     data.slug = Util.setSlug(data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
@@ -4178,6 +4173,12 @@ var app = angular.module('app', [
                                                 scope: {
                                                     fields: ['id', 'authorId', 'direction']
                                                 }
+                                            },
+                                            {
+                                                relation: 'slugs',
+                                                scope: {
+                                                    fields: ['slug', 'linked']
+                                                }
                                             }
                                         ]
                                     }
@@ -4185,6 +4186,8 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (articles) {
                                     _.each(articles, function(article) {
+                                        // init template vars
+                                        article.slug = Util.setSlug(article);
                                         article.voteScore = Util.tally(article.votes, 'direction');
                                     });
 
@@ -4257,7 +4260,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (decks) {
-                                    console.log('decks:', decks);
                                     _.each(decks, function(deck) {
                                         // init template vars
                                         deck.slug = Util.setSlug(deck);
