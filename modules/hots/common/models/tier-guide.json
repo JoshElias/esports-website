@@ -7,10 +7,14 @@
     "validateUpsert": true
   },
   "properties": {
-    "heroTierId": {},
-    "guideId": {},
     "orderNum": {
-        "type": "number"
+      "type": "number"
+    },
+    "heroTierId": {
+      "index": 1
+    },
+    "guideId": {
+      "index": 1
     }
   },
   "validations": [],

@@ -8,10 +8,13 @@
     "validateUpsert": true
   },
   "properties": {
-    "guideId": {},
-    "mapId": {}
+    "guideId": {
+      "index": 1
+    },
+    "mapId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "guide": {
       "type": "belongsTo",
@@ -24,7 +27,6 @@
       "foreignKey": "mapId"
     }
   },
-  "acls": [],
   "mixins": {
     "DestroyOnDelete": true,
     "Scope": true

@@ -10,9 +10,15 @@
     "tier": {
       "type": "number"
     },
-    "guideId": {},
-    "heroId": {},
-    "talentId": {}
+    "guideId": {
+      "index": 1
+    },
+    "heroId": {
+      "index": 1
+    },
+    "talentId": {
+      "index": 1
+    }
   },
   "relations": {
     "guide": {

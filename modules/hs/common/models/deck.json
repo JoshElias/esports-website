@@ -47,11 +47,13 @@
       "Validate": ["spam"]
     },
     "isFeatured": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "name": {
       "type": "string",
       "required": true,
+      "index": 1,
       "Validate": ["spam"],
       "Slug": true
     },

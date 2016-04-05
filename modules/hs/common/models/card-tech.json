@@ -9,7 +9,8 @@
   },
   "properties": {
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "both": {
       "type": "boolean"
@@ -17,8 +18,12 @@
     "toss": {
       "type": "boolean"
     },
-    "cardId": {},
-    "deckTechId": {}
+    "cardId": {
+      "index": 1
+    },
+    "deckTechId": {
+      "index": 1
+    }
   },
   "relations": {
     "deckTech": {
