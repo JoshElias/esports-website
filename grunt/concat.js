@@ -20,8 +20,7 @@ module.exports = {
                 'client/vendor/underscore/underscore-min.js',
                 'client/vendor/async/dist/async.min.js',
                 'client/vendor/jrumble/jquery.jrumble.min.js',
-                'client/vendor/jqueryui-touch-punch/jquery.ui.touch-punch.js',
-                'client/vendor/angular-svg-round-progressbar/build/roundProgress.min.js'
+                'client/vendor/jqueryui-touch-punch/jquery.ui.touch-punch.js'
             ],
             'client/dist/js/angular.js': [
                 'client/vendor/angular/angular.js',
@@ -46,7 +45,8 @@ module.exports = {
                 'client/vendor/ngstorage/ngStorage.min.js',
                 'client/vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js',
                 'client/vendor/angular-animate/angular-animate.min.js',
-                'client/vendor/angular-iscroll/dist/lib/angular-iscroll.js'
+                'client/vendor/angular-iscroll/dist/lib/angular-iscroll.js',
+                'client/vendor/angular-svg-round-progressbar/build/roundProgress.min.js'
             ],
             'client/dist/js/app.js': [
                 'client/js/app.js',
