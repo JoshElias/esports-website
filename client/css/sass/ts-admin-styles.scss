@@ -1326,6 +1326,10 @@ body.admin {
 			transition: padding 0s;
 			transition: border 0.5s ease;
 			//border-left: 0px solid transparent;
+            
+            &.list-underline {
+                border-bottom: 1px solid rgba($ts-blue, 0.5);
+            }
 
 			&.list-items {
 
