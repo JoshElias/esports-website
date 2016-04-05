@@ -239,7 +239,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-                            articles: ['Article', function (Article) {
+                            articles: ['Article', 'Util', function (Article, Util) {
                                 var offset = 1,
                                     num = 6;
 
