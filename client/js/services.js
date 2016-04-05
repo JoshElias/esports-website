@@ -611,6 +611,8 @@ angular.module('app.services', [])
                 tierGuide['guideId'] = guide.id;
                 tierGuide['heroTierId'] = hero.id || "";
 
+                console.log(hero.guides);
+
                 //this is temporary until we decide to enable multiple guides per hero
                 if (hero.guides && hero.guides.length > 0 && hero.guides[0].id) {
                     _.each(hero.guides, function (tierGuide) {

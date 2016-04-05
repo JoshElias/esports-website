@@ -1,8 +1,15 @@
-<div>
-    <div class="col-md-4 m-t-lg">
-        <div class="form-group">
+<div class="row">
+    <div class="col-md-12 col-lg-3 leftside-content padding-none">
+        <ul class="edit-nav m-b-md">
+            <li class="pull-left selected" ><a ui-sref="app.admin.hots.snapshots.snapshot.general">General</a></li>
+            <li class="pull-left" ><a ui-sref="app.admin.hots.snapshots.snapshot.authors">Authors</a></li>
+            <li class="pull-left" ><a ui-sref="app.admin.hots.snapshots.snapshot.tierlist">tierlist</a></li>
+        </ul>
+        
+        <div class="form-group snap-title-group">
             <label class="control-label" for="title">Title</label>
-            <div class="input-group">
+
+            <div class="input-group wide-input">
                 <input ng-model="snapshot.title"
                        ng-keyup="slugifyUrl(snapshot.title)"
                        class="form-control"
@@ -12,9 +19,9 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="url">URL</label>
-            <div class="input-group" ng-repeat="slug in snapshot.slugs">
+        <div class="form-group m-t-md">
+            <label for="url" class="control-label pull-left">URL</label>
+            <div class="input-group pull-left" ng-repeat="slug in snapshot.slugs">
                 <span class="input-group-btn">
                     <button ng-click="toggleLinked()"
                             ng-class="{ 'active': slug.linked }"
@@ -53,8 +60,8 @@
             <!--</div>-->
         <!--</div>-->
 
-        <div class="col-lg-12">
-            <button class="btn active-btn"
+        <div class="form-group m-b-lg">
+            <button class="btn btn-default control-btn m-t-lg"
                     ng-class="{ active: snapshot.isActive }"
                     ng-click="snapshot.isActive = !snapshot.isActive"
                     ng-mouseover="activeHover = true"
@@ -66,18 +73,16 @@
                 <span ng-if="!snapshot.isActive && !activeHover">inactive</span>
                 <span ng-if="snapshot.isActive && !activeHover">active</span>
             </button>
-
-            {{snapshot.isActive}}
         </div>
     </div>
-    <div class="col-md-8">
-        <div class="form-group">
+    <div class="col-md-12 col-lg-9 general-section m-b-md">
+        <div class="form-group m-t-sm">
             <label for="introduction" class="control-label">INTRODUCTION</label>
-            <textarea ng-model="snapshot.intro" id="introduction" rows="10" class="form-control"></textarea>
+            <textarea ng-model="snapshot.intro" id="introduction" rows="12" class="form-control"></textarea>
         </div>
-        <div class="form-group">
+        <div class="form-group m-t-sm">
             <label for="thoughts" class="control-label">THOUGHTS AND OBSERVATIONS</label>
-            <textarea ng-model="snapshot.thoughts" id="thoughts" rows="10" class="form-control"></textarea>
+            <textarea ng-model="snapshot.thoughts" id="thoughts" rows="12" class="form-control"></textarea>
         </div>
     </div>
 </div>

@@ -10,10 +10,12 @@
   "properties": {
     "title": {
       "type": "string",
+      "index": 1,
       "Validate": ["spam"]
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "__v": {
       "type": "number"

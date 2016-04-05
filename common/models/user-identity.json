@@ -8,7 +8,9 @@
     "validateUpsert": true
   },
   "properties": {
-    "userId": {}
+    "userId": {
+      "index": 1
+    }
   },
   "relations": {
     "user": {

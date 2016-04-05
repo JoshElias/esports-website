@@ -8,10 +8,12 @@
   },
   "properties": {
     "screenName": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "fullName": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "description": {
       "type": "string"
@@ -23,16 +25,19 @@
       "type": "string"
     },
     "game": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "teamId": {
-      "type": {}
+      "index": 1
     }
   },
   "relations": {

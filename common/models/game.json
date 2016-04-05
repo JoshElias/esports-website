@@ -12,10 +12,12 @@
     },
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     }
   },
   "relations": {
