@@ -9,7 +9,8 @@
   },
   "properties": {
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "characters": {
       "type": [
@@ -17,34 +18,41 @@
       ]
     },
     "className": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "description": {
       "type": "string"
     },
     "heroType": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "manaType": {
       "type": "string"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "price": {
-      "type": "object"
+      "type": "object",
+      "index": 1
     },
     "role": {
       "type": "string"
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "universe": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "talentTiers": {
       "type": "object"

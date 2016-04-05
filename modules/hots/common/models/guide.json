@@ -10,6 +10,7 @@
     "name": {
       "type": "string",
       "required": true,
+      "index": 1,
       "Validate": ["spam"],
       "Slug": true
     },
@@ -28,9 +29,6 @@
       "type": "string",
       "Validate": ["youtubeId"]
     },
-    "createdDate": {
-      "type": "date"
-    },
     "isCommentable": {
       "type": "boolean",
       "default": true
@@ -39,7 +37,8 @@
       "type": "object"
     },
     "isFeatured": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "viewCount": {
       "type": "number"
