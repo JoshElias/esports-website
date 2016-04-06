@@ -8,8 +8,7 @@
   },
   "properties": {
     "tier": {
-      "type": "number",
-      "index": 1
+      "type": "number"
     },
     "orderNum": {
       "type": "number",

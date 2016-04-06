@@ -27,7 +27,7 @@
       "required": true,
       "index": 1
     },
-    "heroId": {
+    "owHeroId": {
       "required": true,
       "index": 1
     }
@@ -35,8 +35,8 @@
   "relations": {
     "hero": {
       "type": "belongsTo",
-      "model": "overwatchHero",
-      "foreignKey": "heroId"
+      "model": "owHero",
+      "foreignKey": "owHeroId"
     }
   },
   "acls": [

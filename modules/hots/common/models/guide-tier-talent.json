@@ -8,7 +8,6 @@
   },
   "properties": {
     "tier": {
-
       "type": "number"
     },
     "guideTierId": {
@@ -18,7 +17,6 @@
       "index": 1
     }
   },
-  "validations": [],
   "relations": {
     "guideTier": {
       "type": "belongsTo",
@@ -55,6 +53,5 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

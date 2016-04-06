@@ -10,9 +10,15 @@
     "orderNum": {
       "type": "number"
     },
-    "redbullDraftId": {},
-    "redbullExpansionId": {},
-    "ownerId": {}
+    "redbullDraftId": {
+      "index": 1
+    },
+    "redbullExpansionId": {
+      "index": 1
+    },
+    "ownerId": {
+      "index": 1
+    }
   },
   "relations": {
     "draft": {

@@ -8,16 +8,19 @@
   },
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "numOfPacks": {
       "type": "number"
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "className": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     }
   },
   "relations": {
