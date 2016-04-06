@@ -324,8 +324,7 @@ var app = angular.module('app', [
                                             }
                                         ],
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            content: false
                                         },
                                         order: 'createdDate DESC',
                                         limit: perpage
@@ -336,13 +335,11 @@ var app = angular.module('app', [
                                         owArticle.slug = Util.setSlug(owArticle);
                                     });
                                     
-                                    console.log('returning ow arts');
                                     return owArticles;
                                 });
                             }],
-                            heroes: ['owHero', function (owHero) {
-                                console.log('start ow heroes');
-                                return owHero.find({
+                            heroes: ['OwHero', function (OwHero) {
+                                return OwHero.find({
                                     filter: {
                                         where: {
                                             isActive: true
@@ -391,8 +388,8 @@ var app = angular.module('app', [
             .state('app.overwatch.heroes.redirect', {
                 url: '',
                 resolve: {
-                    hero: ['OverwatchHero', function (OverwatchHero) {
-                        return OverwatchHero.findOne({
+                    hero: ['OwHero', function (OwHero) {
+                        return OwHero.findOne({
                             filter: {
                                 where: {
                                     isActive: true
@@ -417,8 +414,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html',
                         controller: 'OverwatchHeroCtrl',
                         resolve: {
-                            heroes: ['OverwatchHero', function (OverwatchHero) {
-                                return OverwatchHero.find({
+                            heroes: ['OwHero', function (OwHero) {
+                                return OwHero.find({
                                     filter: {
                                         where: {
                                             isActive: true
@@ -432,9 +429,9 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
+                            hero: ['$stateParams', 'OwHero', function ($stateParams, OwHero) {
                                 var slug = $stateParams.slug;
-                                return OverwatchHero.findOne({
+                                return OwHero.findOne({
                                     filter: {
                                         where: {
                                             className: slug,
