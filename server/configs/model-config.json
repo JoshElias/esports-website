@@ -1,18 +1,4 @@
 {
-  "_meta": {
-    "sources": [
-      "loopback/common/models",
-      "loopback/server/models",
-      "../common/models",
-      "./models"
-    ],
-    "mixins": [
-      "loopback/common/mixins",
-      "loopback/server/mixins",
-      "../common/mixins",
-      "./mixins"
-    ]
-  },
   "AccessToken": {
     "dataSource": "mongodb",
     "public": false
@@ -184,19 +170,19 @@
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchHero": {
+  "OWHero": {
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchAbility": {
+  "OWAbility": {
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchSnapshot": {
+  "OWSnapshot": {
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchSnapshotHeroTier": {
+  "OWSnapshotHeroTier": {
     "dataSource": "mongodb",
     "public": true
   },

@@ -9,7 +9,8 @@
   "properties": {
     "className": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "instructionsWithCoin": {
       "type": "string"
@@ -18,7 +19,8 @@
       "type": "string"
     },
     "deckId": {
-        "required": true
+      "required": true,
+      "index": 1
     }
   },
   "relations": {

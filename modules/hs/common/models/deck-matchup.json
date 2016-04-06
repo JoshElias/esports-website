@@ -19,9 +19,15 @@
     "againstChance": {
       "type": "number"
     },
-    "forDeckId": {},
-    "againstDeckId": {},
-    "snapshotId": {}
+    "forDeckId": {
+      "index": 1
+    },
+    "againstDeckId": {
+      "index": 1
+    },
+    "snapshotId": {
+      "index": 1
+    }
   },
   "relations": {
     "forDeck": {

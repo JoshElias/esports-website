@@ -12,10 +12,12 @@
       "type": "number"
     },
     "cardId": {
-      "required": true
+      "required": true,
+      "index": 1
     },
     "deckId": {
-      "required": true
+      "required": true,
+      "index": 1
     }
   },
   "relations": {

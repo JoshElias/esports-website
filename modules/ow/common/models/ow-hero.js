@@ -1,6 +1,6 @@
-module.exports = function(OverwatchHero) {
+module.exports = function(OWHero) {
 
-    OverwatchHero.observe("persist", assignOrderNum);
+    OWHero.observe("persist", assignOrderNum);
 
     function assignOrderNum(ctx, finalCb) {
         if(!ctx.isNewInstance) return finalCb();
@@ -8,7 +8,7 @@ module.exports = function(OverwatchHero) {
         var data = ctx.data || ctx.instance;
 
         // Assign the orderNum to the current count of heroes
-        OverwatchHero.count(function(err, count) {
+        OWHero.count(function(err, count) {
             if(err) return finalCb(err);
 
             data.orderNum = count;

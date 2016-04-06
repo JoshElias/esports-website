@@ -1,6 +1,6 @@
 {
-  "name": "overwatchAbility",
-  "plural": "overwatchAbilities",
+  "name": "OWAbility",
+  "plural": "OWAbilities",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -10,7 +10,8 @@
   "properties": {
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "description": {
       "type": "string",
@@ -18,17 +19,19 @@
     },
     "className": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "orderNum": {
       "type": "number",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "heroId": {
-      "required": true
+      "required": true,
+      "index": 1
     }
   },
-  "validations": [],
   "relations": {
     "hero": {
       "type": "belongsTo",

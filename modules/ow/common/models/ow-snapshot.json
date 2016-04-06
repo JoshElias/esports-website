@@ -1,5 +1,5 @@
 {
-  "name": "overwatchSnapshot",
+  "name": "OWSnapshot",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
