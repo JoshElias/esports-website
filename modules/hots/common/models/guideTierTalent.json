@@ -1,5 +1,5 @@
 {
-  "name": "guideTier",
+  "name": "guideTierTalent",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,36 +7,28 @@
     "validateUpsert": true
   },
   "properties": {
-    "orderNum": {
+    "tier": {
+
       "type": "number"
     },
-    "heroTierId": {
+    "guideTierId": {
       "index": 1
     },
-    "guideId": {
+    "talentId": {
       "index": 1
     }
   },
+  "validations": [],
   "relations": {
-    "heroTier": {
+    "guideTier": {
       "type": "belongsTo",
-      "model": "heroTier",
-      "foreignKey": "heroTierId"
-    },
-    "guide": {
-      "type": "belongsTo",
-      "model": "guide",
-      "foreignKey": "guideId"
-    },
-    "guideTalents": {
-      "type": "hasMany",
-      "model": "guideTierTalent",
+      "model": "guideTier",
       "foreignKey": "guideTierId"
     },
-    "elegiggle": {
+    "talent": {
       "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "guideId"
+      "model": "talent",
+      "foreignKey": "talentId"
     }
   },
   "acls": [

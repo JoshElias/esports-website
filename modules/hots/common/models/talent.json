@@ -42,6 +42,11 @@
       "foreignKey": "talentId",
       "through": "heroTalent",
       "keyThrough": "heroId"
+    },
+    "guideTierTalent": {
+      "type": "belongsTo",
+      "model": "guideTierTalent",
+      "foreignKey": "talentId"
     }
   },
   "acls": [

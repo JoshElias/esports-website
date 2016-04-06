@@ -179,6 +179,9 @@ angular.module('hotsSnapshot', [])
                                                                         fields: ['id'],
                                                                         include: ["slugs"]
                                                                     }
+                                                                },
+                                                                {
+                                                                    relation: "talents"
                                                                 }
                                                             ]
                                                         }

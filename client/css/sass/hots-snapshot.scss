@@ -104,7 +104,7 @@
 		background-image: url(../img/backgrounds/hots-snapshot-bg.jpg);
 		background-color: #010101;
 		background-repeat: no-repeat;
-		background-size: 100%;
+		background-size: cover;
 		background-attachment: fixed;
 		background-position: top;
 
@@ -540,7 +540,7 @@
 				text-align: center;
 
 				@media screen and (max-width: 1200px){
-					top: 16%;
+					top: 27%;
 				}
 				@media screen and (max-width: 991px){
 					top: 22%;
