@@ -7,15 +7,17 @@
     "validateUpsert": true
   },
   "properties": {
-    "cardId": {
-      "required": true
-    },
-    "redbullDeckId": {
-      "required": true
-    },
     "cardQuantity": {
       "required": true,
       "type": "number"
+    },
+    "cardId": {
+      "required": true,
+      "index": 1
+    },
+    "redbullDeckId": {
+      "required": true,
+      "index": 1
     }
   },
   "relations": {

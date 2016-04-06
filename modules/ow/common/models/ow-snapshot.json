@@ -8,14 +8,16 @@
   },
   "properties": {
     "snapNum": {
-      "type": "number"
+      "type": "number",
+      "index": -1
     },
     "photoNames": {
       "type": "object"
     },
     "title": {
       "type": "string",
-      "$slug": true
+      "index": 1,
+      "Slug": true
     },
     "intro": {
         "type": "string"
@@ -24,10 +26,10 @@
         "type": "string"
     },
     "isActive": {
-        "type": "boolean"
+      "type": "boolean",
+      "index": 1
     }
   },
-  "validations": [],
   "relations": {
     "authors": {
       "type": "hasMany",
@@ -48,7 +50,7 @@
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "owSnapshotId",
-      "isChild": true
+      "DestroyOnDelete": true
     }
   },
   "acls": [
@@ -76,5 +78,8 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Slug": true,
+    "DestroyOnDelete": true
+  }
 }
