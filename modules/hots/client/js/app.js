@@ -181,7 +181,10 @@ angular.module('hotsSnapshot', [])
                                                                     }
                                                                 },
                                                                 {
-                                                                    relation: "talents"
+                                                                    relation: "talents",
+                                                                    scope: {
+                                                                        include: ['talent']
+                                                                    }
                                                                 }
                                                             ]
                                                         }

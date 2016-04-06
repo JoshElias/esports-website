@@ -28,15 +28,10 @@
       "model": "guide",
       "foreignKey": "guideId"
     },
-    "guideTalents": {
+    "talents": {
       "type": "hasMany",
       "model": "guideTierTalent",
       "foreignKey": "guideTierId"
-    },
-    "elegiggle": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "guideId"
     }
   },
   "acls": [

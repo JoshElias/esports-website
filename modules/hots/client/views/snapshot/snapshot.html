@@ -107,7 +107,7 @@
                                                 <h3>{{hero.hero.title}}</h3>
                                             </div>
                                             <div class="pull-right">
-                                                {{hero}}
+                                                <h1 ng-repeat="talent in hero.guides[0].talents" class="guide-talent-icon talents-icon active large {{hero.hero.className}} {{talent.talent.className}}">{{talent.talent.name}}</h1>
                                             </div>
                                         </div>
                                         <div class="row m-l-none m-r-none">
