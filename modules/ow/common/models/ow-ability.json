@@ -1,5 +1,6 @@
 {
-  "name": "guideTier",
+  "name": "owAbility",
+  "plural": "owAbilities",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -7,28 +8,36 @@
     "validateUpsert": true
   },
   "properties": {
-    "orderNum": {
-      "type": "number"
-    },
-    "heroTierId": {
+    "name": {
+      "type": "string",
+      "required": true,
       "index": 1
     },
-    "guideId": {
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "className": {
+      "type": "string",
+      "required": true,
+      "index": 1
+    },
+    "orderNum": {
+      "type": "number",
+      "required": true,
+      "index": 1
+    },
+    "heroId": {
+      "required": true,
       "index": 1
     }
   },
-  "validations": [],
   "relations": {
-      "heroTier": {
-          "type": "belongsTo",
-          "model": "heroTier",
-          "foreignKey": "heroTierId"
-      },
-      "guide": {
-          "type": "belongsTo",
-          "model": "guide",
-          "foreignKey": "guideId"
-      }
+    "hero": {
+      "type": "belongsTo",
+      "model": "overwatchHero",
+      "foreignKey": "heroId"
+    }
   },
   "acls": [
     {
@@ -55,5 +64,8 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Timestamp" : true
+  }
 }

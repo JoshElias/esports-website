@@ -18,16 +18,26 @@
     }
   },
   "relations": {
-      "heroTier": {
-          "type": "belongsTo",
-          "model": "heroTier",
-          "foreignKey": "heroTierId"
-      },
-      "guide": {
-          "type": "belongsTo",
-          "model": "guide",
-          "foreignKey": "guideId"
-      }
+    "heroTier": {
+      "type": "belongsTo",
+      "model": "heroTier",
+      "foreignKey": "heroTierId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "guideTalents": {
+      "type": "hasMany",
+      "model": "guideTierTalent",
+      "foreignKey": "guideTierId"
+    },
+    "elegiggle": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "guideId"
+    }
   },
   "acls": [
     {

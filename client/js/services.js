@@ -459,8 +459,8 @@ angular.module('app.services', [])
             }
         }
     }])
-    .service('HOTSSnapshot', ['HotsSnapshot', 'SnapshotAuthor', 'HeroTier', 'GuideTier',
-        function (HotsSnapshot, SnapshotAuthor, HeroTier, GuideTier) {
+    .service('HOTSSnapshot', ['HotsSnapshot', 'SnapshotAuthor', 'HeroTier', 'GuideTier', 'GuideTierTalent',
+        function (HotsSnapshot, SnapshotAuthor, HeroTier, GuideTier, GuideTierTalent) {
 
             var defaultSnapshot = {
                 snapNum: 0,
@@ -513,6 +513,7 @@ angular.module('app.services', [])
                 exists['authors'] = angular.copy(defaultCrud);
                 exists['heroTiers'] = angular.copy(defaultCrud);
                 exists['guideTiers'] = angular.copy(defaultCrud);
+                exists['guideTierTalents'] = angular.copy(defaultCrud);
 
                 this.snapNum       = snapshot.snapNum;
                 this.title         = snapshot.title;
@@ -780,7 +781,9 @@ angular.module('app.services', [])
                                     if (!guide.heroTierId)
                                         guide.heroTierId = data.id;
                                 });
-                                tierGuides.push(heroTier.guides);
+
+                                if (heroTier.guides && heroTier.guides.length)
+                                    tierGuides.push(heroTier.guides);
 
                                 return eachCb(undefined);
                             });
@@ -796,16 +799,38 @@ angular.module('app.services', [])
                         async.forEach(guides, function (guide, eachCb) {
                             GuideTier.upsert(guide)
                             .$promise
-                            .then(function () {
+                            .then(function (guideTier) {
+                                var guideTalents = guide.guide.guideTalents;
+
+                                _.each(guideTalents, function (guideTalent) {
+                                    exists['guideTierTalents'].toWrite.push({
+                                        tier: guideTier.tier,
+                                        guideTierId: guideTier.id,
+                                        talentId: guideTalent.talentId
+                                    });
+                                });
+
                                 return eachCb(undefined);
                             });
                         }, seriesCb);
 
                     }, function (seriesCb) {
+                        var guideTalents = exists['guideTierTalents'].toWrite;
+
+                        async.forEach(guideTalents, function (guideTalent, forEachCb) {
+                            GuideTierTalent.upsert(guideTalent)
+                            .$promise
+                            .then(function () {
+                                return forEachCb();
+                            })
+                            .catch(forEachCb);
+                        }, seriesCb);
+                    }, function (seriesCb) {
                         var objs = {
                             guideTiers: GuideTier,
                             heroTiers: HeroTier,
-                            authors: SnapshotAuthor
+                            authors: SnapshotAuthor,
+                            guideTierTalents: GuideTierTalent
                         };
 
                         async.forEachOf(objs, function (obj, key, forEachCb) {
@@ -837,6 +862,7 @@ angular.module('app.services', [])
                         exists['authors'].toWrite = [];
                         exists['heroTiers'].toWrite = [];
                         exists['guideTiers'].toWrite = [];
+                        exists['guideTierTalents'].toWrite = [];
 
                         return cb(err);
                     }

@@ -1,18 +1,4 @@
 {
-  "_meta": {
-    "sources": [
-      "loopback/common/models",
-      "loopback/server/models",
-      "../common/models",
-      "./models"
-    ],
-    "mixins": [
-      "loopback/common/mixins",
-      "loopback/server/mixins",
-      "../common/mixins",
-      "./mixins"
-    ]
-  },
   "AccessToken": {
     "dataSource": "mongodb",
     "public": false
@@ -184,19 +170,19 @@
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchHero": {
+  "owHero": {
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchAbility": {
+  "owAbility": {
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchSnapshot": {
+  "owSnapshot": {
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchSnapshotHeroTier": {
+  "owSnapshotHeroTier": {
     "dataSource": "mongodb",
     "public": true
   },
@@ -276,26 +262,30 @@
     "dataSource": "mongodb",
     "public": true
   },
-    "twitterfeeds": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "twitchfeeds": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "hotsSnapshot": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "heroTier": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "guideTier": {
-        "dataSource": "mongodb",
-        "public": true
-    },
+  "twitterfeeds": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "twitchfeeds": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "hotsSnapshot": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "heroTier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "guideTier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "guideTierTalent": {
+    "dataSource": "mongodb",
+    "public": true
+  },
   "slug": {
     "dataSource": "mongodb",
     "public": true

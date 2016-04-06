@@ -8,16 +8,19 @@
   },
   "properties": {
     "snapNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "title": {
       "type": "string",
+      "index": 1,
       "Slug": {
         "prefixFunc": "metaSnapshot"
       }
     },
     "snapshotType": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "content": {
       "type": "object"
@@ -25,14 +28,12 @@
     "tiers": {
       "type": "object"
     },
-    "createdDate": {
-      "type": "date"
-    },
     "photoNames": {
       "type": "object"
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "oldAuthors": {
       "type": [
@@ -49,7 +50,6 @@
       "default": true
     }
   },
-  "validations": [],
   "relations": {
     "deckMatchups": {
       "type": "hasMany",

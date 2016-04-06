@@ -10,11 +10,13 @@
   "properties": {
     "playerClass": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
-    "gameId": {}
+    "gameId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "game": {
       "type": "belongsTo",

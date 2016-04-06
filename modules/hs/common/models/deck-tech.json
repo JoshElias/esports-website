@@ -9,13 +9,19 @@
   },
   "properties": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
-    "deckId": {},
-    "deckTierId": {}
+    "deckId": {
+      "index": 1
+    },
+    "deckTierId": {
+      "index": 1
+    }
   },
   "relations": {
     "deckTier": {

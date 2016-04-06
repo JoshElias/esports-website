@@ -14,7 +14,8 @@
       "type": "string"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "tier": {
       "type": "number"
@@ -24,8 +25,12 @@
         "number"
       ]
     },
-    "deckId": {},
-    "snapshotId": {}
+    "deckId": {
+      "index": 1
+    },
+    "snapshotId": {
+      "index": 1
+    }
   },
   "relations": {
     "deck": {

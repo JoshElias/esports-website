@@ -69,7 +69,8 @@
     },
     "isPublic": {
       "type": "boolean",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "viewCount": {
       "type": "number"

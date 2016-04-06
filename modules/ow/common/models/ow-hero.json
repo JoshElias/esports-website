@@ -1,6 +1,6 @@
 {
-  "name": "overwatchHero",
-  "plural": "overwatchHeroes",
+  "name": "owHero",
+  "plural": "owHeroes",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -10,11 +10,13 @@
   "properties": {
     "heroName": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "heroRole": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "realName": {
       "type": "string",
@@ -51,11 +53,13 @@
     },
     "orderNum": {
       "type": "number",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "isActive": {
       "type": "boolean",
-      "required": true
+      "required": true,
+      "index": 1
     }
   },
   "relations": {

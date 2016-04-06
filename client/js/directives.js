@@ -1488,7 +1488,15 @@ angular.module('app.directives', ['ui.load'])
                         where: where,
                         skip: (page * perpage) - perpage,
                         limit: perpage,
-                        order: 'username ASC'
+                        order: 'username ASC',
+                        include: [
+                            {
+                                relation: "guideTalents"
+                            },
+                            {
+                                relation: "slugs"
+                            }
+                        ]
                     }
                 };
                 var countOptions = {

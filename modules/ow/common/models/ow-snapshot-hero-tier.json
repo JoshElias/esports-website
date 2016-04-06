@@ -1,5 +1,5 @@
 {
-  "name": "overwatchSnapshotHeroTier",
+  "name": "owSnapshotHeroTier",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -35,20 +35,20 @@
     "orderNum": {
       "type": "number"
     },
-    "overwatchHeroId": {},
-    "overwatchSnapshotId": {}
+    "owHeroId": {},
+    "owSnapshotId": {}
   },
   "validations": [],
   "relations": {
       "snapshot": {
           "type": "belongsTo",
-          "model": "overwatchSnapshot",
-          "foreignKey": "overwatchSnapshotId"
+          "model": "owSnapshot",
+          "foreignKey": "owSnapshotId"
       },
       "heros": {
           "type": "belongsTo",
-          "model": "overwatchHero",
-          "foreignKey": "overwatchHeroId"
+          "model": "owHero",
+          "foreignKey": "owHeroId"
       }
   },
   "acls": [
