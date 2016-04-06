@@ -1883,7 +1883,6 @@ angular.module('app.services', [])
             },
             setSlug: function (obj) {
                 var sl = {};
-
                 try {
                     var slug = obj.slugs[0];
                     sl = {

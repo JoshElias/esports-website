@@ -263,7 +263,10 @@ angular.module('app.controllers', ['ngCookies'])
                                         relation: 'author'
                                     },
                                     {
-                                        relation: 'slugs'
+                                        relation: 'slugs',
+                                        scope: {
+                                            fields: ['linked', 'slug']
+                                        }
                                     }
                                 ],
                                 order: "createdDate DESC",
@@ -273,10 +276,9 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (data) {
-                            
                             _.each(data, function (article) {
                                 // init template variables
-                                article.slug = Util.setSlug(data);
+                                article.slug = Util.setSlug(article);
                             });
                             
                             $scope.articles.data = $scope.articles.data.concat(data);
@@ -332,6 +334,11 @@ angular.module('app.controllers', ['ngCookies'])
                 Article.find(options)
                 .$promise
                 .then(function (data) {
+                    _.each(data, function (article) {
+                        // set template slug
+                        article.slug = Util.setSlug(article);
+                    });
+                    
                     $scope.articles = data;
                 });
             }
@@ -354,6 +361,8 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (tempoDecks) {
                     _.each(tempoDecks, function(tempoDeck) {
+                        // init template variables
+                        tempoDeck.slug = Util.setSlug(tempoDeck);
                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
                     });
 
@@ -378,6 +387,8 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (comDecks) {
                     _.each(comDecks, function(comDeck) {
+                        // init template variables
+                        comDeck.slug = Util.setSlug(comDeck);
                         comDeck.voteScore = Util.tally(comDeck.votes, 'direction');
                     });
 
@@ -1086,7 +1097,6 @@ angular.module('app.controllers', ['ngCookies'])
                             description: true,
                             premium: true,
                             photoNames: true,
-                            slug: true,
                             themeName: true,
                             title: true,
                             articleType: true
@@ -1103,6 +1113,12 @@ angular.module('app.controllers', ['ngCookies'])
                                 scope: {
                                     fields: ['id', 'authorId', 'direction']
                                 }
+                            },
+                            {
+                                relation: 'slugs',
+                                scope: {
+                                    fields: ['linked', 'slug']
+                                }
                             }
                         ]
                     }
@@ -1110,6 +1126,8 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (articles) {
                     _.each(articles, function(article) {
+                        // init template vars
+                        article.slug = Util.setSlug(article);
                         article.voteScore = Util.tally(article.votes, 'direction');
                     });
 
@@ -11679,8 +11697,8 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'MetaService', 'AjaxPagination', 'paginationParams', 'StateParamHelper',
-        function ($scope, $state, $q, $timeout, Article, articles, MetaService, AjaxPagination, paginationParams, StateParamHelper) {
+    .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'MetaService', 'AjaxPagination', 'paginationParams', 'StateParamHelper', 'Util',
+        function ($scope, $state, $q, $timeout, Article, articles, MetaService, AjaxPagination, paginationParams, StateParamHelper, Util) {
             //if (!data.success) { return $state.transitionTo('app.articles.list'); }
 //            console.log('articles:', articles);
 
@@ -11770,6 +11788,12 @@ angular.module('app.controllers', ['ngCookies'])
                     if (err) return console.log('paginate err: ', err);
                     $scope.articlePagination.page = page;
                     $scope.articlePagination.perpage = perpage;
+                    
+                    _.each(data, function (article) {
+                        // init template variables
+                        article.slug = Util.setSlug(article);
+                    });
+                    
                     $scope.articles = data;
                     $scope.articlePagination.total = count.count;
                     if (callback) {
@@ -11825,61 +11849,115 @@ angular.module('app.controllers', ['ngCookies'])
                         Article.findById({
                             id: $scope.article.id,
                             filter: {
-                                fields: {
-                                  oldComments: false,
-                                  oldRelatedArticles: false,
-                                  isActive: false,
-                                },
                                 include: [
-                                    {
-                                        relation: "author",
+                                   {
+                                       relation: "author",
+                                       scope: {
+                                           fields: [
+                                               "username",
+                                               "about",
+                                               "providerDescription",
+                                               "social",
+                                               "email"
+                                           ]
+                                       }
+                                   },
+                                   {
+                                       relation: "comments",
+                                       scope: {
+                                           include: [
+                                               "author"
+                                           ]
+                                       }
+                                   },
+                                   {
+                                       relation: 'votes',
+                                       scope: {
+                                           fields: {
+                                               id: true,
+                                               direction: true,
+                                               authorId: true
+                                           }
+                                       }
+                                   },
+                                   {
+                                       relation: "relatedArticles",
+                                       scope: {
+                                           fields: [
+                                               "title",
+                                               "isActive",
+                                               "photoNames",
+                                               "authorId",
+                                               "voteScore",
+                                               "articleType"
+                                           ],
+                                           include: [
+                                               {
+                                                   relation: "author",
+                                                   scope: {
+                                                       fields: [
+                                                           "username"
+                                                       ]
+                                                   }
+                                               },
+                                               {
+                                                   relation: 'slugs',
+                                                   scope: {
+                                                       fields: ['linked', 'slug']
+                                                   }
+                                               }
+                                           ]
+                                       }
+                                   },
+                                   {
+                                        relation: "deck",
                                         scope: {
-                                            fields: [
-                                                "username",
-                                                "about",
-                                                "providerDescription",
-                                                "social",
-                                                "email"
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        relation: "comments",
-                                        scope: {
-                                            include: [
-                                                "author"
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        relation: "relatedArticles",
-                                        scope: {
-                                            fields: [
-                                                "title",
-                                                "isActive",
-                                                "photoNames",
-                                                "authorId",
-                                                "voteScore",
-                                                "articleType",
-                                                "slug"
-                                            ],
-                                            include: [
-                                                {
-                                                    relation: "author",
-                                                    scope: {
-                                                        fields: [
-                                                            "username"
-                                                        ]
+                                            fields: {
+                                                id: true,
+                                                playerClass: true,
+                                                heroName: true,
+                                                dust: true,
+                                                gameModeType: true,
+                                                name: true
+                                            },
+                                            include: {
+                                                relation: 'cards',
+                                                scope: {
+                                                    include: {
+                                                        relation: 'card',
+                                                        scope: {
+                                                            fields: [
+                                                                'id',
+                                                                'name',
+                                                                'cost',
+                                                                'photoNames'
+                                                            ]
+                                                        }
                                                     }
                                                 }
-                                            ]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        relation: 'slugs',
+                                        scope: {
+                                            fields: ['slug', 'linked']
                                         }
                                     }
                                 ]
                             }
                         })
                         .$promise
-                        .then(function (data) {
+                        .then(function (article) {
+                            // init template vars
+                            article.slug = Util.setSlug(data);
+
+                            article.voteScore = Util.tally(article.votes, 'direction');
+
+                            _.each(article.relatedArticles, function (relatedArticle) {
+                                relatedArticle.slug = Util.setSlug(relatedArticle);
+                            });
+                            
                             $scope.article = data;
 
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
