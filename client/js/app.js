@@ -336,11 +336,13 @@ var app = angular.module('app', [
                                         owArticle.slug = Util.setSlug(owArticle);
                                     });
                                     
+                                    console.log('returning ow arts');
                                     return owArticles;
                                 });
                             }],
-                            heroes: ['OverwatchHero', function (OverwatchHero) {
-                                return OverwatchHero.find({
+                            heroes: ['owHero', function (owHero) {
+                                console.log('start ow heroes');
+                                return owHero.find({
                                     filter: {
                                         where: {
                                             isActive: true
@@ -669,17 +671,27 @@ var app = angular.module('app', [
                                                    ]
                                                }
                                            },
-                                            {
+                                           {
                                                 relation: "deck",
                                                 scope: {
-                                                    fields: {
-                                                        id: true,
-                                                        playerClass: true,
-                                                        heroName: true,
-                                                        dust: true,
-                                                        gameModeType: true,
-                                                        name: true
-                                                    },
+                                                    // this object didnt filter properly?
+                                                    // changed to an array
+//                                                    fields: {
+//                                                        id: true,
+//                                                        playerClass: true,
+//                                                        heroName: true,
+//                                                        dust: true,
+//                                                        gameModeType: true,
+//                                                        name: true
+//                                                    },
+                                                    fields: [
+                                                        'id',
+                                                        'playerClass',
+                                                        'heroName',
+                                                        'dust',
+                                                        'gameModeType',
+                                                        'name'
+                                                    ],
                                                     include: {
                                                         relation: 'cards',
                                                         scope: {
