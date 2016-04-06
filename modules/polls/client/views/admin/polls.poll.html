@@ -48,33 +48,38 @@
 
             <div ng-if="page === 'items'">
                 <div class="panel panel-fix">
-                    <ul class="admin-list padding-none m-b-none" dnd-list="poll.items" ng-show="poll.items.length">
-                        <li class="admin-list-item gradient-add clearfix"
+                    <ul class="admin-list padding-none m-b-none" dnd-list="poll.items" ng-if="poll.items.length">
+                        <li class="admin-list-item list-underline gradient-add clearfix"
                             ng-repeat="pollItem in poll.items"
-                            dnd-draggable="item"
+                            dnd-draggable="pollItem"
                             dnd-moved="poll.pollItemsUpdateDND(poll.items, $index)"
-                            dnd-disable-if="poll.items.length < 2"
+                            dnd-disable-if="poll.items.length < 2" 
+                            ng-class="{ active: poll.activePollItem === pollItem }"
                         >
-                            <div class="list-accent-div pointer-item" ng-click="poll.pollItemEditWnd(pollItem)">
+                            <div class="list-accent-div pointer-item" ng-click="poll.toggleActivePollItem(pollItem)">
                                 <span class="full-div">{{pollItem.name}}</span>
                                 <div class="btn-group pull-right">
 <!--                                    <button class="btn btn-default" ng-click="poll.pollItemEditWnd(pollItem)">Edit</button>-->
-                                    <button type="button" class="btn btn-remove btn-xs" ng-click="poll.pollItemDeletePrompt(pollItem)"><i class="fa fa-close"></i></button>
+                                    <button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); poll.pollItemDeletePrompt(pollItem)"><i class="fa fa-close"></i></button>
                                 </div>
                             </div>
                         </li>
-                        <li class="admin-list-item gradient-add clearfix">
-                            <div class="list-accent-div">
-                                <a href="#" class="add-element"
-                               ng-click="poll.itemAddPrompt()">
-                                <i class="fa fa-plus-circle"></i>Add Poll
-                                </a>
-                            </div>
-                        </li>
                     </ul>
+                    
                     <div class="panel-body" ng-show="!poll.items.length">
                         <p class="m-b-none">There are no items added for this poll yet.</p>
                     </div>
+                    
+                    <div class="admin-list padding-none m-b-none">
+                        <div class="admin-list-item list-underline gradient-add clearfix">
+                            <div class="list-accent-div">
+                                <a href="#" class="add-element" ng-click="poll.addPollItem()">
+                                    <i class="fa fa-plus-circle"></i>Add Poll Item
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -89,8 +94,36 @@
         </div>
         
         <div ng-show="page === 'items'" class="col-sm-12 col-md-8 col-lg-9">
+            <div ng-if="poll.activePollItem">
+                <div class="row form-group">
+                    <label for="itemName" class="col-sm-12 control-label">Option Name</label>
+                    <div class="col-sm-12">
+                        <input type="text" id="itemName" name="itemName" class="form-control" ng-model="poll.activePollItem.name" required>
+                    </div>
+                </div>
+                <div class="row form-group" ng-if="poll.pollType == 'img'">
+                    <label for="itemPhoto" class="col-sm-12 control-label">Item Image</label>
+                    <div class="col-sm-12">
+                        <input type="hidden" id="itemPhotoThumb" name="itemPhotoThumb" value="" ng-model="poll.activePollItem.photoNames.thumb">
+                        <input type="hidden" id="itemPhotoLarge" name="itemPhotoLarge" value="" ng-model="poll.activePollItem.photoNames.large">
+                        <div class="photo-input">
+                            <div class="upload-thumbnail upload-thumbnail-poll">
+                                <div class="upload-drop" ng-show="poll.activePollItem.photoNames.thumb === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                                <img ng-src="{{poll.getPollItemImage()}}" alt="" ng-show="poll.activePollItem.photoNames.thumb !== ''">
+                            </div>
+                            <div class="btn-toolbar">
+                                <button class="btn btn-default" ng-file-select="poll.pollItemPhotoUpload($files)" onclick="this.value=null" accept="image/*">
+                                    <span ng-show="poll.activePollItem.photoNames.thumb === ''">Select image</span>
+                                    <span ng-show="poll.activePollItem.photoNames.thumb !== ''">Change image</span>
+                                </button>
+                                <a href="#" class="btn btn-danger" ng-click="poll.removePollItemPhoto(poll.activePollItem)" ng-show="poll.activePollItem.photoNames.thumb !== ''">Remove image</a>
+                            </div>
+                        </div>
+                    </div>    
+                </div>
+            </div>
         </div>
-                
+        
     </div>
     <div class="panel-footer clearfix">
         <div class="col-sm-12">

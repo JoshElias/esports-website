@@ -34,12 +34,13 @@ angular.module('polls.services')
             description: '',
             pollType: 'img',
             voteLimit: 1,
-            viewType: ''
+            viewType: '',
+            activePollItem: null
         };
         var defaultPollItem = {
-            name: '',
+            name: 'New Item',
             photoNames: {
-                small: '',
+                thumb: '',
                 large: ''
             },
             votes: 0,
@@ -108,10 +109,35 @@ angular.module('polls.services')
                 return out;
             };
             
+            // toggle active poll item
+            pb.toggleActivePollItem = function (pollItem) {
+                pb.activePollItem = (pb.activePollItem !== pollItem) ? pollItem : null;
+            };
+            
+            // add poll item
+            pb.addPollItem = function () {
+                // create new poll item
+                var newPollItem = angular.copy(defaultPollItem);
+                
+                // set ordernum
+                newPollItem.orderNum = pb.items.length + 1;
+                
+                // add to poll items
+                pb.items.push(newPollItem);
+                
+                // set new poll item to active
+                pb.activePollItem = newPollItem;
+            };
+            
             // delete poll item
             pb.pollItemDelete = function (pollItem) {
                 // flag item as deleted
                 pb.pollItemDeleted(pollItem);
+                
+                // check if active poll item is one being deleted
+                if (pb.activePollItem === pollItem) {
+                    pb.activePollItem = null;
+                }
                 
                 // remove poll item
                 var index = pb.items.indexOf(pollItem);
@@ -119,7 +145,7 @@ angular.module('polls.services')
             };
             
             // photo upload
-            pb.photoUpload = function ($files) {
+            pb.pollItemPhotoUpload = function ($files) {
                 if (!$files.length) return false;
                 var newScope = $rootScope.$new(true);
                 newScope.uploading = 0;
@@ -138,14 +164,12 @@ angular.module('polls.services')
                     }).progress(function(evt) {
                         newScope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
-                        sb.photoNames = {
+                        pb.activePollItem.photoNames = {
                             large: data.large,
-                            medium: data.medium,
-                            small: data.small,
-                            square: data.square
+                            thumb: data.thumb,
                         };
-                        var URL = (tpl === './') ? cdn2 : tpl;
-                        sb.snapshotImg = URL + data.path + data.small;
+                        //var URL = (tpl === './') ? cdn2 : tpl;
+                        //sb.snapshotImg = URL + data.path + data.thumb;
                         box.modal('hide');
                         
                         // mark poll as updated
@@ -155,10 +179,20 @@ angular.module('polls.services')
             };
 
             // get snapshot image url
-            pb.getImage = function () {
-                var URL = (tpl === './') ? cdn2 : tpl;
+            pb.getPollItemImage = function () {
+                console.log(pb.activePollItem);
+                
                 var imgPath = 'polls/';
-                return (sb.photoNames && sb.photoNames.small === '') ?  URL + 'img/blank.png' : URL + imgPath + sb.photoNames.small;
+                return (pb.activePollItem && pb.activePollItem.photoNames && pb.activePollItem.photoNames.thumb === '') ?  tpl + 'img/blank.png' : cdn2 + imgPath + pb.activePollItem.photoNames.thumb;
+            };
+            
+            // remove poll item image
+            pb.removePollItemPhoto = function (pollItem) {
+                pollItem.photoNames.thumb = '';
+                pollItem.photoNames.large = '';
+                
+                // flag poll item as updated
+                pb.pollItemUpdated(pollitem);
             };
             
             // prompt for pollItem delete
