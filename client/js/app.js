@@ -923,7 +923,6 @@ var app = angular.module('app', [
                                 return Deck.find(filterParams.tsDeckParams.options)
                                 .$promise
                                 .then(function (tempoDecks) {
-                                    console.log('tempoDecks:', tempoDecks);
                                     _.each(tempoDecks, function(tempoDeck) {
                                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
                                         tempoDeck.slug = Util.setSlug(tempoDeck);
@@ -1244,7 +1243,8 @@ var app = angular.module('app', [
                                                         'id',
                                                         'votes',
                                                         'authorId',
-                                                        'createdDate'
+                                                        'createdDate',
+                                                        'text'
                                                     ],
                                                     include: {
                                                         relation: 'author',

@@ -12216,24 +12216,7 @@ angular.module('app.controllers', ['ngCookies'])
                         where: {
                             isFeatured: featured,
                             isPublic: true
-                        },
-                        fields: {
-                            id: true,
-                            name: true,
-                            description: true,
-                            slug: true,
-                            heroName: true,
-                            authorId: true,
-                            voteScore: true,
-                            playerClass: true,
-                            dust: true,
-                            createdDate: true,
-                            premium: true
-                        },
-                        include: ["author"],
-                        order: "createdDate DESC",
-                        skip: (page * perpage) - perpage,
-                        limit: perpage
+                        }
                     }
                 }
 
@@ -12252,7 +12235,6 @@ angular.module('app.controllers', ['ngCookies'])
                     options.filter.skip    =  (page * perpage) - perpage,
                     options.filter.limit   =  paginationParams.comParams.perpage
                 }
-
 
                 //noinspection UnterminatedStatementJS
                 options.filter.where.playerClass = {
@@ -12285,12 +12267,12 @@ angular.module('app.controllers', ['ngCookies'])
                 });
 
                 AjaxPagination.update(Deck, getQuery(true, false, page, perpage), getQuery(true, false, page, perpage).filter, function (err, data, count) {
-
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.tempostormPagination.page = page;
                     $scope.tempostormPagination.perpage = perpage;
                     _.each(data, function(deck) {
+                        deck.slug = Util.setSlug(deck);
                         deck.voteScore = Util.tally(deck.votes, 'direction');
                     });
                     $scope.tempostormDecks = data;
@@ -12329,6 +12311,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.communityPagination.page = page;
                     $scope.communityPagination.perpage = perpage;
                     _.each(data, function(deck) {
+                        deck.slug = Util.setSlug(deck);
                         deck.voteScore = Util.tally(deck.votes, 'direction');
                     });
                     $scope.communityDecks = data;
@@ -12393,18 +12376,15 @@ angular.module('app.controllers', ['ngCookies'])
                                     description: true,
                                     playerClass: true,
                                     premium: true,
-                                    slug: true,
                                     dust: true,
                                     heroName: true,
                                     authorId: true,
                                     deckType: true,
                                     isPublic: true,
-                                    votes: true,
-                                    voteScore: true,
                                     chapters: true,
                                     youtubeId: true,
                                     gameModeType: true,
-                                    isActive: true,
+                                    isActive: true
                                 },
                                 include: [
                                     {
@@ -12482,7 +12462,6 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (data) {
-                            console.log('data:', data);
                             $scope.deck = DeckBuilder.new(data.playerClass, data);
 
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
