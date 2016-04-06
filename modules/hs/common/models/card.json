@@ -10,7 +10,8 @@
   "properties": {
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "cost": {
       "type": "number",
@@ -50,7 +51,8 @@
     },
     "isActive": {
       "type": "boolean",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "mechanics": {
       "type": [
@@ -62,7 +64,8 @@
       "required": true
     },
     "deckable": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     },
     "photoNames": {
       "type": "object",

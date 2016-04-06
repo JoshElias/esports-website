@@ -184,8 +184,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article',
-        function ($scope, $sce, articles, articlesTotal, Article) {
+    .controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article', 'Util',
+        function ($scope, $sce, articles, articlesTotal, Article, Util) {
             // data
             $scope.articles = {
                 loading: false,
@@ -256,15 +256,29 @@ angular.module('app.controllers', ['ngCookies'])
                                     isActive: true
                                 },
                                 fields: {
-                                    content: false,
-                                    votes: false
+                                    content: false
                                 },
-                                include: ["author"],
+                                include: [
+                                    {
+                                        relation: 'author'
+                                    },
+                                    {
+                                        relation: 'slugs'
+                                    }
+                                ],
                                 order: "createdDate DESC",
                                 skip: $scope.articles.data.length,
                                 limit: num
                             }
-                        }).$promise.then(function (data) {
+                        })
+                        .$promise
+                        .then(function (data) {
+                            
+                            _.each(data, function (article) {
+                                // init template variables
+                                article.slug = Util.setSlug(data);
+                            });
+                            
                             $scope.articles.data = $scope.articles.data.concat(data);
                             $scope.articles.offset += num;
                             $scope.articles.loading = false;
@@ -2473,13 +2487,31 @@ angular.module('app.controllers', ['ngCookies'])
                     ArticleArticle.createMany(relatedArticleArticle)
                     .$promise
                     .then(function (relatedArticles) {
+                        return wateryCB(null, articleCreated);
+                    })
+                    .catch(function (err) {
+                        return wateryCB(err);
+                    });
+                },
+                function (articleCreated, wateryCB) {
+                    var freeVote = {
+                        direction: 1,
+                        createdDate: new Date().toISOString(),
+                        authorId: User.getCurrentId()
+                    };
+                    
+                    Article.votes.create({
+                        id: articleCreated.id
+                    }, freeVote)
+                    .$promise
+                    .then(function (freeVote) {
                         return wateryCB(null);
                     })
                     .catch(function (err) {
                         return wateryCB(err);
                     });
                 }
-            ], function(err, results) {
+            ], function(err) {
                 $scope.fetching = false;
                 $window.scrollTo(0, 0);
                 if (err) {
@@ -17582,7 +17614,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-//              console.log('okay...here we go...');
                 if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                     return false;
                 }
@@ -17619,7 +17650,6 @@ angular.module('app.controllers', ['ngCookies'])
                         'maps'
                     ]);
                     
-                    console.log('cleanMapGuide:', cleanMapGuide);
                     var guideCreated;
                     async.waterfall([
                         function (waterCB) {

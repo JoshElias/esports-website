@@ -9,7 +9,8 @@
   "properties": {
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "description": {
       "type": "string",

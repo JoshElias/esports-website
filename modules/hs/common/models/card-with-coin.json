@@ -9,10 +9,12 @@
   },
   "properties": {
     "cardId": {
-      "required": true
+      "required": true,
+      "index": 1
     },
     "mulliganId": {
-      "required": true
+      "required": true,
+      "index": 1
     }
   },
   "relations": {

@@ -8,22 +8,24 @@
   },
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "description": {
       "type": "string"
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "className": {
       "type": "string"
     },
     "isActive": {
-      "type": "boolean"
+      "type": "boolean",
+      "index": 1
     }
   },
-  "validations": [],
   "relations": {
     "guides": {
       "type": "hasMany",

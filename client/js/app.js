@@ -239,7 +239,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-                            articles: ['Article', function (Article) {
+                            articles: ['Article', 'Util', function (Article, Util) {
                                 var offset = 1,
                                     num = 6;
 
@@ -266,6 +266,11 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (articles) {
+                                    _.each(articles, function (article) {
+                                        // init template vars
+                                        article.slug = Util.setSlug(article);
+                                    });
+                                    
                                     return articles;
                                 })
                                 .catch(function (err) {
@@ -598,8 +603,8 @@ var app = angular.module('app', [
                             }],
                             article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
                                 var slug = $stateParams.slug;
-                                console.log("looking for slug:", slug);
-
+                                
+                                console.log('looking for:', slug);
 
                                 return Article.findOne({
                                     filter: {
@@ -646,8 +651,7 @@ var app = angular.module('app', [
                                                        "photoNames",
                                                        "authorId",
                                                        "voteScore",
-                                                       "articleType",
-                                                       "slug"
+                                                       "articleType"
                                                    ],
                                                    include: [
                                                        {
@@ -656,6 +660,12 @@ var app = angular.module('app', [
                                                                fields: [
                                                                    "username"
                                                                ]
+                                                           }
+                                                       },
+                                                       {
+                                                           relation: 'slugs',
+                                                           scope: {
+                                                               fields: ['linked', 'slug']
                                                            }
                                                        }
                                                    ]
@@ -694,17 +704,20 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise
-                                .then(function (data) {
-                                    console.log('data:', data);
-                                    // create slug as it was moved from model
-                                    data.slug = {
+                                .then(function (article) {
+                                    // init template vars
+                                    article.slug = {
                                         url: slug
                                     };
                                     
-                                    // tally votescore
-                                    data.voteScore = Util.tally(data.votes, 'direction');
+                                    article.voteScore = Util.tally(article.votes, 'direction');
+
+                                    _.each(article.relatedArticles, function (relatedArticle) {
+                                        relatedArticle.slug = Util.setSlug(relatedArticle);
+                                    });
                                     
-                                    return data;
+                                    console.log('article:', article);
+                                    return article;
                                 })
                                 .catch(function (err) {
                                     console.log('err:', err);
@@ -799,7 +812,6 @@ var app = angular.module('app', [
                                                     createdDate: true,
                                                     description: true,
                                                     photoNames: true,
-                                                    slug: true,
                                                     themeName: true,
                                                     title: true,
                                                     premium: true
@@ -846,7 +858,7 @@ var app = angular.module('app', [
                                                   {
                                                       relation: "votes",
                                                       scope: {
-                                                          fields: ['authorId', 'direction']
+                                                          fields: ['direction']
                                                       }
                                                   }
                                               ]
@@ -866,7 +878,6 @@ var app = angular.module('app', [
                                                 heroName: true,
                                                 premium: true,
                                                 authorId: true,
-                                                slug: true,
                                                 createdDate: true
                                               },
                                               include: [
@@ -903,10 +914,10 @@ var app = angular.module('app', [
                                 });
                             }],
                             dataDecksTempostorm: ['Deck', 'filterParams', 'Util', function (Deck, filterParams, Util) {
-//                                console.log('filterParams.tsDeckParams', filterParams.tsDeckParams);
                                 return Deck.find(filterParams.tsDeckParams.options)
                                 .$promise
                                 .then(function (tempoDecks) {
+                                    console.log('tempoDecks:', tempoDecks);
                                     _.each(tempoDecks, function(tempoDeck) {
                                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
                                         tempoDeck.slug = Util.setSlug(tempoDeck);
@@ -2907,7 +2918,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
                                     data.slug = Util.setSlug(data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
@@ -4178,6 +4188,12 @@ var app = angular.module('app', [
                                                 scope: {
                                                     fields: ['id', 'authorId', 'direction']
                                                 }
+                                            },
+                                            {
+                                                relation: 'slugs',
+                                                scope: {
+                                                    fields: ['slug', 'linked']
+                                                }
                                             }
                                         ]
                                     }
@@ -4185,6 +4201,8 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (articles) {
                                     _.each(articles, function(article) {
+                                        // init template vars
+                                        article.slug = Util.setSlug(article);
                                         article.voteScore = Util.tally(article.votes, 'direction');
                                     });
 
@@ -4257,7 +4275,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (decks) {
-                                    console.log('decks:', decks);
                                     _.each(decks, function(deck) {
                                         // init template vars
                                         deck.slug = Util.setSlug(deck);

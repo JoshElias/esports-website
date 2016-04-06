@@ -10,10 +10,13 @@
     "orderNum": {
       "type": "number"
     },
-    "heroTierId": {},
-    "guideId": {}
+    "heroTierId": {
+      "index": 1
+    },
+    "guideId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "heroTier": {
       "type": "belongsTo",
