@@ -1,26 +1,14 @@
 {
-  "name": "OWSnapshot",
+  "name": "owSnapshot",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
   "options": {
-    "validateUpsert": true,
-    "$slug": true
+    "validateUpsert": true
   },
   "properties": {
     "snapNum": {
       "type": "number"
-    },
-    "slug": {
-        "url": {
-          "type": "string",
-          "validators": [
-            "unique"
-          ]
-        },
-        "linked": {
-          "type": "boolean"
-        }
     },
     "photoNames": {
       "type": "object"
@@ -37,9 +25,6 @@
     },
     "isActive": {
         "type": "boolean"
-    },
-    "createdDate": {
-        "type": "date"
     }
   },
   "validations": [],
@@ -47,22 +32,22 @@
     "authors": {
       "type": "hasMany",
       "model": "snapshotAuthor",
-      "foreignKey": "overwatchSnapshotId"
+      "foreignKey": "owSnapshotId"
     },
     "heroTiers": {
       "type": "hasMany",
-      "model": "overwatchSnapshotHeroTier",
-      "foreignKey": "overwatchSnapshotId"
+      "model": "owSnapshotHeroTier",
+      "foreignKey": "owSnapshotId"
     },
     "votes": {
       "type": "hasMany",
       "model": "vote",
-      "foreignKey": "overwatchSnapshotId"
+      "foreignKey": "owSnapshotId"
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
-      "foreignKey": "overwatchSnapshotId",
+      "foreignKey": "owSnapshotId",
       "isChild": true
     }
   },

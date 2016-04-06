@@ -170,19 +170,19 @@
     "dataSource": "mongodb",
     "public": true
   },
-  "OWHero": {
+  "owHero": {
     "dataSource": "mongodb",
     "public": true
   },
-  "OWAbility": {
+  "owAbility": {
     "dataSource": "mongodb",
     "public": true
   },
-  "OWSnapshot": {
+  "owSnapshot": {
     "dataSource": "mongodb",
     "public": true
   },
-  "OWSnapshotHeroTier": {
+  "owSnapshotHeroTier": {
     "dataSource": "mongodb",
     "public": true
   },

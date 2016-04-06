@@ -1,6 +1,6 @@
 {
-  "name": "OWAbility",
-  "plural": "OWAbilities",
+  "name": "owAbility",
+  "plural": "owAbilities",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
