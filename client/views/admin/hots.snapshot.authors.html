@@ -11,7 +11,7 @@
         <ul class="admin-list m-b-none padding-none" ng-if="snapshot.authors.length!=0">
 
             <li
-            class="admin-list-item gradient-add admin-list-item"
+            class="admin-list-item gradient-add list-underline"
             ng-if="!!snapshot.authors.length"
             ng-repeat="author in snapshot.authors"
             ng-click="setActiveAuthor(author)"
@@ -33,12 +33,12 @@
         </ul>
         
         <div ng-if="!snapshot.authors.length">
-            <div class="admin-list m-b-none placeholder-text">
+            <div class="admin-list m-b-none placeholder-text list-underline">
                 No authors have been added yet.
             </div>
         </div>
         <div class="admin-list m-b-none">
-            <div class="admin-list-item gradient-add admin-list-item">
+            <div class="admin-list-item gradient-add list-underline">
                 <div class="list-accent-div">
                     <a ng-click="openAuthorAdd()" class="add-element"><i class="fa fa-plus-circle"></i>Add Author</a>
                 </div>
