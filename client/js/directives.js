@@ -1476,7 +1476,7 @@ angular.module('app.directives', ['ui.load'])
                 if(!_.isEmpty(search)) {
                     where['or'] = [
                         {
-                            title: {
+                            name: {
                                 regexp: pattern
                             }
                         }

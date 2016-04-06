@@ -8,7 +8,7 @@ var app = angular.module('app', [
     'angular-iscroll',
     'angularMoment',
     'angularPayments',
-    'angular-svg-round-progressbar',
+    'angular-svg-round-progress',
     'youtube-embed',
     'dndLists',
     'ngCookies',
