@@ -276,26 +276,30 @@
     "dataSource": "mongodb",
     "public": true
   },
-    "twitterfeeds": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "twitchfeeds": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "hotsSnapshot": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "heroTier": {
-        "dataSource": "mongodb",
-        "public": true
-    },
-    "guideTier": {
-        "dataSource": "mongodb",
-        "public": true
-    },
+  "twitterfeeds": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "twitchfeeds": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "hotsSnapshot": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "heroTier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "guideTier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "guideTierTalent": {
+    "dataSource": "mongodb",
+    "public": true
+  },
   "slug": {
     "dataSource": "mongodb",
     "public": true

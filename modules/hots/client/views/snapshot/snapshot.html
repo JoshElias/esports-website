@@ -58,7 +58,7 @@
                     <div ng-repeat="tier in snapshot.tiers" id="tier {{tier.tier}}" class="tier">
                         <div class="tier-heading">
                             <a class="btn btn-block btn-tier-collapse" role="button" data-toggle="collapse" data-target="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
-                                <h2 class="pull-left">TIER {{tier.tier}}</h2>
+                                <h2 class="pull-left">TIER <span ng-if="tier.tier == 1">S</span><span ng-if="tier.tier > 1">{{tier.tier - 1}}</span></h2>
                             </a>
                             <div class="tier-hero-filters hidden-xs">
                                 <a
@@ -101,9 +101,14 @@
                                 <div class="tier-hero-body collapse" id="collapseHero-{{hero.id}}">
                                     <div class="">
 
-                                        <div class="row m-l-md m-t-md m-b-lg">
-                                            <h2>{{hero.hero.name}}</h2>
-                                            <h3>{{hero.hero.title}}</h3>
+                                        <div class="row m-l-md m-t-md m-b-lg clearfix">
+                                            <div class="pull-left">
+                                                <h2>{{hero.hero.name}}</h2>
+                                                <h3>{{hero.hero.title}}</h3>
+                                            </div>
+                                            <div class="pull-right">
+                                                {{hero}}
+                                            </div>
                                         </div>
                                         <div class="row m-l-none m-r-none">
                                             <div class="col-xs-12 col-md-7 col-lg-7 m-b-sm">
