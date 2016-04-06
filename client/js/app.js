@@ -603,8 +603,6 @@ var app = angular.module('app', [
                             }],
                             article: ['$state', '$stateParams', 'Util', 'Article', function ($state, $stateParams, Util, Article) {
                                 var slug = $stateParams.slug;
-                                
-                                console.log('looking for:', slug);
 
                                 return Article.findOne({
                                     filter: {
@@ -716,7 +714,6 @@ var app = angular.module('app', [
                                         relatedArticle.slug = Util.setSlug(relatedArticle);
                                     });
                                     
-                                    console.log('article:', article);
                                     return article;
                                 })
                                 .catch(function (err) {
@@ -1715,29 +1712,24 @@ var app = angular.module('app', [
             .state('app.hs.snapshot.redirect', {
                 url: '',
                 resolve: {
-//                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
-//                        return SnapshotService.getLatest().then(function (result) {
-//                            console.log(result);
-//                            if (result.success === true) {
-//                                return result;
-//                            } else {
-//                                return $q.reject('unable to find snapshot');
-//                            }
-//                        });
-//                    }],
                     data: ['Snapshot', function (Snapshot) {
                         return Snapshot.findOne({
                             filter: {
                                 order: "createdDate DESC",
-                                where: { isActive: true }
+                                where: { isActive: true },
+                                include: [
+                                    {
+                                        relation: 'slugs',
+                                        scope: {
+                                            fields: ['linked', 'slug']
+                                        }
+                                    }
+                                ]
                             }
                         }).$promise;
                     }],
-//                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
-//                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
-//                        return $q.reject();
-//                    }]
-                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
+                    redirect: ['$q', '$state', 'data', 'Util', function ($q, $state, data, Util) {
+                        data.slug = Util.setSlug(data);
                         $state.go('app.hs.snapshot.snapshot', { slug: data.slug.url });
                         return $q.reject();
                     }]

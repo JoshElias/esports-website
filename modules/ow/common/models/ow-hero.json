@@ -1,6 +1,6 @@
 {
-  "name": "OWHero",
-  "plural": "OWHeroes",
+  "name": "owHero",
+  "plural": "owHeroes",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
