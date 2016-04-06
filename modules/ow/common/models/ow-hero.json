@@ -65,13 +65,13 @@
   "relations": {
     "overwatchAbilities": {
       "type": "hasMany",
-      "model": "overwatchAbility",
-      "foreignKey": "heroId"
+      "model": "owAbility",
+      "foreignKey": "owHeroId"
     },
     "heroTier": {
         "type": "hasMany",
-        "model": "overwatchSnapshotHeroTiers",
-        "foreignKey": "overwatchHeroId"
+        "model": "owSnapshotHeroTiers",
+        "foreignKey": "owHeroId"
     }
   },
   "acls": [
