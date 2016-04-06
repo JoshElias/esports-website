@@ -185,8 +185,6 @@ angular.module('app.directives', ['ui.load'])
                                   LoginModalService.hideModal();
                                   $scope.setLoggingIn(2);
 
-                                console.log($stateParams.redirect);
-
                                 if ($scope.callback) {
                                     $scope.callback(LoopBackAuth);
                                 } else if (!$scope.state) {
@@ -1476,7 +1474,7 @@ angular.module('app.directives', ['ui.load'])
                 if(!_.isEmpty(search)) {
                     where['or'] = [
                         {
-                            title: {
+                            name: {
                                 regexp: pattern
                             }
                         }

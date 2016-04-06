@@ -33,12 +33,16 @@
       "type": "number"
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
-    "owHeroId": {},
-    "owSnapshotId": {}
+    "owHeroId": {
+      "index": 1
+    },
+    "owSnapshotId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
       "snapshot": {
           "type": "belongsTo",
@@ -75,6 +79,5 @@
       "principalId": "$owner",
       "permission": "ALLOW"
     }
-  ],
-  "methods": {}
+  ]
 }

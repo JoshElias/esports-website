@@ -18,7 +18,8 @@
     },
     "className": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     }
   },
   "relations": {

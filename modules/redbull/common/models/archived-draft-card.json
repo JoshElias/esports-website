@@ -7,10 +7,14 @@
     "validateUpsert": true
   },
   "properties": {
-    "cardId": {},
-    "redbullDraftId": {},
     "cardQuantity": {
       "type": "number"
+    },
+    "cardId": {
+      "index": 1
+    },
+    "redbullDraftId": {
+      "index": 1
     }
   },
   "relations": {

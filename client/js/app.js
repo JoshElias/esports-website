@@ -8,7 +8,7 @@ var app = angular.module('app', [
     'angular-iscroll',
     'angularMoment',
     'angularPayments',
-    'angular-svg-round-progressbar',
+    'angular-svg-round-progress',
     'youtube-embed',
     'dndLists',
     'ngCookies',
@@ -324,8 +324,7 @@ var app = angular.module('app', [
                                             }
                                         ],
                                         fields: {
-                                            content: false,
-                                            votes: false
+                                            content: false
                                         },
                                         order: 'createdDate DESC',
                                         limit: perpage
@@ -339,8 +338,8 @@ var app = angular.module('app', [
                                     return owArticles;
                                 });
                             }],
-                            heroes: ['OverwatchHero', function (OverwatchHero) {
-                                return OverwatchHero.find({
+                            heroes: ['OwHero', function (OwHero) {
+                                return OwHero.find({
                                     filter: {
                                         where: {
                                             isActive: true
@@ -389,8 +388,8 @@ var app = angular.module('app', [
             .state('app.overwatch.heroes.redirect', {
                 url: '',
                 resolve: {
-                    hero: ['OverwatchHero', function (OverwatchHero) {
-                        return OverwatchHero.findOne({
+                    hero: ['OwHero', function (OwHero) {
+                        return OwHero.findOne({
                             filter: {
                                 where: {
                                     isActive: true
@@ -415,8 +414,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html',
                         controller: 'OverwatchHeroCtrl',
                         resolve: {
-                            heroes: ['OverwatchHero', function (OverwatchHero) {
-                                return OverwatchHero.find({
+                            heroes: ['OwHero', function (OwHero) {
+                                return OwHero.find({
                                     filter: {
                                         where: {
                                             isActive: true
@@ -430,9 +429,9 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
+                            hero: ['$stateParams', 'OwHero', function ($stateParams, OwHero) {
                                 var slug = $stateParams.slug;
-                                return OverwatchHero.findOne({
+                                return OwHero.findOne({
                                     filter: {
                                         where: {
                                             className: slug,
@@ -669,17 +668,27 @@ var app = angular.module('app', [
                                                    ]
                                                }
                                            },
-                                            {
+                                           {
                                                 relation: "deck",
                                                 scope: {
-                                                    fields: {
-                                                        id: true,
-                                                        playerClass: true,
-                                                        heroName: true,
-                                                        dust: true,
-                                                        gameModeType: true,
-                                                        name: true
-                                                    },
+                                                    // this object didnt filter properly?
+                                                    // changed to an array
+//                                                    fields: {
+//                                                        id: true,
+//                                                        playerClass: true,
+//                                                        heroName: true,
+//                                                        dust: true,
+//                                                        gameModeType: true,
+//                                                        name: true
+//                                                    },
+                                                    fields: [
+                                                        'id',
+                                                        'playerClass',
+                                                        'heroName',
+                                                        'dust',
+                                                        'gameModeType',
+                                                        'name'
+                                                    ],
                                                     include: {
                                                         relation: 'cards',
                                                         scope: {

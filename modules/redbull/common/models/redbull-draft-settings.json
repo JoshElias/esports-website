@@ -8,7 +8,8 @@
   },
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "cardsPerPack": {
       "type": "number",

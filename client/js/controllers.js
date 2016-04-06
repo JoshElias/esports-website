@@ -2442,7 +2442,8 @@ angular.module('app.controllers', ['ngCookies'])
                 'themeName',
                 'title',
                 'related',
-                'isCommentable'
+                'isCommentable',
+                'classTags'
             ]);
 
             if (cleanArticle.guide) {
@@ -2464,8 +2465,6 @@ angular.module('app.controllers', ['ngCookies'])
                 cleanArticle['guideId'] = undefined;
             }
 
-            var d = new Date().toISOString();
-            cleanArticle.createdDate = d;
             cleanArticle.slugOptions = {
                 slug: cleanArticle.slug.url,
                 linked: cleanArticle.slug.linked
@@ -2482,7 +2481,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             delete cleanArticle.related;
 
-            console.log('saving:', cleanArticle);
             var createdArticle;
             async.waterfall([
                 function (wateryCB) {
@@ -3085,10 +3083,10 @@ angular.module('app.controllers', ['ngCookies'])
                 'isFeatured',
                 'photoNames',
                 'premium',
-                'slug',
                 'themeName',
                 'title',
-                'isCommentable'
+                'isCommentable',
+                'classTags'
             ]);
 
             cleanArticle.deckId = (article.articleType[0] === 'hs' && article.deck && article.deck.id) ? article.deck.id : null;
@@ -3116,7 +3114,6 @@ angular.module('app.controllers', ['ngCookies'])
                 cleanArticle['guideId'] = null;
             }
 
-            console.log('saving:', cleanArticle);
             async.parallel([
                 function (paraCB) {
                     Article.upsert(cleanArticle)
@@ -9842,6 +9839,7 @@ angular.module('app.controllers', ['ngCookies'])
                     console.log('roleErr: ', roleErr);
                 });
             });
+            
 
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
 //                console.log("event listener response:", data);
@@ -11819,8 +11817,8 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'userRoles', 'EventService', 'User',
-        function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth, userRoles, EventService, User) {
+    .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'userRoles', 'EventService', 'User', 'Util',
+        function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth, userRoles, EventService, User, Util) {
 //			console.log('article:', article);
             $scope.ArticleService = Article;
             $scope.article = article;
@@ -11846,6 +11844,7 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .$promise
                     .then(function (userRoles) {
+                        
                         Article.findById({
                             id: $scope.article.id,
                             filter: {
@@ -11912,14 +11911,14 @@ angular.module('app.controllers', ['ngCookies'])
                                    {
                                         relation: "deck",
                                         scope: {
-                                            fields: {
-                                                id: true,
-                                                playerClass: true,
-                                                heroName: true,
-                                                dust: true,
-                                                gameModeType: true,
-                                                name: true
-                                            },
+                                            fields: [
+                                                'id',
+                                                'playerClass',
+                                                'heroName',
+                                                'dust',
+                                                'gameModeType',
+                                                'name'
+                                            ],
                                             include: {
                                                 relation: 'cards',
                                                 scope: {
@@ -11950,7 +11949,7 @@ angular.module('app.controllers', ['ngCookies'])
                         .$promise
                         .then(function (article) {
                             // init template vars
-                            article.slug = Util.setSlug(data);
+                            article.slug = Util.setSlug(article);
 
                             article.voteScore = Util.tally(article.votes, 'direction');
 
@@ -11958,7 +11957,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 relatedArticle.slug = Util.setSlug(relatedArticle);
                             });
                             
-                            $scope.article = data;
+                            $scope.article = article;
 
                             $scope.isUser.admin = userRoles.isInRoles.$admin;
                             $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
