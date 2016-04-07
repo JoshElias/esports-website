@@ -4376,7 +4376,6 @@ angular.module('app.services', [])
                 sb.id = data.id;
                 sb.isActive = data.isActive;
                 sb.photoNames = data.photoNames;
-                sb.slug = data.slug;
                 sb.snapNum = data.snapNum;
                 // TODO: remove the "||" patch after updating the db
                 sb.snapshotType = data.snapshotType || defaultSnap.snapshotType;
@@ -4391,9 +4390,7 @@ angular.module('app.services', [])
                 sb.votes = data.votes || [];
                 
                 // set slug
-                if (sb.slug.linked) {
-                    sb.setSlug();
-                }
+                sb.slug = Util.setSlug(data);
                 
                 sb.loaded = true;
             };
@@ -4409,9 +4406,6 @@ angular.module('app.services', [])
                         where: {
                             snapshotType: snapshotType,
                             isActive: true
-                        },
-                        fields: {
-                            tiers: false
                         },
                         order: 'createdDate DESC',
                         include: [
@@ -4472,6 +4466,12 @@ angular.module('app.services', [])
                                             }
                                         }
                                     ]
+                                }
+                            },
+                            {
+                                relation: 'slugs',
+                                scope: {
+                                    fields: ['linked', 'slug']
                                 }
                             }
                         ]
@@ -6249,9 +6249,12 @@ angular.module('app.services', [])
                             }
                         }, {
                             snapNum: sb.snapNum,
-                            //snapshotType: sb.snapshotType,
+                            snapshotType: sb.snapshotType,
                             title: sb.title,
-                            slug: sb.slug,
+                            slugOptions: {
+                                slug: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
                             content: sb.content,
                             photoNames: sb.photoNames,
                             isActive: sb.isActive
@@ -6294,7 +6297,6 @@ angular.module('app.services', [])
                                 intro: sb.content.intro,
                                 thoughts: sb.content.thoughts
                             },
-                            createdDate: new Date().toISOString(),
                             photoNames: {
                                 square: sb.photoNames.square || '',
                                 small: sb.photoNames.small || '',
@@ -6304,19 +6306,19 @@ angular.module('app.services', [])
                             isCommentable: sb.isCommentable,
                             isActive: sb.isActive
                         });
+                        
                         Snapshot.create({
                             snapNum: sb.snapNum,
                             title: sb.title,
                             snapshotType: sb.snapshotType,
-                            slug: {
-                                url: sb.slug.url,
+                            slugOptions: {
+                                slug: sb.slug.url,
                                 linked: sb.slug.linked
                             },
                             content: {
                                 intro: sb.content.intro,
                                 thoughts: sb.content.thoughts
                             },
-                            createdDate: new Date().toISOString(),
                             photoNames: {
                                 square: sb.photoNames.square || '',
                                 small: sb.photoNames.small || '',
