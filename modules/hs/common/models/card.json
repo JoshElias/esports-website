@@ -15,18 +15,22 @@
     },
     "cost": {
       "type": "number",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "rarity": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "race": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "playerClass": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "text": {
       "type": "string"
@@ -38,7 +42,8 @@
       "type": "string"
     },
     "attack": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "health": {
       "type": "number"
@@ -47,7 +52,8 @@
       "type": "number"
     },
     "dust": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
     "isActive": {
       "type": "boolean",
@@ -73,7 +79,8 @@
     },
     "expansion": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     }
   },
   "relations": {
