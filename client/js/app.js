@@ -1851,8 +1851,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (snapshot) {
-                                    console.log('snapshot:', snapshot);
-//                                    snapshot.slug = Util.setSlug(snapshot);
                                     snapshot.voteScore = Util.tally(snapshot.votes, 'direction');
                                     return snapshot;
                                 })
