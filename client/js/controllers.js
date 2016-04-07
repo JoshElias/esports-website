@@ -7426,13 +7426,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             function saveDeck(deck) {
 
-                deck.votes = [
-                    {
-                        userID: User.getCurrentId(),
-                        direction: 1
-                    }
-                ];
-
                 var deckSubmitted = angular.copy(deck);
 
                 angular.forEach(deckSubmitted.mulligans, function(mulligan) {
@@ -7489,12 +7482,10 @@ angular.module('app.controllers', ['ngCookies'])
                 });
 
                 var cleanDeck = Util.cleanObj(deckSubmitted, [
-                    'authorId',
                     'basic',
                     'deckCards',
                     'chapters',
                     'comments',
-                    'createdDate',
                     'deckCards',
                     'deckMatchups',
                     'deckMulligans',
@@ -7507,15 +7498,11 @@ angular.module('app.controllers', ['ngCookies'])
                     'isPublic',
                     'name',
                     'playerClass',
-                    'slug',
                     'premium',
-                    'voteScore',
                     'votes',
                     'youtubeId',
                     'isCommentable'
                 ]);
-
-
 
 //                console.log('deck before save:', cleanDeck);
 
@@ -10322,7 +10309,7 @@ angular.module('app.controllers', ['ngCookies'])
                 if(!deck.validDeck()) {
                   $window.scrollTo(0, 0);
                   $scope.deckSubmitting = false;
-                            return AlertService.setError({
+                  return AlertService.setError({
                     show: true,
                     msg: 'Unable to save deck',
                     errorList: ['Deck must have exactly 30 cards']
@@ -10412,15 +10399,6 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             function saveDeck(deck) {
-                
-                deck.votes = [
-                    {
-                        userID: User.getCurrentId(),
-                        direction: 1
-                    }
-                ];
-
-                deck.authorId = User.getCurrentId();
 
                 var deckSubmitted = angular.copy(deck);
 
@@ -11065,8 +11043,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            console.log('$scope.deck:', $scope.deck);
 
             $scope.$watch('deck', function() {
-                //noinspection UnterminatedStatementJS
-                $scope.app.settings.deck = $scope.deck
+                $scope.app.settings.deck = $scope.deck;
 //                console.log('deck: ', $scope.deck);
             }, true);
 
@@ -11322,9 +11299,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var updatedDeck;
                 async.series([
                     function (seriesCallback) {
-                        Deck.prototype$updateAttributes({
-                            id: deck.id
-                        }, deck)
+                        Deck.upsert(deck)
                         .$promise
                         .then(function (deckUpdated) {
                             updatedDeck = deckUpdated;
@@ -16438,6 +16413,7 @@ angular.module('app.controllers', ['ngCookies'])
                   function (seriesCallback) {
                     doGetTopGuide($scope.filters, function(err, guide) {
                       if (err) return seriesCallback(err);
+                        console.log('top guide: ', guide);
                       $scope.topGuides = guide;
                       initializing = false;
                       return seriesCallback();

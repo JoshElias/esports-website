@@ -1023,7 +1023,6 @@ var app = angular.module('app', [
                                         fields: {
                                             id: true,
                                             name: true,
-                                            slug: true,
                                             heroName: true,
                                             authorId: true,
                                             playerClass: true,
@@ -1060,7 +1059,6 @@ var app = angular.module('app', [
                                         fields: {
                                             id: true,
                                             name: true,
-                                            slug: true,
                                             heroName: true,
                                             authorId: true,
                                             playerClass: true,
@@ -2587,12 +2585,19 @@ var app = angular.module('app', [
                                                                 direction: true
                                                             }
                                                         }
+                                                    },
+                                                    {
+                                                        relation: 'slugs',
+                                                        scope: {
+                                                            fields: ['slug', 'linked']
+                                                        }
                                                     }
                                                 ]
                                             }
                                         })
                                         .$promise
                                         .then(function (data) {
+                                            data[0].slug = Util.setSlug(data[0]);
                                             data[0].voteScore = Util.tally(data[0].votes, 'direction');
                                             return seriesCb(undefined, data);
                                         })

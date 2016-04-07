@@ -3313,10 +3313,11 @@ angular.module('app.services', [])
                     var filter = {}
                 }
 
+                console.log(filter);
                 Guide.topGuide(filter)
                 .$promise
                 .then(function (data) {
-//                    console.log(data);
+                    console.log(data);
                     data.slug = Util.setSlug(data);
                     return finalCallback(undefined, data);
                 })
