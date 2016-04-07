@@ -92,12 +92,12 @@ angular.module('redbull.controllers')
         $event.stopPropagation();
 
         var box = bootbox.dialog({
-          title: 'Set Draft as INACTIVE',
-          message: 'Are you sure you want to deactive this draft for the player: <strong>' +
-          player.username + '</strong>? <br/><br /> This will allow the player to draft again and cannot be undone.',
+          title: 'Archive Draft',
+          message: 'Are you sure you want to archive this draft for the player: <strong>' +
+          player.username + '</strong>?<br/><br />This will allow the player to draft again and cannot be undone.',
           buttons: {
             delete: {
-              label: 'Set Inactive',
+              label: 'Archive',
               className: 'btn-danger',
               callback: function () {
                 var draft = player.activeDraft;
@@ -112,7 +112,7 @@ angular.module('redbull.controllers')
                   $window.scrollTo(0, 0);
                   AlertService.setSuccess({
                     show: true,
-                    msg: 'Draft has been set as Inactive'
+                    msg: 'Draft has been archived successfully'
                   });
 
                 }).catch(function (err) {
@@ -120,7 +120,7 @@ angular.module('redbull.controllers')
                   $window.scrollTo(0, 0);
                   AlertService.setError({
                     show: true,
-                    msg: 'Could not deactive deck',
+                    msg: 'Could not archive draft',
                     lbErr: err
                   });
 
@@ -134,7 +134,8 @@ angular.module('redbull.controllers')
                 box.modal('hide');
               }
             }
-          }
+          },
+          className: 'modal-admin modal-admin-remove'
         });
         box.modal('show');
       };
@@ -191,7 +192,8 @@ angular.module('redbull.controllers')
                 box.modal('hide');
               }
             }
-          }
+          },
+          className: 'modal-admin modal-admin-remove'
         });
         box.modal('show');
       };

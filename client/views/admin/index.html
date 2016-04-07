@@ -151,7 +151,7 @@
         </li>-->
     </ul>
     <!-- sealed tool -->
-    <ul class="nav" ng-if="currentRoles.isAdmin || currentUser.isRedbullAdmin">
+    <ul class="nav" ng-if="currentRoles.isAdmin || currentRoles.isRedbullAdmin">
         <li ng-class="{active:$state.includes('app.admin.sealed')}" class="nav-drop">
             <a href="#" class="nav-drop-btn">
                 <span class="pull-right text-muted">

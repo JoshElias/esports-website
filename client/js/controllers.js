@@ -57,31 +57,16 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
           $scope.currentRoles = {};
 
-          // Add 'redbulladmin' to current user if they have role.
-          var redbullCheck = function(){
-            if ($scope.currentUser) {
-              User.isInRoles({
-                uid: $scope.currentUser.id,
-                roleNames: ['$redbullAdmin']
-              }, function (res) {
-                if (res.isInRoles.$redbullAdmin) {
-                  if (res.isInRoles.$redbullAdmin === true) {
-                    //console.log('user is redbulladmin');
-                    $scope.currentUser.isRedbullAdmin = true;
-                  }
-                }
-              });
-            }
-          }
-
           var adminCheck = function() {
               if ($scope.currentUser) {
                   User.isInRoles({
                       uid: $scope.currentUser.id,
-                      roleNames: ['$admin']
+                      roleNames: ['$admin', '$redbullAdmin']
                   }).$promise
                   .then(function (res) {
+                      console.log(res);
                       $scope.currentRoles.isAdmin = res.isInRoles.$admin;
+                      $scope.currentRoles.isRedbullAdmin = res.isInRoles.$redbullAdmin;
                   })
                   .catch(function (err) {
                       return console.log('User.isInRoles: ', err);
@@ -90,14 +75,12 @@ angular.module('app.controllers', ['ngCookies'])
           };
 
         $scope.currentUser = currentUser;
-        redbullCheck();
         adminCheck();
 
         EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
             $scope.currentUser = data;
 
             adminCheck();
-            redbullCheck();
         });
 
 

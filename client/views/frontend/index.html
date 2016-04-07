@@ -80,11 +80,9 @@
                                     </a>
                                     <ul class="dropdown-menu no-border-radius no-padding">
                                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{user.username}}">Profile</a></li>
-                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}"
-                                          ng-show="currentRoles.isAdmin">
+                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentRoles.isAdmin || currentRoles.isRedbullAdmin">
                                           <a ui-sref="app.admin.dashboard">Admin</a>
-                                        </li>
-                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
+                                      </li>
                                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                                     </ul>
                                 </li>
@@ -107,11 +105,8 @@
                     </a>
                     <ul class="dropdown-menu no-border-radius no-padding dropdown-user-login">
                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{currentUser.username}}">Profile</a></li>
-                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentRoles.isAdmin">
+                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentRoles.isAdmin || currentRoles.isRedbullAdmin">
                         <a ui-sref="app.admin.dashboard">Admin</a>
-                      </li>
-                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin && !currentRoles.isAdmin">
-                        <a ui-sref="app.admin.dashboard">Redbull Admin</a>
                       </li>
                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                     </ul>
