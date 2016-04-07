@@ -4,6 +4,11 @@ var async = require('async');
 
 module.exports = function(Guide) {
 
+    // Do not filter topGuide query
+    Guide.afterRemote("topGuide", function (ctx, modelInstance, next) {
+        ctx.method.skipFilter = true;
+        return next();
+    });
 
     Guide.topGuide = function (filters, cb) {
         var limit = 10;
@@ -24,7 +29,7 @@ module.exports = function(Guide) {
                 },
                 include: ['votes']
             }, function (err, guides) {
-                if (err) 
+                if (err)
                     return findCb(err);
                 
                 _.each(guides, function (guide) { 
@@ -37,7 +42,7 @@ module.exports = function(Guide) {
                 });
                 return findCb(undefined, guides);
             })
-        }
+        };
         
         var findTopGuide = function (arr, seriesCb) {
             var sorted = _.sortBy(arr, 'score');
@@ -51,13 +56,14 @@ module.exports = function(Guide) {
                 var sortedGuides = _.sortBy(guides, function (val) { return val.voteScore; });
                 var i = sortedGuides.length;
                 while (i-- > 0) {
-                    if (sortedGuides[i].guideType === 'hero')
+                    if (sortedGuides[i].guideType === 'hero') {
                         return seriesCb(undefined, sortedGuides[i].id);
+                    }
                 }
                 iter++;
                 return findTopGuide(arr, seriesCb);
             });
-        }
+        };
                 
         async.waterfall([
             function (seriesCb) {
@@ -65,7 +71,7 @@ module.exports = function(Guide) {
                     where: {
                         guideId: { exists: true }
                     }
-                }
+                };
                 
                 if(!_.isEmpty(filters)) {
                     var heroFilter = {};
@@ -105,7 +111,8 @@ module.exports = function(Guide) {
                     
                     if (filters.search == "" && (!_.isEmpty(filters.universes) || !_.isEmpty(filters.roles))) {
                         if(_.isUndefined(heroFilter.where))
-                            heroFilter.where = {}
+                            heroFilter.where = {};
+
                         heroFilter.where.and = [];
                         
                         if (!_.isEmpty(filters.universes)) {
@@ -123,7 +130,7 @@ module.exports = function(Guide) {
                         if(_.isUndefined(heroFilter.include))
                             heroFilter.include = {
                                 relation: "guides"
-                            }
+                            };
                             
                         heroFilter.where.or = [
                             { name: { regexp: pattern } },
@@ -155,7 +162,7 @@ module.exports = function(Guide) {
                         }
                         voteFilter.where['guideId'] = {
                             inq: _.flatten(ids)
-                        }
+                        };
 
                         return seriesCb(undefined, voteFilter);
                     })
@@ -184,7 +191,7 @@ module.exports = function(Guide) {
                         var temp = { id: key, score: val };
                         
                         arr.push(temp);
-                    })
+                    });
                     
                     return seriesCb(err, arr);
                 });
@@ -192,7 +199,7 @@ module.exports = function(Guide) {
             findTopGuide
         ], cb)
         
-    }
+    };
     
     
     

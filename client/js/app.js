@@ -27,7 +27,7 @@ var app = angular.module('app', [
     'app.animations',
     'app.redbull',
     'hotsSnapshot',
-    //'tsAdSense'
+    // 'tsAdSense'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
@@ -2515,6 +2515,7 @@ var app = angular.module('app', [
                                         Guide.topGuide(filter)
                                         .$promise
                                         .then(function (data) {
+                                            console.log(data);
                                             return seriesCb(undefined, data);
                                         })
                                         .catch(function (err) {
@@ -2522,6 +2523,10 @@ var app = angular.module('app', [
                                         })
                                     },
                                     function (guideId, seriesCb) {
+                                        console.log(guideId);
+                                        if (!guideId.id)
+                                            return seriesCb(undefined, null);
+
                                         Guide.find({
                                             filter: {
                                                 where: {
