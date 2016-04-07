@@ -569,24 +569,36 @@ module.exports = function(User) {
 
             return finalCb(err, isInRoles);
         });
-
-        return finalCb.promise;
     };
 
 
-    User.assignRoles = function (uid, roleNames, cb) {
-        cb = cb || new Promise();
+    User.assignRoles = function (uid, roleNames, finalCb) {
+
+        finalCb = finalCb || new Promise();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
+        // Set the request if available
+        var loopbackContext = loopback.getCurrentContext();
+        var req;
+        if (loopbackContext && loopbackContext.active && loopbackContext.active.http){
+            loopbackContext.set("req", loopbackContext.active.http.req);
+        }
+
+        // Stringify uid
         uid = uid.toString();
 
         function assignRole(roleName, assignCb) {
             async.waterfall([
                 // check if user is already that role
                 function (seriesCb) {
-                    User.isInRoles(uid, [roleName], function (err, isInRoles) {
+
+                    var req;
+                    if (loopbackContext) {
+                        req = loopbackContext.get("req");
+                    }
+                    return User.isInRoles(uid, [roleName], req, undefined, function (err, isInRoles) {
                         if (err) return seriesCb(err);
                         if (isInRoles[roleName]) return seriesCb("ok");
                         else return seriesCb(undefined)
@@ -594,6 +606,7 @@ module.exports = function(User) {
                 },
                 // Get the new role
                 function (seriesCb) {
+
                     Role.findOne({where: {name: roleName}}, function (err, role) {
                         if (err) return seriesCb(err);
                         if (!role) {
@@ -607,6 +620,7 @@ module.exports = function(User) {
                 },
                 // Assign the user to that role
                 function (role, seriesCb) {
+
                     role.principals.create({
                         principalType: RoleMapping.USER,
                         principalId: uid
@@ -616,11 +630,17 @@ module.exports = function(User) {
                 },
                 // Add the role to the req cache
                 function(seriesCb) {
-                    var ctx = loopback.getCurrentContext();
-                    if(!ctx.active)
-                        return seriesCb();
 
-                    var roles = ctx.active.http.req.roles;
+                    var req;
+                    if (loopbackContext) {
+                        req = loopbackContext.get("req");
+                    }
+
+                    if(!req) {
+                        return seriesCb();
+                    }
+
+                    var roles = req.roles;
                     if(typeof roles !== "object") {
                         roles = {};
                     }
@@ -639,23 +659,30 @@ module.exports = function(User) {
             });
         }
 
-        async.eachSeries(roleNames, assignRole, cb);
-
-        return cb.promise;
+        return async.eachSeries(roleNames, assignRole, finalCb);
     };
 
 
-    User.revokeRoles = function (uid, roleNames, cb) {
-        cb = cb || new Promise();
+    User.revokeRoles = function (uid, roleNames, finalCb) {
+        finalCb = finalCb || new Promise();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
+
+        // Set the request if available
+        var loopbackContext = loopback.getCurrentContext();
+        var req;
+        if (loopbackContext && loopbackContext.active && loopbackContext.active.http){
+            loopbackContext.set("req", loopbackContext.active.http.req);
+        }
+
+        uid = uid.toString();
 
         function revokeRole(roleName, assignCb) {
             async.waterfall([
                 // check if user is already that role
                 function (seriesCb) {
-                    User.isInRoles(uid, [roleName], function (err, isInRoles) {
+                    User.isInRoles(uid, [roleName], req, undefined, function (err, isInRoles) {
                         if (err) return seriesCb(err);
 
                         if (!isInRoles[roleName]) return seriesCb("ok");
@@ -689,13 +716,25 @@ module.exports = function(User) {
                 },
                 // Remove the role from the req cache
                 function(seriesCb) {
-                    var ctx = loopback.getCurrentContext();
-                    if(!ctx.active || typeof ctx.active.http.req.roles !== "object")
-                        return seriesCb();
 
-                    var currentRoles = ctx.active.http.req.roles[uid.toString()];
-                    if(typeof currentRoles !== "object")
+                    var req;
+                    if (loopbackContext) {
+                        req = loopbackContext.get("req");
+                    }
+
+                    if(!req) {
                         return seriesCb();
+                    }
+
+                    var roles = req.roles;
+                    if(typeof roles !== "object") {
+                        return seriesCb();
+                    }
+
+                    var currentRoles = roles[uid];
+                    if(typeof currentRoles !== "object") {
+                        return seriesCb();
+                    }
 
                     currentRoles[roleName] = false;
                     return seriesCb();
@@ -706,9 +745,7 @@ module.exports = function(User) {
             });
         }
 
-        async.eachSeries(roleNames, revokeRole, cb);
-
-        return cb.promise;
+        return async.eachSeries(roleNames, revokeRole, finalCb);
     };
 
 
@@ -824,6 +861,19 @@ module.exports = function(User) {
     );
 
     User.remoteMethod(
+        'assignRoles',
+        {
+            description: "Assigns a role to a user",
+            accepts: [
+                {arg: 'uid', type: 'string', required:true, http: {source: 'form'}},
+                {arg: 'roleNames', type: 'array', required:true, http: {source: 'form'}}
+            ],
+            http: {verb: 'post'},
+            isStatic: true
+        }
+    );
+
+    User.remoteMethod(
         'isLinked',
         {
             description: "Checks if a user has a 3rd party link",
@@ -900,19 +950,6 @@ module.exports = function(User) {
         'cancelSubscription',
         {
             description: "Cancel a user's subscription",
-            http: {verb: 'post'},
-            isStatic: true
-        }
-    );
-
-    User.remoteMethod(
-        'assignRoles',
-        {
-            description: "Assigns a role to a user",
-            accepts: [
-                {arg: 'uid', type: 'string', required:true, http: {source: 'form'}},
-                {arg: 'roleNames', type: 'array', required:true, http: {source: 'form'}}
-            ],
             http: {verb: 'post'},
             isStatic: true
         }

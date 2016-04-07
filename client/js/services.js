@@ -576,7 +576,14 @@ angular.module('app.services', [])
                         newTiers[item.tier - 1].heroes.push(item);
                     }
 
-                    this.tiers = newTiers;
+                    for (var i = 0; i < newTiers.length; i++) {
+                        if (!this.tiers[i])
+                            this.addTier();
+
+                        this.tiers[i].heroes = newTiers[i].heroes;
+                    }
+
+                    // this.tiers = newTiers;
                 }
             };
 
