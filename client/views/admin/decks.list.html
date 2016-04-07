@@ -1,25 +1,27 @@
+<span class="ts-admin-styles"> <!-- Temporary remove when hero section is redesign -->
+
 <alert-box theme="admin"></alert-box>
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
         
-        <div class="pull-right" ng-if="decks">
-            <span class="m-r-sm">
+        <div class="pull-right pagination-margin" ng-if="decks">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ deckPagination.total === 0 ? deckPagination.total : ((deckPagination.page - 1) * deckPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  deckPagination.page * deckPagination.perpage > deckPagination.total ? deckPagination.total : deckPagination.page * deckPagination.perpage }}</strong> 
-                of <strong>{{ deckPagination.total }}</strong>
+                {{ deckPagination.total === 0 ? deckPagination.total : ((deckPagination.page - 1) * deckPagination.perpage) + 1 }} 
+                to {{  deckPagination.page * deckPagination.perpage > deckPagination.total ? deckPagination.total : deckPagination.page * deckPagination.perpage }} 
+                of {{ deckPagination.total }}
             </span>
             <div pagination="deckPagination" theme="admin" class="admin"></div>
         </div>
         
-        <div class="pull-left mg-r-sm">
+        <div class="pull-left">
             <form class="form-inline" ng-submit="searchDecks()" novalidate>
                 <div class="form-group">
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" 
+                        <button type="submit" class="btn btn-default btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -31,32 +33,40 @@
         </div>
         
     </div>
-    <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="deck in decks">
-            <span>{{deck.name}}</span>
-            <div class="pull-right btn-toolbar">
-                
-                <a ui-sref="app.admin.hearthstone.decks.edit({ deckID: deck.id })" 
-                   class="btn btn-default">Edit</a>
-                
-                <button class="btn btn-danger" 
-                        ng-click="deleteDeck(deck)">Delete</button>
-            </div>
+    <div class="admin-list">
+        <div class="admin-list-item list-items clearfix" ng-repeat="deck in decks">
+            <div class="list-accent-div">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <span class="list-item-height">{{deck.name}}</span>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="pull-right btn-toolbar list-item-height">
+
+                            <a ui-sref="app.admin.hearthstone.decks.edit({ deckID: deck.id })" 
+                               class="btn btn-default">Edit</a>
+
+                            <button class="btn btn-danger" 
+                                    ng-click="deleteDeck(deck)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>       
         </div>
-        <div class="list-group-item" ng-show="!decks.length">
+        <div class="admin-list-item placeholder-text" ng-show="!decks.length">
             There are no decks yet.
         </div>
-        <div class="list-group-item b-t-none" ng-show="decks.length && filtered && !filtered.length">
+        <div class="admin-list-item placeholder-text" ng-show="decks.length && filtered && !filtered.length">
             That search returned no results.
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="pull-right">
-            <span class="m-r-sm">
+        <div class="pull-right pagination-margin">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ deckPagination.total === 0 ? deckPagination.total : ((deckPagination.page - 1) * deckPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  deckPagination.page * deckPagination.perpage > deckPagination.total ? deckPagination.total : deckPagination.page * deckPagination.perpage }}</strong> 
-                of <strong>{{ deckPagination.total }}</strong>
+                {{ deckPagination.total === 0 ? deckPagination.total : ((deckPagination.page - 1) * deckPagination.perpage) + 1 }} 
+                to {{  deckPagination.page * deckPagination.perpage > deckPagination.total ? deckPagination.total : deckPagination.page * deckPagination.perpage }} 
+                of {{ deckPagination.total }}
             </span>
             <div pagination="deckPagination" theme="admin" class="admin"></div>
         </div>
@@ -66,7 +76,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" 
+                        <button type="submit" class="btn btn-default btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -78,3 +88,5 @@
         </div>
     </div>
 </div>
+    
+</span>

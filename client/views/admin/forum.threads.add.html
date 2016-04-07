@@ -2,23 +2,29 @@
 
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
-    <div class="panel-heading">
-        Add Thread
+    <div class="panel-heading  wrapper-md clearfix">
+        <div class="row">
+            <div class="col-xs-12 panel-label p-r-none">
+                <label class="control-label pull-left">
+                    <h3>Add Thread</h3>
+                </label>
+            </div>
+        </div>
     </div>
     <div class="panel-body">
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="category" class="col-sm-2 control-label">Category</label>
             <div class="col-sm-10">
                 <select id="category" name="category" class="form-control" ng-options="category.id as category.title for category in selectCategories" ng-model="thread.forumCategoryId" required></select>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="title" class="col-sm-2 control-label">Title</label>
             <div class="col-sm-10">
                 <input type="text" id="title" name="title" value="" class="form-control" ng-model="thread.title" ng-keyup="setSlug()" required>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="slug" class="col-sm-2 control-label">URL</label>
             <div class="col-sm-10">
                 <div class="input-group">
@@ -29,13 +35,13 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="description" class="col-sm-2 control-label">Description</label>
             <div class="col-sm-10">
                 <textarea id="description" name="description" class="form-control" ng-model="thread.description"></textarea>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="active" class="col-sm-2 control-label">Active</label>
             <div class="col-sm-10">
                 <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in threadActive" ng-model="thread.isActive" required></select>
@@ -44,7 +50,7 @@
     </div>
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="fetching || form.$invalid" ng-click="addThread(thread)">    
+            <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="fetching || form.$invalid" ng-click="addThread(thread)">    
                 <span ng-if="!fetching">Add Thread</span>
                 <span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
             </button>
