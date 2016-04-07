@@ -9,6 +9,7 @@ angular.module('hotsSnapshot', [])
 )
 .controller('hotsSnapshotCtrl', ['$scope', '$filter', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
     function ($scope, $filter, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
+        var foldedTiers = {};
         var filter = {
             role: HOTS.roles,
             universe: HOTS.universes,
@@ -47,6 +48,18 @@ angular.module('hotsSnapshot', [])
             val.scaleScore = 0;
             val.utilityScore = 0;
         });
+
+        $scope.isFolded = function (tierNum) {
+            return foldedTiers[tierNum];
+        };
+        
+        $scope.foldTier = function (tierNum) {
+            console.log(tierNum);
+            if(foldedTiers[tierNum] === undefined)
+                foldedTiers[tierNum] = false;
+
+            foldedTiers[tierNum] = !foldedTiers[tierNum];
+    };
 
         $scope.triggerAnimation = function (hero) {
             var s = $scope.heroAnim[hero.id];
@@ -173,13 +186,6 @@ angular.module('hotsSnapshot', [])
                                                         relation: "guides",
                                                         scope: {
                                                             include: [
-                                                                {
-                                                                    relation: "guide",
-                                                                    scope: {
-                                                                        fields: ['id'],
-                                                                        include: ["slugs"]
-                                                                    }
-                                                                },
                                                                 {
                                                                     relation: "talents",
                                                                     scope: {

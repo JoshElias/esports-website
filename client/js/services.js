@@ -552,7 +552,7 @@ angular.module('app.services', [])
                 var largestTier = tiers.length;
 
                 if (!!heroTiers) {
-                    this.tiers = new Array();
+                    var newTiers = new Array();
 
                     _.each(heroTiers, function (heroTier, idx) {
                         heroTier.orderNum = idx;
@@ -562,14 +562,28 @@ angular.module('app.services', [])
                     });
 
                     for (var i = 0; i < largestTier; i++) {
-                        this.addTier();
+                        var newTier = {
+                            heroes: new Array(),
+                            tier: newTiers.length + 1
+                        };
+
+                        newTiers.push(newTier);
                     }
 
                     for (var i = 0; i < heroTiers.length; i++) {
                         var item = heroTiers[i];
 
-                        this.tiers[item.tier - 1].heroes.push(item);
+                        newTiers[item.tier - 1].heroes.push(item);
                     }
+
+                    for (var i = 0; i < newTiers.length; i++) {
+                        if (!this.tiers[i])
+                            this.addTier();
+
+                        this.tiers[i].heroes = newTiers[i].heroes;
+                    }
+
+                    // this.tiers = newTiers;
                 }
             };
 
@@ -780,6 +794,9 @@ angular.module('app.services', [])
                                 _.each(heroTier.guides, function (guide) {
                                     if (!guide.heroTierId)
                                         guide.heroTierId = data.id;
+
+                                    if (guide.guide.isPublic)
+                                        guide.slug = guide.guide.slugs[0];
                                 });
 
                                 if (heroTier.guides && heroTier.guides.length)
@@ -795,7 +812,7 @@ angular.module('app.services', [])
                         });
                     }, function (tierGuides, seriesCb) {
                         var guides = _.flatten(tierGuides);
-
+                        
                         async.forEach(guides, function (guide, eachCb) {
                             GuideTier.upsert(guide)
                             .$promise
@@ -803,11 +820,13 @@ angular.module('app.services', [])
                                 var guideTalents = guide.guide.guideTalents;
 
                                 _.each(guideTalents, function (guideTalent) {
-                                    exists['guideTierTalents'].toWrite.push({
-                                        tier: guideTier.tier,
+                                    var toPush = {
+                                        tier: guideTalent.tier,
                                         guideTierId: guideTier.id,
                                         talentId: guideTalent.talentId
-                                    });
+                                    };
+
+                                    exists['guideTierTalents'].toWrite.push(toPush);
                                 });
 
                                 return eachCb(undefined);
@@ -3313,10 +3332,11 @@ angular.module('app.services', [])
                     var filter = {}
                 }
 
+                console.log(filter);
                 Guide.topGuide(filter)
                 .$promise
                 .then(function (data) {
-//                    console.log(data);
+                    console.log(data);
                     data.slug = Util.setSlug(data);
                     return finalCallback(undefined, data);
                 })
@@ -3529,7 +3549,9 @@ angular.module('app.services', [])
 
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: {
                                     id: { inq: selectedHeroIds }
                                 },
@@ -3574,17 +3596,17 @@ angular.module('app.services', [])
                                     id: { inq: guideIds },
                                     isPublic: true
                                 },
-                                fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                ],
+                                fields: {
+                                    name: true,
+                                    authorId: true,
+                                    slug: true,
+                                    voteScore: true,
+                                    guideType: true,
+                                    premium: true,
+                                    id: true,
+                                    talentTiers: true,
+                                    createdDate: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -3693,7 +3715,9 @@ angular.module('app.services', [])
                     function (seriesCallback) {
                         Map.findOne({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: {
                                     id: filters.map.id,
                                 },
@@ -3726,17 +3750,17 @@ angular.module('app.services', [])
                                     id: { inq: guideIds },
                                     isPublic: true
                                 },
-                                fields: [
-                                    "id",
-                                    "name",
-                                    "createdDate",
-                                    "voteScore",
-                                    "slug",
-                                    "guideType",
-                                    "authorId",
-                                    "public",
-                                    "premium"
-                                ],
+                                fields: {
+                                    id: true,
+                                    name: true,
+                                    createdDate: true,
+                                    voteScore: true,
+                                    slug: true,
+                                    guideType: true,
+                                    authorId: true,
+                                    public: true,
+                                    premium: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -3808,25 +3832,30 @@ angular.module('app.services', [])
 
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: { id : { inq: selectedHeroIds } },
                                 include: [
                                     {
                                         relation: "guides",
                                         scope: {
                                             where: where,
-                                            fields: ["id"],
                                             include: [
                                                 {
                                                     relation: "maps",
                                                     scope: {
-                                                        fields: ["className"]
+                                                        fields: {
+                                                            className: true
+                                                        }
                                                     }
                                                 },
                                                 {
                                                     relation: "guideHeroes",
                                                     scope: {
-                                                        fields: ["id"]
+                                                        fields: {
+                                                            id: true
+                                                        }
                                                     }
                                                 }
                                             ]
@@ -3843,7 +3872,7 @@ angular.module('app.services', [])
                     //filter heroes
                     function (heroes, seriesCallback) {
                         //filter out guides by map className
-                        try {
+                        // try {
                             var selectedGuides = [];
                             _.each(heroes, function (hero) {
                                 var filteredGuides = _.filter(hero.guides, function (guide) {
@@ -3858,9 +3887,9 @@ angular.module('app.services', [])
                             var selectedGuideIds = _.map(selectedGuides, function(guide) { return guide.id })
 
                             return seriesCallback(undefined, selectedGuideIds);
-                        } catch (err) {
-                            return seriesCallback(err);
-                        }
+                        // } catch (err) {
+                        //     return seriesCallback(err);
+                        // }
                     },
                     //populate heroes, talents
                     function (selectedGuideIds, seriesCallback) {
@@ -3874,17 +3903,17 @@ angular.module('app.services', [])
                                             id: { inq: selectedGuideIds },
                                             isPublic: true
                                         },
-                                        fields: [
-                                            "name",
-                                            "authorId",
-                                            "slug",
-                                            "voteScore",
-                                            "guideType",
-                                            "premium",
-                                            "id",
-                                            "talentTiers",
-                                            "createdDate"
-                                        ],
+                                        fields: {
+                                            name: true,
+                                            authorId: true,
+                                            slug: true,
+                                            voteScore: true,
+                                            guideType: true,
+                                            premium: true,
+                                            id: true,
+                                            talentTiers: true,
+                                            createdDate: true
+                                        },
                                         include: [
                                             {
                                                 relation: "author",
@@ -3933,7 +3962,7 @@ angular.module('app.services', [])
                                                 }
                                             },
                                             {
-                                                relation: 'slug'
+                                                relation: 'slugs'
                                             }
                                         ]
                                     }
@@ -4354,7 +4383,6 @@ angular.module('app.services', [])
                 sb.id = data.id;
                 sb.isActive = data.isActive;
                 sb.photoNames = data.photoNames;
-                sb.slug = data.slug;
                 sb.snapNum = data.snapNum;
                 // TODO: remove the "||" patch after updating the db
                 sb.snapshotType = data.snapshotType || defaultSnap.snapshotType;
@@ -4369,9 +4397,7 @@ angular.module('app.services', [])
                 sb.votes = data.votes || [];
                 
                 // set slug
-                if (sb.slug.linked) {
-                    sb.setSlug();
-                }
+                sb.slug = Util.setSlug(data);
                 
                 sb.loaded = true;
             };
@@ -4387,9 +4413,6 @@ angular.module('app.services', [])
                         where: {
                             snapshotType: snapshotType,
                             isActive: true
-                        },
-                        fields: {
-                            tiers: false
                         },
                         order: 'createdDate DESC',
                         include: [
@@ -4450,6 +4473,12 @@ angular.module('app.services', [])
                                             }
                                         }
                                     ]
+                                }
+                            },
+                            {
+                                relation: 'slugs',
+                                scope: {
+                                    fields: ['linked', 'slug']
                                 }
                             }
                         ]
@@ -6227,9 +6256,12 @@ angular.module('app.services', [])
                             }
                         }, {
                             snapNum: sb.snapNum,
-                            //snapshotType: sb.snapshotType,
+                            snapshotType: sb.snapshotType,
                             title: sb.title,
-                            slug: sb.slug,
+                            slugOptions: {
+                                slug: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
                             content: sb.content,
                             photoNames: sb.photoNames,
                             isActive: sb.isActive
@@ -6272,7 +6304,6 @@ angular.module('app.services', [])
                                 intro: sb.content.intro,
                                 thoughts: sb.content.thoughts
                             },
-                            createdDate: new Date().toISOString(),
                             photoNames: {
                                 square: sb.photoNames.square || '',
                                 small: sb.photoNames.small || '',
@@ -6282,19 +6313,19 @@ angular.module('app.services', [])
                             isCommentable: sb.isCommentable,
                             isActive: sb.isActive
                         });
+                        
                         Snapshot.create({
                             snapNum: sb.snapNum,
                             title: sb.title,
                             snapshotType: sb.snapshotType,
-                            slug: {
-                                url: sb.slug.url,
+                            slugOptions: {
+                                slug: sb.slug.url,
                                 linked: sb.slug.linked
                             },
                             content: {
                                 intro: sb.content.intro,
                                 thoughts: sb.content.thoughts
                             },
-                            createdDate: new Date().toISOString(),
                             photoNames: {
                                 square: sb.photoNames.square || '',
                                 small: sb.photoNames.small || '',

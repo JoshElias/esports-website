@@ -27,7 +27,7 @@ var app = angular.module('app', [
     'app.animations',
     'app.redbull',
     'hotsSnapshot',
-    //'tsAdSense'
+    // 'tsAdSense'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User', 'Util',
@@ -923,7 +923,6 @@ var app = angular.module('app', [
                                 return Deck.find(filterParams.tsDeckParams.options)
                                 .$promise
                                 .then(function (tempoDecks) {
-                                    console.log('tempoDecks:', tempoDecks);
                                     _.each(tempoDecks, function(tempoDeck) {
                                         tempoDeck.voteScore = Util.tally(tempoDeck.votes, 'direction');
                                         tempoDeck.slug = Util.setSlug(tempoDeck);
@@ -1024,7 +1023,6 @@ var app = angular.module('app', [
                                         fields: {
                                             id: true,
                                             name: true,
-                                            slug: true,
                                             heroName: true,
                                             authorId: true,
                                             playerClass: true,
@@ -1061,7 +1059,6 @@ var app = angular.module('app', [
                                         fields: {
                                             id: true,
                                             name: true,
-                                            slug: true,
                                             heroName: true,
                                             authorId: true,
                                             playerClass: true,
@@ -1244,7 +1241,8 @@ var app = angular.module('app', [
                                                         'id',
                                                         'votes',
                                                         'authorId',
-                                                        'createdDate'
+                                                        'createdDate',
+                                                        'text'
                                                     ],
                                                     include: {
                                                         relation: 'author',
@@ -1753,13 +1751,11 @@ var app = angular.module('app', [
                         resolve: {
                             snapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
                                 var slug = $stateParams.slug;
+                                
                                 return Snapshot.findOne({
                                     filter: {
                                         where: {
-                                            'slug.url': slug
-                                        },
-                                        fields: {
-                                            tiers: false
+                                            slug: slug
                                         },
                                         include: [
                                             {
@@ -1844,6 +1840,12 @@ var app = angular.module('app', [
                                                 relation: 'votes',
                                                 scope: {
                                                     fields: ['direction', 'authorId']
+                                                }
+                                            },
+                                            {
+                                                relation: 'slugs',
+                                                scope: {
+                                                    fields: ['linked', 'slug']
                                                 }
                                             }
                                         ]
@@ -2517,6 +2519,7 @@ var app = angular.module('app', [
                                         Guide.topGuide(filter)
                                         .$promise
                                         .then(function (data) {
+                                            console.log(data);
                                             return seriesCb(undefined, data);
                                         })
                                         .catch(function (err) {
@@ -2524,6 +2527,10 @@ var app = angular.module('app', [
                                         })
                                     },
                                     function (guideId, seriesCb) {
+                                        console.log(guideId);
+                                        if (!guideId.id)
+                                            return seriesCb(undefined, null);
+
                                         Guide.find({
                                             filter: {
                                                 where: {
@@ -2587,12 +2594,19 @@ var app = angular.module('app', [
                                                                 direction: true
                                                             }
                                                         }
+                                                    },
+                                                    {
+                                                        relation: 'slugs',
+                                                        scope: {
+                                                            fields: ['slug', 'linked']
+                                                        }
                                                     }
                                                 ]
                                             }
                                         })
                                         .$promise
                                         .then(function (data) {
+                                            data[0].slug = Util.setSlug(data[0]);
                                             data[0].voteScore = Util.tally(data[0].votes, 'direction');
                                             return seriesCb(undefined, data);
                                         })
@@ -3489,8 +3503,7 @@ var app = angular.module('app', [
                                                     fields: {
                                                         id: true,
                                                         title: true,
-                                                        description: true,
-                                                        slug: true
+                                                        description: true
                                                     }
                                                 }
                                             }).$promise
@@ -6780,109 +6793,7 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/hs.snapshots.snapshot.html',
-                        controller: 'AdminHearthstoneSnapshotAddCtrl',
-                        resolve: {
-                            dataPrevious: ['Snapshot', function (Snapshot) {
-                                return Snapshot.findOne({
-                                    filter: {
-                                        limit: 1,
-                                        order: "createdDate ASC",
-                                        fields: {
-//                                            tiers: false
-                                        },
-                                        include: [
-                                            {
-                                                relation: "authors",
-                                                scope: {
-                                                    include: {
-                                                        relation: "user",
-                                                        scope: {
-                                                            fields: ["username"]
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                relation: "deckTiers",
-                                                scope: {
-                                                    include: [
-                                                        {
-                                                            relation: "deck",
-                                                            scope: {
-                                                                fields: ["name", "playerClass"]
-                                                            }
-                                                        },
-                                                        {
-                                                            relation: "deckTech",
-                                                            scope: {
-                                                                include: {
-                                                                    relation: "cardTech",
-                                                                    scope: {
-                                                                        include: {
-                                                                            relation: "card",
-                                                                            scope: {
-                                                                                fields: ["name"]
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: "deckMatchups",
-                                                scope: {
-                                                    include: [
-                                                        {
-                                                            relation: "forDeck",
-                                                            scope: {
-                                                                fields: ["name"]
-                                                            }
-                                                        },
-                                                        {
-                                                            relation: "againstDeck",
-                                                            scope: {
-                                                                fields: ["name"]
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                })
-                                .$promise
-                                .then(function (snapshot) {
-                                    //BUILD TIERS//
-                                    snapshot.tiers = [];
-                                    _.each(snapshot.deckTiers, function (deck) {
-                                        if (snapshot.tiers[deck.tier-1] === undefined) {
-                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
-                                        }
-
-                                        snapshot.tiers[deck.tier-1].decks.push(deck);
-                                    });
-                                    snapshot.tiers = _.filter(snapshot.tiers, function (tier) { return tier; });
-
-                                    var deckNum = 0;
-                                    _.each(snapshot.tiers, function (tier, tIndex) {
-                                        tier.tier = tIndex+1
-                                        _.each(tier.decks, function(deck, dIndex) {
-                                            deck.tier = tIndex+1;
-                                            deck.ranks[0] = ++deckNum;
-                                        })
-                                    })
-                                    //BUILD TIERS//
-
-                                    //BUILD MATCHES//
-                                    snapshot.matches = snapshot.deckMatchups;
-
-                                    return snapshot;
-                                });
-                            }]
-                        }
+                        controller: 'AdminHearthstoneSnapshotAddCtrl'
                     }
                 },
                 access: {auth: true, admin: true},
@@ -6895,15 +6806,12 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hs.snapshots.snapshot.html',
                         controller: 'AdminHearthstoneSnapshotEditCtrl',
                         resolve: {
-                            snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
+                            snapshot: ['$stateParams', 'Snapshot', 'Util', function($stateParams, Snapshot, Util) {
                                 var snapshotID = $stateParams.snapshotID;
                                 return Snapshot.findOne({
                                     filter: {
                                         where: {
                                             id: snapshotID
-                                        },
-                                        fields: {
-                                            tiers: false
                                         },
                                         include: [
                                             {
@@ -6963,6 +6871,12 @@ var app = angular.module('app', [
                                                             }
                                                         }
                                                     ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'slugs',
+                                                scope: {
+                                                    fields: ['linked', 'slug']
                                                 }
                                             }
                                         ]

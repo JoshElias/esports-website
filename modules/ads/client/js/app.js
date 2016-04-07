@@ -209,11 +209,11 @@ angular.module('tsAdSense', [])
 
             window.googleAdsAlreadyLoaded = true;
             
-            $timeout(function () {
-                if (attrs.adSlot === "7575226683") {
-                    $(el[0]).attr('data-ad-format', 'auto')
-                }
-            })
+            // $timeout(function () {
+            //     if (attrs.adSlot === "7575226683") {
+            //         $(el[0]).attr('data-ad-format', 'auto')
+            //     }
+            // })
         }
     }
 }])
@@ -232,9 +232,11 @@ angular.module('tsAdSense', [])
             w: '@'  //width
         },
         templateUrl: function (scope, attrs) {
+            //TODO: MAKE WORK WITH DIFFERENT NETWORKS OK
+            var network = attrs.network;
             var tmp = attrs.structure || attrs.theme;
             
-            return moduleTpl + 'directives/a.' + tmp + '.html';
+            return moduleTpl + network + '/a.' + tmp + '.html';
         },
         controller: 'tsAdCtrl'
     }

@@ -13,6 +13,9 @@
     "guideId": {
       "index": 1
     },
+    "slug": {
+      "type": "object"
+    },
     "orderNum": {
       "type": "number",
       "index": 1

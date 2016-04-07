@@ -57,22 +57,23 @@
                 <div class="hots-tiers m-b-md box-border no-outline" id="tiers">
                     <div ng-repeat="tier in snapshot.tiers" id="tier {{tier.tier}}" class="tier">
                         <div class="tier-heading">
-                            <a class="btn btn-block btn-tier-collapse" role="button" data-toggle="collapse" data-target="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
+                            <a class="btn btn-block btn-tier-collapse" ng-click="foldTier(tier.tier)" role="button" data-toggle="collapse" data-target="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
                                 <h2 class="pull-left">TIER <span ng-if="tier.tier == 1">S</span><span ng-if="tier.tier > 1">{{tier.tier - 1}}</span></h2>
                             </a>
-                            <div class="tier-hero-filters hidden-xs">
+                            <div ng-class="{ 'opZero': !isFolded(tier.tier) }" class="tier-hero-filters hidden-xs">
                                 <a
                                         ng-repeat="role in HOTS.roles"
                                         class="filter filter-{{role.toLowerCase()}}"
                                         ng-class="{'active':getIsActive('role', role, tier.tier)}"
                                         ng-click="selectFilter($event, 'role', role, tier.tier, tier.heroes)"
                                 ></a>
-                                <a
-                                        ng-repeat="universe in HOTS.universes"
-                                        class="filter filter-universe-{{universe.toLowerCase()}}"
-                                        ng-class="{'active':getIsActive('universe', universe, tier.tier)}"
-                                        ng-click="selectFilter($event, 'universe', universe, tier.tier, tier.heroes)"
-                                ></a>
+
+                                <!--<a-->
+                                        <!--ng-repeat="universe in HOTS.universes"-->
+                                        <!--class="filter filter-universe-{{universe.toLowerCase()}}"-->
+                                        <!--ng-class="{'active':getIsActive('universe', universe, tier.tier)}"-->
+                                        <!--ng-click="selectFilter($event, 'universe', universe, tier.tier, tier.heroes)"-->
+                                <!--&gt;</a>-->
                             </div>
                         </div>
 
@@ -89,14 +90,14 @@
                                 class="tier-hero tier-hero-{{hero.hero.className}}"
                             >
                                 <div class="tier-hero-heading clearfix" ng-click="triggerAnimation(hero)" role="button" data-toggle="collapse" ng-href="#collapseHero-{{hero.id}}" aria-expanded="false" aria-controls="collapseHero-{{hero.id}}">
-                                    <h4>{{hero.hero.name}} {{hero.orderNum}}</h4>
+                                    <h4>{{hero.hero.name}}</h4>
                                     <a ui-sref="app.hots.guides.guide({ slug: hero.guides[0].guide.slugs[0].slug })"
                                        target="_blank"
                                        class="hero-button hidden-xs"
-                                       ng-if="hero.guides.length > 0"
+                                       ng-if="hero.guides[0].slug"
                                     >VIEW GUIDE</a>
-                                    <div class="filter filter-role {{hero.hero.role.toLowerCase()}}" ></div>
-                                    <div class="filter filter-universe filter-universe-{{hero.hero.universe.toLowerCase()}} active" ></div>
+                                    <!--<div class="filter filter-role {{hero.hero.role.toLowerCase()}}" ></div>-->
+                                    <!--<div class="filter filter-universe filter-universe-{{hero.hero.universe.toLowerCase()}} active" ></div>-->
                                 </div>
                                 <div class="tier-hero-body collapse" id="collapseHero-{{hero.id}}">
                                     <div class="">
@@ -108,8 +109,12 @@
                                             </div>
                                             <div class="pull-right">
                                                 <ul class="hots-guide-talents">
-                                                    <li ng-repeat="talent in hero.guides[0].talents" class="talents-icon {{hero.hero.className}} {{talent.talent.className}}">
-                                                    </li>
+                                                    <div ng-repeat="talent in hero.guides[0].talents | orderBy: 'tier'">
+                                                        <li ng-tooltip data-original-title="{{talent.talent.name}}" class="talents-icon {{hero.hero.className}} {{talent.talent.className}} large active">
+
+                                                        </li>
+                                                        <h5>Tier {{talent.tier}}</h5>
+                                                    </div>
                                                 </ul>
                                             </div>
                                         </div>

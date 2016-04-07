@@ -176,8 +176,14 @@
 			.hots-guide-talents {
 				margin-left: 20px;
 
-				li {
+				div {
 					float: left;
+					margin-left: -20px;
+				}
+
+				li {
+					z-index:3;
+					transform: scale(.7);
 				}
 			}
 
@@ -191,6 +197,13 @@
 
 		h4 {
 			text-indent: 0px;
+		}
+
+		h5 {
+			font-weight:14px;
+			color: $grey-blue;
+			text-align: center;
+			font-weight: bold;
 		}
 
 		.hero-content {
@@ -251,7 +264,7 @@
 	.hero-button {
 		position: absolute;
 		top: 16px;
-		right: 250px;
+		right: 150px;
 		display: block;
 		background: rgba(0, 0, 0, 0.25);
 		border: 1px $light-grey solid;
@@ -295,7 +308,6 @@
 	.hero-image {
 
 		height: 270px;
-
 		//mixin for positioning hero image is in hots-heroes
 
 	}
@@ -638,6 +650,11 @@
 
 
 .tier-hero-filters {
+	&.opZero {
+		opacity: 0;
+	}
+	transition: .6s;
+
 	margin-top: 7px;
 	margin-right: 10px;
 	position: absolute;
@@ -697,9 +714,10 @@
 	background-color: transparent;
 	border: transparent;
 	float: left;
-	margin-left: 1px;
+	margin-left: -10px;
 	z-index: 5;
 
+	transform: scale(.7);
 
 	//filters on the hero
 
@@ -707,7 +725,7 @@
 
 		position: absolute;
 		top:6px;
-		right: 200px;
+		right: 140px;
 
 		&.warrior {
 			background-position: -43px -1px;
@@ -850,8 +868,27 @@
 		}
 	}
 
-}
 
 //*************************************
 // 8... Preogress Bar
 //*************************************
+
+
+
+//*************************************
+// 9... Author Styles
+//*************************************
+
+	.soc-btns {
+		a {
+			i {
+				font-size: 20px;
+				line-height: 1;
+			}
+
+			height: 40px;
+			width: 40px;
+		}
+	}
+
+}

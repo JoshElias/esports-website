@@ -14,7 +14,9 @@
     "title": {
       "type": "string",
       "index": 1,
-      "Slug": true
+      "Slug": {
+        "prefixFunc": "metaSnapshot"
+      }
     },
     "intro": {
       "type": "string"

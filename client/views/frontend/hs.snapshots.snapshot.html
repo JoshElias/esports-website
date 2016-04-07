@@ -38,7 +38,7 @@
                             </div>
                         </button>
                         <div class="sideTierBody collapse" id="collapseSideTier{{tier.tier}}">
-                            <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks | orderBy : 'ranks[0]'">
+                            <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks">
                                 <a href="#{{deck.ranks[0]}}" ng-click="findDeck(tier.tier, deck.ranks[0])">
                                     <div class="sideTierDeckRank pull-left clearfix">
                                         <h4>{{deck.ranks[0]}}</h4>
