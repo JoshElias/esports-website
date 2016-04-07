@@ -1484,4 +1484,48 @@ body.admin {
         }
     }
     
+    //Pagination fix 
+    
+    .pagination-margin {
+        margin-top: -9px;
+    }
+    
+    .panel-heading {
+        .page-flipper {
+            font-size: 12px;
+            font-weight: 100;
+            &.page-flipper-top {
+                margin-bottom: 0px;
+            }
+        }
+    }
+    
+    .showing-numbers {
+        text-align: right;
+        font-size: 12px !important;
+        float: right
+    }
+    
+    .page-flipper { 
+        .btn-group {
+            
+            .btn:first-child {
+                border-radius: 0;
+
+            }
+
+            .btn:last-child {
+                border-radius: 0;
+                border: 0px solid transparent;
+                
+                .inner {
+                    border: 0px solid transparent;
+                }
+            }
+            
+        }
+    
+    }
+    
+    
 } // ts-admin-styles
