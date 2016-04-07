@@ -1,20 +1,10 @@
 {
-<<<<<<< HEAD
-  "angular.min.js": "angular.min.b0136690.js",
-  "app.min.js": "app.min.f2375611.js",
-  "vendor.min.js": "vendor.min.451ec664.js",
-  "modules.min.js": "modules.min.4b4583aa.js",
+  "angular.min.js": "angular.min.d67d8528.js",
+  "app.min.js": "app.min.2d45fffe.js",
+  "vendor.min.js": "vendor.min.d5f8f9ab.js",
+  "modules.min.js": "modules.min.6ef9625c.js",
   "lb-services.min.js": "lb-services.min.2bc805f2.js",
-  "style.min.css": "style.min.279f7a90.css",
-  "vendor.min.css": "vendor.min.60b209a2.css"
-=======
-  "angular.min.js": "angular.min.fcd4b9c4.js",
-  "app.min.js": "app.min.bcb472a0.js",
-  "vendor.min.js": "vendor.min.9b96fb61.js",
-  "modules.min.js": "modules.min.dfb3a453.js",
-  "lb-services.min.js": "lb-services.min.2bc805f2.js",
-  "style.min.css": "style.min.acd16e5f.css",
+  "style.min.css": "style.min.e1ef54b7.css",
   "vendor.min.css": "vendor.min.60b209a2.css",
   "modules.min.css": "modules.min.509f19dc.css"
->>>>>>> c6da8d4cbe073280f9b3d1dd3a9b2f712009cc64
 }
