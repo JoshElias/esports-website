@@ -1274,6 +1274,89 @@ angular.module('app.directives', ['ui.load'])
     };
   }
 ])
+.directive('modalAdminUsers', ['$q', 'User', 'AjaxPagination', function ($q, User, AjaxPagination) {
+    return {
+        templateUrl: tpl + "views/admin/directives/modal.users.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.users = [];
+            
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 10;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+            
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateUsers(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+            
+            function updateUsers (page, perpage, search, callback) {
+                $scope.loading = true;
+                
+                var pattern = '/.*'+search+'.*/i';
+                var where = {
+                    isActive: true
+                };
+                
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            username: {
+                                regexp: pattern
+                            }
+                        },
+                        {
+                            email: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+                
+                AjaxPagination.update(User, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.users = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateUsers($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateUsers(1, $scope.perpage, $scope.search);
+            };
+
+        }]
+    };
+}])
 .directive('snapshotAddAuthor', ['$q', 'User', 'AjaxPagination', function ($q, User, AjaxPagination) {
     return {
         templateUrl: tpl + "views/admin/hs.snapshot.add.author.html",

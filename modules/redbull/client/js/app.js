@@ -437,9 +437,9 @@ var redbull = angular.module('app.redbull', [
             },
             seo: { title: 'Sealed Deck Generator', description: '', keywords: '' },
             access: { auth: true }
-        })        .state('app.admin.redbull', {
+        })        .state('app.admin.sealed', {
             abstract: true,
-            url: '/redbull',
+            url: '/sealed',
             views: {
                 admin: {
                     templateUrl: moduleTpl + 'admin/admin.redbull.html',
@@ -447,7 +447,7 @@ var redbull = angular.module('app.redbull', [
             },
             access: { auth: true, admin: true }
         })
-        .state('app.admin.redbull.settings', {
+        .state('app.admin.sealed.settings', {
             url: '/settings',
             views: {
                 redbull: {
@@ -466,7 +466,7 @@ var redbull = angular.module('app.redbull', [
             },
             access: { auth: true, admin: true }
         })
-        .state('app.admin.redbull.whitelist', {
+        .state('app.admin.sealed.whitelist', {
             url: '/whitelist',
             views: {
                 redbull: {
@@ -481,7 +481,7 @@ var redbull = angular.module('app.redbull', [
             },
             access: { auth: true, admin: true }
         })
-        .state('app.admin.redbull.decks', {
+        .state('app.admin.sealed.decks', {
             url: '/decks',
             views: {
                 redbull: {

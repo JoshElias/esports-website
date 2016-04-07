@@ -1,26 +1,26 @@
-<alert-box theme="admin"></alert-box>
+<alert-box theme="admin-new"></alert-box>
 
-<div class="row decks-gutter-fix panel panel-primary">
+<div class="decks-gutter-fix panel panel-primary">
 
-  <div class="col-md-12 panel-heading">
-    Current Drafts
+  <div class="panel-heading">
+    <h3>Current Drafts</h3>
   </div>
   <div class="panel-body">
-    <div ng-repeat="player in officialPlayers | filter:{hasActive: true} track by player.id"
-         class="col-md-12 draft-build ">
-      <div class="row admin-draft-decks panel panel-success">
-        <div class="panel-heading" data-toggle="collapse" href="#collapseComplete{{player.id}}">
-          {{ player.username }}
-           <span class="pull-right">
-              <button class="btn btn-danger btn-xs" ng-if="userIsAdmin"
-                      ng-click="promptDelete($event, player.activeDraft, player.username)">
-                DELETE Draft
-              </button>
-              <button class="btn btn-danger btn-xs"
-                      ng-click="promptInactive($event, player)">
-                Deactivate Draft
-              </button>
-            </span>
+    <p class="wrapper-lg white" ng-if="!officialPlayers.length">
+      Add users to the tournament whitelist.
+    </p>
+    <div ng-repeat="player in officialPlayers | filter:{hasActive: true} track by player.id" class="col-md-12 draft-build" ng-if="officialPlayers.length">
+      <div class="panel admin-alert-success">
+        <div class="panel-heading clearfix" data-toggle="collapse" href="#collapseComplete{{player.id}}">
+            <h3 class="pull-left">{{ player.username }}</h3>
+            <div class="pull-right">
+                <button class="btn btn-danger btn-xs" ng-if="userIsAdmin" ng-click="promptDelete($event, player.activeDraft, player.username)">
+                    DELETE Draft
+                </button>
+                <button class="btn btn-danger btn-xs" ng-click="promptInactive($event, player)">
+                    Archive Draft
+                </button>
+            </div>
         </div>
         <div class="draft-block panel-body collapse"
              id="collapseComplete{{player.id}}">
@@ -62,45 +62,44 @@
         </div>
       </div>
     </div>
+    
     <div ng-repeat="player in officialPlayers | filter:{incompleteDraft: true}" class="col-md-12 draft-build">
-      <div class="row admin-draft-decks panel panel-warning">
-        <div class="panel-heading">
-          {{ player.username }}
-          <span class="pull-right">
-
-            Status: Incomplete Draft
-          </span>
-
+        <div class="panel admin-alert-warning">
+            <div class="panel-heading clearfix">
+                <h3 class="pull-left">{{ player.username }}</h3>
+                <div class="pull-right">
+                    <h3>Draft incomplete</h3>
+                </div>
+            </div>
         </div>
-      </div>
-
     </div>
+
     <div ng-repeat="player in officialPlayers | filter:{noDraft: true}" class="col-md-12 draft-build">
-      <div class="row admin-draft-decks panel panel-danger">
-        <div class="panel-heading">
-          {{ player.username }}
-          <span class="pull-right">
-
-            Status: Draft not started
-          </span>
+        <div class="panel admin-alert-error">
+            <div class="panel-heading clearfix">
+                <h3 class="pull-left">{{ player.username }}</h3>
+                <div class="pull-right">
+                    <h3>Draft not started</h3>
+                </div>
+            </div>
         </div>
-      </div>
-
     </div>
+      
   </div>
 </div>
 
-<div class="row decks-gutter-fix panel panel-warning">
-  <div class="col-md-12 panel-heading">
-    Archived Drafts
+<div class="decks-gutter-fix panel panel-warning">
+  <div class="panel-heading">
+    <h3>Archived Drafts</h3>
   </div>
   <div class="panel-body">
-    <div ng-repeat="player in officialPlayers | filter:{hasInactive: true} track by player.id"
-         class="col-md-12 draft-build">
+    <p class="wrapper-lg white" ng-if="!officialPlayers.length">
+      Add users to the tournament whitelist.
+    </p>
+    <div ng-repeat="player in officialPlayers | filter:{hasInactive: true} track by player.id" class="col-md-12 draft-build" ng-if="officialPlayers.length">
       <div class="row admin-draft-decks panel panel-default">
         <div class="panel-heading" role="button" data-toggle="collapse" href="#collapseArchive{{player.id}}">
-          {{ player.username }}
-
+            <h3>{{ player.username }}</h3>
         </div>
 
         <div class="col-md-12 decks panel-body collapse list-group" id="collapseArchive{{player.id}}">

@@ -1390,6 +1390,7 @@ body.admin {
     
     // error panel
     .admin-alert-success,
+    .admin-alert-warning,
     .admin-alert-error {
         .panel-heading {
             background: rgba(239, 67, 35, 0.8);
@@ -1414,6 +1415,12 @@ body.admin {
     .admin-alert-success {
         .panel-heading {
             background: rgba(52, 180, 74, 0.8);
+        }
+    }
+    
+    .admin-alert-warning {
+        .panel-heading {
+            background: rgba(254, 190, 16, 0.8);
         }
     }
     
