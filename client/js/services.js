@@ -552,7 +552,7 @@ angular.module('app.services', [])
                 var largestTier = tiers.length;
 
                 if (!!heroTiers) {
-                    this.tiers = new Array();
+                    var newTiers = new Array();
 
                     _.each(heroTiers, function (heroTier, idx) {
                         heroTier.orderNum = idx;
@@ -562,14 +562,21 @@ angular.module('app.services', [])
                     });
 
                     for (var i = 0; i < largestTier; i++) {
-                        this.addTier();
+                        var newTier = {
+                            heroes: new Array(),
+                            tier: newTiers.length + 1
+                        };
+
+                        newTiers.push(newTier);
                     }
 
                     for (var i = 0; i < heroTiers.length; i++) {
                         var item = heroTiers[i];
 
-                        this.tiers[item.tier - 1].heroes.push(item);
+                        newTiers[item.tier - 1].heroes.push(item);
                     }
+
+                    this.tiers = newTiers;
                 }
             };
 
@@ -780,6 +787,9 @@ angular.module('app.services', [])
                                 _.each(heroTier.guides, function (guide) {
                                     if (!guide.heroTierId)
                                         guide.heroTierId = data.id;
+
+                                    if (guide.guide.isPublic)
+                                        guide.slug = guide.guide.slugs[0];
                                 });
 
                                 if (heroTier.guides && heroTier.guides.length)
@@ -795,7 +805,7 @@ angular.module('app.services', [])
                         });
                     }, function (tierGuides, seriesCb) {
                         var guides = _.flatten(tierGuides);
-
+                        
                         async.forEach(guides, function (guide, eachCb) {
                             GuideTier.upsert(guide)
                             .$promise
@@ -803,11 +813,13 @@ angular.module('app.services', [])
                                 var guideTalents = guide.guide.guideTalents;
 
                                 _.each(guideTalents, function (guideTalent) {
-                                    exists['guideTierTalents'].toWrite.push({
-                                        tier: guideTier.tier,
+                                    var toPush = {
+                                        tier: guideTalent.tier,
                                         guideTierId: guideTier.id,
                                         talentId: guideTalent.talentId
-                                    });
+                                    };
+
+                                    exists['guideTierTalents'].toWrite.push(toPush);
                                 });
 
                                 return eachCb(undefined);
