@@ -3542,7 +3542,9 @@ angular.module('app.services', [])
 
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: {
                                     id: { inq: selectedHeroIds }
                                 },
@@ -3587,17 +3589,17 @@ angular.module('app.services', [])
                                     id: { inq: guideIds },
                                     isPublic: true
                                 },
-                                fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                ],
+                                fields: {
+                                    name: true,
+                                    authorId: true,
+                                    slug: true,
+                                    voteScore: true,
+                                    guideType: true,
+                                    premium: true,
+                                    id: true,
+                                    talentTiers: true,
+                                    createdDate: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -3706,7 +3708,9 @@ angular.module('app.services', [])
                     function (seriesCallback) {
                         Map.findOne({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: {
                                     id: filters.map.id,
                                 },
@@ -3739,17 +3743,17 @@ angular.module('app.services', [])
                                     id: { inq: guideIds },
                                     isPublic: true
                                 },
-                                fields: [
-                                    "id",
-                                    "name",
-                                    "createdDate",
-                                    "voteScore",
-                                    "slug",
-                                    "guideType",
-                                    "authorId",
-                                    "public",
-                                    "premium"
-                                ],
+                                fields: {
+                                    id: true,
+                                    name: true,
+                                    createdDate: true,
+                                    voteScore: true,
+                                    slug: true,
+                                    guideType: true,
+                                    authorId: true,
+                                    public: true,
+                                    premium: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -3821,25 +3825,30 @@ angular.module('app.services', [])
 
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: { id : { inq: selectedHeroIds } },
                                 include: [
                                     {
                                         relation: "guides",
                                         scope: {
                                             where: where,
-                                            fields: ["id"],
                                             include: [
                                                 {
                                                     relation: "maps",
                                                     scope: {
-                                                        fields: ["className"]
+                                                        fields: {
+                                                            className: true
+                                                        }
                                                     }
                                                 },
                                                 {
                                                     relation: "guideHeroes",
                                                     scope: {
-                                                        fields: ["id"]
+                                                        fields: {
+                                                            id: true
+                                                        }
                                                     }
                                                 }
                                             ]
@@ -3856,7 +3865,7 @@ angular.module('app.services', [])
                     //filter heroes
                     function (heroes, seriesCallback) {
                         //filter out guides by map className
-                        try {
+                        // try {
                             var selectedGuides = [];
                             _.each(heroes, function (hero) {
                                 var filteredGuides = _.filter(hero.guides, function (guide) {
@@ -3871,9 +3880,9 @@ angular.module('app.services', [])
                             var selectedGuideIds = _.map(selectedGuides, function(guide) { return guide.id })
 
                             return seriesCallback(undefined, selectedGuideIds);
-                        } catch (err) {
-                            return seriesCallback(err);
-                        }
+                        // } catch (err) {
+                        //     return seriesCallback(err);
+                        // }
                     },
                     //populate heroes, talents
                     function (selectedGuideIds, seriesCallback) {
@@ -3887,17 +3896,17 @@ angular.module('app.services', [])
                                             id: { inq: selectedGuideIds },
                                             isPublic: true
                                         },
-                                        fields: [
-                                            "name",
-                                            "authorId",
-                                            "slug",
-                                            "voteScore",
-                                            "guideType",
-                                            "premium",
-                                            "id",
-                                            "talentTiers",
-                                            "createdDate"
-                                        ],
+                                        fields: {
+                                            name: true,
+                                            authorId: true,
+                                            slug: true,
+                                            voteScore: true,
+                                            guideType: true,
+                                            premium: true,
+                                            id: true,
+                                            talentTiers: true,
+                                            createdDate: true
+                                        },
                                         include: [
                                             {
                                                 relation: "author",
@@ -3946,7 +3955,7 @@ angular.module('app.services', [])
                                                 }
                                             },
                                             {
-                                                relation: 'slug'
+                                                relation: 'slugs'
                                             }
                                         ]
                                     }

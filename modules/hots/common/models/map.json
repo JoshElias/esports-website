@@ -30,7 +30,7 @@
     "guides": {
       "type": "hasMany",
       "model": "guide",
-      "foreignKey": "guideId",
+      "foreignKey": "mapId",
       "through": "guideMap"
     },
     "guideMaps": {
