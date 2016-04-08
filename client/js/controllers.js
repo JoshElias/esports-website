@@ -3079,6 +3079,7 @@ angular.module('app.controllers', ['ngCookies'])
                 'description',
                 'guideId',
                 'id',
+                'slug',
                 'isActive',
                 'isFeatured',
                 'photoNames',
@@ -3090,6 +3091,7 @@ angular.module('app.controllers', ['ngCookies'])
             ]);
 
             cleanArticle.deckId = (article.articleType[0] === 'hs' && article.deck && article.deck.id) ? article.deck.id : null;
+            
             cleanArticle.slugOptions = {
                 slug: cleanArticle.slug.url,
                 linked: cleanArticle.slug.linked
@@ -8306,6 +8308,8 @@ angular.module('app.controllers', ['ngCookies'])
                 updateDeck(deck);
                 return false;
             };
+            
+            console.log('wtf');
 
             // Updates Deck, Mulligan, and Matchup Models
             function updateDeck(deckSubmitted) {
@@ -8331,6 +8335,8 @@ angular.module('app.controllers', ['ngCookies'])
 
 //              console.log('deck before update:', deck);
 //              console.log('WOOOOOOOOOOORK');
+                
+                console.log('deck:', angular.copy(deck));
 
                 var updatedDeck;
                 async.series([
@@ -11299,7 +11305,31 @@ angular.module('app.controllers', ['ngCookies'])
                 var updatedDeck;
                 async.series([
                     function (seriesCallback) {
-                        Deck.upsert(deck)
+                        Deck.update({
+                            where: {
+                                id: deck.id
+                            }
+                        }, {
+                            against: deck.against,
+                            basic: deck.basic,
+                            gameModeType: deck.gameModeType,
+                            type: deck.type,
+                            contentEarly: deck.contentEarly,
+                            contentLate: deck.contentLate,
+                            contentMid: deck.contentMid,
+                            deckType: deck.deckType,
+                            isCommentable: deck.isCommentable,
+                            description: deck.description,
+                            isFeatured: deck.isFeatured,
+                            name: deck.name,
+                            heroName: deck.heroName,
+                            playerClass: deck.playerClass,
+                            premium: deck.premium,
+                            isPublic: deck.isPublic,
+                            viewCount: deck.viewCount,
+                            youtubeId: deck.youtubeId,
+                            chapters: deck.chapters
+                        })
                         .$promise
                         .then(function (deckUpdated) {
                             updatedDeck = deckUpdated;

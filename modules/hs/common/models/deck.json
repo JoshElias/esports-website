@@ -39,9 +39,6 @@
       "type": "string",
       "required": true
     },
-    "isCommentable": {
-      "type": "boolean"
-    },
     "description": {
       "type": "string",
       "Validate": ["spam"]
