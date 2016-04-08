@@ -1,0 +1,37 @@
+@import 'ts-colors.scss';
+
+.ts-admin-styles { // ---- bookend class ----
+
+//*************************************
+// Admin Users styles
+//*************************************
+  
+    .panel-heading {
+        &.users-heading {
+            height: auto;
+        }
+        
+        > .panel-heading {
+            background-color: transparent;
+        }
+    }
+    
+    .blue-userbar {
+        background-color: rgba($ts-blue, 0.8);
+        color: $white;
+        padding: 10px 0 0;
+        
+
+        h4 {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+    }
+
+    .no-top-bottom-pad {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+    }
+    
+}

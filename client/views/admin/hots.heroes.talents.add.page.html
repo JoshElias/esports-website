@@ -1,22 +1,28 @@
 <div class="panel panel-default br-none">
   <form name="form" role="form" class="form-horizontal">
-    <div class="panel-heading">
-        Add Talent
+    <div class="panel-heading  wrapper-md clearfix">
+        <div class="row">
+            <div class="col-xs-12 panel-label p-r-none">
+                <label class="control-label pull-left">
+                    <h3>Add Talent</h3>
+                </label>
+            </div>
+        </div>
     </div>
     <div class="panel-body">
-        <div class="form-group">
+        <div class="row form-group m-b-xs">
             <label for="name" class="col-sm-2 control-label">Name</label>
             <div class="col-sm-10">
                 <input type="name" id="name" name="name" class="form-control" ng-model="talent.name" required>
             </div>
         </div>
-        <div class="form-group">
+        <div class="row form-group m-b-xs">
             <label for="description" class="col-sm-2 control-label">Description</label>
             <div class="col-sm-10">
                 <input type="description" id="description" name="description" class="form-control" ng-model="talent.description" required>
             </div>
         </div>
-        <div class="form-group">
+        <div class="row form-group m-b-xs">
             <label for="class" class="col-sm-2 control-label">CSS Class</label>
             <div class="col-sm-10">
                 <input type="class" id="class" name="class" class="form-control" ng-model="talent.className" required>
@@ -24,8 +30,8 @@
         </div>
     </div>
     <div class="panel-footer clearfix">
-      <div class="col-sm-10 col-sm-offset-2">
-        <button type="submit" class="btn btn-blue btn-lg" ng-disabled="talentForm.$invalid" ng-click="addTalent()">Add Talent</button>
+      <div class="col-xs-12">
+        <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="talentForm.$invalid" ng-click="addTalent()">Add Talent</button>
       </div>
     </div>
   </form>

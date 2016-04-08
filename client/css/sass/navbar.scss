@@ -216,14 +216,14 @@
     white-space: nowrap;
     text-indent: -99999px;
 }
-.navbar-tempo .navbar-nav .dropdown-menu { background: #1B1B1B; }
+.navbar-tempo .navbar-nav .dropdown-menu { background: $black-90; }
 .navbar-tempo .navbar-nav > li { margin-bottom: -1px; }
 .navbar-tempo .navbar-nav > li > a {
     color: rgba(255,255,255,.4) !important;
     font-weight:bold;
     letter-spacing: 1px;
     text-shadow: none;
-    background: #1B1B1B !important;
+    background: $black-90 !important;
     
     
     .nav-accent-div {

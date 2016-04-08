@@ -1751,6 +1751,7 @@ var app = angular.module('app', [
                         resolve: {
                             snapshot: ['$stateParams', '$state', 'Snapshot', 'Util', function ($stateParams, $state, Snapshot, Util) {
                                 var slug = $stateParams.slug;
+                                
                                 return Snapshot.findOne({
                                     filter: {
                                         where: {
@@ -3502,8 +3503,7 @@ var app = angular.module('app', [
                                                     fields: {
                                                         id: true,
                                                         title: true,
-                                                        description: true,
-                                                        slug: true
+                                                        description: true
                                                     }
                                                 }
                                             }).$promise
