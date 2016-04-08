@@ -2,115 +2,121 @@
 
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
-    <div class="panel-heading">
-        Add User Account
+    <div class="panel-heading  wrapper-md clearfix">
+        <div class="row">
+            <div class="col-xs-12 panel-label p-r-none">
+                <label class="control-label pull-left">
+                    Add User Account
+                </label>
+            </div>
+        </div>
     </div>
     <div class="panel-body">
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="email" class="col-sm-2 control-label">Email</label>
             <div class="col-sm-10">
                 <input type="email" id="email" name="email" class="form-control" ng-model="user.email" required>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="username" class="col-sm-2 control-label">Username</label>
             <div class="col-sm-10">
                 <input type="text" id="username" name="username" class="form-control" ng-model="user.username" required>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="password" class="col-sm-2 control-label">Password</label>
             <div class="col-sm-10">
                 <input type="password" id="password" name="password" class="form-control" ng-model="user.newPassword" required>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="cpassword" class="col-sm-2 control-label">Confirm Password</label>
             <div class="col-sm-10">
                 <input type="password" id="cpassword" name="password" class="form-control" ng-model="user.password" required>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="firstName" class="col-sm-2 control-label">First Name</label>
             <div class="col-sm-10">
                 <input type="text" id="firstName" name="firstName" class="form-control" ng-model="user.firstName">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="lastName" class="col-sm-2 control-label">Last Name</label>
             <div class="col-sm-10">
                 <input type="text" id="lastName" name="lastName" class="form-control" ng-model="user.lastName">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="about" class="col-sm-2 control-label">About</label>
             <div class="col-sm-10">
                 <textarea id="about" name="about" class="form-control" ng-model="user.about"></textarea>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="twitter" class="col-sm-2 control-label">Twitter</label>
             <div class="col-sm-10">
                 <input type="text" id="twitter" name="twitter" class="form-control" ng-model="user.social.twitter">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="facebook" class="col-sm-2 control-label">Facebook</label>
             <div class="col-sm-10">
                 <input type="text" id="facebook" name="facebook" class="form-control" ng-model="user.social.facebook">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="twitch" class="col-sm-2 control-label">Twitch</label>
             <div class="col-sm-10">
                 <input type="text" id="twitch" name="twitch" class="form-control" ng-model="user.social.twitch">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="instagram" class="col-sm-2 control-label">Instagram</label>
             <div class="col-sm-10">
                 <input type="text" id="instagram" name="instagram" class="form-control" ng-model="user.social.instagram">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="youtube" class="col-sm-2 control-label">YouTube</label>
             <div class="col-sm-10">
                 <input type="text" id="youtube" name="youtube" class="form-control" ng-model="user.social.youtube">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="subscription" class="col-sm-2 control-label">Subscriber</label>
             <div class="col-sm-10">
                 <select id="subscription" name="subscription" class="form-control" ng-options="subscription.value as subscription.name for subscription in userSubscription" ng-model="user.subscription.isSubscribed" required></select>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
             <div class="col-sm-10">
                 <div date-picker data-id="expiryDate" data-name="expiryDate" ng-model="user.subscription.expiryDate" ng-disabled="!user.subscription.isSubscribed"></div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="contentProvider" class="col-sm-2 control-label">Content Provider</label>
             <div class="col-sm-10">
                 <select id="contentProvider" name="contentProvider" class="form-control" ng-options="provider.value as provider.name for provider in userProvider" ng-model="user.isProvider" required></select>
             </div>
         </div>
         
-        <div class="form-group" ng-if="user.isProvider">
+        <div class="form-group m-b-xs" ng-if="user.isProvider">
             <label for="providerDescription" class="col-sm-2 control-label">Provider Description</label>
             <div class="col-sm-10">
                 <textarea id="providerDescription" name="providerDescription" class="form-control" ng-model="user.providerDescription" rows="4"></textarea>
             </div>
         </div>
         
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="admin" class="col-sm-2 control-label">Admin</label>
             <div class="col-sm-10">
                 <select id="admin" name="admin" class="form-control" ng-options="admin.value as admin.name for admin in userAdmin" ng-model="user.isAdmin" required></select>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-b-xs">
             <label for="active" class="col-sm-2 control-label">Active</label>
             <div class="col-sm-10">
                 <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in userActive" ng-model="user.isActive" required></select>
@@ -119,7 +125,7 @@
     </div>
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg"
+            <button type="submit" class="btn admin-btn-blue pull-right"
                     ng-disabled="form.$invalid || fetching" 
                     ng-click="addUser(user)">
                 <span ng-if="!fetching">Add User</span>

@@ -346,7 +346,7 @@ body.admin {
     
     .form-group {
         
-        margin-bottom: 0px;
+        //margin-bottom: 0px;
         
         .btn {
             border-radius: 0px ;
@@ -401,7 +401,10 @@ body.admin {
     //              panel overrides 
     //-------------------------------------------
     
-    
+//    .panel-default > .panel-heading { 
+//        background-color: transparent !important;
+//    }
+        
     .panel,
     .panel-body {
         border: 0px solid transparent;
@@ -423,6 +426,7 @@ body.admin {
     .pabel-body { 
         background-color: rgba($black-50, 0);
     }
+    
     
     .panel-heading,
     .panel-footer {
@@ -605,23 +609,9 @@ body.admin {
         .form-group {
             margin-left: 0px !important;
             margin-right: 0px !important;
+            margin-bottom: 0px;
             padding-left: 10px;
             padding-right: 10px;
-            
-            select {
-                    border: 0px solid transparent;
-               > option {
-                    background-color: #292537;
-                    height: 34px;
-                    border: 0px solid transparent;
-                    line-height: 34px;
-                    height: 34px;
-                    
-                    &:hover {
-                        background-color: #2766ad;
-                    }
-                }
-            }
             
             .photo-input {
                 text-align: center;
@@ -1453,6 +1443,32 @@ body.admin {
     }
     
     //*************************************
+    //select input styles
+    //*************************************
+    
+    select {
+            border: 0px solid transparent;
+       > option {
+            background-color: #292537;
+            height: 34px;
+            border: 0px solid transparent;
+            line-height: 34px;
+            height: 34px;
+           outline: none !important;
+
+            &:hover {
+                background-color: #2766ad;
+            }
+        }
+    }
+    
+    
+
+    
+  
+    
+    
+    //*************************************
     // error panel
     //*************************************
     
@@ -1483,5 +1499,63 @@ body.admin {
             background: rgba(52, 180, 74, 0.8);
         }
     }
+    
+    //Pagination fix 
+    
+    .pagination-margin {
+        margin-top: -9px;
+    }
+    
+    .panel-heading {
+        .page-flipper {
+            font-size: 12px;
+            font-weight: 100;
+            &.page-flipper-top {
+                margin-bottom: 0px;
+            }
+        }
+    }
+    
+    .showing-numbers {
+        text-align: right;
+        font-size: 12px !important;
+        float: right
+    }
+    
+    .page-flipper { 
+        .btn-group {
+            
+            .btn:first-child {
+                border-radius: 0;
+
+            }
+
+            .btn:last-child {
+                border-radius: 0;
+                border: 0px solid transparent;
+                
+                .inner {
+                    border: 0px solid transparent;
+                }
+            }
+            
+        }
+    
+    }
+    
+    .hots-admin-snapshot-body {
+        .form-group {
+            margin-bottom: 0px;
+        }
+    
+    }
+    
+    // Changes to forum structure admin heading
+    
+    .neg-m-7 {
+        margin-right: -7px;
+    }
+    
+    
     
 } // ts-admin-styles

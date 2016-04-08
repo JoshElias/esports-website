@@ -3,12 +3,12 @@
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
 <!--
-        <div class="pull-right" ng-if="maps">
-            <span class="m-r-sm">
+        <div class="pull-right pagination-margin" ng-if="maps">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ mapPagination.total === 0 ? mapPagination.total : ((mapPagination.page - 1) * mapPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  mapPagination.page * mapPagination.perpage > mapPagination.total ? mapPagination.total : mapPagination.page * mapPagination.perpage }}</strong> 
-                of <strong>{{ mapPagination.total }}</strong>
+                {{ mapPagination.total === 0 ? mapPagination.total : ((mapPagination.page - 1) * mapPagination.perpage) + 1 }} 
+                to {{  mapPagination.page * mapPagination.perpage > mapPagination.total ? mapPagination.total : mapPagination.page * mapPagination.perpage }} 
+                of {{ mapPagination.total }}
             </span>
             <div pagination="mapPagination" theme="admin" class="admin"></div>
         </div>
@@ -19,7 +19,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-default  btn-blue" 
+                        <button type="submit" class="btn btn-default btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -49,18 +49,18 @@
         <div class="admin-list-item placeholder-text" ng-show="!snapshots.length">
             There are no snapshots yet.
         </div>
-        <div class="admin-list-item b-t-none" ng-show="snapshots.length && filtered && !filtered.length">
+        <div class="admin-list-item placeholder-text" ng-show="snapshots.length && filtered && !filtered.length">
             That search returned no results.
         </div>
     </div>
     <div class="panel-footer clearfix">
 <!--
-        <div class="pull-right" ng-if="maps">
-            <span class="m-r-sm">
+        <div class="pull-right pagination-margin" ng-if="maps">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ mapPagination.total === 0 ? mapPagination.total : ((mapPagination.page - 1) * mapPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  mapPagination.page * mapPagination.perpage > mapPagination.total ? mapPagination.total : mapPagination.page * mapPagination.perpage }}</strong> 
-                of <strong>{{ mapPagination.total }}</strong>
+                {{ mapPagination.total === 0 ? mapPagination.total : ((mapPagination.page - 1) * mapPagination.perpage) + 1 }} 
+                to {{  mapPagination.page * mapPagination.perpage > mapPagination.total ? mapPagination.total : mapPagination.page * mapPagination.perpage }} 
+                of {{ mapPagination.total }}
             </span>
             <div pagination="mapPagination" theme="admin" class="admin"></div>
         </div>

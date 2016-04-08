@@ -1,13 +1,15 @@
+<span class="ts-admin-styles"> <!-- Temporary remove when hero section is redesign -->
+
 <alert-box theme="admin"></alert-box>
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <div class="pull-right" ng-if="guides">
-            <span class="m-r-sm">
+        <div class="pull-right pagination-margin" ng-if="guides">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ guidePagination.total === 0 ? guidePagination.total : ((guidePagination.page - 1) * guidePagination.perpage) + 1 }}</strong> 
-                to <strong>{{  guidePagination.page * guidePagination.perpage > guidePagination.total ? guidePagination.total : guidePagination.page * guidePagination.perpage }}</strong> 
-                of <strong>{{ guidePagination.total }}</strong>
+                {{ guidePagination.total === 0 ? guidePagination.total : ((guidePagination.page - 1) * guidePagination.perpage) + 1 }}
+                to {{  guidePagination.page * guidePagination.perpage > guidePagination.total ? guidePagination.total : guidePagination.page * guidePagination.perpage }} 
+                of {{ guidePagination.total }}
             </span>
             <div pagination="guidePagination" theme="admin" class="admin"></div>
         </div>
@@ -17,7 +19,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" 
+                        <button type="submit" class="btn btn-default btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -28,28 +30,36 @@
             </form>
         </div>
     </div>
-    <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="guide in guides">
-            <span>{{guide.name}}</span>
-            <div class="pull-right btn-toolbar">
-                <button class="btn btn-default" ng-click="editGuide(guide)">Edit</a>
-                <button class="btn btn-danger" ng-click="deleteGuide(guide)">Delete</button>
+    <div class="admin-list">
+        <div class="admin-list-item list-items clearfix" ng-repeat="guide in guides">
+            <div class="list-accent-div">
+                 <div class="row">
+                    <div class="col-xs-6">
+                        <span class="list-item-height">{{guide.name}}</span>
+                    </div>
+                     <div class="col-xs-6">
+                        <div class="pull-right btn-toolbar list-item-height">
+                            <button class="btn btn-default" ng-click="editGuide(guide)">Edit</a>
+                            <button class="btn btn-danger" ng-click="deleteGuide(guide)">Delete</button>
+                        </div>
+                     </div>
+                </div>
             </div>
         </div>
-        <div class="list-group-item" ng-show="!guides.length">
+        <div class="admin-list-item placeholder-text" ng-show="!guides.length">
             There are no guides yet.
         </div>
-        <div class="list-group-item b-t-none" ng-show="guides.length && filtered && !filtered.length">
+        <div class="admin-list-item placeholder-text" ng-show="guides.length && filtered && !filtered.length">
             That search returned no results.
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="pull-right" ng-if="guides">
-            <span class="m-r-sm">
+        <div class="pull-right pagination-margin" ng-if="guides">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ guidePagination.total === 0 ? guidePagination.total : ((guidePagination.page - 1) * guidePagination.perpage) + 1 }}</strong> 
-                to <strong>{{  guidePagination.page * guidePagination.perpage > guidePagination.total ? guidePagination.total : guidePagination.page * guidePagination.perpage }}</strong> 
-                of <strong>{{ guidePagination.total }}</strong>
+                {{ guidePagination.total === 0 ? guidePagination.total : ((guidePagination.page - 1) * guidePagination.perpage) + 1 }}
+                to {{  guidePagination.page * guidePagination.perpage > guidePagination.total ? guidePagination.total : guidePagination.page * guidePagination.perpage }}
+                of {{ guidePagination.total }}
             </span>
             <div pagination="guidePagination" theme="admin" class="admin"></div>
         </div>
@@ -59,7 +69,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" 
+                        <button type="submit" class="btn btn-default btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -71,3 +81,5 @@
         </div>
     </div>
 </div>
+    
+</span>

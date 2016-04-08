@@ -1,35 +1,43 @@
+<!--<span class="ts-admin-styles">  Temporary remove when hero section is redesign -->
+
 <alert-box theme="admin"></alert-box>
 
 <div class="panel panel-default" ng-repeat="category in categories">
     <div class="panel-heading clearfix">
         <div class="row">
             <div class="col-sm-6 admin-list-heading">
-                <span>{{category.title}}</span>
+                <label class="control-label pull-left">
+                    <h3>{{category.title}}</h3>
+                </label>
             </div>
             <div class="col-sm-6">
-                <div class="pull-right btn-toolbar">
+                <div class="pull-right btn-toolbar neg-m-7">
                     <a href="./admin/forum/structure/category/edit/{{category.id}}" class="btn btn-default">Edit</a>
                     <button class="btn btn-danger" ng-click="deleteCategory(category)">Delete</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="list-group">
-        <div class="list-group-item admin-list-heading clearfix" ng-repeat="thread in category.forumThreads">
-            <div class="row">
-                <div class="col-sm-6">
-                    <span>{{thread.title}}</span>
-                </div>
-                <div class="col-sm-6">
-                    <div class="pull-right btn-toolbar">
-                        <a href="./admin/forum/structure/thread/edit/{{thread.id}}" class="btn btn-default">Edit</a>
-                        <button class="btn btn-danger" ng-click="deleteThread(thread)">Delete</button>
+    <div class="admin-list">
+        <div class="admin-list-item list-items clearfix" ng-repeat="thread in category.forumThreads">
+            <div class="list-accent-div">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <span class="list-item-height">{{thread.title}}</span>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="pull-right btn-toolbar list-item-height">
+                            <a href="./admin/forum/structure/thread/edit/{{thread.id}}" class="btn btn-default">Edit</a>
+                            <button class="btn btn-danger" ng-click="deleteThread(thread)">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="list-group-item" ng-show="!categories.length">
+        <div class="admin-list-item placeholder-text" ng-show="!categories.length">
             There are no threads yet.
         </div>
     </div>
 </div>
+    
+<!--</span>-->
