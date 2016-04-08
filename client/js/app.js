@@ -712,7 +712,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (article) {
-                                    console.log('article:', article);
                                     // init template vars
                                     article.slug = {
                                         url: slug
