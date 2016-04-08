@@ -1507,6 +1507,7 @@ angular.module('app.controllers', ['ngCookies'])
                             className: 'btn-danger',
                             callback: function () {
 
+                                console.log('guide:', guide);
                                 return Guide.deleteById({
                                     id: guide.id
                                 }).$promise
@@ -3079,6 +3080,7 @@ angular.module('app.controllers', ['ngCookies'])
                 'description',
                 'guideId',
                 'id',
+                'slug',
                 'isActive',
                 'isFeatured',
                 'photoNames',
@@ -3090,6 +3092,7 @@ angular.module('app.controllers', ['ngCookies'])
             ]);
 
             cleanArticle.deckId = (article.articleType[0] === 'hs' && article.deck && article.deck.id) ? article.deck.id : null;
+            
             cleanArticle.slugOptions = {
                 slug: cleanArticle.slug.url,
                 linked: cleanArticle.slug.linked
@@ -8306,6 +8309,8 @@ angular.module('app.controllers', ['ngCookies'])
                 updateDeck(deck);
                 return false;
             };
+            
+            console.log('wtf');
 
             // Updates Deck, Mulligan, and Matchup Models
             function updateDeck(deckSubmitted) {
@@ -8331,6 +8336,8 @@ angular.module('app.controllers', ['ngCookies'])
 
 //              console.log('deck before update:', deck);
 //              console.log('WOOOOOOOOOOORK');
+                
+                console.log('deck:', angular.copy(deck));
 
                 var updatedDeck;
                 async.series([
@@ -11299,7 +11306,31 @@ angular.module('app.controllers', ['ngCookies'])
                 var updatedDeck;
                 async.series([
                     function (seriesCallback) {
-                        Deck.upsert(deck)
+                        Deck.update({
+                            where: {
+                                id: deck.id
+                            }
+                        }, {
+                            against: deck.against,
+                            basic: deck.basic,
+                            gameModeType: deck.gameModeType,
+                            type: deck.type,
+                            contentEarly: deck.contentEarly,
+                            contentLate: deck.contentLate,
+                            contentMid: deck.contentMid,
+                            deckType: deck.deckType,
+                            isCommentable: deck.isCommentable,
+                            description: deck.description,
+                            isFeatured: deck.isFeatured,
+                            name: deck.name,
+                            heroName: deck.heroName,
+                            playerClass: deck.playerClass,
+                            premium: deck.premium,
+                            isPublic: deck.isPublic,
+                            viewCount: deck.viewCount,
+                            youtubeId: deck.youtubeId,
+                            chapters: deck.chapters
+                        })
                         .$promise
                         .then(function (deckUpdated) {
                             updatedDeck = deckUpdated;
@@ -11792,23 +11823,17 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'userRoles', 'EventService', 'User', 'Util',
-        function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth, userRoles, EventService, User, Util) {
+    .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'userRoles', 'EventService', 'User', 'Util', 'DeckBuilder',
+        function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth, userRoles, EventService, User, Util, DeckBuilder) {
 //			console.log('article:', article);
             $scope.ArticleService = Article;
             $scope.article = article;
+            if ($scope.article.deck) {
+                $scope.article.deck = DeckBuilder.new($scope.article.deck.playerClass, $scope.article.deck);
+            }
             //noinspection UnterminatedStatementJS
             $scope.votableArticle = { article: $scope.article }
             $scope.authorEmail = article.author ? article.author.email : null;
-//        $scope.ArticleService = ArticleService;
-//        $scope.$watch('app.user.isLogged()', function() {
-//            for (var i = 0; i < $scope.article.votes.length; i++) {
-//                if ($scope.article.votes[i] == LoopBackAuth.currentUserData()) {
-//                    checkVotes();
-//                    updateCommentVotes();
-//                }
-//            }
-//        });
 
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
               if ($scope.article.premium.isPremium) {
@@ -11925,6 +11950,10 @@ angular.module('app.controllers', ['ngCookies'])
                         .then(function (article) {
                             // init template vars
                             article.slug = Util.setSlug(article);
+                            
+                            if (article.deck) {
+                                article.deck = DeckBuilder.new(article.deck.playerClass, article.deck);
+                            }
 
                             article.voteScore = Util.tally(article.votes, 'direction');
 
@@ -12626,7 +12655,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.data = [300, 500, 100];
 
             $scope.getVideo = function () {
-                return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.deck.video + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
+                return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.deck.youtubeId + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
             };
 
             $scope.getContent = function (content) {
@@ -15041,149 +15070,161 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
+              if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                return false;
+              }
+              if (!User.isAuthenticated()) {
+                LoginModalService.showModal('login', function () {
+                  $scope.saveGuide();
+                });
+              } else {
+                $scope.fetching = true;
+                var cleanGuide = angular.copy($scope.guide);
+                cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
+                cleanGuide.authorId = User.getCurrentId();
 
-                    var keys = [
-                        'name',
-                        'authorId',
-                        'guideType',
-                        'description',
-                        'createdDate',
-                        'premium',
-                        'votes',
-                        'against',
-                        'synergy',
-                        'content',
-                        'isFeatured',
-                        'isPublic',
-                        'youtubeId',
-                        'viewCount',
-                        'voteScore',
-                        'isCommentable',
-                        'maps'
-                    ];
-                    var stripped = Util.cleanObj(cleanGuide, keys);
-                    var temp = _.map($scope.guide.heroes, function (hero) {
-                        return _.map(hero.talents, function (talent, tier) {
-                            var str = tier.slice(4, tier.length);
+                var keys = ['name',
+                            'against',
+                            'authorId',
+                            'guideType',
+                            'description',
+                            'createdDate',
+                            'premium',
+                            'against',
+                            'synergy',
+                            'content',
+                            'isFeatured',
+                            'isPublic',
+                            'youtubeId',
+                            'viewCount',
+                            'voteScore',
+                            'isCommentable'
+                           ];
+                  
+                var stripped = Util.cleanObj(cleanGuide, keys);
+                  
+                var temp = _.map($scope.guide.heroes, function (hero) {
+                  return _.map(hero.talents, function (talent, tier) {
+                    var str = tier.slice(4, tier.length);
 
-                            return {
-                                heroId: hero.hero.id,
-                                talentId: talent,
-                                tier: parseInt(str)
-                            }
-                        });
-                    });
+                    return {
+                      heroId: hero.hero.id,
+                      talentId: talent,
+                      tier: parseInt(str)
+                    }
+                  });
+                });
 
-                    cleanGuide.guideTalents = _.flatten(temp);
+                cleanGuide.guideTalents = _.flatten(temp);
+                  
+                var guideCreated;
+                var tals = [];
+                  console.log('stripped:', stripped);
+                  async.series([
+                      function (seriesCB) {
+                          Guide.create(stripped)
+                          .$promise
+                          .then(function (createdGuide) {
+                              guideCreated = createdGuide;
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              console.log("catching guide create error");
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
+                          Guide.guideHeroes.createMany({
+                              id: guideCreated.id
+                          }, cleanGuide.guideHeroes)
+                          .$promise
+                          .then(function (guideHeroData) {
+                              _.each(guideHeroData, function(eachVal) {
+                                  var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
+                                      return filterVal.heroId === eachVal.heroId;
+                                  });
 
-                    stripped.voteScore = 1;
-                    
-                    var guideCreated;
-                    var tals = [];
-                    async.series([
-                        function (seriesCB) {
-                            Guide.create(stripped)
-                            .$promise
-                            .then(function (createdGuide) {
-                                guideCreated = createdGuide;
-                                return seriesCB();
-                            })
-                            .catch(function (err) {
-                                return seriesCB(err);
-                            });
-                        },
-                        function (seriesCB) {
-                            Guide.guideHeroes.createMany({
-                                id: guideCreated.id
-                            }, cleanGuide.guideHeroes)
-                            .$promise
-                            .then(function (guideHeroData) {
+                                  _.each(heroTals, function (innerEachVal, index, list) {
+                                      innerEachVal.guideId = guideCreated.id;
+                                      innerEachVal.guideHeroId = eachVal.id;
+                                  });
 
-                                _.each(guideHeroData, function(eachVal) {
-                                    var heroTals = _.filter(cleanGuide.guideTalents, function (filterVal) {
-                                        return filterVal.heroId === eachVal.heroId;
-                                    });
-
-                                    _.each(heroTals, function (innerEachVal, index, list) {
-                                        innerEachVal.guideId = guideCreated.id;
-                                        innerEachVal.guideHeroId = eachVal.id;
-                                    });
-                                    tals.push(heroTals);
-                                });
-
-                                return seriesCB();
-                            })
-                            .catch(function (err) {
-                                return seriesCB(err);
-                            });
-                        },
-                        function (seriesCB) {
-                            Guide.guideTalents.createMany({
-                                id: guideCreated.id
-                            }, tals)
-                            .$promise
-                            .then(function (guideTalentData) {
-                                return seriesCB();
-                            })
-                            .catch(function (err) {
-                                console.log('guide talent err', err);
-                                return seriesCB(err);
-                            });
-                        },
-                        function (seriesCB) {
-                            var freeVote = {
-                                direction: 1,
-                                createdDate: new Date().toISOString(),
-                                authorId: User.getCurrentId()
-                            };
-
-                            Guide.votes.create({
-                                id: guideCreated.id
-                            }, freeVote)
-                            .$promise
-                            .then(function (voteCreated) {
-                                return seriesCB();
-                            })
-                            .catch(function (err) {
-                                return seriesCB(err);
-                            });
-                        },
-                        function (seriesCB) {
-                            async.each(stripped.maps, function (map, mapCB) {
-                              Guide.maps.link({
-                                id: guideCreated.id,
-                                fk: map.id
-                              }, null)
-                              .$promise
-                              .then(function (mapLinkData) {
-                                return mapCB();
-                              })
-                              .catch(function (err) {
-                                return mapCB(err);
+                                  tals.push(heroTals);
                               });
-                            }, function (err) {
-                                return seriesCB(err);
-                            });
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
+                          Guide.guideTalents.createMany({
+                              id: guideCreated.id
+                          }, tals)
+                          .$promise
+                          .then(function (guideTalentData) {
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              console.log('guide talent err', err);
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
+                          var freeVote = {
+                              direction: 1,
+                              createdDate: new Date().toISOString(),
+                              authorId: User.getCurrentId()
+                          };
 
-                        }], function (err, results) {
-                        $scope.fetching = false;
-                        if (err) {
-                            $window.scrollTo(0, 0);
-                            AlertService.setError({
-                                show: true,
-                                lbErr: err,
-                                msg: 'Unable to Save Guide'
-                            });
-                            
-                            return console.log('series err:', err);
-                        }
-                        
-                        $scope.app.settings.guide = null;
-                        $state.go('app.hots.guides.guide', { slug: Util.slugify(guideCreated.name) });
-                    });
+                          Guide.votes.create({
+                              id: guideCreated.id
+                          }, freeVote)
+                          .$promise
+                          .then(function (voteCreated) {
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+                      },
+                      function (seriesCB) {
+                          var guideMaps = [];
+                          _.each(cleanGuide.maps, function (map) {
+                              var newGuideMap = {
+                                  guideId: guideCreated.id,
+                                  mapId: map.id
+                              };
+                              guideMaps.push(newGuideMap);
+                          });
+                          
+                          GuideMap.createMany(guideMaps)
+                          .$promise
+                          .then(function (newGuideMaps) {
+                              return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
+                          });
+
+                      }], function (err) {
+                      $scope.fetching = false;
+                      if (err) {
+                          $window.scrollTo(0, 0);
+                          AlertService.setError({
+                              show: true,
+                              lbErr: err,
+                              msg: 'Unable to Save Guide'
+                          });
+                          return console.log('series err:', err);
+                      }
+                      $scope.app.settings.guide = null;
+                      $state.go('app.hots.guides.guide', { slug: Util.slugify(guideCreated.name) });
+                  });
 
                 }
-            }
+            };
+        }
     ])
     .controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'heroes', 'maps',
         function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, heroes, maps) {
@@ -17099,7 +17140,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getVideo = function () {
-                return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.guide.video + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
+                return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.guide.youtubeId + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
             };
 
             $scope.getContent = function (content) {
@@ -17161,17 +17202,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService', 'GuideMap',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService, GuideMap) {
 
 			      $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log('login event fired');
-                console.log('data:', data);
-                console.log('User.getCurrentId():', User.getCurrentId());
 //                 Check if user is admin or contentProvider
                 User.isInRoles({
                     uid: User.getCurrentId(),
@@ -17354,15 +17392,12 @@ angular.module('app.controllers', ['ngCookies'])
               } else {
                 $scope.fetching = true;
                 var cleanGuide = angular.copy($scope.guide);
-                cleanGuide.slug = Util.slugify(cleanGuide.name);
-                cleanGuide.authorId = User.getCurrentId();
                 cleanGuide.guideHeroes = _.map(cleanGuide.heroes, function (val) { return { heroId: val.hero.id } });
                 cleanGuide.authorId = User.getCurrentId();
 
                 var keys = ['name',
                             'against',
                             'authorId',
-                            'slug',
                             'guideType',
                             'description',
                             'createdDate',
@@ -17377,7 +17412,9 @@ angular.module('app.controllers', ['ngCookies'])
                             'voteScore',
                             'isCommentable'
                            ];
+                  
                 var stripped = Util.cleanObj(cleanGuide, keys);
+                  
                 var temp = _.map($scope.guide.heroes, function (hero) {
                   return _.map(hero.talents, function (talent, tier) {
                     var str = tier.slice(4, tier.length);
@@ -17394,6 +17431,7 @@ angular.module('app.controllers', ['ngCookies'])
                   
                 var guideCreated;
                 var tals = [];
+                  console.log('stripped:', stripped);
                   async.series([
                       function (seriesCB) {
                           Guide.create(stripped)
@@ -17463,25 +17501,22 @@ angular.module('app.controllers', ['ngCookies'])
                           });
                       },
                       function (seriesCB) {
-                          async.each(cleanGuide.maps, function(map, mapCB) {
-
-                              Guide.maps.link({
-                                  id: guideCreated.id,
-                                  fk: map.id
-                              }, null)
-                              .$promise
-                              .then(function (mapLinkData) {
-                                  return mapCB();
-                              })
-                              .catch(function (err) {
-                                  console.log('map link err:', err);
-                                  return mapCB(err);
-                              });
-                          }, function (err, results) {
-                              if (err) {
-                                  return seriesCB(err);
-                              }
+                          var guideMaps = [];
+                          _.each(cleanGuide.maps, function (map) {
+                              var newGuideMap = {
+                                  guideId: guideCreated.id,
+                                  mapId: map.id
+                              };
+                              guideMaps.push(newGuideMap);
+                          });
+                          
+                          GuideMap.createMany(guideMaps)
+                          .$promise
+                          .then(function (newGuideMaps) {
                               return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
                           });
 
                       }], function (err) {

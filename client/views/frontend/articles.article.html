@@ -98,9 +98,11 @@
     
                 <div class="article-related row m-r-none m-l-none" ng-if="article.relatedArticles && article.relatedArticles.length && relatedActive()">
                     <h3>RELATED ARTICLES</h3>
-                    <div class="related" ng-repeat="item in article.relatedArticles | orderBy: '-createdDate'" 
+                    <div class="related" 
+                         ng-repeat="item in article.relatedArticles | orderBy: '-createdDate'" 
                          ng-if="item.isActive">
-                        <a href ui-sref="app.articles.article({ slug: item.slug.url })" title="{{item.title}}">
+                        <a href ui-sref="app.articles.article({ slug: item.slug.url })" 
+                           title="{{item.title}}">
                             <div class="related-img pull-left" 
                                  style="background-image: url('https://cdn-tempostorm.netdna-ssl.com/articles/{{item.photoNames.small}}')"></div>
                             <div class="related-info">
