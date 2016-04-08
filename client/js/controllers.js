@@ -1507,6 +1507,7 @@ angular.module('app.controllers', ['ngCookies'])
                             className: 'btn-danger',
                             callback: function () {
 
+                                console.log('guide:', guide);
                                 return Guide.deleteById({
                                     id: guide.id
                                 }).$promise
@@ -12654,7 +12655,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.data = [300, 500, 100];
 
             $scope.getVideo = function () {
-                return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.deck.video + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
+                return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.deck.youtubeId + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
             };
 
             $scope.getContent = function (content) {
@@ -15118,6 +15119,7 @@ angular.module('app.controllers', ['ngCookies'])
                   
                 var guideCreated;
                 var tals = [];
+                  console.log('stripped:', stripped);
                   async.series([
                       function (seriesCB) {
                           Guide.create(stripped)
@@ -15187,25 +15189,22 @@ angular.module('app.controllers', ['ngCookies'])
                           });
                       },
                       function (seriesCB) {
-                          async.each(cleanGuide.maps, function(map, mapCB) {
-
-                              Guide.maps.link({
-                                  id: guideCreated.id,
-                                  fk: map.id
-                              }, null)
-                              .$promise
-                              .then(function (mapLinkData) {
-                                  return mapCB();
-                              })
-                              .catch(function (err) {
-                                  console.log('map link err:', err);
-                                  return mapCB(err);
-                              });
-                          }, function (err, results) {
-                              if (err) {
-                                  return seriesCB(err);
-                              }
+                          var guideMaps = [];
+                          _.each(cleanGuide.maps, function (map) {
+                              var newGuideMap = {
+                                  guideId: guideCreated.id,
+                                  mapId: map.id
+                              };
+                              guideMaps.push(newGuideMap);
+                          });
+                          
+                          GuideMap.createMany(guideMaps)
+                          .$promise
+                          .then(function (newGuideMaps) {
                               return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
                           });
 
                       }], function (err) {
@@ -17141,7 +17140,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getVideo = function () {
-                return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.guide.video + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
+                return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.guide.youtubeId + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
             };
 
             $scope.getContent = function (content) {
@@ -17203,17 +17202,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService',
-        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util', 'userRoles', 'EventService', 'AlertService', 'GuideMap',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util, userRoles, EventService, AlertService, GuideMap) {
 
 			      $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log('login event fired');
-                console.log('data:', data);
-                console.log('User.getCurrentId():', User.getCurrentId());
 //                 Check if user is admin or contentProvider
                 User.isInRoles({
                     uid: User.getCurrentId(),
@@ -17435,6 +17431,7 @@ angular.module('app.controllers', ['ngCookies'])
                   
                 var guideCreated;
                 var tals = [];
+                  console.log('stripped:', stripped);
                   async.series([
                       function (seriesCB) {
                           Guide.create(stripped)
@@ -17504,25 +17501,22 @@ angular.module('app.controllers', ['ngCookies'])
                           });
                       },
                       function (seriesCB) {
-                          async.each(cleanGuide.maps, function(map, mapCB) {
-
-                              Guide.maps.link({
-                                  id: guideCreated.id,
-                                  fk: map.id
-                              }, null)
-                              .$promise
-                              .then(function (mapLinkData) {
-                                  return mapCB();
-                              })
-                              .catch(function (err) {
-                                  console.log('map link err:', err);
-                                  return mapCB(err);
-                              });
-                          }, function (err, results) {
-                              if (err) {
-                                  return seriesCB(err);
-                              }
+                          var guideMaps = [];
+                          _.each(cleanGuide.maps, function (map) {
+                              var newGuideMap = {
+                                  guideId: guideCreated.id,
+                                  mapId: map.id
+                              };
+                              guideMaps.push(newGuideMap);
+                          });
+                          
+                          GuideMap.createMany(guideMaps)
+                          .$promise
+                          .then(function (newGuideMaps) {
                               return seriesCB();
+                          })
+                          .catch(function (err) {
+                              return seriesCB(err);
                           });
 
                       }], function (err) {
