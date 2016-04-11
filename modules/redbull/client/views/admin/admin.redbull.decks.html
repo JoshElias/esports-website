@@ -1,157 +1,149 @@
-<alert-box theme="admin"></alert-box>
+<alert-box theme="admin-new"></alert-box>
 
-<div class="row decks-gutter-fix panel panel-primary">
-
-  <div class="col-md-12 panel-heading">
-    Current Drafts
-  </div>
-  <div class="panel-body">
-    <div ng-repeat="player in officialPlayers | filter:{hasActive: true} track by player.id"
-         class="col-md-12 draft-build ">
-      <div class="row admin-draft-decks panel panel-success">
-        <div class="panel-heading" data-toggle="collapse" href="#collapseComplete{{player.id}}">
-          {{ player.username }}
-           <span class="pull-right">
-              <button class="btn btn-danger btn-xs" ng-if="userIsAdmin"
-                      ng-click="promptDelete($event, player.activeDraft, player.username)">
-                DELETE Draft
-              </button>
-              <button class="btn btn-danger btn-xs"
-                      ng-click="promptInactive($event, player)">
-                Deactivate Draft
-              </button>
-            </span>
-        </div>
-        <div class="draft-block panel-body collapse"
-             id="collapseComplete{{player.id}}">
-          <div class="col-md-12 decks">
-            <div class="col-md-4 deck {{deck.playerClass.toLowerCase()}} active"
-                 ng-repeat="deck in player.activeDraft.decks">
-              <div class="deck-title-bar">
-                <div class="deck-title-bar-inner">
-                  <div class="deck-title">{{deck.name}}</div>
-                  <div class="deck-bg"></div>
-                </div>
-              </div>
-
-              <div class="deck-cards">
-                <div class="iscroll-wrapper">
-                  <div class="iscroll-scroller">
-                    <div class="deck-card {{card.card.playerClass.toLowerCase()}}"
-                         ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}"
-                         ng-repeat="card in deck.deckCards track by card.card.id"
-                         data-tooltip-img="'http://cdn.tempostorm.netdna-cdn.com/cards/' + card.card.photoNames.large"
-                         data-tooltip-pos="left" hs-card
-                         ng-click="removeCardFromDeck(card)">
-                      <div class="card-pool-card-mana">{{card.card.cost}}</div>
-                      <div class="card-pool-card-qty" ng-if="card.cardQuantity > 1">{{card.cardQuantity}}</div>
-                      <div class="card-pool-card-legendary" ng-if="card.card.rarity === 'Legendary'">
-                        <i class="fa fa-star"></i>
-                      </div>
-                      <div class="card-pool-card-photo">
-                        <img ng-src="http://cdn.tempostorm.netdna-cdn.com/cards/{{card.card.photoNames.small}}"
-                             alt="card.card.name">
-                      </div>
-                      <div class="card-pool-card-name">{{card.card.name}}</div>
+<div class="decks-gutter-fix panel panel-primary">
+    <div class="panel-heading">
+        <h3>Current Drafts</h3>
+    </div>
+    <div class="panel-body">
+        <p class="wrapper-lg white" ng-if="!officialPlayers.length">
+            Add users to the tournament whitelist.
+        </p>
+        
+        <div ng-repeat="player in officialPlayers | filter:{hasActive: true} track by player.id" class="col-md-12 draft-build m-t-md" ng-if="officialPlayers.length">
+            <div class="panel admin-alert-success">
+                <div class="panel-heading clearfix" data-toggle="collapse" href="#collapseComplete{{player.id}}">
+                    <h3 class="pull-left">{{ player.username }}</h3>
+                    <div class="pull-right">
+                        <button class="btn btn-danger btn-xs" ng-if="userIsAdmin" ng-click="promptDelete($event, player.activeDraft, player)">
+                            DELETE Draft
+                        </button>
+                        <button class="btn btn-danger btn-xs" ng-click="promptInactive($event, player)">
+                            Archive Draft
+                        </button>
                     </div>
-                  </div>
                 </div>
-              </div>
+                <div class="panel-body collapse" id="collapseComplete{{player.id}}">
+                    <!-- decks -->
+                    <div class="admin-draft-decks">
+                        <div class="decks">
+                            <div class="deck active {{deck.playerClass.toLowerCase()}} col-sm-4" ng-repeat="deck in player.activeDraft.decks">
+                                <div class="deck-title-bar">
+                                    <div class="deck-title-bar-inner">
+                                        <div class="deck-title">{{deck.name}}</div>
+                                    </div>
+                                </div>
+
+                                <div class="deck-cards">
+                                    <!--<div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
+                                        <div class="iscroll-scroller">-->
+
+                                            <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}" ng-repeat="card in deck.deckCards track by card.card.id" data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" data-tooltip-pos="left" hs-card>
+                                                <div class="card-pool-card-mana">{{card.card.cost}}</div>
+                                                <div class="card-pool-card-qty" ng-if="card.cardQuantity > 1">{{card.cardQuantity}}</div>
+                                                <div class="card-pool-card-legendary" ng-if="card.card.rarity === 'Legendary'">
+                                                    <i class="fa fa-star"></i>
+                                                </div>
+                                                <div class="card-pool-card-photo">
+                                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" alt="card.card.name">
+                                                </div>
+                                                <div class="card-pool-card-name">{{card.card.name}}</div>
+                                            </div>
+
+                                        <!--</div>
+                                    </div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / decks -->
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-    <div ng-repeat="player in officialPlayers | filter:{incompleteDraft: true}" class="col-md-12 draft-build">
-      <div class="row admin-draft-decks panel panel-warning">
-        <div class="panel-heading">
-          {{ player.username }}
-          <span class="pull-right">
-
-            Status: Incomplete Draft
-          </span>
-
+        
+        <div ng-repeat="player in officialPlayers | filter:{incompleteDraft: true}" class="col-md-12 draft-build m-t-md">
+            <div class="panel admin-alert-warning">
+                <div class="panel-heading clearfix">
+                    <h3 class="pull-left">{{ player.username }}</h3>
+                    <div class="pull-right">
+                        <h3>Draft in progress</h3>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
 
-    </div>
-    <div ng-repeat="player in officialPlayers | filter:{noDraft: true}" class="col-md-12 draft-build">
-      <div class="row admin-draft-decks panel panel-danger">
-        <div class="panel-heading">
-          {{ player.username }}
-          <span class="pull-right">
-
-            Status: Draft not started
-          </span>
+        <div ng-repeat="player in officialPlayers | filter:{noDraft: true}" class="col-md-12 draft-build m-t-md">
+            <div class="panel admin-alert-error">
+                <div class="panel-heading clearfix">
+                    <h3 class="pull-left">{{ player.username }}</h3>
+                    <div class="pull-right">
+                        <h3>Draft not started</h3>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
+        
     </div>
-  </div>
 </div>
 
-<div class="row decks-gutter-fix panel panel-warning">
-  <div class="col-md-12 panel-heading">
-    Archived Drafts
-  </div>
-  <div class="panel-body">
-    <div ng-repeat="player in officialPlayers | filter:{hasInactive: true} track by player.id"
-         class="col-md-12 draft-build">
-      <div class="row admin-draft-decks panel panel-default">
-        <div class="panel-heading" role="button" data-toggle="collapse" href="#collapseArchive{{player.id}}">
-          {{ player.username }}
-
-        </div>
-
-        <div class="col-md-12 decks panel-body collapse list-group" id="collapseArchive{{player.id}}">
-
-          <div class="draft-block col-xs-12 list-group-item" ng-repeat="draft in player.inactiveDrafts">
-            <div class="col-xs-12">
-            <span class="pull-right">
-              <button class="btn btn-danger btn-xs" ng-if="userIsAdmin" ng-click="promptDelete($event, draft, player.username)">DELETE Draft
-              </button>
-              </span>
-            </div>
-            <div class="col-md-4 deck {{deck.playerClass.toLowerCase()}} active" ng-repeat="deck in draft.decks">
-
-              <div class="deck-title-bar">
-                <div class="deck-title-bar-inner">
-                  <div class="deck-title">{{deck.name}}</div>
-                  <div class="deck-bg"></div>
-                </div>
-              </div>
-
-              <div class="deck-cards">
-                <div class="iscroll-wrapper">
-                  <div class="iscroll-scroller">
-
-                    <div class="deck-card {{card.card.playerClass.toLowerCase()}}"
-                         ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}"
-                         ng-repeat="card in deck.deckCards track by card.card.id"
-                         data-tooltip-img="'http://cdn.tempostorm.netdna-cdn.com/cards/' + card.card.photoNames.large"
-                         data-tooltip-pos="left" hs-card
-                         ng-click="removeCardFromDeck(card)">
-                      <div class="card-pool-card-mana">{{card.card.cost}}</div>
-                      <div class="card-pool-card-qty" ng-if="card.cardQuantity > 1">{{card.cardQuantity}}</div>
-                      <div class="card-pool-card-legendary" ng-if="card.card.rarity === 'Legendary'">
-                        <i class="fa fa-star"></i>
-                      </div>
-                      <div class="card-pool-card-photo">
-                        <img ng-src="http://cdn.tempostorm.netdna-cdn.com/cards/{{card.card.photoNames.small}}"
-                             alt="card.card.name">
-                      </div>
-                      <div class="card-pool-card-name">{{card.card.name}}</div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-      </div>
+<div class="decks-gutter-fix panel panel-warning">
+    <div class="panel-heading">
+        <h3>Archived Drafts</h3>
     </div>
-  </div>
+    <div class="panel-body">
+        <p class="wrapper-lg white" ng-if="!officialPlayers.length">
+            Add users to the tournament whitelist.
+        </p>
+        <div ng-repeat="player in officialPlayers | filter:{hasInactive: true} track by player.id" class="col-md-12 draft-build m-t-md" ng-if="officialPlayers.length">
+            <div class="panel admin-alert-warning">
+                <div class="panel-heading" role="button" data-toggle="collapse" href="#collapseArchive{{player.id}}">
+                    <h3>{{ player.username }}</h3>
+                </div>
+
+                <div class="panel-body collapse" id="collapseArchive{{player.id}}">
+
+                    <div class="col-xs-12 m-b-md" ng-repeat="draft in player.inactiveDrafts track by $index | orderBy: '-draftStartTime'">
+                        <div class="col-xs-12">
+                            <h3 class="pull-left">Draft {{$index + 1}}</h3>
+                            <span class="pull-right">
+                                <button class="btn btn-danger btn-xs" ng-if="userIsAdmin" ng-click="promptDelete($event, draft, player)">DELETE Draft</button>
+                            </span>
+                        </div>
+                        <!-- decks -->
+                        <div class="admin-draft-decks">
+                            <div class="decks">
+                                <div class="deck active {{deck.playerClass.toLowerCase()}} col-sm-4" ng-repeat="deck in draft.decks">
+                                    <div class="deck-title-bar">
+                                        <div class="deck-title-bar-inner">
+                                            <div class="deck-title">{{deck.name}}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="deck-cards">
+                                        <!--<div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, interactiveScrollbars: true}">
+                                            <div class="iscroll-scroller">-->
+
+                                                <div class="deck-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.cardQuantity > 1, legendary: card.card.rarity === 'Legendary'}" ng-repeat="card in deck.deckCards track by card.card.id" data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" data-tooltip-pos="left" hs-card>
+                                                    <div class="card-pool-card-mana">{{card.card.cost}}</div>
+                                                    <div class="card-pool-card-qty" ng-if="card.cardQuantity > 1">{{card.cardQuantity}}</div>
+                                                    <div class="card-pool-card-legendary" ng-if="card.card.rarity === 'Legendary'">
+                                                        <i class="fa fa-star"></i>
+                                                    </div>
+                                                    <div class="card-pool-card-photo">
+                                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" alt="card.card.name">
+                                                    </div>
+                                                    <div class="card-pool-card-name">{{card.card.name}}</div>
+                                                </div>
+
+                                            <!--</div>
+                                        </div>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- / decks -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

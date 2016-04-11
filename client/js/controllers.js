@@ -57,32 +57,15 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
           $scope.currentRoles = {};
 
-          // Add 'redbulladmin' to current user if they have role.
-          //noinspection UnterminatedStatementJS
-            var redbullCheck = function(){
-            if ($scope.currentUser) {
-              User.isInRoles({
-                uid: $scope.currentUser.id,
-                roleNames: ['$redbullAdmin']
-              }, function (res) {
-                if (res.isInRoles.$redbullAdmin) {
-                  if (res.isInRoles.$redbullAdmin === true) {
-                    //console.log('user is redbulladmin');
-                    $scope.currentUser.isRedbullAdmin = true;
-                  }
-                }
-              });
-            }
-          }
-
           var adminCheck = function() {
               if ($scope.currentUser) {
                   User.isInRoles({
                       uid: $scope.currentUser.id,
-                      roleNames: ['$admin']
+                      roleNames: ['$admin', '$redbullAdmin']
                   }).$promise
                   .then(function (res) {
                       $scope.currentRoles.isAdmin = res.isInRoles.$admin;
+                      $scope.currentRoles.isRedbullAdmin = res.isInRoles.$redbullAdmin;
                   })
                   .catch(function (err) {
                       return console.log('User.isInRoles: ', err);
@@ -91,14 +74,12 @@ angular.module('app.controllers', ['ngCookies'])
           };
 
         $scope.currentUser = currentUser;
-        redbullCheck();
         adminCheck();
 
         EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
             $scope.currentUser = data;
 
             adminCheck();
-            redbullCheck();
         });
 
 
@@ -18968,8 +18949,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
 
-    .controller('AdminOverwatchHeroListCtrl', ['$scope', '$window', '$timeout', 'bootbox', 'AlertService', 'OverwatchHero', 'heroes',
-        function ($scope, $window, $timeout, bootbox, AlertService, OverwatchHero, heroes) {
+    .controller('AdminOverwatchHeroListCtrl', ['$scope', '$window', '$timeout', 'bootbox', 'AlertService', 'OwHero', 'heroes',
+        function ($scope, $window, $timeout, bootbox, AlertService, OwHero, heroes) {
             // load vars
             $scope.heroes = heroes;
 
@@ -18983,7 +18964,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.saving = true;
                 async.forEach(list, function (hero, eachCallback) {
-                    OverwatchHero.upsert(hero).$promise
+                    OwHero.upsert(hero).$promise
                     .then(function () {
                         return eachCallback();
                     })
@@ -19029,9 +19010,9 @@ angular.module('app.controllers', ['ngCookies'])
                             callback: function () {
                                 if (!hero.id) { return done(); }
 
-                                OverwatchHero.overwatchAbilities.destroyAll({ id: hero.id }).$promise
+                                OwHero.overwatchAbilities.destroyAll({ id: hero.id }).$promise
                                 .then(function () {
-                                    OverwatchHero.destroyById({ id: hero.id }).$promise
+                                    OwHero.destroyById({ id: hero.id }).$promise
                                     .then(function() {
                                         var index = $scope.heroes.indexOf(hero);
                                                     $scope.heroes.splice(index, 1);
@@ -19073,8 +19054,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminOverwatchHeroAddCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'bootbox', 'OVERWATCH', 'AlertService', 'OverwatchHero', 'OverwatchAbility',
-        function ($scope, $compile, $timeout, $state, $window, bootbox, OVERWATCH, AlertService, OverwatchHero, OverwatchAbility) {
+    .controller('AdminOverwatchHeroAddCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'bootbox', 'OVERWATCH', 'AlertService', 'OwHero', 'OwAbility',
+        function ($scope, $compile, $timeout, $state, $window, bootbox, OVERWATCH, AlertService, OwHero, OwAbility) {
             // defaults
             var defaultHero = {
                     heroName : '',
@@ -19179,13 +19160,13 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.addHero = function () {
                 $scope.fetching = true;
 
-                OverwatchHero.create($scope.hero).$promise
+                OwHero.create($scope.hero).$promise
                 .then(function (heroValue) {
                     _.each($scope.hero.abilities, function (ability) {
                         ability.heroId = heroValue.id;
                     });
 
-                    OverwatchHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
+                    OwHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
                     .then(function (abilityValue) {
                         $scope.fetching = false;
                         AlertService.setSuccess({
@@ -19219,8 +19200,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminOverwatchHeroEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'bootbox', 'OVERWATCH', 'AlertService', 'OverwatchHero', 'OverwatchAbility', 'hero',
-        function ($scope, $compile, $timeout, $state, $window, bootbox, OVERWATCH, AlertService, OverwatchHero, OverwatchAbility, hero) {
+    .controller('AdminOverwatchHeroEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'bootbox', 'OVERWATCH', 'AlertService', 'OwHero', 'OwAbility', 'hero',
+        function ($scope, $compile, $timeout, $state, $window, bootbox, OVERWATCH, AlertService, OwHero, OwAbility, hero) {
             // defaults
             var defaultAbility = {
                     name: '',
@@ -19268,6 +19249,8 @@ angular.module('app.controllers', ['ngCookies'])
                 box.modal('hide');
                 $scope.currentAbility = false;
             };
+                
+                console.log('$scope.hero:', $scope.hero);
 
             $scope.deleteAbility = function (ability) {
                 function done () {
@@ -19288,11 +19271,12 @@ angular.module('app.controllers', ['ngCookies'])
                             callback: function () {
                                 if (!ability.id) { return done(); }
 
-                                OverwatchHero.overwatchAbilities.destroyById({ id: ability.heroId, fk: ability.id }).$promise
+                                OwHero.overwatchAbilities.destroyById({ id: ability.owHeroId, fk: ability.id }).$promise
                                 .then(function() {
+                                  done();
                                   AlertService.setSuccess({
-                                    show: false,
-                                    persist: true,
+                                    show: true,
+                                    persist: false,
                                     msg: ability.name + ' deleted successfully.'
                                   });
                                   $window.scrollTo(0, 0);
@@ -19334,15 +19318,15 @@ angular.module('app.controllers', ['ngCookies'])
             // edit hero
             $scope.editHero = function () {
 				        $scope.fetching = true;
-                OverwatchHero.upsert($scope.hero).$promise
+                OwHero.upsert($scope.hero).$promise
                 .then(function (heroValue) {
 
                     _.each($scope.hero.overwatchAbilities, function (ability) {
-                        ability.heroId = heroValue.id;
+                        ability.owHeroId = heroValue.id;
                     });
 
                     async.forEach($scope.hero.overwatchAbilities, function(ability, eachCallback) {
-                        OverwatchAbility.upsert(ability).$promise
+                        OwAbility.upsert(ability).$promise
                         .then(function (abilityValue) {
                             return eachCallback();
                         })

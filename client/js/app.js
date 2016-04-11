@@ -7321,8 +7321,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/overwatch.heroes.list.html',
                         controller: 'AdminOverwatchHeroListCtrl',
                         resolve: {
-                            heroes: ['OverwatchHero', function (OverwatchHero) {
-                                return OverwatchHero.find({
+                            heroes: ['OwHero', function (OwHero) {
+                                return OwHero.find({
                                     filter: {
                                         order: "orderNum ASC"
                                     }
@@ -7352,10 +7352,10 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/overwatch.heroes.edit.html',
                         controller: 'AdminOverwatchHeroEditCtrl',
                         resolve: {
-                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
+                            hero: ['$stateParams', 'OwHero', function ($stateParams, OwHero) {
                                 var heroID = $stateParams.heroID;
 
-                                return OverwatchHero.findOne({
+                                return OwHero.findOne({
                                     filter: {
                                         where: {
                                             id: heroID

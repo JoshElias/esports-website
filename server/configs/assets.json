@@ -1,10 +1,10 @@
 {
-  "style.min.css": "style.min.4eb53f8a.css",
-  "vendor.min.css": "vendor.min.60b209a2.css",
-  "modules.min.css": "modules.min.509f19dc.css",
   "angular.min.js": "angular.min.80714153.js",
-  "app.min.js": "app.min.322ae681.js",
+  "app.min.js": "app.min.ae2e83e6.js",
   "vendor.min.js": "vendor.min.d5f8f9ab.js",
-  "modules.min.js": "modules.min.1371962e.js",
-  "lb-services.min.js": "lb-services.min.58fb3328.js"
+  "modules.min.js": "modules.min.0b0806b3.js",
+  "lb-services.min.js": "lb-services.min.58fb3328.js",
+  "style.min.css": "style.min.58db7a7a.css",
+  "vendor.min.css": "vendor.min.60b209a2.css",
+  "modules.min.css": "modules.min.509f19dc.css"
 }
