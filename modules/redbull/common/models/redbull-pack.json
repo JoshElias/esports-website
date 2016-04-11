@@ -10,11 +10,16 @@
     "orderNum": {
       "type": "number"
     },
-    "redbullDraftId": {},
-    "redbullExpansionId": {},
-    "ownerId": {}
+    "redbullDraftId": {
+      "index": 1
+    },
+    "redbullExpansionId": {
+      "index": 1
+    },
+    "ownerId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "draft": {
       "type": "belongsTo",
@@ -44,7 +49,6 @@
     "principalId": "$everyone",
     "permission": "DENY"
   },
-
   {
     "accessType": "EXECUTE",
     "principalType": "ROLE",
@@ -85,5 +89,7 @@
     "permission": "ALLOW",
     "accessType": "WRITE"
   }],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

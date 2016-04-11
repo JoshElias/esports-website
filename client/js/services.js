@@ -46,8 +46,101 @@ angular.module('app.services', [])
         getStatusCode: function() { return statusCode; }
     }
 })
-.factory('AuthenticationService', function() {
-    var loggedIn = false,
+    .factory('CrudMan', [
+        function () {
+            //    var arrs = {};
+            var crud = {
+                exists  : [],
+                toDelete: [],
+                toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
+            }
+            var e = 'exists';
+            var d = 'toDelete';
+            var w = 'toWrite';
+
+            var CrudMan = function () {
+                var arrs = {};
+
+                function getArrs () {
+                    return arrs;
+                }
+
+                function find (item, arrName, crud) {
+                    return _.find(arrs[arrName][crud], function (val) { return val == item });
+                }
+
+                function createArr (arrName) {
+                    arrs[arrName] = angular.copy(crud);
+                }
+
+                function setExists (inArr, arrName) {
+                    if (!arrs[arrName]) {
+                        this.createArr(arrName);
+                    }
+
+                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
+                }
+
+                function removeFromArr (item, arrName, crud) {
+                    var arr = arrs[arrName];
+                    var idx = arr[crud].indexOf(item);
+
+                    arr[crud].splice(idx, 1);
+                }
+
+                function addToDelete (item, arrName) {
+                    var arr = arrs[arrName];
+
+                    if (find(item, arrName, w)) {
+                        var idx = arr[w].indexOf(item);
+
+                        arr[w].splice(idx, 1);
+                    }
+
+                    if (!find(item, arrName)) {
+                        arr[d].push(item);
+                    }
+                }
+
+                function addToArr (item, arrName) {
+                    var arr = arrs[arrName];
+
+                    if (find(item, arrName)) {
+                        var idx = arr[d].indexOf(item);
+
+                        arr[d].splice(idx, 1);
+                    }
+
+                    if (!find(item, arrName)) {
+                        arr[w].push(item);
+                    }
+                }
+
+                function toggleItem (item, arrName) {
+                    if (find(item, arrName, e)) {
+                        arrs[arrName][d].push(item);
+                    } else if (find(item, arrName, w)) {
+                        removeFromArr(item, arrName, w);
+                    } else {
+                        addToArr(item, arrName, w);
+                    }
+                }
+
+                return {
+                    setExists: setExists,
+                    toggle: toggleItem,
+                    add: addToArr,
+                    delete: addToDelete,
+                    createArr: createArr,
+                    getArrs: getArrs
+                }
+            }
+
+            return CrudMan();
+        }
+    ])
+    .factory('AuthenticationService', function() {
+        var loggedIn = false,
         admin = false,
         provider = false;
 
@@ -366,6 +459,441 @@ angular.module('app.services', [])
             }
         }
     }])
+    .service('HOTSSnapshot', ['HotsSnapshot', 'SnapshotAuthor', 'HeroTier', 'GuideTier', 'GuideTierTalent',
+        function (HotsSnapshot, SnapshotAuthor, HeroTier, GuideTier, GuideTierTalent) {
+
+            var defaultSnapshot = {
+                snapNum: 0,
+                title: "default title",
+                intro: "default intro",
+                thoughts: "default thoughts",
+                slugs: [
+                    {
+                        linked: true,
+                        slug: "default slug"
+                    }
+                ],
+                authors: [],
+                heroTiers: [],
+                isActive: false,
+                createdDate: undefined,
+                comments: []
+            };
+            var defaultAuthor = {
+                description: "",
+                expertClasses: [],
+                hotsSnapshotId: "",
+                authorId: ""
+            };
+            var defaultGuideTier = {
+                heroTierId: "",
+                guideId: "",
+                orderNum: 0
+            };
+            var defaultCrud = {
+                exists: [],
+                toDelete: [],
+                toWrite: []
+            };
+            var exists = new Object();
+
+            var HOTSSnapshot = function (snapshot) {
+                if (!snapshot) {
+                    snapshot = angular.copy(defaultSnapshot);
+                }
+
+                if (snapshot.heroTiers) {
+                    snapshot.heroTiers = _.sortBy(snapshot.heroTiers, function (val) { return val.orderNum });
+                }
+
+                this.load(snapshot);
+            };
+
+            HOTSSnapshot.prototype.load = function (snapshot) {
+                exists['authors'] = angular.copy(defaultCrud);
+                exists['heroTiers'] = angular.copy(defaultCrud);
+                exists['guideTiers'] = angular.copy(defaultCrud);
+                exists['guideTierTalents'] = angular.copy(defaultCrud);
+
+                this.snapNum       = snapshot.snapNum;
+                this.title         = snapshot.title;
+                this.intro         = snapshot.intro;
+                this.thoughts      = snapshot.thoughts;
+                this.slugs         = snapshot.slugs;
+                this.authors       = snapshot.authors;
+                this.heroTiers     = snapshot.heroTiers;
+                this.isActive      = snapshot.isActive;
+                this.createdDate   = snapshot.createdDate;
+                this.comments      = snapshot.comments;
+                this.isCommentable = snapshot.isCommentable;
+                this.tiers         = new Array();
+
+                if(!!snapshot.id) {
+                    this.id = snapshot.id;
+
+                    exists['authors'].exists = angular.copy(this.authors);
+                    exists['heroTiers'].exists = angular.copy(this.heroTiers);
+                }
+            };
+
+            //begin method definitions
+            HOTSSnapshot.prototype.addTier = function () {
+                var tier = {
+                    heroes: new Array(),
+                    tier: this.tiers.length + 1
+                };
+
+                this.tiers.push(tier);
+            };
+
+            HOTSSnapshot.prototype.buildTiers = function () {
+                var heroTiers = this.heroTiers;
+                var tiers = angular.copy(this.tiers);
+                var largestTier = tiers.length;
+
+                if (!!heroTiers) {
+                    var newTiers = new Array();
+
+                    _.each(heroTiers, function (heroTier, idx) {
+                        heroTier.orderNum = idx;
+
+                        if (heroTier.tier > largestTier)
+                            largestTier = heroTier.tier;
+                    });
+
+                    for (var i = 0; i < largestTier; i++) {
+                        var newTier = {
+                            heroes: new Array(),
+                            tier: newTiers.length + 1
+                        };
+
+                        newTiers.push(newTier);
+                    }
+
+                    for (var i = 0; i < heroTiers.length; i++) {
+                        var item = heroTiers[i];
+
+                        newTiers[item.tier - 1].heroes.push(item);
+                    }
+
+                    for (var i = 0; i < newTiers.length; i++) {
+                        if (!this.tiers[i])
+                            this.addTier();
+
+                        this.tiers[i].heroes = newTiers[i].heroes;
+                    }
+
+                    // this.tiers = newTiers;
+                }
+            };
+
+            HOTSSnapshot.prototype.newHero = function (obj) {
+                var hero = {
+                    summary      : obj.summary,
+                    tier         : obj.tier,
+                    previousTier : obj.previousTier,
+                    hero         : obj.hero,
+                    burstScore   : obj.burstScore,
+                    pushScore    : obj.pushScore,
+                    surviveScore : obj.surviveScore,
+                    scaleScore   : obj.scaleScore,
+                    utilityScore : obj.utilityScore,
+                    orderNum     : obj.orderNum,
+                    guideTierId  : obj.guideTierId,
+                    heroId       : obj.heroId,
+                    snapshotId   : obj.snapshotId
+                };
+
+                this.heroTiers.push(hero);
+            };
+
+            HOTSSnapshot.prototype.newAuthor = function (obj) {
+                var author = {
+                    description: obj.description,
+                    expertClasses: obj.expertClasses,
+                    hotsSnapshotId: obj.hotsSnapshotId,
+                    authorId: obj.authorId,
+                    user: obj.user,
+                    orderNum: obj.orderNum
+                };
+
+                this.authors.push(author);
+            };
+
+            HOTSSnapshot.prototype.addGuideToHero = function (hero, guide) {
+                var that = this;
+                var tierGuide = angular.copy(defaultGuideTier);
+                tierGuide['guide'] = guide;
+                tierGuide['guideId'] = guide.id;
+                tierGuide['heroTierId'] = hero.id || "";
+
+                console.log(hero.guides);
+
+                //this is temporary until we decide to enable multiple guides per hero
+                if (hero.guides && hero.guides.length > 0 && hero.guides[0].id) {
+                    _.each(hero.guides, function (tierGuide) {
+                        that.removeGuideFromHero(tierGuide.id, hero.id);
+                    });
+                }
+
+                if (!hero.guides)
+                    hero.guides = [];
+
+                hero.guides.push(tierGuide);
+            };
+
+            HOTSSnapshot.prototype.removeTier = function (tier) {
+                var that = this;
+                var heroes = this.heroTiers;
+                var tiers = this.tiers;
+                var tierToRemove = tier;
+
+                if (typeof tier == "number") {
+                    tierToRemove = _.find(tiers, function (fTier) {
+                        return tier == fTier.tier;
+                    });
+                }
+
+                _.each(tierToRemove.heroes, function (hero) {
+                    return that.removeHero(hero);
+                });
+
+                _.each(heroes, function (hero) {
+                    var heroTier = hero.tier;
+
+                    if (heroTier > tier)
+                        hero.tier = heroTier - 1;
+                });
+
+                tiers.splice(tiers.length-1, 1);
+            };
+
+            HOTSSnapshot.prototype.removeHero = function (hero) {
+                var that = this;
+
+                _.each(hero.guides, function (guide) {
+                    that.removeGuideFromHero(guide.id, hero.id);
+                });
+
+                if (hero.id)
+                    exists.heroTiers.toDelete.push(hero);
+
+                this.heroTiers.splice(this.heroTiers.indexOf(hero),1);
+            };
+
+            HOTSSnapshot.prototype.removeGuideFromHero = function (guideId, heroId) {
+                var hero = _.find(this.heroTiers, function (h) {
+                    return h.heroId == heroId || h.id == heroId;
+                });
+
+                var guide = _.find(hero.guides, function (g) {
+                    return g.guideId == guideId || g.id == guideId;
+                });
+
+                if (guide.id)
+                    exists.guideTiers.toDelete.push(guide);
+
+                hero.guides = _.difference(hero.guides, [guide]);
+            };
+
+            HOTSSnapshot.prototype.removeAuthor = function (obj) {
+                var authors = this.authors;
+
+                this.authors = _.difference(authors, [obj]);
+
+                if(!!obj.id)
+                    exists.authors.toDelete.push(obj);
+            };
+
+            HOTSSnapshot.prototype.newTier = function () {
+
+                this.tiers.push();
+            };
+
+            HOTSSnapshot.prototype.submit = function (cb) {
+                var arrs = exists;
+                var snapshot = angular.copy(this);
+
+                if (!snapshot.id)
+                    snapshot.createdDate = new Date().toISOString();
+
+                snapshot.slugOptions = {
+                    slug: snapshot.slugs[0].slug,
+                    linked: snapshot.slugs[0].linked
+                };
+
+                //build our crudman toWrite arrays
+                _.each(arrs, function (arr, key) {
+                    var exists  = arr.exists;
+                    var toWrite = arr.toWrite;
+
+                    _.each(snapshot[key], function (val) {
+                        var diff =  _.find(exists, function (eVal) {
+                            var valStr = JSON.stringify(val);
+                            var eValStr = JSON.stringify(eVal);
+
+                            return valStr == eValStr;
+                        });
+
+                        if (!diff) {
+                            toWrite.push(val);
+                        }
+                    });
+                });
+
+                async.waterfall([
+                    function (seriesCb) {
+                        HotsSnapshot.upsert(snapshot)
+                        .$promise
+                        .then(function (data) {
+
+                            //gross, kill me pls
+                            if (data._id) {
+                                data.id = data._id;
+                                delete data._id;
+                            }
+
+                            return seriesCb(undefined, data);
+                        })
+                        .catch(seriesCb);
+                    }, function (newSnapshot, seriesCb) {
+                        var authors = arrs.authors;
+                        var hotsSnapshotId = newSnapshot.id;
+
+                        async.forEach(authors.toWrite, function (author, eachCb) {
+                            author.hotsSnapshotId = hotsSnapshotId;
+
+                            SnapshotAuthor.upsert(author)
+                            .$promise
+                            .then(function (data) {
+                                console.log('successfully submitted author:', data);
+                                return eachCb(undefined);
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+
+                                return eachCb(err);
+                            })
+                        }, function () {
+                            //if (err)
+                                //TODO ERR HANDLING
+
+                            return seriesCb(undefined, newSnapshot);
+                        });
+                    }, function (newSnapshot, seriesCb) {
+                        var heroTiers = arrs.heroTiers;
+                        var snapshotId = newSnapshot.id;
+                        var tierGuides = [];
+
+                        async.forEach(heroTiers.toWrite, function (heroTier, eachCb) {
+                            heroTier.snapshotId = snapshotId;
+
+                            HeroTier.upsert(heroTier)
+                            .$promise
+                            .then(function (data) {
+                                console.log('successfully submitted heroTier: ', data);
+                                _.each(heroTier.guides, function (guide) {
+                                    if (!guide.heroTierId)
+                                        guide.heroTierId = data.id;
+
+                                    if (guide.guide.isPublic && !guide.slug)
+                                        guide.slug = guide.guide.slugs[0];
+                                });
+
+                                if (heroTier.guides && heroTier.guides.length)
+                                    tierGuides.push(heroTier.guides);
+
+                                return eachCb(undefined);
+                            });
+                        }, function (err) {
+                            //if (err)
+                                //TODO ERR HANDLING
+
+                            return seriesCb(undefined, tierGuides);
+                        });
+                    }, function (tierGuides, seriesCb) {
+                        var guides = _.flatten(tierGuides);
+                        
+                        async.forEach(guides, function (guide, eachCb) {
+                            GuideTier.upsert(guide)
+                            .$promise
+                            .then(function (guideTier) {
+                                var guideTalents = guide.guide.guideTalents;
+
+                                _.each(guideTalents, function (guideTalent) {
+                                    var toPush = {
+                                        tier: guideTalent.tier,
+                                        guideTierId: guideTier.id,
+                                        talentId: guideTalent.talentId
+                                    };
+
+                                    exists['guideTierTalents'].toWrite.push(toPush);
+                                });
+
+                                return eachCb(undefined);
+                            });
+                        }, seriesCb);
+
+                    }, function (seriesCb) {
+                        var guideTalents = exists['guideTierTalents'].toWrite;
+
+                        async.forEach(guideTalents, function (guideTalent, forEachCb) {
+                            GuideTierTalent.upsert(guideTalent)
+                            .$promise
+                            .then(function () {
+                                return forEachCb();
+                            })
+                            .catch(forEachCb);
+                        }, seriesCb);
+                    }, function (seriesCb) {
+                        var objs = {
+                            guideTiers: GuideTier,
+                            heroTiers: HeroTier,
+                            authors: SnapshotAuthor,
+                            guideTierTalents: GuideTierTalent
+                        };
+
+                        async.forEachOf(objs, function (obj, key, forEachCb) {
+                            async.forEach(arrs[key].toDelete, function (toDelete, eachCb) {
+                                obj.deleteById({
+                                    id: toDelete.id
+                                })
+                                .$promise
+                                .then(function () {
+                                    console.log('delete ' + key);
+                                    return eachCb();
+                                })
+                                .catch(function (e) {
+                                    if(e.status == 404) {
+                                        console.error("An error occured:");
+                                        console.error(e);
+                                        console.error("Continuing...");
+
+                                        return eachCb();
+                                    }
+
+                                    return eachCb(e);
+                                });
+                            }, forEachCb);
+                        }, seriesCb);
+                    }
+                ], function (err) {
+                    if (err) {
+                        exists['authors'].toWrite = [];
+                        exists['heroTiers'].toWrite = [];
+                        exists['guideTiers'].toWrite = [];
+                        exists['guideTierTalents'].toWrite = [];
+
+                        return cb(err);
+                    }
+
+                    return cb(undefined);
+                });
+            };
+
+            return function (snapshot) { return new HOTSSnapshot(snapshot); }
+        }
+    ])
     .factory('AdminTeamService', ['$http', '$q', function ($http, $q) {
         return {
             getMembers: function () {
@@ -1157,37 +1685,37 @@ angular.module('app.services', [])
       var servObj = {};
       // ui.router hack for updating $stateParams without reloading resolves/controller
       // and allows History API to work.
-    
+
       servObj.updateStateParams = function(stateParams) {
           $state.current.reloadOnSearch = false;
-          
+
           $state.transitionTo($state.current.name, stateParams, {
               location: true,
               inherit: true,
               relative: $state.$current.name,
               notify: false
           });
-          
+
           $timeout(function () {
             $state.current.reloadOnSearch = undefined;
           });
       };
-      
+
       servObj.replaceHistoryWith404 = function() {
           $state.transitionTo('app.404', {}, {
               location: "replace"
           });
       };
-      // this method expects: 
+      // this method expects:
       // page - number
       // count - number
       // perpage - number
       servObj.validatePage = function (page, count, perpage) {
           // 404 if page entered manually is not valid
           if (angular.isUndefined(page)) return;
-          
+
           var page = angular.isNumber(page) ? page : parseInt(page);
-          
+
           if (angular.isDefined(page) && angular.isNumber(page) && page !== 1) {
               if (page <= 0) {
                   this.replaceHistoryWith404();
@@ -1202,7 +1730,7 @@ angular.module('app.services', [])
           }
 //          console.log('cleared page validation');
       };
-      
+
       // this method expects:
       // stateFilters - a stateParam array of values
       // availFilters - an array of available filters
@@ -1212,7 +1740,7 @@ angular.module('app.services', [])
               this.replaceHistoryWith404();
           }
       };
-      
+
       return servObj;
   }])
   .factory('AjaxPagination', ['$state', '$timeout', function ($state, $timeout) {
@@ -1398,13 +1926,27 @@ angular.module('app.services', [])
 
                 });
                 return out;
+            },
+            setSlug: function (obj) {
+                var sl = {};
+                try {
+                    var slug = obj.slugs[0];
+                    sl = {
+                        url: slug.slug,
+                        linked: slug.linked
+                    };
+
+                    delete obj.slugs;
+                } finally {
+                    return sl;
+                }
             }
         };
     }])
     .factory('Base64', function () {
     var digitsStr =
-        //   0       8       16      24      32      40      48      56     63
-        //   v       v       v       v       v       v       v       v      v
+    //   0       8       16      24      32      40      48      56     63
+    //   v       v       v       v       v       v       v       v      v
         "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
     var digits = digitsStr.split('');
     var digitsMap = {};
@@ -1465,7 +2007,7 @@ angular.module('app.services', [])
     hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
-    hots.heroRows = [9, 8, 9, 8, 7, 6];
+    hots.heroRows = [9, 8, 9, 8, 9, 8];
     hots.mapRows = [4,3,4];
 
     hots.genStats = function () {
@@ -1499,7 +2041,7 @@ angular.module('app.services', [])
     return ow;
 })
 .factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', 'CrudMan', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone, CrudMan) {
-    
+
     var deckBuilder = {};
 
     deckBuilder.new = function (playerClass, data) {
@@ -1603,11 +2145,11 @@ angular.module('app.services', [])
             ]
         };
 
-        db.init = function() {
-            if (db.cards.length) {
-                db.sortDeck();
-            }
-        };
+            db.init = function() {
+                if (db.cards.length) {
+                    db.sortDeck();
+                }
+            };
 
         db.validVideo = function () {
             //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -1661,7 +2203,7 @@ angular.module('app.services', [])
             }
             return false;
         };
-        
+
         db.toggleMulligan = function (mulligan, withCoin, card) {
             //            console.log('mulligan: ', mulligan);
             //            console.log('card: ', card);
@@ -1814,19 +2356,19 @@ angular.module('app.services', [])
             if (exists) {
                 // check gameModeType
                 if(db.gameModeType === 'arena') {
-                    
+
                     db.cards[index].cardQuantity += 1;
                     return true;
                 } else {
                     // mode is constructed or brawl mode
                     if (!isLegendary && db.cards[index].cardQuantity === 1) {
-                            
+
                         db.cards[index].cardQuantity += 1;
                         return true;
                     }
                     // increase qty by one
                     if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
-                        
+
                         db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
                         return true;
                     }
@@ -1939,11 +2481,11 @@ angular.module('app.services', [])
                             label: 'Continue',
                             className: 'btn-danger',
                             callback: function () {
-                                
+
                                 $timeout(function() {
                                     db.cards.splice(index, 1);
                                 });
-                                
+
                                 for(var i = 0; i < db.mulligans.length; i++) {
                                     for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
                                         if (db.mulligans[i].mulligansWithCoin[j].id === card.id) {
@@ -1981,7 +2523,7 @@ angular.module('app.services', [])
                 card.cardQuantity = card.cardQuantity - 1;
             } else {
                 var index = db.cards.indexOf(card);
-                
+
                 db.cards.splice(index, 1);
             }
         };
@@ -2636,11 +3178,11 @@ angular.module('app.services', [])
                         var where = {};
 
                         if ((!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) && _.isEmpty(filters.heroes)) {
-                            
+
                             if (!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) {
                                 where.or = [];
                             }
-                            
+
                             if (!_.isEmpty(filters.roles)) {
                                 where.or.push({ role: { inq: filters.roles }})
                             }
@@ -2648,7 +3190,7 @@ angular.module('app.services', [])
                             if (!_.isEmpty(filters.universes)) {
                                 where.or.push({ universe: { inq: filters.universes }})
                             }
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -2656,7 +3198,7 @@ angular.module('app.services', [])
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
 //                            console.log('where:', where);
                             Hero.find({
                                 filter: {
@@ -2670,10 +3212,10 @@ angular.module('app.services', [])
                                 console.log(err);
                                 return finalCallback(err);
                             });
-                            
+
                         } else if (!_.isEmpty(filters.heroes)) {
                             var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -2681,7 +3223,7 @@ angular.module('app.services', [])
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
                             where.name = { inq: heroNames };
 
                             Hero.find({
@@ -2697,7 +3239,7 @@ angular.module('app.services', [])
                                 return finalCallback(err);
                             });
                         } else if (_.isEmpty(filters.heroes)) {
-                            
+
                             if (!_.isEmpty(filters.search)) {
                                 var pattern = '/.*'+filters.search+'.*/i';
                                 where.or = [
@@ -2705,7 +3247,7 @@ angular.module('app.services', [])
                                     { description: { regexp: pattern }}
                                 ]
                             }
-                            
+
                             Hero.find({
                                 filter: {
                                     where: where,
@@ -2723,7 +3265,7 @@ angular.module('app.services', [])
                     },
                     function(heroes, seriesCallback) {
                         var where = {};
-                        
+
                         if (_.isEmpty(filters.heroes)) {
                             where = {
                                 isActive: true,
@@ -2738,9 +3280,9 @@ angular.module('app.services', [])
                                 }
                             };
                         }
-                        
+
 //                        console.log('where:', where);
-                        
+
                         Article.find({
                             filter: {
                                 where: where,
@@ -2756,12 +3298,16 @@ angular.module('app.services', [])
                                     premium: true,
                                     createdDate: true
                                 },
-                                include: ['author'],
+                                include: ['author', 'slugs'],
                                 order: "createdDate DESC",
                                 limit: limit
                             }
                         }, function (articles) {
 //                            console.log('ARTICLES!!:', articles);
+                            _.each(articles, function (article) {
+                                article.slug = Util.setSlug(article);
+                            });
+
                             return finalCallback(undefined, articles);
                         }, function (err) {
                             console.log(err);
@@ -2771,7 +3317,7 @@ angular.module('app.services', [])
                 ])
             },
             topGuide: function (filters, finalCallback) {
-                if ( 
+                if (
                 !_.isUndefined(filters.heroes[0]) ||
                 !_.isEmpty(filters.universes) ||
                 !_.isEmpty(filters.roles) ||
@@ -2786,11 +3332,13 @@ angular.module('app.services', [])
                 } else {
                     var filter = {}
                 }
-               
+
+                console.log(filter);
                 Guide.topGuide(filter)
                 .$promise
                 .then(function (data) {
-//                    console.log(data);
+                    console.log(data);
+                    data.slug = Util.setSlug(data);
                     return finalCallback(undefined, data);
                 })
                 .catch(function (err) {
@@ -2814,7 +3362,7 @@ angular.module('app.services', [])
                     if (!_.isEmpty(filters.roles)) {
                         heroWhere.and.push({ role: { inq: filters.roles } });
                     }
-                    
+
                     if (!_.isEmpty(filters.search)) {
                         var pattern = '/.*'+filters.search+'.*/i';
                         heroWhere.or = [
@@ -2822,9 +3370,9 @@ angular.module('app.services', [])
                             { description: { regexp: pattern }}
                         ]
                     }
-                    
+
                 } else if (filters.search != "") {
-                    
+
                     var pattern = '/.*'+filters.search+'.*/i';
                     heroWhere.or = [
                         { name: { regexp: pattern } },
@@ -2836,23 +3384,25 @@ angular.module('app.services', [])
                     guideWhere.isFeatured = isFeatured;
                     order = "createdDate DESC";
                 }
-                
+
 //                console.log('heroWhere:', heroWhere);
-                
+
                 async.waterfall([
                     function(seriesCallback) {
                         var selectedUniverses = filters.universes,
                             selectedRoles = filters.roles
-                        
+
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: heroWhere,
                                 include: [
                                     {
                                         relation: "guides",
                                         scope: {
-                                            fields: ["id"],
+                                            fields: {id: true},
                                             where: heroGuideWhere
                                         }
                                     }
@@ -2880,17 +3430,17 @@ angular.module('app.services', [])
                                 order: order,
                                 skip: ((page*limit) - limit),
                                 where: guideWhere,
-                                fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                ],
+                                fields: {
+                                    name: true,
+                                    authorId: true,
+                                    slug: true,
+                                    voteScore: true,
+                                    guideType: true,
+                                    premium: true,
+                                    id: true,
+                                    talentTiers: true,
+                                    createdDate: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -2926,7 +3476,7 @@ angular.module('app.services', [])
                                                         className: true
                                                     }
                                                 }
-                                            },
+                                            }
                                         }
                                     },
                                     {
@@ -2937,15 +3487,19 @@ angular.module('app.services', [])
                                                 direction: true
                                             }
                                         }
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
                         }).$promise.then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideWhere);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -2996,7 +3550,9 @@ angular.module('app.services', [])
 
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: {
                                     id: { inq: selectedHeroIds }
                                 },
@@ -3041,17 +3597,17 @@ angular.module('app.services', [])
                                     id: { inq: guideIds },
                                     isPublic: true
                                 },
-                                fields: [
-                                    "name",
-                                    "authorId",
-                                    "slug",
-                                    "voteScore",
-                                    "guideType",
-                                    "premium",
-                                    "id",
-                                    "talentTiers",
-                                    "createdDate"
-                                ],
+                                fields: {
+                                    name: true,
+                                    authorId: true,
+                                    slug: true,
+                                    voteScore: true,
+                                    guideType: true,
+                                    premium: true,
+                                    id: true,
+                                    talentTiers: true,
+                                    createdDate: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -3098,15 +3654,19 @@ angular.module('app.services', [])
                                                 direction: true
                                             }
                                         }
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
                         }).$promise.then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideIds);
                         }).catch(function (err) {
                             return seriesCallback(err);
@@ -3156,7 +3716,9 @@ angular.module('app.services', [])
                     function (seriesCallback) {
                         Map.findOne({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: {
                                     id: filters.map.id,
                                 },
@@ -3189,17 +3751,17 @@ angular.module('app.services', [])
                                     id: { inq: guideIds },
                                     isPublic: true
                                 },
-                                fields: [
-                                    "id",
-                                    "name",
-                                    "createdDate",
-                                    "voteScore",
-                                    "slug",
-                                    "guideType",
-                                    "authorId",
-                                    "public",
-                                    "premium"
-                                ],
+                                fields: {
+                                    id: true,
+                                    name: true,
+                                    createdDate: true,
+                                    voteScore: true,
+                                    slug: true,
+                                    guideType: true,
+                                    authorId: true,
+                                    public: true,
+                                    premium: true
+                                },
                                 include: [
                                     {
                                         relation: "author",
@@ -3212,17 +3774,21 @@ angular.module('app.services', [])
                                     },
                                     {
                                         relation: 'votes'
+                                    },
+                                    {
+                                        relation: 'slugs'
                                     }
                                 ]
                             }
                         })
                             .$promise
                             .then(function (guides) {
-                            
+
                             _.each(guides, function(guide) {
                                 guide.voteScore = Util.tally(guide.votes, 'direction');
+                                guide.slug = Util.setSlug(guide);
                             });
-                            
+
                             return seriesCallback(undefined, guides, guideIds);
                         })
                             .catch(function (err) {
@@ -3252,40 +3818,45 @@ angular.module('app.services', [])
                 if (_.isEmpty(selectedHeroes)) {
                     return;
                 }
-                
+
                 var where = {}
 
                 if (isFeatured !== null) {
                     where.isFeatured = isFeatured
                 }
-                
+
                 async.waterfall([
                     //get selected heroes
                     function (seriesCallback) {
-                        
+
                         var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
-                        
+
                         Hero.find({
                             filter: {
-                                fields: ["id"],
+                                fields: {
+                                    id: true
+                                },
                                 where: { id : { inq: selectedHeroIds } },
                                 include: [
                                     {
                                         relation: "guides",
                                         scope: {
                                             where: where,
-                                            fields: ["id"],
                                             include: [
                                                 {
                                                     relation: "maps",
                                                     scope: {
-                                                        fields: ["className"]
+                                                        fields: {
+                                                            className: true
+                                                        }
                                                     }
                                                 },
                                                 {
                                                     relation: "guideHeroes",
                                                     scope: {
-                                                        fields: ["id"]
+                                                        fields: {
+                                                            id: true
+                                                        }
                                                     }
                                                 }
                                             ]
@@ -3302,7 +3873,7 @@ angular.module('app.services', [])
                     //filter heroes
                     function (heroes, seriesCallback) {
                         //filter out guides by map className
-                        try {
+                        // try {
                             var selectedGuides = [];
                             _.each(heroes, function (hero) {
                                 var filteredGuides = _.filter(hero.guides, function (guide) {
@@ -3317,9 +3888,9 @@ angular.module('app.services', [])
                             var selectedGuideIds = _.map(selectedGuides, function(guide) { return guide.id })
 
                             return seriesCallback(undefined, selectedGuideIds);
-                        } catch (err) {
-                            return seriesCallback(err);
-                        }
+                        // } catch (err) {
+                        //     return seriesCallback(err);
+                        // }
                     },
                     //populate heroes, talents
                     function (selectedGuideIds, seriesCallback) {
@@ -3333,17 +3904,17 @@ angular.module('app.services', [])
                                             id: { inq: selectedGuideIds },
                                             isPublic: true
                                         },
-                                        fields: [
-                                            "name",
-                                            "authorId",
-                                            "slug",
-                                            "voteScore",
-                                            "guideType",
-                                            "premium",
-                                            "id",
-                                            "talentTiers",
-                                            "createdDate"
-                                        ],
+                                        fields: {
+                                            name: true,
+                                            authorId: true,
+                                            slug: true,
+                                            voteScore: true,
+                                            guideType: true,
+                                            premium: true,
+                                            id: true,
+                                            talentTiers: true,
+                                            createdDate: true
+                                        },
                                         include: [
                                             {
                                                 relation: "author",
@@ -3390,15 +3961,19 @@ angular.module('app.services', [])
                                                         direction: true
                                                     }
                                                 }
+                                            },
+                                            {
+                                                relation: 'slugs'
                                             }
                                         ]
                                     }
                                 }).$promise.then(function (guides) {
-                                    
+
                                     _.each(guides, function(guide) {
                                         guide.voteScore = Util.tally(guide.votes, 'direction');
+                                        guide.slug = Util.setSlug(guide);
                                     });
-                                    
+
                                     return waterCallback(undefined, guides);
                                 }).catch(function (err) {
                                     return waterCallback(err);
@@ -3662,116 +4237,23 @@ angular.module('app.services', [])
             emit : emit
         }
     }])
-    .factory('CrudMan', [
-        function () {
-            //    var arrs = {};
-            var crud = {
-                exists  : [],
-                toDelete: [],
-                toWrite: [] //toWrite holds both items to create and items to update and we can check against what's in exists to determine whether or not we need to create or update
-            }
-            var e = 'exists';
-            var d = 'toDelete';
-            var w = 'toWrite';
-
-            var CrudMan = function () {
-                var arrs = {};
-
-                function getArrs () {
-                    return arrs;
-                }
-
-                function find (item, arrName, crud) {
-                    return _.find(arrs[arrName][crud], function (val) { return val == item });
-                }
-
-                function createArr (arrName) {
-                    arrs[arrName] = angular.copy(crud);
-                }
-
-                function setExists (inArr, arrName) {
-                    if (!arrs[arrName]) {
-                        this.createArr(arrName);
-                    }
-
-                    _.each(inArr, function (val) { arrs[arrName].exists.push(angular.copy(val)); });
-                }
-
-                function removeFromArr (item, arrName, crud) {
-                    var arr = arrs[arrName];
-                    var idx = arr[crud].indexOf(item);
-
-                    arr[crud].splice(idx, 1);
-                }
-
-                function addToDelete (item, arrName) {
-                    var arr = arrs[arrName];
-
-                    if (find(item, arrName)) {
-                        var idx = arr[w].indexOf(item);
-
-                        arr[w].splice(idx, 1);
-                    }
-
-                    if (!find(item, arrName)) {
-                        arr[d].push(item);
-                    }
-                }
-
-                function addToArr (item, arrName) {
-                    var arr = arrs[arrName];
-
-                    if (find(item, arrName)) {
-                        var idx = arr[d].indexOf(item);
-
-                        arr[d].splice(idx, 1);
-                    }
-
-                    if (!find(item, arrName)) {
-                        arr[w].push(item);
-                    }
-                }
-
-                function toggleItem (item, arrName) {
-                    if (find(item, arrName, e)) {
-                        arrs[arrName][d].push(item);
-                    } else if (find(item, arrName, w)) {
-                        removeFromArr(item, arrName, w);
-                    } else {
-                        addToArr(item, arrName, w);
-                    }
-                }
-
+    .factory('markitupSettings', [
+        function() {
+            var factory, markset;
+            markset = [
+                //here goes your usual markItUp layout
+            ];
+            factory = {};
+            factory.create = function(callback) {
                 return {
-                    setExists: setExists,
-                    toggle: toggleItem,
-                    add: addToArr,
-                    delete: addToDelete,
-                    createArr: createArr,
-                    getArrs: getArrs
-                }
-            }
-
-            return CrudMan;
+                    afterInsert: callback,
+                    previewParserPath: '',
+                    markupSet: markset
+                };
+            };
+            return factory;
         }
     ])
-    .factory('markitupSettings', [
-    function() {
-        var factory, markset;
-        markset = [
-            //here goes your usual markItUp layout
-        ];
-        factory = {};
-        factory.create = function(callback) {
-            return {
-                afterInsert: callback,
-                previewParserPath: '',
-                markupSet: markset
-            };
-        };
-        return factory;
-    }
-])
 .factory('HearthstoneSnapshotBuilder', ['$state', '$upload', '$compile', '$rootScope', '$timeout', 'bootbox', 'User', 'Util', 'Hearthstone', 'AlertService', 'Snapshot', 'SnapshotAuthor', 'DeckTier', 'DeckMatchup', 'DeckTech', 'CardTech',
     function ($state, $upload, $compile, $rootScope, $timeout, bootbox, User, Util, Hearthstone, AlertService, Snapshot, SnapshotAuthor, DeckTier, DeckMatchup, DeckTech, CardTech) {
         var snapshot = {};
@@ -3902,7 +4384,6 @@ angular.module('app.services', [])
                 sb.id = data.id;
                 sb.isActive = data.isActive;
                 sb.photoNames = data.photoNames;
-                sb.slug = data.slug;
                 sb.snapNum = data.snapNum;
                 // TODO: remove the "||" patch after updating the db
                 sb.snapshotType = data.snapshotType || defaultSnap.snapshotType;
@@ -3917,9 +4398,7 @@ angular.module('app.services', [])
                 sb.votes = data.votes || [];
                 
                 // set slug
-                if (sb.slug.linked) {
-                    sb.setSlug();
-                }
+                sb.slug = Util.setSlug(data);
                 
                 sb.loaded = true;
             };
@@ -3935,9 +4414,6 @@ angular.module('app.services', [])
                         where: {
                             snapshotType: snapshotType,
                             isActive: true
-                        },
-                        fields: {
-                            tiers: false
                         },
                         order: 'createdDate DESC',
                         include: [
@@ -3998,6 +4474,12 @@ angular.module('app.services', [])
                                             }
                                         }
                                     ]
+                                }
+                            },
+                            {
+                                relation: 'slugs',
+                                scope: {
+                                    fields: ['linked', 'slug']
                                 }
                             }
                         ]
@@ -4285,6 +4767,7 @@ angular.module('app.services', [])
                         break;
                     }
                 }
+
                 if (index !== -1) {
                     // if existing item
                     if (sb.authors[index].id) {
@@ -5774,9 +6257,12 @@ angular.module('app.services', [])
                             }
                         }, {
                             snapNum: sb.snapNum,
-                            //snapshotType: sb.snapshotType,
+                            snapshotType: sb.snapshotType,
                             title: sb.title,
-                            slug: sb.slug,
+                            slugOptions: {
+                                slug: sb.slug.url,
+                                linked: sb.slug.linked
+                            },
                             content: sb.content,
                             photoNames: sb.photoNames,
                             isActive: sb.isActive
@@ -5819,7 +6305,6 @@ angular.module('app.services', [])
                                 intro: sb.content.intro,
                                 thoughts: sb.content.thoughts
                             },
-                            createdDate: new Date().toISOString(),
                             photoNames: {
                                 square: sb.photoNames.square || '',
                                 small: sb.photoNames.small || '',
@@ -5829,19 +6314,19 @@ angular.module('app.services', [])
                             isCommentable: sb.isCommentable,
                             isActive: sb.isActive
                         });
+                        
                         Snapshot.create({
                             snapNum: sb.snapNum,
                             title: sb.title,
                             snapshotType: sb.snapshotType,
-                            slug: {
-                                url: sb.slug.url,
+                            slugOptions: {
+                                slug: sb.slug.url,
                                 linked: sb.slug.linked
                             },
                             content: {
                                 intro: sb.content.intro,
                                 thoughts: sb.content.thoughts
                             },
-                            createdDate: new Date().toISOString(),
                             photoNames: {
                                 square: sb.photoNames.square || '',
                                 small: sb.photoNames.small || '',
@@ -6065,7 +6550,7 @@ angular.module('app.services', [])
                                 show: true
                             });
                         } else {
-                            AlertService.setError({
+                            return AlertService.setError({
                                 msg: 'Snapshot Error',
                                 lbErr: err,
                                 show: true

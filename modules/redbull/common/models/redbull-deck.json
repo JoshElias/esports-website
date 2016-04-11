@@ -8,7 +8,8 @@
   },
   "properties": {
     "name": {
-       "type": "string"
+       "type": "string",
+        "index": 1
     },
     "playerClass": {
       "type": "string",
@@ -16,12 +17,16 @@
     },
     "isOfficial": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "index": 1
     },
-    "redbullDraftId": {},
-    "authorId": {}
+    "redbullDraftId": {
+      "index": 1
+    },
+    "authorId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "author": {
       "type": "belongsTo",
@@ -69,5 +74,7 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

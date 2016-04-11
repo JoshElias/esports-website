@@ -9,17 +9,12 @@
   "properties": {
     "displayDate": {
       "type": "date",
-      "required": true
-    },
-    "createdDate": {
-      "type": "date",
-      "defaultFn": "now"
+      "required": true,
+      "index": -1
     },
     "youtubeId": {
       "type": "string",
-      "validators": [
-        "youtubeId"
-      ]
+      "Validate": ["youtubeId"]
     },
     "subtitle": {
       "type": "string"
@@ -28,8 +23,6 @@
       "type": "object"
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -55,5 +48,9 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Validate": true,
+    "Scope": true,
+    "Timestamp" : true
+  }
 }

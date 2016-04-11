@@ -10,6 +10,8 @@ body.admin {
 }
 
 
+//ts admin styles for hots and hs snapshots
+
 .ts-admin-styles { // ---- bookend class ----
     
     .admin-title {
@@ -344,7 +346,7 @@ body.admin {
     
     .form-group {
         
-        margin-bottom: 0px;
+        //margin-bottom: 0px;
         
         .btn {
             border-radius: 0px ;
@@ -399,7 +401,10 @@ body.admin {
     //              panel overrides 
     //-------------------------------------------
     
-    
+//    .panel-default > .panel-heading { 
+//        background-color: transparent !important;
+//    }
+        
     .panel,
     .panel-body {
         border: 0px solid transparent;
@@ -421,6 +426,7 @@ body.admin {
     .pabel-body { 
         background-color: rgba($black-50, 0);
     }
+    
     
     .panel-heading,
     .panel-footer {
@@ -513,8 +519,23 @@ body.admin {
         }
     }
     
+    .input-group.wide-input {
+        width: 100%;
+    }
+    
+    
     .panel-footer {
        padding-top: 20px;
+    }
+    
+    .placeholder-text {
+        text-align: center;
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+    }
+    
+    li.placeholder-text {
+        height: 60px !important;
     }
     
     //-------------------------------------------
@@ -570,36 +591,27 @@ body.admin {
     //-------------------------------------------
     
     .leftside-content {
-            background-color: $black-20;
-            margin: 0px !important;
+        background-color: $black-20;
+        margin: 0px !important;
+        //min-height: 628px;
+        padding-bottom: 20px;
+        top: 0;
+        flex-direction: column;
+        display: flex;
+        position: relative;
+        bottom: 0px;
+
+         @media screen and (min-width: 1200px) {
             min-height: 628px;
-            padding-bottom: 20px;
-            top: 0;
-            flex-direction: column;
-            display: flex;
-            position: relative;
-            bottom: 0px;
+        }
+        
 
         .form-group {
             margin-left: 0px !important;
             margin-right: 0px !important;
+            margin-bottom: 0px;
             padding-left: 10px;
             padding-right: 10px;
-            
-            select {
-                    border: 0px solid transparent;
-               > option {
-                    background-color: #292537;
-                    height: 34px;
-                    border: 0px solid transparent;
-                    line-height: 34px;
-                    height: 34px;
-                    
-                    &:hover {
-                        background-color: #2766ad;
-                    }
-                }
-            }
             
             .photo-input {
                 text-align: center;
@@ -940,6 +952,11 @@ body.admin {
     .tier-section {
         
         margin-top: -20px;
+        
+        &.hero-tiers {
+            margin-top: 0px;
+        }
+        
         > .form-group {
                 padding: 0px;
             .panel {
@@ -1064,7 +1081,8 @@ body.admin {
                         }
                     }
                     
-                    a {
+                    a,
+                    button{
 
                         h4 {
                             line-height: 50px;
@@ -1275,16 +1293,20 @@ body.admin {
     
     }
     
-    
-    //Admin Snapshot list
+    //*************************************
+    //Admin list styles
+    //*************************************
     
     .input-sm {
         height: 34px;
     }
     
+    .list-underline {
+        border-bottom: 1px solid rgba($ts-blue, 0.5) !important;
+    }
+    
     .admin-list {
         
-
         .admin-list-item {
             position: relative;
             display: block;
@@ -1299,7 +1321,7 @@ body.admin {
             transition: border 0.5s ease;
             //border-left: 0px solid transparent;
             
-            &.snapshot-list {
+            &.list-items {  //changed from .snapshot-list
                 
                 &:nth-child(odd) {
                   background: $white-02;
@@ -1370,7 +1392,7 @@ body.admin {
                 border-bottom-left-radius: 0px !important;
             }
             
-            .snapshot-list-item {
+            .list-item-height { // changed from .snapshot-list-item
                 line-height: 50px;
                 
                 
@@ -1378,7 +1400,7 @@ body.admin {
             } // snapshot-list-item
             
             .btn-toolbar{
-                &.snapshot-list-item {
+                &.list-item-height {
                     margin-top: 8px;
                     margin-right: 8px;
                 }
@@ -1388,7 +1410,68 @@ body.admin {
         
     } // admin-list
     
+    .hero-tiers {
+    
+        .hero-tier {
+            width: 100%;
+            text-align: left;
+            background-color: transparent;
+            border: 0px;
+            outline: 0px;
+        }
+    }
+    
+    //*************************************
+    //panel fixes
+    //*************************************
+    .panel-fix {
+        background-color: transparent;
+        margin-top: -20px;
+    }
+    
+    .pointer-item {
+        cursor: pointer;
+    }
+    
+    .polls-section {
+        .edit-nav {
+            li {
+                width: 50%;
+            }
+        }
+    
+    }
+    
+    //*************************************
+    //select input styles
+    //*************************************
+    
+    select {
+            border: 0px solid transparent;
+       > option {
+            background-color: #292537;
+            height: 34px;
+            border: 0px solid transparent;
+            line-height: 34px;
+            height: 34px;
+           outline: none !important;
+
+            &:hover {
+                background-color: #2766ad;
+            }
+        }
+    }
+    
+    
+
+    
+  
+    
+    
+    //*************************************
     // error panel
+    //*************************************
+    
     .admin-alert-success,
     .admin-alert-warning,
     .admin-alert-error {
@@ -1423,5 +1506,63 @@ body.admin {
             background: rgba(254, 190, 16, 0.8);
         }
     }
+    
+    //Pagination fix 
+    
+    .pagination-margin {
+        margin-top: -9px;
+    }
+    
+    .panel-heading {
+        .page-flipper {
+            font-size: 12px;
+            font-weight: 100;
+            &.page-flipper-top {
+                margin-bottom: 0px;
+            }
+        }
+    }
+    
+    .showing-numbers {
+        text-align: right;
+        font-size: 12px !important;
+        float: right
+    }
+    
+    .page-flipper { 
+        .btn-group {
+            
+            .btn:first-child {
+                border-radius: 0;
+
+            }
+
+            .btn:last-child {
+                border-radius: 0;
+                border: 0px solid transparent;
+                
+                .inner {
+                    border: 0px solid transparent;
+                }
+            }
+            
+        }
+    
+    }
+    
+    .hots-admin-snapshot-body {
+        .form-group {
+            margin-bottom: 0px;
+        }
+    
+    }
+    
+    // Changes to forum structure admin heading
+    
+    .neg-m-7 {
+        margin-right: -7px;
+    }
+    
+    
     
 } // ts-admin-styles

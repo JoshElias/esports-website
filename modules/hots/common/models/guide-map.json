@@ -1,0 +1,34 @@
+{
+  "name": "guideMap",
+  "plural": "guideMaps",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "guideId": {
+      "index": 1
+    },
+    "mapId": {
+      "index": 1
+    }
+  },
+  "relations": {
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "map": {
+      "type": "belongsTo",
+      "model": "map",
+      "foreignKey": "mapId"
+    }
+  },
+  "mixins": {
+    "DestroyOnDelete": true,
+    "Scope": true
+  }
+}

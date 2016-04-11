@@ -46,13 +46,13 @@ angular.module('app.directives', ['ui.load'])
             var createUUID = function() {
               return"uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
             }
-            
+
             var tmpUuid = createUUID();
 
             function setTooltip () {
                 var content = $compile('<img ng-src="'+scope.tooltipImg+'" alt="">')(scope);
                 var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
-                
+
                 el.wTooltip({
                   delay: 500,
                   offsetX: xPos,
@@ -123,7 +123,7 @@ angular.module('app.directives', ['ui.load'])
             }
         }],
         link: function($scope, el, attr) {
-            
+
             $scope.setTitle = function(s) {
                 $(".modal-title")[0].innerHTML = s;
             }
@@ -184,8 +184,6 @@ angular.module('app.directives', ['ui.load'])
 
                                   LoginModalService.hideModal();
                                   $scope.setLoggingIn(2);
-
-                                console.log($stateParams.redirect);
 
                                 if ($scope.callback) {
                                     $scope.callback(LoopBackAuth);
@@ -265,7 +263,7 @@ angular.module('app.directives', ['ui.load'])
 
       $scope.signup = function(email, username, password) {
         if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined ) {
-            
+
           User.create({
               email: email,
               username: username,
@@ -284,7 +282,7 @@ angular.module('app.directives', ['ui.load'])
                   msg: 'Unable to Create Account',
                   lbErr: err
               });
-              
+
           });
         }
       }
@@ -373,8 +371,8 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.commentPost = function (c) {
-                $scope.posting = true; 
-                
+                $scope.posting = true;
+
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost(c);
@@ -397,7 +395,7 @@ angular.module('app.directives', ['ui.load'])
                     .$promise
                     .then(function (com) {
                         com.author = LoopBackAuth.currentUserData;
-                        
+
                         $scope.commentable.comments.push(com);
                         $scope.comment = '';
                         commentSuccess();
@@ -418,15 +416,15 @@ angular.module('app.directives', ['ui.load'])
 
                 return voteScore;
             }
-            
+
             function commentSuccess () {
                 $scope.commentSuccess = true;
-                
+
                 $timeout(function () {
                     $scope.commentSuccess = false;
                 }, 5000);
             }
-            
+
             updateCommentVotes();
             function updateCommentVotes() {
                 $scope.commentable.comments.forEach(checkVotes);
@@ -474,14 +472,14 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
-                    
+
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
                         comment.votes.push({
                             direction: direction,
                             userId: LoopBackAuth.currentUserId
                         });
-                        
+
                         Comment.upsert(comment)
                         .$promise
                         .then(function (data) {
@@ -781,7 +779,7 @@ angular.module('app.directives', ['ui.load'])
             var parentId = votable.id;
             var votableType = objType.toString() + 'Id';
             $scope.voteInfo = {};
-            
+
             function getVoteInfo (cb) {
                 async.waterfall([
                     getVotes,
@@ -793,16 +791,16 @@ angular.module('app.directives', ['ui.load'])
                         return cb();
                 })
             }
-            
+
             function getVotes (cb) {
                 var voteOptions = {
                     filter: {
                         where: {
-                            
+
                         }
                     }
                 };
-                
+
                 voteOptions.filter.where[votableType] = parentId;
                 Vote.find(voteOptions)
                 .$promise
@@ -812,31 +810,31 @@ angular.module('app.directives', ['ui.load'])
                     return cb(undefined, votes);
                 });
             }
-            
+
             function calcVotes (votes, cb) {
                 var hasVoted,
                     voteScore = 0;
-                
+
                 Vote.hasVoted({
                     parentId: parentId,
                     uid: LoopBackAuth.currentUserId
                 }).$promise
                 .then(function (data) {
                     hasVoted = data.hasVoted;
-                
+
                     _.each(votes, function(vote) {
                         voteScore += vote.direction;
                     });
-                
+
                     var voteInfo = {
                         score: voteScore,
                         hasVoted: hasVoted
                     };
-                    
+
                     return cb(undefined, voteInfo);
                 });
             }
-            
+
             //initial load
             getVoteInfo();
 
@@ -870,7 +868,7 @@ angular.module('app.directives', ['ui.load'])
                     bootbox.alert("You can't vote for your own content.");
                     return false;
                 } else {
-                    
+
                     if ($scope.voteInfo.hasVoted === direction) {
                         return;
                     } else if ($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) {
@@ -886,25 +884,25 @@ angular.module('app.directives', ['ui.load'])
                         })
                         .$promise
                         .then(function (vote) {
-                            
+
                             vote.direction = direction;
-                            
+
                             Vote.upsert({
                                 id: vote.id
                             }, vote)
                             .$promise
                             .then(function(voteUpdated) {
-                                
+
                                 _.each(votable.votes, function(vote) {
                                     if (voteUpdated.id === vote.id) {
                                         vote.direction = direction;
                                     }
                                 });
-                                
+
                                 getVoteInfo();
                             });
                         });
-                        
+
                     } else {
                         setLoading(true);
                         var newVote = {};
@@ -942,11 +940,11 @@ angular.module('app.directives', ['ui.load'])
         restrict: 'A',
         link: function(scope, element, attrs) {
             var tooltip;
-            
+
             $timeout(function () {
                 tooltip = $(element).tooltip();
             });
-            
+
 //            scope.$on('$destroy', function () {
 //                if (tooltip.next()) {
 //                    tooltip.next().remove();
@@ -1064,7 +1062,7 @@ angular.module('app.directives', ['ui.load'])
                 style: false,
                 className: 'hots-talent-tooltip'
             });
-            
+
             scope.$on('$destroy', function () {
                 $('.hots-talent-tooltip').remove();
             });
@@ -1104,7 +1102,7 @@ angular.module('app.directives', ['ui.load'])
                 style: false,
                 className: 'hots-map-tooltip'
             });
-            
+
             scope.$on('$destroy', function () {
                 $('.hots-map-tooltip').remove();
             });
@@ -1363,7 +1361,7 @@ angular.module('app.directives', ['ui.load'])
         controller: ['$scope', function ($scope) {
             $scope.loading = false;
             $scope.authors = [];
-            
+
             // pagination
             $scope.page = 1;
             $scope.perpage = 10;
@@ -1371,7 +1369,7 @@ angular.module('app.directives', ['ui.load'])
                 page: $scope.page,
                 perpage: $scope.perpage
             };
-            
+
             $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
                 var d = $q.defer();
                 updateAuthors(page, perpage, $scope.search, function (err, count) {
@@ -1383,12 +1381,12 @@ angular.module('app.directives', ['ui.load'])
             
             function updateAuthors (page, perpage, search, callback) {
                 $scope.loading = true;
-                
+
                 var pattern = '/.*'+search+'.*/i';
                 var where = {
                     isProvider: true
                 };
-                
+
                 if(!_.isEmpty(search)) {
                     where['or'] = [
                         {
@@ -1415,7 +1413,7 @@ angular.module('app.directives', ['ui.load'])
                 var countOptions = {
                     where: where
                 };
-                
+
                 AjaxPagination.update(User, findOptions, countOptions, function (err, data, count) {
                     $scope.loading = false;
                     if (err) { return console.error('Pagination error:', err); }
@@ -1430,6 +1428,7 @@ angular.module('app.directives', ['ui.load'])
                     }
                 });
             }
+
             updateAuthors($scope.page, $scope.perpage, $scope.search);
 
             // search
@@ -1437,6 +1436,266 @@ angular.module('app.directives', ['ui.load'])
                 updateAuthors(1, $scope.perpage, $scope.search);
             };
 
+        }]
+    };
+}])
+.directive('snapshotAddHero', ['$q', 'Hero', 'AjaxPagination', function ($q, Hero, AjaxPagination) {
+    return {
+        templateUrl: tpl + "views/admin/hero.search.modal.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.heroes = [];
+
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 100;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateHeroes(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+
+            function updateHeroes (page, perpage, search, callback) {
+                $scope.loading = true;
+
+                var pattern = '/.*'+search+'.*/i';
+                var where = {};
+
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            name: {
+                                regexp: pattern
+                            }
+                        },
+                        {
+                            universe: {
+                                regexp: pattern
+                            }
+                        },
+                        {
+                            role: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+
+                AjaxPagination.update(Hero, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.heroes = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateHeroes($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateHeroes(1, $scope.perpage, $scope.search);
+            };
+        }]
+    }
+}])
+.directive('snapshotAddGuide', ['$q', 'Guide', 'AjaxPagination', function ($q, Guide, AjaxPagination) {
+    return {
+        templateUrl: tpl + "views/admin/guide.search.modal.html",
+        controller: ['$scope', function ($scope) {
+            $scope.loading = false;
+            $scope.guides = [];
+
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 10;
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateGuides(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+
+            function updateGuides (page, perpage, search, callback) {
+                $scope.loading = true;
+
+                var pattern = '/.*'+search+'.*/i';
+                var where = {};
+
+                if(!_.isEmpty(search)) {
+                    where['or'] = [
+                        {
+                            name: {
+                                regexp: pattern
+                            }
+                        }
+                    ];
+                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC',
+                        include: [
+                            {
+                                relation: "guideTalents"
+                            },
+                            {
+                                relation: "slugs"
+                            },
+                            {
+                                relation: "guideHeroes"
+                            }
+                        ]
+                    }
+                };
+                var countOptions = {
+                    where: where
+                };
+
+                AjaxPagination.update(Guide, findOptions, countOptions, function (err, data, count) {
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.guides = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+            updateGuides($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateGuides(1, $scope.perpage, $scope.search);
+            };
+        }]
+    }
+}])
+.directive('owSnapshotAddHero', [function () {
+    return {
+        templateUrl: tpl + 'views/admin/overwatch.snapshot.add.hero.html',
+        controller: ['$scope', '$q', '$timeout', 'OverwatchHero', 'AjaxPagination', function ($scope, $q, $timeout, OverwatchHero, AjaxPagination) {
+            $scope.loading = false;
+            $scope.heroes = [];
+
+            // pagination
+            $scope.page = 1;
+            $scope.perpage = 100;
+
+            var pOptions = {
+                page: $scope.page,
+                perpage: $scope.perpage
+            };
+
+            $scope.pagination = AjaxPagination.new(pOptions, function (page, perpage) {
+                var d = $q.defer();
+                updateHeroes(page, perpage, $scope.search, function (err, count) {
+                    if (err) { return console.error('Pagination error:', err); }
+                    d.resolve(count.count);
+                });
+                return d.promise;
+            });
+
+            function updateHeroes (page, perpage, search, callback) {
+                $scope.loading = true;
+
+                var pattern = '/.*'+search+'.*/i';
+                var where = {};
+
+//                if(!_.isEmpty(search)) {
+//                    where['or'] = [
+//                        {
+//                            name: {
+//                                regexp: pattern
+//                            }
+//                        },
+//                        {
+//                            universe: {
+//                                regexp: pattern
+//                            }
+//                        },
+//                        {
+//                            role: {
+//                                regexp: pattern
+//                            }
+//                        }
+//                    ];
+//                }
+
+                var findOptions = {
+                    filter: {
+                        where: where,
+                        skip: (page * perpage) - perpage,
+                        limit: perpage,
+                        order: 'username ASC'
+                    }
+                };
+
+                var countOptions = {
+                    where: where
+                };
+
+                AjaxPagination.update(OverwatchHero, findOptions, countOptions, function (err, data, count) {
+                    console.log('data:', data);
+                    $scope.loading = false;
+                    if (err) { return console.error('Pagination error:', err); }
+
+                    $scope.pagination.page = page;
+                    $scope.pagination.perpage = perpage;
+                    $scope.heroes = data;
+                    $scope.pagination.total = count.count;
+
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+
+            updateHeroes($scope.page, $scope.perpage, $scope.search);
+
+            // search
+            $scope.updateSearch = function () {
+                updateHeroes(1, $scope.perpage, $scope.search);
+            };
         }]
     };
 }])
@@ -1717,7 +1976,7 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/hots.filtering.html',
         link: function (scope, element, attrs) {
             scope.searchHeroes = angular.copy(scope.filters.search);
-            
+
             var initializing = true,
                 randHeroIndex = randomIntFromInterval (0,scope.heroes.length - 1);
 
@@ -1738,10 +1997,10 @@ angular.module('app.directives', ['ui.load'])
 
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
-                
+
                 scope.$parent.searchGuides();
             }
-            
+
             scope.queryOnEmpty = function (str) {
                 if (_.isEmpty(str)) {
                     scope.updateSearch();
@@ -1769,7 +2028,7 @@ angular.module('app.directives', ['ui.load'])
             scope.toggleFilterHero = function (hero) {
 //                var index = scope.filters.heroes.indexOf(hero);
                 var index = _.find(scope.filters.heroes, function (heroFilter) { return heroFilter.id === hero.id });
-                
+
                 if (!index) {
                     if (scope.filters.roles.length && scope.filters.roles.indexOf(hero.role) == -1) {
                         scope.filters.roles.push(hero.role);
@@ -1837,7 +2096,7 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     return false;
                 }
-                
+
             };
 
             scope.hasAnyFilterMap = function () {
@@ -1850,7 +2109,7 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     scope.filters.map = map;
                 }
-                
+
             };
 
             scope.currentMapBack = function () {
@@ -2088,7 +2347,7 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     scope.filters.classes.splice(index, 1);
                 }
-                
+
                 StateParamHelper.updateStateParams({
                     k: scope.filters.classes
                 });
@@ -2141,14 +2400,14 @@ angular.module('app.directives', ['ui.load'])
             scope.getNumber = function (x) {
                 return Util.numberWithCommas(x);
             }
-            
+
             function checkPre (str) {
                 var https = str.slice(0, 5) === "https";
                 var sub = str.substr(5);
-                
+
                 if (!https)
                     return "https:" + sub;
-                
+
                 return str;
             }
 
@@ -2159,7 +2418,7 @@ angular.module('app.directives', ['ui.load'])
 
                 for (var i = 0; i < data.length; i++) {
                     var scr = data[i].screenshotUrl;
-                    
+
                     scr = checkPre(scr);
 
                     data[i].screenshotUrl = scr;
@@ -2232,8 +2491,458 @@ angular.module('app.directives', ['ui.load'])
         restict: 'A',
         templateUrl: tpl + 'views/admin/directives/hs.snapshot.load-previous.html',
         controller: ['$scope', function ($scope) {
-            
+
         }]
     };
+})
+.directive('hotsSnapshotGeneral', function () {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
+        controller: ['$scope', 'Util', function ($scope, Util) {
+            //$scope.snapshot = $scope.$parent.snapshot;
+
+            $scope.toggleLinked = function () {
+                $scope.snapshot.slugs[0].linked = !$scope.snapshot.slugs[0].linked;
+
+                return $scope.slugifyUrl($scope.snapshot.title);
+            };
+
+            $scope.slugifyUrl = function (str) {
+                console.log(str);
+                console.log($scope.snapshot.slugs[0]);
+
+                if (!$scope.snapshot.slugs[0] && !$scope.snapshot.slugs[0].linked)
+                    return;
+
+                $scope.snapshot.slugs[0].slug = slugify(str);
+            };
+
+            function slugify (str) {
+                return Util.slugify(str);
+            }
+        }]
+    }
+})
+.directive('hotsSnapshotAuthors', ['$compile', 'HOTS', function ($compile, HOTS) {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/admin/hots.snapshot.authors.html',
+        controller: ['$scope', function ($scope) {
+            var box = bootbox.dialog;
+            var aBuffer = [];
+            var defaultAuthor = {
+                description: "",
+                expertClasses: [],
+                hotsSnapshotId: "",
+                authorId: "",
+                orderNum: 0
+            };
+
+            function buildOrder () {
+                var idx = 0;
+                var snap = $scope.snapshot;
+
+                _.each(snap.authors, function (val) {
+                    val.orderNum = idx++;
+                });
+            };
+
+            //we buffer our authors during the add phase and apply them to the model when the user confirms
+            //their selection
+            function addBufferedAuthors () {
+                var snap = $scope.snapshot;
+                var authorEmpty = _.isEmpty(snap.authors);
+
+                //apply is required to update the scope when we iterate through our buffered authors
+                //and add them to the model
+                $scope.$apply(_.each(aBuffer, function (author) { snap.newAuthor(author); }));
+                aBuffer = [];
+
+                //this sets activeAuthor if there was no authors added to the scope already
+                //default is always index 0
+                if (authorEmpty) {
+                    $scope.activeAuthor = snap.authors[0];
+                }
+            };
+
+            //begin our scope definition
+            //
+            $scope.roles = HOTS.roles;
+
+            if (!!$scope.snapshot.authors)
+                $scope.activeAuthor = $scope.snapshot.authors[0];
+
+            $scope.updateDND = function ($index, list) {
+                list.splice($index, 1);
+
+                buildOrder();
+            };
+
+            $scope.openAuthorAdd = function () {
+                var dialog = box({
+                    message: $compile('<snapshot-add-author></snapshot-add-author>')($scope),
+                    title: 'Add author'
+                });
+
+                dialog.modal('show');
+                dialog.on('hidden.bs.modal', addBufferedAuthors);
+            };
+
+            // check if user is already an author on snapshot
+            $scope.authorExistsById = function (authorId) {
+                var authors = $scope.snapshot.authors;
+                var allAuthors = _.union(authors, aBuffer);
+
+                return _.find(allAuthors, function (auth) { return authorId == auth.user.id });
+            };
+
+            // delete author
+            $scope.authorDeleteById = function (authorId) {
+                var snapAuths = $scope.snapshot.authors;
+                var allAuthors = _.union(aBuffer, snapAuths);
+                var toDelete = _.find(allAuthors, function (auth) { return auth.user.id == authorId });
+                var msg = "Are you sure you want to remove " + toDelete.user.username + "?"
+
+                $scope.warning(msg, function () {
+                    $scope.$apply(function () {
+                        //remove from our author buffer
+                        aBuffer = _.difference(aBuffer, [toDelete]);
+
+                        //remove from our model
+                        $scope.snapshot.removeAuthor(toDelete);
+                    });
+                });
+            };
+
+            //this method used by the popup dialog to add authors to the author buffer
+            $scope.authorAdd = function (author) {
+                var newAuthor = angular.copy(defaultAuthor);
+                    newAuthor.authorId = author.id;
+                    newAuthor.user = author;
+                    newAuthor.orderNum = $scope.snapshot.authors.length;
+
+                aBuffer.push(newAuthor);
+            };
+
+            //our activeAuthor is the author currently being displayed in the right panel
+            //this is where we set the scope variable, this fn is being used by the template
+            $scope.setActiveAuthor = function (author) {
+                $scope.activeAuthor = author;
+            };
+
+            //toggling our activeAuthor expert classes on and off
+            $scope.toggleActiveExpert = function (role) {
+                var authors = $scope.snapshot.authors;
+                var activeAuthor = $scope.activeAuthor;
+                var snapAuthor = _.find(authors, function (val) {
+                    return val.user.id == activeAuthor.user.id
+                });
+
+                //if activeAuthor is already toggled as an expert of the role arg
+                if ($scope.isExpert(role)) {
+                    var idx = snapAuthor.expertClasses.indexOf(role);
+                    snapAuthor.expertClasses.splice(idx,1);
+                    return;
+                }
+
+                //at this point we know activeAuthor isn't flagged as an expert
+                snapAuthor.expertClasses.push(role);
+            };
+
+            //fn returns if the activeAuthor is an expert of the role arg
+            $scope.isExpert = function (role) {
+                var activeAuthor = $scope.activeAuthor;
+
+                return _.find(activeAuthor.expertClasses, function (val) {
+                    return val == role;
+                });
+            }
+        }]
+    }
+}])
+.directive('hotsSnapshotTierlist', ['$compile', function ($compile) {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/admin/hots.snapshot.tierlist.html',
+        controller: ['$scope', function ($scope) {
+            var box = bootbox.dialog;
+            var hBuffer = [];
+            var gBuffer = [];
+            var defaultHeroTier = {
+                summary      : "",
+                tier         : $scope.tier,
+                previousTier : "",
+                burstScore   : 0,
+                pushScore    : 0,
+                surviveScore : 0,
+                scaleScore   : 0,
+                utilityScore : 0,
+                orderNum     : 0,
+                heroId       : "",
+                guideTierId  : "",
+                snapshotId   : ""
+            };
+            var defaultTierGuide = {
+                heroTierId : "",
+                guideId    : "",
+                orderNum   : 0
+            };
+
+            function buildOrder () {
+                var idx = 0;
+                _.each($scope.snapshot.tiers, function (tier) {
+                    _.each(tier.heroes, function (hero) {
+                        hero.orderNum = idx++;
+
+                        //gross
+                        var toChange = _.find($scope.snapshot.heroTiers, function (val) {
+                            return val.hero.className == hero.hero.className;
+                        });
+
+
+                        toChange.orderNum = hero.orderNum;
+                        toChange.tier = tier.tier;
+                    });
+                });
+            }
+
+            function addBufferedHeroes (tier) {
+                var snap = $scope.snapshot;
+                var heroEmpty = _.isEmpty(snap.heroTiers);
+
+                _.each(hBuffer, function (hero) {
+                    var heroToPush = hero;
+
+                    heroToPush.orderNum = snap.heroTiers.length;
+                    heroToPush.tier = tier;
+                    snap.newHero(heroToPush);
+                });
+                hBuffer = [];
+
+                //snap.buildTiers();
+                $scope.$apply(function () {
+                    snap.buildTiers();
+                    buildOrder();
+                });
+
+                if (heroEmpty) {
+                    $scope.activeHero = snap.heroTiers[0];
+                }
+            }
+
+            if (!!$scope.snapshot.heroTiers)
+                $scope.activeHero = $scope.snapshot.heroTiers[0];
+
+            $scope.numOfTiers = 12;
+            $scope.pastTiers = function (num) {
+                return new Array(num);
+            };
+
+            $scope.updateDND = function ($index, list) {
+                list.splice($index, 1);
+
+                buildOrder();
+            };
+
+            $scope.openHeroAdd = function (tier) {
+                var dialog = box({
+                    message: $compile('<snapshot-add-hero></snapshot-add-hero>')($scope),
+                    title: 'Add hero'
+                });
+
+                dialog.modal('show');
+                dialog.on('hidden.bs.modal', function () {
+                    addBufferedHeroes(tier);
+                });
+            };
+
+            $scope.heroAdd = function (hero) {
+                var newHero = angular.copy(defaultHeroTier);
+                newHero['heroId'] = hero.id;
+                newHero['hero'] = hero;
+
+                hBuffer.push(newHero);
+            };
+
+            $scope.openGuideAdd = function () {
+                var dialog = box({
+                    message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope)
+                });
+
+                dialog.modal('show');
+                dialog.on('hidden.bs.modal', function () {
+                    addBufferedHeroes();
+                });
+            };
+
+            $scope.guideAdd = function (guide) {
+                // console.log(guide);
+                // console.log($scope.activeHero);
+
+                var guideHeroCheck = _.find(guide.guideHeroes, function (val) {
+                    return val.heroId == $scope.activeHero.heroId;
+                });
+
+                if (!guideHeroCheck) {
+                    $scope.snapshot.addGuideToHero($scope.activeHero, guide);
+                }
+            };
+
+            $scope.removeHero = function (hero) {
+                var msg = "Are you sure you want to remove " + hero.hero.name + "?";
+
+                $scope.warning(msg, function () {
+                    $scope.$apply(function () {
+                        $scope.snapshot.removeHero(hero);
+                        $scope.snapshot.buildTiers();
+                    });
+                });
+            };
+
+            $scope.guideDeleteById = function (guideId) {
+                var active = $scope.activeHero;
+
+                return $scope.snapshot.removeGuideFromHero(guideId, active.hero.id);
+            };
+
+            $scope.setActiveHero = function (hero) {
+                gBuffer = [];
+
+                $scope.activeHero = hero;
+            };
+
+            $scope.guideExistsById = function (guideId) {
+                var guides = $scope.activeHero.guides;
+
+                return _.find(guides, function (guide) { return guide.guideId == guideId });
+            };
+
+            $scope.heroExistsById = function (heroId) {
+                var heroes = $scope.snapshot.heroTiers;
+                var allHeroes = _.union(heroes, hBuffer);
+
+                return _.find(allHeroes, function (hero) { return heroId == hero.hero.id });
+            };
+
+            //remove funcs
+            $scope.removeTier = function (tier) {
+                var t = (tier == 1) ? "S" : tier-1;
+                var msg = "Are you sure you want to remove Tier " + t + "?";
+
+                $scope.warning(msg, function () {
+                    $scope.$apply(function () {
+                        $scope.snapshot.removeTier(tier);
+
+                        $scope.snapshot.buildTiers();
+                    });
+                });
+            };
+
+            $scope.snapshot.buildTiers();
+            //$scope.$watch($scope.snapshot.heroTiers, $scope.snapshot.buildTiers);
+        }]
+    }
+}])
+.directive('hotsSnapshotHeroAdd', function () {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/admin/hots.snapshot.hero.add.html',
+        controller: ['$scope', 'Hero', 'Guide', function ($scope, Hero, Guide) {
+            $scope.maxScore = 10;
+            $scope.heroes = getHeroes(0, 3);
+            $scope.guides = getGuides(0, 3);
+            $scope.heroTier = {
+                summary      : "",
+                tier         : $scope.tier,
+                previousTier : "",
+                burstScore   : 0,
+                pushScore    : 0,
+                surviveScore : 0,
+                scaleScore   : 0,
+                utilityScore : 0,
+                heroId       : "",
+                guideTierId  : "",
+                snapshotId   : ""
+            };
+
+            $scope.setHero = function (hero) {
+                $scope.heroTier.hero = hero;
+                $scope.heroTier.heroId = hero.id;
+            }
+
+            $scope.setGuide = function (guide) {
+                $scope.heroTier.guideTier = {
+                    guideId: guide.id,
+                    guide: guide
+                }
+            }
+
+            $scope.doSearch = function (obj) {
+                var skip = 0;
+                var limit = 10;
+                var search = $scope.search;
+                var func = {
+                    heroes: getHeroes,
+                    guides: getGuides
+                }
+
+                $scope[obj] = func[obj](skip, limit, search);
+            };
+
+            $scope.isScoreValid = function (max, value) {
+                return value > max;
+            }
+
+            function getGuides (skip, limit, search) {
+                $scope.loading = true;
+
+                var skip = skip || 0;
+                var limit = limit || 10;
+                var options = {
+                    filter: {
+                        fields: {
+                            id: true,
+                            name: true
+                        },
+                        skip: skip,
+                        limit: limit
+                    }
+                }
+
+                if (!!search) {
+                    filter.where = {};
+                    filter.where.or = [
+                        { name: { regexp: pattern } },
+                        { text: { regexp: pattern } }
+                    ]
+                }
+
+                return Guide.find(options, function () {
+                    $scope.loading = false;
+                });
+            }
+
+            function getHeroes (skip, limit, search) {
+                $scope.loading = true;
+
+                var skip = skip || 0;
+                var limit = limit || 10;
+
+                return Hero.find({
+                    filter: {
+                        fields: {
+                            id: true,
+                            name: true
+                        },
+                        skip: skip,
+                        limit: limit
+                    }
+                }, function () {
+                    $scope.loading = false;
+                });
+            }
+        }]
+    }
 })
 ;

@@ -1,0 +1,57 @@
+{
+  "name": "guideTierTalent",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "tier": {
+      "type": "number"
+    },
+    "guideTierId": {
+      "index": 1
+    },
+    "talentId": {
+      "index": 1
+    }
+  },
+  "relations": {
+    "guideTier": {
+      "type": "belongsTo",
+      "model": "guideTier",
+      "foreignKey": "guideTierId"
+    },
+    "talent": {
+      "type": "belongsTo",
+      "model": "talent",
+      "foreignKey": "talentId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ]
+}
