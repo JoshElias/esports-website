@@ -664,6 +664,12 @@ var app = angular.module('app', [
                                                            scope: {
                                                                fields: ['linked', 'slug']
                                                            }
+                                                       },
+                                                       {
+                                                           relation: 'votes',
+                                                           scope: {
+                                                               fields: ['direction']
+                                                           }
                                                        }
                                                    ]
                                                }
@@ -720,6 +726,7 @@ var app = angular.module('app', [
                                     article.voteScore = Util.tally(article.votes, 'direction');
 
                                     _.each(article.relatedArticles, function (relatedArticle) {
+                                        relatedArticle.voteScore = Util.tally(relatedArticle.votes, 'direction');
                                         relatedArticle.slug = Util.setSlug(relatedArticle);
                                     });
                                     
@@ -1287,6 +1294,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
+                                    console.log('data:', data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
 
                                     return data;
@@ -2519,7 +2527,6 @@ var app = angular.module('app', [
                                         Guide.topGuide(filter)
                                         .$promise
                                         .then(function (data) {
-                                            console.log(data);
                                             return seriesCb(undefined, data);
                                         })
                                         .catch(function (err) {
@@ -2527,7 +2534,6 @@ var app = angular.module('app', [
                                         })
                                     },
                                     function (guideId, seriesCb) {
-                                        console.log(guideId);
                                         if (!guideId.id)
                                             return seriesCb(undefined, null);
 
@@ -2933,6 +2939,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
+                                    console.log('data:', data);
                                     data.slug = Util.setSlug(data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
@@ -7470,6 +7477,7 @@ var app = angular.module('app', [
                                 }
                             }],
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                                console.log('here');
                                 var slug = $stateParams.slug;
                                 console.log('slug: ', slug);
                                 return Guide.findOne({
