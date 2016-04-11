@@ -7,14 +7,14 @@ angular.module('hotsSnapshot', [])
         }
     ]
 )
-.controller('hotsSnapshotCtrl', ['$scope', '$filter', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
-    function ($scope, $filter, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
+.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
+    function ($scope, $window, $state, $filter, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
         var foldedTiers = {};
         var filter = {
             role: HOTS.roles,
             universe: HOTS.universes,
             filtered: false
-        }
+        };
 
         $scope.activeFilters = {};
         $scope.heroAnim = {};
@@ -52,14 +52,14 @@ angular.module('hotsSnapshot', [])
         $scope.isFolded = function (tierNum) {
             return foldedTiers[tierNum];
         };
-        
+
         $scope.foldTier = function (tierNum) {
             console.log(tierNum);
             if(foldedTiers[tierNum] === undefined)
                 foldedTiers[tierNum] = false;
 
             foldedTiers[tierNum] = !foldedTiers[tierNum];
-    };
+        };
 
         $scope.triggerAnimation = function (hero) {
             var s = $scope.heroAnim[hero.id];
@@ -69,7 +69,7 @@ angular.module('hotsSnapshot', [])
             hero.surviveScore = s.surviveScore;
             hero.scaleScore = s.scaleScore;
             hero.utilityScore = s.utilityScore;
-        }
+        };
 
         $scope.selectFilter = function ($event, arr, obj, tier, heroes) {
             $event.stopPropagation();
@@ -84,7 +84,7 @@ angular.module('hotsSnapshot', [])
             }
 
             $scope.activeFilters[tier].filtered = $scope.getFilteredHeroes(heroes, tier);
-        }
+        };
 
         $scope.getFilteredHeroes = function (heroes, tier) {
             var out;
@@ -108,10 +108,19 @@ angular.module('hotsSnapshot', [])
             });
 
             return out;
-        }
+        };
 
         $scope.getIsActive = function (arr, obj, tier) {
             return !!_.find($scope.activeFilters[tier][arr], function (val) { return val == obj; });
+        };
+
+        $scope.goToGuide = function ($event, slug) {
+            var url = $state.href('app.hots.guides.guide', { slug: slug });
+
+            $event = $event || window.event;
+            $event.stopPropagation();
+
+            $window.open(url, '_blank');
         }
     }
 ])

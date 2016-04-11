@@ -459,8 +459,8 @@ angular.module('app.services', [])
             }
         }
     }])
-    .service('HOTSSnapshot', ['HotsSnapshot', 'SnapshotAuthor', 'HeroTier', 'GuideTier', 'GuideTierTalent',
-        function (HotsSnapshot, SnapshotAuthor, HeroTier, GuideTier, GuideTierTalent) {
+    .service('HOTSSnapshot', ['HotsSnapshot', 'SnapshotAuthor', 'HeroTier', 'GuideTier', 'GuideTierTalent', 'Util',
+        function (HotsSnapshot, SnapshotAuthor, HeroTier, GuideTier, GuideTierTalent, Util) {
 
             var defaultSnapshot = {
                 snapNum: 0,
@@ -716,6 +716,10 @@ angular.module('app.services', [])
 
                 if (!snapshot.id)
                     snapshot.createdDate = new Date().toISOString();
+
+                //clean slug before submitting so we don't end up with things like meta-snapshot-meta-snapshot
+                //in the slug field
+                snapshot.slugs[0].slug = Util.slugify(snapshot.title);
 
                 snapshot.slugOptions = {
                     slug: snapshot.slugs[0].slug,

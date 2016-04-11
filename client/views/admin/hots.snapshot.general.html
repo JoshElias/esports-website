@@ -11,7 +11,7 @@
 
             <div class="input-group wide-input">
                 <input ng-model="snapshot.title"
-                       ng-keyup="slugifyUrl(snapshot.title)"
+                       ng-change="slugifyUrl(snapshot.title)"
                        class="form-control"
                        id="title"
                        type="text"
