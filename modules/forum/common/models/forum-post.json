@@ -22,7 +22,8 @@
     "title": {
       "type": "string",
       "index": 1,
-      "Validate": ["spam"]
+      "Validate": ["spam"],
+      "Slug": true
     },
     "viewCount": {
       "type": "number"
@@ -35,6 +36,10 @@
     },
     "forumThreadId": {
       "index": 1
+    },
+    "isCommentable": {
+      "type": "boolean",
+      "default": true
     }
   },
   "relations": {
@@ -93,6 +98,7 @@
     "Validate": true,
     "DestroyOnDelete": true,
     "Scope": true,
+    "Slug": true,
     "Authored": true,
     "Filter": {
       "acceptedRoles": ["$admin"],

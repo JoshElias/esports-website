@@ -3467,12 +3467,11 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
-                            forumCategories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
+                            forumCategories: ['$q', 'ForumCategory', 'ForumThread', 'Util', function($q, ForumCategory, ForumThread, Util) {
 								// Alex's Resolve
                                 var d = $q.defer();
                                 async.waterfall([
                                     function(waterCB) {
-
                                         ForumCategory.find({
                                             filter: {
                                                 where: {
@@ -3504,6 +3503,9 @@ var app = angular.module('app', [
                                                         id: true,
                                                         title: true,
                                                         description: true
+                                                    },
+                                                    include: {
+                                                        relation: 'slugs'
                                                     }
                                                 }
                                             }).$promise
@@ -3519,19 +3521,24 @@ var app = angular.module('app', [
                                                                id: thread.id,
                                                                filter: {
                                                                    fields: {
+                                                                       id: true,
                                                                        title: true,
-                                                                       slug: true,
                                                                        authorId: true
                                                                    },
-                                                                   include: {
-                                                                       relation: 'author',
-                                                                       scope: {
-                                                                           fields: {
-                                                                               username: true,
-                                                                               email: true
+                                                                   include: [
+                                                                       {
+                                                                           relation: 'author',
+                                                                           scope: {
+                                                                               fields: {
+                                                                                   username: true,
+                                                                                   email: true
+                                                                               }
                                                                            }
+                                                                       },
+                                                                       {
+                                                                           relation: 'slugs'
                                                                        }
-                                                                   },
+                                                                   ],
                                                                    order: 'createdDate DESC',
                                                                    limit: 1
                                                                }
@@ -3588,8 +3595,22 @@ var app = angular.module('app', [
                                     }
                                 ], function(err, results) {
                                     if (err) {
+                                        console.log('err', err);
                                         return d.resolve(err);
                                     }
+
+                                    _.each(results, function (val) {
+                                        _.each(val.forumThreads, function (thread) {
+                                            thread.slug = Util.setSlug(thread);
+
+                                            _.each(thread.forumPosts, function (post) {
+                                                post.slug = Util.setSlug(post);
+                                            });
+                                        });
+                                    });
+
+                                    console.log(results);
+
                                     return d.resolve(results);
                                 });
                                 return d.promise;
@@ -3687,7 +3708,7 @@ var app = angular.module('app', [
                                 ForumThread.findOne({
                                     filter: {
                                         where: {
-                                            'slug.url': slug,
+                                            slug: slug,
                                             isActive: true
                                         }
                                     }
@@ -3709,7 +3730,7 @@ var app = angular.module('app', [
 
                                 return d.promise;
                             }],
-                            forumThread: ['$state', '$q', '$stateParams', 'ForumThread', 'ForumPost', function($state, $q, $stateParams, ForumThread, ForumPost) {
+                            forumThread: ['$state', '$q', '$stateParams', 'ForumThread', 'ForumPost', 'Util', function($state, $q, $stateParams, ForumThread, ForumPost, Util) {
                                 var slug = $stateParams.thread,
                                     d = $q.defer();
 
@@ -3724,25 +3745,35 @@ var app = angular.module('app', [
                                             slug: true,
                                             title: true
                                         },
-                                        include: {
-                                            relation: 'forumPosts',
-                                            scope: {
-                                                fields: ['id', 'slug', 'title', 'authorId', 'viewCount', 'createdDate'],
-                                                include: {
-                                                    relation: 'author',
-                                                    scope: {
-                                                        fields: ['email', 'username']
-                                                    }
-                                                },
-                                                order: "createdDate DESC",
-                                                offset: 0,
-                                                limit: 20
+                                        include: [
+                                            {
+                                                relation: 'forumPosts',
+                                                scope: {
+                                                    fields: ['id', 'slug', 'title', 'authorId', 'viewCount', 'createdDate'],
+                                                    include: [
+                                                        {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: ['email', 'username']
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'slugs'
+                                                        }
+                                                    ],
+                                                    order: "createdDate DESC",
+                                                    offset: 0,
+                                                    limit: 20
+                                                }
+                                            },
+                                            {
+                                                relation: 'slugs'
                                             }
-                                        }
+                                        ]
                                     }
-                                }).$promise
+                                })
+                                .$promise
                                 .then(function (thread) {
-
                                     async.each(thread.forumPosts, function (post, eachCallback) {
                                         ForumPost.comments.count({
                                             id: post.id
@@ -3755,6 +3786,12 @@ var app = angular.module('app', [
                                             $q.reject();
                                         });
                                     }, function () {
+                                        thread.slug = Util.setSlug(thread);
+
+                                        _.each(thread.forumPosts, function (val) {
+                                            val.slug = Util.setSlug(val);
+                                        });
+
                                         return d.resolve(thread);
                                     });
 
@@ -3807,7 +3844,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.post.html',
                         controller: 'ForumPostCtrl',
                         resolve: {
-                            forumPost: ['$state', '$stateParams', 'ForumPost', function($state, $stateParams, ForumPost) {
+                            forumPost: ['$state', '$stateParams', 'ForumPost', 'Util', function($state, $stateParams, ForumPost, Util) {
                                 var thread = $stateParams.thread,
                                     post = $stateParams.post;
                                 return ForumPost.findOne({
@@ -3821,6 +3858,9 @@ var app = angular.module('app', [
                                                 scope: {
                                                     where: {
                                                         'slug.url': thread
+                                                    },
+                                                    include: {
+                                                        relation: 'slugs'
                                                     }
                                                 }
                                             },
@@ -3843,11 +3883,21 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: 'author'
+                                            },
+                                            {
+                                                relation: 'slugs'
                                             }
                                         ]
                                     }
                                 })
                                 .$promise
+                                .then(function (data) {
+                                    data.slug = Util.setSlug(data);
+                                    data.forumThread.slug = Util.setSlug(data.forumThread);
+
+                                    console.log(data);
+                                    return data;
+                                })
                                 .catch(function (err) {
                                     if (err.status === 404) {
                                         return throw404($state);
@@ -6200,6 +6250,7 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'authors',
                                                 scope: {
+                                                    order: "orderNum",
                                                     include: ['user']
                                                 }
                                             },

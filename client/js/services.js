@@ -613,7 +613,8 @@ angular.module('app.services', [])
                     expertClasses: obj.expertClasses,
                     hotsSnapshotId: obj.hotsSnapshotId,
                     authorId: obj.authorId,
-                    user: obj.user
+                    user: obj.user,
+                    orderNum: obj.orderNum
                 };
 
                 this.authors.push(author);
@@ -795,7 +796,7 @@ angular.module('app.services', [])
                                     if (!guide.heroTierId)
                                         guide.heroTierId = data.id;
 
-                                    if (guide.guide.isPublic)
+                                    if (guide.guide.isPublic && !guide.slug)
                                         guide.slug = guide.guide.slugs[0];
                                 });
 

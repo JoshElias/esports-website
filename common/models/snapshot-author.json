@@ -15,6 +15,9 @@
         "string"
       ]
     },
+    "orderNum": {
+      "type": "number"
+    },
     "snapshotId": {
       "index": 1
     },

@@ -214,6 +214,7 @@ angular.module('hotsSnapshot', [])
                                         {
                                             relation: "authors",
                                             scope: {
+                                                order: "orderNum ASC",
                                                 include: ["user"]
                                             }
                                         },

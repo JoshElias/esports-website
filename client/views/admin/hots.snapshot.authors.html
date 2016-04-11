@@ -8,7 +8,7 @@
         
         
         
-        <ul class="admin-list m-b-none padding-none" ng-if="snapshot.authors.length!=0">
+        <ul class="admin-list m-b-none padding-none" dnd-list="snapshot.authors" ng-if="snapshot.authors.length!=0">
 
             <li
             class="admin-list-item gradient-add list-underline"
@@ -16,6 +16,9 @@
             ng-repeat="author in snapshot.authors"
             ng-click="setActiveAuthor(author)"
             ng-class="{ 'active': activeAuthor.user.id == author.user.id }"
+            dnd-draggable="author"
+            dnd-type="'author'"
+            dnd-moved="updateDND($index, snapshot.authors)"
             >
                 <div class="list-accent-div">  
                     <span  class="full-div">

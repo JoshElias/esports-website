@@ -41,7 +41,7 @@
             -->
                         <div id="collapse{{tier.tier}}" class="collapse panel tier-list-item">
                             <div class="panel-body">
-                                <ul class="admin-list m-b-none">
+                                <ul class="admin-list m-b-none" dnd-list="tier.heroes">
                                      <li class="admin-list-item gradient-add tier-list-hero clearfix"
                                     ng-if="tier.heroes.length"
                                     ng-repeat="hero in tier.heroes"

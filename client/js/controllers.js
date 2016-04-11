@@ -5694,6 +5694,7 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('AdminHOTSSnapshotBuildCtrl', ['$scope', '$state', '$compile', 'hotsSnapshot', 'HOTSSnapshot', 'HotsSnapshot', 'AlertService',
         function ($scope, $state, $compile, hotsSnapshot, HOTSSnapshot, HotsSnapshot, AlertService) {
             $scope.snapshot = new HOTSSnapshot(hotsSnapshot);
+            $scope.loaded = ($scope.snapshot.id) ? true : false;
 
             //pre-compile inner states to remove flicker on sub-state change
             $compile('<hots-snapshot-authors>');
@@ -5713,6 +5714,24 @@ angular.module('app.controllers', ['ngCookies'])
                 });
 
                 return toClean;
+            }
+
+            $scope.warning = function (msg, cb) {
+                var box = bootbox.dialog({
+                    message: msg,
+                    title: "Are you sure?",
+                    buttons: {
+                        danger: {
+                            label: "I'm sure",
+                            className: "btn-danger",
+                            callback: cb
+                        },
+                        default: {
+                            label: "Cancel",
+                            className: "btn-primary"
+                        }
+                    }
+                });
             }
 
             $scope.loadPrevious = function () {
@@ -5763,6 +5782,7 @@ angular.module('app.controllers', ['ngCookies'])
                     cleanData.snapNum = ++cleanData.snapNum;
 
                     $scope.snapshot.load(cleanData);
+                    $scope.loaded = true;
                 });
             };
 

@@ -1493,6 +1493,9 @@ angular.module('app.directives', ['ui.load'])
                             },
                             {
                                 relation: "slugs"
+                            },
+                            {
+                                relation: "guideHeroes"
                             }
                         ]
                     }
@@ -2449,8 +2452,18 @@ angular.module('app.directives', ['ui.load'])
                 description: "",
                 expertClasses: [],
                 hotsSnapshotId: "",
-                authorId: ""
-            }
+                authorId: "",
+                orderNum: 0
+            };
+
+            function buildOrder () {
+                var idx = 0;
+                var snap = $scope.snapshot;
+
+                _.each(snap.authors, function (val) {
+                    val.orderNum = idx++;
+                });
+            };
 
             //we buffer our authors during the add phase and apply them to the model when the user confirms
             //their selection
@@ -2468,7 +2481,7 @@ angular.module('app.directives', ['ui.load'])
                 if (authorEmpty) {
                     $scope.activeAuthor = snap.authors[0];
                 }
-            }
+            };
 
             //begin our scope definition
             //
@@ -2476,6 +2489,12 @@ angular.module('app.directives', ['ui.load'])
 
             if (!!$scope.snapshot.authors)
                 $scope.activeAuthor = $scope.snapshot.authors[0];
+
+            $scope.updateDND = function ($index, list) {
+                list.splice($index, 1);
+
+                buildOrder();
+            };
 
             $scope.openAuthorAdd = function () {
                 var dialog = box({
@@ -2485,7 +2504,7 @@ angular.module('app.directives', ['ui.load'])
 
                 dialog.modal('show');
                 dialog.on('hidden.bs.modal', addBufferedAuthors);
-            }
+            };
 
             // check if user is already an author on snapshot
             $scope.authorExistsById = function (authorId) {
@@ -2500,17 +2519,17 @@ angular.module('app.directives', ['ui.load'])
                 var snapAuths = $scope.snapshot.authors;
                 var allAuthors = _.union(aBuffer, snapAuths);
                 var toDelete = _.find(allAuthors, function (auth) { return auth.user.id == authorId });
+                var msg = "Are you sure you want to remove " + toDelete.user.username + "?"
 
-                //remove from our author buffer
-                aBuffer = _.difference(aBuffer, [toDelete]);
+                $scope.warning(msg, function () {
+                    $scope.$apply(function () {
+                        //remove from our author buffer
+                        aBuffer = _.difference(aBuffer, [toDelete]);
 
-                //remove from our model
-                $scope.snapshot.removeAuthor(toDelete);
-
-                //if the author has an id then we want to queue it for removal from the db
-                if (toDelete.snapshotId) {
-                    // TODO: CRUDMAN REMOVE AUTHOR
-                }
+                        //remove from our model
+                        $scope.snapshot.removeAuthor(toDelete);
+                    });
+                });
             };
 
             //this method used by the popup dialog to add authors to the author buffer
@@ -2518,15 +2537,16 @@ angular.module('app.directives', ['ui.load'])
                 var newAuthor = angular.copy(defaultAuthor);
                     newAuthor.authorId = author.id;
                     newAuthor.user = author;
+                    newAuthor.orderNum = $scope.snapshot.authors.length;
 
                 aBuffer.push(newAuthor);
-            }
+            };
 
             //our activeAuthor is the author currently being displayed in the right panel
             //this is where we set the scope variable, this fn is being used by the template
             $scope.setActiveAuthor = function (author) {
                 $scope.activeAuthor = author;
-            }
+            };
 
             //toggling our activeAuthor expert classes on and off
             $scope.toggleActiveExpert = function (role) {
@@ -2545,7 +2565,7 @@ angular.module('app.directives', ['ui.load'])
 
                 //at this point we know activeAuthor isn't flagged as an expert
                 snapAuthor.expertClasses.push(role);
-            }
+            };
 
             //fn returns if the activeAuthor is an expert of the role arg
             $scope.isExpert = function (role) {
@@ -2634,7 +2654,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.numOfTiers = 12;
             $scope.pastTiers = function (num) {
                 return new Array(num);
-            }
+            };
 
             $scope.updateDND = function ($index, list) {
                 list.splice($index, 1);
@@ -2655,7 +2675,6 @@ angular.module('app.directives', ['ui.load'])
             };
 
             $scope.heroAdd = function (hero) {
-
                 var newHero = angular.copy(defaultHeroTier);
                 newHero['heroId'] = hero.id;
                 newHero['hero'] = hero;
@@ -2672,22 +2691,37 @@ angular.module('app.directives', ['ui.load'])
                 dialog.on('hidden.bs.modal', function () {
                     addBufferedHeroes();
                 });
-            }
+            };
 
             $scope.guideAdd = function (guide) {
-                return $scope.snapshot.addGuideToHero($scope.activeHero, guide);
-            }
+                // console.log(guide);
+                // console.log($scope.activeHero);
+
+                var guideHeroCheck = _.find(guide.guideHeroes, function (val) {
+                    return val.heroId == $scope.activeHero.heroId;
+                });
+
+                if (!guideHeroCheck) {
+                    $scope.snapshot.addGuideToHero($scope.activeHero, guide);
+                }
+            };
 
             $scope.removeHero = function (hero) {
-                $scope.snapshot.removeHero(hero);
-                $scope.snapshot.buildTiers();
-            }
+                var msg = "Are you sure you want to remove " + hero.hero.name + "?";
+
+                $scope.warning(msg, function () {
+                    $scope.$apply(function () {
+                        $scope.snapshot.removeHero(hero);
+                        $scope.snapshot.buildTiers();
+                    });
+                });
+            };
 
             $scope.guideDeleteById = function (guideId) {
                 var active = $scope.activeHero;
 
                 return $scope.snapshot.removeGuideFromHero(guideId, active.hero.id);
-            }
+            };
 
             $scope.setActiveHero = function (hero) {
                 gBuffer = [];
@@ -2699,7 +2733,7 @@ angular.module('app.directives', ['ui.load'])
                 var guides = $scope.activeHero.guides;
 
                 return _.find(guides, function (guide) { return guide.guideId == guideId });
-            }
+            };
 
             $scope.heroExistsById = function (heroId) {
                 var heroes = $scope.snapshot.heroTiers;
@@ -2710,10 +2744,17 @@ angular.module('app.directives', ['ui.load'])
 
             //remove funcs
             $scope.removeTier = function (tier) {
-                $scope.snapshot.removeTier(tier);
+                var t = (tier == 1) ? "S" : tier-1;
+                var msg = "Are you sure you want to remove Tier " + t + "?";
 
-                $scope.snapshot.buildTiers();
-            }
+                $scope.warning(msg, function () {
+                    $scope.$apply(function () {
+                        $scope.snapshot.removeTier(tier);
+
+                        $scope.snapshot.buildTiers();
+                    });
+                });
+            };
 
             $scope.snapshot.buildTiers();
             //$scope.$watch($scope.snapshot.heroTiers, $scope.snapshot.buildTiers);

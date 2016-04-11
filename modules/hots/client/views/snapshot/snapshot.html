@@ -310,7 +310,7 @@
 
                 <!-- AUTHORS -->
                 <div class="row m-l-none m-r-none m-b-md">
-                    <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors" >
+                    <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors | orderBy: 'orderNum'" >
                         <a class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}">
                             <div class="hots-author-wrapper pull-left hidden-xs">
                                 <span ng-if="author.expertClasses.length > 1">
