@@ -7,12 +7,20 @@ module.exports = {
             cacheDir:    'client/css/.sass-cache',
         }
     },
-    modules_: {
+    modules_redbull: {
         options: {
             outputStyle: 'expanded',
-            sassDir:     'modules/**/client/css',
+            sassDir:     'modules/redbull/client/css',
             cssDir:      'client/dist/css/sass/modules',
-            cacheDir:    'modules/.sass-cache',
+            cacheDir:    'modules/.sass-cache'
+        }
+    },
+    modules_ads: {
+        options: {
+            outputStyle: 'expanded',
+            sassDir:     'modules/ads/client/css',
+            cssDir:      'client/dist/css/sass/modules',
+            cacheDir:    'modules/.sass-cache'
         }
     }
 };
