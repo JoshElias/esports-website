@@ -97,15 +97,14 @@ angular.module('redbull.controllers')
                         className: 'btn-danger',
                         callback: function () {
                             var draft = player.activeDraft;
-                            $timeout(function () {
-                                draft.isActive = false;
-                            });
+                            draft.isActive = false;
+                            
                             RedbullDraft.upsert(draft).$promise.then(function (res) {
                                 $timeout(function () {
                                     player.inactiveDrafts.push(player.activeDraft);
                                     player.activeDraft = null;
                                     player.hasActive = false;
-                                    player.hasInactive = false;
+                                    player.hasInactive = true;
                                 });
 
                                 $window.scrollTo(0, 0);
