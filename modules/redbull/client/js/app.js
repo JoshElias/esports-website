@@ -76,11 +76,11 @@ var redbull = angular.module('app.redbull', [
                         }],
                         draft: ['$localStorage', '$state', 'RedbullDraft', '$q', function ($localStorage, $state, RedbullDraft, $q) {
                             var d = $q.defer();
-                            if ($localStorage.draftId) {
+                            if ($localStorage.sealedDraft && $localStorage.sealedDraft.draftId) {
                                 RedbullDraft.findOne({
                                     filter: {
                                         where: {
-                                            id: $localStorage.draftId,
+                                            id: $localStorage.sealedDraft.draftId,
                                             isActive: true
                                         },
                                         include: {
@@ -115,8 +115,10 @@ var redbull = angular.module('app.redbull', [
                                     if (findResponse && findResponse.status === 404) {
                                         RedbullDraft.create().$promise
                                         .then(function (data) {
-                                            $localStorage.draftId = data.id;
-                                            $localStorage.draftDecks = [];
+                                            $localStorage.sealedDraft = {
+                                                draftId: data.id,
+                                                decks: []
+                                            };
                                             d.resolve(data);
                                         }).catch(function (createResponse) {
                                             console.error(createResponse);
@@ -147,11 +149,11 @@ var redbull = angular.module('app.redbull', [
                             return RedbullDraftSettings.findOne().$promise;
                         }],
                         draft: ['$localStorage', '$state', '$q', 'RedbullDraft', function ($localStorage, $state, $q, RedbullDraft) {
-                            if ($localStorage.draftId) {
+                            if ($localStorage.sealedDraft && $localStorage.sealedDraft.draftId) {
                                 return RedbullDraft.findOne({
                                     filter: {
                                         where: {
-                                            id: $localStorage.draftId,
+                                            id: $localStorage.sealedDraft.draftId,
                                             isActive: true
                                         },
                                         fields: ['id', 'hasOpenedPacks'],

@@ -64,7 +64,6 @@ angular.module('app.controllers', ['ngCookies'])
                       roleNames: ['$admin', '$redbullAdmin']
                   }).$promise
                   .then(function (res) {
-                      console.log(res);
                       $scope.currentRoles.isAdmin = res.isInRoles.$admin;
                       $scope.currentRoles.isRedbullAdmin = res.isInRoles.$redbullAdmin;
                   })
