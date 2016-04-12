@@ -1,5 +1,7 @@
 <div class="bg-override meta-snapshot container-fluid">
     
+    <ts-ad class="text-center container-fluid row z-5 top-bar-fix" structure="double"></ts-ad>
+    
     <div class="container wrapper-none heading">
         <div class="snapTitle">
             <h1>THE META SNAPSHOT: #{{snapshot.snapNum}}</h1>
@@ -11,7 +13,6 @@
             <span class="snapVoteWrap">
                 <vote-widget votable="votableSnapshot" theme="single"></vote-widget>
             </span>
-
         </div>
         <img class="sideBorders img-responsive head-img" src="../../img/meta-snapshot/generic-meta.jpg" />
     </div>
@@ -38,7 +39,7 @@
                             </div>
                         </button>
                         <div class="sideTierBody collapse" id="collapseSideTier{{tier.tier}}">
-                            <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks | orderBy : 'ranks[0]'">
+                            <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks">
                                 <a href="#{{deck.ranks[0]}}" ng-click="findDeck(tier.tier, deck.ranks[0])">
                                     <div class="sideTierDeckRank pull-left clearfix">
                                         <h4>{{deck.ranks[0]}}</h4>
@@ -53,7 +54,7 @@
                     
                     <!-- sidebar plg -->
                     
-                    <ts-ad h="280" w="336" ad-slot="9633995889" class="m-t-md" structure="sidebar" theme="hs-snapshot"></ts-ad>
+                    <ts-ad ad-slot="9633995889" class="m-t-md" structure="sidebar" theme="hs-snapshot"></ts-ad>
                     
                     <!-- sidebar plg ends-->
                 </div>

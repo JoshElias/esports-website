@@ -40,6 +40,7 @@
         <subnav-redbull class="pull-right"></subnav-redbull>
         
         <div class="sub-nav-links">
+            
             <ul>
                 <li><a ui-sref="app.hs.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hots.talentCalculator.redirect">TALENT CALCULATOR</a></li><li><a ui-sref="app.hots.guideBuilder.step1">GUIDE BUILDER</a></li><li style="border-right: 0px;"><a target="_blank" ng-href="http://store.tempostorm.com" href="http://store.tempostorm.com">STORE</a></li>
             </ul>
@@ -54,8 +55,20 @@
     
     <!-- articles -->
     <div class="home-articles">
-        <button class="home-articles-prev" ng-class="{ 'hidden': !canArticlePrev() }" ng-click="prevArticles()"><span class="fa fa-angle-left"></span></button>
-        <button class="home-articles-next" ng-class="{ 'hidden': !canArticleNext() }" ng-click="nextArticles()"><span class="fa" ng-class="{ 'fa-angle-right': articles.loading != 'next', 'fa-refresh fa-spin': articles.loading == 'next' }"></span></button>
+        
+        <button class="home-articles-prev"
+                ng-class="{ 'hidden': !canArticlePrev() }"
+                ng-click="prevArticles()">
+            <span class="fa fa-angle-left"></span>
+        </button>
+        
+        <button class="home-articles-next" 
+                ng-class="{ 'hidden': !canArticleNext() }"
+                ng-click="nextArticles()">
+            <span class="fa" 
+                  ng-class="{ 'fa-angle-right': articles.loading != 'next', 'fa-refresh fa-spin': articles.loading == 'next' }">
+            </span>
+        </button>
         
         <div class="home-articles-wrapper" home-articles data-viewable="articles.viewable()" data-offset="articles.offset" data-size="articles.data.length">
             <div class="home-articles-inner">
@@ -168,10 +181,13 @@
                         <h1 class="title m-t-md">VIDEO OF THE DAY</h1>
                         <div video-of-the-day></div>
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                         <h1 class="title m-t-md">TWITTER FEED</h1>
                         <h3 class="sub-title m-b-md">Join the conversation on Twitter</h3>
                         <div twitter-feed></div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                        <ts-ad  w="728" h="90" structure="single" theme="clear-plg"></ts-ad>
                     </div>
                 </div>
             </div>
@@ -179,6 +195,6 @@
         </div>
 
     </div>
-    <ts-ad class="text-center container-fluid row" structure="single"></ts-ad>
+    <ts-ad class="text-center container-fluid row" structure="double"></ts-ad>
 </div>
 <!-- / content -->

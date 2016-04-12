@@ -3,6 +3,14 @@ angular.module('redbull.controllers')
     function ($scope, $compile, $filter, $state, $localStorage, Hearthstone, DeckBuilder, bootbox, AlertService, Pagination, RedbullDraft, draftSettings, draftCards, draftDecks, draftBuildStart) {
         var draft = draftBuildStart.draft;
         
+        // make sure decks loading from proper draft
+        if ($localStorage.sealedDraft && $localStorage.sealedDraft.draftId !== draft.id) {
+            $localStorage.sealedDraft = {
+                draftId: draft.id,
+                decks: []
+            };
+        }
+        
         $scope.draftId = draft.id;
         $scope.decksSaving = false;
         
@@ -112,7 +120,7 @@ angular.module('redbull.controllers')
         }
         
         function initDecks () {
-            var decks = ($scope.tournament.isOfficial) ? cleanLoadedDecks(draftDecks) : $localStorage.draftDecks;
+            var decks = (!draft.hasDecksConstructed && $localStorage.sealedDraft && $localStorage.sealedDraft.decks) ? $localStorage.sealedDraft.decks : cleanLoadedDecks(draftDecks);
             if (decks && decks.length) {
                 for (var i = 0; i < decks.length; i++) {
                     $scope.decks.push(DeckBuilder.new(decks[i].playerClass, decks[i]));
@@ -121,10 +129,11 @@ angular.module('redbull.controllers')
         }
         initDecks();
         
-        if (!$scope.tournament.isOfficial) {
+        //if (!$scope.tournament.isOfficial) {
+        if (!draft.hasDecksConstructed) {
             // save decks to local storage for now
             $scope.$watch(function () { return $scope.decks; }, function (newValue) {
-                $localStorage.draftDecks = newValue;
+                $localStorage.sealedDraft.decks = newValue;
             }, true);
         }
         
@@ -562,10 +571,9 @@ angular.module('redbull.controllers')
 
             RedbullDraft.submitDecks({ draftId: draft.id, decks: cleanDecks, options: { hasTimedOut: timesUp } }).$promise
             .then(function (data) {
-                if (!$scope.tournament.isOfficial) {
-                    delete $localStorage.draftDecks;
-                    delete $localStorage.draftId;
-                }
+                //if (!$scope.tournament.isOfficial) {
+                    delete $localStorage.sealedDraft;
+                //}
                 
                 if (timesUp) {
                     bootbox.hideAll();

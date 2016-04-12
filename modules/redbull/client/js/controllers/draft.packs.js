@@ -3,8 +3,18 @@ angular.module('redbull.controllers')
     '$scope', '$localStorage', '$window', '$compile', '$state', 'bootbox', 'Preloader', 'AlertService', 'DraftPacks', 'RedbullDraft', 'draftSettings', 'draft',
     function ($scope, $localStorage, $window, $compile, $state, bootbox, Preloader, AlertService, DraftPacks, RedbullDraft, draftSettings, draft){
 
-    if (!$localStorage.draftId && !draft.isOfficial) {
-        $localStorage.draftId = draft.id;
+    if (!$localStorage.sealedDraft) {
+        $localStorage.sealedDraft = {
+            draftId: draft.id,
+            decks: []
+        };
+    } else {
+        if ($localStorage.sealedDraft && $localStorage.sealedDraft.draftId !== draft.id) {
+            $localStorage.sealedDraft = {
+                draftId: draft.id,
+                decks: []
+            };
+        }
     }
 
     // TODO: REMOVE THIS BEFORE LAUNCH
@@ -12,7 +22,7 @@ angular.module('redbull.controllers')
     function skipPacks (e) {
         if (e.which === 13) {
             $scope.goingToBuild = true;
-            RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.draftId }).$promise.then(function () {
+            RedbullDraft.finishedOpeningPacks({ draftId: $localStorage.sealedDraft.draftId }).$promise.then(function () {
                 return $state.go('^.build');
             }).catch(function (response) {
                 console.log(response);

@@ -25,12 +25,8 @@
     },
     "viewType": {
       "type": "string"
-    },
-    "createdDate": {
-      "type": "date"
     }
   },
-  "validations": [],
   "relations": {
     "items": {
       "type": "hasMany",
@@ -64,5 +60,8 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Timestamp" : true
+  }
 }

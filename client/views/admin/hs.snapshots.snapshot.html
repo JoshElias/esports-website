@@ -1,9 +1,19 @@
+ <!-- first fullwidth plg -->
+
+        <ts-ad class="m-r-lg m-l-lg m-t-md" w="468" h="60" structure="double" theme="clear-plg"></ts-ad>
+
+        <!-- first fullwidth plg ends -->
+
 <alert-box theme="admin-new"></alert-box>
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading wrapper-md clearfix">
         <h3 class="pull-left"><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Meta Snapshot</h3>
-        <button type="button" ng-click="snapshot.loadPreviousPrompt()" ng-if="mode === 'add' && !snapshot.loaded" ng-disabled="snapshot.loading" class="btn admin-btn-blue pull-right m-r-sm ">
+        <button type="button" 
+                ng-click="snapshot.loadPreviousPrompt()" 
+                ng-if="mode === 'add' && !snapshot.loaded" 
+                ng-disabled="snapshot.loading"
+                class="btn admin-btn-blue pull-right m-r-sm ">
             Load Previous<i class="fa fa-refresh fa-spin m-l-sm" ng-if="snapshot.loading"></i>
         </button>
    
@@ -27,7 +37,7 @@
                 <div class="form-group snap-title-group">
                     <label for="title" class="control-label pull-left">Title</label>
                     <div class="wrapper-none">
-                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()" required>
+                        <input id="title" name="title" class="form-control wide-input" ng-model="snapshot.title" ng-keyup="snapshot.setSlug()" ng-change="snapshot.snapshotUpdated()" required>
                     </div>
                 </div>
                 <!--URL starts -->
@@ -38,7 +48,7 @@
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default" ng-class="{active: snapshot.slug.linked}" ng-click="snapshot.slugToggleLink()"><i class="fa" ng-class="{'fa-link': snapshot.slug.linked, 'fa-unlink': !snapshot.slug.linked}"></i></button>
                             </span>
-                            <input type="text" id="slug" name="slug" class="form-control wide-input" ng-model="snapshot.slug.url" ng-init="snapshot.setSlug()" ng-readonly="snapshot.slug.linked" required>
+                            <input type="text" id="slug" name="slug" class="form-control wide-input" ng-change="snapshot.snapshotUpdated()" ng-model="snapshot.slug.url" ng-init="snapshot.setSlug()" ng-readonly="snapshot.slug.linked" required>
                         </div>
                     </div>
                 </div>
@@ -47,7 +57,7 @@
                 <div class="form-group snap-title-group">
                     <label for="snapshotType" class="control-label pull-left">Type</label>
                     <div class="wrapper-none">
-                        <select id="snapshotType" name="snapshotType" class="form-control wide-input" ng-options="type.value as type.key for type in snapshot.getSnapshotTypes()" ng-model="snapshot.snapshotType"></select>
+                        <select id="snapshotType" name="snapshotType" class="form-control wide-input" ng-change="snapshot.snapshotUpdated()" ng-options="type.value as type.key for type in snapshot.getSnapshotTypes()" ng-model="snapshot.snapshotType"></select>
                     </div>
                 </div>
                 
@@ -78,7 +88,7 @@
                 <div class="form-group m-b-lg">
                     <button class="btn btn-default control-btn"
                             ng-class="{active: snapshot.isActive}"
-                            ng-click="snapshot.isActive = !snapshot.isActive"
+                            ng-click="snapshot.toggleActive()"
                             ng-mouseover="activeHover = true"
                             ng-mouseleave="activeHover = false"
                         >
@@ -99,9 +109,7 @@
                         <div class="panel neg-margin panel-default">
                             <div class="panel-body">
                                 <ul class="admin-list m-b-none" ng-if="snapshot.authors.length!=0">
-
-                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="admin-list-item gradient-add admin-list-item list-underline" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
-                                    
+                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'" class="admin-list-item gradient-add list-underline" ng-class="{ active: snapshot.activeAuthor === author }" ng-click="snapshot.setActiveAuthor(author)">
                                         <div class="list-accent-div">    
                                             <span class="full-div">{{author.user.username}}</span><div class="btn-group pull-right"><button type="button" class="btn btn-remove btn-xs" ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)"><i class="fa fa-close"></i></button></div>
                                         </div>
@@ -110,7 +118,7 @@
                                 </ul>
                                 <div class="panel-body">
                                     <div class="admin-list m-b-none">
-                                        <div class="admin-list-item list-underline gradient-add admin-list-item">
+                                        <div class="admin-list-item gradient-add list-underline">
                                             <div class="list-accent-div">
                                                 <a ng-click="snapshot.authorAddPrompt()"  class="add-element"><i class="fa fa-plus-circle"></i>Add Author</a>
                                             </div>
@@ -193,11 +201,11 @@
                     <div class="panel-body">
                         <label for="intro" class="col-sm-12 control-label">Introduction</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" rows="10"></textarea>
+                            <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro" ng-change="snapshot.snapshotUpdated()" rows="10"></textarea>
                         </div>
                         <label for="thoughts" class="col-sm-12 control-label">Thoughts &amp; Observations</label>
                         <div class="col-sm-12">
-                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" rows="10"></textarea>
+                            <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts" ng-change="snapshot.snapshotUpdated()" rows="10"></textarea>
                         </div>
                     </div>
                 </div>
@@ -429,3 +437,5 @@
         </div>
     </div>
 </div>
+
+                    <ts-ad class="m-r-lg m-l-lg m-t-md m-b-lg" w="300" h="600" structure="sidebar" theme="clear-plg"></ts-ad>

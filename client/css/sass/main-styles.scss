@@ -598,24 +598,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background-color: #2766ad;
 }
 
-//*************************************
-// 3.1.. main Navbar
-//*************************************
 
-
-/* nav bar */
-.navbar-tempo {
-    margin-bottom: 0px;
-    height: 52px;
-    background: #1b1b1b;
-    color: #2766ad;
-    border-bottom: 2px solid #000;
-}
-
-
-.navbar-tempo .navbar-header { margin-left: 0px !important; }
-.navbar-tempo .navbar-toggle { margin-right: 0px !important; }
-/*.navbar-tempo .nav.navbar-nav { margin: 0px; }*/
+//moved main navbar to navbar.scss
 
 @media (min-width: 980px) {
     .navbar .navbar-center {
@@ -645,14 +629,31 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     white-space: nowrap;
     text-indent: -99999px;
 }
-.navbar-tempo .navbar-nav .dropdown-menu { background: #1B1B1B; }
+.navbar-tempo .navbar-nav .dropdown-menu {  
+    background: rgba($off-black, 0.97); 
+    -webkit-animation-duration: 500ms !important;
+    -moz-animation-duration: 500ms !important;
+    -o-animation-duration: 500ms !important;
+    animation-duration: 500ms !important;
+
+    @media screen and (max-width: 767px) {
+        background: rgba($off-black, 1);
+    }
+}
+
+
+
 .navbar-tempo .navbar-nav > li { margin-bottom: -1px; }
 .navbar-tempo .navbar-nav > li > a {
     color: rgba(255,255,255,.4) !important;
     font-weight:bold;
     letter-spacing: 1px;
     text-shadow: none;
-    background: #1B1B1B !important;
+    background: rgba($off-black, 0.9) !important;
+    
+    @media screen and (max-width: 767px) {
+        background: rgba($off-black, 1) !important;
+    }
 }
 
 .navbar-tempo .navbar-nav > li > a:hover {
@@ -696,8 +697,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .navbar-nav .dropdown-menu li.sub { color: rgba(255,255,255,.4) !important; }
 .navbar-nav .dropdown-menu li.sub a:hover { color: rgba(255,255,255,.6) !important; }
 .navbar-nav .dropdown-menu li a:focus { color: rgba(255,255,255,.4) !important; border: none; outline: none; }
-.navbar-nav .dropdown-menu li.active a,
-.navbar-nav .dropdown-menu li a.active { background: #2766ad; color: #FFF !important; }
+//.navbar-nav .dropdown-menu li.active a,
+//.navbar-nav .dropdown-menu li a.active { background: #2766ad; color: #FFF !important; }
 
 .navbar-default {
     .navbar-collapse {
@@ -1058,10 +1059,71 @@ span.username { color: #428bca; }
 }
 
  .open .dropdown-menu {
-     -webkit-animation: fadeInRight 0.5s;
-     animation: fadeInRight 0.5s;
+     //-webkit-animation: fadeInRight 0.5s;
+    // animation: fadeInRight 0.5s;
      background: #1B1B1B;
 }
+
+// !important --- Navbar animation Hack starts
+
+@-webkit-keyframes fadeInRight {
+	0% {
+		opacity: 0;
+		-webkit-transform: translateX(20px);
+	}
+	
+	100% {
+		opacity: 1;
+		-webkit-transform: translateX(0);
+	}
+}
+
+@-moz-keyframes fadeInRight {
+	0% {
+		opacity: 0;
+		-moz-transform: translateX(20px);
+	}
+	
+	100% {
+		opacity: 1;
+		-moz-transform: translateX(0);
+	}
+}
+
+@-o-keyframes fadeInRight {
+	0% {
+		opacity: 0;
+		-o-transform: translateX(20px);
+	}
+	
+	100% {
+		opacity: 1;
+		-o-transform: translateX(0);
+	}
+}
+
+@keyframes fadeInRight {
+	0% {
+		opacity: 0;
+		transform: translateX(20px);
+	}
+	
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+.fadeInRight {
+	-webkit-animation-name: fadeInRight !important;
+	-moz-animation-name: fadeInRight !important;
+	-o-animation-name: fadeInRight !important;
+	animation-name: fadeInRight !important;
+}
+
+// !important --- Navbar animation Hack ends
+
+
 
 .open .dropdown-menu li a {
     color: white;

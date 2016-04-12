@@ -1,3 +1,7 @@
+<!-- a-sense -->
+<ts-ad class="container-fluid text-center row" structure="double"></ts-ad>
+<!-- /a-sense -->
+
 <div class="container">
     <ul class="gb-steps clearfix">
         <li class="steps-arrow steps-arrow-prev">
@@ -222,7 +226,7 @@
                     <div class="form-group row">
                         <label for="video" class="control-label col-sm-2">Video<br><small>(YouTube ID only)</small></label>
                         <div class="col-sm-10">
-                            <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.video">
+                            <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.youtubeId">
                         </div>
                     </div>
                     <div ng-if="isUserAdmin || isUserContentProvider">
@@ -320,3 +324,7 @@
         </div>
     </div>
 </div>
+
+<!-- a-sense -->
+<ts-ad class="text-center container-fluid row" structure="single"></ts-ad>
+<!-- /a-sense -->

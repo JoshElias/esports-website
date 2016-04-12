@@ -45,7 +45,8 @@ module.exports = {
                 'client/vendor/ngstorage/ngStorage.min.js',
                 'client/vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js',
                 'client/vendor/angular-animate/angular-animate.min.js',
-                'client/vendor/angular-iscroll/dist/lib/angular-iscroll.js'
+                'client/vendor/angular-iscroll/dist/lib/angular-iscroll.js',
+                'client/vendor/angular-svg-round-progressbar/build/roundProgress.js'
             ],
             'client/dist/js/app.js': [
                 'client/js/app.js',

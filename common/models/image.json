@@ -6,9 +6,6 @@
   "options": {
     "validateUpsert": true
   },
-  "properties": {},
-  "validations": [],
-  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",
@@ -64,6 +61,5 @@
       "permission": "ALLOW",
       "property": "uploadTeam"
     }
-  ],
-  "methods": {}
+  ]
 }

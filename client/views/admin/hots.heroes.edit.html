@@ -1,14 +1,5 @@
-<div class="panel panel-danger error-modal animated" ng-show="showError">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-        <strong>Unable to update hero</strong>
-    </div>
-    <div class="panel-body">
-        <ul class="error text-danger">
-            <li ng-repeat="error in errors">{{error.msg}}</li>
-        </ul>
-    </div>
-</div>
+<alert-box theme="admin-new"></alert-box>
+
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">

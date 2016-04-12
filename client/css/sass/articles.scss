@@ -160,13 +160,35 @@
 .article-comments h3,
 .article-related h3 { color: #FFF; font-family: 'Open Sans Bold'; }
 
+.article-related h3 {
+    
+    @media screen and (min-width: 1217px) {
+        margin-left: 30px;
+    }
+}
+
 .article-page .article-left {  }
 .article-page .article-right {  }
 
 .article-page .article-deck { width: auto; }
 
 .article-page .article-related {  }
-.article-page .article-related .related { background: rgba(10,10,10,.8); height: 60px; opacity: .8; position: relative; }
+.article-page .article-related .related { 
+    background: rgba(10,10,10,.8); 
+    height: 60px; 
+    opacity: .8; 
+    position: relative;
+    
+    
+    @media screen and (min-width: 1217px ) {
+        
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    
+    }
+    
+}
 .article-page .article-related .related:nth-child(even) { background: rgba(95,95,95,.2); height: 60px; }
 .article-page .article-related .related:hover { opacity: 1; }
 
@@ -273,7 +295,8 @@
             }
             
             &.hots {
-                background-image: url(../img/hots/maps/bgs/base.jpg);
+                background-image: url(../img/backgrounds/hots-article-bg.jpg);
+                background-position: bottom;
             }
             
             &.overwatch {

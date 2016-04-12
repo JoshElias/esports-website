@@ -22,7 +22,6 @@
     },
     "pollId": {}
   },
-  "validations": [],
   "relations": {
     "poll": {
       "type": "belongsTo",
@@ -38,5 +37,8 @@
       "permission": "ALLOW"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Timestamp" : true
+  }
 }

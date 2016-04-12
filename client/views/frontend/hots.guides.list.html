@@ -2,10 +2,10 @@
 <div class="sub-nav-wrapper sticky hidden-xs">
     <div class="container-fluid sub-nav sticky">
         <div class="now-streaming pull-left">
-            
+
         </div>
         <div class="swap-to pull-right">
-            
+
         </div>
         <div class="sub-nav-links">
             <ul>
@@ -39,7 +39,7 @@
                             <div class="hots-top-guide-votes">{{topGuide.voteScore}}</div>
                             <ul class="hots-top-guide-talents clearfix">
                                 <li>
-                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 1).className }}" 
+                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 1).className }}"
                                        ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 1).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 1, dot) }"
@@ -47,7 +47,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 4).className}}" 
+                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 4).className}}"
                                        ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 4).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 4, dot) }"
@@ -55,7 +55,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 7).className}}" 
+                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 7).className}}"
                                        ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 7).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 7, dot) }"
@@ -63,7 +63,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 10).className }}" 
+                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 10).className }}"
                                        ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 10).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 10, dot) }"
@@ -71,7 +71,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 13).className }}" 
+                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 13).className }}"
                                        ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 13).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 13, dot) }"
@@ -79,7 +79,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 16).className }}" 
+                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 16).className }}"
                                        ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 16).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 16, dot) }"
@@ -87,7 +87,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 20).className }}" 
+                                    <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 20).className }}"
                                        ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(topGuide), topGuide, 20).name }}"></a>
                                     <div class="guide-talent-dots hidden-xs hidden-sm">
                                         <div class="guide-talent-dot" ng-class="{ active: activeTalent(topGuide, 20, dot) }"
@@ -100,7 +100,7 @@
                     <div class="col-md-12 col-lg-5">
                         <div class="row-flex-col">
                             <p>{{topGuide.description}}</p>
-                            <a ui-sref="app.hots.guides.guide({ slug: topGuide.slug })" class="btn btn-hots m-t-md"><div class="inner">VIEW GUIDE</div></a>
+                            <a ui-sref="app.hots.guides.guide({ slug: topGuide.slug.url })" class="btn btn-hots m-t-md"><div class="inner">VIEW GUIDE</div></a>
                         </div>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
                     <div class="hots-filters-search">
                         <form ng-submit="searchGuides()">
                             <div class="input-group">
-                                <input type="text" 
+                                <input type="text"
                                        placeholder="Search..."
                                        class="form-control input-dark hots-search" ng-model="filters.search">
                                 <span class="input-group-btn">
@@ -146,7 +146,7 @@
             <div class="hots-list-ts-guides-wrapper">
                 <ul class="hots-guides row no-pad" ng-if="tempostormGuides.length">
                     <li class="col-xs-12 col-sm-6 col-md-6 col-lg-3" ng-repeat="guide in tempostormGuides">
-                        <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide large {{getGuideClass(guide)}}">
+                        <a ui-sref="app.hots.guides.guide({ slug: guide.slug.url })" class="hots-guide large {{getGuideClass(guide)}}">
                             <div class="inner"></div>
                             <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>
                             <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
@@ -158,26 +158,26 @@
                                 <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
                             </div>
                             <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
-                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 1, true).className }}" 
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 1, true).className }}"
                                     ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 1, true).name }}"></li>
-                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 4, true).className }}" 
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 4, true).className }}"
                                     ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 4, true).name }}"></li>
-                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 7, true).className }}" 
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 7, true).className }}"
                                     ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 7, true).name }}"></li>
-                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 10, true).className }}" 
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 10, true).className }}"
                                     ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 10, true).name }}"></li>
-                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 13, true).className }}" 
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 13, true).className }}"
                                     ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 13, true).name }}"></li>
-                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 16, true).className }}" 
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 16, true).className }}"
                                     ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 16, true).name }}"></li>
-                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 20, true).className }}" 
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 20, true).className }}"
                                     ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 20, true).name }}"></li>
                             </ul>
                         </a>
                     </li>
                 </ul>
             </div>
-            
+
             <!-- page flipping -->
             <div pagination="tempostormPagination" class="default"></div>
             <!-- / page flipping -->
@@ -190,7 +190,7 @@
     <!-- guides start -->
     <div class="container-fluid hots-guide-list">
         <div class="container-fluid-max hots-guide-list-inner tri-both">
-            
+
             <div class="hots-list-guides-title clearfix">
                 <div class="hots-mini-filters">
                     <div hots-filter-role filters="filters"></div>
@@ -198,7 +198,7 @@
                     <div class="hots-filters-search">
                         <form ng-submit="searchGuides()">
                             <div class="input-group">
-                                <input type="text" 
+                                <input type="text"
                                        placeholder="Search..."
                                        class="form-control input-dark hots-search" ng-model="filters.search">
                                 <span class="input-group-btn">
@@ -222,11 +222,11 @@
                 <!-- page flipping -->
                 <div pagination="communityPagination" class="default"></div>
                 <!-- / page flipping -->
-                
+
                 <!-- first fullwidth plg -->
                 <!--<ts-ad class="container-fluid text-center m-b-md" structure="single"></ts-ad>-->
                 <!-- first fullwidth plg ends -->
-                
+
                 <!-- guides titles -->
                 <div class="row hots-guides-long-title m-b-sm">
                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
@@ -243,12 +243,12 @@
                     </div>
                 </div>
                 <!-- / guides titles -->
-                
+
                 <!-- guides -->
                 <ul class="hots-guides" ng-if="communityGuides.length">
                     <li ng-repeat="guide in communityGuides">
                         <!-- TODO: Find out why Kaelthas image does not appear on guide -->
-                        <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide long {{getGuideClass(guide)}}">
+                        <a ui-sref="app.hots.guides.guide({ slug: guide.slug.url })" class="hots-guide long {{getGuideClass(guide)}}">
                             <div class="inner"></div>
                             <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>
                             <div class="row row-flex">
@@ -261,19 +261,19 @@
                                 <div class="hidden-xs col-sm-6 col-md-4 col-lg-3">
                                     <div class="row-col">
                                         <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
-                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 1, false).className }}" 
+                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 1, false).className }}"
                                                 ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 1, false).name }}"></li>
-                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 4, false).className }}" 
+                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 4, false).className }}"
                                                 ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 4, false).name }}"></li>
-                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 7, false).className }}" 
+                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 7, false).className }}"
                                                 ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 7, false).name }}"></li>
-                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 10, false).className }}" 
+                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 10, false).className }}"
                                                 ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 10, false).name }}"></li>
-                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 13, false).className }}" 
+                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 13, false).className }}"
                                                 ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 13, false).name }}"></li>
-                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 16, false).className }}" 
+                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 16, false).className }}"
                                                 ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 16, false).name }}"></li>
-                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 20, false).className }}" 
+                                            <li class="talents-icon active {{getGuideClass(guide)}} {{ getTalent(getGuideCurrentHero(guide), guide, 20, false).className }}"
                                                 ng-tooltip data-original-title="{{ getTalent(getGuideCurrentHero(guide), guide, 20, false).name }}"></li>
                                         </ul>
                                     </div>
@@ -299,7 +299,7 @@
                 </ul>
                 <p class="darkbox white p-md" ng-if="!communityGuides.length">There are no guides for the filtering above.</p>
                 <!-- / guides -->
-                
+
                 <!-- first fullwidth plg -->
                 <!--<ts-ad class="container-fluid text-center m-b-sm" structure="single"></ts-ad>-->
                 <!-- first fullwidth plg ends -->
@@ -314,6 +314,6 @@
     <!-- guides end -->
 
     <!-- first fullwidth plg -->
-    <ts-ad class="container-fluid text-center row" structure="single"></ts-ad>
+    <ts-ad class="container-fluid text-center row" structure="double"></ts-ad>
     <!-- first fullwidth plg ends -->
 </div>

@@ -38,7 +38,7 @@
             </div>
             <div class="col-xs-4 col-sm-4 col-md-2">
                 <div class="tc-trait-title">TRAIT</div>
-                <div class="tc-trait-wrapper" ng-click="toggleAbility(getTrait())" ng-class="{ active: getCurrentAbility() == getTrait() }">
+                <div class="tc-trait-wrapper" ng-if="getTrait()" ng-click="toggleAbility(getTrait())" ng-class="{ active: getCurrentAbility() == getTrait() }">
                     <div class="tc-trait">
                         <div class="talents-icon {{getCurrentHero().className}} {{getTrait().className}}{{isLarge}}" talent-icon-lg></div>
                     </div>
@@ -167,7 +167,7 @@
         </div>
             
         <!-- a-sense -->
-        <ts-ad class="m-r-md m-l-md m-t-md" structure="single" theme="clear-plg"></ts-ad>
+<!--        <ts-ad class="m-r-md m-l-md m-t-md" structure="single" theme="clear-plg"></ts-ad>-->
         <!-- /a-sense -->
         
     </div>
