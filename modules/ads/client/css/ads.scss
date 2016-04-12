@@ -149,16 +149,8 @@
     
     .plg-sidebar {
         padding-top: 35px;
-        padding-bottom: 0px;
+        padding-bottom: 35px;
         text-align: center;
-
-		@media (max-width: 768px) {
-			padding-bottom: 35px;
-		}
-
-		&.top-bar {
-			margin: -2px -17px 0px -17px;
-		}
 
         .adblock-img {
           height: 200px;
@@ -172,7 +164,10 @@
 			margin: auto;
 		}
     }
-    
+
+	.top-bar-fix {
+		margin: -2px -17px 0px -17px;
+	}
 }
 
 //*************************************
