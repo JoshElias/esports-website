@@ -358,20 +358,15 @@ module.exports = function(RedbullDraft) {
             // If the draft is official, check if the authorId matches the current uid
             function(draft, seriesCb) {
 
-                console.log("checking official");
                 if(!draft.isOfficial) {
                     return seriesCb(undefined, draft);
                 }
 
-                console.log("checking for req object")
                 var req;
                 if (loopbackContext) {
                     req = loopbackContext.get("req");
                 }
 
-                console.log("checking for valid user Id")
-                console.log("userId", req.accessToken.userId.toString());
-                console.log("draft author Id", draft.authorId.toString());
                 if(!req || !req.accessToken || (req.accessToken.userId.toString() !== draft.authorId.toString())) {
                     var invalidUser = new Error("User id is invalid");
                     invalidUser.statusCode = 401;
@@ -379,7 +374,6 @@ module.exports = function(RedbullDraft) {
                     return finalCb(invalidUser);
                 }
 
-                console.log("userId passed");
                 return seriesCb(undefined, draft);
             },
             // Submit the decks
