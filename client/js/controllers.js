@@ -12925,8 +12925,8 @@ angular.module('app.controllers', ['ngCookies'])
             );
         }
     ])
-    .controller('ForumAddCtrl', ['$scope', '$state', '$window', '$compile', 'LoginModalService', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util',
-        function ($scope, $state, $window, $compile, LoginModalService, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util) {
+    .controller('ForumAddCtrl', ['$scope', '$state', '$window', '$compile', 'LoginModalService', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util', 'ForumThread',
+        function ($scope, $state, $window, $compile, LoginModalService, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util, ForumThread) {
             // thread
             $scope.thread = thread;
 
@@ -12972,8 +12972,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                     ForumPost.create(newPost).$promise
                     .then(function (results) {
-//                        console.log('results:', results);
-                        return $state.transitionTo('app.forum.threads', { thread: $scope.thread.slug.url });
+                        ForumThread.findById({
+                            id: results.forumThreadId
+                        })
+                        .$promise
+                        .then(function (forumThread) {
+                            
+                            return $state.transitionTo('app.forum.threads', { thread: Util.slugify(forumThread.title) });
+                        });
                     })
                     .catch(function (HttpResponse) {
                         console.log("err from froum post:", HttpResponse);
