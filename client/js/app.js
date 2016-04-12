@@ -4796,7 +4796,10 @@ var app = angular.module('app', [
                                                 relation: "author"
                                             },
                                             {
-                                                relation: "relatedArticles"
+                                                relation: "relatedArticles", 
+                                                scope: {
+                                                    include: 'slugs'    
+                                                }
                                             },
                                             {
                                                 relation: 'slugs'
@@ -4807,6 +4810,9 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     data.slug = Util.setSlug(data);
+                                    _.each(data.relatedArticles, function(article) {
+                                        article.slug = Util.setSlug(article);
+                                    });
                                     data.related = data.relatedArticles;
                                     return data;
                                 });
