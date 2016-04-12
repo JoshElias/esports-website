@@ -1454,14 +1454,26 @@ body.admin {
             border: 0px solid transparent;
             line-height: 34px;
             height: 34px;
-           outline: none !important;
+            outline: none !important;
 
-            &:hover {
-                background-color: #2766ad;
+            &:hover,
+            &:focus,
+            &:active {
+                background-color: rgba($ts-blue, 0.9);
             }
+           
         }
     }
     
+    select[multiple] {
+        &.form-control {
+            padding: 0px;
+            
+            option {
+                padding: 8px;
+            }
+        } 
+    }
     
 
     

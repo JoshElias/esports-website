@@ -29,8 +29,8 @@
             </div>
         </div>
     </div>
-    <ul dnd-list="team.teamMembers" class="admin-list padding-none m-b-none">
-        <li class="admin-list-item list-items clearfix" ng-repeat="member in team.teamMembers" 
+    <div dnd-list="team.teamMembers" class="admin-list">
+        <div class="admin-list-item list-items clearfix" ng-repeat="member in team.teamMembers" 
                     dnd-draggable="member"
                     dnd-moved="updateDND(team.teamMembers, $index, member)"
                     dnd-disable-if="team.teamMembers.length < 2">
@@ -47,11 +47,11 @@
                     </div>
                 </div>
             </div>
-        </li>
-        <div class="list-group-item" ng-if="!team.teamMembers.length">
+        </div>
+        <div class="admin-list-item placeholder-text" ng-if="!team.teamMembers.length">
             There are no members yet.
         </div>
-    </ul>
+    </div>
     <div class="panel-footer clearfix">
     </div>
 </div>
