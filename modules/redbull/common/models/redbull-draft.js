@@ -17,15 +17,13 @@ module.exports = function(RedbullDraft) {
     function filterOfficialDrafts(ctx, deckInstance, finalCb) {
         var User = RedbullDraft.app.models.user;
 
-        var req = ctx.req;
-
         // Do we have a user Id
-        if (!req.accessToken || !req.accessToken.userId) {
+        if (!ctx.req || !ctx.req.accessToken || !ctx.req.accessToken.userId) {
             return applyFilter();
         }
-        var userId = req.accessToken.userId.toString();
+        var userId = ctx.req.accessToken.userId.toString();
 
-        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], ctx.req, function (err, isInRoles) {
             if(err) return finalCb(err);
             if(isInRoles.none) return applyFilter();
 
@@ -57,6 +55,7 @@ module.exports = function(RedbullDraft) {
 
                     return User.isInRoles(userId,
                         ["$owner"],
+                        ctx.req,
                         {modelClass: "redbullDraft", modelId: result.id},
                         function (err, isInRoles) {
                             if(err) return resultCb(err);
@@ -81,6 +80,7 @@ module.exports = function(RedbullDraft) {
 
                 return User.isInRoles(userId,
                     ["$owner"],
+                    ctx.req,
                     {modelClass: "redbullDraft", modelId: ctx.result.id},
                     function (err, isInRoles) {
                         if(err) return finalCb(err);
