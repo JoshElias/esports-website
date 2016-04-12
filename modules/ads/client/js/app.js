@@ -41,6 +41,61 @@ angular.module('tsAdSense', [])
         }
     ]
 )
+.value('moduleTpl', (tpl !== './') ? tpl + 'views/asense/client/views/' : 'dist/views/asense/client/views/')
+.service('adSizer', ['$window', function ($window) {
+    //sizes are just a multi dimentional array based off the structure defined in the main template
+    var sizes = {
+        //the arrays are structured such as
+        // lg [w, h]
+        // md [w, h]
+        // sm [w, h]
+        // xs [w, h]
+        single : [
+            ['90', '728'], //lg
+            ['90', '728'], //md
+            ['90', '728'], //sm
+            ['250', '300'] //xs
+        ],
+        double : [
+            ['90', '728'], //lg
+            ['90', '728'], //md
+            ['90', '728'], //sm
+            ['250', '300'] //xs
+        ],
+        sidebar: [
+            ['336', '280'], //lg
+            ['336', '280'], //md
+            ['336', '280'], //sm
+            ['250', '300']  //xs
+        ]
+    };
+
+    //getting the size of the window at load time
+    function getCurSize () {
+        var width = $('body').innerWidth();
+        if (width < 768) {
+            //xs
+            return 3;
+        } else if (width < 993) {
+            //sm
+            return 2;
+        } else if (width < 1199) {
+            //md
+            return 1;
+        } else {
+            //lg
+            return 0;
+        }
+    }
+
+    return function (h, w, struct) {
+        var size = getCurSize();
+        var h = h || sizes[struct][size][0];
+        var w = w || sizes[struct][size][1];
+
+        return [h, w];
+    }
+}])
 .value('moduleTpl', (tpl !== './') ? tpl + 'views/ads/client/views/' : 'dist/views/ads/client/views/')
 .controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', 'UserRoleService', 'LoopBackAuth',
     function ($scope, $state, $window, User, EventService, $timeout, UserRoleService, LoopBackAuth) {
@@ -50,8 +105,6 @@ angular.module('tsAdSense', [])
         var e = $(".ad");
         var r = UserRoleService.getRoles();
         var role = (!_.isUndefined(r)) ? r.$premium : undefined;
-        //var role = true;
-        var canShowAds = !!window.canshowads;
 
         if (!_.isNull(LoopBackAuth.currentUserData))
             $scope.user = LoopBackAuth.currentUserData.username;
@@ -217,7 +270,7 @@ angular.module('tsAdSense', [])
         }
     }
 }])
-.directive('tsAd', ['moduleTpl', function (moduleTpl) {
+.directive('tsAd', ['moduleTpl', 'adSizer', function (moduleTpl, adSizer) {
     return {
         restrict: 'E',
         replace: true,
@@ -238,7 +291,14 @@ angular.module('tsAdSense', [])
             
             return moduleTpl + network + '/a.' + tmp + '.html';
         },
+        link: function (scope, el, attrs) {
+            var sizes = adSizer(attrs.h, attrs.w, attrs.structure);
+
+            scope.h = sizes[0];
+            scope.w = sizes[1];
+        },
         controller: 'tsAdCtrl'
+
     }
 }])
 ;
