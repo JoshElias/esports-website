@@ -101,7 +101,7 @@
 
                 <div class="panel-body collapse" id="collapseArchive{{player.id}}">
 
-                    <div class="col-xs-12 m-b-md" ng-repeat="draft in player.inactiveDrafts track by $index | orderBy: '-draftStartTime'">
+                    <div class="col-xs-12 m-b-md" ng-repeat="draft in player.inactiveDrafts track by $index">
                         <div class="col-xs-12">
                             <h3 class="pull-left">Draft {{$index + 1}}</h3>
                             <span class="pull-right">
