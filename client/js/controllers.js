@@ -5675,8 +5675,8 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
     }])
-    .controller('AdminHOTSSnapshotBuildCtrl', ['$scope', '$state', '$compile', 'hotsSnapshot', 'HOTSSnapshot', 'HotsSnapshot', 'AlertService',
-        function ($scope, $state, $compile, hotsSnapshot, HOTSSnapshot, HotsSnapshot, AlertService) {
+    .controller('AdminHOTSSnapshotBuildCtrl', ['$scope', '$state', '$compile', 'Util', 'hotsSnapshot', 'HOTSSnapshot', 'HotsSnapshot', 'AlertService',
+        function ($scope, $state, $compile, Util, hotsSnapshot, HOTSSnapshot, HotsSnapshot, AlertService) {
             $scope.snapshot = new HOTSSnapshot(hotsSnapshot);
             $scope.loaded = ($scope.snapshot.id) ? true : false;
 
@@ -5716,6 +5716,23 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                 });
+            }
+
+            $scope.slugifyUrl = function (str) {
+                if (!$scope.snapshot.slugs[0] && !$scope.snapshot.slugs[0].linked)
+                    return;
+
+                $scope.snapshot.slugs[0].slug = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + slugify(str);
+            };
+
+            $scope.toggleLinked = function () {
+                $scope.snapshot.slugs[0].linked = !$scope.snapshot.slugs[0].linked;
+
+                return $scope.slugifyUrl($scope.snapshot.title);
+            };
+
+            function slugify (str) {
+                return Util.slugify(str);
             }
 
             $scope.loadPrevious = function () {
@@ -5764,6 +5781,13 @@ angular.module('app.controllers', ['ngCookies'])
                         val.previousTiers.push(val.tier);
                     });
                     cleanData.snapNum = ++cleanData.snapNum;
+
+                    _.each(cleanData.slugs, function (val) {
+                        var temp = val.slug.split("-");
+                        var str = "meta-snapshot-" + cleanData.snapNum + "-" + temp.splice(3,temp.length).toString().replace(",", "-");
+
+                        val.slug = str;
+                    });
 
                     $scope.snapshot.load(cleanData);
                     $scope.loaded = true;

@@ -91,7 +91,7 @@
                             >
                                 <div class="tier-hero-heading clearfix" ng-click="triggerAnimation(hero)" role="button" data-toggle="collapse" ng-href="#collapseHero-{{hero.id}}" aria-expanded="false" aria-controls="collapseHero-{{hero.id}}">
                                     <h4>{{hero.hero.name}}</h4>
-                                    <a ui-sref="app.hots.guides.guide({ slug: hero.guides[0].guide.slugs[0].slug })"
+                                    <a ng-click="goToGuide($event, hero.guides[0].slug.slug)"
                                        target="_blank"
                                        class="hero-button hidden-xs"
                                        ng-if="hero.guides[0].slug"

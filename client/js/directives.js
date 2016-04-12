@@ -2499,29 +2499,6 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'E',
         templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
-        controller: ['$scope', 'Util', function ($scope, Util) {
-            //$scope.snapshot = $scope.$parent.snapshot;
-
-            $scope.toggleLinked = function () {
-                $scope.snapshot.slugs[0].linked = !$scope.snapshot.slugs[0].linked;
-
-                return $scope.slugifyUrl($scope.snapshot.title);
-            };
-
-            $scope.slugifyUrl = function (str) {
-                console.log(str);
-                console.log($scope.snapshot.slugs[0]);
-
-                if (!$scope.snapshot.slugs[0] && !$scope.snapshot.slugs[0].linked)
-                    return;
-
-                $scope.snapshot.slugs[0].slug = slugify(str);
-            };
-
-            function slugify (str) {
-                return Util.slugify(str);
-            }
-        }]
     }
 })
 .directive('hotsSnapshotAuthors', ['$compile', 'HOTS', function ($compile, HOTS) {
@@ -2602,7 +2579,7 @@ angular.module('app.directives', ['ui.load'])
                 var snapAuths = $scope.snapshot.authors;
                 var allAuthors = _.union(aBuffer, snapAuths);
                 var toDelete = _.find(allAuthors, function (auth) { return auth.user.id == authorId });
-                var msg = "Are you sure you want to remove " + toDelete.user.username + "?"
+                var msg = "Are you sure you want to remove " + toDelete.user.username + "?";
 
                 $scope.warning(msg, function () {
                     $scope.$apply(function () {
