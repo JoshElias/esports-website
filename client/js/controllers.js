@@ -2045,7 +2045,10 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: {title: true, id: true, photoNames: true}
+                        fields: {title: true, id: true, photoNames: true},
+                        include: {
+                            relation: "slugs"
+                        }
                     }
                 };
 
@@ -2063,8 +2066,12 @@ angular.module('app.controllers', ['ngCookies'])
                 Article.find(options)
                     .$promise
                     .then(function (data) {
-                    $scope.articles = data;
-                    if (cb !== undefined) { return cb(); }
+                        _.each(data, function(article) {
+                            article.slug = Util.setSlug(article);
+                        });
+                    
+                        $scope.articles = data;
+                        if (cb !== undefined) { return cb(); }
                 });
             }
 
@@ -2592,7 +2599,10 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: {title: true, id: true, photoNames: true}
+                        fields: {title: true, id: true, photoNames: true},
+                        include: {
+                            relation: "slugs"
+                        }
                     }
                 };
 
@@ -2610,6 +2620,9 @@ angular.module('app.controllers', ['ngCookies'])
                 Article.find(options)
                     .$promise
                     .then(function (data) {
+                        _.each(data, function(article) {
+                            article.slug = Util.setSlug(article);
+                        });
                       $scope.articles = data;
                       if (cb !== undefined) { return cb(data); }
                 });
