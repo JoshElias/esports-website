@@ -10,12 +10,19 @@
     "orderNum": {
       "type": "number"
     },
-    "cardId": {},
-    "redbullPackId": {},
-    "redbullExpansionId": {},
-    "redbullDraftId": {}
+    "cardId": {
+      "index": 1
+    },
+    "redbullPackId": {
+      "index": 1
+    },
+    "redbullExpansionId": {
+      "index": 1
+    },
+    "redbullDraftId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "card": {
       "type": "belongsTo",
@@ -44,7 +51,6 @@
       "principalId": "$everyone",
       "permission": "DENY"
     },
-
     {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
@@ -86,5 +92,7 @@
       "accessType": "WRITE"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

@@ -1,4 +1,4 @@
-<alert-box theme="admin"></alert-box>
+<alert-box theme="admin-new"></alert-box>
 
 <div class="panel panel-danger error-modal animated" ng-show="showError">
     <div class="panel-heading">
@@ -33,27 +33,38 @@
             </form>
         </div>
     </div>
-    <ul class="list-group" dnd-list="heroes" dnd-allowed-types="['hero']">
-        <li class="list-group-item admin-list-item clearfix"
+    <div class="admin-list" dnd-list="heroes" dnd-allowed-types="['hero']">
+        <div class="admin-list-item list-items clearfix"
             ng-repeat="hero in filtered = (heroes | filter:search)"
             dnd-draggable="hero"
             dnd-moved="updateDND(heroes, $index)"
             dnd-disable-if="heroes.length < 2 || saving || search.length"
             dnd-type="'hero'"
         >
-            <span>{{hero.heroName}}</span>
-            <div class="pull-right btn-toolbar">
-                <button ui-sref="app.admin.overwatch.heroes.edit({ heroID: hero.id })" class="btn btn-default" ng-disabled="saving">Edit</button>
-                <button class="btn btn-danger" ng-click="deleteHero(hero)" ng-disabled="saving">Delete</button>
+            <div class="list-accent-div">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <span class="list-item-height">{{hero.heroName}}</span>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="pull-right btn-toolbar list-item-height">
+                            <button ui-sref="app.admin.overwatch.heroes.edit({ heroID: hero.id })" class="btn btn-default" ng-disabled="saving">Edit</button>
+                            <button class="btn btn-danger" ng-click="deleteHero(hero)" ng-disabled="saving">Delete</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </li>
-        <li class="list-group-item" ng-show="!heroes.length">
+        </div>
+            
+        
+        
+        <div class="admin-list-item placeholder-text" ng-show="!heroes.length">
             There are no heroes yet.
-        </li>
-        <li class="list-group-item b-t-none" ng-show="heroes.length && filtered && !filtered.length">
+        </div>
+        <div class="admin-list-item placeholder-text" ng-show="heroes.length && filtered && !filtered.length">
             That search returned no results.
-        </li>
-    </ul>
+        </div>
+    </div>
     <div class="panel-footer clearfix">
         <div class="pull-left">
             <form class="form-inline" ng-submit="searchHeroes()" novalidate>

@@ -1,4 +1,4 @@
-<alert-box theme="admin"></alert-box>
+<alert-box theme="admin-new"></alert-box>
 <div class="panel panel-danger error-modal animated" ng-show="showError">
     <div class="panel-heading">
         <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
@@ -15,27 +15,40 @@
     <div class="panel-heading clearfix">
         <h3 class="pull-left">Tournament Whitelist</h3>
     </div>
-    <div class="panel-body">
+    <div class="panel-body p-t-none p-b-none">
         <div class="form-group">
-            <label for="intro" class="col-sm-2 control-label">Users</label>
-            <div class="col-sm-10 wrapper-none">
+            <div class="col-sm-12 padding-none">
 
-                <ul class="list-group m-b-md" ng-if="draftPlayers.length">
-                    <li ng-repeat="user in draftPlayers" class="list-group-item">
-                        {{user.username}} - {{user.email}}<span class="pull-right button-block">
-                      <button ng-click="removeUserPrompt(user)"><i class="fa fa-close"></i></button></span>
+                <ul class="admin-list padding-none m-b-none" ng-if="draftPlayers.length">
+                    <li ng-repeat="user in draftPlayers" class="admin-list-item gradient-add">
+                        <div class="list-accent-div">
+                            <div class="clearfix z-5 full-div">
+                                <div class="pull-left">{{user.username}} - {{user.email}}</div>
+                                <div class="pull-right">
+                                    <button type="button" class="btn btn-remove" ng-click="removeUserPrompt(user)">
+                                        <i class="fa fa-close"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
-                <button class="btn btn-green btn-rounded m-r-sm" ng-click="addUserWnd()">
-                    <i class="fa fa-plus"></i> Add User
-                </button>
+                
+                <p class="wrapper-lg white" ng-if="!draftPlayers.length">You have not whitelisted any users for the tournament yet. Click the add <strong>Add User</strong> button to add users.</p>
+                <div class="admin-list m-b-none">
+                    <div class="admin-list-item gradient-add admin-list-item">
+                        <div class="list-accent-div">
+                            <a ng-click="userAddPrompt()" class="add-element"><i class="fa fa-plus-circle"></i>Add User</a>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="updateSettings()">Update Settings</button>
+        <div class="col-sm-12">
+            <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid" ng-click="updateSettings()">Update Whitelist</button>
         </div>
     </div>
     </form>

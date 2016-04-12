@@ -1,4 +1,4 @@
-<alert-box theme="admin"></alert-box>
+<alert-box theme="admin-new"></alert-box>
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
@@ -9,13 +9,6 @@
                 to <strong>{{  vodPagination.page * vodPagination.perpage > vodPagination.total ? vodPagination.total : vodPagination.page * vodPagination.perpage }}</strong> 
                 of <strong>{{ vodPagination.total }}</strong>
             </span>
-<!--
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
-            </span>
--->
             <div pagination="vodPagination" theme="admin" class="admin"></div>
         </div>
         <div class="pull-left">
@@ -35,32 +28,30 @@
             </form>
         </div>
     </div>
-    <div class="list-group">
-        <div class="list-group-item articles-list-item clearfix" ng-repeat="vod in vods | orderBy : '-date'">
-            <div class="row">
-                <div class="col-sm-6">
-                  <img class="admin-vod-list" ng-if="vod.youtubeId" ng-src="http://img.youtube.com/vi/{{vod.youtubeId}}/0.jpg">
-                  <strong class="admin-vod-list" ng-if="!vod.youtubeId">Playlist - </strong>
-<!--
-                    <youtube-video class="admin-vod-list" ng-if="vod.youtubeId" video-url="vod.youtubeId"></youtube-video>
-                    <youtube-video class="admin-vod-list" ng-if="vod.youtubeVars.list" player-vars="vod.youtubeVars"></youtube-video>
--->
-                    <span>{{vod.subtitle}} - {{ vod.displayDate | date}}</span>
-                </div>
-                <div class="col-sm-6">
-                    <div class="pull-right btn-toolbar">
-                        <a ui-sref="app.admin.vod.edit({ id: vod.id })" class="btn btn-default">Edit</a>
-                        <button class="btn btn-danger" ng-click="deleteVod(vod)">Delete</button>
+    <ul class="admin-list padding-none m-b-none">
+        <li class="admin-list-item list-items clearfix" ng-repeat="vod in vods | orderBy : '-date'">
+            <div class="list-accent-div">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <img class="admin-vod-list" ng-if="vod.youtubeId" style="max-height: 42px;" ng-src="http://img.youtube.com/vi/{{vod.youtubeId}}/0.jpg">
+                        <strong class="admin-vod-list" ng-if="!vod.youtubeId">Playlist - </strong>
+                        <span class="list-item-height">{{vod.subtitle.substr(0, 50)}} - {{ vod.displayDate | date}}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="pull-right btn-toolbar list-item-height">
+                            <a ui-sref="app.admin.vod.edit({ id: vod.id })" class="btn btn-default">Edit</a>
+                            <button type="button" class="btn btn-danger" ng-click="deleteVod(vod)">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="list-group-item" ng-if="!vods.length && !search.length">
-            There are no vods yet.
-        </div>
-        <div class="list-group-item b-t-none" ng-if="search.length && vodPagination.total == 0">
-            That search returned no results.
-        </div>
+        </li>
+    </ul>
+    <div class="admin-list-item" ng-if="!vods.length && !search.length">
+        There are no vods yet.
+    </div>
+    <div class="admin-list-item b-t-none" ng-if="search.length && vodPagination.total == 0">
+        That search returned no results.
     </div>
     <div class="panel-footer clearfix">
         <div class="pull-right">

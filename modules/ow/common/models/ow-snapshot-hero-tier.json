@@ -1,0 +1,83 @@
+{
+  "name": "owSnapshotHeroTier",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "number"
+    },
+    "previousTiers": {
+      "type": ["number"],
+      "default": []
+    },
+    "burstScore": {
+      "type": "number"
+    },
+    "pushScore": {
+      "type": "number"
+    },
+    "surviveScore": {
+      "type": "number"
+    },
+    "scaleScore": {
+      "type": "number"
+    },
+    "utilityScore": {
+      "type": "number"
+    },
+    "orderNum": {
+      "type": "number",
+      "index": 1
+    },
+    "owHeroId": {
+      "index": 1
+    },
+    "owSnapshotId": {
+      "index": 1
+    }
+  },
+  "relations": {
+      "snapshot": {
+          "type": "belongsTo",
+          "model": "owSnapshot",
+          "foreignKey": "owSnapshotId"
+      },
+      "heros": {
+          "type": "belongsTo",
+          "model": "owHero",
+          "foreignKey": "owHeroId"
+      }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ]
+}

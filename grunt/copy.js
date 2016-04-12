@@ -12,12 +12,5 @@ module.exports = {
         src: ['modules/**/client/audio/**/*'],
         dest: 'client/dist/audio',
         filter: 'isFile'
-    },
-    //jsAssets: {
-    //    expand: true,
-    //    flatten: true,
-    //    src: ['client/js/**/*', '!client/js/**/*.{js,map}'],
-    //    dest: 'client/dist/js',
-    //    filter: 'isFile'
-    //}
+    }
 };

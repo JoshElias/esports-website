@@ -1,0 +1,22 @@
+<div>
+    <div class="clearfix">
+        <form ng-submit="updateSearch()" class="search-styles">
+            <input type="text" ng-model="search" class="form-control input-sm pull-right" placeholder="search"><i class="fa fa-search"></i>
+        </form>
+    </div>
+    <div class="text-center big-spin" ng-if="loading">
+        <i class="fa fa-refresh fa-spin fa-5x"></i>
+    </div>
+    <ul class="list-group m-b-none" ng-if="!loading && heroes.length">
+        <li class="clearfix" ng-class="{ active: heroExistsById(hero.id) }" ng-repeat="hero in heroes">
+            <div class="pull-right">
+                <button type="button" class="btn btn-success" ng-click="heroAdd(hero)" ng-if="!heroExistsById(hero.id)">Add</button>
+                <button type="button" class="btn btn-danger" ng-click="heroDeleteById(hero.id)" ng-if="heroExistsById(hero.id)">Remove</button>
+            </div>
+            <div class="authour pull-left">
+                {{hero.name}}
+            </div>
+        </li>
+    </ul>
+    <div pagination="pagination" theme="modal-admin" class="modal-admin"></div>
+</div>

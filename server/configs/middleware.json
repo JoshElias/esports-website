@@ -7,7 +7,7 @@
     },
     "loopback#token":{},
     "loopback#favicon": {
-        "params": "$!../favicon.ico"
+        "params": "./server/favicon.ico"
     }
   },
   "initial": {

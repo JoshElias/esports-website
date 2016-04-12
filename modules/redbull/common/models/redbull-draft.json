@@ -42,16 +42,21 @@
     },
     "isOfficial": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "index": 1
     },
     "isActive": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "index": 1
     },
-    "authorId": {},
-    "redbullDraftSettingsId": {}
+    "authorId": {
+      "index": 1
+    },
+    "redbullDraftSettingsId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "cards": {
       "type": "hasMany",
@@ -63,19 +68,19 @@
       "type": "hasMany",
       "model": "redbullPackCard",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "packs": {
       "type": "hasMany",
       "model": "redbullPack",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "decks": {
       "type": "hasMany",
       "model": "redbullDeck",
       "foreignKey": "redbullDraftId",
-      "isChild": true
+      "DestroyOnDelete": true
     },
     "archivedCards": {
       "type": "hasMany",
@@ -165,7 +170,6 @@
       "permission": "ALLOW",
       "property": "submitDecks"
     },
-
     {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
@@ -210,5 +214,9 @@
     }
 
   ],
-  "methods": {}
+  "mixins": {
+    "DestroyOnDelete": true,
+    "Scope": true,
+    "Timestamp" : true
+  }
 }

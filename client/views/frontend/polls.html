@@ -1,4 +1,7 @@
 <div class="bg-override polls">
+    
+     <ts-ad class="text-center container-fluid row z-5" structure="double"></ts-ad>
+    
     <div class="container container-dark">
 
         <img class="poll-photo-banner pos-rl img-responsive" src="https://cdn-tempostorm.netdna-ssl.com/img/shirts.jpg"/>
@@ -44,11 +47,11 @@
                         </ul>
                     </div>
                 </div>
-                <!-- / deck -->    
+                <!-- / deck -->  
                 
-                <!-- a-sense -->
-                <ts-ad class="text-center m-l-md m-r-md" structure="single"></ts-ad>
-                <!-- / a-sense -->
+                <div class="row">
+                <ts-ad class="padding-none" w="300" h="600" structure="sidebar" theme="clear-plg"></ts-ad>
+                </div>
 
             </div>
             <!-- / article right -->
@@ -60,9 +63,7 @@
                     <p>There are currently no active polls.</p>
                 </div>
                 
-                <!-- a-sense -->
-                <ts-ad class="text-center container-fluid m-r-md" structure="single"></ts-ad>
-                <!-- / a-sense -->
+
 
                 <div ng-repeat="poll in pollsMain | orderBy: '-createdDate'">
                     <div class="poll" ng-class="{ 'poll-img' : poll.pollType == 'img'}" ng-if="poll.pollType == 'img' && !isDoneVoting(poll.id)">
@@ -171,3 +172,5 @@
         <!-- / article page -->
     </div>
 </div>
+    
+ <ts-ad class="text-center container-fluid row" structure="double"></ts-ad>

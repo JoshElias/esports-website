@@ -1,9 +1,9 @@
-<alert-box theme="admin"></alert-box>
+<alert-box theme="admin-new"></alert-box>
 
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal" novalidate>
     <div class="panel-heading">
-        Edit Video of the Day
+        <h3 class="pull-left">Edit Video of the Day</h3>
     </div>
     <div class="panel-body">
         <div class="form-group">
@@ -60,8 +60,8 @@
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || !vod.displayDate || fetching" ng-click="updateVod(vod)">
+        <div class="col-xs-12">
+            <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid || !vod.displayDate || fetching" ng-click="updateVod(vod)">
                 <span ng-if="!fetching">Edit Video of the Day</span>
                 <span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
             </button>

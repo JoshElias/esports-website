@@ -1,0 +1,67 @@
+{
+  "name": "guideTier",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "heroTierId": {
+      "index": 1
+    },
+    "guideId": {
+      "index": 1
+    },
+    "slug": {
+      "type": "object"
+    },
+    "orderNum": {
+      "type": "number",
+      "index": 1
+    }
+  },
+  "relations": {
+    "heroTier": {
+      "type": "belongsTo",
+      "model": "heroTier",
+      "foreignKey": "heroTierId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "talents": {
+      "type": "hasMany",
+      "model": "guideTierTalent",
+      "foreignKey": "guideTierId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

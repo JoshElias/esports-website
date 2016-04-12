@@ -1,6 +1,7 @@
 var loopback = require("loopback");
 var async = require("async");
-var utils = require("./../../../../lib/utils");
+var Promise = require("bluebird");
+
 
 
 module.exports = function(RedbullDraft) {
@@ -16,15 +17,13 @@ module.exports = function(RedbullDraft) {
     function filterOfficialDrafts(ctx, deckInstance, finalCb) {
         var User = RedbullDraft.app.models.user;
 
-        var req = ctx.req;
-
         // Do we have a user Id
-        if (!req.accessToken || !req.accessToken.userId) {
+        if (!ctx.req || !ctx.req.accessToken || !ctx.req.accessToken.userId) {
             return applyFilter();
         }
-        var userId = req.accessToken.userId.toString();
+        var userId = ctx.req.accessToken.userId.toString();
 
-        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullAdmin", "$admin"], ctx.req, function (err, isInRoles) {
             if(err) return finalCb(err);
             if(isInRoles.none) return applyFilter();
 
@@ -56,6 +55,7 @@ module.exports = function(RedbullDraft) {
 
                     return User.isInRoles(userId,
                         ["$owner"],
+                        ctx.req,
                         {modelClass: "redbullDraft", modelId: result.id},
                         function (err, isInRoles) {
                             if(err) return resultCb(err);
@@ -80,6 +80,7 @@ module.exports = function(RedbullDraft) {
 
                 return User.isInRoles(userId,
                     ["$owner"],
+                    ctx.req,
                     {modelClass: "redbullDraft", modelId: ctx.result.id},
                     function (err, isInRoles) {
                         if(err) return finalCb(err);
@@ -128,6 +129,7 @@ module.exports = function(RedbullDraft) {
     }
 
     function checkForOfficialDraft(clientData, finalCb) {
+
         var User = RedbullDraft.app.models.user;
 
         var notOfficialErr = new Error("You're not authorized to start an official draft");
@@ -160,7 +162,7 @@ module.exports = function(RedbullDraft) {
         clientData.authorId = userId;
 
         // Check if this is an official draft or not
-        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], req, function (err, isInRoles) {
             if (err) return finalCb(err);
 
             // If the user tried to start an official draft without authorization
@@ -227,11 +229,11 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         var currentTime = Date.now();
 
-        RedbullDraft.findById(draftId, {fields:{id:true}}, function(err, draft) {
+        return RedbullDraft.findById(draftId, {fields:{id:true}}, function(err, draft) {
             if(err) return finalCb(err);
             else if(!draft) {
                 var noDraftErr = new Error("Unable to find draft with id", draftId);
@@ -247,8 +249,6 @@ module.exports = function(RedbullDraft) {
                 return finalCb(err);
             });
         });
-
-        return finalCb.promise;
     };
 
 
@@ -260,9 +260,9 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
-        RedbullDraft.findById(draftId, {
+        return RedbullDraft.findById(draftId, {
             include: ["settings"]
         }, function (err, draft) {
             if (err) return finalCb(err);
@@ -292,8 +292,6 @@ module.exports = function(RedbullDraft) {
                 return finalCb(undefined, draftJSON);
             });
         });
-
-        return finalCb.promise;
     };
 
     function newDraftState(draftSettings) {
@@ -315,43 +313,80 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
-        var RedbullDeck = RedbullDraft.app.models.redbullDeck;
+        // Set the request if available
+        var loopbackContext = loopback.getCurrentContext();
+        var req;
+        if (loopbackContext && loopbackContext.active && loopbackContext.active.http){
+            loopbackContext.set("req", loopbackContext.active.http.req);
+        }
 
-        // Does the given draft exist and have official set?
-        RedbullDraft.findById(draftId,
-            {
-                include: [
+        return async.waterfall([
+            // Find the draft
+            function(seriesCb) {
+                RedbullDraft.findById(draftId,
                     {
-                        relation: "cards",
-                        scope: {
-                            fields: {
-                                id: true,
-                                playerClass: true,
-                                rarity: true
+                        include: [
+                            {
+                                relation: "cards",
+                                scope: {
+                                    fields: {
+                                        id: true,
+                                        playerClass: true,
+                                        rarity: true
+                                    }
+                                }
+                            },
+                            {
+                                relation: "settings"
                             }
-                        }
+                        ]
                     },
-                    {
-                        relation: "settings"
+                    function (err, draft) {
+                        if (err) return finalCb(err);
+                        else if (!draft) {
+                            var noDraftErr = new Error("No draft found for id", draftId);
+                            noDraftErr.statusCode = 404;
+                            noDraftErr.code = 'DRAFT_NOT_FOUND';
+                            return finalCb(noDraftErr);
+                        }
+
+                        return seriesCb(undefined, draft);
                     }
-                ]
+                );
             },
-            function (err, draft) {
-                if (err) return finalCb(err);
-                else if (!draft) {
-                    var noDraftErr = new Error("No draft found for id", draftId);
-                    noDraftErr.statusCode = 404;
-                    noDraftErr.code = 'DRAFT_NOT_FOUND';
-                    return finalCb(noDraftErr);
+            // If the draft is official, check if the authorId matches the current uid
+            function(draft, seriesCb) {
+
+                if(!draft.isOfficial) {
+                    return seriesCb(undefined, draft);
                 }
 
-                return RedbullDeck.saveDraftDecks(draft, clientDecks, options, finalCb);
-            }
-        );
+                var req;
+                if (loopbackContext) {
+                    req = loopbackContext.get("req");
+                }
 
-        return finalCb.promise;
+                if(!req || !req.accessToken || (req.accessToken.userId.toString() !== draft.authorId.toString())) {
+                    var invalidUser = new Error("User id is invalid");
+                    invalidUser.statusCode = 401;
+                    invalidUser.code = 'INVALID_USER_ID';
+                    return finalCb(invalidUser);
+                }
+
+                return seriesCb(undefined, draft);
+            },
+            // Submit the decks
+            function(draft, seriesCb) {
+                var RedbullDeck = RedbullDraft.app.models.redbullDeck;
+                return RedbullDeck.saveDraftDecks(draft, clientDecks, options, seriesCb);
+            }
+        ],
+        function(err, results) {
+            if(err) return finalCb(err);
+            else return finalCb(undefined, results);
+        });
     };
 
 
@@ -364,7 +399,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;
@@ -372,14 +407,14 @@ module.exports = function(RedbullDraft) {
     };
 
     RedbullDraft.getDraftPlayers = function (finalCb) {
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;
         var Role = RedbullDraft.app.models.Role;
         var RoleMapping = RedbullDraft.app.models.RoleMapping;
 
-        async.waterfall([
+        return async.waterfall([
             // Get the redbullPlayer role
             function(seriesCb) {
                 return Role.findOne({where:{name: "$redbullPlayer"}}, function(err, role) {
@@ -410,8 +445,6 @@ module.exports = function(RedbullDraft) {
                 }, seriesCb);
             }
         ], finalCb);
-
-        return finalCb.promise;
     };
 
     RedbullDraft.removeDraftPlayer = function (uid, options, finalCb) {
@@ -420,7 +453,7 @@ module.exports = function(RedbullDraft) {
             finalCb = options;
             options = undefined;
         }
-        finalCb = finalCb || utils.createPromiseCallback();
+        finalCb = finalCb || new Promise();
 
         // Add the redbull role to this user
         var User = RedbullDraft.app.models.user;

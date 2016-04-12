@@ -1,0 +1,31 @@
+@import 'ts-colors.scss';
+
+.ts-admin-styles { // ---- bookend class ----
+
+    //*************************************
+    // Admin Cards - only used in admin
+    //*************************************
+
+    .form-inline > .form-group > .input-group > .input-group-addon { padding: 0px; border: 0px; }
+
+    /* cards */
+    .card-list-item span { position: relative; line-height: 50px; }
+    //.card-list-item:nth-child(even) { background: #FDFDFD; }
+    //.card-list-item:hover { background: #e6f7ff; }
+
+    .card-list-item .rarity { margin-top: 18px; margin-right: 20px; }
+
+    /* rarity circles */
+    .rarity { width: 14px; height: 14px; border-radius: 50%; border: 0px solid transparent; }
+    .rarity.basic { background: #FFF; }
+    .rarity.common { background: #d3ddd5; }
+    .rarity.rare { background: #359cff; }
+    .rarity.epic { background: #e649fc; }
+    .rarity.legendary { background: #ffb629; }
+
+    /* class circles */
+    .class { width: 30px; height: 30px; background: #000 url('../img/class-icons.png') no-repeat; }
+
+
+
+}

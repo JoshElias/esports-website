@@ -28,7 +28,7 @@
                         <li class="dropdown-grid" ng-class="{active:$state.includes('app.hots') || $state.includes('app.hs') || $state.includes('app.hs.snapshot') || $state.includes('app.overwatch')}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Games<div class="nav-accent-div"></div><span class="caret"></span></a>
                             <div class="dropdown-grid-wrapper">
-                                <ul class="dropdown-menu no-border-radius col-xs-12 col-sm-7 col-md-8 col-lg-7 clearfix">
+                                <ul class="dropdown-menu fadeInRight no-border-radius col-xs-12 col-sm-7 col-md-8 col-lg-7 clearfix">
                                     <li>
                                         <ul class="col-xs-12 col-md-4 game-list-border">
                                             <a ui-sref="app.hs.home"><img ng-src="{{app.cdn}}img/hs-menu.jpg" class="section-img"></a>
@@ -44,9 +44,10 @@
                                             <a ui-sref="app.hots.home"><img ng-src="{{app.cdn}}img/hots-menu.jpg" class="section-img"></a>
                                             <a class="game-head-link" ui-sref="app.hots.home" ng-class="{active:$state.includes('app.hots.home')}" class="dropdown-header">Heroes of the Storm</a>
                                             <li class="sub">
-                                                <a ui-sref="app.hots.guides.list" ng-class="{active:$state.includes('app.hots.guides')}" class="gradient-add">Guides<div class="list-accent-div"></div></a>
-                                                <a ui-sref="app.hots.guideBuilder.step1" class="hidden-xs gradient-add" ng-class="{active:$state.includes('app.hots.guideBuilder')}">Guide Builder<div class="list-accent-div"></div></a>
-                                                <a ui-sref="app.hots.talentCalculator.redirect" ng-class="{active:$state.includes('app.hots.talentCalculator')}" class="gradient-add">Talent Calculator<div class="list-accent-div"></div></a>
+                                                <!--<a ui-sref="app.hots.snapshots.redirect" class="gradient-add" ng-class="{active:$state.includes('app.hots.snapshots')}">Meta Snapshot<div class="list-accent-div"></div></a>-->
+                                                <a ui-sref="app.hots.guides.list" class="gradient-add" ng-class="{active:$state.includes('app.hots.guides')}">Guides<div class="list-accent-div"></div></a>
+                                                <a ui-sref="app.hots.guideBuilder.step1" class="gradient-add hidden-xs" ng-class="{active:$state.includes('app.hots.guideBuilder')}">Guide Builder<div class="list-accent-div"></div></a>
+                                                <a ui-sref="app.hots.talentCalculator.redirect" class="gradient-add" ng-class="{active:$state.includes('app.hots.talentCalculator')}">Talent Calculator<div class="list-accent-div"></div></a>
                                             </li>
                                         </ul>
                                         <ul class="col-xs-12 col-md-4">
@@ -80,11 +81,9 @@
                                     </a>
                                     <ul class="dropdown-menu no-border-radius no-padding">
                                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{user.username}}">Profile</a></li>
-                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}"
-                                          ng-show="currentRoles.isAdmin">
+                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentRoles.isAdmin || currentRoles.isRedbullAdmin">
                                           <a ui-sref="app.admin.dashboard">Admin</a>
-                                        </li>
-                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin"><a ui-sref="app.admin.dashboard">Redbull Admin</a></li>
+                                      </li>
                                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                                     </ul>
                                 </li>
@@ -105,13 +104,10 @@
                       </span>
                       <span class="hidden-sm hidden-md">{{currentUser.username}}</span><span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu no-border-radius no-padding dropdown-user-login">
+                    <ul class="dropdown-menu no-border-radius fadeInRight no-padding dropdown-user-login">
                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{currentUser.username}}">Profile</a></li>
-                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentRoles.isAdmin">
+                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentRoles.isAdmin || currentRoles.isRedbullAdmin">
                         <a ui-sref="app.admin.dashboard">Admin</a>
-                      </li>
-                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isRedbullAdmin && !currentRoles.isAdmin">
-                        <a ui-sref="app.admin.dashboard">Redbull Admin</a>
                       </li>
                       <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                     </ul>

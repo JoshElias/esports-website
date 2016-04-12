@@ -1,0 +1,82 @@
+{
+  "name": "talent",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "index": 1
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "className": {
+      "type": "string",
+      "required": true,
+      "index": 1
+    }
+  },
+  "relations": {
+    "abilities": {
+      "type": "hasMany",
+      "model": "ability",
+      "foreignKey": "talentId",
+      "through": "heroTalent",
+      "keyThrough": "abilityId"
+    },
+    "guides": {
+      "type": "hasMany",
+      "model": "guide",
+      "foreignKey": "talentId",
+      "through": "guideTalent",
+      "keyThrough": "guideId"
+    },
+    "heroes": {
+      "type": "hasMany",
+      "model": "hero",
+      "foreignKey": "talentId",
+      "through": "heroTalent",
+      "keyThrough": "heroId"
+    },
+    "guideTierTalent": {
+      "type": "belongsTo",
+      "model": "guideTierTalent",
+      "foreignKey": "talentId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "mixins": {
+    "Scope": true,
+    "Timestamp" : true
+  }
+}

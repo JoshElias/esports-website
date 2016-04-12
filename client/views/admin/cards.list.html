@@ -1,13 +1,15 @@
-<alert-box theme="admin"></alert-box>
+<span class="ts-admin-styles"> <!-- Temporary remove when hero section is redesign -->
+
+<alert-box theme="admin-new"></alert-box>
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <div class="pull-right" ng-if="cards">
-            <span class="m-r-sm">
+        <div class="pull-right pagination-margin" ng-if="cards">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ cardPagination.total === 0 ? cardPagination.total : ((cardPagination.page - 1) * cardPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  cardPagination.page * cardPagination.perpage > cardPagination.total ? cardPagination.total : cardPagination.page * cardPagination.perpage }}</strong> 
-                of <strong>{{ cardPagination.total }}</strong>
+                {{ cardPagination.total === 0 ? cardPagination.total : ((cardPagination.page - 1) * cardPagination.perpage) + 1 }} 
+                to {{  cardPagination.page * cardPagination.perpage > cardPagination.total ? cardPagination.total : cardPagination.page * cardPagination.perpage }} 
+                of {{ cardPagination.total }}
             </span>
             <div pagination="cardPagination" theme="admin" class="admin"></div>
         </div>
@@ -17,7 +19,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" ng-click="searchCards()" 
+                        <button type="submit" class="btn btn-default btn-blue" ng-click="searchCards()" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -44,30 +46,39 @@
             </form>
         </div>
     </div>
-    <div class="list-group">
+    <div class="admin-list">
 <!--        <div class="list-group-item card-list-item clearfix" ng-repeat="card in filtered = (cards | filterAll:search | filter:{ expansion: filterExpansion, playerClass: filterClass, cardType: filterType, rarity: filterRarity }) | orderBy:'name' | startFrom:pagination.pageStart() | limitTo:pagination.perpage">-->
-            <div class="list-group-item card-list-item clearfix" ng-repeat="card in cards">
-            <div class="rarity {{card.rarity | lowercase}} pull-left"></div>
-                <span>{{card.name}}</span>
-            <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.hearthstone.cards.edit({ cardID: card.id })" class="btn btn-default">Edit</a>
-                <button class="btn btn-danger" ng-click="deleteCard(card)">Delete</button>
+            <div class="admin-list-item list-items clearfix" ng-repeat="card in cards">
+                
+                <div class="list-accent-div">
+                    
+                <div class="row">
+                    <div class="col-xs-6 card-list-item">
+                        <div class="rarity {{card.rarity | lowercase}} pull-left"></div>
+                        <span class="list-item-height">{{card.name}}</span>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="pull-right btn-toolbar list-item-height">
+                            <a ui-sref="app.admin.hearthstone.cards.edit({ cardID: card.id })" class="btn btn-default">Edit</a>
+                            <button class="btn btn-danger" ng-click="deleteCard(card)">Delete</button>
+                        </div>
+                    </div>
+                </div>   
             </div>
-        </div>
-        <div class="list-group-item" ng-show="!cards.length">
+        <div class="admin-list-item placeholder-text" ng-show="!cards.length">
             There are no cards yet.
         </div>
-        <div class="list-group-item b-t-none" ng-show="cards.length && filtered && !filtered.length">
+        <div class="admin-list-item placeholder-text" ng-show="cards.length && filtered && !filtered.length">
             That search returned no results.
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="pull-right" ng-if="cards">
-            <span class="m-r-sm">
+        <div class="pull-right pagination-margin" ng-if="cards">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ cardPagination.total === 0 ? cardPagination.total : ((cardPagination.page - 1) * cardPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  cardPagination.page * cardPagination.perpage > cardPagination.total ? cardPagination.total : cardPagination.page * cardPagination.perpage }}</strong> 
-                of <strong>{{ cardPagination.total }}</strong>
+                {{ cardPagination.total === 0 ? cardPagination.total : ((cardPagination.page - 1) * cardPagination.perpage) + 1 }} 
+                to {{  cardPagination.page * cardPagination.perpage > cardPagination.total ? cardPagination.total : cardPagination.page * cardPagination.perpage }} 
+                of {{ cardPagination.total }}
             </span>
             <div pagination="cardPagination" theme="admin" class="admin"></div>
         </div>
@@ -77,7 +88,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" ng-click="searchCards()"
+                        <button type="submit" class="btn btn-default btn-blue" ng-click="searchCards()"
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
