@@ -74,6 +74,10 @@
         text-align: center;
         
         @include ts-div;
+
+		&.top-bar-fix {
+			margin: -2px -17px 0px -17px;
+		}
         
         &.plg-dbl {
             @media (max-width: 768px) {
@@ -164,10 +168,6 @@
 			margin: auto;
 		}
     }
-
-	.top-bar-fix {
-		margin: -2px -17px 0px -17px;
-	}
 }
 
 //*************************************
