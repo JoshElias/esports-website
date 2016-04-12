@@ -8310,8 +8310,6 @@ angular.module('app.controllers', ['ngCookies'])
                 updateDeck(deck);
                 return false;
             };
-            
-            console.log('wtf');
 
             // Updates Deck, Mulligan, and Matchup Models
             function updateDeck(deckSubmitted) {
@@ -8334,11 +8332,6 @@ angular.module('app.controllers', ['ngCookies'])
                 delete mulligan.mulligansWithoutCoin;
 
               });
-
-//              console.log('deck before update:', deck);
-//              console.log('WOOOOOOOOOOORK');
-                
-                console.log('deck:', angular.copy(deck));
 
                 var updatedDeck;
                 async.series([

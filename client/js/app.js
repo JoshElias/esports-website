@@ -1294,7 +1294,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
 
                                     return data;
@@ -2939,7 +2938,6 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    console.log('data:', data);
                                     data.slug = Util.setSlug(data);
                                     data.voteScore = Util.tally(data.votes, 'direction');
                                     return data;
@@ -3474,7 +3472,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
-                            forumCategories: ['$q', 'ForumCategory', 'ForumThread', 'Util', function($q, ForumCategory, ForumThread, Util) {
+                            forumCategories: ['$q', 'ForumCategory', 'ForumPost', 'ForumThread', 'Util', function($q, ForumCategory, ForumPost, ForumThread, Util) {
 								// Alex's Resolve
                                 var d = $q.defer();
                                 async.waterfall([
@@ -3527,6 +3525,9 @@ var app = angular.module('app', [
                                                            ForumThread.forumPosts({
                                                                id: thread.id,
                                                                filter: {
+                                                                   where: {
+                                                                       isActive: true
+                                                                   },
                                                                    fields: {
                                                                        id: true,
                                                                        title: true,
@@ -3560,9 +3561,23 @@ var app = angular.module('app', [
 
                                                        },
                                                        function (paraCB) {
-
-                                                           ForumThread.forumPosts.count({
-                                                                id: thread.id
+//                                                           ForumThread.forumPosts.count({
+//                                                               id: thread.id,
+//                                                               isActive: true
+//                                                            }).$promise
+//                                                            .then(function (postCount) {
+//                                                                thread.forumPostsCount = postCount.count;
+//                                                                return paraCB();
+//                                                            })
+//                                                            .catch(function (err) {
+//                                                                return paraCB(err);
+//                                                            });
+                                                           
+                                                           ForumPost.count({
+                                                               where: {
+                                                                   forumThreadId: thread.id,
+                                                                   isActive: true
+                                                               }
                                                             }).$promise
                                                             .then(function (postCount) {
                                                                 thread.forumPostsCount = postCount.count;
@@ -3615,8 +3630,6 @@ var app = angular.module('app', [
                                             });
                                         });
                                     });
-
-                                    console.log(results);
 
                                     return d.resolve(results);
                                 });
@@ -3902,7 +3915,6 @@ var app = angular.module('app', [
                                     data.slug = Util.setSlug(data);
                                     data.forumThread.slug = Util.setSlug(data.forumThread);
 
-                                    console.log(data);
                                     return data;
                                 })
                                 .catch(function (err) {
