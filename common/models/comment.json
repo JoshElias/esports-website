@@ -9,32 +9,44 @@
   "properties": {
     "text": {
       "type": "string",
-      "validators": [
-        "spam"
-      ]
+      "Validate": ["spam"]
     },
     "votes": {
       "type": [
         "object"
       ]
     },
-    "createdDate": {
-      "type": "date",
-      "required": true
-    },
     "voteScore": {
       "type": "number"
     },
-    "authorId": {},
-    "articleId": {},
-    "guideId": {},
-    "deckId": {},
-    "snapshotId": {},
-    "forumPostId": {},
-    "parentCommentId": {},
-    "redbullDeckId": {}
+    "articleId": {
+      "index": 1
+    },
+    "guideId": {
+      "index": 1
+    },
+    "deckId": {
+      "index": 1
+    },
+    "snapshotId": {
+      "index": 1
+    },
+    "hotsSnapshotId": {
+      "index": 1
+    },
+    "forumPostId": {
+      "index": 1
+    },
+    "parentCommentId": {
+      "index": 1
+    },
+    "redbullDeckId": {
+      "index": 1
+    },
+    "overwatchSnapshotId": {
+      "index": 1
+    }
   },
-  "validations": [],
   "relations": {
     "article": {
       "type": "belongsTo",
@@ -60,6 +72,16 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
+    },
+    "owSnapshot": {
+      "type": "belongsTo",
+      "model": "overwatchSnapshot",
+      "foreignKey": "overwatchSnapshotId"
+    },
+    "hotsSnapshot": {
+      "type": "belongsTo",
+      "model": "hotsSnapshot",
+      "foreignKey": "hotsSnapshotId"
     },
     "forumPost": {
       "type": "belongsTo",
@@ -95,5 +117,10 @@
       "property": "*"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true,
+    "Validate": true,
+    "Authored": true,
+    "Timestamp" : true
+  }
 }

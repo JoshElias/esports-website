@@ -6,12 +6,12 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <div class="pull-right m-t-lg" ng-if="snapshots">
-            <span class="m-r-sm">
+        <div class="pull-right" ng-if="snapshots">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ snapshotPagination.total === 0 ? snapshotPagination.total : ((snapshotPagination.page - 1) * snapshotPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  snapshotPagination.page * snapshotPagination.perpage > snapshotPagination.total ? snapshotPagination.total : snapshotPagination.page * snapshotPagination.perpage }}</strong> 
-                of <strong>{{ snapshotPagination.total }}</strong>
+                {{ snapshotPagination.total === 0 ? snapshotPagination.total : ((snapshotPagination.page - 1) * snapshotPagination.perpage) + 1 }} 
+                to {{  snapshotPagination.page * snapshotPagination.perpage > snapshotPagination.total ? snapshotPagination.total : snapshotPagination.page * snapshotPagination.perpage }} 
+                of {{ snapshotPagination.total }}
             </span>
             <div pagination="snapshotPagination" theme="admin" class="admin"></div>
         </div>
@@ -33,14 +33,14 @@
         </div>
     </div>
     <div class="admin-list">
-        <div class="admin-list-item snapshot-list clearfix" ng-repeat="snapshot in snapshots | orderBy : '-snapNum'">
+        <div class="admin-list-item list-items clearfix" ng-repeat="snapshot in snapshots | orderBy : '-snapNum'">
             <div class="list-accent-div">
                 <div class="row">
-                    <div class="col-sm-6">
-                        <span class="snapshot-list-item">Meta Snapshot {{snapshot.snapNum}} - {{snapshot.title}}</span>
+                    <div class="col-xs-12 col-sm-9">
+                        <span class="list-item-height">Meta Snapshot {{snapshot.snapNum}} - {{snapshot.title}}</span>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="pull-right btn-toolbar snapshot-list-item">
+                    <div class="col-xs-12 col-sm-3">
+                        <div class="pull-right btn-toolbar list-item-height">
                             <a ui-sref="app.admin.hearthstone.snapshots.edit({ snapshotID: snapshot.id })" class="btn btn-default">Edit</a>
                             <button class="btn btn-danger" ng-click="deleteSnapshot(snapshot)">Delete</button>
                         </div>
@@ -57,11 +57,11 @@
     </div>
     <div class="panel-footer clearfix">
         <div class="pull-right" ng-if="snapshots">
-            <span class="m-r-sm">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ snapshotPagination.total === 0 ? snapshotPagination.total : ((snapshotPagination.page - 1) * snapshotPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  snapshotPagination.page * snapshotPagination.perpage > snapshotPagination.total ? snapshotPagination.total : snapshotPagination.page * snapshotPagination.perpage }}</strong> 
-                of <strong>{{ snapshotPagination.total }}</strong>
+                {{ snapshotPagination.total === 0 ? snapshotPagination.total : ((snapshotPagination.page - 1) * snapshotPagination.perpage) + 1 }} 
+                to {{  snapshotPagination.page * snapshotPagination.perpage > snapshotPagination.total ? snapshotPagination.total : snapshotPagination.page * snapshotPagination.perpage }} 
+                of {{ snapshotPagination.total }}
             </span>
 <!--
             <span class="btn-group">

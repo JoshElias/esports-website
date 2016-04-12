@@ -391,7 +391,19 @@
     .filters-maps ul li { list-style: none; display: inline-block; margin: 0 10px 10px 0; }
     .filters-maps ul li:last-child { margin-right: 0px; }
 
-    .filters-maps ul li button { display:inline-block; width:55px; height:55px; border-radius: 50%; border: 2px solid #FFF; overflow:hidden; background-repeat: no-repeat; background: url('../img/hots/maps/hots-map-sprite.png'); white-space: nowrap; text-indent: -99999px; outline: none; transition: transform .25s ease-in-out, opacity .25s ease-in-out; }
+    .filters-maps ul li button { 
+        display:inline-block; 
+        width:55px; 
+        height:55px; 
+        border-radius: 50%; 
+        border: 2px solid #FFF; 
+        overflow:hidden; 
+        background-repeat: no-repeat; 
+        background: url('../img/hots/maps/hots-map-sprite.png'); 
+        white-space: nowrap; 
+        text-indent: -99999px; 
+        outline: none; 
+        transition: transform .25s ease-in-out, opacity .25s ease-in-out; }
 
     .filters-maps ul li button.not-selected { opacity: .3; transform: scale(.9,.9); }
 
@@ -404,17 +416,7 @@
     //.filters-maps ul li button.skytemple { background-position: -344px -2px; }
     //.filters-maps ul li button.tomb-of-the-spider-queen { background-position: -401px -2px; }
 
-    .filters-maps ul li button.battlefield-of-eternity {width:55px; height:55px; background-position: -2px -2px}
-    .filters-maps ul li button.blackhearts-bay {width:55px; height:55px; background-position: -59px -2px}
-    .filters-maps ul li button.cursed-hollow {width:55px; height:55px; background-position: -116px -2px}
-    .filters-maps ul li button.dragon-shrine {width:55px; height:55px; background-position: -173px -2px}
-    .filters-maps ul li button.garden-of-terror {width:55px; height:55px; background-position: -230px -2px}
-    .filters-maps ul li button.haunted-mines {width:55px; height:55px; background-position: -287px -2px}
-    .filters-maps ul li button.infernal-shrine {width:55px; height:55px; background-position: -344px -2px}
-    .filters-maps ul li button.sky-temple {width:55px; height:55px; background-position: -401px -2px}
-    .filters-maps ul li button.towers-of-doom {width:55px; height:55px; background-position: -458px -2px}
-    .filters-maps ul li button.tomb-of-the-spider-queen {width:55px; height:55px; background-position: -515px -2px}
-
+    // ----------------- Specific map filters moved to hots maps -----------------------------
 
 
     //*************************************
@@ -498,54 +500,3 @@
 // HOTS NEW GUIDE TEMP
 
 
-
-
-.hots-styles .hots-guide-styles-new {
-
-    .guide-hero-image.abathur {width:75px; height:75px; background-position: -2px -2px}
-    .guide-hero-image.anub-arak {width:75px; height:75px; background-position: -2px -79px}
-    .guide-hero-image.artanis {width:75px; height:75px; background-position: -79px -2px}
-    .guide-hero-image.arthas {width:75px; height:75px; background-position: -79px -79px}
-    .guide-hero-image.azmodan {width:75px; height:75px; background-position: -156px -2px}
-    .guide-hero-image.brightwing {width:75px; height:75px; background-position: -156px -79px}
-    .guide-hero-image.chen {width:75px; height:75px; background-position: -233px -2px}
-    .guide-hero-image.cho {width:75px; height:75px; background-position: -233px -79px}
-    .guide-hero-image.diablo {width:75px; height:75px; background-position: -310px -2px}
-    .guide-hero-image.etc {width:75px; height:75px; background-position: -310px -79px}
-    .guide-hero-image.falstad {width:75px; height:75px; background-position: -387px -2px}
-    .guide-hero-image.gall {width:75px; height:75px; background-position: -387px -79px}
-    .guide-hero-image.gazlowe {width:75px; height:75px; background-position: -464px -2px}
-    .guide-hero-image.illidan {width:75px; height:75px; background-position: -464px -79px}
-    .guide-hero-image.jaina {width:75px; height:75px; background-position: -541px -2px}
-    .guide-hero-image.johanna {width:75px; height:75px; background-position: -541px -79px}
-    .guide-hero-image.kaelthas {width:75px; height:75px; background-position: -618px -2px}
-    .guide-hero-image.kerrigan {width:75px; height:75px; background-position: -618px -79px}
-    .guide-hero-image.kharazim {width:75px; height:75px; background-position: -695px -2px}
-    .guide-hero-image.leoric {width:75px; height:75px; background-position: -695px -79px}
-    .guide-hero-image.lili {width:75px; height:75px; background-position: -772px -2px}
-    .guide-hero-image.lunara {width:75px; height:75px; background-position: -772px -79px}
-    .guide-hero-image.malfurion {width:75px; height:75px; background-position: -849px -2px}
-    .guide-hero-image.morales {width:75px; height:75px; background-position: -849px -79px}
-    .guide-hero-image.muradin {width:75px; height:75px; background-position: -926px -2px}
-    .guide-hero-image.murky {width:75px; height:75px; background-position: -926px -79px}
-    .guide-hero-image.nazeebo {width:75px; height:75px; background-position: -1003px -2px}
-    .guide-hero-image.nova {width:75px; height:75px; background-position: -1003px -79px}
-    .guide-hero-image.raynor {width:75px; height:75px; background-position: -1080px -2px}
-    .guide-hero-image.rehgar {width:75px; height:75px; background-position: -1080px -79px}
-    .guide-hero-image.rexxar {width:75px; height:75px; background-position: -1157px -2px}
-    .guide-hero-image.sgthammer {width:75px; height:75px; background-position: -1157px -79px}
-    .guide-hero-image.sonya {width:75px; height:75px; background-position: -1234px -2px}
-    .guide-hero-image.stitches {width:75px; height:75px; background-position: -1234px -79px}
-    .guide-hero-image.sylvanas {width:75px; height:75px; background-position: -1311px -2px}
-    .guide-hero-image.tassadar {width:75px; height:75px; background-position: -1311px -79px}
-    .guide-hero-image.the-butcher {width:75px; height:75px; background-position: -1388px -2px}
-    .guide-hero-image.thelostvikings {width:75px; height:75px; background-position: -1388px -79px}
-    .guide-hero-image.thrall {width:75px; height:75px; background-position: -1465px -2px}
-    .guide-hero-image.tychus {width:75px; height:75px; background-position: -1465px -79px}
-    .guide-hero-image.tyrael {width:75px; height:75px; background-position: -1542px -2px}
-    .guide-hero-image.tyrande {width:75px; height:75px; background-position: -1542px -79px}
-    .guide-hero-image.uther {width:75px; height:75px; background-position: -1619px -2px}
-    .guide-hero-image.valla {width:75px; height:75px; background-position: -1619px -79px}
-    .guide-hero-image.zagara {width:75px; height:75px; background-position: -1696px -2px}
-    .guide-hero-image.zeratul {width:75px; height:75px; background-position: -1696px -79px}
-}

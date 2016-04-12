@@ -9,42 +9,49 @@
         </ul>
     </div>
 </div>
-<div class="panel panel-default br-none">
+
+<div class="panel panel-default br-none form-horizontal">
     <form name="form" role="form" class="form-horizontal">
-    <div class="panel-heading">
-        Edit Map
-    </div>
-    <div class="panel-body">
-        <div class="row form-group">
-            <label for="title" class="col-sm-2 control-label">Name</label>
-            <div class="col-sm-10">
-                <input type="text" id="name" name="name" class="form-control" ng-model="map.name" required>
+         <div class="panel-heading  wrapper-md clearfix">
+            <div class="row">
+                <div class="col-xs-12 panel-label p-r-none">
+                    <label class="control-label pull-left">
+                        <h3>Edit Map</h3>
+                    </label>
+                </div>
             </div>
         </div>
-        <div class="row form-group">
-            <label for="description" class="col-sm-2 control-label">Description</label>
-            <div class="col-sm-10">
-                <textarea id="description" name="description" class="form-control" ng-model="map.description" required></textarea>
+        <div class="panel-body">
+            <div class="row form-group m-b-xs">
+                <label for="title" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" id="name" name="name" class="form-control" ng-model="map.name" required>
+                </div>
+            </div>
+            <div class="row form-group m-b-xs">
+                <label for="description" class="col-sm-2 control-label">Description</label>
+                <div class="col-sm-10">
+                    <textarea id="description" name="description" class="form-control" ng-model="map.description" required></textarea>
+                </div>
+            </div>
+            <div class="row form-group m-b-xs">
+                <label for="className" class="col-sm-2 control-label">CSS Class</label>
+                <div class="col-sm-10">
+                    <input type="text" id="className" name="className" class="form-control" ng-model="map.className" required>
+                </div>
+            </div>
+            <div class="row form-group m-b-xs">
+                <label for="active" class="col-sm-2 control-label">Active</label>
+                <div class="col-sm-10">
+                    <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in mapActive" ng-model="map.isActive" required></select>
+                </div>
             </div>
         </div>
-        <div class="row form-group">
-            <label for="className" class="col-sm-2 control-label">CSS Class</label>
-            <div class="col-sm-10">
-                <input type="text" id="className" name="className" class="form-control" ng-model="map.className" required>
+        <div class="panel-footer clearfix">
+            <div class="col-sm-10 col-sm-offset-2">
+                <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid" ng-click="editMap()">Update Map</button>
             </div>
         </div>
-        <div class="row form-group">
-            <label for="active" class="col-sm-2 control-label">Active</label>
-            <div class="col-sm-10">
-                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in mapActive" ng-model="map.isActive" required></select>
-            </div>
-        </div>
-    </div>
-    <div class="panel-footer clearfix">
-        <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="editMap()">Update Map</button>
-        </div>
-    </div>
     </form>
-    </div>
 </div>
+

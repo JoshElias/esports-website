@@ -1,4 +1,8 @@
-<div class="container">
+<!-- a-sense -->
+<ts-ad class="container-fluid text-center row" structure="double"></ts-ad>
+<!-- /a-sense -->
+
+<div class="container m-t-lg">
     <ul class="gb-steps clearfix">
         <li class="steps-arrow steps-arrow-prev">
             <button ng-click="prevStep()">
@@ -53,10 +57,6 @@
             </button>
         </li>
     </ul>
-
-    <!-- a-sense -->
-    <ts-ad class="container-fluid text-center m-t-md" structure="double"></ts-ad>
-    <!-- /a-sense -->
 </div>
 <div class="container" ng-show="step === 2">
     <div class="guide-text hero-select"></div>
@@ -94,7 +94,8 @@
                         <ul class="gb-talents-icons clearfix">
                             <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: 'orderNum'">
                                 <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" 
-                                   ng-click="guide.toggleTalent(hero, talent)" hots-talent hero="hero.hero" talent="talent" tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
+                                   ng-click="guide.toggleTalent(hero, talent)" 
+                                   hots-talent hero="hero.hero" talent="talent" tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
                             </li>
                         </ul>
                     </li>
@@ -222,7 +223,7 @@
                     <div class="form-group row">
                         <label for="video" class="control-label col-sm-2">Video<br><small>(YouTube ID only)</small></label>
                         <div class="col-sm-10">
-                            <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.video">
+                            <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.youtubeId">
                         </div>
                     </div>
                     <div ng-if="isUserAdmin || isUserContentProvider">
@@ -322,5 +323,5 @@
 </div>
 
 <!-- a-sense -->
-<ts-ad class="container text-center center" structure="single"></ts-ad>
+<ts-ad class="text-center container-fluid row" structure="single"></ts-ad>
 <!-- /a-sense -->

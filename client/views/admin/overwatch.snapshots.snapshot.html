@@ -1,0 +1,511 @@
+<alert-box theme="admin-new"></alert-box>
+
+<div class="panel panel-default br-none">
+    <form name="form" role="form" class="form-horizontal" 
+          autocomplete="on" novalidate>
+        
+        <div class="panel-heading wrapper-md clearfix">
+
+            <h3 class="pull-left">
+                <span ng-if="mode === 'add'">Add</span>
+                <span ng-if="mode === 'edit'">Edit</span> Meta Snapshot
+            </h3>
+
+            <button type="button" 
+                    ng-click="snapshot.loadPreviousPrompt()" 
+                    ng-if="mode === 'add' && !snapshot.loaded" 
+                    ng-disabled="snapshot.loading" 
+                    class="btn admin-btn-blue pull-right m-r-sm ">
+                Load Previous<i class="fa fa-refresh fa-spin m-l-sm" ng-if="snapshot.loading"></i>
+            </button>
+
+            <div class="form-group pull-left">
+                <label for="title" class="control-label pull-left snap-num-title">#</label>
+                <div class="wrapper-none pull-left">
+                    <input class="form-control snap-num"
+                           type="text" ng-model="snapshot.snapNum" 
+                           ng-keyup="snapshot.setSlug()">
+                </div>
+            </div>
+            
+        </div> <!--panel header ends -->
+        
+    <div class="panel-body padding-none p-t-none p-b-none flex-check">
+        <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
+            
+            <ul class="edit-nav m-b-md">
+                <li class="pull-left" ng-class="{selected: page==='general'}">
+                    <a href="#" ng-click="page = 'general'" >General</a>
+                </li>
+                <li class="pull-left" ng-class="{selected: page==='authors'}">
+                    <a href="#" ng-click="page = 'authors'" >Authors</a>
+                </li>
+                <li class="pull-left" ng-class="{selected: page==='tiers'}">
+                    <a href="#" ng-click="page = 'tiers'" >Tier List</a>
+                </li>
+            </ul><!-- general nav ends-->
+            
+            
+            <!-- general section -->
+            <div ng-show="page === 'general'" class="col-sm-12">
+                
+                <!-- start title -->
+                <div class="form-group snap-title-group">
+                    <label for="title" class="control-label pull-left">Title</label>
+                    <div class="wrapper-none">
+                        <input id="title" name="title" 
+                               class="form-control wide-input" 
+                               ng-model="snapshot.title"
+                               ng-keyup="snapshot.setSlug()"
+                               autocomplete="off" required>
+                    </div>
+                </div><!-- end title -->
+                
+                <!--URL starts -->
+                <div class="form-group">
+                    <label for="slug" class="control-label pull-left">URL</label>
+                    <div class="wrapper-none">
+                        <div class="input-group pull-left">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" 
+                                        ng-class="{active: snapshot.slug.linked}" 
+                                        ng-click="snapshot.slugToggleLink()">
+                                    <i class="fa" ng-class="{'fa-link': snapshot.slug.linked, 'fa-unlink': !snapshot.slug.linked}"></i>
+                                </button>
+                            </span>
+                            <input type="text" id="slug" name="slug" 
+                                   class="form-control wide-input" 
+                                   ng-model="snapshot.slug.url" 
+                                   ng-init="snapshot.setSlug()" 
+                                   ng-readonly="snapshot.slug.linked" required>
+                        </div>
+                    </div>
+                </div><!-- end form-group -->
+                
+                <!-- image starts -->
+                <div class="form-group">
+                    <label for="snapshotPhoto" class="control-label">
+                        Snapshot Image
+                    </label>
+                    <div class="">
+                        
+                        <input type="hidden" id="snapshotPhotoSquare" 
+                               name="snapshotPhotoSquare" value="" 
+                               ng-model="snapshot.photoNames.square">
+                        
+                        <input type="hidden" id="snapshotPhotoSmall" 
+                               name="snapshotPhotoSmall" value="" 
+                               ng-model="snapshot.photoNames.small">
+                        
+                        <input type="hidden" id="snapshotPhotoMedium" 
+                               name="snapshotPhotoMedium" value="" 
+                               ng-model="snapshot.photoNames.medium">
+                        
+                        <input type="hidden" id="snapshotPhotoLarge" 
+                               name="snapshotPhotoLarge" value=""
+                               ng-model="snapshot.photoNames.large">
+                        
+                        <div class="photo-input">
+                            <div class="upload-thumbnail upload-thumbnail-article">
+                                
+                                <div class="upload-drop" 
+                                     ng-show="snapshot.photoNames.large === ''" 
+                                     ng-file-drop="snapshot.photoUpload($files)" 
+                                     ng-file-drag-over-class="active">
+                                    Drop image here
+                                </div>
+                                
+                                <img ng-src="{{snapshot.getImage()}}" alt="" 
+                                     ng-show="snapshot.photoNames.large !== ''">
+                                
+                            </div><!-- end upload-thumbnail -->
+                            
+                            <div class="btn-toolbar">
+                                <button class="btn btn-change" 
+                                        ng-file-select="snapshot.photoUpload($files)" 
+                                        onclick="this.value=null" accept="image/*">
+                                    <span ng-show="snapshot.photoNames.large === ''">Select image</span>
+                                    <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
+                                </button>
+                                <a href="#" class="btn btn-danger pull-right"
+                                   ng-click="snapshot.removeImage()" 
+                                   ng-show="snapshot.photoNames.large !== ''">
+                                    Remove image
+                                </a>
+                            </div><!-- end btn-toolbar -->
+                            
+                        </div><!-- end photo-input -->
+                    </div>
+                </div><!-- end form-group -->
+                
+                <!-- Is active starts -->
+                <div class="form-group m-b-lg">
+                    <button class="btn btn-default control-btn"
+                            ng-class="{'active': snapshot.isActive}"
+                            ng-click="snapshot.isActive = !snapshot.isActive"
+                            ng-mouseover="activeHover = true"
+                            ng-mouseleave="activeHover = false">
+                        <span ng-if="snapshot.isActive && activeHover">disable</span>
+                        <span ng-if="!snapshot.isActive && activeHover">enable</span>
+
+                        <span ng-if="!snapshot.isActive && !activeHover">inactive</span>
+                        <span ng-if="snapshot.isActive && !activeHover">active</span>
+                    </button>
+                </div>
+                
+            </div><!-- end general-page -->
+            
+            <!-- authors nav -->
+            <div ng-show="page === 'authors'" class="author-section">
+                <div class="form-group">
+                    <div class="wrapper-none">
+                        <div class="panel neg-margin panel-default">
+                            <div class="panel-body">
+                                
+                                <ul class="admin-list m-b-none" ng-if="snapshot.authors.length!=0">
+                                    <li ng-repeat="author in snapshot.authors | orderBy: 'user.username'"
+                                        class="admin-list-item gradient-add admin-list-item" 
+                                        ng-class="{ active: snapshot.activeAuthor === author }" 
+                                        ng-click="snapshot.setActiveAuthor(author)">
+                                    
+                                        <div class="list-accent-div">    
+                                            <span class="full-div">{{author.user.username}}</span>
+                                            
+                                            <div class="btn-group pull-right">
+                                                <button type="button" class="btn btn-remove btn-xs"
+                                                        ng-click="$event.stopPropagation(); snapshot.authorDeletePrompt(author)">
+                                                    <i class="fa fa-close"></i>
+                                                </button>
+                                            </div>
+                                        </div><!-- end list-accent -->
+                                    </li>
+                                </ul>
+                                
+                                <div class="panel-body">
+                                    <div class="admin-list m-b-none">
+                                        <div class="admin-list-item gradient-add admin-list-item">
+                                            <div class="list-accent-div">
+                                                <a ng-click="snapshot.authorAddPrompt()"
+                                                   class="add-element">
+                                                    <i class="fa fa-plus-circle"></i>Add Author
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- end panel-body -->
+                                
+                            </div><!-- end panel-body -->
+                        </div><!-- end panel-default -->
+                    </div>
+                </div><!-- end form-group -->
+            </div><!-- end author-page -->
+            
+            <!-- tiers nav -->
+            <div ng-show="page === 'tiers'" class="tier-section">
+                <div class="form-group">
+                    <div class="panel">
+                        <div class="tier-panel wrapper-none" 
+                             ng-repeat="tier in snapshot.tiers track by tier.tier" 
+                             ng-if="snapshot.tiers.length">
+                            
+                            <div class="clearfix tier-top"  
+                                 ng-class="{ active: snapshot.activeDeck && snapshot.activeDeck.tier === tier.tier }">
+
+                                <a class="" role="button" data-toggle="collapse"
+                                   href="#collapse{{tier.tier}}" aria-expanded="false" 
+                                   aria-controls="collapse{{tier.tier}}">     
+                                    <div class="list-accent-div">
+                                        <h4 class="panel-title"> 
+                                            Tier {{tier.tier}} 
+                                        </h4>
+                                    </div>
+                                </a>
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-remove pull-right" 
+                                            ng-click="snapshot.tierDeletePrompt(tier)">
+                                        <i class="fa fa-close"></i>
+                                    </button>
+                                </div>
+                                
+                            </div>
+                            <div id="collapse{{tier.tier}}" class="collapse panel">
+                                <div class="panel-body">
+                                    <ul class="admin-list m-b-none" 
+                                        dnd-list="tier.heroes" 
+                                        dnd-allowed-types="['heroes']">
+                                        <li class="admin-list-item" ng-if="tier.heroes.length === 0">
+                                            <span class="full-div">There are no heroes in this tier yet.</span>
+                                        </li>
+                                        <li class="admin-list-item gradient-add" 
+                                            ng-class="{ active: snapshot.activeHero === tierHero }" 
+                                            ng-repeat="tierHero in tier.heroes" 
+                                            ng-if="tier.heroes.length" 
+                                            dnd-draggable="tierHero" 
+                                            dnd-moved="snapshot.deckUpdateDND(tier.decks, $index, d)" 
+                                            dnd-disable-if="tier.decks.length < 2 && snapshot.tiers.length < 2" 
+                                            dnd-type="'deck'">
+                                            <div class="list-accent-div">
+                                                <div ng-click="snapshot.setActiveHero(tierHero)" 
+                                                     class="clearfix z-5 full-div">
+<!--                                                    <div class="pull-left m-r-sm">{{d.ranks[0]}}</div>-->
+                                                    <div class="pull-left">{{tierHero.hero.heroName}}</div>
+                                                    <div class="btn-group pull-right">
+                                                        <button class="btn btn-remove" type="button" 
+                                                                ng-click="$event.stopPropagation(); snapshot.heroDeletePrompt(tier, tierHero)">
+                                                            <i class="fa fa-close"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    
+                                    <div class="panel-body">
+                                        <div class="admin-list m-b-none">
+                                            <div class="admin-list-item gradient-add admin-list-item">
+                                                <div class="list-accent-div">
+                                                    <a ng-click="snapshot.heroAddPrompt(tier)"  
+                                                       class="add-element">
+                                                        <i class="fa fa-plus-circle"></i>Add Hero
+                                                    </a>                           
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="admin-list m-b-none">
+                            <div class="admin-list-item gradient-add admin-list-item">
+                                <div class="list-accent-div">
+                                    <a ng-click="snapshot.tierAdd()" class="add-element">
+                                        <i class="fa fa-plus-circle"></i>Add Tier
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- panel -->
+            </div>
+            </div>
+            <!-- / tiers nav -->
+        </div>
+        
+        <!-- general-right -->
+        <div ng-show="page === 'general'" 
+             class="col-sm-12 col-md-8 col-lg-9 general-section">
+            <div class="form-group">
+<!--                <label for="intro" class="col-sm-2 control-label">Content</label>-->
+                <div class="panel opac-panel wrapper-none col-sm-12">
+                    <div class="panel-body">
+                        
+                        <label for="intro" class="col-sm-12 control-label">Introduction</label>
+                        <div class="col-sm-12">
+                            <textarea class="form-control m-b-sm" 
+                                      name="intro" ng-model="snapshot.intro" 
+                                      rows="10"></textarea>
+                        </div>
+                        
+                        <label for="thoughts" class="col-sm-12 control-label">Thoughts and Observations</label>
+                        <div class="col-sm-12">
+                            <textarea class="form-control m-b-sm" 
+                                      name="thoughts" ng-model="snapshot.thoughts" 
+                                      rows="10">
+                            </textarea>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div><!-- end general-right -->
+        
+        <!-- authors -->
+        <div ng-show="page === 'authors'" class="col-sm-12 col-md-8 col-lg-9 author-right-section padding-none">
+            <div ng-if="snapshot.activeAuthor">
+                
+                <div class="col-sm-12 padding-none m-t-md">
+                    
+                    <div class="form-group col-sm-12 padding-none class-section">
+                        <div class="col-md-12 col-lg-4 p-l-md">
+                            <h4 class="user-section">{{snapshot.activeAuthor.user.username}}</h4>
+                        </div>
+                        
+                        <div class="col-md-12 col-lg-8 padding-none">
+                            <ul class="ow-hero-filters">
+                                <li ng-repeat="owHero in owHeroes">
+                                    <a href class="{{owHero.heroName | lowercase}}"      
+                                       ng-class="{ 'active': snapshot.authorHasHero(snapshot.activeAuthor, owHero.heroName) }"
+                                       ng-click="snapshot.toggleAuthorHero(snapshot.activeAuthor, owHero.heroName)" 
+                                       ng-tooltip data-original-title="{{owHero.heroName}}">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="col-sm-12">
+                        <label for="authorDescription_{{snapshot.activeAuthor.user.username}}"
+                               class="col-sm-12 padding-none control-label m-t-sm">Description</label>
+                        <textarea class="form-control m-b-lg" rows="15" 
+                                  name="authorDescription_{{snapshot.activeAuthor.user.username}}" 
+                                  ng-model="snapshot.activeAuthor.description" ng-change="snapshot.authorUpdated(snapshot.activeAuthor)"></textarea>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <!-- / authors -->
+        <!-- tier list -->
+        <div ng-show="page === 'tiers'" 
+             class="col-sm-12 col-md-8 col-lg-9 tier-right-section padding-none">
+            <div ng-if="snapshot.activeTierHero">
+                
+                <div class="col-xs-5 admin-title">
+                    
+                    <img src="../img/overwatch/hero-thumbnails/{{snapshot.activeTierHero.hero.className}}.png" 
+                         class="class-image pull-left m-t-sm">  
+                    
+                    <h3 class="user-section pull-left m-t-md m-l-md">
+                        {{snapshot.activeTierHero.hero.heroName}}
+                    </h3>
+                    
+                </div><!-- end admin-title -->
+                
+                <div class="col-xs-12 tier-sub-nav">
+                    <label for="heroSummary_{{snapshot.activeTierHero.hero.heroName}}"
+                           class="col-sm-12 padding-none control-label m-t-sm">Summary</label>
+                    <textarea class="form-control m-b-lg" rows="10" 
+                              name="heroSummary_{{snapshot.activeTierHero.hero.heroName}}" 
+                              ng-model="snapshot.activeTierHero.summary" 
+                              ng-change="snapshot.tierHeroUpdated(snapshot.activeTierHero)"></textarea>
+                </div>
+                
+                <!-- general -->
+<!--
+                <div class="form-group" ng-show="deckPage === 'general'">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-6 m-b-sm">
+                            <label for="deckName" class="control-label col-xs-12">Deck Name</label>
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" id="deckName" name="deckName" ng-model="snapshot.activeDeck.name" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)" />
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-6 m-b-sm">
+                            <label for="deckDeckName" class="control-label col-xs-12">Linked Deck</label>
+                            <div class="col-xs-12">
+                                <div class="wrapper-none pull-left">
+                                    <div class="input-group pull-left">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default active" ng-click="snapshot.deckChangePrompt(snapshot.activeDeck)">Change</button>
+                                        </span>
+                                        <input type="text" id="deckDeckName" name="deckDeckName" class="form-control wide-input" ng-value="snapshot.activeDeck.deck.name">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class=" m-b-sm row">
+                        <div class="col-xs-12">
+                            <label for="deckExplanation" class="control-label col-xs-12">Explanation</label>
+                            <div class="col-xs-12">
+                                <textarea class="form-control" id="deckExplanation" name="deckExplanation" ng-model="snapshot.activeDeck.description" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)" rows="8"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class=" m-b-sm row">
+                        <div class="col-xs-12">
+                            <label for="deckWeeklyNotes" class="control-label col-xs-12">Weekly Notes</label>
+                            <div class="col-xs-12">
+                                <textarea class="form-control" id="deckWeeklyNotes" name="deckWeeklyNotes" ng-model="snapshot.activeDeck.weeklyNotes" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)" rows="8"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class=" m-b-sm row">
+                        <div class="col-xs-12">
+                            <label for="deck.weeklyTrend" class="control-label col-xs-12">Weekly Trend</label></div>
+                            <div class="col-xs-12">
+                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-1 m-b-md weekly-trend" ng-repeat="trend in snapshot.getTrends() track by $index">
+                                    <input class="form-control wrapper-none" type="number" ng-model="snapshot.activeDeck.ranks[1+$index]" ng-change="snapshot.deckTierUpdated(snapshot.activeDeck)">
+                                    <span class="snap-number"># {{snapshot.snapNum - (1+$index)}}</span>
+                                </div>
+                            </div>
+                        
+                    </div>
+                </div>
+-->
+                <!-- / general -->
+                <!-- tech decisions -->
+<!--
+                <div class="form-group" ng-show="deckPage === 'tech'">
+                    <div class="clearfix">
+                        <div class="col-xs-12 padding-none">
+                            <div class="col-xs-12 padding-none" ng-repeat="tech in snapshot.activeDeck.deckTech | orderBy: 'title'">
+                                <div class="panel tech-panel panel-default">
+                                    <div class="tech-heading">
+                                        <div class="input-group p-t-md p-l-md">
+                                            <span class="admin-group-addon">vs</span>
+                                            <input type="text" class="form-control" ng-model="tech.title" ng-change="snapshot.deckTechUpdated(tech)">
+                                            <span class="input-group-btn">
+                                                <a href="#" class="btn btn-remove" ng-click="snapshot.deckTechDeletePrompt(snapshot.activeDeck, tech)"><i class="fa fa-close"></i></a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <ul class="admin-list m-b-none padding-none">
+                                        <li ng-class="{'card-toss': c.toss, 'card-keep': !c.toss}" ng-repeat="c in tech.cardTech | orderBy: ['-toss', 'card.name']" class="admin-list-item gradient-add">
+                                            <div class="list-accent-div">
+                                            <button type="button" class="cardBtn z-5" ng-click="snapshot.deckTechCardToggleToss(c)">
+                                                 <i class="fa" ng-class="{ 'fa-minus': c.toss, 'fa-plus': !c.toss }"></i>
+                                            </button>
+                                            <span class="full-div">{{c.card.name}}</span>
+                                            <button type="button" class="pull-right btn-remove z-5 cardBtn" ng-click="snapshot.deckTechCardDeletePrompt(tech, c)"><i class="fa fa-close"></i></button>
+                                            <button type="button" class="pull-right z-5 btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="snapshot.deckTechCardToggleBoth(c)">2</button>
+                                            </div>
+                                        </li>
+                                        <li class="admin-list-item gradient-add">
+                                            <div class="list-accent-div">
+                                                <a href="#" ng-click="snapshot.deckTechCardAddPrompt(tech)" class="add-element z-5"><i class="fa fa-plus-circle"></i>&nbsp; Add Card</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 padding-none">
+                            <ul class="admin-list m-b-none padding-none">
+                                <li class="admin-list-item gradient-add">
+                                    <div class="list-accent-div">
+                                        <a href="#" ng-click="snapshot.deckTechAdd(snapshot.activeDeck)" class="z-5 add-element"><i class="fa fa-plus-circle "></i>&nbsp; Add Tech</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+-->
+                <!-- / tech decisions -->
+            </div>
+        </div>
+        <!-- / tier list -->
+    </div>
+    
+    </form><!-- end form -->
+    
+    <div class="panel-footer clearfix">
+        <div class="col-sm-12">
+            <button type="submit" class="btn admin-btn-blue pull-right"
+                    ng-disabled="form.$invalid || snapshot.loading || snapshot.saving"
+                    ng-click="snapshot.save()">
+                <span ng-if="mode === 'add'">Add</span>
+                <span ng-if="mode === 'edit'">Update</span> 
+                Snapshot<i class="fa fa-refresh fa-spin m-l-sm" ng-if="snapshot.saving"></i>
+            </button>
+        </div>
+    </div><!-- end panel-footer -->
+</div><!-- end panel-default -->

@@ -14,10 +14,9 @@
       "type": "number"
     },
     "redbullExpansionId": {
-      "type": {}
+      "index": 1
     }
   },
-  "validations": [],
   "relations": {
     "expansion": {
       "type": "belongsTo",
@@ -73,5 +72,7 @@
       "accessType": "WRITE"
     }
   ],
-  "methods": {}
+  "mixins": {
+    "Scope": true
+  }
 }

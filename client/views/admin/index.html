@@ -1,7 +1,6 @@
 <!-- side nav -->
 <div ui-admin-nav class="admin-side-nav">
-    <ul class="nav">
-        <div class="redbull-lockout" ng-if="!currentUser.isRedbullAdmin || currentRoles.isAdmin">
+    <ul class="nav" ng-if="currentRoles.isAdmin">
         <li ng-class="{active:$state.includes('app.admin.dashboard')}">
             <a ui-sref="app.admin.dashboard">
                 <i class="fa fa-tachometer m-r-sm"></i>
@@ -48,9 +47,12 @@
                     <i class="fa fa-fw fa-angle-down"></i>
                 </span>
                 <i class="fa fa-bolt m-r-sm"></i>
-                <span>HotS</span>
+                <span>Hots</span>
             </a>
             <ul class="nav nav-sub">
+                <li ng-class="{active:$state.includes('app.admin.hots.snapshots')}">
+                    <a ui-sref="app.admin.hots.snapshots.list">Snapshots</a>
+                </li>
                 <li ng-class="{active:$state.includes('app.admin.hots.heroes')}">
                     <a ui-sref="app.admin.hots.heroes.list">Heroes</a>
                 </li>
@@ -77,6 +79,11 @@
                 <span>Overwatch</span>
             </a>
             <ul class="nav nav-sub">
+<!--
+                <li ng-class="{active:$state.includes('app.admin.overwatch.snapshots')}">
+                    <a ui-sref="app.admin.overwatch.snapshots.list">Snapshots</a>
+                </li>
+-->
                 <li ng-class="{active:$state.includes('app.admin.overwatch.heroes')}">
                     <a ui-sref="app.admin.overwatch.heroes.list">Heroes</a>
                 </li>
@@ -150,30 +157,30 @@
                 <span>Streams</span>
             </a>
         </li>-->
-        </div>
-        <!-- redbull -->
-        <li ng-class="{active:$state.includes('app.admin.redbull')}" class="nav-drop">
+    </ul>
+    <!-- sealed tool -->
+    <ul class="nav" ng-if="currentRoles.isAdmin || currentRoles.isRedbullAdmin">
+        <li ng-class="{active:$state.includes('app.admin.sealed')}" class="nav-drop">
             <a href="#" class="nav-drop-btn">
                 <span class="pull-right text-muted">
                     <i class="fa fa-fw fa-angle-right"></i>
                     <i class="fa fa-fw fa-angle-down"></i>
                 </span>
                 <i class="fa fa-star m-r-sm"></i>
-                <span>Redbull</span>
+                <span>Sealed Tool</span>
             </a>
             <ul class="nav nav-sub">
-                <li ng-class="{active:$state.includes('app.admin.redbull.settings')}">
-                    <a ui-sref="app.admin.redbull.settings">Settings</a>
+                <!--<li ng-class="{active:$state.includes('app.admin.sealed.settings')}">
+                    <a ui-sref="app.admin.sealed.settings">Settings</a>
+                </li>-->
+                <li ng-class="{active:$state.includes('app.admin.sealed.whitelist')}">
+                    <a ui-sref="app.admin.sealed.whitelist">Whitelist</a>
                 </li>
-                <li ng-class="{active:$state.includes('app.admin.redbull.whitelist')}">
-                    <a ui-sref="app.admin.redbull.whitelist">Whitelist</a>
-                </li>
-                <li ng-class="{active:$state.includes('app.admin.redbull.decks')}">
-                    <a ui-sref="app.admin.redbull.decks">Decks</a>
+                <li ng-class="{active:$state.includes('app.admin.sealed.decks')}">
+                    <a ui-sref="app.admin.sealed.decks">Decks</a>
                 </li>
             </ul>
         </li>
-        <!-- / hots -->
     </ul>
 </div>
 <!-- / side nav -->

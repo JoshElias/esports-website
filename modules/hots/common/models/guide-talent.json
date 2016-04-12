@@ -1,0 +1,43 @@
+{
+  "name": "guideTalent",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "tier": {
+      "type": "number"
+    },
+    "guideId": {
+      "index": 1
+    },
+    "heroId": {
+      "index": 1
+    },
+    "talentId": {
+      "index": 1
+    }
+  },
+  "relations": {
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "hero": {
+      "type": "belongsTo",
+      "model": "hero",
+      "foreignKey": "heroId"
+    },
+    "talent": {
+      "type": "belongsTo",
+      "model": "talent",
+      "foreignKey": "talentId"
+    }
+  },
+  "mixins": {
+    "Scope": true
+  }
+}

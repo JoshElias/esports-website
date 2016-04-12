@@ -1,13 +1,15 @@
-<alert-box theme="admin"></alert-box>
+<span class="ts-admin-styles"> <!-- Temporary remove when hero section is redesign -->
+
+<alert-box theme="admin-new"></alert-box>
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
         <div class="pull-right" ng-if="heroes">
-            <span class="m-r-sm">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ heroPagination.total === 0 ? heroPagination.total : ((heroPagination.page - 1) * heroPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  heroPagination.page * heroPagination.perpage > heroPagination.total ? heroPagination.total : heroPagination.page * heroPagination.perpage }}</strong> 
-                of <strong>{{ heroPagination.total }}</strong>
+                {{ heroPagination.total === 0 ? heroPagination.total : ((heroPagination.page - 1) * heroPagination.perpage) + 1 }} 
+                to {{  heroPagination.page * heroPagination.perpage > heroPagination.total ? heroPagination.total : heroPagination.page * heroPagination.perpage }} 
+                of {{ heroPagination.total }}
             </span>
             <div pagination="heroPagination" theme="admin" class="admin"></div>
         </div>
@@ -17,7 +19,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" 
+                        <button type="submit" class="btn btn-default btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -28,28 +30,36 @@
             </form>
         </div>
     </div>
-    <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="hero in heroes">
-            <span>{{hero.name}}</span>
-            <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.hots.heroes.edit({ heroID: hero.id })" class="btn btn-default">Edit</a>
-                <button class="btn btn-danger" ng-click="deleteHero(hero)">Delete</button>
+    <div class="admin-list">
+        <div class="admin-list-item list-items clearfix" ng-repeat="hero in heroes">
+             <div class="list-accent-div">
+                 <div class="row">
+                    <div class="col-xs-6">
+                        <span class="list-item-height">{{hero.name}}</span>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="pull-right btn-toolbar list-item-height">
+                            <a ui-sref="app.admin.hots.heroes.edit({ heroID: hero.id })" class="btn btn-default">Edit</a>
+                            <button class="btn btn-danger" ng-click="deleteHero(hero)">Delete</button>
+                        </div>
+                     </div>
+                 </div>
             </div>
         </div>
-        <div class="list-group-item" ng-show="!heroes.length">
+        <div class="admin-list-item placeholder-text" ng-show="!heroes.length">
             There are no heroes yet.
         </div>
-        <div class="list-group-item b-t-none" ng-show="heroes.length && filtered && !filtered.length">
+        <div class="admin-list-item placeholder-text" ng-show="heroes.length && filtered && !filtered.length">
             That search returned no results.
         </div>
     </div>
     <div class="panel-footer clearfix">
         <div class="pull-right" ng-if="heroes">
-            <span class="m-r-sm">
+            <span class="showing-numbers">
                 Showing: 
-                <strong>{{ heroPagination.total === 0 ? heroPagination.total : ((heroPagination.page - 1) * heroPagination.perpage) + 1 }}</strong> 
-                to <strong>{{  heroPagination.page * heroPagination.perpage > heroPagination.total ? heroPagination.total : heroPagination.page * heroPagination.perpage }}</strong> 
-                of <strong>{{ heroPagination.total }}</strong>
+                {{ heroPagination.total === 0 ? heroPagination.total : ((heroPagination.page - 1) * heroPagination.perpage) + 1 }} 
+                to {{  heroPagination.page * heroPagination.perpage > heroPagination.total ? heroPagination.total : heroPagination.page * heroPagination.perpage }} 
+                of {{ heroPagination.total }}
             </span>
             <div pagination="heroPagination" theme="admin" class="admin"></div>
         </div>
@@ -59,7 +69,7 @@
                     <div class="input-group">
                        <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
                     <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-blue" 
+                        <button type="submit" class="btn btn-default btn-blue" 
                                 ng-disabled="fetching">
                             <span ng-if="!fetching"><i class="fa fa-search"></i></span>
                             <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
@@ -71,3 +81,4 @@
         </div>
     </div>
 </div>
+</span>
