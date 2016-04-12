@@ -129,6 +129,7 @@ module.exports = function(RedbullDraft) {
     }
 
     function checkForOfficialDraft(clientData, finalCb) {
+
         var User = RedbullDraft.app.models.user;
 
         var notOfficialErr = new Error("You're not authorized to start an official draft");
@@ -161,7 +162,7 @@ module.exports = function(RedbullDraft) {
         clientData.authorId = userId;
 
         // Check if this is an official draft or not
-        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], function (err, isInRoles) {
+        return User.isInRoles(userId, ["$redbullPlayer", "$redbullAdmin"], req, function (err, isInRoles) {
             if (err) return finalCb(err);
 
             // If the user tried to start an official draft without authorization
