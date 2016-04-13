@@ -34,7 +34,7 @@
                     <i ng-if="remember" class="fa fa-check fa-stack-1x"></i>
                 </a>
             </span>
-            <span class="remember-text">Remember me</span>
+            <a href="#" class="remember-text" ng-click="remember = !remember">Remember me</a>
             <p class="forgot-password pull-right">
                 <a href="https://tempostorm.com/forgot-password" ng-if="setState" ng-click="setState('forgot'); setTitle('Forgot Password')">Forgot Password?</a>
                 <a ui-sref="app.forgotPassword" ng-if="!setState">Forgot Password?</a>

@@ -1,0 +1,21 @@
+@import 'ts-colors.scss';
+
+.ts-admin-styles {
+    
+    .panel {
+        &.sub-panel {
+            background-color: $black-20 !important;
+            
+            
+            .admin-list .admin-list-item:nth-of-type(even) {
+                background-color: $white-04;
+            }
+            
+
+            h4 {
+                text-transform: uppercase;
+                font-weight: 400;
+            }
+        }
+    } 
+}
