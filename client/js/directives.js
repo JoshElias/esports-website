@@ -2571,7 +2571,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.openAuthorAdd = function () {
                 var dialog = box({
                     message: $compile('<snapshot-add-author></snapshot-add-author>')($scope),
-                    title: 'Add author'
+                    title: 'Add author',
+                    className: 'modal-admin modal-admin-authors'
                 });
 
                 dialog.modal('show');
@@ -2737,7 +2738,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.openHeroAdd = function (tier) {
                 var dialog = box({
                     message: $compile('<snapshot-add-hero></snapshot-add-hero>')($scope),
-                    title: 'Add hero'
+                    title: 'Add hero',
+                    className: 'modal-admin'
                 });
 
                 dialog.modal('show');
@@ -2756,7 +2758,8 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.openGuideAdd = function () {
                 var dialog = box({
-                    message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope)
+                    message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope),
+                    className: 'modal-admin'
                 });
 
                 dialog.modal('show');
