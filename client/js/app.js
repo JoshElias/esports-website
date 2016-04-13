@@ -2528,7 +2528,7 @@ var app = angular.module('app', [
                                 }
                                 
                                 async.waterfall([
-                                    /*function (seriesCb) {
+                                    function (seriesCb) {
                                         Guide.topGuide(filter)
                                         .$promise
                                         .then(function (data) {
@@ -2537,9 +2537,9 @@ var app = angular.module('app', [
                                         .catch(function (err) {
                                             console.log(err);
                                         })
-                                    },*/
-                                    function (/*guideId, */seriesCb) {
-                                        //if (!guideId.id)
+                                    },
+                                    function (guideId, seriesCb) {
+                                        if (!guideId.id)
                                             return seriesCb(undefined, null);
 
                                         Guide.find({
