@@ -2045,7 +2045,10 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: {title: true, id: true, photoNames: true}
+                        fields: {title: true, id: true, photoNames: true},
+                        include: {
+                            relation: "slugs"
+                        }
                     }
                 };
 
@@ -2063,8 +2066,12 @@ angular.module('app.controllers', ['ngCookies'])
                 Article.find(options)
                     .$promise
                     .then(function (data) {
-                    $scope.articles = data;
-                    if (cb !== undefined) { return cb(); }
+                        _.each(data, function(article) {
+                            article.slug = Util.setSlug(article);
+                        });
+                    
+                        $scope.articles = data;
+                        if (cb !== undefined) { return cb(); }
                 });
             }
 
@@ -2592,7 +2599,10 @@ angular.module('app.controllers', ['ngCookies'])
                     filter: {
                         limit: 10,
                         order: "createdDate DESC",
-                        fields: {title: true, id: true, photoNames: true}
+                        fields: {title: true, id: true, photoNames: true},
+                        include: {
+                            relation: "slugs"
+                        }
                     }
                 };
 
@@ -2610,6 +2620,9 @@ angular.module('app.controllers', ['ngCookies'])
                 Article.find(options)
                     .$promise
                     .then(function (data) {
+                        _.each(data, function(article) {
+                            article.slug = Util.setSlug(article);
+                        });
                       $scope.articles = data;
                       if (cb !== undefined) { return cb(data); }
                 });
@@ -12379,8 +12392,8 @@ angular.module('app.controllers', ['ngCookies'])
             );
         }
     ])
-    .controller('ForumAddCtrl', ['$scope', '$state', '$window', '$compile', 'LoginModalService', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util',
-        function ($scope, $state, $window, $compile, LoginModalService, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util) {
+    .controller('ForumAddCtrl', ['$scope', '$state', '$window', '$compile', 'LoginModalService', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util', 'ForumThread',
+        function ($scope, $state, $window, $compile, LoginModalService, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util, ForumThread) {
             // thread
             $scope.thread = thread;
 
@@ -12426,8 +12439,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                     ForumPost.create(newPost).$promise
                     .then(function (results) {
-//                        console.log('results:', results);
-                        return $state.transitionTo('app.forum.threads', { thread: $scope.thread.slug.url });
+                        ForumThread.findById({
+                            id: results.forumThreadId
+                        })
+                        .$promise
+                        .then(function (forumThread) {
+                            
+                            return $state.transitionTo('app.forum.threads', { thread: Util.slugify(forumThread.title) });
+                        });
                     })
                     .catch(function (HttpResponse) {
                         console.log("err from froum post:", HttpResponse);

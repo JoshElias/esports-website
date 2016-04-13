@@ -35,6 +35,7 @@ angular.module('polls.services')
             pollType: 'img',
             voteLimit: 1,
             viewType: '',
+            items: [],
             activePollItem: null
         };
         var defaultPollItem = {
@@ -100,7 +101,7 @@ angular.module('polls.services')
             // get vote limits
             pb.getVoteLimits = function () {
                 var out = [];
-                if (!pb.items.length || pb.items.length < 2) { return out; }
+                if (!pb.items || !pb.items.length || pb.items.length < 2) { return out; }
                 
                 for (var i = 1; i < pb.items.length; i++) {
                     out.push(i);
@@ -192,7 +193,7 @@ angular.module('polls.services')
                 pollItem.photoNames.large = '';
                 
                 // flag poll item as updated
-                pb.pollItemUpdated(pollitem);
+                pb.pollItemUpdated(pollItem);
             };
             
             // prompt for pollItem delete
@@ -272,6 +273,7 @@ angular.module('polls.services')
                     },
                     // check poll items
                     function (cb) {
+                        // 
                         
                         return cb();
                     }
@@ -400,7 +402,12 @@ angular.module('polls.services')
                     function (cb) {
                         if (pb.id) { return cb(null, pb.id); }
                         Poll.create({
-                            // TODO: ADD POLL FIELDS TO CREATE
+                            title: pb.title,
+                            subtitle: pb.subtitle,
+                            description: pb.description,
+                            pollType: pb.pollType,
+                            voteLimit: pb.voteLimit,
+                            viewType: pb.viewType
                         })
                         .$promise
                         .then(function (data) {
@@ -418,7 +425,11 @@ angular.module('polls.services')
                             if (pollItem.id) { return eachCallback(); }
                             // create new poll item
                             PollItem.create({
-                                // TODO: ADD FIELDS FOR CREATE POLL ITEM
+                                name: pollItem.name,
+                                photoNames: pollItem.photoNames,
+                                votes: 0,
+                                orderNum: pollItem.orderNum,
+                                pollId: pollId
                             })
                             .$promise
                             .then(function (data) {

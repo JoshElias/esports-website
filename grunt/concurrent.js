@@ -2,7 +2,7 @@ module.exports = {
     /* build */
     first: ['clean:js', 'clean:css', 'clean:sass'],
     second: ['compass:build', 'compass:modules_redbull', 'compass:modules_ads'/*, 'loopback_sdk_angular:build'*/],
-    third: ['newer:concat', 'newer:htmlmin:dist', 'newer:htmlmin:modules_'],
+    third: ['execute:lb_services', 'newer:concat', 'newer:htmlmin:dist', 'newer:htmlmin:modules_'],
     fourth: ['newer:uglify', 'newer:cssmin'/*, 'newer:imagemin'*/],
     fifth: ['hash', 'newer:copy:fonts', 'newer:copy:modules_audio'],
     /* modules */

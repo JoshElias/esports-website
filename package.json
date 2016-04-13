@@ -76,6 +76,7 @@
     "grunt-contrib-uglify": "^0.11.1",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-docular": "^0.2.4",
+    "grunt-execute": "^0.2.2",
     "grunt-hash": "^0.5.0",
     "grunt-loopback-sdk-angular": "^1.1.2",
     "grunt-newer": "^1.1.2",

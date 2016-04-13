@@ -1,0 +1,45 @@
+@import 'ts-colors.scss';
+
+//*************************************
+// 1... admin team
+//*************************************
+
+
+.upload-drop-team {
+    height: 188px !important;
+    width: 188px !important;
+}
+
+.photo-input {
+
+    .upload-drop {
+        border-radius: 4px;
+        border: 1px dashed #ccc;
+        text-align: center;
+        color: #666;
+
+        &.active {
+            border: 1px dashed #66afe9;
+            color: #357ebd;
+            background: #e6f7ff;
+        }
+    }
+}
+
+.social-addon-group {
+    width: 100%;
+}
+
+.social-addon {
+    width: 10%;
+    text-align: right;
+    
+    &.input-group-addon {
+        
+        color: $white;
+        background-color: $ts-blue;
+        border: 0px solid #ccc;
+        border-radius: 0px;
+    }   
+
+}

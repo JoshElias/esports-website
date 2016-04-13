@@ -102,21 +102,21 @@
                         <div class="vcenter">
                             <h4 class="pull-left lh-lg m-b-none">Article Title</h4>
                         </div>
-                        <button type="button" class="btn btn-green pull-right" ng-click="addRelatedArticle()">Add Article</button>
+                        <button type="button" class="btn admin-btn-blue m-r-md pull-right" ng-click="addRelatedArticle()">Add Article</button>
                     </div>
-                    <div ng-if="article.related.length" class="list-group clearfix">
-                        <li ng-repeat="a in article.related | orderBy: '-createdDate'" class="list-group-item admin-list-item clearfix  admin-article-related-bg">
+                    <div ng-if="article.related.length" class="admin-list">
+                        <li ng-repeat="a in article.related | orderBy: '-createdDate'" class="admin-list-item list-items clearfix">
                             <a href="https://tempostorm.com/articles/{{a.slug.url}}" target="_blank">
-                                <div class="lh-lg pull-left">
-                                    {{a.title}} 
+                                <div class="list-accent-div">
+                                    <span class="list-item-height">{{a.title}}</span>
                                 </div>
                             </a>
-                            <button type="button" class="btn btn-danger pull-right" ng-click="removeRelatedArticle(a); $event.stopPropagation()">
+                            <button type="button" class="btn btn-remove pull-right" ng-click="removeRelatedArticle(a); $event.stopPropagation()">
                                 <i class="fa fa-close"></i>
                             </button>
                         </li>
                     </div>
-                    <div class="wrapper-md" ng-if="!article.related.length">There are currently no related articles selected.</div>
+                    <div class="admin-list-item placeholder-text" ng-if="!article.related.length">There are currently no related articles selected.</div>
                 </div>
             </div>
         </div>
