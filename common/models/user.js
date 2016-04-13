@@ -748,8 +748,6 @@ module.exports = function(User) {
         return async.eachSeries(roleNames, revokeRole, finalCb);
     };
 
-
-
     User.isLinked = function (providers, cb) {
         cb = cb || new Promise();
 
@@ -769,6 +767,17 @@ module.exports = function(User) {
         });
 
         return cb.promise;
+    };
+
+    User.unlink = function (provider, cb) {
+        cb = cb || new Promise();
+
+        var UserIdentity = User.app.models.userIdentity;
+        var ctx = loopback.getCurrentContext();
+        var accessToken = ctx.get("accessToken");
+        var userId = accessToken.userId.toString();
+
+        return UserIdentity.destroyAll({userId:userId, provider:provider}, cb);
     };
 
     User.getCurrent = function(finalCb) {
@@ -884,6 +893,15 @@ module.exports = function(User) {
         }
     );
 
+    User.remoteMethod(
+        'unlink',
+        {
+            description: "Unlink providers from currently logged in user",
+            accepts: {arg: 'provider', type: 'string', required:true, http: {source: 'form'}},
+            http: {verb: 'post'},
+            isStatic: true
+        }
+    );
 
     User.remoteMethod(
         'changePassword',

@@ -548,6 +548,29 @@ angular.module('app.controllers', ['ngCookies'])
                 LoginService.thirdPartyRedirect('link', 'bnet');
             };
 
+            $scope.unlink = function (provider) {
+                $scope.isUnlinking = true;
+
+                User.unlink({
+                    provider: provider
+                })
+                .$promise
+                .then(function () {
+                    var providers = ['twitch','bnet'];
+
+                    User.isLinked({
+                        providers: providers
+                    })
+                    .$promise
+                    .then(function (data) {
+                        $scope.isLinked = data.isLinked;
+                    })
+                    .finally(function () {
+                        $scope.isUnlinking = false;
+                    });
+                });
+            }
+
 //
 //            // grab alerts
 //            if (AlertService.hasAlert()) {

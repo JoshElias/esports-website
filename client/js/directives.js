@@ -1899,7 +1899,9 @@ angular.module('app.directives', ['ui.load'])
             mulliganHide: "=",
             deck: "=deck"
         },
-        controller: ['$scope', function ($scope) {
+        controller: ['$scope', 'DeckBuilder', function ($scope, DeckBuilder) {
+            console.log($scope.deck);
+            // var deck = DeckBuilder.new();
 
             $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
 
