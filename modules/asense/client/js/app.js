@@ -96,7 +96,7 @@ angular.module('tsAdSense', [])
         return [h, w];
     }
 }])
-.value('moduleTpl', (tpl !== './') ? tpl + 'views/ads/client/views/' : 'dist/views/ads/client/views/')
+.value('moduleTpl', (tpl !== './') ? tpl + 'views/asense/client/views/' : 'dist/views/asense/client/views/')
 .controller('tsAdCtrl', ['$scope', '$state', '$window', 'User', 'EventService', '$timeout', 'UserRoleService', 'LoopBackAuth',
     function ($scope, $state, $window, User, EventService, $timeout, UserRoleService, LoopBackAuth) {
         var url = 'https://pagead2.googlesyndication.com/pagead/show_ads.js';

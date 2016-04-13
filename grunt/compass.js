@@ -18,7 +18,7 @@ module.exports = {
     modules_ads: {
         options: {
             outputStyle: 'expanded',
-            sassDir:     'modules/ads/client/css',
+            sassDir:     'modules/asense/client/css',
             cssDir:      'client/dist/css/sass/modules',
             cacheDir:    'modules/.sass-cache'
         }
