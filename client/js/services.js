@@ -1934,7 +1934,7 @@ angular.module('app.services', [])
             setSlug: function (obj) {
                 var sl = {};
                 try {
-                    var slug = obj.slugs[0];
+                    var slug = angular.copy(obj.slugs[0]);
                     sl = {
                         url: slug.slug,
                         linked: slug.linked
@@ -4381,6 +4381,15 @@ angular.module('app.services', [])
             };
 
             sb.load = function (data) {
+                // set slug for snapshot
+                sb.slug = Util.setSlug(data);
+                
+                // set slugs for decks
+                data.deckTiers.forEach(function (deckTier) {
+                    deckTier.deck.slug = Util.setSlug(deckTier.deck);
+                });
+
+                // vars
                 sb.authors = data.authors;
                 sb.content = data.content;
                 sb.createdDate = data.createdDate;
@@ -4389,8 +4398,7 @@ angular.module('app.services', [])
                 sb.isActive = data.isActive;
                 sb.photoNames = data.photoNames;
                 sb.snapNum = data.snapNum;
-                // TODO: remove the "||" patch after updating the db
-                sb.snapshotType = data.snapshotType || defaultSnap.snapshotType;
+                sb.snapshotType = data.snapshotType;
                 sb.tiers = data.tiers;
                 sb.title = data.title;
                 sb.deckTiers = data.deckTiers;
@@ -4400,10 +4408,7 @@ angular.module('app.services', [])
                 // comments for frontend
                 sb.comments = data.comments || [];
                 sb.votes = data.votes || [];
-                
-                // set slug
-                sb.slug = Util.setSlug(data);
-                
+                                
                 sb.loaded = true;
             };
 

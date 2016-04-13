@@ -1804,7 +1804,13 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'deck',
                                                             scope: {
-                                                                fields: ['id', 'name', 'slug', 'playerClass']
+                                                                fields: ['id', 'name', 'slug', 'playerClass'],
+                                                                include: {
+                                                                    relation: 'slugs',
+                                                                    scope: {
+                                                                        fields: ['linked', 'slug']
+                                                                    }
+                                                                }
                                                             }
                                                         },
                                                         {
@@ -2511,7 +2517,7 @@ var app = angular.module('app', [
                                 !_.isEmpty(paginationParams.guideFilters.roles) ||
                                 !_.isEmpty(paginationParams.guideFilters.search)
                                 ) {
-                                    var filter = { filters: {} };
+                                    var filter = { where: {} };
                                     filter.filters['heroId']       = (!_.isEmpty(paginationParams.guideFilters.heroes[0])) ? paginationParams.guideFilters.heroes[0].id : undefined;
                                     filter.filters['mapClassName'] = (!_.isUndefined(paginationParams.guideFilters.map)) ? paginationParams.guideFilters.map.className : undefined;
                                     filter.filters['universes']    = paginationParams.guideFilters.universes;
@@ -2522,7 +2528,7 @@ var app = angular.module('app', [
                                 }
                                 
                                 async.waterfall([
-                                    function (seriesCb) {
+                                    /*function (seriesCb) {
                                         Guide.topGuide(filter)
                                         .$promise
                                         .then(function (data) {
@@ -2531,9 +2537,9 @@ var app = angular.module('app', [
                                         .catch(function (err) {
                                             console.log(err);
                                         })
-                                    },
-                                    function (guideId, seriesCb) {
-                                        if (!guideId.id)
+                                    },*/
+                                    function (/*guideId, */seriesCb) {
+                                        //if (!guideId.id)
                                             return seriesCb(undefined, null);
 
                                         Guide.find({

@@ -153,7 +153,7 @@
                         <div id="deck{{deck.ranks[0]}}" ng-repeat="deck in tier.decks | orderBy : 'ranks[0]'" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
                             <div class="tier-deck-heading deck-portrait-{{deck.deck.playerClass}}-sm clearfix" role="button" data-toggle="collapse" ng-href="#collapseDeck-{{deck.ranks[0]}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.ranks[0]}}">
                                 <h4>{{deck.name}}</h4>
-                                <button class="deck-button" ng-click="goToDeck($event, deck.deck.slug)">VIEW<span class="hidden-xs">&nbsp;DECK</span></button>
+                                <button class="deck-button" ng-click="goToDeck($event, deck.deck.slug.url)">VIEW<span class="hidden-xs">&nbsp;DECK</span></button>
                             </div>
                             <div class="tier-deck-body collapse" id="collapseDeck-{{deck.ranks[0]}}">
                                 <div class="tier-deck-body-inner">
