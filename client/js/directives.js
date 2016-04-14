@@ -1312,9 +1312,7 @@ angular.module('app.directives', ['ui.load'])
                 $scope.loading = true;
                 
                 var pattern = '/.*'+search+'.*/i';
-                var where = {
-                    isActive: true
-                };
+                var where = {};
                 
                 if(!_.isEmpty(search)) {
                     where['or'] = [
