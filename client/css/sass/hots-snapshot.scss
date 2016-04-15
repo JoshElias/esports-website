@@ -587,9 +587,69 @@
 	// 9... Authors Styles
 	//*************************************
 
+	.meta-author {
+		padding-top: 14px;
+		padding-bottom: 14px;
+	}
+
 	.hots-author-wrapper {
 		position: relative;
-		height: 60px;
+		height: 85px;
+		width: 60px;
+		left: 10px;
+	}
+
+	.author-img-ico {
+		position: absolute;
+
+		&.ico-length-1{
+			&.ico-0 {
+				top: 15px;
+				margin: auto;
+			}
+		}
+		&.ico-length-2 {
+			&.ico-0 {
+				top: 15px;
+				left: 0px;
+			}
+			&.ico-1 {
+				top: 15px;
+				left: 30px;
+			}
+		}
+		&.ico-length-3 {
+			&.ico-0 {
+				top: 0px;
+				left: 0px;
+			}
+			&.ico-1 {
+				top: 0px;
+				left: 30px;
+			}
+			&.ico-2 {
+				top: 35px;
+				left: 0px;
+			}
+		}
+		&.ico-length-4 {
+			&.ico-0 {
+				top: 0px;
+				left: 0px;
+			}
+			&.ico-1 {
+				top: 0px;
+				left: 30px;
+			}
+			&.ico-2 {
+				top: 35px;
+				left: 0px;
+			}
+			&.ico-3 {
+				top: 35px;
+				left: 30px;
+			}
+		}
 	}
 }
 
