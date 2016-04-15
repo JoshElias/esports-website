@@ -224,6 +224,7 @@
 @include hots-hero-filters-image (li-ming, 48);
 @include hots-hero-filters-image (xul, 49);
 @include hots-hero-filters-image (dehaka, 50);
+@include hots-hero-filters-image (tracer, 51);
 
 
 
@@ -358,6 +359,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(lunara);
 @include hots-hero(greymane);
 @include hots-hero(dehaka);
+@include hots-hero(tracer);
 
 //*************************************
 //5... HOTS heroes talents
@@ -1286,6 +1288,31 @@ This is the template for hots-hero-talents.
     ( class: (bolt-of-the-storm), pos: 14 ) // -420
 ) );
 
+//talents: tracer
+
+//@include hots-hero-talents ( tracer, (
+//    ( class: (), pos: 0 ), // 0
+//    ( class: (), pos: 1 ), // -30
+//    ( class: (), pos: 2 ), // -60
+//    ( class: (), pos: 3 ), // -90
+//    ( class: (), pos: 4 ), // -120
+//    ( class: (), pos: 5 ), // -150
+//    ( class: (), pos: 6 ), // -180
+//    ( class: (), pos: 7 ), // -210
+//    ( class: (), pos: 8 ), // -240
+//    ( class: (), pos: 9 ), // -270
+//    ( class: (), pos: 10 ), // -300
+//    ( class: (), pos: 11 ), // -330
+//    ( class: (), pos: 12 ), // -360
+//    ( class: (), pos: 13 ), // -390
+//    ( class: (), pos: 14 ), // -420
+//    ( class: (), pos: 15 ), // -450
+//    ( class: (), pos: 16 ), // -480
+//    ( class: (), pos: 17 ), // -510
+//    ( class: (), pos: 18 ) // -540
+//) );
+
+
 //talents: tychus
 
 @include hots-hero-talents ( tychus, (
@@ -1693,6 +1720,7 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(the-butcher, -25, 17, -60, 132);
 @include hots-snapshot-hero(thelostvikings, -25, -65, -70, 76);
 @include hots-snapshot-hero(thrall, -25, -65, -70, 76);
+@include hots-snapshot-hero(tracer, -25, -5, -70, 96);
 @include hots-snapshot-hero(tychus,  -25, -65, -70, 76);
 @include hots-snapshot-hero(tyrael, -25, -65, -70, 76);
 @include hots-snapshot-hero(tyrande, -25, -89, -60, 35);
