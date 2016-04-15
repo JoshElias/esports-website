@@ -30,7 +30,8 @@
                         <div class="box-border wrapper-md">
                             <div class="clearfix">
                                 <h2 class="section-title m-b-lg" >Introduction</h2>
-                                <p>{{snapshot.intro}}</p>
+                                <!--<p>{{snapshot.intro}}</p>-->
+                                <p ng-bind-html="getContent(snapshot.intro)"></p>
                             </div>
                         </div>
                     </div>
@@ -40,7 +41,8 @@
                         <div class="box-border wrapper-md">
                             <div class="clearfix">
                                 <h2 class="section-title m-b-lg">Thoughts &amp; Observations</h2>
-                                <p>{{snapshot.thoughts}}</p>
+                                <!--<p>{{snapshot.thoughts}}</p>-->
+                                <p ng-bind-html="getContent(snapshot.thoughts)"></p>
                             </div>
                         </div>
                     </div>
@@ -110,7 +112,7 @@
                                             <div class="pull-right">
                                                 <ul class="hots-guide-talents">
                                                     <div ng-repeat="talent in hero.guides[0].talents | orderBy: 'tier'">
-                                                        <li ng-tooltip data-original-title="{{talent.talent.name}}" class="talents-icon {{hero.hero.className}} {{talent.talent.className}} large active">
+                                                        <li talent-icon hots-talent hero="hero.hero" talent="talent.talent" data-original-title="{{talent.talent.name}}" class="talents-icon {{hero.hero.className}} {{talent.talent.className}} large active">
 
                                                         </li>
                                                         <h5>Tier {{talent.tier}}</h5>
@@ -123,7 +125,7 @@
                                                 <div class="hero-content m-l-xs">
 
                                                     <h3>Summary</h3>
-                                                    <p>{{hero.summary}}</p>
+                                                    <p ng-bind-html="getContent(hero.summary)"></p>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-md-5 col-lg-5 m-b-sm hidden-xs">
@@ -313,11 +315,9 @@
                     <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors | orderBy: 'orderNum'" >
                         <a class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}">
                             <div class="hots-author-wrapper pull-left hidden-xs">
-                                <span ng-if="author.expertClasses.length > 1">
-                                    <div class="author-img-ico filter filter-{{ico.toLowerCase()}} active" ng-repeat="ico in author.expertClasses">
+                                <div class="author-img-ico filter filter-{{ico.toLowerCase()}} ico-{{$index}} ico-length-{{author.expertClasses.length}} active" ng-repeat="ico in author.expertClasses">
 
-                                    </div>
-                                </span>
+                                </div>
                             </div>
                             <div class="author-text-wrapper">
                                 <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.expertClasses.length > 0 } ">{{author.user.username}}</h2>
@@ -326,7 +326,8 @@
                             </span>
                                 <h3 ng-if="author.expertClasses.length > 1">
                                 <span ng-repeat="klass in author.expertClasses">
-                                    <span ng-if="$index > 0">&nbsp;AND</span> {{klass}}
+                                    <span ng-if="$index == author.expertClasses.length-1">&nbsp;AND</span>
+                                    {{klass}}<span ng-if="$index < author.expertClasses.length-2">,</span>
                                 </span>
                                     EXPERT
                                 </h3>

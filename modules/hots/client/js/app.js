@@ -7,8 +7,8 @@ angular.module('hotsSnapshot', [])
         }
     ]
 )
-.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
-    function ($scope, $window, $state, $filter, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
+.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', '$sce', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
+    function ($scope, $window, $state, $filter, $sce, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
         var foldedTiers = {};
         var filter = {
             role: HOTS.roles,
@@ -48,6 +48,10 @@ angular.module('hotsSnapshot', [])
             val.scaleScore = 0;
             val.utilityScore = 0;
         });
+
+        $scope.getContent = function (content) {
+            return $sce.trustAsHtml(content);
+        };
 
         $scope.isFolded = function (tierNum) {
             return foldedTiers[tierNum];
@@ -246,6 +250,17 @@ angular.module('hotsSnapshot', [])
                             })
                             .$promise
                             .then(function (data) {
+                                var intro = data.intro;
+                                var thoughts = data.thoughts;
+
+                                data.intro = intro.replace(/\n/g, '<br>');
+                                data.thoughts = thoughts.replace(/\n/g, '<br>');
+                                _.each(data.heroTiers, function (val) {
+                                    var summary = val.summary;
+
+                                    val.summary = summary.replace(/\n/g, '<br>');
+                                });
+
                                 return data;
 
                             })

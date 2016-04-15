@@ -17196,6 +17196,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return $sce.trustAsHtml(content);
             };
 
+
             //is premium
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
