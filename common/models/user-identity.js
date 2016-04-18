@@ -27,7 +27,7 @@ module.exports = function(UserIdentity) {
         console.log("authScheme", authScheme);
         console.log("profile", profile);
         console.log("credentials", credentials);
-        console.loG("options", options);
+        console.log("options", options);
         options = options || {};
         if (typeof options === 'function' && cb === undefined) {
             cb = options;
