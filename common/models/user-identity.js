@@ -43,10 +43,7 @@ module.exports = function(UserIdentity) {
         }
 
         // Get the host to rediret to from the provider information
-        var providers = require("../../server/configs/providers."+process.env.NODE_ENV+".js");
-        var callbackUrl = providers[provider].callbackURL;
-        console.log("callbackUrl", callbackUrl);
-        var urlObj = url.parse(callbackUrl);
+        var urlObj = url.parse(options.callbackUrl);
         var redirectUrl = urlObj.protocol + "//" + urlObj.host;
         console.log("redirectUrl", redirectUrl);
 
