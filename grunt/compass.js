@@ -22,5 +22,13 @@ module.exports = {
             cssDir:      'client/dist/css/sass/modules',
             cacheDir:    'modules/.sass-cache'
         }
+    },
+    modules_hots: {
+        options: {
+            outputStyle: 'expanded',
+            sassDir:     'modules/hots/client/css',
+            cssDir:      'client/dist/css/sass/modules',
+            cacheDir:    'modules/.sass-cache'
+        }
     }
 };
