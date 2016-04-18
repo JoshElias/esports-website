@@ -1,4 +1,5 @@
 var loopback = require('loopback');
+var url = require('url');
 
 
 module.exports = function(UserIdentity) {
@@ -41,8 +42,17 @@ module.exports = function(UserIdentity) {
             return cb(thirdPartyLoginErr);
         }
 
+        // Get the host to rediret to from the provider information
+        var providers = require("../../server/configs/providers."+process.env.NODE_ENV+".js");
+        var callbackUrl = providers[provider].callbackURL;
+        console.log("callbackUrl", callbackUrl);
+        var urlObj = url.parse(callbackUrl);
+        var redirectUrl = urlObj.protocol + "//" + urlObj.host;
+        console.log("redirectUrl", redirectUrl);
+
         var autoLogin = options.autoLogin || options.autoLogin === undefined;
-        var provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
+        provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
+
         var redirectUrl = "https://"+UserIdentity.app.get("domain");
         console.log("redirectUrl", redirectUrl);
 
