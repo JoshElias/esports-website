@@ -23,11 +23,6 @@ module.exports = function(UserIdentity) {
      */
     UserIdentity.login = function (provider, authScheme, profile, credentials,
                                    options, cb) {
-        console.log("provider", provider);
-        console.log("authScheme", authScheme);
-        console.log("profile", profile);
-        console.log("credentials", credentials);
-        console.log("options", options);
         options = options || {};
         if (typeof options === 'function' && cb === undefined) {
             cb = options;
@@ -45,7 +40,6 @@ module.exports = function(UserIdentity) {
         // Get the host to rediret to from the provider information
         var urlObj = url.parse(options.callbackURL);
         var redirectUrl = urlObj.protocol + "//" + urlObj.host;
-        console.log("redirectUrl", redirectUrl);
 
         var autoLogin = options.autoLogin || options.autoLogin === undefined;
         provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
@@ -56,14 +50,12 @@ module.exports = function(UserIdentity) {
             loopbackContext.set("res", loopbackContext.active.http.res);
         }
 
-        console.log("finding with where:", provider, profile.id);
         return UserIdentity.findOne({
             where: {
                 provider: provider,
                 externalId: profile.id
             }
         }, function (err, identity) {
-            console.log("found userIdentity", err, identity);
             if (err) {
 
                 var res;
@@ -72,7 +64,6 @@ module.exports = function(UserIdentity) {
                 }
 
                 if(res) {
-                    console.log("responding to res");
                     res.cookie("thirdPartyError", "Please link your " + provider + " profile to an email account first.", {
                         signed: true,
                         maxAge: 1209600
@@ -82,7 +73,6 @@ module.exports = function(UserIdentity) {
 
                 return cb(err);
             } else if (identity) {
-                console.log("found identity")
                 identity.credentials = credentials;
                 return identity.updateAttributes({
                     profile: profile,
@@ -100,7 +90,6 @@ module.exports = function(UserIdentity) {
                     });
                 });
             } else {
-                console.log("responding with no identity");
                 var res;
                 if (loopbackContext) {
                     res = loopbackContext.get("res");
@@ -133,7 +122,6 @@ module.exports = function(UserIdentity) {
      */
     UserIdentity.link = function (userId, provider, authScheme, profile,
                                   credentials, options, cb) {
-console.log("LINKING!~!!!!");
         options = options || {};
         if(typeof options === 'function' && cb === undefined) {
             cb = options;
@@ -167,9 +155,8 @@ console.log("LINKING!~!!!!");
                 credentials: credentials,
                 userId: userId
             };
-            console.log("NNNEEEWWWW USERIDENTITy", newUserIdentity);
+
             return UserIdentity.create(newUserIdentity, function (err, i) {
-                console.log("created userrrrrrrrrrrrrrrrrrrrrrr");
                 return cb(err, i);
             });
         });
