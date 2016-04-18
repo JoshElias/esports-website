@@ -338,9 +338,61 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .home-resource img { width: 100%; height: auto; }
 .home-resource .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
-.home-resource .home-resource-content { margin: -1px 1px 0px 1px; padding: 50px 20px 50px 20px; position: relative; border-top: 1px solid rgba(255,255,255,.2); }
+.home-resource .home-resource-content { margin: -1px 1px 0px 1px; padding: 50px 20px; position: relative; border-top: 1px solid rgba(255,255,255,.2); }
 .home-resource .home-resource-content h1 { margin-bottom: 5px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; color: #f7ef22; text-align: center; text-shadow: 1px 1px 0px rgba(0,0,0,1); }
 .home-resource .home-resource-content p { margin-bottom: 0px; color: #bababa; font-size: 10px; text-align: center; text-shadow: 1px 1px 0px rgba(0,0,0,1); }
+
+.home-resource {
+    &.coming-soon {
+        opacity: .5;
+        
+        &:hover {
+            cursor: default;
+            top: 0px;
+            background: rgba(19,18,19,.7);
+            box-shadow: 2px 2px 3px rgba(0,0,0,.75);
+        }
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .home-resource {
+        &.snapshot-resource {
+            .home-resource-content {
+                margin: 0px;
+                border-top: none;
+                width: 100%;
+                text-align: center;
+                height: 130px;
+            }
+            .home-resource-img {
+                float: left;
+                padding-right: 0px;
+                border-right: 1px solid rgba(255,255,255,.2);
+                
+                img {
+                    width: auto;
+                    height: 130px;
+                }
+            }
+        }
+    }
+}
+@media only screen and (min-width: 1200px) and (max-width: 1570px) {
+    .home-resource {
+        &.snapshot-resource {
+            .home-resource-content {
+                padding: 30px 10px;
+                height: 100px;
+            }
+            .home-resource-img {
+                img {
+                    height: 100px;
+                }
+            }
+        }
+    }
+}
 
 .home-content .btn-hots { width: 100% !important; }
 .home-content .btn-hots .inner { width: 100% !important; }
