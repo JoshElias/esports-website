@@ -43,7 +43,7 @@ module.exports = function(UserIdentity) {
         }
 
         // Get the host to rediret to from the provider information
-        var urlObj = url.parse(options.callbackUrl);
+        var urlObj = url.parse(options.callbackURL);
         var redirectUrl = urlObj.protocol + "//" + urlObj.host;
         console.log("redirectUrl", redirectUrl);
 
