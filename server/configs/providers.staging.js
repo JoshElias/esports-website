@@ -3,8 +3,8 @@ module.exports = {
  "twitch-login": {
    "provider": "twitch",
    "module": "passport-twitch",
-   "clientID": "ms556wfz0hr0adtraypjo2i7m2pmvam",
-   "clientSecret": "hzrci57rtvfw9r915linb2gmfyzr30r",
+   "clientID": "7vmjjrlb8m9n9ko1xuaf22432rnpdof",
+   "clientSecret": "1nkrbxz3q9dy0pfhhr8mh1ubx49ydg9",
    "callbackURL": "https://staging.tempostorm.com/login/twitch/callback",
    "authPath": "/login/twitch",
    "callbackPath": "/login/twitch/callback",
@@ -15,8 +15,8 @@ module.exports = {
  "twitch-link": {
    "provider": "twitch",
    "module": "passport-twitch",
-   "clientID": "6raft682814tfrgr00pvmek4tb543n8",
-   "clientSecret": "q1coxxl8ly4yel676ttkht705z0fkju",
+   "clientID": "1bu6q1noi0akto24jxbgivim6o3bfq9",
+   "clientSecret": "b9d5vlb3f6vdbpy6h0xu4g1odzcw1j",
    "callbackURL": "https://staging.tempostorm.com/link/twitch/callback",
    "authPath": "/link/twitch",
    "callbackPath": "/link/twitch/callback",
