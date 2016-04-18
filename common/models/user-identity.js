@@ -50,10 +50,6 @@ module.exports = function(UserIdentity) {
         var autoLogin = options.autoLogin || options.autoLogin === undefined;
         provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
 
-        var redirectUrl = "https://"+UserIdentity.app.get("domain");
-        console.log("redirectUrl", redirectUrl);
-
-
         // Set the result if available
         var loopbackContext = loopback.getCurrentContext();
         if (loopbackContext && loopbackContext.active && loopbackContext.active.http){
@@ -137,7 +133,7 @@ module.exports = function(UserIdentity) {
      */
     UserIdentity.link = function (userId, provider, authScheme, profile,
                                   credentials, options, cb) {
-
+console.log("LINKING!~!!!!");
         options = options || {};
         if(typeof options === 'function' && cb === undefined) {
             cb = options;
@@ -169,13 +165,12 @@ module.exports = function(UserIdentity) {
                 authScheme: authScheme,
                 profile: profile,
                 credentials: credentials,
-                userId: userId,
-                created: date,
-                modified: date
+                userId: userId
             };
-            console.log("new userIden", newUserIdentity);
+            console.log("NNNEEEWWWW USERIDENTITy", newUserIdentity);
             return UserIdentity.create(newUserIdentity, function (err, i) {
-                cb(err, i);
+                console.log("created userrrrrrrrrrrrrrrrrrrrrrr");
+                return cb(err, i);
             });
         });
     }
