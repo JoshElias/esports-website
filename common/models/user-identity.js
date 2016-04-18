@@ -21,60 +21,83 @@ module.exports = function(UserIdentity) {
    */
   UserIdentity.login = function (provider, authScheme, profile, credentials,
                                  options, cb) {
-	    options = options || {};
-	    if(typeof options === 'function' && cb === undefined) {
-	      cb = options;
-	      options = {};
-	    }
-	    var autoLogin = options.autoLogin || options.autoLogin === undefined;
-  		var provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
-        var loopbackContext = loopback.getCurrentContext();
+      options = options || {};
+      if (typeof options === 'function' && cb === undefined) {
+          cb = options;
+          options = {};
+      }
+      var autoLogin = options.autoLogin || options.autoLogin === undefined;
+      var provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
 
-	    UserIdentity.findOne({where: {
-	      provider: provider,
-	      externalId: profile.id
-	    }}, function (err, identity) {
-	      if (err) {
-              if (loopbackContext && loopbackContext.active) {
-                  var res = loopbackContext.active.http.res;
-                  res.cookie("thirdPartyError", "Please link your "+provider+" profile to an email account first.", {
+
+      // Set the result if available
+      var loopbackContext = loopback.getCurrentContext();
+      if (loopbackContext && loopbackContext.active && loopbackContext.active.http){
+          loopbackContext.set("res", loopbackContext.active.http.res);
+      }
+
+      console.log("finding with where:", provider, profile.id);
+      UserIdentity.findOne({
+          where: {
+              provider: provider,
+              externalId: profile.id
+          }
+      }, function (err, identity) {
+          console.log("found userIdentity", err, identity);
+          if (err) {
+
+              var res;
+              if (loopbackContext) {
+                  res = loopbackContext.get("res");
+              }
+
+              if(res) {
+                  console.log("responding to res");
+                  res.cookie("thirdPartyError", "Please link your " + provider + " profile to an email account first.", {
                       signed: true,
                       maxAge: 1209600
                   });
                   return res.redirect("https://tempostorm.com");
               }
 
-	        return cb(err);
-	      }
-	      if (identity) {
-	        identity.credentials = credentials;
-	        return identity.updateAttributes({profile: profile,
-	          credentials: credentials, modified: new Date()}, function (err, i) {
-	          // Find the user for the given identity
-	          return identity.user(function (err, user) {
-	            // Create access token if the autoLogin flag is set to true
-	            if(!err && user && autoLogin) {
-	              return (options.createAccessToken || createAccessToken)(user, function(err, token) {
-	                cb(err, user, identity, token);
-	              });
-	            }
-	            cb(err, user, identity);
-	          });
-	        });
-	      } else {
-              if (loopbackContext && loopbackContext.active) {
-                  var res = loopbackContext.active.http.res;
-                  res.cookie("thirdPartyError", "Please link your "+provider+" profile to an email account first.", {
+              return cb(err);
+          } else if (identity) {
+              console.log("found identity")
+              identity.credentials = credentials;
+              return identity.updateAttributes({
+                  profile: profile,
+                  credentials: credentials, modified: new Date()
+              }, function (err, i) {
+                  // Find the user for the given identity
+                  return identity.user(function (err, user) {
+                      // Create access token if the autoLogin flag is set to true
+                      if (!err && user && autoLogin) {
+                          return (options.createAccessToken || createAccessToken)(user, function (err, token) {
+                              cb(err, user, identity, token);
+                          });
+                      }
+                      cb(err, user, identity);
+                  });
+              });
+          } else {
+              console.log("responding with no identity");
+              var res;
+              if (loopbackContext) {
+                  res = loopbackContext.get("res");
+              }
+
+              if(res) {
+                  res.cookie("thirdPartyError", "Please link your " + provider + " profile to an email account first.", {
                       signed: true,
                       maxAge: 1209600
                   });
                   return res.redirect("https://tempostorm.com");
               }
 
-	      	return cb(undefined, new Error("You must link your profile first"));
-	      }
-	  });
-	};
+              return cb(undefined, new Error("You must link your profile first"));
+          }
+      });
+  };
 
 
 	/**
