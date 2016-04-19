@@ -5638,6 +5638,11 @@ angular.module('app.services', [])
                 var movedDeck;
                 var afterInMatchups;
 
+                // if dragging active deck, make sure to deactive it
+                if (decks[index] === sb.activeDeck) {
+                    sb.activeDeck = null;
+                }
+                
                 // remove old position for deck
                 decks.splice(index, 1);
 

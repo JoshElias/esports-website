@@ -73,6 +73,7 @@ angular.module('polls.services')
             pb.load = function (data) {
                 pb.loaded = true;
                 
+                pb.id = data.id;
                 pb.title = data.title;
                 pb.subtitle = data.subtitle;
                 pb.description = data.description;
@@ -130,6 +131,16 @@ angular.module('polls.services')
                 pb.activePollItem = newPollItem;
             };
             
+            // get pollItem by id
+            pb.getPollItemById = function (pollItemId) {
+                for (var i = 0; i < pb.items.length; i++) {
+                    if (pb.items[i].id === pollItemId) {
+                        return pb.items[i];
+                    }
+                }
+                return false;
+            };
+            
             // delete poll item
             pb.pollItemDelete = function (pollItem) {
                 // flag item as deleted
@@ -181,8 +192,6 @@ angular.module('polls.services')
 
             // get snapshot image url
             pb.getPollItemImage = function () {
-                console.log(pb.activePollItem);
-                
                 var imgPath = 'polls/';
                 return (pb.activePollItem && pb.activePollItem.photoNames && pb.activePollItem.photoNames.thumb === '') ?  tpl + 'img/blank.png' : cdn2 + imgPath + pb.activePollItem.photoNames.thumb;
             };
@@ -262,6 +271,28 @@ angular.module('polls.services')
                     pb.deleted.pollItems.push(pollItem.id);
                 }
             };
+
+            // handle drag and drop for pollItems
+            pb.pollItemsUpdateDND = function (list, index) {
+                // if we're dragging the active pollItem, unset active pollItem
+                if (list[index] === pb.activePollItem) {
+                    $timeout(function () {
+                        pb.activePollItem = null;
+                    });
+                }
+                
+                // remove old item from list
+                list.splice(index, 1);
+                
+                // update list
+                for (var i = 0; i < list.length; i++) {
+                    // update orderNum
+                    list[i].orderNum = i + 1;
+                    
+                    // mark item as updated
+                    pb.pollItemUpdated(list[i]);
+                }
+            };
             
             // check poll before save
             pb.saveCheck = function (callback) {
@@ -333,13 +364,15 @@ angular.module('polls.services')
                         if (!pb.updated.pollItems.length) { return cb(); }
                         
                         async.each(pb.updated.pollItems, function (pollItemId, eachCallback) {
-                            var pollItem = pb.getPollItemId(pollItemId);
+                            var pollItem = pb.getPollItemById(pollItemId);
                             PollItem.update({
                                 where: {
                                     id: pollItemId
                                 }
                             }, {
-                                // TODO: ADD POLL ITEM FIELDS TO UPDATE
+                                name: pollItem.name,
+                                photoNames: pollItem.photoNames,
+                                orderNum: pollItem.orderNum
                             })
                             .$promise
                             .then(function (data) {
@@ -373,7 +406,12 @@ angular.module('polls.services')
                                 id: pb.id
                             }
                         }, {
-                            // TODO: ADD POLL FIELDS TO UPDATE
+                            title: pb.title,
+                            subtitle: pb.subtitle,
+                            description: pb.description,
+                            pollType: pb.pollType,
+                            voteLimit: pb.voteLimit,
+                            viewType: pb.viewType
                         })
                         .$promise
                         .then(function (data) {
@@ -420,7 +458,7 @@ angular.module('polls.services')
                     },
                     // create poll items
                     function (pollId, cb) {
-                        async.each(pb.pollItems, function (pollItem, eachCallback) {
+                        async.each(pb.items, function (pollItem, eachCallback) {
                             // only create poll items without ids
                             if (pollItem.id) { return eachCallback(); }
                             // create new poll item

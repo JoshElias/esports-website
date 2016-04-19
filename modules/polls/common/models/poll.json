@@ -34,7 +34,7 @@
       "type": "hasMany",
       "model": "pollItem",
       "foreignKey": "pollId",
-      "isChild": "true"
+      "DestroyOnDelete": true
     }
   },
   "acls": [
@@ -64,6 +64,7 @@
   ],
   "mixins": {
     "Scope": true,
-    "Timestamp" : true
+    "Timestamp" : true,
+    "DestroyOnDelete": true
   }
 }
