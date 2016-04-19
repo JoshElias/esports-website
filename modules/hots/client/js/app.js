@@ -57,8 +57,13 @@ angular.module('hotsSnapshot', [])
             return foldedTiers[tierNum];
         };
 
+        $scope.getNgNumberScore = function (value) {
+            var clamp = Math.min(Math.max(value, 2), 10);
+
+            return (clamp * 10) - ((clamp != 10) ? 1 : 7);
+        };
+
         $scope.foldTier = function (tierNum) {
-            console.log(tierNum);
             if(foldedTiers[tierNum] === undefined)
                 foldedTiers[tierNum] = false;
 
@@ -184,7 +189,7 @@ angular.module('hotsSnapshot', [])
                     controller: 'hotsSnapshotCtrl',
                     templateUrl: moduleTpl + 'snapshot.html',
                     resolve: {
-                        snapshot: ['$stateParams', '$state', 'HotsSnapshot', function ($stateParams, $state, HotsSnapshot) {
+                        snapshot: ['$stateParams', '$state', 'HotsSnapshot', 'Util', function ($stateParams, $state, HotsSnapshot, Util) {
                             var slug = $stateParams.slug;
 
                             return HotsSnapshot.findBySlug({
@@ -253,12 +258,12 @@ angular.module('hotsSnapshot', [])
                                 var intro = data.intro;
                                 var thoughts = data.thoughts;
 
-                                data.intro = intro.replace(/\n/g, '<br>');
-                                data.thoughts = thoughts.replace(/\n/g, '<br>');
+                                data.intro = Util.replaceLineBreak(intro);
+                                data.thoughts = Util.replaceLineBreak(thoughts);
                                 _.each(data.heroTiers, function (val) {
                                     var summary = val.summary;
 
-                                    val.summary = summary.replace(/\n/g, '<br>');
+                                    val.summary = Util.replaceLineBreak(summary);
                                 });
 
                                 return data;
