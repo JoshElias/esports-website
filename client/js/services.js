@@ -539,7 +539,7 @@ angular.module('app.services', [])
             //begin method definitions
             HOTSSnapshot.prototype.addTier = function () {
                 var tier = {
-                    heroes: new Array(),
+                    heroes: [],
                     tier: this.tiers.length + 1
                 };
 
@@ -552,7 +552,7 @@ angular.module('app.services', [])
                 var largestTier = tiers.length;
 
                 if (!!heroTiers) {
-                    var newTiers = new Array();
+                    var newTiers = [];
 
                     _.each(heroTiers, function (heroTier, idx) {
                         heroTier.orderNum = idx;
@@ -563,7 +563,7 @@ angular.module('app.services', [])
 
                     for (var i = 0; i < largestTier; i++) {
                         var newTier = {
-                            heroes: new Array(),
+                            heroes: [],
                             tier: newTiers.length + 1
                         };
 
