@@ -7,8 +7,8 @@ angular.module('hotsSnapshot', [])
         }
     ]
 )
-.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', '$sce', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
-    function ($scope, $window, $state, $filter, $sce, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
+.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', '$sce', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS', 'MetaService',
+    function ($scope, $window, $state, $filter, $sce, HOTSSnapshot, HotsSnapshot, snapshot, HOTS, MetaService) {
         var foldedTiers = {};
         var filter = {
             role: HOTS.roles,
@@ -23,6 +23,11 @@ angular.module('hotsSnapshot', [])
         $scope.snapshot = HOTSSnapshot(snapshot);
         $scope.votableSnapshot = { hotsSnapshot: $scope.snapshot };
         $scope.snapshot.buildTiers();
+        $scope.metaservice = MetaService;
+
+        $scope.metaservice.set($scope.snapshot.title + ' - Heroes of the Storm Meta Snapshot', $scope.snapshot.intro);
+        var ogImg = $scope.app.cdn + 'snapshots/default-banner-square.jpg';
+        $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/meta-snapshot/' + $scope.snapshot.slugs[0].slug, $scope.snapshot.title, $scope.snapshot.intro, 'article', ogImg);
 
         _.each($scope.snapshot.tiers, function (val) {
             if(!$scope.activeFilters[val.tier])
@@ -130,6 +135,20 @@ angular.module('hotsSnapshot', [])
             $event.stopPropagation();
 
             $window.open(url, '_blank');
+        };
+
+        $scope.goToTwitch = function ($event, slug) {
+            $event = $event || window.event;
+            $event.stopPropagation();
+            //noinspection UnterminatedStatementJS
+            var url = 'http://twitch.tv/' + slug
+            window.open(url, '_blank');
+        };
+
+        $scope.goToTwitter = function ($event, slug) {
+            $event.stopPropagation();
+            var url = 'http://twitter.com/' + slug;
+            window.open(url, '_blank');
         }
     }
 ])
@@ -170,7 +189,6 @@ angular.module('hotsSnapshot', [])
                     })
                     .$promise
                     .then(function (data) {
-                        console.log('2', data);
                         return data;
                     });
                 }],
@@ -190,8 +208,10 @@ angular.module('hotsSnapshot', [])
                     templateUrl: moduleTpl + 'snapshot.html',
                     resolve: {
                         snapshot: ['$stateParams', '$state', 'HotsSnapshot', 'Util', function ($stateParams, $state, HotsSnapshot, Util) {
+                            console.log('F');
                             var slug = $stateParams.slug;
 
+                            
                             return HotsSnapshot.findBySlug({
                                 slug: slug,
                                 filter: {
@@ -221,8 +241,7 @@ angular.module('hotsSnapshot', [])
                                                                 'name',
                                                                 'universe',
                                                                 'role',
-                                                                'title',
-                                                                'characters'
+                                                                'title'
                                                             ]
                                                         }
                                                     }
@@ -233,7 +252,17 @@ angular.module('hotsSnapshot', [])
                                             relation: "authors",
                                             scope: {
                                                 order: "orderNum ASC",
-                                                include: ["user"]
+                                                include: [
+                                                    {
+                                                        relation: 'user',
+                                                        scope: {
+                                                            fields: {
+                                                                username: true,
+                                                                social: true
+                                                            }
+                                                        }
+                                                    }
+                                                ]
                                             }
                                         },
                                         {
@@ -249,6 +278,9 @@ angular.module('hotsSnapshot', [])
                                                     }
                                                 }
                                             }
+                                        },
+                                        {
+                                            relation: 'slugs'
                                         }
                                     ]
                                 }
@@ -271,7 +303,7 @@ angular.module('hotsSnapshot', [])
                             })
                             .catch(function (e) {
                                 console.log("ERR", e);
-                                $state.transitionTo('otherwise');
+                                $state.transitionTo('app.404');
                             });
                         }]
                     }

@@ -5733,7 +5733,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.slugifyUrl = function (str) {
-                if (!$scope.snapshot.slugs[0] && !$scope.snapshot.slugs[0].linked)
+                if (!$scope.snapshot.slugs[0] || !$scope.snapshot.slugs[0].linked)
                     return;
 
                 $scope.snapshot.slugs[0].slug = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + slugify(str);
@@ -11618,7 +11618,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // meta service
-            $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
+            $scope.metaservice.set($scope.snapshot.title + ' - Hearthstone Meta Snapshot', $scope.snapshot.content.intro);
             var ogImg = ($scope.snapshot.photoNames.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photoNames.square;
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
 

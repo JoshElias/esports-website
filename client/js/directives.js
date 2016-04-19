@@ -2508,7 +2508,7 @@ angular.module('app.directives', ['ui.load'])
 .directive('hotsSnapshotGeneral', function () {
     return {
         restrict: 'E',
-        templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
+        templateUrl: tpl + 'views/admin/hots.snapshot.general.html'
     }
 })
 .directive('hotsSnapshotAuthors', ['$compile', 'HOTS', function ($compile, HOTS) {

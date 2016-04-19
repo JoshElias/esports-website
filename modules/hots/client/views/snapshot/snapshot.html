@@ -25,7 +25,7 @@
         </div>
         <div class="container" >
             <div class="m-t-md">
-                <div class="row no-pad clearfix">
+                <div class="row no-pad clearfix" ng-if="snapshot.intro.length > 0">
                     <div class="col-xs-12 col-lg-12 m-b-md">
                         <div class="box-border wrapper-md">
                             <div class="clearfix">
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row no-pad clearfix">
+                <div class="row no-pad clearfix" ng-if="snapshot.thoughts.length > 0">
                     <div class="col-xs-12 col-lg-12 m-b-md">
                         <div class="box-border wrapper-md">
                             <div class="clearfix">
@@ -59,7 +59,7 @@
                 <div class="hots-tiers m-b-md box-border no-outline" id="tiers">
                     <div ng-repeat="tier in snapshot.tiers" id="tier {{tier.tier}}" class="tier">
                         <div class="tier-heading">
-                            <a class="btn btn-block btn-tier-collapse" ng-click="foldTier(tier.tier)" role="button" data-toggle="collapse" data-target="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
+                            <a class="btn btn-block btn-tier-collapse btn-hov" ng-click="foldTier(tier.tier)" role="button" data-toggle="collapse" data-target="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
                                 <h2 class="pull-left">TIER <span ng-if="tier.tier == 1">S</span><span ng-if="tier.tier > 1">{{tier.tier - 1}}</span></h2>
                             </a>
                             <div ng-class="{ 'opZero': !isFolded(tier.tier) }" class="tier-hero-filters hidden-xs">
@@ -338,14 +338,14 @@
                             </div>
                             <div class="author-text-wrapper">
                                 <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.expertClasses.length > 0 } ">{{author.user.username}}</h2>
-                            <span ng-if="author.expertClasses.length === 1">
-                                <h3 class="classExpert">{{author.expertClasses[0]}} EXPERT</h3>
-                            </span>
-                                <h3 ng-if="author.expertClasses.length > 1">
-                                <span ng-repeat="klass in author.expertClasses">
-                                    <span ng-if="$index == author.expertClasses.length-1">&nbsp;AND</span>
-                                    {{klass}}<span ng-if="$index < author.expertClasses.length-2">,</span>
+                                <span ng-if="author.expertClasses.length === 1">
+                                    <h3 class="classExpert">{{author.expertClasses[0]}} EXPERT</h3>
                                 </span>
+                                <h3 ng-if="author.expertClasses.length > 1">
+                                    <span ng-repeat="klass in author.expertClasses">
+                                        <span ng-if="$index == author.expertClasses.length-1">&nbsp;AND</span>
+                                        {{klass}}<span ng-if="$index < author.expertClasses.length-2">,</span>
+                                    </span>
                                     EXPERT
                                 </h3>
                             </div>

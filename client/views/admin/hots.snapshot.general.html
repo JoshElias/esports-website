@@ -24,10 +24,10 @@
             <div class="input-group pull-left" ng-repeat="slug in snapshot.slugs">
                 <span class="input-group-btn">
                     <button ng-click="toggleLinked()"
-                            ng-class="{ 'active': slug.linked }"
+                            ng-class="{ 'btn-default': slug.linked, 'btn-danger': !slug.linked }"
                             class="btn btn-default"
                             type="button"
-                    ><i class="fa fa-link"></i></button>
+                    ><i ng-if="slug.linked" class="fa fa-link"></i><i ng-if="!slug.linked" class="fa fa-unlink"></i></button>
                 </span>
                 <input ng-model="slug.slug"
                        class="form-control"
