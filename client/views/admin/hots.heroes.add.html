@@ -3,7 +3,7 @@
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">
-        Add Hero
+        <h3>Add Hero</h3>
     </div>
     <div class="panel-body">
         <div class="row form-group">
@@ -54,61 +54,77 @@
                 <input type="number" id="gold" name="gold" class="form-control" ng-model="hero.price.gold" required>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel sub-panel">
             <div class="panel-heading clearfix">
-                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="charAddWnd()">
+                <a href="#" class="btn btn-sm btn-blue btn-rounded pull-right" ng-click="charAddWnd()">
                     <i class="fa fa-plus-circle m-r-xs"></i>Add
                 </a>
-                <strong class="lh-lg">Characters</strong>
+                <h4 class="lh-lg">Characters</h4>
             </div>
-            <ul class="list-group" ng-show="hero.characters.length">
-                <li class="list-group-item admin-list-item lh-lg clearfix" ng-repeat="character in hero.characters | orderBy: 'name'">
-                    {{character.name}}
-                    <div class="pull-right">
-                        <button class="btn btn-sm btn-default" ng-click="charEditWnd(character)">Edit</button>
-                        <button class="btn btn-sm btn-danger" ng-click="deleteChar(character)">Delete</button>
+            <div class="admin-list" ng-show="hero.characters.length">
+                <div class="admin-list-item gradient-add clearfix" ng-repeat="character in hero.characters | orderBy: 'name'">
+                    <div class="list-accent-div">
+                         <div class="row">
+                            <div class="col-xs-6">
+                                <span class="list-item-height">{{character.name}}</span>
+                             </div>
+                            <div class="col-xs-6">
+                                <div class="pull-right btn-toolbar list-item-height">
+                                    <button class="btn btn-default" ng-click="charEditWnd(character)">Edit</button>
+                                    <button class="btn btn-danger" ng-click="deleteChar(character)">Delete</button>
+                                </div>
+                             </div>
+                        </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </div>
             <div class="panel-body" ng-show="!hero.characters.length">
-                <p class="m-b-none">There are no characters added for this hero yet.</p>
+                <p class="m-b-none placeholder-text">There are no characters added for this hero yet.</p>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel sub-panel">
             <div class="panel-heading clearfix">
-                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="abilityAddWnd()">
+                <a href="#" class="btn btn-sm btn-blue btn-rounded pull-right" ng-click="abilityAddWnd()">
                     <i class="fa fa-plus-circle m-r-xs"></i>Add
                 </a>
-                <strong class="lh-lg">Abilities</strong>
+                <h4 class="lh-lg">Abilities</h4>
             </div>
-            <ul class="list-group" dnd-list="hero.abilities" dnd-allowed-types="['ability']" ng-show="hero.abilities.length">
-                <li class="list-group-item admin-list-item lh-lg clearfix"
-                    ng-repeat="ability in hero.abilities"
-                    dnd-draggable="ability"
-                    dnd-moved="updateDND(hero.abilities, $index, ability, 'abilities')"
-                    dnd-disable-if="hero.abilities.length < 2"
-                    dnd-type="'ability'"
+            <div class="admin-list" dnd-list="hero.abilities" dnd-allowed-types="['ability']" ng-show="hero.abilities.length">
+                <div class="admin-list-item gradient-add clearfix" 
+                        ng-repeat="ability in hero.abilities"
+                        dnd-draggable="ability"
+                        dnd-moved="updateDND(hero.abilities, $index, ability, 'abilities')"
+                        dnd-disable-if="hero.abilities.length < 2"
+                        dnd-type="'ability'"
                 >
-                    {{ability.name}}
-                    <div class="pull-right">
-                        <button class="btn btn-sm btn-default" ng-click="abilityEditWnd(ability)">Edit</button>
-                        <button class="btn btn-sm btn-danger" ng-click="deleteAbility(ability)">Delete</button>
+                    <div class="list-accent-div">
+                         <div class="row">
+                            <div class="col-xs-6">
+                                <span class="list-item-height">{{ability.name}}</span>
+                             </div>
+                            <div class="col-xs-6">
+                                <div class="pull-right btn-toolbar list-item-height">
+                                    <button class="btn btn-default" ng-click="abilityEditWnd(ability)">Edit</button>
+                                    <button class="btn btn-danger" ng-click="deleteAbility(ability)">Delete</button>
+                                </div>
+                             </div>
+                        </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </div>
             <div class="panel-body" ng-show="!hero.abilities.length">
-                <p class="m-b-none">There are no abilities added for this hero yet.</p>
+                <p class="m-b-none placeholder-text">There are no abilities added for this hero yet.</p>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel sub-panel">
             <div class="panel-heading clearfix">
-                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="talentAddWnd()">
+                <a href="#" class="btn btn-sm btn-blue btn-rounded pull-right" ng-click="talentAddWnd()">
                     <i class="fa fa-plus-circle m-r-xs"></i>Add
                 </a>
-                <strong class="lh-lg">Talents</strong>
+                <h4 class="lh-lg">Talents</h4>
             </div>
-            <ul class="list-group" dnd-list="hero.talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
-                <li class="list-group-item admin-list-item lh-lg clearfix"
+            <div class="admin-list" dnd-list="hero.talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
+                <div class="admin-list-item gradient-add clearfix" 
                     ng-repeat="talent in hero.talents"
                     dnd-draggable="talent"
                     dnd-moved="updateDND(hero.talents, $index, talent, 'talents')"
@@ -116,15 +132,23 @@
                     dnd-disable-if="hero.talents.length < 2"
                     dnd-type="'talent'"
                 >
-                    Level {{talent.tier}} - {{talent.name || talent.talent.name}}
-                    <div class="pull-right">
-                        <button class="btn btn-sm btn-default" ng-click="talentEditWnd(talent)">Edit</button>
-                        <button class="btn btn-sm btn-danger" ng-click="deleteTalent(talent)">Delete</button>
+                    <div class="list-accent-div">
+                         <div class="row">
+                            <div class="col-xs-6">
+                                <span class="list-item-height">Level {{talent.tier}} - {{talent.name || talent.talent.name}}</span>
+                             </div>
+                            <div class="col-xs-6">
+                                <div class="pull-right btn-toolbar list-item-height">
+                                    <button class="btn btn-default" ng-click="talentEditWnd(talent)">Edit</button>
+                                    <button class="btn btn-danger" ng-click="deleteTalent(talent)">Delete</button>
+                                </div>
+                             </div>
+                        </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </div>
             <div class="panel-body" ng-show="!hero.talents.length">
-                <p class="m-b-none">There are no talents added for this hero yet.</p>
+                <p class="m-b-none placeholder-text">There are no talents added for this hero yet.</p>
             </div>
         </div>
         <!--
@@ -196,8 +220,8 @@
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="editHero()">Update Hero</button>
+        <div class="col-xs-12">
+            <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid" ng-click="editHero()">Update Hero</button>
         </div>
     </div>
     </form>

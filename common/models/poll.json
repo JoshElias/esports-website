@@ -9,7 +9,8 @@
   "properties": {
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": 1
     },
     "subtitle": {
       "type": "string"
@@ -18,7 +19,8 @@
       "type": "string"
     },
     "pollType": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "voteLimit": {
       "type": "number"

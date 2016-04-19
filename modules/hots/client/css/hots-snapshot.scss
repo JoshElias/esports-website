@@ -1,5 +1,5 @@
-@import 'ts-colors';
-@import 'ts-mixins';
+@import '../../../../client/css/sass/ts-colors';
+@import '../../../../client/css/sass/ts-mixins';
 
 // Description: styles for the hots meta snapshot only. WARNING!! Some styles may be affected by deck styles from the hs-deck.scss file.
 
@@ -141,7 +141,6 @@
 	}
 
 	.tier-body {
-
 		.tier-hero h4 {
 			//padding-right: 200px;
 			//text-indent: 20px;
@@ -164,7 +163,7 @@
 		.tier-hero-body {
 
 			h2 {
-				font-size: 55px !important;
+				font-size: 34px !important;
 				font-weight: bold;
 				color: $white;
 
@@ -177,20 +176,38 @@
 				margin-left: 15px;
 			}
 
+			.tier-hero-title {
+				padding: 11px 0px;
+				float: left;
+			}
+
+			.tier-talent {
+				float: left;
+				width: 14.27%;
+
+				.talents-icon {
+					margin: 0px auto;
+				}
+			}
+
 			.hots-guide-talents {
-				margin-left: 20px;
+				//margin-left: 20px;
+				float: right;
+
+				.tier-tag {
+					width: auto;
+				}
 
 				div {
 					float: left;
-					margin-left: -20px;
+					//margin-left: -20px;
 				}
 
 				li {
 					z-index:3;
-					transform: scale(.7);
+					//transform: scale(.7);
 				}
 			}
-
 		}
 
 		h3 {
@@ -204,21 +221,19 @@
 		}
 
 		h5 {
-			font-weight:14px;
 			color: $grey-blue;
 			text-align: center;
 			font-weight: bold;
 		}
 
 		.hero-content {
+			min-height: 250px;
 			padding-bottom: 50px;
 
 			@media screen and (max-width: 750px) {
 				padding-bottom: 0px;
 			}
-
 		}
-
 	}
 
 
@@ -587,9 +602,70 @@
 	// 9... Authors Styles
 	//*************************************
 
+
+	.meta-author {
+		padding-top: 14px;
+		padding-bottom: 14px;
+	}
+
 	.hots-author-wrapper {
 		position: relative;
-		height: 60px;
+		height: 85px;
+		width: 60px;
+		left: 10px;
+	}
+
+	.author-img-ico {
+		position: absolute;
+
+		&.ico-length-1{
+			&.ico-0 {
+				top: 15px;
+				margin: auto;
+			}
+		}
+		&.ico-length-2 {
+			&.ico-0 {
+				top: 15px;
+				left: 0px;
+			}
+			&.ico-1 {
+				top: 15px;
+				left: 30px;
+			}
+		}
+		&.ico-length-3 {
+			&.ico-0 {
+				top: 0px;
+				left: 0px;
+			}
+			&.ico-1 {
+				top: 0px;
+				left: 30px;
+			}
+			&.ico-2 {
+				top: 35px;
+				left: 0px;
+			}
+		}
+		&.ico-length-4 {
+			&.ico-0 {
+				top: 0px;
+				left: 0px;
+			}
+			&.ico-1 {
+				top: 0px;
+				left: 30px;
+			}
+			&.ico-2 {
+				top: 35px;
+				left: 0px;
+			}
+			&.ico-3 {
+				top: 35px;
+				left: 30px;
+			}
+		}
 	}
 }
 
@@ -675,7 +751,8 @@
 	width: 100%;
 
 	.tier-hero-filters {
-		float: none;
+		position: relative;
+		float: right;
 		margin: 0;
 
 		.center {
@@ -684,7 +761,7 @@
 			margin: 10px auto;
 
 			@media screen and (max-width: 500px) {
-				width: 172px;
+				//width: 172px;
 				margin: 15px auto 0;
 
 			}

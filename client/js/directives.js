@@ -1507,7 +1507,7 @@ angular.module('app.directives', ['ui.load'])
                         where: where,
                         skip: (page * perpage) - perpage,
                         limit: perpage,
-                        order: 'username ASC'
+                        order: 'className ASC'
                     }
                 };
                 var countOptions = {
@@ -2572,7 +2572,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.openAuthorAdd = function () {
                 var dialog = box({
                     message: $compile('<snapshot-add-author></snapshot-add-author>')($scope),
-                    title: 'Add author'
+                    title: 'Add author',
+                    className: 'modal-admin modal-admin-authors'
                 });
 
                 dialog.modal('show');
@@ -2738,7 +2739,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.openHeroAdd = function (tier) {
                 var dialog = box({
                     message: $compile('<snapshot-add-hero></snapshot-add-hero>')($scope),
-                    title: 'Add hero'
+                    title: 'Add hero',
+                    className: 'modal-admin'
                 });
 
                 dialog.modal('show');
@@ -2757,7 +2759,9 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.openGuideAdd = function () {
                 var dialog = box({
-                    message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope)
+                    title: "Decks",
+                    message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope),
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
                 });
 
                 dialog.modal('show');
@@ -2774,13 +2778,14 @@ angular.module('app.directives', ['ui.load'])
                     return val.heroId == $scope.activeHero.heroId;
                 });
 
-                if (!guideHeroCheck) {
+                if (guideHeroCheck) {
                     $scope.snapshot.addGuideToHero($scope.activeHero, guide);
                 }
             };
 
             $scope.removeHero = function (hero) {
-                var msg = "Are you sure you want to remove " + hero.hero.name + "?";
+                var name = (hero.hero) ? hero.hero.name : hero.name;
+                var msg = "Are you sure you want to remove " + name + "?";
 
                 $scope.warning(msg, function () {
                     $scope.$apply(function () {

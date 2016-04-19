@@ -7,8 +7,8 @@ angular.module('hotsSnapshot', [])
         }
     ]
 )
-.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
-    function ($scope, $window, $state, $filter, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
+.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', '$sce', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
+    function ($scope, $window, $state, $filter, $sce, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
         var foldedTiers = {};
         var filter = {
             role: HOTS.roles,
@@ -49,12 +49,21 @@ angular.module('hotsSnapshot', [])
             val.utilityScore = 0;
         });
 
+        $scope.getContent = function (content) {
+            return $sce.trustAsHtml(content);
+        };
+
         $scope.isFolded = function (tierNum) {
             return foldedTiers[tierNum];
         };
 
+        $scope.getNgNumberScore = function (value) {
+            var clamp = Math.min(Math.max(value, 2), 10);
+
+            return (clamp * 10) - ((clamp != 10) ? 1 : 7);
+        };
+
         $scope.foldTier = function (tierNum) {
-            console.log(tierNum);
             if(foldedTiers[tierNum] === undefined)
                 foldedTiers[tierNum] = false;
 
@@ -180,7 +189,7 @@ angular.module('hotsSnapshot', [])
                     controller: 'hotsSnapshotCtrl',
                     templateUrl: moduleTpl + 'snapshot.html',
                     resolve: {
-                        snapshot: ['$stateParams', '$state', 'HotsSnapshot', function ($stateParams, $state, HotsSnapshot) {
+                        snapshot: ['$stateParams', '$state', 'HotsSnapshot', 'Util', function ($stateParams, $state, HotsSnapshot, Util) {
                             var slug = $stateParams.slug;
 
                             return HotsSnapshot.findBySlug({
@@ -246,6 +255,17 @@ angular.module('hotsSnapshot', [])
                             })
                             .$promise
                             .then(function (data) {
+                                var intro = data.intro;
+                                var thoughts = data.thoughts;
+
+                                data.intro = Util.replaceLineBreak(intro);
+                                data.thoughts = Util.replaceLineBreak(thoughts);
+                                _.each(data.heroTiers, function (val) {
+                                    var summary = val.summary;
+
+                                    val.summary = Util.replaceLineBreak(summary);
+                                });
+
                                 return data;
 
                             })

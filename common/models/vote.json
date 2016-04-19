@@ -28,7 +28,7 @@
     "commentId": {
       "index": 1
     },
-    "overwatchSnapshotId": {
+    "owSnapshotId": {
       "index": 1
     },
     "hotsSnapshotId": {

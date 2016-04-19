@@ -11,7 +11,7 @@
         <li class="clearfix" ng-class="{ active: heroExistsById(hero.id) }" ng-repeat="hero in heroes">
             <div class="pull-right">
                 <button type="button" class="btn btn-success" ng-click="heroAdd(hero)" ng-if="!heroExistsById(hero.id)">Add</button>
-                <button type="button" class="btn btn-danger" ng-click="heroDeleteById(hero.id)" ng-if="heroExistsById(hero.id)">Remove</button>
+                <button type="button" class="btn btn-danger" ng-click="removeHero(hero)" ng-if="heroExistsById(hero.id)">Remove</button>
             </div>
             <div class="authour pull-left">
                 {{hero.name}}

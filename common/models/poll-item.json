@@ -9,7 +9,8 @@
   },
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "index": 1
     },
     "photoNames": {
       "type": "object"
@@ -18,9 +19,12 @@
       "type": "number"
     },
     "orderNum": {
-      "type": "number"
+      "type": "number",
+      "index": 1
     },
-    "pollId": {}
+    "pollId": {
+      "index": 1
+    }
   },
   "relations": {
     "poll": {

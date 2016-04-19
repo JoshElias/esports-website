@@ -1944,6 +1944,9 @@ angular.module('app.services', [])
                 } finally {
                     return sl;
                 }
+            },
+            replaceLineBreak: function (str) {
+                return str.replace(/\n/g, '<br>');
             }
         };
     }])

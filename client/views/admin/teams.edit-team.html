@@ -3,7 +3,7 @@
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
         <div class="panel-heading">
-            Edit Existing Team
+            <h3>Edit Existing Team</h3>
         </div>
         
         <div class="panel-body">
@@ -46,8 +46,8 @@
         </div>
         
         <div class="panel-footer clearfix">
-            <div class="col-sm-10 col-sm-offset-2">
-                <button type="submit" class="btn btn-blue btn-lg"
+            <div class="col-xs-12">
+                <button type="submit" class="btn admin-btn-blue pull-right"
                         ng-disabled="fetching || form.$invalid" ng-click="editTeam()">
                     <span ng-if="!fetching">Edit Team</span>
                     <span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>

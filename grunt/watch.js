@@ -32,8 +32,9 @@ module.exports = {
         ],
         tasks: [
             'newer:htmlmin:modules_',
-            'compass:modules_ads',
             'compass:modules_redbull',
+            'compass:modules_ads',
+            'compass:modules_hots',
             'newer:concat:modules_',
             //'newer:imagemin:modules_'
         ]

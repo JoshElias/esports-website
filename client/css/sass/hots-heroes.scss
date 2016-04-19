@@ -642,7 +642,7 @@ This is the template for hots-hero-talents.
     ( class: (viciousness), pos: 3 ), // -90
     ( class: (thick-skin, running-wild), pos: 4 ), // -120
     ( class: (eyes-in-the-dark), pos: 5 ), // -150
-    ( class: (quicksilver-bullets, relentless-predator, Hunters-blunderbuss), pos: 6 ), // -180
+    ( class: (quicksilver-bullets, relentless-predator, hunters-blunderbuss), pos: 6 ), // -180
     ( class: (wizened-duelist, alpha-killer, tooth-and-claw), pos: 7 ), // -210
     ( class: (go-for-the-throat, unleashed), pos: 8 ), // -240
     ( class: (marked-for-the-kill, gilnean-roulette), pos: 9 ), // -270
@@ -1650,55 +1650,55 @@ This is the template for hots-hero-talents.
 //*************************************
 // 10... HOTS meta snapshot image
 //*************************************
-        
-        
+
+
 @include hots-snapshot-hero(abathur, -80, -15, -70, 120);
 @include hots-snapshot-hero(anub-arak, -80, -50, -70, 50);
 @include hots-snapshot-hero(arthas, -80, -40, -70, 50);
-@include hots-snapshot-hero(artanis, -80, -65, -70, 50);
-@include hots-snapshot-hero(azmodan, -80, -40, -70, 50);
-@include hots-snapshot-hero(brightwing, -70, -55, -56, 50);
+@include hots-snapshot-hero(artanis, -40, -65, -70, 50);
+@include hots-snapshot-hero(azmodan, -50, -40, -70, 50);
+@include hots-snapshot-hero(brightwing, -45, -55, -56, 50);
 @include hots-snapshot-hero(chen, -80, -40, -70, 68);
-@include hots-snapshot-hero(cho, -80, -78, -70, 50);
-@include hots-snapshot-hero(diablo, -80, -78, -56, 50);
-@include hots-snapshot-hero(dehaka, -80, -78, -56, 50);
-@include hots-snapshot-hero(etc, -80, -78, -56, 50);
-@include hots-snapshot-hero(falstad, -80, -78, -56, 50);
-@include hots-snapshot-hero(gall, -80, -78, -70, 50);
-@include hots-snapshot-hero(gazlowe, -80, -23, -40, 50);
-@include hots-snapshot-hero(greymane, -80, -23, -40, 50);
-@include hots-snapshot-hero(illidan, -80, -58, -40, 50);
-@include hots-snapshot-hero(jaina, -54, -8, -34, 98);
-@include hots-snapshot-hero(johanna, -45, -80, -34, 34);
-@include hots-snapshot-hero(kaelthas, -58, 16, -70, 50);
-@include hots-snapshot-hero(kerrigan, -60, -31, -70, 65);
+@include hots-snapshot-hero(cho, -50, -78, -70, 50);
+@include hots-snapshot-hero(diablo, -50, -78, -56, 50);
+@include hots-snapshot-hero(dehaka, -35, -78, -56, 50);
+@include hots-snapshot-hero(etc, -35, -78, -56, 50);
+@include hots-snapshot-hero(falstad, -40, -78, -56, 50);
+@include hots-snapshot-hero(gall, -50, -78, -70, 50);
+@include hots-snapshot-hero(gazlowe, -40, -23, -40, 50);
+@include hots-snapshot-hero(greymane, -15, -23, -40, 50);
+@include hots-snapshot-hero(illidan, -35, -58, -40, 50);
+@include hots-snapshot-hero(jaina, -40, -8, -34, 98);
+@include hots-snapshot-hero(johanna, -25, -80, -34, 34);
+@include hots-snapshot-hero(kaelthas, -35, 16, -70, 50);
+@include hots-snapshot-hero(kerrigan, -40, -31, -70, 65);
 @include hots-snapshot-hero(kharazim, -25, -54, -60, 50);
 @include hots-snapshot-hero(leoric, -25, -54, -60, 50);
 @include hots-snapshot-hero(lili, -35, -40, -40, 100);
-@include hots-snapshot-hero(li-ming, -80, -23, -40, 50);
+@include hots-snapshot-hero(li-ming, -50, -23, -40, 50);
 @include hots-snapshot-hero(morales, -25, -54, -60, 50);
 @include hots-snapshot-hero(malfurion, -25, -80, -60, 50);
-@include hots-snapshot-hero(muradin,  -25, -55, -60, 68);
+@include hots-snapshot-hero(muradin,  -40, -55, -60, 68);
 @include hots-snapshot-hero(murky,  -25, -55, -60, 68);
 @include hots-snapshot-hero(nazeebo, -42, -88, -60, 49);
-@include hots-snapshot-hero(nova, -40, -110, -60, 45);
-@include hots-snapshot-hero(raynor, -70, -65, -60, 50);
+@include hots-snapshot-hero(nova, -35, -110, -60, 45);
+@include hots-snapshot-hero(raynor, -40, -65, -60, 50);
 @include hots-snapshot-hero(rehgar, -25, -68, -70, 68);
 @include hots-snapshot-hero(rexxar, -25, -68, -70, 68);
-@include hots-snapshot-hero(sgthammer, -25, -68, -70, 68);
+@include hots-snapshot-hero(sgthammer, -85, -68, -70, 68);
 @include hots-snapshot-hero(sonya, -25, -30, -70, 68);
 @include hots-snapshot-hero(stitches, -25, -61, -70, 60);
 @include hots-snapshot-hero(sylvanas, -25, -61, -70, 60);
 @include hots-snapshot-hero(tassadar, -25, -61, -70, 60);
 @include hots-snapshot-hero(the-butcher, -25, 17, -60, 132);
-@include hots-snapshot-hero(thelostvikings, -25, -65, -70, 76);
-@include hots-snapshot-hero(thrall, -25, -65, -70, 76);
-@include hots-snapshot-hero(tychus,  -25, -65, -70, 76);
+@include hots-snapshot-hero(thelostvikings, -45, -65, -70, 76);
+@include hots-snapshot-hero(thrall, -35, -65, -70, 76);
+@include hots-snapshot-hero(tychus,  -55, -65, -70, 76);
 @include hots-snapshot-hero(tyrael, -25, -65, -70, 76);
 @include hots-snapshot-hero(tyrande, -25, -89, -60, 35);
 @include hots-snapshot-hero(uther, -25, -48, -70, 61);
 @include hots-snapshot-hero(valla, -25, -22, -70, 96);
 @include hots-snapshot-hero(xul, -25, -22, -70, 96);
-@include hots-snapshot-hero(zagara, -25, -22, -70, 96);
+@include hots-snapshot-hero(zagara, -45, -22, -70, 96);
 @include hots-snapshot-hero(zeratul, -25, -5, -70, 96);
 @include hots-snapshot-hero(lunara, -25, -5, -70, 96);
