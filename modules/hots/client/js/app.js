@@ -271,7 +271,7 @@ angular.module('hotsSnapshot', [])
                             })
                             .catch(function (e) {
                                 console.log("ERR", e);
-                                $state.transitionTo('otherwise');
+                                $state.transitionTo('app.404');
                             });
                         }]
                     }
