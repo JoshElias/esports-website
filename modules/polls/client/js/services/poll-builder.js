@@ -36,6 +36,7 @@ angular.module('polls.services')
             voteLimit: 1,
             viewType: '',
             items: [],
+            mode: 'add',
             activePollItem: null
         };
         var defaultPollItem = {
@@ -49,7 +50,7 @@ angular.module('polls.services')
             pollId: null
         };
 
-        poll.new = function (data) {
+        poll.new = function (mode, data) {
             // start with default poll
             var pb = angular.copy(defaultPoll);
             pb.deleted = {
@@ -61,7 +62,10 @@ angular.module('polls.services')
             };
 
             // init
-            pb.init = function(data) {
+            pb.init = function(mode, data) {
+                // set mode
+                pb.mode = mode;
+                
                 // if we have data, load it
                 if (data) {
                     // load data
@@ -524,6 +528,17 @@ angular.module('polls.services')
                                 show: true
                             });
                         }
+                    } else {
+                        var action = (pb.mode === 'add') ? 'added' : 'updated';
+                        
+                        AlertService.setSuccess({
+                            show: true,
+                            msg: 'Poll ' + action + ' successfully'
+                        });
+                        
+                        if (pb.mode === 'add') {
+                            pb.mode = 'edit';
+                        }
                     }
                     
                     console.log('done saving');
@@ -532,7 +547,7 @@ angular.module('polls.services')
             };
 
             // run init
-            pb.init(data);
+            pb.init(mode, data);
 
             // return instance
             return pb;

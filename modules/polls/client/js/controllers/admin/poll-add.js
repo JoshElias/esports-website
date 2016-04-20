@@ -3,9 +3,8 @@ angular.module('polls.controllers')
     function ($scope, PollBuilder) {
 
         $scope.page = 'general';
-        $scope.mode = 'add';
 
-        $scope.poll = PollBuilder.new();
+        $scope.poll = PollBuilder.new('add');
 
         /*
         $scope.photoUpload = function ($files) {

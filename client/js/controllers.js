@@ -11092,32 +11092,28 @@ angular.module('app.controllers', ['ngCookies'])
                 $('html, body').animate({
                     scrollTop: (deck.offset().top - 100)
                 }, 400);
-            }
+            };
 
-            //noinspection UnterminatedStatementJS
             $scope.findDeck = function (tier, deck) {
                 var t = $('#collapseTier' + tier),
                     d = $('#collapseDeck-' + deck);
                 t.collapse('show');
                 d.collapse('show');
                 $scope.scrollToDeck(d);
-            }
+            };
 
-            //noinspection UnterminatedStatementJS
             $scope.goToTwitch = function ($event, usr) {
                 event = event || window.event;
                 $event.stopPropagation();
-                //noinspection UnterminatedStatementJS
-                var url = 'http://twitch.tv/' + usr
+                var url = 'http://twitch.tv/' + usr;
                 window.open(url, '_blank');
-            }
+            };
 
-            //noinspection UnterminatedStatementJS
             $scope.goToTwitter = function ($event, usr) {
                 $event.stopPropagation();
                 var url = 'http://twitter.com/' + usr;
                 window.open(url, '_blank');
-            }
+            };
 
             $scope.goToDeck = function ($event, slug) {
                 $event.stopPropagation();
@@ -11125,20 +11121,17 @@ angular.module('app.controllers', ['ngCookies'])
                 window.open(url,'_blank');
             };
 
-            //noinspection UnterminatedStatementJS
             $scope.goToTwitch = function ($event, usr) {
                 $event.stopPropagation();
-                //noinspection UnterminatedStatementJS
-                var url = 'http://twitch.tv/' + usr
+                var url = 'http://twitch.tv/' + usr;
                 window.open(url, '_blank');
-            }
+            };
 
-            //noinspection UnterminatedStatementJS
             $scope.goToTwitter = function ($event, usr) {
                 $event.stopPropagation();
                 var url = 'http://twitter.com/' + usr;
                 window.open(url, '_blank');
-            }
+            };
         }
     ])
     .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',

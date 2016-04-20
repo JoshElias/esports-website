@@ -1929,6 +1929,12 @@ body.admin {
     
     }
     
+    .admin-alert-success {
+        .panel-heading {
+            background: rgba(47, 149, 71, 1);
+        }
+    }
+
     .admin-alert-warning {
         .panel-heading {
             background: rgba(254, 190, 16, 0.8);

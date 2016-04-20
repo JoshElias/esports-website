@@ -3,7 +3,7 @@
 <div class="panel panel-default br-none polls-section">
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">
-        <h3><span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Poll</h3>
+        <h3><span ng-if="poll.mode === 'add'">Add</span><span ng-if="poll.mode === 'edit'">Edit</span> Poll</h3>
     </div>
     <div class="panel-body padding-none p-t-none p-b-none flex-check">
         <div class="col-sm-12 col-md-4 col-lg-3 leftside-content padding-none">
@@ -17,31 +17,31 @@
                 <div class="form-group">
                     <label for="title" class="col-sm-12 control-label">Title</label>
                     <div class="col-sm-12">
-                        <input type="title" id="title" name="title" class="form-control" ng-model="poll.title" required>
+                        <input type="title" id="title" name="title" class="form-control" ng-model="poll.title" ng-change="poll.pollUpdated()" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="subtitle" class="col-sm-12 control-label">Subtitle</label>
                     <div class="col-sm-12">
-                        <input type="subtitle" id="subtitle" name="subtitle" class="form-control" ng-model="poll.subtitle" required>
+                        <input type="subtitle" id="subtitle" name="subtitle" class="form-control" ng-model="poll.subtitle" ng-change="poll.pollUpdated()" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="type" class="col-sm-12 control-label">Poll Type</label>
                     <div class="col-sm-12">
-                        <select id="type" name="type" class="form-control" ng-options="pollType.value as pollType.key for pollType in poll.getPollTypes()" ng-model="poll.pollType" required></select>
+                        <select id="type" name="type" class="form-control" ng-options="pollType.value as pollType.key for pollType in poll.getPollTypes()" ng-model="poll.pollType" ng-change="poll.pollUpdated()" required></select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="view" class="col-sm-12 control-label">View</label>
                     <div class="col-sm-12">
-                        <select id="view" name="view" class="form-control" ng-options="viewType.value as viewType.key for viewType in poll.getViewTypes()" ng-model="poll.viewType" required></select>
+                        <select id="view" name="view" class="form-control" ng-options="viewType.value as viewType.key for viewType in poll.getViewTypes()" ng-model="poll.viewType" ng-change="poll.pollUpdated()" required></select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="voteLimit" class="col-sm-12 control-label">Vote Limit</label>
                     <div class="col-sm-12">
-                        <select id="voteLimit" name="voteLimit" class="form-control" ng-disabled="!poll.items.length" ng-options="number as number for number in poll.getVoteLimits()" ng-model="poll.voteLimit"></select>
+                        <select id="voteLimit" name="voteLimit" class="form-control" ng-disabled="!poll.items.length" ng-options="number as number for number in poll.getVoteLimits()" ng-model="poll.voteLimit" ng-change="poll.pollUpdated()"></select>
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
             <div class="form-group">
                 <label for="description" class="col-sm-12 control-label">Description</label>
                 <div class="col-sm-12">
-                    <summernote id="description" config="poll.getSummernoteOptions()" ng-model="poll.description"></summernote>
+                    <summernote id="description" config="poll.getSummernoteOptions()" ng-model="poll.description" ng-change="poll.pollUpdated()"></summernote>
                 </div>
             </div>
         </div>
@@ -127,7 +127,7 @@
     <div class="panel-footer clearfix">
         <div class="col-sm-12">
             <button type="submit" class="btn admin-btn-blue pull-right" ng-disabled="form.$invalid || poll.pollItems.length <= 2 || poll.saving" ng-click="poll.save()">
-				<span ng-if="mode === 'add'">Add</span><span ng-if="mode === 'edit'">Edit</span> Poll<i class="fa fa-spinner fa-pulse m-l-xs" ng-if="poll.saving"></i>
+				<span ng-if="poll.mode === 'add'">Add</span><span ng-if="poll.mode === 'edit'">Edit</span> Poll<i class="fa fa-spinner fa-pulse m-l-xs" ng-if="poll.saving"></i>
 			</button>
         </div>
     </div>

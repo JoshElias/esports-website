@@ -3,9 +3,8 @@ angular.module('polls.controllers')
     function ($scope, PollBuilder, poll) {
 
         $scope.page = 'general';
-        $scope.mode = 'edit';
 
-        $scope.poll = PollBuilder.new(poll);
+        $scope.poll = PollBuilder.new('edit', poll);
         
 /*        var box,
             defaultPoll = {
