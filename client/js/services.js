@@ -2027,7 +2027,7 @@ angular.module('app.services', [])
 
     hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
     hots.types = ["Melee", "Ranged"];
-    hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
+    hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard", "Overwatch"];
     hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
