@@ -1290,27 +1290,24 @@ This is the template for hots-hero-talents.
 
 //talents: tracer
 
-//@include hots-hero-talents ( tracer, (
-//    ( class: (), pos: 0 ), // 0
-//    ( class: (), pos: 1 ), // -30
-//    ( class: (), pos: 2 ), // -60
-//    ( class: (), pos: 3 ), // -90
-//    ( class: (), pos: 4 ), // -120
-//    ( class: (), pos: 5 ), // -150
-//    ( class: (), pos: 6 ), // -180
-//    ( class: (), pos: 7 ), // -210
-//    ( class: (), pos: 8 ), // -240
-//    ( class: (), pos: 9 ), // -270
-//    ( class: (), pos: 10 ), // -300
-//    ( class: (), pos: 11 ), // -330
-//    ( class: (), pos: 12 ), // -360
-//    ( class: (), pos: 13 ), // -390
-//    ( class: (), pos: 14 ), // -420
-//    ( class: (), pos: 15 ), // -450
-//    ( class: (), pos: 16 ), // -480
-//    ( class: (), pos: 17 ), // -510
-//    ( class: (), pos: 18 ) // -540
-//) );
+@include hots-hero-talents ( tracer, (
+    ( class: (locked-and-loaded), pos: 0 ), // 0
+    ( class: (focus-fire), pos: 1 ), // -30
+    ( class: (sleight-of-hand), pos: 2 ), // -60
+    ( class: (leeching-rounds), pos: 3 ), // -90
+    ( class: (ricochet), pos: 4 ), // -120
+    ( class: (pulse-rounds), pos: 5 ), // -150
+    ( class: (quantum-spike), pos: 6 ), // -180
+    ( class: (sticky-bomb, composition-b), pos: 7 ), // -210
+    ( class: (spatial-echo), pos: 8 ), // -240
+    ( class: (bullet-time), pos: 9 ), // -270
+    ( class: (jumper), pos: 10 ), // -300
+    ( class: (untouchable), pos: 11 ), // -330
+    ( class: (is-that-a-health-pack), pos: 12 ), // -360
+    ( class: (tracer-rounds), pos: 13 ), // -390
+    ( class: (parting-gift, slipstream, total-recall), pos: 14 ), // -420
+    ( class: (pulse-strike, bullet-spray, get-stuffed), pos: 15 ) // -450
+) );
 
 
 //talents: tychus
