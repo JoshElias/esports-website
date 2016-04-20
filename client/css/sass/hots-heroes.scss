@@ -224,6 +224,7 @@
 @include hots-hero-filters-image (li-ming, 48);
 @include hots-hero-filters-image (xul, 49);
 @include hots-hero-filters-image (dehaka, 50);
+@include hots-hero-filters-image (tracer, 51);
 
 
 
@@ -358,6 +359,7 @@ This is the template for hots-hero-talents.
 @include hots-hero(lunara);
 @include hots-hero(greymane);
 @include hots-hero(dehaka);
+@include hots-hero(tracer);
 
 //*************************************
 //5... HOTS heroes talents
@@ -1286,6 +1288,28 @@ This is the template for hots-hero-talents.
     ( class: (bolt-of-the-storm), pos: 14 ) // -420
 ) );
 
+//talents: tracer
+
+@include hots-hero-talents ( tracer, (
+    ( class: (locked-and-loaded), pos: 0 ), // 0
+    ( class: (focus-fire), pos: 1 ), // -30
+    ( class: (sleight-of-hand), pos: 2 ), // -60
+    ( class: (leeching-rounds), pos: 3 ), // -90
+    ( class: (ricochet), pos: 4 ), // -120
+    ( class: (pulse-rounds), pos: 5 ), // -150
+    ( class: (quantum-spike), pos: 6 ), // -180
+    ( class: (sticky-bomb, composition-b), pos: 7 ), // -210
+    ( class: (spatial-echo), pos: 8 ), // -240
+    ( class: (bullet-time), pos: 9 ), // -270
+    ( class: (jumper), pos: 10 ), // -300
+    ( class: (untouchable), pos: 11 ), // -330
+    ( class: (is-that-a-health-pack), pos: 12 ), // -360
+    ( class: (tracer-rounds), pos: 13 ), // -390
+    ( class: (parting-gift, slipstream, total-recall), pos: 14 ), // -420
+    ( class: (pulse-strike, bullet-spray, get-stuffed), pos: 15 ) // -450
+) );
+
+
 //talents: tychus
 
 @include hots-hero-talents ( tychus, (
@@ -1637,6 +1661,7 @@ This is the template for hots-hero-talents.
 .hots-modal .universe.diablo { background: url('../img/hots/modal/universe/diablo.png') no-repeat; }
 .hots-modal .universe.starcraft { background: url('../img/hots/modal/universe/sc.png') no-repeat; }
 .hots-modal .universe.warcraft { background: url('../img/hots/modal/universe/wow.png') no-repeat; }
+.hots-modal .universe.overwatch { background: url('../img/hots/modal/universe/ow.png') no-repeat; }
 
 //*************************************
 // 9.1.. HOTS modal - talents
@@ -1691,9 +1716,10 @@ This is the template for hots-hero-talents.
 @include hots-snapshot-hero(sylvanas, -25, -61, -70, 60);
 @include hots-snapshot-hero(tassadar, -25, -61, -70, 60);
 @include hots-snapshot-hero(the-butcher, -25, 17, -60, 132);
-@include hots-snapshot-hero(thelostvikings, -45, -65, -70, 76);
-@include hots-snapshot-hero(thrall, -35, -65, -70, 76);
-@include hots-snapshot-hero(tychus,  -55, -65, -70, 76);
+@include hots-snapshot-hero(thelostvikings, -25, -65, -70, 76);
+@include hots-snapshot-hero(thrall, -25, -65, -70, 76);
+@include hots-snapshot-hero(tracer, -25, -5, -70, 96);
+@include hots-snapshot-hero(tychus,  -25, -65, -70, 76);
 @include hots-snapshot-hero(tyrael, -25, -65, -70, 76);
 @include hots-snapshot-hero(tyrande, -25, -89, -60, 35);
 @include hots-snapshot-hero(uther, -25, -48, -70, 61);
