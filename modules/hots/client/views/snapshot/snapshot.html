@@ -1,6 +1,6 @@
 <div class="bg-override" id="introduction">
-    <div class="sub-nav-wrapper hidden-xs">
-        <div class="container-fluid sub-nav" sub-nav>
+    <div class="sub-nav-wrapper hidden-xs sticky">
+        <div class="container-fluid sub-nav sticky">
             <div class="swap-to pull-right"></div>
             <div class="sub-nav-links">
                 <ul>
@@ -10,6 +10,8 @@
             </div>
         </div>
     </div>
+    <ts-ad structure="double"></ts-ad>
+
     <div class="hots-meta-snapshot hots-styles container-fluid ">
         <div class="container wrapper-none heading m-t-xl">
             <div class=" m-l-md">
@@ -327,6 +329,9 @@
                     </div>
                 </div>
 
+
+                <ts-ad structure="single" class="m-r-none m-l-none"></ts-ad>
+
                 <!-- AUTHORS -->
                 <div class="row m-l-none m-r-none m-b-md">
                     <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors | orderBy: 'orderNum'" >
@@ -376,4 +381,4 @@
         </div>
     </div>
 </div>
-    
+<ts-ad structure="double"></ts-ad>

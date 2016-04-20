@@ -26,7 +26,7 @@ angular.module('hotsSnapshot', [])
         $scope.metaservice = MetaService;
 
         $scope.metaservice.set($scope.snapshot.title + ' - Heroes of the Storm Meta Snapshot', $scope.snapshot.intro);
-        var ogImg = $scope.app.cdn + 'snapshots/default-banner-square.jpg';
+        var ogImg = $scope.app.cdn + 'snapshots/hots-meta-social.png';
         $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/meta-snapshot/' + $scope.snapshot.slugs[0].slug, $scope.snapshot.title, $scope.snapshot.intro, 'article', ogImg);
 
         _.each($scope.snapshot.tiers, function (val) {
