@@ -539,7 +539,7 @@ angular.module('app.services', [])
             //begin method definitions
             HOTSSnapshot.prototype.addTier = function () {
                 var tier = {
-                    heroes: new Array(),
+                    heroes: [],
                     tier: this.tiers.length + 1
                 };
 
@@ -552,7 +552,7 @@ angular.module('app.services', [])
                 var largestTier = tiers.length;
 
                 if (!!heroTiers) {
-                    var newTiers = new Array();
+                    var newTiers = [];
 
                     _.each(heroTiers, function (heroTier, idx) {
                         heroTier.orderNum = idx;
@@ -563,7 +563,7 @@ angular.module('app.services', [])
 
                     for (var i = 0; i < largestTier; i++) {
                         var newTier = {
-                            heroes: new Array(),
+                            heroes: [],
                             tier: newTiers.length + 1
                         };
 
@@ -744,10 +744,24 @@ angular.module('app.services', [])
                         }
                     });
                 });
+                
+                //clean our snapshot object so that our request isn't larger than 1mb
+                var cleanSnap = Util.cleanObj(snapshot, [
+                    'createDate',
+                    'id',
+                    'intro',
+                    'isActive',
+                    'isCommentable',
+                    'slugOptions',
+                    'slug',
+                    'snapNum',
+                    'thoughts',
+                    'title'
+                ]);
 
                 async.waterfall([
                     function (seriesCb) {
-                        HotsSnapshot.upsert(snapshot)
+                        HotsSnapshot.upsert(cleanSnap)
                         .$promise
                         .then(function (data) {
 
@@ -819,10 +833,13 @@ angular.module('app.services', [])
                         var guides = _.flatten(tierGuides);
                         
                         async.forEach(guides, function (guide, eachCb) {
+                            var tempGuide = guide.guide;
+                            delete guide.guide;
+
                             GuideTier.upsert(guide)
                             .$promise
                             .then(function (guideTier) {
-                                var guideTalents = guide.guide.guideTalents;
+                                var guideTalents = tempGuide.guideTalents;
 
                                 _.each(guideTalents, function (guideTalent) {
                                     var toPush = {
@@ -1944,6 +1961,9 @@ angular.module('app.services', [])
                 } finally {
                     return sl;
                 }
+            },
+            replaceLineBreak: function (str) {
+                return str.replace(/\n/g, '<br>');
             }
         };
     }])

@@ -1312,9 +1312,7 @@ angular.module('app.directives', ['ui.load'])
                 $scope.loading = true;
                 
                 var pattern = '/.*'+search+'.*/i';
-                var where = {
-                    isActive: true
-                };
+                var where = {};
                 
                 if(!_.isEmpty(search)) {
                     where['or'] = [
@@ -1506,7 +1504,7 @@ angular.module('app.directives', ['ui.load'])
                         where: where,
                         skip: (page * perpage) - perpage,
                         limit: perpage,
-                        order: 'username ASC'
+                        order: 'className ASC'
                     }
                 };
                 var countOptions = {
@@ -2510,7 +2508,7 @@ angular.module('app.directives', ['ui.load'])
 .directive('hotsSnapshotGeneral', function () {
     return {
         restrict: 'E',
-        templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
+        templateUrl: tpl + 'views/admin/hots.snapshot.general.html'
     }
 })
 .directive('hotsSnapshotAuthors', ['$compile', 'HOTS', function ($compile, HOTS) {
@@ -2758,8 +2756,9 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.openGuideAdd = function () {
                 var dialog = box({
+                    title: "Decks",
                     message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope),
-                    className: 'modal-admin'
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
                 });
 
                 dialog.modal('show');
@@ -2776,13 +2775,14 @@ angular.module('app.directives', ['ui.load'])
                     return val.heroId == $scope.activeHero.heroId;
                 });
 
-                if (!guideHeroCheck) {
+                if (guideHeroCheck) {
                     $scope.snapshot.addGuideToHero($scope.activeHero, guide);
                 }
             };
 
             $scope.removeHero = function (hero) {
-                var msg = "Are you sure you want to remove " + hero.hero.name + "?";
+                var name = (hero.hero) ? hero.hero.name : hero.name;
+                var msg = "Are you sure you want to remove " + name + "?";
 
                 $scope.warning(msg, function () {
                     $scope.$apply(function () {
@@ -2937,4 +2937,21 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 })
+.directive('timestamp', function () {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + "views/frontend/directives/timestamp.html",
+        scope: {
+            item: "="
+        },
+        controller: ['$scope', function ($scope) {
+            if ($scope.item.createdDate === undefined) {
+                console.error('timestamp directive does not have createdDate field, will not display date');
+                return
+            }
+
+            $scope.date = $scope.item.updatedDate || $scope.item.createdDate;
+        }]
+    }
+});
 ;

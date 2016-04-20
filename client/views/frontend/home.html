@@ -43,7 +43,7 @@
         <div class="sub-nav-links">
             
             <ul>
-                <li><a ui-sref="app.hs.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hots.talentCalculator.redirect">TALENT CALCULATOR</a></li><li><a ui-sref="app.hots.guideBuilder.step1">GUIDE BUILDER</a></li><li style="border-right: 0px;"><a target="_blank" ng-href="http://store.tempostorm.com" href="http://store.tempostorm.com">STORE</a></li>
+                <li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hots.talentCalculator.redirect">TALENT CALCULATOR</a></li><li><a ui-sref="app.hots.guideBuilder.step1">GUIDE BUILDER</a></li><li style="border-right: 0px;"><a target="_blank" ng-href="http://store.tempostorm.com" href="http://store.tempostorm.com">STORE</a></li>
                 <li style="border-left: none"><a target="_blank" ng-href="http://tempostorm.com" href="http://tempostorm.com"><subnav-redbull></subnav-redbull></a></li>
             </ul>
             
@@ -103,22 +103,57 @@
         
         <div class="row">
             <div class="col-xs-12">
+                <h1 class="title">THE META SNAPSHOT</h1>
+                <h3 class="sub-title m-b-md">Get ahead of the meta in your favorite game with TempoStorm</h3>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 m-b-md">
+                        <a ui-sref="app.hs.snapshot.redirect" class="home-resource snapshot-resource">
+                            <div class="inner"></div>
+                            <div class="home-resource-img">
+                                <img ng-src="{{app.cdn}}img/hs-snapshot.jpg">
+                            </div>
+                            <div class="home-resource-content">
+                                <h1>HEARTHSTONE</h1>
+                                <p>META SNAPSHOT</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 m-b-md">
+                        <a ui-sref="app.hots.snapshots.redirect" class="home-resource snapshot-resource">
+                            <div class="inner"></div>
+                            <div class="home-resource-img">
+                                <img ng-src="{{app.cdn}}img/hots-snapshot.jpg">
+                            </div>
+                            <div class="home-resource-content">
+                                <h1>HEROES OF THE STORM</h1>
+                                <p>META SNAPSHOT</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 m-b-md">
+                        <a href="#" class="home-resource snapshot-resource coming-soon">
+                            <div class="inner"></div>
+                            <div class="home-resource-img">
+                                <img ng-src="{{app.cdn}}img/ow-snapshot.jpg">
+                            </div>
+                            <div class="home-resource-content">
+                                <h1>OVERWATCH</h1>
+                                <p>COMING SOON</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-xs-12">
                 <h1 class="title">TEMPOSTORM RESOURCES</h1>
                 <h3 class="sub-title m-b-md">Amazing tools to help you up your game</h3>
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6 m-b-md col-lg-20p">
-                                <a ui-sref="app.hs.snapshot.redirect" class="home-resource">
-                                    <div class="inner"></div>
-                                    <img ng-src="{{app.cdn}}img/metasnapshot.jpg" class="img-responsive">
-                                    <div class="home-resource-content">
-                                        <h1>THE META SNAPSHOT</h1>
-                                        <p>GET AHEAD OF THE META WITH TEMPOSTORM</p>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs col-lg-20p col-lg-20p-push">
+                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs col-md-3 col-lg-3">
                                 <a ui-sref="app.hs.redbull.home" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/sealed-resource.jpg" class="img-responsive">
@@ -128,7 +163,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-xs-12 col-sm-4 m-b-md hidden-xs col-lg-20p col-lg-20p-pull">
+                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs col-md-3 col-lg-3">
                                 <a ui-sref="app.hs.deckBuilder.class" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/deckbuilder.jpg" class="img-responsive">
@@ -138,17 +173,17 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-xs-12 col-sm-4 m-b-md hidden-xs col-lg-20p">
+                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs col-md-3 col-lg-3">
                                 <a ui-sref="app.hots.talentCalculator.redirect" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/talentcalculator.jpg" class="img-responsive">
                                     <div class="home-resource-content">
                                         <h1>TALENT CALCULATOR</h1>
-                                        <p>GET AHEAD OF THE META WITH TEMPOSTORM</p>
+                                        <p>GET AHEAD OF THE META</p>
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-xs-12 col-sm-4 m-b-md hidden-xs col-lg-20p">
+                            <div class="col-xs-12 col-sm-6 m-b-md hidden-xs col-md-3 col-lg-3">
                                 <a ui-sref="app.hots.guideBuilder.step1" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/heroguide.jpg" class="img-responsive">
