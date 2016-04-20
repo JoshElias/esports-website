@@ -10,7 +10,7 @@ var NUM_CARDS_PER_DECK = 30;
 var NUM_OF_LEGENDARIES = 1;
 var NUM_OF_CARDS_PER_DECK = 2;
 
-var DECK_RESULT_LIMIT = 9;
+var DECK_RESULT_LIMIT = 50;
 
 
 module.exports = function(RedbullDeck) {

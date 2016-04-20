@@ -2,6 +2,7 @@ module.exports = {
   "restApiRoot": "/api",
   "host": "0.0.0.0",
   "port": 8080,
+  "domain": "tempostorm.com",
   "remoting": {
     "context": {
       "enableHttpContext": true
