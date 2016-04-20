@@ -2851,6 +2851,7 @@ var app = angular.module('app', [
                                             comments: true,
                                             content: true,
                                             createdDate: true,
+                                            updatedDate: true,
                                             description: true,
                                             guideType: true,
                                             id: true,

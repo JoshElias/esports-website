@@ -2937,4 +2937,21 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 })
+.directive('timestamp', function () {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + "views/frontend/directives/timestamp.html",
+        scope: {
+            item: "="
+        },
+        controller: ['$scope', function ($scope) {
+            if ($scope.item.createdDate === undefined) {
+                console.error('timestamp directive does not have createdDate field, will not display date');
+                return
+            }
+
+            $scope.date = $scope.item.updatedDate || $scope.item.createdDate;
+        }]
+    }
+});
 ;
