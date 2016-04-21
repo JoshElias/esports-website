@@ -208,7 +208,6 @@ angular.module('hotsSnapshot', [])
                     templateUrl: moduleTpl + 'snapshot.html',
                     resolve: {
                         snapshot: ['$stateParams', '$state', 'HotsSnapshot', 'Util', function ($stateParams, $state, HotsSnapshot, Util) {
-                            console.log('F');
                             var slug = $stateParams.slug;
 
                             

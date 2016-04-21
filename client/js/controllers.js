@@ -5796,12 +5796,12 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                     cleanData.snapNum = ++cleanData.snapNum;
 
-                    _.each(cleanData.slugs, function (val) {
-                        var temp = val.slug.split("-");
-                        var str = "meta-snapshot-" + cleanData.snapNum + "-" + temp.splice(3,temp.length).toString().replace(",", "-");
-
-                        val.slug = str;
-                    });
+                    // _.each(cleanData.slugs, function (val) {
+                    //     var temp = val.slug.split("-");
+                    //     var str = "meta-snapshot-" + cleanData.snapNum + "-" + temp.splice(3,temp.length).toString().replace(",", "-");
+                    //
+                    //     val.slug = str;
+                    // });
 
                     $scope.snapshot.load(cleanData);
                     $scope.loaded = true;

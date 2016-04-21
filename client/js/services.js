@@ -719,11 +719,11 @@ angular.module('app.services', [])
 
                 //clean slug before submitting so we don't end up with things like meta-snapshot-meta-snapshot
                 //in the slug field
-                snapshot.slugs[0].slug = Util.slugify(snapshot.title);
+                // snapshot.slugs[0].slug = Util.slugify(snapshot.title);
 
                 snapshot.slugOptions = {
                     slug: snapshot.slugs[0].slug,
-                    linked: snapshot.slugs[0].linked
+                    linked: false
                 };
 
                 //build our crudman toWrite arrays

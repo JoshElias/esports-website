@@ -7,7 +7,7 @@
                 <label for="snapshot-number" class="control-label pull-left">
                     <h3>Add Meta Snapshot #</h3>
                 </label>
-                <input ng-change="slugifyUrl(snapshot.title)" ng-model="snapshot.snapNum" name="snapshot-number" id="snapshot-number" class="form-control pull-left snap-num" type="text" />
+                <input ng-model="snapshot.snapNum" name="snapshot-number" id="snapshot-number" class="form-control pull-left snap-num" type="text" />
                 <button ng-click="loadPrevious()" ng-if="!loaded" class="btn btn-blue pull-right m-r-md">
                     Load previous
                 </button>

@@ -11,7 +11,6 @@
 
             <div class="input-group wide-input">
                 <input ng-model="snapshot.title"
-                       ng-change="slugifyUrl(snapshot.title)"
                        class="form-control"
                        id="title"
                        type="text"
@@ -20,20 +19,12 @@
         </div>
 
         <div class="form-group m-t-md">
-            <label for="url" class="control-label pull-left">URL</label>
-            <div class="input-group pull-left" ng-repeat="slug in snapshot.slugs">
-                <span class="input-group-btn">
-                    <button ng-click="toggleLinked()"
-                            ng-class="{ 'btn-default': slug.linked, 'btn-danger': !slug.linked }"
-                            class="btn btn-default"
-                            type="button"
-                    ><i ng-if="slug.linked" class="fa fa-link"></i><i ng-if="!slug.linked" class="fa fa-unlink"></i></button>
-                </span>
+            <label for="url" class="control-label">URL</label>
+            <div class="input-group wide-input" ng-repeat="slug in snapshot.slugs">
                 <input ng-model="slug.slug"
                        class="form-control"
                        id="url"
                        type="text"
-                       ng-readonly="slug.linked"
                 />
             </div>
         </div>
