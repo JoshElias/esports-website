@@ -1417,7 +1417,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: perpage,
@@ -1443,7 +1444,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: 'Neutral',
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: 15
@@ -1458,7 +1460,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 })
                                 .$promise;
@@ -1468,7 +1471,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: 'Neutral',
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 })
                                 .$promise;
@@ -1664,7 +1668,8 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             playerClass: playerClass,
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ['cost ASC', 'name ASC'],
                                         limit: perpage
@@ -1677,7 +1682,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: deckNoMulligans.playerClass,
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }],
@@ -1686,7 +1692,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: 'Neutral',
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }],
@@ -1696,7 +1703,8 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             playerClass: 'Neutral',
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: 15
@@ -4999,7 +5007,8 @@ var app = angular.module('app', [
                                         // },
                                         where: {
                                             playerClass: playerClass,
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ['cost ASC', 'name ASC'],
                                         limit: 15
@@ -5015,7 +5024,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass,
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise
                                 .then(function (classCardCounts) {
@@ -5027,7 +5037,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: 'Neutral',
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }],
@@ -5049,7 +5060,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: 'Neutral',
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: 15
@@ -5294,18 +5306,6 @@ var app = angular.module('app', [
 
                                 return Card.find({
                                     filter: {
-                                        // fields: {
-                                        //     artist: false,
-                                        //     attack: false,
-                                        //     durability: false,
-                                        //     expansion: false,
-                                        //     flavor: false,
-                                        //     health: false,
-                                        //     isActive: false,
-                                        //     race: false,
-                                        //     text: false,
-                                        //     deckable: false
-                                        // },
                                         fields: {
                                             id: true,
                                             name: true,
@@ -5322,7 +5322,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: playerClass,
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ['cost ASC', 'name ASC'],
                                         limit: perpage
@@ -5347,7 +5348,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: 'Neutral',
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }],
@@ -5355,18 +5357,6 @@ var app = angular.module('app', [
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
-                                        // fields: {
-                                        //     artist: false,
-                                        //     attack: false,
-                                        //     durability: false,
-                                        //     expansion: false,
-                                        //     flavor: false,
-                                        //     health: false,
-                                        //     isActive: false,
-                                        //     race: false,
-                                        //     text: false,
-                                        //     deckable: false
-                                        // },
                                         fields: {
                                             id: true,
                                             name: true,
@@ -5383,7 +5373,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: 'Neutral',
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: 15
