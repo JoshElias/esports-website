@@ -6578,16 +6578,23 @@ var app = angular.module('app', [
                                 });
                             }],
                             users: ['User', 'paginationParams', function (User, paginationParams) {
-                                return User.find(
+                                return User.getUsersWithActive(
                                     paginationParams.options
-                                ).$promise
-                                .then(function (allUsers) {
-//                                    console.log('allUsers: ', allUsers);
-                                    return allUsers;
-                                })
-                                .catch(function (err) {
-                                    console.log('Snapshot.find err: ', err);
+                                )
+                                .$promise
+                                .then(function (data) {
+                                    return data.users;
                                 });
+//                                 return User.find(
+//                                     paginationParams.options
+//                                 ).$promise
+//                                 .then(function (allUsers) {
+// //                                    console.log('allUsers: ', allUsers);
+//                                     return allUsers;
+//                                 })
+//                                 .catch(function (err) {
+//                                     console.log('Snapshot.find err: ', err);
+//                                 });
                             }]
                         }
                     }

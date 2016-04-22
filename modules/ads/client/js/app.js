@@ -157,8 +157,8 @@ angular.module('tsAdSense', [])
 
         function doLoadAds () {
             $scope.adClient = $scope.adClient || "pub-5622157629772216";
-            //$scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
             $scope.adSlot = $scope.adSlot || "1810633479";
+            //$scope.adClient = $scope.adClient || "ca-pub-6273013980199815";
             //$scope.adSlot = $scope.adSlot || "7575226683";
             $scope.theme = $state.theme || 'default';
             $scope.region = $state.current.name;
@@ -184,8 +184,8 @@ angular.module('tsAdSense', [])
         replace: true,
         templateUrl: moduleTpl + 'directives/a.html',
         controller: ['$scope', function ($scope) {
-            var adIter = 0;
-            var adIterMax = 10;
+            // var adIter = 0;
+            // var adIterMax = 10;
             var canShowAds = !!window.canShowAds;
 
             if(!$window.adsbygoogle) {

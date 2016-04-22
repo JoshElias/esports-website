@@ -849,9 +849,61 @@ module.exports = function(User) {
         });
     };
 
-    
+    User.getUsersWithActive = function (filter, cb) {
+        cb = cb || new Promise();
 
+        var findUsers = function (cb) {
+            User.find(filter, function (err, data) {
+                return cb(err, data);
+            });
+        }
 
+        var getRoles = function (users, cb) {
+            var newUsers = [];
+            var roles = [
+                '$active'
+            ]
+
+            async.each(users, function (user, eachCb) {
+                User.isInRoles(user.id, roles, undefined, undefined, function (err, role) {
+                    if (err) {
+                        return eachCb(err);
+                    }
+
+                    user.isActive = role.$active;
+                    newUsers.push(user);
+
+                    return eachCb();
+                });
+            }, function (err) {
+                return cb(err, newUsers);
+            });
+        }
+
+        async.waterfall([
+            findUsers,
+            getRoles
+        ], function (err, users) {
+            if (err) {
+                return console.log("ERR", err);
+            }
+
+            return cb(err, users);
+        });
+    }
+
+    User.remoteMethod(
+        'getUsersWithActive',
+        {
+            description: "Returns users with their active role attached",
+            accepts: [
+                {arg: 'filter', type: 'object', required:false, http: {source: 'query'}},
+            ],
+            returns: {arg: 'users', type: 'object'},
+            http: {verb: 'get'},
+            isStatic: true
+        }
+    );
 
     User.remoteMethod(
         'isInRoles',
