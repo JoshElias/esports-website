@@ -5963,7 +5963,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
 
                     //noinspection UnterminatedStatementJS
@@ -5972,7 +5973,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
@@ -5980,7 +5982,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
                 }
 
@@ -6781,7 +6784,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
 
                     //noinspection UnterminatedStatementJS
@@ -6790,7 +6794,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
@@ -6798,7 +6803,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
                 }
 
@@ -8943,7 +8949,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
 
                     //noinspection UnterminatedStatementJS
@@ -8952,7 +8959,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
@@ -8960,7 +8968,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern} }
+                        { race: { regexp: pattern} },
+                        { expansion: { regexp: pattern} }
                     ]
                 }
 
@@ -9770,7 +9779,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
 
                     //noinspection UnterminatedStatementJS
@@ -9779,7 +9789,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
 
                     countOptionsNeutral.where.or = [
@@ -9787,7 +9798,8 @@ angular.module('app.controllers', ['ngCookies'])
                         { text: { regexp: pattern } },
                         { rarity: { regexp: pattern } },
                         { cardType: { regexp: pattern } },
-                        { race: { regexp: pattern } }
+                        { race: { regexp: pattern } },
+                        { expansion: { regexp: pattern } }
                     ]
                 }
 
@@ -10485,7 +10497,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load snapshot
             $scope.snapshot = HearthstoneSnapshotBuilder.new(snapshot);
-            
+
             // vote
             $scope.voted = false;
             $scope.SnapshotService = Snapshot;
