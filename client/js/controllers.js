@@ -1724,8 +1724,7 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
                         $scope.card.photoNames.small = data.small;
-//                        $scope.deckImg = $scope.app.cdn + data.path + data.small;
-                        $scope.deckImg = 'https://staging-cdn-tempostorm.netdna-ssl.com/' + data.path + data.small;
+                        $scope.deckImg = $scope.app.cdn + data.path + data.small;
                         box.modal('hide');
                     });
                 }
