@@ -99,7 +99,7 @@ var redbullData = {
         },
         {
             "expansion": "Naxxramas",
-            "packs": 5,
+            "packs": 2,
             "chances": {
                 "basic": 0,
                 "common": 74,
@@ -111,7 +111,7 @@ var redbullData = {
         },
         {
             "expansion": "Goblins Vs. Gnomes",
-            "packs": 10,
+            "packs": 6,
             "chances": {
                 "basic": 0,
                 "common": 72,
@@ -147,13 +147,25 @@ var redbullData = {
         },
         {
             "expansion": "League of Explorers",
-            "packs": 8,
+            "packs": 5,
             "chances": {
                 "basic": 0,
                 "common": 74,
                 "rare": 21,
                 "epic": 4,
                 "legendary": 1
+            },
+            "isActive": true
+        },
+        {
+            "expansion": "Whispers of the Old Gods",
+            "packs": 10,
+            "chances": {
+                "basic": 0,
+                "common": 72,
+                "rare": 21,
+                "epic": 4,
+                "legendary": 3
             },
             "isActive": true
         },
