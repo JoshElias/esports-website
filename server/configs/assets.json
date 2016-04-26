@@ -1,26 +1,10 @@
 {
   "angular.min.js": "angular.min.80714153.js",
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-  "app.min.js": "app.min.5ed67d74.js",
+  "app.min.js": "app.min.96d35829.js",
   "vendor.min.js": "vendor.min.d5f8f9ab.js",
-  "modules.min.js": "modules.min.78530462.js",
-  "lb-services.min.js": "lb-services.min.02650eec.js",
-  "style.min.css": "style.min.61dcdaa2.css",
-=======
-  "app.min.js": "app.min.e8025861.js",
-  "vendor.min.js": "vendor.min.d5f8f9ab.js",
-  "modules.min.js": "modules.min.7cf4d5ef.js",
-  "lb-services.min.js": "lb-services.min.d1aa3f05.js",
-  "style.min.css": "style.min.ae35fe51.css",
->>>>>>> Stashed changes
-=======
-  "app.min.js": "app.min.d4b6b7a5.js",
-  "vendor.min.js": "vendor.min.d5f8f9ab.js",
-  "modules.min.js": "modules.min.0d36ba63.js",
-  "lb-services.min.js": "lb-services.min.49673c34.js",
-  "style.min.css": "style.min.c127b055.css",
->>>>>>> staging
+  "modules.min.js": "modules.min.0ee6ff7b.js",
+  "lb-services.min.js": "lb-services.min.72e355f9.js",
+  "style.min.css": "style.min.4cccc024.css",
   "vendor.min.css": "vendor.min.60b209a2.css",
-  "modules.min.css": "modules.min.964746be.css"
+  "modules.min.css": "modules.min.c56bc42f.css"
 }
