@@ -857,11 +857,23 @@ angular.module('app.directives', ['ui.load'])
             $scope.vote = function (direction) {
                 if (loading)
                     return;
+                            
+                // avoid users entering invalid direction
+                var voteDirection;
+                if (direction >= 0 && angular.isNumber(direction) && $attrs.theme === 'multi') {
+                    voteDirection = 1;
+                } else if (direction <= -1 && angular.isNumber(direction) && $attrs.theme === 'multi') {
+                    voteDirection = -1;
+                } else if ($attrs.theme === 'single') {
+                    voteDirection = 1;
+                } else {
+                    return;
+                }
 
                 if (_.isNull(LoopBackAuth.currentUserId)) {
                     LoginModalService.showModal('login', function (result) {
                         getVoteInfo(function() {
-                            $scope.vote(direction);
+                            $scope.vote(voteDirection);
                         });
                     });
                 } else if ($attrs.theme === 'multi' && votable.authorId && LoopBackAuth.currentUserId === votable.authorId) {
@@ -869,7 +881,7 @@ angular.module('app.directives', ['ui.load'])
                     return false;
                 } else {
 
-                    if ($scope.voteInfo.hasVoted === direction) {
+                    if ($scope.voteInfo.hasVoted === voteDirection) {
                         return;
                     } else if ($scope.voteInfo.hasVoted === 1 || $scope.voteInfo.hasVoted === -1) {
                         setLoading(true);
@@ -884,8 +896,8 @@ angular.module('app.directives', ['ui.load'])
                         })
                         .$promise
                         .then(function (vote) {
-
-                            vote.direction = direction;
+                            
+                            vote.direction = voteDirection;
 
                             Vote.upsert({
                                 id: vote.id
@@ -895,7 +907,7 @@ angular.module('app.directives', ['ui.load'])
 
                                 _.each(votable.votes, function(vote) {
                                     if (voteUpdated.id === vote.id) {
-                                        vote.direction = direction;
+                                        vote.direction = voteDirection;
                                     }
                                 });
 
@@ -907,7 +919,7 @@ angular.module('app.directives', ['ui.load'])
                         setLoading(true);
                         var newVote = {};
                             newVote[objType + "Id"] = votable.id;
-                            newVote["direction"] = direction;
+                            newVote["direction"] = voteDirection;
                             newVote["authorId"] = LoopBackAuth.currentUserId;
 
                         Vote.create(newVote)
@@ -1494,7 +1506,7 @@ angular.module('app.directives', ['ui.load'])
                         where: where,
                         skip: (page * perpage) - perpage,
                         limit: perpage,
-                        order: 'username ASC'
+                        order: 'className ASC'
                     }
                 };
                 var countOptions = {
@@ -2500,7 +2512,7 @@ angular.module('app.directives', ['ui.load'])
 .directive('hotsSnapshotGeneral', function () {
     return {
         restrict: 'E',
-        templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
+        templateUrl: tpl + 'views/admin/hots.snapshot.general.html'
     }
 })
 .directive('hotsSnapshotAuthors', ['$compile', 'HOTS', function ($compile, HOTS) {
@@ -2561,7 +2573,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.openAuthorAdd = function () {
                 var dialog = box({
                     message: $compile('<snapshot-add-author></snapshot-add-author>')($scope),
-                    title: 'Add author'
+                    title: 'Add author',
+                    className: 'modal-admin modal-admin-authors'
                 });
 
                 dialog.modal('show');
@@ -2727,7 +2740,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.openHeroAdd = function (tier) {
                 var dialog = box({
                     message: $compile('<snapshot-add-hero></snapshot-add-hero>')($scope),
-                    title: 'Add hero'
+                    title: 'Add hero',
+                    className: 'modal-admin'
                 });
 
                 dialog.modal('show');
@@ -2746,7 +2760,9 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.openGuideAdd = function () {
                 var dialog = box({
-                    message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope)
+                    title: "Decks",
+                    message: $compile('<snapshot-add-guide></snapshot-add-guide>')($scope),
+                    className: 'modal-admin modal-admin-decks modal-has-footer'
                 });
 
                 dialog.modal('show');
@@ -2763,13 +2779,14 @@ angular.module('app.directives', ['ui.load'])
                     return val.heroId == $scope.activeHero.heroId;
                 });
 
-                if (!guideHeroCheck) {
+                if (guideHeroCheck) {
                     $scope.snapshot.addGuideToHero($scope.activeHero, guide);
                 }
             };
 
             $scope.removeHero = function (hero) {
-                var msg = "Are you sure you want to remove " + hero.hero.name + "?";
+                var name = (hero.hero) ? hero.hero.name : hero.name;
+                var msg = "Are you sure you want to remove " + name + "?";
 
                 $scope.warning(msg, function () {
                     $scope.$apply(function () {

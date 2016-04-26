@@ -3411,7 +3411,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             };
@@ -5755,7 +5756,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.slugifyUrl = function (str) {
-                if (!$scope.snapshot.slugs[0] && !$scope.snapshot.slugs[0].linked)
+                if (!$scope.snapshot.slugs[0] || !$scope.snapshot.slugs[0].linked)
                     return;
 
                 $scope.snapshot.slugs[0].slug = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + slugify(str);
@@ -6076,7 +6077,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             };
@@ -6135,7 +6137,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             };
@@ -6623,7 +6626,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             }
@@ -8764,7 +8768,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             };
@@ -9106,7 +9111,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             };
@@ -11635,7 +11641,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // meta service
-            $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
+            $scope.metaservice.set($scope.snapshot.title + ' - Hearthstone Meta Snapshot', $scope.snapshot.content.intro);
             var ogImg = ($scope.snapshot.photoNames.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photoNames.square;
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
 
@@ -12948,8 +12954,8 @@ angular.module('app.controllers', ['ngCookies'])
             );
         }
     ])
-    .controller('ForumAddCtrl', ['$scope', '$state', '$window', '$compile', 'LoginModalService', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util',
-        function ($scope, $state, $window, $compile, LoginModalService, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util) {
+    .controller('ForumAddCtrl', ['$scope', '$state', '$window', '$compile', 'LoginModalService', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util', 'ForumThread',
+        function ($scope, $state, $window, $compile, LoginModalService, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util, ForumThread) {
             // thread
             $scope.thread = thread;
 
@@ -12995,8 +13001,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                     ForumPost.create(newPost).$promise
                     .then(function (results) {
-//                        console.log('results:', results);
-                        return $state.transitionTo('app.forum.threads', { thread: $scope.thread.slug.url });
+                        ForumThread.findById({
+                            id: results.forumThreadId
+                        })
+                        .$promise
+                        .then(function (forumThread) {
+                            
+                            return $state.transitionTo('app.forum.threads', { thread: Util.slugify(forumThread.title) });
+                        });
                     })
                     .catch(function (HttpResponse) {
                         console.log("err from froum post:", HttpResponse);
@@ -13078,7 +13090,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             };
@@ -13226,7 +13239,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             };
@@ -13552,7 +13566,8 @@ angular.module('app.controllers', ['ngCookies'])
                       box.modal('hide');
                     }
                   }
-                }
+                },
+                className: 'modal-admin modal-admin-remove'
               });
               box.modal('show');
             }
@@ -14544,7 +14559,7 @@ angular.module('app.controllers', ['ngCookies'])
             // delete map
             $scope.deleteTalent = function deleteTalent(talent) {
                 var box = bootbox.dialog({
-                    title: 'Delete map: ' + talent.name + '?',
+                    title: 'Delete talent: ' + talent.name + '?',
                     message: 'Are you sure you want to delete the talent <strong>' + talent.name + '</strong>?',
                     buttons: {
                         delete: {
@@ -14576,7 +14591,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             }
@@ -14735,7 +14751,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             }
@@ -14939,7 +14956,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
                 box.modal('show');
             }
@@ -17201,6 +17219,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return $sce.trustAsHtml(content);
             };
 
+
             //is premium
             //noinspection UnterminatedStatementJS
             $scope.isPremium = function () {
@@ -19030,7 +19049,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
 
                 var box = bootbox.dialog({
-                    title: 'Delete Hero?',
+                    title: 'Delete Hero: ' + hero.heroName + '?',
                     message: 'Are you sure you want to delete the hero <strong>' + hero.heroName + '</strong>?',
                     buttons: {
                         delete: {
@@ -19078,7 +19097,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 box.modal('hide');
                             }
                         }
-                    }
+                    },
+                    className: 'modal-admin modal-admin-remove'
                 });
             };
         }

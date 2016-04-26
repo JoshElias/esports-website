@@ -7,8 +7,8 @@ angular.module('hotsSnapshot', [])
         }
     ]
 )
-.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS',
-    function ($scope, $window, $state, $filter, HOTSSnapshot, HotsSnapshot, snapshot, HOTS) {
+.controller('hotsSnapshotCtrl', ['$scope', '$window', '$state', '$filter', '$sce', 'HOTSSnapshot', 'HotsSnapshot', 'snapshot', 'HOTS', 'MetaService',
+    function ($scope, $window, $state, $filter, $sce, HOTSSnapshot, HotsSnapshot, snapshot, HOTS, MetaService) {
         var foldedTiers = {};
         var filter = {
             role: HOTS.roles,
@@ -23,6 +23,11 @@ angular.module('hotsSnapshot', [])
         $scope.snapshot = HOTSSnapshot(snapshot);
         $scope.votableSnapshot = { hotsSnapshot: $scope.snapshot };
         $scope.snapshot.buildTiers();
+        $scope.metaservice = MetaService;
+
+        $scope.metaservice.set($scope.snapshot.title + ' - Heroes of the Storm Meta Snapshot', $scope.snapshot.intro);
+        var ogImg = $scope.app.cdn + 'snapshots/default-banner-square.jpg';
+        $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/meta-snapshot/' + $scope.snapshot.slugs[0].slug, $scope.snapshot.title, $scope.snapshot.intro, 'article', ogImg);
 
         _.each($scope.snapshot.tiers, function (val) {
             if(!$scope.activeFilters[val.tier])
@@ -49,12 +54,21 @@ angular.module('hotsSnapshot', [])
             val.utilityScore = 0;
         });
 
+        $scope.getContent = function (content) {
+            return $sce.trustAsHtml(content);
+        };
+
         $scope.isFolded = function (tierNum) {
             return foldedTiers[tierNum];
         };
 
+        $scope.getNgNumberScore = function (value) {
+            var clamp = Math.min(Math.max(value, 2), 10);
+
+            return (clamp * 10) - ((clamp != 10) ? 1 : 7);
+        };
+
         $scope.foldTier = function (tierNum) {
-            console.log(tierNum);
             if(foldedTiers[tierNum] === undefined)
                 foldedTiers[tierNum] = false;
 
@@ -121,6 +135,20 @@ angular.module('hotsSnapshot', [])
             $event.stopPropagation();
 
             $window.open(url, '_blank');
+        };
+
+        $scope.goToTwitch = function ($event, slug) {
+            $event = $event || window.event;
+            $event.stopPropagation();
+            //noinspection UnterminatedStatementJS
+            var url = 'http://twitch.tv/' + slug
+            window.open(url, '_blank');
+        };
+
+        $scope.goToTwitter = function ($event, slug) {
+            $event.stopPropagation();
+            var url = 'http://twitter.com/' + slug;
+            window.open(url, '_blank');
         }
     }
 ])
@@ -161,7 +189,6 @@ angular.module('hotsSnapshot', [])
                     })
                     .$promise
                     .then(function (data) {
-                        console.log('2', data);
                         return data;
                     });
                 }],
@@ -180,9 +207,11 @@ angular.module('hotsSnapshot', [])
                     controller: 'hotsSnapshotCtrl',
                     templateUrl: moduleTpl + 'snapshot.html',
                     resolve: {
-                        snapshot: ['$stateParams', '$state', 'HotsSnapshot', function ($stateParams, $state, HotsSnapshot) {
+                        snapshot: ['$stateParams', '$state', 'HotsSnapshot', 'Util', function ($stateParams, $state, HotsSnapshot, Util) {
+                            console.log('F');
                             var slug = $stateParams.slug;
 
+                            
                             return HotsSnapshot.findBySlug({
                                 slug: slug,
                                 filter: {
@@ -212,8 +241,7 @@ angular.module('hotsSnapshot', [])
                                                                 'name',
                                                                 'universe',
                                                                 'role',
-                                                                'title',
-                                                                'characters'
+                                                                'title'
                                                             ]
                                                         }
                                                     }
@@ -224,7 +252,17 @@ angular.module('hotsSnapshot', [])
                                             relation: "authors",
                                             scope: {
                                                 order: "orderNum ASC",
-                                                include: ["user"]
+                                                include: [
+                                                    {
+                                                        relation: 'user',
+                                                        scope: {
+                                                            fields: {
+                                                                username: true,
+                                                                social: true
+                                                            }
+                                                        }
+                                                    }
+                                                ]
                                             }
                                         },
                                         {
@@ -240,18 +278,32 @@ angular.module('hotsSnapshot', [])
                                                     }
                                                 }
                                             }
+                                        },
+                                        {
+                                            relation: 'slugs'
                                         }
                                     ]
                                 }
                             })
                             .$promise
                             .then(function (data) {
+                                var intro = data.intro;
+                                var thoughts = data.thoughts;
+
+                                data.intro = Util.replaceLineBreak(intro);
+                                data.thoughts = Util.replaceLineBreak(thoughts);
+                                _.each(data.heroTiers, function (val) {
+                                    var summary = val.summary;
+
+                                    val.summary = Util.replaceLineBreak(summary);
+                                });
+
                                 return data;
 
                             })
                             .catch(function (e) {
                                 console.log("ERR", e);
-                                $state.transitionTo('otherwise');
+                                $state.transitionTo('app.404');
                             });
                         }]
                     }

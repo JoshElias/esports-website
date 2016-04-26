@@ -25,39 +25,41 @@
         </div>
         <div class="container" >
             <div class="m-t-md">
-                <div class="row no-pad clearfix">
+                <div class="row no-pad clearfix" ng-if="snapshot.intro.length > 0">
                     <div class="col-xs-12 col-lg-12 m-b-md">
                         <div class="box-border wrapper-md">
                             <div class="clearfix">
                                 <h2 class="section-title m-b-lg" >Introduction</h2>
-                                <p>{{snapshot.intro}}</p>
+                                <!--<p>{{snapshot.intro}}</p>-->
+                                <p ng-bind-html="getContent(snapshot.intro)"></p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row no-pad clearfix">
+                <div class="row no-pad clearfix" ng-if="snapshot.thoughts.length > 0">
                     <div class="col-xs-12 col-lg-12 m-b-md">
                         <div class="box-border wrapper-md">
                             <div class="clearfix">
                                 <h2 class="section-title m-b-lg">Thoughts &amp; Observations</h2>
-                                <p>{{snapshot.thoughts}}</p>
+                                <!--<p>{{snapshot.thoughts}}</p>-->
+                                <p ng-bind-html="getContent(snapshot.thoughts)"></p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mobile-filter box-border hidden-sm visible-xs m-b-sm"> <!-- Mobile hero filter, hidden md sm and up -->
-                    <div class="tier-hero-filters hidden-sm visible-xs clearfix">
-                        <div class="center ">
-                            <a ng-repeat="role in HOTS.roles" class="filter filter-{{role.toLowerCase()}}"></a>
-                            <a ng-repeat="universe in HOTS.universes" class="filter filter-universe-{{universe.toLowerCase()}}"></a>
-                        </div>
-                    </div>
-                </div>
+                <!--<div class="mobile-filter box-border hidden-sm visible-xs m-b-sm clearfix"> &lt;!&ndash; Mobile hero filter, hidden md sm and up &ndash;&gt;-->
+                    <!--<div class="tier-hero-filters hidden-sm visible-xs">-->
+                        <!--<div class="center ">-->
+                            <!--<a ng-repeat="role in HOTS.roles" class="filter filter-{{role.toLowerCase()}}"></a>-->
+                            <!--<a ng-repeat="universe in HOTS.universes" class="filter filter-universe-{{universe.toLowerCase()}}"></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <!-- HOTS Tiers -->
                 <div class="hots-tiers m-b-md box-border no-outline" id="tiers">
                     <div ng-repeat="tier in snapshot.tiers" id="tier {{tier.tier}}" class="tier">
                         <div class="tier-heading">
-                            <a class="btn btn-block btn-tier-collapse" ng-click="foldTier(tier.tier)" role="button" data-toggle="collapse" data-target="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
+                            <a class="btn btn-block btn-tier-collapse btn-hov" ng-click="foldTier(tier.tier)" role="button" data-toggle="collapse" data-target="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
                                 <h2 class="pull-left">TIER <span ng-if="tier.tier == 1">S</span><span ng-if="tier.tier > 1">{{tier.tier - 1}}</span></h2>
                             </a>
                             <div ng-class="{ 'opZero': !isFolded(tier.tier) }" class="tier-hero-filters hidden-xs">
@@ -96,26 +98,38 @@
                                        class="hero-button hidden-xs"
                                        ng-if="hero.guides[0].slug"
                                     >VIEW GUIDE</a>
-                                    <!--<div class="filter filter-role {{hero.hero.role.toLowerCase()}}" ></div>-->
-                                    <!--<div class="filter filter-universe filter-universe-{{hero.hero.universe.toLowerCase()}} active" ></div>-->
                                 </div>
                                 <div class="tier-hero-body collapse" id="collapseHero-{{hero.id}}">
                                     <div class="">
 
                                         <div class="row m-l-md m-t-md m-b-lg m-r-md clearfix">
-                                            <div class="pull-left">
+                                            <div class="pull-left tier-hero-title">
                                                 <h2>{{hero.hero.name}}</h2>
                                                 <h3>{{hero.hero.title}}</h3>
                                             </div>
-                                            <div class="pull-right">
-                                                <ul class="hots-guide-talents">
-                                                    <div ng-repeat="talent in hero.guides[0].talents | orderBy: 'tier'">
-                                                        <li ng-tooltip data-original-title="{{talent.talent.name}}" class="talents-icon {{hero.hero.className}} {{talent.talent.className}} large active">
-
-                                                        </li>
-                                                        <h5>Tier {{talent.tier}}</h5>
-                                                    </div>
-                                                </ul>
+                                            <ul class="hots-guide-talents clearfix hidden-xs visible-sm visible-md visible-lg">
+                                                <div ng-repeat="talent in hero.guides[0].talents | orderBy: 'tier'">
+                                                    <li talent-icon
+                                                        hots-talent
+                                                        hero="hero.hero"
+                                                        talent="talent.talent"
+                                                        data-original-title="{{talent.talent.name}}"
+                                                        class="talents-icon {{hero.hero.className}} {{talent.talent.className}} active large"
+                                                    ></li>
+                                                    <h5 class="m-t-sm">Tier {{talent.tier}}</h5>
+                                                </div>
+                                            </ul>
+                                        </div>
+                                        <div class="row m-l-none m-r-none m-b-md hidden-sm visible-xs">
+                                            <div ng-repeat="talent in hero.guides[0].talents | orderBy: 'tier'" class="tier-talent">
+                                                <li talent-icon
+                                                    hots-talent
+                                                    hero="hero.hero"
+                                                    talent="talent.talent"
+                                                    data-original-title="{{talent.talent.name}}"
+                                                    class="talents-icon {{hero.hero.className}} {{talent.talent.className}} active"
+                                                ></li>
+                                                <h5 class="m-t-sm">{{talent.tier}}</h5>
                                             </div>
                                         </div>
                                         <div class="row m-l-none m-r-none">
@@ -123,7 +137,7 @@
                                                 <div class="hero-content m-l-xs">
 
                                                     <h3>Summary</h3>
-                                                    <p>{{hero.summary}}</p>
+                                                    <p ng-bind-html="getContent(hero.summary)"></p>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-md-5 col-lg-5 m-b-sm hidden-xs">
@@ -134,7 +148,12 @@
                                         </div>
 
                                         <div class="row"> <!-- hidden on large for guide-->
-                                            <button class="bottom-hero-button hidden-sm visible-xs" >VIEW GUIDE</button>
+                                            <button ng-click="goToGuide($event, hero.guides[0].slug.slug)"
+                                               target="_blank"
+                                               class="bottom-hero-button hidden-sm visible-xs"
+                                               ng-if="hero.guides[0].slug"
+                                            >VIEW GUIDE</button>
+
                                         </div>
                                         <div class="row">
                                             <div class="padding-none col-xs-12 col-md-12 col-lg-12 m-b-md">
@@ -261,7 +280,7 @@
                                                                     <rect ng-attr-width="{{hero.burstScore*10}}%" ry="0" rx="0" height="30"></rect> <!-- long color block -->
                                                                     <circle ng-attr-cx="{{hero.burstScore*10}}%" cy="15" r="15"></circle> <!-- right circle -->
                                                                     <text x="5" y="15" dy=".35em">Burst</text> <!-- text left -->
-                                                                    <text ng-attr-x="{{(hero.burstScore * 10) - 1}}%" y="15" dy=".35em">{{hero.burstScore}}</text> <!-- number -->
+                                                                    <text ng-attr-x="{{getNgNumberScore(hero.burstScore)}}%" y="15" dy=".35em">{{hero.burstScore}}</text> <!-- number -->
                                                                 </g>
                                                                 <g class="bar push">
                                                                     <rect width="100%" height="30" y="32" class="bar-back"></rect> <!-- Black bar -->
@@ -269,7 +288,7 @@
                                                                     <rect ng-attr-width="{{hero.pushScore*10}}%" ry="0" rx="0" height="30" y="32" ></rect> <!-- long color block -->
                                                                     <circle ng-attr-cx="{{hero.pushScore*10}}%" cy="47" r="15"></circle> <!-- right circle -->
                                                                     <text x="5" y="47" dy=".35em">Push</text> <!-- text left -->
-                                                                    <text ng-attr-x="{{(hero.pushScore * 10) - 1}}%" y="47" dy=".35em">{{hero.pushScore}}</text> <!-- number -->
+                                                                    <text ng-attr-x="{{getNgNumberScore(hero.pushScore)}}%" y="47" dy=".35em">{{hero.pushScore}}</text> <!-- number -->
                                                                 </g>
                                                                 <g class="bar survive">
                                                                     <rect width="100%" height="30" y="64" class="bar-back"></rect> <!-- Black bar -->
@@ -277,7 +296,7 @@
                                                                     <rect ng-attr-width="{{hero.surviveScore*10}}%" ry="0" rx="0" height="30" y="64" ></rect> <!-- long color block -->
                                                                     <circle ng-attr-cx="{{hero.surviveScore*10}}%" cy="79" r="15"></circle> <!-- right circle -->
                                                                     <text x="5" y="79" dy=".35em">Survive</text> <!-- text left -->
-                                                                    <text ng-attr-x="{{(hero.surviveScore * 10) - 1}}%" y="79" dy=".35em">{{hero.surviveScore}}</text> <!-- number -->
+                                                                    <text ng-attr-x="{{getNgNumberScore(hero.surviveScore)}}%" y="79" dy=".35em">{{hero.surviveScore}}</text> <!-- number -->
                                                                 </g>
                                                                 <g class="bar scale">
                                                                     <rect width="100%" height="30" y="96" class="bar-back"></rect> <!-- Black bar -->
@@ -285,7 +304,7 @@
                                                                     <rect ng-attr-width="{{hero.scaleScore*10}}%" ry="0" rx="0" height="30" y="96" ></rect> <!-- long color block -->
                                                                     <circle ng-attr-cx="{{hero.scaleScore*10}}%" cy="111" r="15"></circle> <!-- right circle -->
                                                                     <text x="5" y="111" dy=".35em">Scale</text> <!-- text left -->
-                                                                    <text ng-attr-x="{{(hero.scaleScore * 10) - 1}}%" y="111" dy=".35em">{{hero.scaleScore}}</text> <!-- number -->
+                                                                    <text ng-attr-x="{{getNgNumberScore(hero.scaleScore)}}%" y="111" dy=".35em">{{hero.scaleScore}}</text> <!-- number -->
                                                                 </g>
                                                                 <g class="bar utility">
                                                                     <rect width="100%" height="30" y="128" class="bar-back"></rect> <!-- Black bar -->
@@ -293,7 +312,7 @@
                                                                     <rect ng-attr-width="{{hero.utilityScore*10}}%" ry="0" rx="0" height="30" y="128" ></rect> <!-- long color block -->
                                                                     <circle ng-attr-cx="{{hero.utilityScore*10}}%" cy="143" r="15"></circle> <!-- right circle -->
                                                                     <text x="5" y="143" dy=".35em">Utility</text> <!-- text left -->
-                                                                    <text ng-attr-x="{{(hero.utilityScore * 10) - 1}}%" y="143" dy=".35em">{{hero.utilityScore}}</text> <!-- number -->
+                                                                    <text ng-attr-x="{{getNgNumberScore(hero.utilityScore)}}%" y="143" dy=".35em">{{hero.utilityScore}}</text> <!-- number -->
                                                                 </g>
                                                             </svg>
                                                         </div>
@@ -313,21 +332,20 @@
                     <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors | orderBy: 'orderNum'" >
                         <a class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}">
                             <div class="hots-author-wrapper pull-left hidden-xs">
-                                <span ng-if="author.expertClasses.length > 1">
-                                    <div class="author-img-ico filter filter-{{ico.toLowerCase()}} active" ng-repeat="ico in author.expertClasses">
+                                <div class="author-img-ico filter filter-{{ico.toLowerCase()}} ico-{{$index}} ico-length-{{author.expertClasses.length}} active" ng-repeat="ico in author.expertClasses">
 
-                                    </div>
-                                </span>
+                                </div>
                             </div>
                             <div class="author-text-wrapper">
                                 <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.expertClasses.length > 0 } ">{{author.user.username}}</h2>
-                            <span ng-if="author.expertClasses.length === 1">
-                                <h3 class="classExpert">{{author.expertClasses[0]}} EXPERT</h3>
-                            </span>
-                                <h3 ng-if="author.expertClasses.length > 1">
-                                <span ng-repeat="klass in author.expertClasses">
-                                    <span ng-if="$index > 0">&nbsp;AND</span> {{klass}}
+                                <span ng-if="author.expertClasses.length === 1">
+                                    <h3 class="classExpert">{{author.expertClasses[0]}} EXPERT</h3>
                                 </span>
+                                <h3 ng-if="author.expertClasses.length > 1">
+                                    <span ng-repeat="klass in author.expertClasses">
+                                        <span ng-if="$index == author.expertClasses.length-1">&nbsp;AND</span>
+                                        {{klass}}<span ng-if="$index < author.expertClasses.length-2">,</span>
+                                    </span>
                                     EXPERT
                                 </h3>
                             </div>

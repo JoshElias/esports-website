@@ -8,7 +8,7 @@ var app = angular.module('app', [
     'angular-iscroll',
     'angularMoment',
     'angularPayments',
-    'angular-svg-round-progress',
+    'angular-svg-round-progressbar',
     'youtube-embed',
     'dndLists',
     'ngCookies',
@@ -1804,7 +1804,13 @@ var app = angular.module('app', [
                                                         {
                                                             relation: 'deck',
                                                             scope: {
-                                                                fields: ['id', 'name', 'slug', 'playerClass']
+                                                                fields: ['id', 'name', 'slug', 'playerClass'],
+                                                                include: {
+                                                                    relation: 'slugs',
+                                                                    scope: {
+                                                                        fields: ['linked', 'slug']
+                                                                    }
+                                                                }
                                                             }
                                                         },
                                                         {
@@ -2511,7 +2517,7 @@ var app = angular.module('app', [
                                 !_.isEmpty(paginationParams.guideFilters.roles) ||
                                 !_.isEmpty(paginationParams.guideFilters.search)
                                 ) {
-                                    var filter = { filters: {} };
+                                    var filter = { where: {} };
                                     filter.filters['heroId']       = (!_.isEmpty(paginationParams.guideFilters.heroes[0])) ? paginationParams.guideFilters.heroes[0].id : undefined;
                                     filter.filters['mapClassName'] = (!_.isUndefined(paginationParams.guideFilters.map)) ? paginationParams.guideFilters.map.className : undefined;
                                     filter.filters['universes']    = paginationParams.guideFilters.universes;
@@ -3473,7 +3479,7 @@ var app = angular.module('app', [
                         controller: 'ForumCategoryCtrl',
                         resolve: {
                             forumCategories: ['$q', 'ForumCategory', 'ForumPost', 'ForumThread', 'Util', function($q, ForumCategory, ForumPost, ForumThread, Util) {
-								// Alex's Resolve
+								                // Alex's Resolve
                                 var d = $q.defer();
                                 async.waterfall([
                                     function(waterCB) {
@@ -3510,11 +3516,15 @@ var app = angular.module('app', [
                                                         description: true
                                                     },
                                                     include: {
-                                                        relation: 'slugs'
+                                                        relation: 'slugs',
+                                                        scope: {
+                                                            fields: ['linked', 'slug']
+                                                        }
                                                     }
                                                 }
                                             }).$promise
                                             .then(function (threads) {
+                                                
                                                 category.forumThreads = threads;
 
                                                 async.each(category.forumThreads, function (thread, threadCB) {
@@ -3544,7 +3554,10 @@ var app = angular.module('app', [
                                                                            }
                                                                        },
                                                                        {
-                                                                           relation: 'slugs'
+                                                                           relation: 'slugs',
+                                                                           scope: {
+                                                                               fields: ['linked', 'slug']
+                                                                           }
                                                                        }
                                                                    ],
                                                                    order: 'createdDate DESC',
@@ -3552,6 +3565,7 @@ var app = angular.module('app', [
                                                                }
                                                            }).$promise
                                                            .then(function (forumPost) {
+                                                               forumPost.slug = Util.setSlug(forumPost);
                                                                thread.forumPosts = forumPost;
                                                                return paraCB();
                                                            })
@@ -3757,12 +3771,11 @@ var app = angular.module('app', [
                                 ForumThread.findOne({
                                     filter: {
                                         where: {
-                                            'slug.url': slug,
+                                            slug: slug,
                                             isActive: true
                                         },
                                         fields: {
                                             id: true,
-                                            slug: true,
                                             title: true
                                         },
                                         include: [
@@ -3839,10 +3852,11 @@ var app = angular.module('app', [
                         resolve: {
                             thread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
                                 var thread = $stateParams.thread;
+                                
                                 return ForumThread.findOne({
                                     filter: {
                                         where: {
-                                            'slug.url': thread,
+                                            slug: thread,
                                             isActive: true
                                         },
                                         fields: {
@@ -3867,17 +3881,18 @@ var app = angular.module('app', [
                             forumPost: ['$state', '$stateParams', 'ForumPost', 'Util', function($state, $stateParams, ForumPost, Util) {
                                 var thread = $stateParams.thread,
                                     post = $stateParams.post;
+                                
                                 return ForumPost.findOne({
                                     filter: {
                                         where: {
-                                            'slug.url': post
+                                            slug: post
                                         },
                                         include: [
                                             {
                                                 relation: 'forumThread',
                                                 scope: {
                                                     where: {
-                                                        'slug.url': thread
+                                                        slug: thread
                                                     },
                                                     include: {
                                                         relation: 'slugs'

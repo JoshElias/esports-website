@@ -217,11 +217,6 @@
   "mixins": {
     "DestroyOnDelete": true,
     "Scope": true,
-    "Filter": {
-      "acceptedRoles": ["$admin"],
-      "predicate": "official",
-      "requiredFields": ["isOfficial"]
-    },
     "Timestamp" : true
   }
 }

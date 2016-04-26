@@ -8,6 +8,21 @@
     "validateUpsert": true
   },
   "properties": {
+    "provider": {
+      "type": "string"
+    },
+    "externalId": {
+      "type": "string"
+    },
+    "authScheme": {
+      "type": "string"
+    },
+    "profile": {
+      "type": "object"
+    },
+    "credentials": {
+      "type": "object"
+    },
     "userId": {
       "index": 1
     }
