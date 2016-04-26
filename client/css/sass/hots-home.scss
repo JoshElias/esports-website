@@ -71,11 +71,13 @@
     .hero-universes li button.starcraft { background-position: -86px -49px; }
     .hero-universes li button.diablo { background-position: -86px -98px; }
     .hero-universes li button.retro { background-position: -86px -147px; }
+    .hero-universes li button.retro { background-position: -86px -196px; }
 
     .hero-universes li button.warcraft.active { background-position: -129px 0px; }
     .hero-universes li button.starcraft.active { background-position: -129px -49px; }
     .hero-universes li button.diablo.active { background-position: -129px -98px; }
     .hero-universes li button.retro.active { background-position: -129px -147px; }
+    .hero-universes li button.overwatch.active { background-position: -129px -196px; }
 
 
     .hero-filters { position: relative; margin: 0 auto; max-width: 1448px; height: 510px; padding: 0; }

@@ -11,7 +11,10 @@
             <div class="wrapper-lg guide-header-inner clearfix">
                 <div class="pull-left guide-name-wrapper">
                     <h1>{{guide.name}}</h1>
-                    <p>posted by <a href="./user/{{guide.author.username}}" class="m-r-sm">@{{guide.author.username}}</a><i class="fa fa-clock-o"></i> {{guide.createdDate | date:'mediumDate'}}</p>
+                    <p><span ng-if="guide.updatedDate">edited</span><span ng-if="!guide.updatedDate">posted</span> by <a href="./user/{{guide.author.username}}" class="m-r-sm">
+                        @{{guide.author.username}}
+                    </a>
+                    <timestamp item="guide"></timestamp>
                 </div>
                 <div class="pull-right hidden-xs">
                     <!-- guide-votes -->

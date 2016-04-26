@@ -1313,9 +1313,7 @@ angular.module('app.directives', ['ui.load'])
                 $scope.loading = true;
                 
                 var pattern = '/.*'+search+'.*/i';
-                var where = {
-                    isActive: true
-                };
+                var where = {};
                 
                 if(!_.isEmpty(search)) {
                     where['or'] = [
@@ -1912,7 +1910,9 @@ angular.module('app.directives', ['ui.load'])
             mulliganHide: "=",
             deck: "=deck"
         },
-        controller: ['$scope', function ($scope) {
+        controller: ['$scope', 'DeckBuilder', function ($scope, DeckBuilder) {
+            console.log($scope.deck);
+            // var deck = DeckBuilder.new();
 
             $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
 
@@ -2511,7 +2511,7 @@ angular.module('app.directives', ['ui.load'])
 .directive('hotsSnapshotGeneral', function () {
     return {
         restrict: 'E',
-        templateUrl: tpl + 'views/admin/hots.snapshot.general.html',
+        templateUrl: tpl + 'views/admin/hots.snapshot.general.html'
     }
 })
 .directive('hotsSnapshotAuthors', ['$compile', 'HOTS', function ($compile, HOTS) {
@@ -2940,4 +2940,21 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 })
+.directive('timestamp', function () {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + "views/frontend/directives/timestamp.html",
+        scope: {
+            item: "="
+        },
+        controller: ['$scope', function ($scope) {
+            if ($scope.item.createdDate === undefined) {
+                console.error('timestamp directive does not have createdDate field, will not display date');
+                return
+            }
+
+            $scope.date = $scope.item.updatedDate || $scope.item.createdDate;
+        }]
+    }
+});
 ;
