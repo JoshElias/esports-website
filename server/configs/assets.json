@@ -1,5 +1,6 @@
 {
   "angular.min.js": "angular.min.80714153.js",
+<<<<<<< HEAD
   "app.min.js": "app.min.a50156a2.js",
   "vendor.min.js": "vendor.min.d5f8f9ab.js",
   "modules.min.js": "modules.min.7cf4d5ef.js",
@@ -7,4 +8,13 @@
   "style.min.css": "style.min.ae35fe51.css",
   "vendor.min.css": "vendor.min.60b209a2.css",
   "modules.min.css": "modules.min.2bb0f83a.css"
+=======
+  "app.min.js": "app.min.96d35829.js",
+  "vendor.min.js": "vendor.min.d5f8f9ab.js",
+  "modules.min.js": "modules.min.0ee6ff7b.js",
+  "lb-services.min.js": "lb-services.min.72e355f9.js",
+  "style.min.css": "style.min.4cccc024.css",
+  "vendor.min.css": "vendor.min.60b209a2.css",
+  "modules.min.css": "modules.min.c56bc42f.css"
+>>>>>>> darren-bug-fixes
 }

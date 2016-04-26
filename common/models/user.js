@@ -748,8 +748,6 @@ module.exports = function(User) {
         return async.eachSeries(roleNames, revokeRole, finalCb);
     };
 
-
-
     User.isLinked = function (providers, cb) {
         cb = cb || new Promise();
 
@@ -769,6 +767,17 @@ module.exports = function(User) {
         });
 
         return cb.promise;
+    };
+
+    User.unlink = function (provider, cb) {
+        cb = cb || new Promise();
+
+        var UserIdentity = User.app.models.userIdentity;
+        var ctx = loopback.getCurrentContext();
+        var accessToken = ctx.get("accessToken");
+        var userId = accessToken.userId.toString();
+
+        return UserIdentity.destroyAll({userId:userId, provider:provider}, cb);
     };
 
     User.getCurrent = function(finalCb) {
@@ -840,9 +849,61 @@ module.exports = function(User) {
         });
     };
 
-    
+    User.getUsersWithActive = function (filter, cb) {
+        cb = cb || new Promise();
 
+        var findUsers = function (cb) {
+            User.find(filter, function (err, data) {
+                return cb(err, data);
+            });
+        }
 
+        var getRoles = function (users, cb) {
+            var newUsers = [];
+            var roles = [
+                '$active'
+            ]
+
+            async.each(users, function (user, eachCb) {
+                User.isInRoles(user.id, roles, undefined, undefined, function (err, role) {
+                    if (err) {
+                        return eachCb(err);
+                    }
+
+                    user.isActive = role.$active;
+                    newUsers.push(user);
+
+                    return eachCb();
+                });
+            }, function (err) {
+                return cb(err, newUsers);
+            });
+        }
+
+        async.waterfall([
+            findUsers,
+            getRoles
+        ], function (err, users) {
+            if (err) {
+                return console.log("ERR", err);
+            }
+
+            return cb(err, users);
+        });
+    }
+
+    User.remoteMethod(
+        'getUsersWithActive',
+        {
+            description: "Returns users with their active role attached",
+            accepts: [
+                {arg: 'filter', type: 'object', required:false, http: {source: 'query'}},
+            ],
+            returns: {arg: 'users', type: 'object'},
+            http: {verb: 'get'},
+            isStatic: true
+        }
+    );
 
     User.remoteMethod(
         'isInRoles',
@@ -884,6 +945,15 @@ module.exports = function(User) {
         }
     );
 
+    User.remoteMethod(
+        'unlink',
+        {
+            description: "Unlink providers from currently logged in user",
+            accepts: {arg: 'provider', type: 'string', required:true, http: {source: 'form'}},
+            http: {verb: 'post'},
+            isStatic: true
+        }
+    );
 
     User.remoteMethod(
         'changePassword',
