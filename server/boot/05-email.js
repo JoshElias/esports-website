@@ -1,6 +1,7 @@
 var ejs = require("ejs");
 var path = require("path");
 var fs = require("fs");
+var async = require("async");
 
 var emailBuilder = require("../lib/email/email-builder");
 
@@ -11,17 +12,23 @@ console.log("bodyUrl", bodyUrl);
 var EMAIL_VIEW_FOLDER = "views";
 
 
-module.exports = function(server) {
-
+module.exports = function(server, finalCb) {
 
     // Cache email templates
-    var templatePath = path.join(__dirname, "..", "boot", EMAIL_VIEW_FOLDER);
+    var rootTemplatePath = path.join(__dirname, "..", "boot", EMAIL_VIEW_FOLDER);
 
     // Get template paths
-    var templates = [];
-    templates.push(path.join(templatePath, "notification-email", "lost-password"));
+    var templatePaths = [];
+    templatePaths.push(path.join(rootTemplatePath, "notification-email", "lost-password"));
 
-    //
+    // Iterate through templates and render with default arguments
+    return async.each(templatePaths, function(templatePath, eachCb) {
+        return fs.readFile(templatePath, function(err, file) {
+            if(err) return eachCb(err);
+
+            emailBuilder.buildHtml()
+        });
+    });
 
 
 

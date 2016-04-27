@@ -25,7 +25,9 @@ fs.readdirSync(templatePath).forEach(function(file) {
 });
 
 
-function buildHtml(templateName) {
+function buildHtml(templatePath) {
+
+
 
     var templateHtml = cachedHtml[templateName];
     if(typeof templateHtml === "string") {
@@ -33,6 +35,10 @@ function buildHtml(templateName) {
     }
 
 
+
+}
+
+function cacheTemplate(templatePath) {
 
 }
 
