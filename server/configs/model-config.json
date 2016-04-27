@@ -16,7 +16,7 @@
     "public": false
   },
   "Email": {
-    "dataSource": "mandrill",
+    "dataSource": "aws-ses",
     "public": false
   },
   "UserCredential": {

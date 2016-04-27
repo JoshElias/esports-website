@@ -19,22 +19,12 @@ module.exports = {
 		},
 		"allowExtendedOperators": true
 	},
-	/*
-	"tournament-mongo": {
-		"url": 'mongodb://localhost:27017/tournament',
-		"connector": "loopback-connector-mongodb",
-		"server": {
-			"auto_reconnect": true,
-			"reconnectTries": 100,
-			"reconnectInterval": 1000
-		},
-		"allowExtendedOperators": true
-	},
-	*/
-	"mandrill": {
-	    "name": "mandrill",
-	    "connector": "loopback-connector-mandrill",
-	    "apiKey": "Zl5f6pHhNAraoqh5Z2jBEQ"
+	"aws-ses": {
+	    "name": "aws-ses",
+	    "connector": "loopback-connector-aws-ses",
+		"key": "AKIAIRC7VKIUNLLUQJPA",
+		"secret": "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",
+		"region": "us-west-2"
 	},
     "s3": {
         "name": "s3",
