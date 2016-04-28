@@ -126,7 +126,6 @@
       "permission": "ALLOW",
       "property": "find"
     },
-
     {
       "principalType": "ROLE",
       "principalId": "$everyone",

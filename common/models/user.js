@@ -5,6 +5,7 @@ var loopback = require("loopback");
 var bcrypt = require('bcrypt-nodejs');
 var request = require("request");
 
+var emailBuilder = require("../../server/lib/email/email-builder");
 var subscription = require("../../server/lib/subscription");
 
 
@@ -96,33 +97,53 @@ module.exports = function(User) {
                 },
                 // Send Email
                 function (user, seriesCallback) {
-                    var mailOptions = {
-                        from: {name: "Tempostorm", email: "admin@tempostorm.com"},
-                        to: {name: user.username, email: user.email, type: "to"},
-                        template: {
-                            name: "testactivation"
+
+                    // Compile the email html
+                    var domain = User.app.get("domain");
+                    var templateOptions = {
+                        header: {
+                            url: String.format("http://{0}", domain),
+                            imgSrc: "http://www.tempostorm.com/img/email/email-logo.png"
                         },
-                        subject: "Confirm your account",
-                        //text: "text message",
-                        //html: "<b>message</b>"
-                        vars: [{
-                            "rcpt": user.email,
-                            "vars": [{
-                                'name': 'ID',
-                                'content': user.id
-                            }, {
-                                'name': 'TOKEN',
-                                'content': user.verificationToken
-                            }, {
-                                'name': 'REDIRECT',
-                                'content': '/'
-                            }]
-                        }],
-                        tags: ["signup"]
+                        body: {
+                            title: {
+                                text: "You're almost done signing up!"
+                            },
+                            description: {
+                                text: "Please click the link below to confirm your email address.",
+                                code: String.format("Activation Code: {0}", user.verificationToken)
+                            },
+                            button: {
+                                url: String.format("http://{0}/api/users/confirm?uid={1}&token={2}&redirect={3}",
+                                    domain, user.id, user.verificationToken, "/"),
+                                text: "Activate Now"
+                            }
+                        }
+                    }
+
+                    var html = emailBuilder.compileHtml("account-activation", templateOptions);
+
+                    // Send the email
+                    var mailOptions = {
+                        Destination: {
+                            ToAddresses: [user.email]
+                        },
+                        Message: {
+                            Body: {
+                                Html: {
+                                    Data: html
+                                }
+                            },
+                            Subject: {
+                                Data: "Reset your account password"
+                            }
+                        },
+                        Source: "Tempostorm <admin@tempostorm.com>",
+                        ReplyToAddresses: ["admin@tempostorm.com"]
                     };
 
                     var Email = userModel.email;
-                    Email.send(mailOptions, function (err, email) {
+                    return Email.send(mailOptions, function (err, email) {
                         seriesCallback(err);
                     });
                 }],
@@ -211,30 +232,50 @@ module.exports = function(User) {
     //send password reset link when requested
     User.on('resetPasswordRequest', function (info) {
 
-        var mailOptions = {
-            from: {name: "Tempostorm", email: "admin@tempostorm.com"},
-            to: {name: info.user.username, email: info.email, type: "to"},
-            template: {
-                name: "testresetpassword"
+        // Compile the email html
+        var domain = User.app.get("domain");
+        var templateOptions = {
+            header: {
+                url: String.format("http://{0}", domain),
+                imgSrc: "http://www.tempostorm.com/img/email/email-logo.png"
             },
-            subject: "Reset your account password",
-            //text: "text message",
-            //html: "<b>message</b>"
-            vars: [{
-                "rcpt": info.email,
-                "vars": [{
-                    'name': 'EMAIL',
-                    'content': info.email
-                }, {
-                    'name': 'TOKEN',
-                    'content': info.accessToken.id.toString()
-                }]
-            }],
-            tags: ["signup"]
+            body: {
+                title: {
+                    text: "Lost your password?"
+                },
+                description: {
+                    text: "Don't worry, we can help you out with that."
+                },
+                button: {
+                    url: String.format("http://{0}/forgot-password/reset?email={1}&token={2}",
+                        domain, info.email, info.accessToken.id.toString()),
+                    text: "Reset Password"
+                }
+            }
+        }
+        var html = emailBuilder.compileHtml("reset-password", templateOptions);
+
+        // Send the email
+        var mailOptions = {
+            Destination: {
+                ToAddresses: [info.email]
+            },
+            Message: {
+                Body: {
+                    Html: {
+                        Data: html
+                    }
+                },
+                Subject: {
+                    Data: "Reset your account password"
+                }
+            },
+            Source: "Tempostorm <admin@tempostorm.com>",
+            ReplyToAddresses: ["admin@tempostorm.com"]
         };
 
         var Email = User.app.models.Email;
-        Email.send(mailOptions, function (err, email) {
+        return Email.send(mailOptions, function (err, email) {
             if (err) {
                 console.log("ERR resetting user password");
                 console.log("send the client some kind of error?")
@@ -283,63 +324,76 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-    User.resetEmail = function (email, cb) {
-        cb = cb || new Promise();
+    User.resetEmail = function (email, finalCb) {
+        finalCb = finalCb || new Promise();
         var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
-        User.getCurrent(function(err, user) {
-            if(err) return cb(err);
-            else if(!user) return cb(noUserErr);
+        return User.getCurrent(function(err, user) {
+            if(err) return finalCb(err);
+            else if(!user) return finalCb(noUserErr);
 
-            user.accessTokens.create({ttl: ttl}, function (tokenErr, accessToken) {
+            return user.accessTokens.create({ttl: ttl}, function (tokenErr, accessToken) {
                 if (tokenErr) {
                     var err = new Error('unable to create access token for user');
                     err.statusCode = 400;
                     err.code = 'UNABLE_TO_GENERATE_TOKEN';
-                    return cb(err);
+                    return finalCb(err);
                 }
 
-                var mailOptions = {
-                    from: {name: "Tempostorm", email: "admin@tempostorm.com"},
-                    to: {name: user.username, email: email, type: "to"},
-                    template: {
-                        name: "test-email-change-confirmed"
+                // Compile the email html
+                var domain = User.app.get("domain");
+                var templateOptions = {
+                    header: {
+                        url: String.format("http://{0}", domain),
+                        imgSrc: "http://www.tempostorm.com/img/email/email-logo.png"
                     },
-                    subject: "Email Updated",
-                    //text: "text message",
-                    //html: "<b>message</b>"
-                    vars: [{
-                        "rcpt": data.email,
-                        "vars": [{
-                            'name': 'UID',
-                            'content': user.id.toString()
-                        }, {
-                            'name': 'TOKEN',
-                            'content': accessToken.id.toString()
-                        }, {
-                            'name': 'EMAIL',
-                            'content': email
-                        }]
-                    }],
-                    tags: ["signup"]
+                    body: {
+                        title: {
+                            text: "Verify New Email Address"
+                        },
+                        description: {
+                            text: "Please verify your new email address by clicking the button below."
+                        },
+                        button: {
+                            url: String.format("http://{0}/api/users/changeEmail?uid={1}&token={2}&email={3}",
+                                domain, user.id.toString(), accessToken.id.toString(), email),
+                            text: "Confirm Email"
+                        }
+                    }
+                }
+                var html = emailBuilder.compileHtml("email-changed", templateOptions);
+
+                // Send the email
+                var mailOptions = {
+                    Destination: {
+                        ToAddresses: [email]
+                    },
+                    Message: {
+                        Body: {
+                            Html: {
+                                Data: html
+                            }
+                        },
+                        Subject: {
+                            Data: "Email Updated"
+                        }
+                    },
+                    Source: "Tempostorm <admin@tempostorm.com>",
+                    ReplyToAddresses: ["admin@tempostorm.com"]
                 };
 
                 var Email = User.app.models.Email;
-                Email.send(mailOptions, function (err, email) {
+                return Email.send(mailOptions, function (err, email) {
                     if (err) {
                         var err = new Error('unable to send verification email');
                         err.statusCode = 400;
                         err.code = 'UNABLE_TO_SEND_EMAIL';
-                        return cb(err);
+                        return finalCb(err);
                     }
-                    return cb();
+                    return finalCb();
                 });
-
             });
-
         });
-
-        return cb.promise;
     };
 
     
