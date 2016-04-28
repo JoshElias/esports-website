@@ -133,12 +133,12 @@ module.exports = function(Image) {
                         path: path + small,
                         name: small
                     }); // HAhhahahahahHAHAHahahhah
-                    console.log('small:', 'decks/'+small);
-                    amazon.upload(path+small, 'decks/'+small, function(err) {
+                    console.log('small:', 'cards/'+small);
+                    amazon.upload(path+small, 'cards/'+small, function(err) {
                         return done(err, {
                             success: true,
                             small: small,
-                            path: 'decks/'
+                            path: 'cards/'
                         });
                     });
                 });
@@ -326,25 +326,25 @@ module.exports = function(Image) {
                 function copyFile(callback) {
                     // read file
                     fs.readFile(file.path, function (err, data) {
-                        if (err) return next(err);
+                        if (err) return done(err);
                         // write file
                         fs.writeFile(path + large, data, function (err) {
-                            if (err) return next(err);
+                            if (err) return done(err);
                             // chmod new file
                             fs.chmod(path + large, 0777, function (err) {
-                                if (err) return next(err);
+                                if (err) return done(err);
                                 // delete tmp file
                                 fs.unlink(file.path, function (err) {
-                                    if (err) return next(err);
+                                    if (err) return done(err);
                                     // resize
                                     gm(path + large).quality(100).resize(800, 600, ">").write(path + large, function (err) {
-                                        if (err) return next(err);
+                                        if (err) return done(err);
                                         gm(path + large).quality(100).resize(140, 140, "^").write(path + thumb, function (err) {
-                                            if (err) return next(err);
+                                            if (err) return done(err);
                                             gm(path + thumb).quality(100).gravity('Center').crop(140, 140).write(path + thumb, function (err) {
-                                                if (err) return next(err);
+                                                if (err) return done(err);
                                                 fs.chmod(path + thumb, 0777, function (err) {
-                                                    if (err) return next(err);
+                                                    if (err) return done(err);
                                                     return callback();
                                                 });
                                             });
@@ -538,6 +538,10 @@ module.exports = function(Image) {
                 return done(defaultError);
             }
 
+
+            var teamHeight = 368;
+            var teamWidth = 698;
+
             var file = files[Object.keys(files)[0]]; // get first property in dict files
 
             // check if image file
@@ -582,13 +586,20 @@ module.exports = function(Image) {
                             fs.unlink(file.path, function(err) {
                                 if (err) return done(err);
                                 // resize
-                                gm(path + photo).quality(100).resize(188, 188, "^").write(path + photo, function(err) {
-                                    if (err) return done(err);
-                                    fs.chmod(path + photo, 0777, function(err) {
+                                gm(path + photo)
+                                    .quality(100)
+                                    .resize(teamWidth, teamHeight, "^^")
+                                    .repage("+")
+                                    .gravity("Center")
+                                    .crop(teamWidth, teamHeight, 0, 0)
+                                    .write(path + photo, function(err) {
                                         if (err) return done(err);
-                                        return callback();
-                                    });
-                                });
+                                        fs.chmod(path + photo, 0777, function(err) {
+                                            if (err) return done(err);
+                                            return callback();
+                                        });
+                                    }
+                                );
                             });
                         });
                     });

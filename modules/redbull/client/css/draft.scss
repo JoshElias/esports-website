@@ -385,6 +385,10 @@
                                 background: url("../img/modules/redbull/client/img/pack-soulbound.png") no-repeat;
                             }
 
+                            &.whispers-of-the-old-gods {
+                                background: url("../img/modules/redbull/client/img/pack-wotog.png") no-repeat;
+                            }
+
                             &.disabled {
                                 background: none !important;
                             }
@@ -427,7 +431,8 @@
 
                             &.naxxramas,
                             &.goblins-vs-gnomes,
-                            &.the-grand-tournament {
+                            &.the-grand-tournament,
+                            &.whispers-of-the-old-gods {
                                 top: 8px;
                             }
 
@@ -695,6 +700,10 @@
 
                         &.soulbound {
                             background: url("../img/modules/redbull/client/img/back-soulbound.png") no-repeat;
+                        }
+
+                        &.whispers-of-the-old-gods {
+                            background: url("../img/modules/redbull/client/img/back-wotog.png") no-repeat;
                         }
                     }
 

@@ -112,6 +112,7 @@ var redbull = angular.module('app.redbull', [
                                         return d.resolve(data);
                                     }
                                 }).catch(function (findResponse) {
+                                    console.log(findResponse);
                                     if (findResponse && findResponse.status === 404) {
                                         RedbullDraft.create().$promise
                                         .then(function (data) {

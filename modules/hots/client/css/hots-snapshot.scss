@@ -17,7 +17,13 @@
 
 //*************************************
 
+.btn-hov {
+	transition: .4s;
 
+	&:hover {
+		background: rgba(255,255,255,.04);
+	}
+}
 
 //*************************************
 // 1... Typography
@@ -137,10 +143,11 @@
 				}
 			}
 		}
-
 	}
 
 	.tier-body {
+		transition: .4s;
+
 		.tier-hero h4 {
 			//padding-right: 200px;
 			//text-indent: 20px;
@@ -163,7 +170,7 @@
 		.tier-hero-body {
 
 			h2 {
-				font-size: 34px !important;
+				font-size: 30px !important;
 				font-weight: bold;
 				color: $white;
 
@@ -211,7 +218,7 @@
 		}
 
 		h3 {
-			font-size: 20px;
+			font-size: 18px;
 			font-weight: bold;
 			color: $grey-blue;
 		}
@@ -251,6 +258,7 @@
 		-moz-appearance: none;
 		appearance: none;
 		cursor: pointer;
+		transition: .4s;
 
 		h4 {
 			margin-left: 20px;
@@ -265,11 +273,11 @@
 			background-repeat: no-repeat !important;
 			background-position: right top !important;
 			padding-top: 4px;
-
-
 		}
 
-
+		&:hover {
+			background-color: lighten( $hots-dark-purple, 5% ) !important;
+		}
 	}
 
 
@@ -277,6 +285,10 @@
 
 		.tier-hero-heading {
 			background-color: rgba(#32234c, 1) !important;
+
+			&:hover {
+				background-color: lighten( #32234c, 5% ) !important;
+			}
 		}
 	}
 
@@ -795,10 +807,16 @@
 	background-color: transparent;
 	border: transparent;
 	float: left;
-	margin-left: -10px;
+	//margin-left: -10px;
 	z-index: 5;
 
-	transform: scale(.7);
+
+	//FFFFFUUUUUUUU-
+	&.author-img-ico {
+		transform: scale(.7);
+		margin-left: -10px;
+	}
+
 
 	//filters on the hero
 

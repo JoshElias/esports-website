@@ -19,9 +19,7 @@ angular.module('redbull.controllers')
         
         
         // set cards
-        var allCards = getCards(_.sortBy(draftCards, function (card) {
-            return [card.card.cost, card.card.name].join("_");
-        }));
+        var allCards = sortCardOrder(getCards(draftCards));
 
         function getCards (cards) {
             var out = [];
@@ -153,6 +151,36 @@ angular.module('redbull.controllers')
             }
             
             return filtered;
+        }
+        
+        function sortCardOrder (cards) {
+            cards = cards || [];
+            
+            if (!cards.length) { return cards; }
+            
+            function dynamicSort(property) {
+                return function (a, b) {
+                    if (a[property] < b[property]) return -1;
+                    if (a[property] > b[property]) return 1;
+                    return 0;
+                }
+            }
+
+            function dynamicSortMultiple() {
+                var props = arguments;
+                return function (a, b) {
+                    var i = 0,
+                        result = 0;
+
+                    while(result === 0 && i < props.length) {
+                        result = dynamicSort(props[i])(a.card, b.card);
+                        i++;
+                    }
+                    return result;
+                }
+            }
+
+            return cards.sort(dynamicSortMultiple('cost', 'name'));
         }
         
         $scope.getCardsCurrent = function () {

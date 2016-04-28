@@ -34,8 +34,8 @@
                                             <a ui-sref="app.hs.home"><img ng-src="{{app.cdn}}img/hs-menu.jpg" class="section-img"></a>
                                             <a class="game-head-link" ui-sref="app.hs.home" ng-class="{active:$state.includes('app.hs.home')}" class="dropdown-header">Hearthstone</a>
                                             <li class="sub">
-                                                <a ui-sref="app.hs.redbull.home" class="hidden-xs gradient-add" ng-class="{active:$state.includes('app.hs.redbull.home')}">Sealed Deck Generator<div class="list-accent-div"></div></a>
                                                 <a ui-sref="app.hs.snapshot.redirect" ng-class="{active:$state.includes('app.hs.snapshot')}"  class="gradient-add">Meta Snapshot<div class="list-accent-div"></div></a>
+                                                <a ui-sref="app.hs.redbull.home" class="hidden-xs gradient-add" ng-class="{active:$state.includes('app.hs.redbull.home')}">Sealed Deck Generator<div class="list-accent-div"></div></a>
                                                 <a ui-sref="app.hs.decks.list" ng-class="{active:$state.includes('app.hs.decks')}" class="gradient-add">Decks<div class="list-accent-div"></div></a>
                                                 <a ui-sref="app.hs.deckBuilder.class" class="hidden-xs gradient-add" ng-class="{active:$state.includes('app.hs.deckBuilder')}" class="gradient-add">Deck Builder<div class="list-accent-div"></div></a>
                                             </li>
@@ -44,7 +44,7 @@
                                             <a ui-sref="app.hots.home"><img ng-src="{{app.cdn}}img/hots-menu.jpg" class="section-img"></a>
                                             <a class="game-head-link" ui-sref="app.hots.home" ng-class="{active:$state.includes('app.hots.home')}" class="dropdown-header">Heroes of the Storm</a>
                                             <li class="sub">
-                                                <!--<a ui-sref="app.hots.snapshots.redirect" class="gradient-add" ng-class="{active:$state.includes('app.hots.snapshots')}">Meta Snapshot<div class="list-accent-div"></div></a>-->
+                                                <a ui-sref="app.hots.snapshots.redirect" class="gradient-add" ng-class="{active:$state.includes('app.hots.snapshots')}">Meta Snapshot<div class="list-accent-div"></div></a>
                                                 <a ui-sref="app.hots.guides.list" class="gradient-add" ng-class="{active:$state.includes('app.hots.guides')}">Guides<div class="list-accent-div"></div></a>
                                                 <a ui-sref="app.hots.guideBuilder.step1" class="gradient-add hidden-xs" ng-class="{active:$state.includes('app.hots.guideBuilder')}">Guide Builder<div class="list-accent-div"></div></a>
                                                 <a ui-sref="app.hots.talentCalculator.redirect" class="gradient-add" ng-class="{active:$state.includes('app.hots.talentCalculator')}">Talent Calculator<div class="list-accent-div"></div></a>
@@ -128,5 +128,5 @@
 
 <!-- footer-ad -->
 
-<!--<footer-redbull ng-if="!$state.includes('app.admin') && !$state.includes('app.hs.redbull') && !$state.includes('app.hs.draft')"></footer-redbull>-->
+<footer-amazon ng-if="!$state.includes('app.admin') && !$state.includes('app.hs.redbull') && !$state.includes('app.hs.draft')"></footer-amazon>
 <!-- / footer-ad -->

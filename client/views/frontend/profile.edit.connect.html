@@ -8,11 +8,20 @@
             <i class="fa fa-twitch"></i>
         </div>
         <div class="connect-body">
-            <span ng-if="!isLinked.twitch" class="hidden-xs">Link your twitch account.</span>
-            <span ng-if="isLinked.twitch" class="hidden-xs">Your account is linked.</span>
-            
-            <button ng-if="isLinked.twitch" ng-click="twitchLink()" class="link twitchBack"><i class="fa fa-chain"></i></button>
-            <button ng-if="!isLinked.twitch" ng-click="twitchLink()" class="link"><i class="fa fa-chain-broken"></i></button>
+            <span ng-if="!isLinked.twitch" class="hidden-xs connect-text">Link your twitch account.</span>
+            <span ng-if="isLinked.twitch" class="hidden-xs connect-text">Your account is linked.</span>
+
+            <div class="pull-right clearfix connect-btn-wrapper">
+                <span ng-if="isLinked.twitch">
+                    <button ng-click="twitchLink()" class="link twitchBack pull-left"><i class="fa fa-chain"></i></button>
+                    <button ng-disabled="isUnlinking" ng-click="unlink('twitch')" class="link unlink pull-left">
+                        <i ng-if="!isUnlinking" class="fa fa-close"></i>
+                        <i ng-if="isUnlinking" class="fa fa-cog fa-spin"></i>
+                    </button>
+                </span>
+
+                <button ng-if="!isLinked.twitch" ng-click="twitchLink()" class="link"><i class="fa fa-chain-broken"></i></button>
+            </div>
         </div>
     </div>
     
@@ -21,11 +30,17 @@
             <img src="../../img/BattleNet_white.png">
         </div>
         <div class="connect-body">
-            <span ng-if="!isLinked.bnet" class="hidden-xs">Link your Battlenet account.</span>
-            <span ng-if="isLinked.bnet" class="hidden-xs">Your account is linked.</span>
-            
-            <button ng-if="isLinked.bnet" ng-click="bnetLink()" class="link blizzBack"><i class="fa fa-chain"></i></button>
-            <button ng-if="!isLinked.bnet" ng-click="bnetLink()" class="link"><i class="fa fa-chain-broken"></i></button>
+            <span ng-if="!isLinked.bnet" class="hidden-xs connect-text">Link your Battlenet account.</span>
+            <span ng-if="isLinked.bnet" class="hidden-xs connect-text">Your account is linked.</span>
+
+            <div class="pull-right clearfix connect-btn-wrapper">
+                <span ng-if="isLinked.bnet">
+                    <button ng-click="bnetLink()" class="link blizzBack pull-left"><i class="fa fa-chain"></i></button>
+                    <button ng-click="unlink('bnet')" class="link unlink pull-left"><i class="fa fa-close"></i></button>
+                </span>
+
+                <button ng-if="!isLinked.bnet" ng-click="bnetLink()" class="link"><i class="fa fa-chain-broken"></i></button>
+            </div>
         </div>
     </div>
 </div>

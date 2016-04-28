@@ -1,7 +1,7 @@
 <!-- activities -->
 <div class="profile-col-header"><h2>ACTIVITY</h2></div>
 <div class="activity-filter clearfix">
-    <ul class="pull-right">
+    <!--<ul class="pull-right">
         <li>
           <button class="profile-filter-btn btn btn-default" 
                   ng-class="{ 'active' : isFiltered('comments') }" 
@@ -35,11 +35,11 @@
             Forum Posts
           </button>
       </li>
-    </ul>
+    </ul>-->
 </div>
 <div class="activity-list">
     <!-- activity -->
-    <div class="activity {{activity.activityType}} m-b-sm" ng-repeat="activity in activities">
+    <!--<div class="activity {{activity.activityType}} m-b-sm" ng-repeat="activity in activities">
         <div class="activity-left">
             <div class="activity-img">
                 <img gravatar-src-once="user.email" class="img-circle">
@@ -70,9 +70,10 @@
             <span activity-guide-comment ng-if="activity.activityType == 'guideComment'"></span>
             <span activity-snapshot-comment ng-if="activity.activityType == 'snapshotComment'"></span>
         </div>
-    </div>
+    </div>-->
     <!-- / activity -->
 </div>
-<p class="profile-no-content" ng-show="!activities.length">@{{user.username}} has no site activity yet.</p>
+<!--<p class="profile-no-content" ng-show="!activities.length">@{{user.username}} has no site activity yet.</p>-->
+<p class="profile-no-content">Activity feed will be coming soon&#8482;!</p>
 <!--<div ng-if="activityLimit < total" class="show-more m-b-md"><a class="show-more-btn" ng-click="loadActivities(false)" href="#">Show More</a></div>-->
 <!-- / activities -->

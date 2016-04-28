@@ -539,7 +539,7 @@ angular.module('app.services', [])
             //begin method definitions
             HOTSSnapshot.prototype.addTier = function () {
                 var tier = {
-                    heroes: new Array(),
+                    heroes: [],
                     tier: this.tiers.length + 1
                 };
 
@@ -552,7 +552,7 @@ angular.module('app.services', [])
                 var largestTier = tiers.length;
 
                 if (!!heroTiers) {
-                    var newTiers = new Array();
+                    var newTiers = [];
 
                     _.each(heroTiers, function (heroTier, idx) {
                         heroTier.orderNum = idx;
@@ -563,7 +563,7 @@ angular.module('app.services', [])
 
                     for (var i = 0; i < largestTier; i++) {
                         var newTier = {
-                            heroes: new Array(),
+                            heroes: [],
                             tier: newTiers.length + 1
                         };
 
@@ -719,11 +719,11 @@ angular.module('app.services', [])
 
                 //clean slug before submitting so we don't end up with things like meta-snapshot-meta-snapshot
                 //in the slug field
-                snapshot.slugs[0].slug = Util.slugify(snapshot.title);
+                // snapshot.slugs[0].slug = Util.slugify(snapshot.title);
 
                 snapshot.slugOptions = {
                     slug: snapshot.slugs[0].slug,
-                    linked: snapshot.slugs[0].linked
+                    linked: false
                 };
 
                 //build our crudman toWrite arrays
@@ -2016,9 +2016,9 @@ angular.module('app.services', [])
         Hunter: ['Rexxar', 'Alleria'],
         Druid: ['Malfurion']
     };
-    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
+    hs.mechanics = ['Battlecry', 'C\'Thun', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
     hs.deckTypes = ['None', 'Aggro', 'Control', 'Midrange', 'Combo', 'Theory Craft'];
-    hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament', 'League of Explorers'];
+    hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament', 'League of Explorers', 'Whispers of the Old Gods'];
 
     return hs;
 })
@@ -2027,7 +2027,7 @@ angular.module('app.services', [])
 
     hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
     hots.types = ["Melee", "Ranged"];
-    hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
+    hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard", "Overwatch"];
     hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
@@ -5655,6 +5655,11 @@ angular.module('app.services', [])
                 var movedDeck;
                 var afterInMatchups;
 
+                // if dragging active deck, make sure to deactive it
+                if (decks[index] === sb.activeDeck) {
+                    sb.activeDeck = null;
+                }
+                
                 // remove old position for deck
                 decks.splice(index, 1);
 

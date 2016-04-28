@@ -26,6 +26,7 @@ var app = angular.module('app', [
     'app.directives',
     'app.animations',
     'app.redbull',
+    'app.polls',
     'hotsSnapshot',
     'tsAdSense'
 ])
@@ -1417,7 +1418,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: perpage,
@@ -1443,7 +1445,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: 'Neutral',
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: 15
@@ -1458,7 +1461,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 })
                                 .$promise;
@@ -1468,7 +1472,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: 'Neutral',
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 })
                                 .$promise;
@@ -1664,7 +1669,8 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             playerClass: playerClass,
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ['cost ASC', 'name ASC'],
                                         limit: perpage
@@ -1677,7 +1683,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: deckNoMulligans.playerClass,
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }],
@@ -1686,7 +1693,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: 'Neutral',
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }],
@@ -1696,7 +1704,8 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             playerClass: 'Neutral',
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: 15
@@ -2851,6 +2860,7 @@ var app = angular.module('app', [
                                             comments: true,
                                             content: true,
                                             createdDate: true,
+                                            updatedDate: true,
                                             description: true,
                                             guideType: true,
                                             id: true,
@@ -3999,38 +4009,6 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Teams', description: 'Teams on Tempostorm', keywords: '' }
             })
-            .state('app.polls', {
-                url: 'vote',
-                views: {
-                    content: {
-                        templateUrl: tpl + 'views/frontend/polls.html',
-                        controller: 'PollsCtrl',
-                        resolve: {
-                          dataPollsMain: ['Poll', function (Poll) {
-                            return Poll.find({
-                                filter: {
-                                    where: {
-                                        viewType: 'main'
-                                    },
-                                    include: ['items']
-                                }
-                            }).$promise;
-                          }],
-                          dataPollsSide: ['Poll', function (Poll) {
-                            return Poll.find({
-                                filter: {
-                                    where: {
-                                        viewType: 'side'
-                                    },
-                                    include: ['items']
-                                }
-                            }).$promise;
-                          }]
-                        }
-                    }
-                },
-                seo: { title: 'Vote', description: 'Vote on TempoStorm', keywords: '' }
-            })
             .state('app.sponsors', {
                 url: 'sponsors',
                 views: {
@@ -4998,7 +4976,8 @@ var app = angular.module('app', [
                                         // },
                                         where: {
                                             playerClass: playerClass,
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ['cost ASC', 'name ASC'],
                                         limit: 15
@@ -5014,7 +4993,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass,
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise
                                 .then(function (classCardCounts) {
@@ -5026,7 +5006,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: 'Neutral',
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }],
@@ -5048,7 +5029,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: 'Neutral',
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: 15
@@ -5293,18 +5275,6 @@ var app = angular.module('app', [
 
                                 return Card.find({
                                     filter: {
-                                        // fields: {
-                                        //     artist: false,
-                                        //     attack: false,
-                                        //     durability: false,
-                                        //     expansion: false,
-                                        //     flavor: false,
-                                        //     health: false,
-                                        //     isActive: false,
-                                        //     race: false,
-                                        //     text: false,
-                                        //     deckable: false
-                                        // },
                                         fields: {
                                             id: true,
                                             name: true,
@@ -5321,7 +5291,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: playerClass,
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ['cost ASC', 'name ASC'],
                                         limit: perpage
@@ -5346,7 +5317,8 @@ var app = angular.module('app', [
                                 return Card.count({
                                     where: {
                                         playerClass: 'Neutral',
-                                        deckable: true
+                                        deckable: true,
+                                        isActive: true
                                     }
                                 }).$promise;
                             }],
@@ -5354,18 +5326,6 @@ var app = angular.module('app', [
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
-                                        // fields: {
-                                        //     artist: false,
-                                        //     attack: false,
-                                        //     durability: false,
-                                        //     expansion: false,
-                                        //     flavor: false,
-                                        //     health: false,
-                                        //     isActive: false,
-                                        //     race: false,
-                                        //     text: false,
-                                        //     deckable: false
-                                        // },
                                         fields: {
                                             id: true,
                                             name: true,
@@ -5382,7 +5342,8 @@ var app = angular.module('app', [
                                         },
                                         where: {
                                             playerClass: 'Neutral',
-                                            deckable: true
+                                            deckable: true,
+                                            isActive: true
                                         },
                                         order: ["cost ASC", "name ASC"],
                                         limit: 15
@@ -6593,16 +6554,23 @@ var app = angular.module('app', [
                                 });
                             }],
                             users: ['User', 'paginationParams', function (User, paginationParams) {
-                                return User.find(
+                                return User.getUsersWithActive(
                                     paginationParams.options
-                                ).$promise
-                                .then(function (allUsers) {
-//                                    console.log('allUsers: ', allUsers);
-                                    return allUsers;
-                                })
-                                .catch(function (err) {
-                                    console.log('Snapshot.find err: ', err);
+                                )
+                                .$promise
+                                .then(function (data) {
+                                    return data.users;
                                 });
+//                                 return User.find(
+//                                     paginationParams.options
+//                                 ).$promise
+//                                 .then(function (allUsers) {
+// //                                    console.log('allUsers: ', allUsers);
+//                                     return allUsers;
+//                                 })
+//                                 .catch(function (err) {
+//                                     console.log('Snapshot.find err: ', err);
+//                                 });
                             }]
                         }
                     }
@@ -6718,108 +6686,6 @@ var app = angular.module('app', [
                                 var bannerID = $stateParams.bannerID;
                                 return AdminBannerService.getBanner(bannerID);
                             }]
-                        }
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.polls', {
-                abstract: true,
-                url: '/polls',
-                views: {
-                    admin: {
-                        templateUrl: tpl + 'views/admin/polls.html'
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.polls.list', {
-                url: '',
-                views: {
-                    polls: {
-                        templateUrl: tpl + 'views/admin/polls.list.html',
-                        controller: 'AdminPollListCtrl',
-                        resolve: {
-                            paginationParams: [function() {
-                                return {
-                                    page: 1,
-                                    perpage: 50,
-                                    options: {
-                                        filter: {
-                                            fields: {
-                                                id: true,
-                                                title: true
-                                            },
-                                            limit: 50,
-                                            order: 'createdDate DESC'
-                                        }
-                                    }
-                                };
-                            }],
-                            pollsCount: ['Poll', 'paginationParams', function (Poll, paginationParams) {
-                                return Poll.count({})
-                                .$promise
-                                .then(function (pollCount) {
-                                    paginationParams.total = pollCount.count;
-                                    return pollCount;
-                                })
-                                .catch(function (err) {
-                                    console.log('Poll.count err: ',err);
-                                });
-                            }],
-                            polls: ['Poll', 'paginationParams', function (Poll, paginationParams) {
-                                return Poll.find(
-                                    paginationParams.options
-                                ).$promise
-                                .then(function (allPolls) {
-                                    return allPolls;
-                                })
-                                .catch(function (err) {
-                                    console.log('Poll.find err: ', err);
-                                });
-                            }]
-                        }
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.polls.add', {
-                url: '/add',
-                views: {
-                    polls: {
-                        templateUrl: tpl + 'views/admin/polls.add.html',
-                        controller: 'AdminPollAddCtrl'
-                    }
-                },
-                access: { auth: true, admin: true },
-                seo: { title: 'Admin', description: '', keywords: '' }
-            })
-            .state('app.admin.polls.edit', {
-                url: '/edit/:pollID',
-                views: {
-                    polls: {
-                        templateUrl: tpl + 'views/admin/polls.edit.html',
-                        controller: 'AdminPollEditCtrl',
-                        resolve: {
-                            poll: ['$stateParams', 'Poll', function($stateParams, Poll){
-                                var pollID = $stateParams.pollID;
-                                return Poll.findOne({
-                                    filter: {
-                                        where: {
-                                            id: pollID
-                                        },
-										include: 'items'
-                                    }
-                                })
-                                .$promise
-                                .then(function (data) {
-                                    return data;
-                                })
-                            }]
-
                         }
                     }
                 },
