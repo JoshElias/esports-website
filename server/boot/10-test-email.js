@@ -46,7 +46,7 @@ module.exports = function(server, finalCb) {
                 Data: "Email Updated"
             }
         },
-        Source: "admin@tempostorm.com",
+        Source: "Tempostorm <admin@tempostorm.com>",
         ReplyToAddresses: ["admin@tempostorm.com"]
     };
 

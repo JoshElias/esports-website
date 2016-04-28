@@ -138,7 +138,7 @@ module.exports = function(User) {
                                 Data: "Reset your account password"
                             }
                         },
-                        Source: "admin@tempostorm.com",
+                        Source: "Tempostorm <admin@tempostorm.com>",
                         ReplyToAddresses: ["admin@tempostorm.com"]
                     };
 
@@ -270,7 +270,7 @@ module.exports = function(User) {
                     Data: "Reset your account password"
                 }
             },
-            Source: "admin@tempostorm.com",
+            Source: "Tempostorm <admin@tempostorm.com>",
             ReplyToAddresses: ["admin@tempostorm.com"]
         };
 
@@ -378,7 +378,7 @@ module.exports = function(User) {
                             Data: "Email Updated"
                         }
                     },
-                    Source: "admin@tempostorm.com",
+                    Source: "Tempostorm <admin@tempostorm.com>",
                     ReplyToAddresses: ["admin@tempostorm.com"]
                 };
 
