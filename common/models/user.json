@@ -10,7 +10,7 @@
   "properties": {
     "isActive": {
       "type": "boolean",
-      "default": false,
+      "default": true,
       "index": 1
     },
     "firstName": {
