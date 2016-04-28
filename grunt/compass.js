@@ -30,5 +30,13 @@ module.exports = {
             cssDir:      'client/dist/css/sass/modules',
             cacheDir:    'modules/.sass-cache'
         }
+    },
+    modules_polls: {
+        options: {
+            outputStyle: 'expanded',
+            sassDir:     'modules/polls/client/css',
+            cssDir:      'client/dist/css/sass/modules',
+            cacheDir:    'modules/.sass-cache'
+        }
     }
 };
