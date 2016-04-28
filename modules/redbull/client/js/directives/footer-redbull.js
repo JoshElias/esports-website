@@ -15,7 +15,7 @@ angular.module('redbull.directives')
                 scope.small = !scope.small;
                 $localStorage.redbullFooter = scope.small;
             }
-            
+
         }
     };
 }]);

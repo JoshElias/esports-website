@@ -19,6 +19,26 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('footerAmazon', ['$localStorage', function ($localStorage) {
+    return {
+        restrict: 'E',
+        templateUrl: tpl + 'views/frontend/directives/amazon.footer.html',
+        link: function (scope, el, attrs) {
+
+            if ($localStorage.redbullFooter === undefined) {
+                $localStorage.redbullFooter = false;
+            }
+
+            scope.small = $localStorage.redbullFooter;
+
+            scope.toggleSmall = function () {
+                scope.small = !scope.small;
+                $localStorage.redbullFooter = scope.small;
+            }
+
+        }
+    };
+}])
 .directive('uiAdminNav', [function () {
     return {
         restrict: 'AE',
