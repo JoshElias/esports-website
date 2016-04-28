@@ -324,63 +324,76 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-    User.resetEmail = function (email, cb) {
-        cb = cb || new Promise();
+    User.resetEmail = function (email, finalCb) {
+        finalCb = finalCb || new Promise();
         var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
-        User.getCurrent(function(err, user) {
-            if(err) return cb(err);
-            else if(!user) return cb(noUserErr);
+        return User.getCurrent(function(err, user) {
+            if(err) return finalCb(err);
+            else if(!user) return finalCb(noUserErr);
 
-            user.accessTokens.create({ttl: ttl}, function (tokenErr, accessToken) {
+            return user.accessTokens.create({ttl: ttl}, function (tokenErr, accessToken) {
                 if (tokenErr) {
                     var err = new Error('unable to create access token for user');
                     err.statusCode = 400;
                     err.code = 'UNABLE_TO_GENERATE_TOKEN';
-                    return cb(err);
+                    return finalCb(err);
                 }
 
-                var mailOptions = {
-                    from: {name: "Tempostorm", email: "admin@tempostorm.com"},
-                    to: {name: user.username, email: email, type: "to"},
-                    template: {
-                        name: "test-email-change-confirmed"
+                // Compile the email html
+                var domain = User.app.get("domain");
+                var templateOptions = {
+                    header: {
+                        url: String.format("http://{0}", domain),
+                        imgSrc: "http://www.tempostorm.com/img/email/email-logo.png"
                     },
-                    subject: "Email Updated",
-                    //text: "text message",
-                    //html: "<b>message</b>"
-                    vars: [{
-                        "rcpt": data.email,
-                        "vars": [{
-                            'name': 'UID',
-                            'content': user.id.toString()
-                        }, {
-                            'name': 'TOKEN',
-                            'content': accessToken.id.toString()
-                        }, {
-                            'name': 'EMAIL',
-                            'content': email
-                        }]
-                    }],
-                    tags: ["signup"]
+                    body: {
+                        title: {
+                            text: "Verify New Email Address"
+                        },
+                        description: {
+                            text: "Please verify your new email address by clicking the button below."
+                        },
+                        button: {
+                            url: String.format("http://{0}/api/users/changeEmail?uid={1}&token={2}&email={3}",
+                                domain, user.id.toString(), accessToken.id.toString(), email),
+                            text: "Confirm Email"
+                        }
+                    }
+                }
+                var html = emailBuilder.compileHtml("email-changed", templateOptions);
+
+                // Send the email
+                var mailOptions = {
+                    Destination: {
+                        ToAddresses: [email]
+                    },
+                    Message: {
+                        Body: {
+                            Html: {
+                                Data: html
+                            }
+                        },
+                        Subject: {
+                            Data: "Email Updated"
+                        }
+                    },
+                    Source: "admin@tempostorm.com",
+                    ReplyToAddresses: ["admin@tempostorm.com"]
                 };
 
                 var Email = User.app.models.Email;
-                Email.send(mailOptions, function (err, email) {
+                return Email.send(mailOptions, function (err, email) {
                     if (err) {
                         var err = new Error('unable to send verification email');
                         err.statusCode = 400;
                         err.code = 'UNABLE_TO_SEND_EMAIL';
-                        return cb(err);
+                        return finalCb(err);
                     }
-                    return cb();
+                    return finalCb();
                 });
-
             });
-
         });
-
-        return cb.promise;
     };
 
     

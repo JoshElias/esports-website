@@ -17,21 +17,19 @@ module.exports = function(server, finalCb) {
         },
         body: {
             title: {
-                text: "You're almost done signing up!"
+                text: "Verify New Email Address"
             },
             description: {
-                text: "Please click the link below to confirm your email address.",
-                code: String.format("Activation Code: {0}", "TEST")
+                text: "Please verify your new email address by clicking the button below."
             },
             button: {
-                url: String.format("http://{0}/api/users/confirm?uid={1}&token={2}&redirect={3}",
-                    "TEST", "TEST", "/"),
-                text: "Reset Password"
+                url: String.format("http://{0}/api/users/changeEmail?uid={0}&token={1}&email={2}",
+                    "testDomain", "testUid", "testTokenId", "testEmail"),
+                text: "Confirm Email"
             }
         }
     }
-
-    var html = emailBuilder.compileHtml("account-activation", templateOptions);
+    var html = emailBuilder.compileHtml("email-changed", templateOptions);
 
     // Send the email
     var mailOptions = {
@@ -45,7 +43,7 @@ module.exports = function(server, finalCb) {
                 }
             },
             Subject: {
-                Data: "Reset your account password"
+                Data: "Email Updated"
             }
         },
         Source: "admin@tempostorm.com",

@@ -15,6 +15,7 @@ module.exports = function(server, finalCb) {
     var rootTemplatePath = path.join(__dirname, "..", EMAIL_VIEW_FOLDER);
     templatePaths.push(path.join(rootTemplatePath, "notification-email", "reset-password"));
     templatePaths.push(path.join(rootTemplatePath, "notification-email", "account-activation"));
+    templatePaths.push(path.join(rootTemplatePath, "notification-email", "email-changed"));
 
     // Add templates to email builder
     return async.each(templatePaths, function(templatePath, eachCb) {
