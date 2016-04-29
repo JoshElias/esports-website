@@ -66,6 +66,12 @@
     },
     "social": {
       "type": "object"
+    },
+    "email": {
+      "type": "string",
+      "Filter": {
+        "acceptedRoles": ["$owner", "$admin"]
+      }
     }
   },
   "hidden": [
@@ -157,14 +163,14 @@
     {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
-      "principalId": "$owner",
+      "principalId": "$authenticated",
       "permission": "ALLOW",
-      "property": "resetEmail"
+      "property": "requestEmailChange"
     },
     {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
-      "principalId": "$owner",
+      "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "changeEmail"
     },

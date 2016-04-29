@@ -28,7 +28,7 @@ module.exports = function(User) {
     invalidCatpchaTokenErr.statusCode = 400;
     invalidCatpchaTokenErr.code = 'INVALID_CAPTCHA_TOKEN';
 
-    
+
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
         ctx.method.skipFilter = true;
         ctx.req.logIn(ctx.result.toJSON().user, function (err) {
@@ -324,7 +324,7 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-    User.resetEmail = function (email, finalCb) {
+    User.requestEmailChange = function (email, finalCb) {
         finalCb = finalCb || new Promise();
         var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
@@ -397,108 +397,56 @@ module.exports = function(User) {
     };
 
     
-    User.changeEmail = function (uid, token, email, cb) {
-        cb = cb || new Promise();
-
-        var AccessToken = User.app.models.AccessToken;
+    User.changeEmail = function (uid, token, email, finalCb) {
+        finalCb = finalCb || new Promise();
 
         var emailErr = new Error('unable to change email');
         emailErr.statusCode = 400;
         emailErr.code = 'UNABLE_TO_CHANGE_EMAIL';
 
-        AccessToken.findOne({where:{id:token, userId:uid}, include:"user"}, function(err, accessToken) {
-            if(err || !accessToken || !accessToken.user) return cb(invalidTokenErr);
-
-            accessToken.user.updateAttribute("email", email, function (err, emailInstance) {
-                if (err) return cb(err);
-
-
-                var ctx = loopback.getCurrentContext();
-                if (!ctx || !ctx.active) {
-                    return cb(emailErr);
-                }
-
-                var res = ctx.active.http.res;
-                var req = ctx.active.http.req;
-                user.createAccessToken("1209600", function (err, loginToken) {
-                    if (err) return cb(invalidTokenErr);
-                    loginToken.__data.user = user;
-                    req.logIn(user, function (err) {
-                        if (err) return next(err);
-
-                        res.cookie('access_token', loginToken.id.toString(), {
-                            signed: req.signedCookies ? true : false,
-                            // maxAge is in ms
-                            maxAge: loginToken.ttl
-                        });
-                        res.cookie('userId', user.id.toString(), {
-                            signed: req.signedCookies ? true : false,
-                            maxAge: loginToken.ttl
-                        });
-
-                        res.redirect("https://52.26.75.137");
-                    });
-
-                    return cb();
-                });
-            });
-        });
-
-        User.findById(uid, function (err, user) {
-            if (err) {
-                cb(err);
-            } else if (user) {
-
-                var err = new Error('unable to change email');
-                err.statusCode = 400;
-                err.code = 'UNABLE_TO_CHANGE_EMAIL';
-
-                // check if the user has the access token
-                user.accessTokens.findById(token, function (tokenErr, accessToken) {
-                    if (tokenErr) return cb(err);
-
-                    user.updateAttribute("email", email, function (emailErr, emailInstance) {
-                        if (emailErr) return cb(emailErr);
-
-                        var ctx = loopback.getCurrentContext();
-                        if (ctx.active) {
-                            var res = ctx.active.http.res;
-                            var req = ctx.active.http.req;
-                            user.createAccessToken("1209600", function (err, loginToken) {
-                                if (err) return cb(err);
-                                loginToken.__data.user = user;
-                                req.logIn(user, function (err) {
-                                    if (err) return next(err);
-
-                                    res.cookie('access_token', loginToken.id.toString(), {
-                                        signed: req.signedCookies ? true : false,
-                                        // maxAge is in ms
-                                        maxAge: loginToken.ttl
-                                    });
-                                    res.cookie('userId', user.id.toString(), {
-                                        signed: req.signedCookies ? true : false,
-                                        maxAge: loginToken.ttl
-                                    });
-
-                                    res.redirect("https://52.26.75.137");
-                                });
-                                cb();
-                            });
-                        } else {
-                            cb()
-                        }
-                    });
-                });
-
-            } else {
+        return User.findById(uid, function (err, user) {
+            if (err) return finalCb(err);
+            else if(!user) {
                 var err = new Error('no user found');
                 err.statusCode = 400;
                 err.code = 'USER_NOT_FOUND';
-                cb(err);
+                finalCb(err);
             }
-        });
 
-        return cb.promise;
+            // check if the user has the access token
+            return user.accessTokens.findById(token, function (tokenErr, accessToken) {
+                if (tokenErr) return finalCb(emailErr);
+
+                return user.updateAttribute("email", email, function (emailErr, emailInstance) {
+                    if (emailErr) return finalCb(emailErr);
+
+                    var ctx = loopback.getCurrentContext();
+                    var res = ctx.active.http.res;
+                    var req = ctx.active.http.req;
+                    return user.createAccessToken("1209600", function (err, loginToken) {
+                        if (err) return finalCb(err);
+                        loginToken.__data.user = user;
+                        return req.logIn(user, function (err) {
+                            if (err) return finalCb(err);
+
+                            res.cookie('access_token', loginToken.id.toString(), {
+                                signed: req.signedCookies ? true : false,
+                                // maxAge is in ms
+                                maxAge: loginToken.ttl
+                            });
+                            res.cookie('userId', user.id.toString(), {
+                                signed: req.signedCookies ? true : false,
+                                maxAge: loginToken.ttl
+                            });
+
+                            var domain = User.app.get("domain");
+                            res.redirect("http://"+domain);
+                            return finalCb()
+                        });
+                    });
+                });
+            });
+        });
     };
 
 
@@ -1024,7 +972,7 @@ module.exports = function(User) {
     );
 
     User.remoteMethod(
-        'resetEmail',
+        'requestEmailChange',
         {
             description: "Resets a user's email",
             accepts: {arg: 'email', type: 'string', required:true, http: {source: 'form'}},

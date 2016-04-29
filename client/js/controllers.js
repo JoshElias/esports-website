@@ -696,10 +696,8 @@ angular.module('app.controllers', ['ngCookies'])
                 async.series([
                     function (seriesCb) {
                         if ($scope.email !== $scope.user.email) {
-                            User.changeEmail({
-                                uid: $scope.user.id,
-                                token: LoopBackAuth.accessTokenId,
-                                email: user.email
+                            User.requestEmailChange({
+                                email: $scope.email
                             })
                             .$promise
                             .then(function (data) {
