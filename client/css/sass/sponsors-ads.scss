@@ -51,6 +51,16 @@
     @include absolute-fix;
 }
 
+.sponsor-logo-curse { 
+    margin: 0 auto; 
+    width: 275px; 
+    height: 80px; 
+    background: url('../img/curse.png') no-repeat; 
+    background-size: 100%;
+    
+    @include absolute-fix;
+}
+
 /*.sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }*/
 .btn-sponsor { width: 36px; height: 36px; border-radius: 50%; display: block; border: 1px solid white; margin: 10px 0px; }
 .btn-sponsor div { width: 30px; height: 30px; text-align: center; }
