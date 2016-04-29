@@ -688,7 +688,11 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
 
-            $scope.updateProfile = function () {
+            $scope.setEmail = function (str) {
+                $scope.email = str;
+            }
+
+            $scope.updateProfile = function (email) {
                 async.series([
                     function (seriesCb) {
                         if ($scope.email !== $scope.user.email) {

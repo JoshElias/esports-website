@@ -1,7 +1,12 @@
 <div class="verify-form row">
-    <div class="col-sm-12">
-        <h2 class="m-b-lg">Verification Required</h2>
+    <div class="login-form-header">
+        <div class="key-border"><i class="fa fa-user-plus"></i></div>
+        <h1>Verification Required</h1>
         <i ng-if="!!state" class="fa fa-close closing-x" ng-click="cancel()"></i>
+    </div>
+    <div class="col-sm-12">
+        <!--<h2 class="m-b-lg">Verification Required</h2>-->
+        <!--<i ng-if="!!state" class="fa fa-close closing-x" ng-click="cancel()"></i>-->
         <p class="white">You should receive an email shortly with a link to verify your account and log you in.</p>
 <!--
         <div class="panel panel-danger error-modal animated" ng-show="showError">
@@ -25,5 +30,8 @@
         <button type="submit" class="btn btn-blue btn-block" ng-disabled="verifyForm.$invalid" ng-click="verifyEmail(verify.email, verify.code)">Verify Account</button>
         </form>
 -->
+
+
+
     </div>
 </div>
